@@ -82,3 +82,32 @@ def test_a_refresh_applies_one_basis_as_the_live_run_does(monkeypatch):
     assert new["results"] is None and "consolidated" in new["grounding"]["one_basis"][0]
     assert "results" in changed and "grounding" in changed
     assert card["results"] is not None   # the stored card itself is not touched
+
+
+def test_a_switch_written_as_text_in_the_file_reads_as_written(monkeypatch, tmp_path):
+    from bse_intel import settings as st
+
+    path = tmp_path / "switches.toml"
+    path.write_text('[on]\nCARD_WATCH_VERDICT = "0"\nCARD_TWO_PARTS = "1"\nCARD_ONE_BASIS = false\n', encoding="utf-8")
+    monkeypatch.setenv("BSE_INTEL_SWITCHES", str(path))
+    for name in ("CARD_WATCH_VERDICT", "CARD_TWO_PARTS", "CARD_ONE_BASIS"):
+        monkeypatch.delenv(name, raising=False)
+    assert (st.card_watch_verdict(), st.card_two_parts(), st.card_one_basis()) == (False, True, False)
+    assert st.switches_on() == ["CARD_TWO_PARTS"]
+
+
+def test_a_refresh_drops_a_one_basis_note_that_no_longer_holds(monkeypatch):
+    from test_card_refresh import FILED, _card, _dossier
+
+    from bse_intel import card_refresh
+    from bse_intel.models import Filing
+
+    filing = Filing(news_id="n1", scrip_code="500001", company_name="Demo Rail Ltd", headline="h", subject="",
+                    filed_at=FILED, filing_date=FILED[:10])
+    monkeypatch.setenv("CARD_ONE_BASIS", "1")
+    card = {**_card(), "grounding": {"one_basis": ["an old note"], "other": 1}}
+    new, changed = card_refresh.refresh(copy.deepcopy(card), _dossier(), filing, None)
+    assert new["grounding"] == {"other": 1} and "grounding" in changed
+    plain = _card()   # no grounding before: none is added
+    new, changed = card_refresh.refresh(copy.deepcopy(plain), _dossier(), filing, None)
+    assert "grounding" not in new and "grounding" not in changed

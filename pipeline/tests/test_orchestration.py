@@ -854,7 +854,13 @@ def test_one_run_reads_today_first_and_again_after_each_slice_of_older_work(sett
     pipeline.process = lambda day_from, day_to, *a, **k: read.append((day_from, day_to))
     pipeline._backfill = lambda *a, **k: read.append("backfill")
     today = now_ist().date().isoformat()
+    order = []
+    pipeline._discover_safely = lambda day, full: order.append("discover") or 0
+    pipeline._sweep_held = lambda: order.append("sweep")
+    real_process = pipeline.process
+    pipeline.process = lambda *a, **k: order.append("process") or real_process(*a, **k)
     pipeline.run("live", time_budget_s=60)
+    assert order.index("discover") < order.index("sweep") < order.index("process")   # housekeeping before cards, as before
     assert read[0] == (today, today) and "backfill" not in read
     earlier = [r for r in read if r != (today, today)]
     assert earlier and read[read.index(earlier[0]) + 1] == (today, today)   # today again after the older slice
@@ -886,6 +892,9 @@ def test_a_slice_that_used_all_its_time_is_followed_by_another_until_the_deadlin
     looks.clear()
     pipeline._in_slices(lambda until: calls.append(until), time.monotonic() + 5, lambda: looks.append(1))
     assert len(calls) == 1 and len(looks) == 1   # finished early: nothing left, one look for today after it
+    calls.clear()
+    pipeline._in_slices(busy, time.monotonic() + 0.05, None)
+    assert len(calls) == 1   # a backfill-only run has no today to look for: one piece, no slices
 
 
 def test_a_pdf_cut_short_on_nse_waits_and_then_fails_with_that_reason(settings):

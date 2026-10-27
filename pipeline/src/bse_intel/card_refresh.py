@@ -100,8 +100,12 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
         new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}
         if new.get("results"):
             new["results"] = {**new["results"], "lines": [dict(s) for s in new["results"].get("lines") or []]}
-        if notes := one_basis.apply_card_json(new, dossier):
-            new["grounding"] = {**(new.get("grounding") or {}), "one_basis": notes}
+        notes = one_basis.apply_card_json(new, dossier)
+        grounding = {k: v for k, v in (new.get("grounding") or {}).items() if k != "one_basis"}   # no stale note
+        if notes:
+            grounding["one_basis"] = notes
+        if grounding or "grounding" in new:
+            new["grounding"] = grounding
     if card_results_one_line():
         # the table's notes go to the change log and a figure on another basis is labelled, as at card time (F206; off: nothing)
         new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}

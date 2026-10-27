@@ -107,6 +107,8 @@ D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP") or 
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
 SLICE_S = 180            # older work between two looks for today's new filings (one run, owner 27 Oct 2026)
+BACKFILL_SLICE_S = 600   # the backfill's slices: its filings share Gemini requests (packs wait up to 180 s), and a
+                         # slice end sends the open packs part-full; shorter slices would spend more free requests
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
@@ -4306,11 +4308,15 @@ class Pipeline:
         self.process(today.isoformat(), today.isoformat(), deadline, bulk=False, memory_complete=memory_complete,
                      history_first=True)
 
-    def _in_slices(self, step, until: float, fresh) -> None:
-        """Older work in slices of SLICE_S, today's new filings looked for between them. A slice that ends before its own
-        deadline had nothing left to do (or the route is out of quota), so the step is finished for this run."""
+    def _in_slices(self, step, until: float, fresh, slice_s: float | None = None) -> None:
+        """Older work in slices (SLICE_S unless given), today's new filings looked for between them. A slice that ends
+        before its own deadline had nothing left to do (or the route is out of quota), so the step is finished for this
+        run. With no today to look for (a backfill-only run) the step runs in one piece."""
+        if fresh is None:
+            step(until)
+            return
         while time.monotonic() < until and not self._blocked:
-            end = min(until, time.monotonic() + SLICE_S)
+            end = min(until, time.monotonic() + (slice_s or SLICE_S))
             step(end)
             more = time.monotonic() >= end
             if fresh:
@@ -4350,7 +4356,9 @@ class Pipeline:
             # filing broadcast during the run waits minutes for its card, not the whole run
             fresh = partial(self._fresh, today, deadline, backfill_done) if mode in ("live", "all") else None
             if fresh:
-                fresh()
+                days = [today - timedelta(days=1), today] if now_ist().hour < 9 else [today]
+                for day in days:
+                    self._discover_safely(day, full=False)
                 # the window's earlier days cost ~2,000 ledger writes each: under the daily write budget, like the
                 # backfill, so today's filings keep the free tier's headroom (20 Oct: 80,013 writes by 11:30 IST)
                 if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget:
@@ -4417,7 +4425,7 @@ class Pipeline:
                     self._backfill(today, until, writes_at_start, days[0], history_to)
                     days[0] = 0
 
-                self._in_slices(backfill, deadline, fresh)
+                self._in_slices(backfill, deadline, fresh, BACKFILL_SLICE_S)
         except nse_api.FileCapReached as exc:
             self.stats.stopped_reason = self.stats.stopped_reason or "file cap reached: the rest waits for the next run"
             log.warning("%s", exc)   # the cap is a planned stop, not an error: the status stays as it was

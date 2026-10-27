@@ -53,7 +53,8 @@ def _switch(name: str, default: bool = False) -> bool:
     if value is None:
         value = str(_repo_vars().get(name, "") or "") or None
     if value is None:
-        return bool(_switch_file(switch_file()).get(name, default))
+        value = _switch_file(switch_file()).get(name, default)
+        return value is True or str(value).strip().lower() in _TRUE   # a written "0" or false is off
     return value.strip().lower() in _TRUE
 
 
@@ -67,7 +68,7 @@ def switch_file() -> str:
 
 def switches_on() -> list[str]:
     """The switches config/switches.toml turns on."""
-    return sorted(k for k, v in _switch_file(switch_file()).items() if v)
+    return sorted(k for k, v in _switch_file(switch_file()).items() if v is True or str(v).strip().lower() in _TRUE)
 
 
 def _local_ocr() -> bool:

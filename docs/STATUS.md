@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 01:35 IST.
+Last updated: 28 Oct 2026, 02:12 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -65,8 +65,11 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    figures, no refusal, stopped at its 500-file cap. Batch 2 (run 40524728754): 43 companies, 277 quarters, 7,277
    figures. Batch 3 (run 40541696607, done 23:54 IST): 40 companies, 210 quarters, 5,444 figures, 428 BSE files kept,
    no refusal; 157 quarters skipped because BSE's basis differs from memory's, 148 held, 16 fetches failed (NBFC files
-   that came back empty). Batch 4 (run 40561999277) started 00:09 IST 28 Oct. The owner said to run the rest back to
-   back (27 Oct), stopping at once on any refusal. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
+   that came back empty). Batch 4 (run 40561999277, 00:09-01:24 IST 28 Oct): 1 company, 1 quarter, 27 figures, no
+   refusal, "more left: False": **the BSE fill is done** under today's rules. Totals: 133 companies, 809 quarters, 21,072
+   figures. Left out on purpose: 54 quarters where BSE's basis differs from memory's, 82 held, 127 with no new quarter.
+   23 BSE lender files (NBFC template, e.g. TATACAP, PIRAMALFIN Q2FY26) came back empty: the known gap of 16 Oct (BSE's
+   NBFC path answers a plain fetch with its homepage; `seed.py`), not a refusal. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
    Q4FY26) goes into memory unchecked; screener and tijori comparisons are the check.
    Checked 27 Oct night (`docs/bench/bse-fill-batches-1-2-check.md`): revenue and profit agree with screener in 98-99%
    of 1,776 pairs; of 89 differences read in the company's PDF, BSE right 82, **wrong 4** (Eco Recycling Q4FY25 profit,
@@ -75,6 +78,12 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    EPS in the consolidated file). The four are in memory now; taking them out waits for item 6 and the owner.
 3. **After the full BSE download: the BSE fill keeps its record as it goes and compares with memory before writing**
    (today the list of what it wrote is saved only at the end, and a refusal or a kill loses it).
+   First half done 28 Oct, 02:30 IST (PR #201, two review rounds): after each company the fill appends its rows to the CSV and rewrites the
+   summary JSON (`bse_gap_fill.Record`; a dry run records what it would write; a refusal keeps what was filled before it).
+   The upload step already runs `if: always()` after the fill step's own `timeout-minutes`; a disk error in the record never
+   stops the fill. Second half (compare with memory before writing) waits for the owner: what to compare a BSE figure with
+   when memory has nothing for that quarter (the fill only fills empty quarters), and whether a disagreement holds the
+   figure back.
 4. **`refresh-card-blocks` waits for the owner.** The dry run (run 40546510549, 27 Oct 23:08 IST) would change **3,214
    of 7,895 stored cards**: the results block on 2,876, grounding 1,344, headline 288, key numbers 287, memory context
    270, fundamentals 140, scale 123. That is far more than `CARD_ONE_BASIS` alone; the refresh rebuilds every block
@@ -92,7 +101,13 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    reader fixes behind `PDF_ROW_FIXES` (garbled unit lines, a boxed table's basis, revenue/profit labels). On the hard
    set of 340 figures, with the maintenance switches on: 104 right, 0 wrong before; 155 right, 1 wrong after. The one
    wrong is the key's mistake: the PDF prints 610.27, the key has the XBRL's 610.26 (owner to say whether the key
-   follows the printed page). In review now.
+   follows the printed page). Merged 28 Oct 00:48 IST (PR #199) after two review rounds; one rule was withdrawn because it
+   could turn a conflict into a wrong figure.
+   The normal key scored (27 Oct night, code before #199; `docs/bench/normalpdf/score-baseline-2026-10-27.md`): of 337
+   figures, live switches 35 right / 1 wrong / 301 no answer, maintenance switches 45 / 0 / 292. Fails the 98% right and 5%
+   no-answer marks by far; passes the wrong mark. The reader has no rows for total income or profit before tax at all,
+   and 29 of 50 filings give no answer. The maintenance state gave 40 and then 45 right on two runs: not repeatable yet;
+   a re-score on the new code, run alone twice, is running.
 6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Today `bse_gap_fill.KNOWN_WRONG` only
    stops a future fill, and nothing removes a wrong figure already written.
 7. **The docs clean-up the owner planned for later** (one doc per purpose, the one-off tools out of the live code); not
@@ -116,7 +131,7 @@ unexplained rows is not started (owner to say).
   memory-gaps-fill, text-backfill and the PDF ensemble's download, beside `run` and `textback-bse`. Empty means no cap.
 - `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign). Measured 28 Oct: 12 of the 31
   memory errors in the screener referee are flipped EPS signs.
-- Fixed 28 Oct, 01:30 IST (PR #200): the "company-reported" label on a headline or key number is no longer added to a
+- Fixed 28 Oct, 01:30 IST (PR #200, merged 01:33 IST): the "company-reported" label on a headline or key number is no longer added to a
   figure of another period (a year, nine months, a half, another quarter), to a guided or target figure, or to the
   earlier figure after "from". It was live since 27 Oct (`CARD_RESULTS_ONE_LINE`); cards written since then keep the
   label until a refresh.

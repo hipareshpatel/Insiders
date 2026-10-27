@@ -74,11 +74,13 @@ Read before changing anything:
   owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
-- NSE and BSE files are downloaded in batches of at most 100 (owner rule, 27 Oct 2026: "no more then 100 files from NSE or
-  BSE each times"; then "get it from BSE on faster route in the batch of 100 files at once" and "let it run"). A file is a
-  downloaded document (PDF, XBRL, ZIP, attachment); list and search calls and stored copies are not files. The batch size is
-  not a stop for the run: the next batch follows. NSE and BSE have never blocked us (measured: BSE 16 of 16 calls on 25 and
-  27 Oct; the one 403 on record was a bare curl with wrong headers), so no pause is added without a measured refusal.
+- At most 100 files from NSE or BSE in one run (owner rule, 27 Oct 2026: "no more then 100 files from NSE or BSE each
+  times"; asked to choose, the owner chose "Cap: 100 files a run" over parallel batches or counting only). A file is a
+  downloaded document (PDF, XBRL, ZIP, attachment); list and search calls and stored copies are not files. One run is one
+  live pipeline run or one maintenance dispatch, all its shards together. What is over the cap waits for the next run; it
+  never spends a filing's attempt and is never marked failed. NSE and BSE have never blocked us (measured: BSE 16 of 16
+  calls on 25 and 27 Oct; the one 403 on record was a bare curl with wrong headers): the cap is the owner's rule, not a
+  response to a block.
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

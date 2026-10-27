@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 02:45 IST.
+Last updated: 28 Oct 2026, 03:15 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -120,7 +120,15 @@ NSE's own XBRL; memory matches the file in 5,480, screener in 21, neither in 10,
 independent, memory was built from it). The 31 where memory is wrong or unsure: 12 EPS signs flipped (ALEMBICLTD Q4FY26,
 APOLLOPIPE Q2FY26, PRIVISCL Q1FY25, RPOWER Q2FY25, SILVERTUC Q1FY27, MOLDTECH x5, NITCO Q4FY24, MAXESTATES Q2FY24), 9 EPS
 stored as 0 (AHLUCONT, ARVIND, BGRENERGY, PILANIINVS, SKFINDIA, HARDWYN), DOLPHIN revenue and profit ten times too big
-(Q2FY24, Q4FY24, FY24) and two lender revenue definitions (GEOJITFSL, SHRIRAMFIN): they wait for item 6; screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
+(Q2FY24, Q4FY24, FY24) and two lender revenue definitions (GEOJITFSL, SHRIRAMFIN): they wait for item 6. The PDF
+referee on the open pairs (run 40541837810, finished 28 Oct 02:53 IST at its time budget, code before PR #199): 3,235 pairs,
+1,157 PDFs, no refusal; decided 226 (PDF agrees with memory 197, with screener 17, with the XBRL 1, with none 11), unsure
+or unreadable 529, not run 2,480. The 28 disagreements read by hand: mostly definitions, not wrong figures. Profit
+including discontinued operations against memory's continuing figure (ABREL Q4FY26 -110.31 vs 5.39, ADANIENT Q4FY25
+1,382.17 vs 4,014.9, ANUP FY25, BALMLAWRIE Q2FY26, BHARATRAS Q2FY26); bank profit before or after the minority share
+(AXISBANK, six quarters, 0.3-0.5% apart); the reader on a sub-line or a half-year column (ADANIGREEN "i. Power Supply",
+AXISBANK Q2FY27 15,306 = six months): reader errors. A lead for the owner: memory's profit is the continuing figure when a
+company reports a discontinued line, so a card can show ₹1,382 Cr where the company's own headline profit is ₹4,015 Cr. screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
 unexplained rows is not started (owner to say).
 
 ## 4. Known problems (found 27 Oct, not fixed)
@@ -131,7 +139,10 @@ unexplained rows is not started (owner to say).
 - Fixed 27 Oct night: the `file_cap` input (the 100-file first test) now reaches every job that marks the cap: seed-memory,
   memory-gaps-fill, text-backfill and the PDF ensemble's download, beside `run` and `textback-bse`. Empty means no cap.
 - `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign). Measured 28 Oct: 12 of the 31
-  memory errors in the screener referee are flipped EPS signs.
+  memory errors in the screener referee are flipped EPS signs. Read 28 Oct, 03:20 IST: the code already refuses the
+  Alembic Q4FY26 case (26 Oct: owners' and whole profit of opposite signs), yet memory still holds -2.61 there, so at least
+  part of the 12 is memory written before that fix. Putting it right means re-reading only those filings through today's
+  code (the routine in DATA_QUALITY.md, a memory write): waits for the owner's go, with item 6.
 - Fixed 28 Oct, 01:30 IST (PR #200, merged 01:33 IST): the "company-reported" label on a headline or key number is no longer added to a
   figure of another period (a year, nine months, a half, another quarter), to a guided or target figure, or to the
   earlier figure after "from". It was live since 27 Oct (`CARD_RESULTS_ONE_LINE`); cards written since then keep the

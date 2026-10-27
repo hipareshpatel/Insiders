@@ -75,13 +75,13 @@ Read before changing anything:
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
 - At most 100 files from NSE or BSE in one run (owner rule, 27 Oct 2026: "no more then 100 files from NSE or BSE each
-  times"; ON by default). A file is a downloaded document (PDF, XBRL, ZIP, attachment); list and search calls and stored
-  copies (R2, text cache, XBRL store) are not files. `FILE_CAP` (default 100, 0 = no cap) is counted by one process-wide
-  counter (`file_cap.py`, F213) called before every download; past it `FileCapReached` (a kind of `SourceBlockedError`, but
-  not a refusal) makes the run stop its loop and leave the rest: the live pipeline leaves the filing queued with no attempt
-  spent, the seeds and fills do not mark the unfinished company tried or done, and the next run goes on. A sharded
-  maintenance job sets `FILE_CAP_SHARDS` and each shard holds `FILE_CAP // shards` (at least 1). A capped run exits 0, so no
-  chain restarts it at once.
+  times"; asked to choose, the owner chose "Cap: 100 files a run" over parallel batches or counting only). A file is a
+  downloaded document (PDF, XBRL, ZIP, attachment); list and search calls and stored copies are not files. One run is one
+  live pipeline run or one maintenance dispatch, all its shards together. What is over the cap waits for the next run; it
+  never spends a filing's attempt and is never marked failed. The cap is the owner's rule, not a response to a block. Measured
+  refusals so far: a bare curl with wrong headers (403, 25 Oct); and maintenance run 40441180783 (27 Oct, 08:25 IST), the
+  BSE adapter got "403 Access Denied" in memory-gaps-fill-bse two hours after the same adapter answered 16 of 16 calls
+  (run 40429585773). Cause not yet diagnosed (headers, rate or that runner's address: look at the response body first).
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

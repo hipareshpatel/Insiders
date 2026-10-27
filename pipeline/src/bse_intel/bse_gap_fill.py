@@ -14,6 +14,11 @@ A company is filled only when all of these hold (each failure is counted under i
    one; a list that did not load is "nse list unavailable", never "empty");
 3. BSE's results archive lists files for it.
 
+With ``BSE_FILL_PRE_NSE`` on (F214, TODO 108), rule 2 is relaxed for a company NSE does list: its gap quarters strictly older
+than its first NSE results row (listed late: 531201, 544602, 532767) are candidates, and nothing else. A quarter NSE holds, or
+a gap inside NSE's range, is never filled from BSE. A company whose NSE rows show no quarter is left alone. Off (the default),
+any NSE row skips the company, as before.
+
 A figure is written only for a (metric, quarter) that memory holds no value for (any source, any basis): nothing is ever
 overwritten. It is written as the seed writes an exchange file's figure (source id ``xbrl:res:<scrip>:<period>``, so memory
 gaps and the metrics table count it) and carries its exchange: the entry and every source in it have ``exchange: "BSE"`` and
@@ -28,12 +33,13 @@ from __future__ import annotations
 import json
 import logging
 import time
+from datetime import date
 
 from .bse import SourceBlockedError
 from .nse import FileCapReached
 from .dossier import _norm, keep_concurrent_writes
 from .memory_gaps import has_gap, main_basis, since_for
-from .periods import quarter_index
+from .periods import canonical_period, quarter_index
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
@@ -96,6 +102,23 @@ def held_keys(dossier: dict | None) -> set[tuple[str, str]]:
             if isinstance(e, dict) and e.get("value") is not None}
 
 
+def first_nse_index(rows) -> int | None:
+    """The ``quarter_index`` of the oldest quarter any NSE results row covers, from the row's quarter end; None when no row
+    shows one (then nothing can be called older than NSE's range)."""
+    found = []
+    for row in rows:
+        end = getattr(row, "period_end", None)
+        if not end:
+            continue
+        try:
+            idx = quarter_index(canonical_period(f"quarter ended {date.fromisoformat(end):%d.%m.%Y}"))
+        except ValueError:
+            continue
+        if idx:
+            found.append(idx)
+    return min(found) if found else None
+
+
 def _stamp(entry: dict, url: str | None) -> dict:
     """The entry as the seed wrote it, labelled as BSE's: on the entry, on each source and on its label."""
     out = json.loads(json.dumps(entry))
@@ -141,17 +164,23 @@ def new_figures(before: dict | None, after: dict | None, scrip: str, wanted: set
 
 
 def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: bool = False,
-        time_budget: float = 17400.0, restart: bool = False, clock=time.monotonic) -> dict:
+        time_budget: float = 17400.0, restart: bool = False, clock=time.monotonic,
+        pre_nse: bool | None = None) -> dict:
     """The fill over the gap companies of a ``memory_gaps.survey`` report. ``nse`` needs ``financial_results(symbol)`` (and may
     carry ``integrated_failed``); ``bse`` needs ``results_xbrl`` and ``download``. A refusal (SourceBlockedError) from either
     propagates. ``more`` is true when the time budget ended the run with companies left. Only a real run (``apply``) keeps the
-    list of companies handled; a dry run keeps no state."""
+    list of companies handled; a dry run keeps no state. ``pre_nse`` (default: the ``BSE_FILL_PRE_NSE`` switch) lets a company
+    NSE lists be filled for the quarters older than its first NSE results row."""
     from .seed import SeedStats, seed_results
+    from .settings import bse_fill_pre_nse
+
+    if pre_nse is None:
+        pre_nse = bse_fill_pre_nse()
 
     tried = set() if restart or not apply else set(json.loads(sink.kv_get(TRIED_KEY) or "[]"))
     floor = float(settings.universe_min_mcap_cr)
     todo = [s for s, r in sorted(report["companies"].items()) if has_gap(r)]
-    totals = {"companies_with_gaps": len(todo), "companies_skipped_tried": 0, "companies_class_b": 0,
+    totals = {"companies_with_gaps": len(todo), "companies_skipped_tried": 0, "companies_class_b": 0, "companies_pre_nse": 0,
               "companies_filled": 0, "quarters_filled": 0, "figures_filled": 0, "figures_written": 0, "skipped": {}}
     skipped = totals["skipped"]
 
@@ -196,15 +225,22 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
             failed.append(f"{scrip} {symbol}: NSE integrated list did not load")
             skip("nse list unavailable")
             continue
-        if nse_rows:
-            skip("nse has results")
-            done(scrip)
-            continue
-        totals["companies_class_b"] += 1
-        before = sink.get_dossier(scrip)
         wanted = set(result["missing"])
         if result.get("missing_year_ago") and result.get("year_ago"):
             wanted.add(result["year_ago"])
+        if nse_rows:
+            first = first_nse_index(nse_rows) if pre_nse else None
+            wanted = {q for q in wanted if first is not None and (quarter_index(q) or 0) < first}
+            if not wanted:
+                skip("nse has results")
+                done(scrip)
+                continue
+            counted = "companies_pre_nse"
+        else:
+            counted = "companies_class_b"
+        totals[counted] += 1
+        # TODO(batch counter): the shared batch-of-100 download counter hooks in here, before BSE is called for the company
+        before = sink.get_dossier(scrip)
         scratch = _Scratch(sink, scrip, before)
         recorder = _RecordingBse(bse)
         stats = SeedStats()
@@ -214,7 +250,7 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         except FileCapReached:
             # the run's file cap (F213): this company is not finished, so it is not marked handled and nothing is written
             # for it; the handled list as saved is where the next run resumes
-            totals["companies_class_b"] -= 1
+            totals[counted] -= 1
             more = capped = True
             break
         except SourceBlockedError:
@@ -286,6 +322,7 @@ def render(outcome: dict) -> str:
              f"{outcome['min_mcap_cr']:g} Cr:",
              f"companies with a gap           {outcome['companies_with_gaps']} ({outcome['companies_skipped_tried']} handled before)",
              f"NSE lists nothing (class b)    {outcome['companies_class_b']}",
+             f"NSE lists only later quarters  {outcome['companies_pre_nse']}",
              f"companies filled               {outcome['companies_filled']}",
              f"quarters filled                {outcome['quarters_filled']}",
              f"figures filled                 {outcome['figures_filled']} (written {outcome['figures_written']})",

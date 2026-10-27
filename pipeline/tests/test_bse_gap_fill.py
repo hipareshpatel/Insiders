@@ -155,3 +155,58 @@ def test_bse_listing_nothing_is_counted_and_the_time_budget_leaves_more():
     late = bf.run(sink, report, symbols, nse, Bse(), SETTINGS, apply=True, restart=True, time_budget=10,
                   clock=lambda: next(ticks))
     assert late["more"] is True
+
+
+# F214, TODO 108: quarters older than a company's first NSE results row
+Q4FY26_XML = GI_XML.replace(b"2026-07-01", b"2026-01-01").replace(b"2026-09-30", b"2026-03-31")
+URL_Q4 = "https://www.bseindia.com/xml-data/corpfiling/AttachLive/q4fy26.xml"
+
+
+def nse_row(period_end):
+    return SimpleNamespace(period_end=period_end)
+
+
+def pre_setup(nse_rows):
+    companies = {"1": company("LATE", 900.0)}
+    sink = Sink(companies)
+    report = mg.survey(sink, ["1"], TODAY)
+    links = [XbrlLink("Q1FY27", "STANDALONE", URL, "2026-08-10T18:00:00"),
+             XbrlLink("Q4FY26", "STANDALONE", URL_Q4, "2026-05-10T18:00:00")]
+    return sink, report, {"1": "LATE"}, Nse({"LATE": nse_rows}), Bse({"1": links}, {URL: Q1FY27_XML, URL_Q4: Q4FY26_XML})
+
+
+def test_a_late_listed_company_gets_only_the_quarters_older_than_its_first_nse_row():
+    sink, report, symbols, nse, bse = pre_setup([nse_row("2026-06-30")])   # NSE's first row is Q1FY27
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True, pre_nse=True)
+    periods = {e["period"] for e in sink.dossiers["1"]["financial_metrics"]}
+    assert periods == {"Q4FY26"} and out["companies_pre_nse"] == 1 and out["companies_class_b"] == 0
+    assert out["quarters_filled"] == 1 and {r["source"] for r in out["rows"]} == {"BSE"}
+    assert all(e["exchange"] == "BSE" for e in sink.dossiers["1"]["financial_metrics"])
+
+
+def test_a_gap_inside_nses_range_is_not_filled_from_bse():
+    # NSE holds Q3FY26 and Q1FY27; Q4FY26 is a hole inside that range and BSE has it, but it is not older than NSE's first row
+    sink, report, symbols, nse, bse = pre_setup([nse_row("2025-12-31"), nse_row("2026-06-30")])
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True, pre_nse=True)
+    # the quarters older than Q3FY26 stay candidates (BSE is asked) but the file's Q4FY26 and Q1FY27 are not written
+    assert out["companies_pre_nse"] == 1 and out["companies_filled"] == 0 and out["rows"] == []
+    assert sink.writes == 0 and sink.dossiers == {} and out["skipped"].get("not a gap quarter")
+
+
+def test_the_switch_off_and_rows_without_a_quarter_leave_a_company_nse_lists_alone():
+    sink, report, symbols, nse, bse = pre_setup([nse_row("2026-06-30")])
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True, pre_nse=False)
+    assert out["skipped"] == {"nse has results": 1} and bse.listed == [] and sink.writes == 0
+    sink, report, symbols, nse, bse = pre_setup([object()])   # no quarter end on the row: nothing is "older than NSE"
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True, pre_nse=True)
+    assert out["skipped"] == {"nse has results": 1} and bse.listed == [] and sink.writes == 0
+
+
+def test_the_pre_nse_switch_is_read_from_the_environment_and_a_dry_run_writes_nothing(monkeypatch):
+    monkeypatch.delenv("BSE_FILL_PRE_NSE", raising=False)
+    sink, report, symbols, nse, bse = pre_setup([nse_row("2026-06-30")])
+    assert bf.run(sink, report, symbols, nse, bse, SETTINGS)["companies_pre_nse"] == 0   # default off
+    monkeypatch.setenv("BSE_FILL_PRE_NSE", "1")
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=False)
+    assert out["companies_pre_nse"] == 1 and out["quarters_filled"] == 1 and out["figures_written"] == 0
+    assert sink.writes == 0 and sink.dossiers == {} and sink.kv == {}

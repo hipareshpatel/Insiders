@@ -72,7 +72,7 @@ from . import annual_xbrl
 from . import xbrl_store
 from . import directions
 from . import results_card
-from . import footer_plausible, one_basis
+from . import footer_plausible, one_basis, results_one_line
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -3794,6 +3794,9 @@ class Pipeline:
         # the table and the key numbers read against the card's stated basis (CARD_ONE_BASIS; off: nothing)
         if one_basis_notes := one_basis.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["one_basis"] = one_basis_notes
+        # each results row on one statement line, a figure on another basis labelled (CARD_RESULTS_ONE_LINE; off: nothing)
+        if one_line_notes := results_one_line.apply_card_json(card_json):
+            card_json.setdefault("grounding", {})["one_line"] = one_line_notes
         # a footer figure that cannot be right is left off the card (CARD_FOOTER_PLAUSIBLE; off: nothing); the card keeps why
         if card_footer_plausible() and (footer_notes := footer_plausible.card_notes(card_json)):
             card_json.setdefault("grounding", {})["footer_hidden"] = footer_notes

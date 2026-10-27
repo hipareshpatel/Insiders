@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, eps_base_check, memory_call_v2,
+from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, eps_base_check, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -2565,6 +2565,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             out["held"] = held_here   # each with its reason; the figure itself is not shown
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    if card_results_one_line():   # CARD_RESULTS_ONE_LINE: each row one statement line (F206; off: nothing)
+        from . import results_one_line
+        results_one_line.snapshot_rows(out, lines, table, periods, period, lookup)
     if with_eps and "eps" in out:
         lines.append({"key": "eps", "label": "EPS (₹)", "unit": "inr"})
     if v2:

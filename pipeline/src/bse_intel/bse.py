@@ -31,6 +31,7 @@ from datetime import date
 
 import httpx
 
+from .file_batch import files
 from .models import Filing
 from .timeutil import iso_ist, now_ist, parse_bse_datetime
 
@@ -325,6 +326,7 @@ class BseClient:
         Raises AttachmentError when it exists but could not be fetched (403, 5xx, timeout), so the
         filing is retried later rather than analysed without its text.
         """
+        files.take(url)   # one file for the batch counter (file_batch.py)
         self.warm_up()
         self._pace_download()
         candidates = [url]

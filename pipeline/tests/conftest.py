@@ -119,3 +119,13 @@ def make_gateway():
 
 
 __all__ = ["FakeProvider", "api_error", "completion", "gateway_config", "openai"]
+
+
+@pytest.fixture(autouse=True)
+def _file_counter_reset():
+    """F213: the run's file counter is process-wide; every test starts from zero, and a batch pause never really sleeps."""
+    from bse_intel.file_batch import files
+    files.reset()
+    files.sleep = lambda s: None
+    yield
+    files.reset()

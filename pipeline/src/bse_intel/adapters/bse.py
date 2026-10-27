@@ -48,6 +48,8 @@ from typing import Any, Protocol, TypeVar
 
 import requests
 
+from ..file_batch import files
+
 log = logging.getLogger(__name__)
 
 API = 'https://api.bseindia.com/BseIndiaAPI/api/'
@@ -227,6 +229,7 @@ class BSEClient:
         """One filing's inline XBRL, as sent (raw copy gzip-compressed)."""
         if url.startswith('/'):
             url = HOME.rstrip('/') + url
+        files.take(url)   # one file for the batch counter (file_batch.py, F213)
         return self.fetch_url(url, {}, 'shareholding_xbrl', covers, file=True)
 
     def close(self) -> None:

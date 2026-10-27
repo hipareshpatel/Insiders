@@ -2224,6 +2224,8 @@ def main(argv: list[str] | None = None) -> int:
         code = 2
     finally:
         _record_writes(sink)
+        from .file_batch import files
+        print(files.summary(), flush=True)   # "files N in B batches" (F213)
     _record_job(sink, args.command, code)
     return code
 

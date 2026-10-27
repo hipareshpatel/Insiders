@@ -36,6 +36,7 @@ import io
 import httpx
 
 from .bse import AttachmentError, AttachmentTooLarge
+from .file_batch import files
 from .bse import SourceBlockedError as _SourceBlocked
 from .models import Filing
 from .periods import canonical_period
@@ -625,7 +626,9 @@ class NseClient:
     def fetch(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
         """An announcement's attachment (PDF, sometimes a ZIP) from nsearchives. None when it does not exist;
         AttachmentTooLarge when it is larger than ``max_bytes`` (a truncated PDF is unreadable). A refusal stops the run (SourceBlockedError); a
-        network failure raises AttachmentError, so the filing is tried again rather than read without its text."""
+        network failure raises AttachmentError, so the filing is tried again rather than read without its text.
+        One file for the batch counter (file_batch.py)."""
+        files.take(url)
         self.warm_up()
         problem: Exception | None = None
         for _ in range(self._retries):
@@ -654,7 +657,9 @@ class NseClient:
         raise problem or AttachmentError(f"attachment download failed: {url}")
 
     def download(self, url: str, max_bytes: int = 8_000_000) -> bytes | None:
-        """One XBRL file. None when NSE serves something that is not XML, or a file over ``max_bytes``."""
+        """One XBRL file. None when NSE serves something that is not XML, or a file over ``max_bytes``.
+        One file for the batch counter (file_batch.py)."""
+        files.take(url)
         response = self._get(url)
         body = response.content
         if len(body) > max_bytes:

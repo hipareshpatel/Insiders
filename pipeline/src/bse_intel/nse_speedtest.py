@@ -27,6 +27,8 @@ from urllib.parse import urlparse
 
 import httpx
 
+from .file_batch import files
+
 from . import nse as nse_api
 
 log = logging.getLogger(__name__)
@@ -68,6 +70,7 @@ class HttpFetcher:
         client.warm_up()
 
     def get(self, url: str) -> Response:
+        files.take(url)   # a file for the batch counter (F213); the pause between batches is outside the timing
         start = time.monotonic()
         try:
             r = self._client._client.get(url)

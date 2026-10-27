@@ -200,6 +200,22 @@ def eps_share_adjust() -> bool:
     return (_env("EPS_SHARE_ADJUST", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def file_batch() -> int:
+    """FILE_BATCH (default 100; owner rule, 27 Oct 2026, F213): NSE/BSE files downloaded before a pause. 0 = no batching."""
+    try:
+        return max(0, int((_env("FILE_BATCH", "100") or "100").strip()))
+    except ValueError:
+        return 100
+
+
+def file_batch_pause_s() -> float:
+    """FILE_BATCH_PAUSE_S (default 0: no pause; the setting is there to raise): seconds between two batches of files. Read at the call."""
+    try:
+        return max(0.0, float((_env("FILE_BATCH_PAUSE_S", "0") or "0").strip()))
+    except ValueError:
+        return 0.0
+
+
 def _env_int(name: str, default: int) -> int:
     value = _env(name)
     return int(value) if value is not None else default

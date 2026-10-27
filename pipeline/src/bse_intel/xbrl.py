@@ -30,6 +30,7 @@ from datetime import date
 
 from .models import BalanceSheet, FinancialMetric, Ownership
 from .periods import canonical_period, prior_quarter_period, prior_year_period, quarter_from_index, quarter_index
+from .settings import eps_base_check
 
 log = logging.getLogger(__name__)
 
@@ -1244,6 +1245,9 @@ def drop_long_year(result: XbrlResult | None, history, source: str = "") -> str 
     return why
 
 
+_EPS_NAMES = frozenset({"eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"})
+
+
 def add_comparatives(result: XbrlResult, *earlier: XbrlResult) -> int:
     """YoY and QoQ for a results file from the year-ago and previous quarters' own files. BSE's files
     carry only the current quarter and the year to date (Ahluwalia Q3FY25: Q3FY25 and 9MFY25), so the
@@ -1252,9 +1256,13 @@ def add_comparatives(result: XbrlResult, *earlier: XbrlResult) -> int:
     if result.kind != "RESULTS":
         return 0
     known = {(m.metric, m.period): m for m in result.metrics}
+    base_check = eps_base_check()   # EPS_BASE_CHECK (F208): an earlier file with no basis recorded gives no EPS to a file whose basis is known
     for other in earlier:
         if other and other.kind == "RESULTS" and (not result.basis or other.basis in (None, result.basis)):
+            no_eps = base_check and bool(result.basis) and other.basis is None
             for m in other.metrics:
+                if no_eps and m.metric in _EPS_NAMES:
+                    continue
                 if (m.metric, m.period) not in known:
                     known[(m.metric, m.period)] = m
                     result.metrics.append(m)

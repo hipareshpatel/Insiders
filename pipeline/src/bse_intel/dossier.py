@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
+from .settings import (card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, eps_base_check, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -1137,6 +1137,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         tagged_q = [_period(m.period) for m in delta.financial_metrics
                     if getattr(m, "by", None) in ("file", "calc") and m.value is not None and _period(m.period).startswith("Q")]
         own_period = max(tagged_q, key=lambda p: (str(due_date(p) or ""), p), default=None)
+    # EPS_BASE_CHECK (F208): the delta's own profit figures, so the check does not depend on where its EPS stands in the list
+    delta_profit = {(_norm(m.metric), _period(m.period)): {"value": m.value} for m in delta.financial_metrics
+                    if m.value is not None and _norm(m.metric) in ("pat", "pat_owners")} if eps_base_check() else {}
     for m in delta.financial_metrics:
         if m.value is None:
             continue
@@ -1167,6 +1170,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
         m_by = getattr(m, "by", None) or item_by
+        if m_by not in ("file", "calc") and key[0] == "eps":
+            # EPS_BASE_CHECK (F208): a standalone EPS an AI read stored as consolidated is dropped, not moved (moving a figure
+            # worked out from a ratio would write a second guess into the standalone block, which only files fill)
+            from . import eps_adjust
+            why = eps_adjust.misbased_eps({**metrics, **delta_profit}, d.get(STANDALONE_KEY), key[1], m.value, basis, d)
+            if why:
+                log.info("memory: eps %s %s from %s refused: %s", key[1], m.value, news_id, why)
+                continue
         lab = label(m_by, "results" if m_by in ("file", "calc") else doc, updated_at,
                     basis=(getattr(m, "file_basis", None) if m_by in ("file", "calc") else None) or basis, unit=m.unit, ok=True,
                     src=getattr(m, "derived_from", None) if m_by == "calc" else None)

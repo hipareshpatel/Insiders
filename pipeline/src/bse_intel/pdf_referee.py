@@ -550,6 +550,7 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
     if target is None:
         return {"values": [], "unsure": "", "found": 0, "reason": f"no column for the period {period}"}
     values: list[tuple[float, str, int]] = []
+    siblings: list[list[float]] = []       # per value: the row's other figures, in the same unit (a joined-cell check)
     unsure: list[str] = []
     seen = 0
     for r in rows:
@@ -594,7 +595,9 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
             continue
         value = cell if metric == "eps" else cell / r.unit
         values.append((value, r.label[:60], r.page))
-    return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen}
+        siblings.append([f / (1 if metric == "eps" else r.unit) for k, f in enumerate(r.figures)
+                         if k != index and f is not None])
+    return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen, "siblings": siblings}
 
 
 def revenue_only(values: list[tuple[float, str, int]]) -> list[tuple[float, str, int]]:

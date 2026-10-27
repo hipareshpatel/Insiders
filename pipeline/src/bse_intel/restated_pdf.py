@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import copy
 import logging
+import math
 import re
 from datetime import datetime, timezone
 
@@ -37,6 +38,58 @@ def differs(original: float, printed: float) -> bool:
     the two figures' decimals, so 647.68 against 647.7 is rounding, 647.68 against 629.79 is not)."""
     half = 0.5 * 10 ** -min(decimals_of(original), decimals_of(printed))
     return abs(printed - original) > half + 1e-9
+
+
+BAND = 0.25     # F212: a restatement moves a figure by this share of the original at most (see TRACKER F212)
+
+
+def _digits(value: float) -> int:
+    return len(str(int(abs(value)))) if abs(value) >= 1 else 0
+
+
+def _power_of_ten(ratio: float) -> bool:
+    """Whether ``ratio`` is 10^k for a k other than 0 (within 2% in the exponent: 3250.73 to 3.25 and 4018.96 to 4.018 both
+    count, the second lost precision as well)."""
+    if ratio <= 0:
+        return False
+    k = math.log10(ratio)
+    return round(k) != 0 and abs(k - round(k)) < 0.01
+
+
+def _lost_leading_digit(original: float, restated: float) -> bool:
+    """1305.01 read as 305.01: the printed original less its first digit."""
+    a, b = f"{abs(original):.2f}".rstrip("0").rstrip("."), f"{abs(restated):.2f}".rstrip("0").rstrip(".")
+    return len(a) > 2 and b != a and b.lstrip("0") == a[1:].lstrip("0") and abs(original) > abs(restated)
+
+
+def unreadable(value: float, siblings: list[float], metric: str = "") -> str:
+    """F212: why a printed cell cannot be trusted ("" when it can): two cells joined show as a figure with more integer digits
+    than any other figure of its row (19438.39 glued to a neighbour is 1943839.0), or, for revenue, as a minus no revenue carries
+    (the bracket of the next cell: (14 and 1475.75 read as -141475.75)."""
+    if metric == "revenue" and value < 0:
+        return "joined cells: a negative revenue"
+    others = [abs(s) for s in siblings]
+    if others and _digits(value) > max(_digits(o) for o in others):
+        return "joined cells: more digits than any figure of its row"
+    return ""
+
+
+def plausible(original: float, restated: float) -> str:
+    """F212: why a restated comparative is a reading error and not a restatement ("" when it can be one). A restatement moves
+    a figure by a little; a ratio that is a power of ten is a unit slip (the page unit is already applied by ``figure_for``,
+    so what is left is a lost thousands separator or another unit in the cell), a sign flip is not a restatement, a first digit
+    lost is a misread, and beyond ``BAND`` of the original it is held, not stored."""
+    if original == 0:
+        return ""
+    if (original < 0) != (restated < 0) and restated != 0:
+        return "sign flip"
+    if _power_of_ten(restated / original):
+        return "unit slip (ratio is a power of ten)"
+    if _lost_leading_digit(original, restated):
+        return "a leading digit lost"
+    if abs(restated - original) > BAND * abs(original):
+        return f"moves more than {BAND:.0%} of the original"
+    return ""
 
 
 def chosen_basis(entries: list[dict]) -> str | None:
@@ -69,18 +122,30 @@ def comparatives(rows: list, period: str, basis: str) -> list[dict]:
             found = pr.revenue_only(got["values"]) if metric == "revenue" else got["values"]
             values = {round(v, 4) for v, _label, _page in found}
             if len(values) == 1:        # none, or two readings that disagree: nothing stored
-                out.append({"metric": metric, "period": target, "basis": basis, "value": values.pop()})
+                value = values.pop()
+                sib = next((s for (v, _l, _p), s in zip(got["values"], got.get("siblings") or [])
+                            if round(v, 4) == value), [])
+                out.append({"metric": metric, "period": target, "basis": basis, "value": value,
+                            "joined": unreadable(value, sib, metric)})
     return out
 
 
-def find(dossier: dict, rows: list, period: str, basis: str, filing_id: str = "", url: str = "") -> list[dict]:
+def find(dossier: dict, rows: list, period: str, basis: str, filing_id: str = "", url: str = "",
+         rejected: list | None = None) -> list[dict]:
     """Restated figures: the printed comparatives of the filing for ``period`` that differ from the period's original in
-    memory. Each record keeps both figures and where each came from."""
+    memory. Each record keeps both figures and where each came from. A difference that is a reading error (F212: ``unreadable``,
+    ``plausible``) is not stored; it is added to ``rejected`` with its reason when a list is given."""
     entries = {(e["metric"], e["period"]): e for e in dossier.get("financial_metrics", [])}
     found = []
     for c in comparatives(rows, period, basis):
         original = original_of(entries.get((c["metric"], c["period"])), basis)
         if original is None or not differs(original[0], c["value"]):
+            continue
+        why = c.get("joined") or plausible(original[0], c["value"])
+        if why:
+            if rejected is not None:
+                rejected.append({"metric": c["metric"], "period": c["period"], "original": original[0],
+                                 "restated": c["value"], "reason": why})
             continue
         found.append({"metric": c["metric"], "period": c["period"], "basis": basis, "unit": "INR_CR",
                       "original": original[0], "original_news_id": original[1],
@@ -132,7 +197,7 @@ def merge(dossier: dict, records: list[dict], cleared: list[tuple] = ()) -> int:
     return changed
 
 
-def read_company(src, symbol: str, dossier: dict, quarters: int = 6) -> tuple[list[dict], list[tuple], list[str]]:
+def read_company(src, symbol: str, dossier: dict, quarters: int = 6, rejected: list | None = None) -> tuple[list[dict], list[tuple], list[str]]:
     """Read the results PDFs of a company's latest ``quarters`` quarters in memory and return (restated records, unchanged
     comparatives, reasons a quarter was not read). Text layer only: ``src`` is a ``pdf_referee.Sources`` made with ocr=False."""
     metrics = [e for e in dossier.get("financial_metrics", [])
@@ -152,7 +217,7 @@ def read_company(src, symbol: str, dossier: dict, quarters: int = 6) -> tuple[li
             if rows is None:
                 reasons.append(f"{period}: {why}")
                 continue
-            mine = find(dossier, rows, period, basis, f.news_id, f.pdf_url)
+            mine = find(dossier, rows, period, basis, f.news_id, f.pdf_url, rejected)
             records += mine
             seen = {(r["metric"], r["period"]) for r in mine}
             cleared += [(c["metric"], c["period"], basis, period) for c in comparatives(rows, period, basis)
@@ -167,15 +232,16 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
     nothing and lists every restated figure found in ``stats["found"]`` (with both figures and their sources), for review."""
     from .nse import SourceBlockedError
     src = pr.Sources(nse, ocr=False)
-    stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}, "found": []}
+    stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}, "found": [], "rejected": []}
     for scrip, symbol in list(symbols.items())[:limit]:
         dossier = sink.get_dossier(scrip)
         if not dossier:
             continue
         read = copy.deepcopy(dossier)   # the PDFs take minutes: what another writer stores meanwhile is kept (review of #168)
         stats["companies"] += 1
+        refused: list[dict] = []
         try:
-            records, cleared, reasons = read_company(src, symbol, dossier, quarters)
+            records, cleared, reasons = read_company(src, symbol, dossier, quarters, refused)
         except SourceBlockedError:
             raise
         except Exception as exc:   # noqa: BLE001
@@ -186,6 +252,7 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         if reasons:
             stats["reasons"][symbol] = reasons
         stats["restated"] += len(records)
+        stats["rejected"] += [{"scrip": scrip, "symbol": symbol, **r} for r in refused]    # reading errors (F212), never stored
         if dry_run:
             stats["found"] += [{"scrip": scrip, "symbol": symbol, **r} for r in records]
             continue

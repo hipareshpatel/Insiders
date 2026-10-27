@@ -168,18 +168,24 @@ class PortedBse:
         return body
 
 
+BEFORE, AFTER = 4, 1   # quarters read around each gap quarter
+
+
 def needed_quarters(wanted: set[str]) -> set[str]:
     """The quarters whose files the fill downloads (owner, 27 Oct 2026: "We should download which we need"): each quarter
-    memory lacks, and the quarters just before and after it. The neighbours are what the seed's own checks read: the unit
-    check needs a quarter's neighbours (xbrl.scale_slip) and a quarter filed only inside a longer period is worked out from
-    the quarter before (seed._derive_quarters). Before this the seed read every quarter from the oldest gap to today."""
+    memory lacks, the four before it and the one after. That is what the seed's own checks read from the files it fetched
+    (memory is not their history): the unit check (xbrl.scale_slip) needs at least two other quarters and looks at the
+    neighbours on both sides, and a gap is most often the latest quarter, which has no quarter after it yet; the long-year
+    check (xbrl.long_year) needs three or four quarters of the same year, so a Q4 gap needs Q1-Q3; a quarter filed only
+    inside a longer period is worked out from the quarter before (seed._derive_quarters). Before this the seed read every
+    quarter from the oldest gap to today."""
     out = set()
     for period in wanted:
         index = quarter_index(period)
         if index is None:
             out.add(period)
             continue
-        out.update(quarter_from_index(i) for i in (index - 1, index, index + 1))
+        out.update(quarter_from_index(i) for i in range(index - BEFORE, index + AFTER + 1))
     return out
 
 

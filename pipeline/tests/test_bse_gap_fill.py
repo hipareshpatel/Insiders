@@ -325,10 +325,14 @@ def test_every_downloaded_file_is_kept_in_our_store_and_read_from_it_next_time(m
     assert bse.files == {"downloaded": 1, "kept": 1, "from_store": 1}
 
 
-def test_only_the_missing_quarters_and_their_neighbours_are_downloaded():
-    """Owner, 27 Oct 2026: "We should download which we need": not every quarter from the oldest gap to today."""
-    assert bf.needed_quarters({"Q1FY24", "Q4FY23"}) == {"Q3FY23", "Q4FY23", "Q1FY24", "Q2FY24"}
-    links = [XbrlLink(p, "CONSOLIDATED", f"https://x/{p}.xml", "2025-01-01T00:00:00")
-             for p in ("Q3FY23", "Q4FY23", "Q1FY24", "Q2FY24", "Q3FY24", "Q1FY27")]
+def test_only_the_missing_quarters_and_what_their_checks_read_are_downloaded():
+    """Owner, 27 Oct 2026: "We should download which we need": not every quarter from the oldest gap to today, but enough
+    for the unit and long-year checks (the four quarters before a gap and the one after)."""
+    assert bf.needed_quarters({"Q4FY23"}) == {"Q4FY22", "Q1FY23", "Q2FY23", "Q3FY23", "Q4FY23", "Q1FY24"}
+    assert len(bf.needed_quarters({"Q1FY24", "Q4FY23"})) == 7
+    periods = ("Q3FY22", "Q4FY22", "Q1FY23", "Q2FY23", "Q3FY23", "Q4FY23", "Q1FY24", "Q2FY24", "Q3FY24", "Q1FY27")
+    links = [XbrlLink(p, "CONSOLIDATED", f"https://x/{p}.xml", "2025-01-01T00:00:00") for p in periods]
     recorder = bf._RecordingBse(SimpleNamespace(results_xbrl=lambda scrip: links), bf.needed_quarters({"Q4FY23"}))
-    assert [link.period for link in recorder.results_xbrl("1")] == ["Q3FY23", "Q4FY23", "Q1FY24"]
+    assert [link.period for link in recorder.results_xbrl("1")] == ["Q4FY22", "Q1FY23", "Q2FY23", "Q3FY23", "Q4FY23",
+                                                                    "Q1FY24"]
+    assert recorder.listed == len(periods)

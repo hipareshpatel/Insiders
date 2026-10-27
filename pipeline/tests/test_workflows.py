@@ -21,10 +21,13 @@ def test_no_workflow_names_the_parked_branch():
 def test_an_export_is_committed_only_to_a_branch_the_owner_named_and_is_always_kept_as_an_artifact():
     for name in ("audit-export.yml", "maintenance.yml"):
         text = _text(name)
-        for step in re.split(r"\n\s+- (?=name:|uses:)", text):
-            if step.startswith("name: Commit the export"):
-                assert "vars.AUDIT_BRANCH != ''" in step, name
-        assert "name: Collect" in text and "audit-export/" in text, name
+        steps = re.split(r"\n\s+- (?=name:|uses:)", text)
+        commits = [s for s in steps if s.startswith("name: Commit the export")]
+        assert commits, name
+        for step in commits:
+            assert re.search(r"^\s*if: .*vars\.AUDIT_BRANCH != ''", step, re.M), name   # the step's own condition
+        uploads = [s for s in steps if s.startswith("uses: actions/upload-artifact") and "audit-export/" in s]
+        assert uploads and all("AUDIT_BRANCH" not in s for s in uploads), name   # kept whatever the branch setting
 
 
 def test_the_critic_export_runs_only_with_the_critic_on():

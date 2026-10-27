@@ -59,9 +59,14 @@ export function isBank(metrics: Metric[]): boolean {
  *  and the associates' share, PBT and Tax % with the associates' share, a lender's Revenue = total income - other income. */
 function lines(v: Values, p: string, bank: boolean, screener = false): Record<string, Cell> {
   const g = (m: string) => get(v, m, p);
-  if (screener && !bank && g("revenue") != null && g("total_expenses") != null && g("finance_cost") != null && g("depreciation") != null) {
-    const sales = g("revenue")! - (g("excise_duty") ?? 0);
-    const expenses = g("total_expenses")! - g("finance_cost")! - g("depreciation")!;
+  if (screener && !bank) {
+    // the caller (screenerReady) has checked every column; a column that still lacks a part shows no derived cell
+    if (g("revenue") == null || g("total_expenses") == null || g("finance_cost") == null || g("depreciation") == null) return {};
+    const excise = g("excise_duty") ?? 0;
+    const sales = g("revenue")! - excise;
+    // total expenses hold the excise duty (Schedule III), so screener's Expenses take it out as its Sales does: ITC revenue
+    // 100, excise 10, total expenses 60 + 20 interest and depreciation: Sales 90, Expenses 30, Operating profit 60 = 100 - 60 + 20
+    const expenses = g("total_expenses")! - g("finance_cost")! - g("depreciation")! - excise;
     const op = sales - expenses;
     const assoc = g("share_associates") ?? 0;
     const pbt = g("pbt") != null ? g("pbt")! + assoc : null;
@@ -74,8 +79,7 @@ function lines(v: Values, p: string, bank: boolean, screener = false): Record<st
   if (bank) {
     // a bank's OperatingExpenses tag is the total, employee cost inside it (RBI Form B): HDFC Bank's Q4FY25
     // 86,779 + 33,489 - 46,986 - 43,904 = 29,378, its own pre-provision profit 29,379
-    const lenderTop = screener && g("total_income") != null && g("other_income") != null ? g("total_income")! - g("other_income")! : null;
-    const revenue = lenderTop ?? g("interest_earned"), interest = g("interest_expended"), opex = g("other_expenses");
+    const revenue = screener ? sub(g("total_income"), g("other_income")) : g("interest_earned"), interest = g("interest_expended"), opex = g("other_expenses");
     const nii = sub(revenue, interest);
     const ppop = g("pre_provision_operating_profit") ?? (nii != null && opex != null ? nii + (g("other_income") ?? 0) - opex : null);
     return {
@@ -94,6 +98,13 @@ function lines(v: Values, p: string, bank: boolean, screener = false): Record<st
     exceptional: g("exceptional_items"), pbt: g("pbt"), tax_pct: pct(g("tax_expense"), g("pbt")),
     pat: g("pat"), pat_owners: g("pat_owners"),
   };
+}
+
+/** Screener's formulas for a table only when every column has the parts of its top line; else the table keeps the usual lines
+ *  whole, so one table never mixes two definitions (F210). */
+function screenerReady(v: Values, columns: string[], bank: boolean): boolean {
+  const need = bank ? ["total_income", "other_income"] : ["revenue", "total_expenses", "finance_cost", "depreciation"];
+  return columns.length > 0 && columns.every((c) => need.every((m) => get(v, m, c) != null));
 }
 
 const CORPORATE: [string, string, Row["kind"]?, boolean?][] = [
@@ -125,7 +136,8 @@ const periodsOf = (metrics: Metric[], test: RegExp) => [...new Set(metrics.map((
 export function quarterlyTable(metrics: Metric[], screener = false): Table {
   const bank = isBank(metrics), v = collect(metrics);
   const quarters = periodsOf(metrics, /^Q[1-4]FY\d{2}$/).slice(-QUARTERS);
-  return table(quarters, quarters.map((q) => lines(v, q, bank, screener)), bank);
+  const useScreener = screener && screenerReady(v, quarters, bank);
+  return table(quarters, quarters.map((q) => lines(v, q, bank, useScreener)), bank);
 }
 
 const ADDITIVE = ["revenue", "total_income", "other_income", "finance_cost", "depreciation", "exceptional_items", "pbt", "tax_expense",
@@ -148,15 +160,19 @@ export function ttmQuarters(metrics: Metric[]): string[] | null {
 export function annualTable(metrics: Metric[], screener = false): Table {
   const bank = isBank(metrics), v = collect(metrics);
   const years = periodsOf(metrics, /^FY\d{2}$/).slice(-YEARS);
-  const cols = years.map((y) => lines(v, y, bank, screener));
   const ttm = ttmQuarters(metrics);
+  const useScreener = screener && screenerReady(v, years, bank);
+  const cols = years.map((y) => lines(v, y, bank, useScreener));
   if (ttm) {
     for (const metric of ADDITIVE) {
       const parts = ttm.map((q) => get(v, metric, q));
       if (parts.every((x) => x != null)) (v.get(metric) ?? v.set(metric, new Map()).get(metric)!).set("TTM", parts.reduce((a, b) => a! + b!, 0)!);
     }
     v.get("ebitda_margin")?.delete("TTM");
-    cols.push(lines(v, "TTM", bank, screener));
+    // a part a formula uses must be in all four quarters or none of them: else the TTM column shows no derived cell
+    const partial = useScreener && ["excise_duty", "share_associates", "exceptional_items", "other_income"]
+      .some((m) => { const n = ttm.filter((q) => get(v, m, q) != null).length; return n > 0 && n < 4; });
+    cols.push(partial ? {} : lines(v, "TTM", bank, useScreener));
   }
   return table([...years, ...(ttm ? ["TTM"] : [])], cols, bank);
 }
@@ -199,8 +215,10 @@ export function balanceTable(sheets: Snapshot[], screener = false): Table {
     { label: "Deposits", cells: col((s) => num(s, "deposits_cr")) },   // a bank's, and an NBFC's public deposits
     { label: "Borrowings", cells: col(debt) },
     // screener's plug: total less equity, reserves, borrowings and deposits, the minority inside it (mapping 1d)
+    // null when equity, reserves or borrowings is missing, so a missing part is not dumped into it; deposits only a bank has
     { label: "Other liabilities", cells: col((s) => screener
-      ? sub(num(s, "total_assets_cr"), [num(s, "equity_capital_cr"), num(s, "reserves_cr"), debt(s), num(s, "deposits_cr")].reduce<number>((a, b) => a + (b ?? 0), 0))
+      ? sub(num(s, "total_assets_cr"), [num(s, "equity_capital_cr"), num(s, "reserves_cr"), debt(s)].some((x) => x == null)
+        ? null : num(s, "equity_capital_cr")! + num(s, "reserves_cr")! + debt(s)! + (num(s, "deposits_cr") ?? 0))
       : sub(sub(num(s, "total_liabilities_cr"), debt(s) ?? 0), num(s, "deposits_cr") ?? 0)) },
     { label: "Total liabilities", cells: col((s) => num(s, "total_assets_cr")), strong: true },
     { label: "Advances / loans", cells: col((s) => num(s, "advances_cr")) },

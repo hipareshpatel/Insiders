@@ -788,6 +788,57 @@ def cmd_memory_gaps(args, settings, sink) -> int:
     return MORE_LEFT if outcome and outcome["more"] else 0
 
 
+def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
+    """The one-time fill of results quarters memory lacks, for companies NSE lists no results for, from BSE's results XBRL
+    (bse_gap_fill.py, F201): a dry run by default (decides, writes nothing), --apply writes figures labelled BSE. NSE's list is
+    read now for each gap company above the market-cap floor; the seed's BSE path reads the files. No AI."""
+    from . import bse_gap_fill, memory_gaps, universe
+    from .bse import BseClient, SourceBlockedError   # the base class: NSE's refusal and BSE's both
+    from .nse import NseClient
+
+    nse_universe = universe.load_nse(sink)
+    if args.scrips:
+        scrips = [nse_universe.symbols.get(name.upper()) or name for name in (s.strip() for s in args.scrips.split(",")) if name]
+    elif nse_universe.built:
+        scrips = sorted(nse_universe.included)
+    else:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    today = date.fromisoformat(args.as_of) if args.as_of else today_ist()
+    report = memory_gaps.survey(sink, scrips, today, args.quarters)
+    print(memory_gaps.render(report))
+    by_scrip = {scrip: symbol for symbol, scrip in nse_universe.symbols.items()}
+    symbols = {scrip: ((sink.company(scrip) or {}).get("symbol") or by_scrip.get(scrip, "")).strip().upper()
+               for scrip, r in report["companies"].items() if memory_gaps.has_gap(r)}
+    refused = False
+    with BseClient() as bse, NseClient() as nse:
+        raw.attach(bse, sink, "bse", settings)
+        raw.attach(nse, sink, "nse", settings)
+        bse.warm_up()
+        try:
+            outcome = bse_gap_fill.run(sink, report, symbols, nse, bse, settings, args.apply, args.time_budget, args.restart)
+        except SourceBlockedError as exc:
+            logging.getLogger("bse_intel.bse_gap_fill").error("an exchange refused the session; stopping: %s", exc)
+            refused = True
+            outcome = {"apply": args.apply, "more": False, "failed": [f"refused: {exc}"[:200]], "rows": [],
+                       "min_mcap_cr": float(settings.universe_min_mcap_cr), "companies_with_gaps": 0,
+                       "companies_skipped_tried": 0, "companies_class_b": 0, "companies_filled": 0, "quarters_filled": 0,
+                       "figures_filled": 0, "figures_written": 0, "skipped": {}}
+    print(bse_gap_fill.render(outcome))
+    for line in outcome["failed"][:20]:
+        print(f"  {line}")
+    if not args.apply:
+        print("dry run: nothing changed (--apply writes the figures, each labelled exchange BSE)")
+    if args.json:
+        Path(args.json).write_text(json.dumps({k: v for k, v in outcome.items() if k != "rows"} | {"as_of": report["as_of"]},
+                                              ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(bse_gap_fill.to_csv(outcome), encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome["more"] else 0
+
+
 def cmd_restated_report(args, settings, sink) -> int:
     """Quarters whose restated figure differs from the one first filed, across stored memory (restated_report.py, F167).
     Read only: no NSE, no AI, no write."""
@@ -1925,6 +1976,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--shard", help="with --fill: I/N, this runner's share of the companies with gaps")
     p.add_argument("--time-budget", type=int, default=17400, help="with --fill: seconds; exit 124 if companies are left")
     p.set_defaults(func=cmd_memory_gaps)
+
+    p = sub.add_parser("memory-gaps-fill-bse", help="one-time fill of the quarters memory lacks for companies NSE lists no results for, from BSE's results XBRL: dry run (default) or --apply (no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--quarters", type=int, default=8, help="quarters checked, ending at the latest past its filing deadline")
+    p.add_argument("--as-of", help="YYYY-MM-DD, instead of today (IST)")
+    p.add_argument("--apply", action="store_true", help="write the figures (labelled exchange BSE); without it nothing is changed")
+    p.add_argument("--restart", action="store_true", help="try companies an earlier --apply run already handled")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every filled figure to this file")
+    p.set_defaults(func=cmd_memory_gaps_fill_bse)
 
     p = sub.add_parser("screener-fill", help="one-time fill of the quarters memory lacks from screener.in: dry run (default) or --apply (no AI)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

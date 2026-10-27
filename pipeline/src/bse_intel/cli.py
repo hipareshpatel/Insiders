@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import sys
 import time
 from datetime import date, timedelta
@@ -1553,8 +1554,18 @@ def cmd_screener_referee(args, settings, sink) -> int:
         return 2
     summary = sc.run(sink, companies, args.day, args.workers, False)
     write = _referee_writer(args)
+    names_for = None
+    if getattr(args, "archive_only", False):
+        # F222: the file names memory recorded, no results list (the archive host only)
+        dossiers: dict[str, dict | None] = {}
+
+        def names_for(scrip, basis):
+            if scrip not in dossiers:
+                dossiers[scrip] = sink.get_dossier(scrip)
+            return sx.file_names(dossiers[scrip], scrip, basis)
     with NseClient() as nse:
-        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget, sink=sink, progress=write)
+        outcome = sx.run(nse, summary["rows"], args.limit, args.time_budget, sink=sink, progress=write, names_for=names_for,
+                         workers=args.download_workers)
     print(sx.render(outcome))
     write(outcome)
     if outcome["blocked"]:
@@ -2159,6 +2170,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--csv", help="write every refereed pair, with the official figure and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown summary to this file")
+    p.add_argument("--archive-only", action="store_true", help="no results list: read each file named in memory (lab.file) from the XBRL store, else the archive host; a pair with no name or file is not_run")
+    p.add_argument("--download-workers", type=int, default=int(os.environ.get("REFEREE_DOWNLOAD_WORKERS", "8")),
+                   help="archive-only: companies read at once from the archive host (default 8, env REFEREE_DOWNLOAD_WORKERS)")
     p.set_defaults(func=cmd_screener_referee)
 
     p = sub.add_parser("tijori-referee", help="read-only: NSE's results XBRL as the referee of the Tijori cross-check's leads and sign differences")

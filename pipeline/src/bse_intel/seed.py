@@ -204,8 +204,8 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     _hold_slips(sink, scrip, found, held_slips, stats, unsure)
     _drop_misdated(sink, scrip, found, stats)
     _derive_quarters(found, stats)
-    for period, (filed_on, url, parsed, _) in sorted(found.items()):
-        _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
+    for period, (filed_on, url, parsed, from_nse) in sorted(found.items()):
+        _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats, from_nse)
     _flag_slips(sink, scrip, held_slips)
     if keep_standalone and found:
         _mark_standalone_only(sink, scrip, found)
@@ -371,8 +371,22 @@ def _parse_results(data: bytes, stats: SeedStats):
     return parsed
 
 
+def stamp_file(dossier: dict, news_id: str, url: str) -> int:
+    """Put the NSE file's full url (as fetched) on the label of every figure this synthetic filing stated (F222): memory kept only the
+    source id ``xbrl:res:<scrip>:<period>``, so the file could not be found again without NSE's results list. Returns how
+    many labels were stamped."""
+    stamped = 0
+    for entry in dossier.get("financial_metrics", []):
+        rows = entry.get("sources") or ([{"news_id": entry.get("source_news_id"), "lab": entry.get("lab")}] if entry.get("lab") else [])
+        for row in rows:
+            if row.get("news_id") == news_id and isinstance(row.get("lab"), dict):
+                row["lab"]["file_url"] = url
+                stamped += 1
+    return stamped
+
+
 def _write_results(sink, scrip: str, name: str, company: dict | None, period: str, filed_on: str,
-                   url: str, parsed, stats: SeedStats) -> None:
+                   url: str, parsed, stats: SeedStats, from_nse: bool = False) -> None:
     """One parsed results file into memory."""
     filing = _filing("res", scrip, name, period, f"{filed_on}T18:00:00+05:30", url)
     out = Pass2Output(is_material=False, timeline_entry="")
@@ -385,8 +399,11 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
         dossier["scale_held"] = left
         if not left:
             dossier.pop("scale_held")
-    sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso(), basis=parsed.basis,
-                                  fy_end_month=getattr(parsed, "fy_end_month", None), own_period=period))
+    merged = merge(dossier, out, filing, None, now_iso(), basis=parsed.basis,
+                   fy_end_month=getattr(parsed, "fy_end_month", None), own_period=period)
+    if from_nse:   # only an NSE archive url is stamped: a BSE file's url is no archive-only source (F222)
+        stamp_file(merged, filing.news_id, url)
+    sink.put_dossier(scrip, merged)
     stats.results_periods += 1
     log.info("seed %s %s: %d figures from %s (%s)", scrip, period, len(parsed.metrics), url.rsplit("/", 1)[-1],
              parsed.basis or "basis not stated")

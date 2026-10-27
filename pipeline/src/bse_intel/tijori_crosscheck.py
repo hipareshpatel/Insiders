@@ -53,6 +53,7 @@ import os
 import re
 from concurrent.futures import ThreadPoolExecutor
 
+from . import line_map
 from . import screener_crosscheck as sc
 from .memory_gaps import main_basis
 from .metrics import CONSOLIDATED, STANDALONE, _figures, is_lender
@@ -69,10 +70,10 @@ EPS_FACTOR_TOLERANCE = 0.02   # tijori's adjusted EPS over ours: the same factor
 WORKERS = 8
 
 # the row names (see the module docstring for what was measured and what was not)
-REVENUE_LINES = ("Net Sales", "Sales")
-LENDER_REVENUE_LINES = ("Net Sales", "Sales", "Revenue", "Total Income", "Interest Earned", "Income from Operations")
-PROFIT_LINES = ("Net Profit",)
-EPS_LINES = ("EPS",)
+REVENUE_LINES = line_map.tijori_rows("revenue")
+LENDER_REVENUE_LINES = line_map.tijori_rows("revenue", lender=True)
+PROFIT_LINES = line_map.tijori_rows("pat")
+EPS_LINES = line_map.tijori_rows("eps")
 
 
 def _lines(env: str, default: tuple[str, ...]) -> tuple[str, ...]:

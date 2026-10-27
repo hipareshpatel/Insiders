@@ -158,6 +158,17 @@ def card_one_basis() -> bool:
     return (_env("CARD_ONE_BASIS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_results_one_line() -> bool:
+    """CARD_RESULTS_ONE_LINE (default off; TODO 107, F206; live audit of 26 Oct 2026, class "two bases in the results block"):
+    each row of the results block takes its current and comparative figures from one statement line (revenue from
+    operations with revenue from operations, total income with total income; an EBITDA our code works out from the
+    tagged file with one worked out the same way). A comparative from another line is worked out again from the same line
+    when the tagged data has it, else its change is left out. A headline or key-number revenue or EBITDA on another
+    basis than the block's row is labelled "company-reported", and two EBITDA figures on one card are each named.
+    Read at the call."""
+    return (_env("CARD_RESULTS_ONE_LINE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the
@@ -184,6 +195,15 @@ def card_eps_follows_profit() -> bool:
     return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def eps_base_check() -> bool:
+    """EPS_BASE_CHECK (default off; F208, TODO 78): on a results file, an EPS YoY / QoQ that the profit does not carry (same
+    test as CARD_EPS_FOLLOWS_PROFIT) with no share-count event on record is not stored as a comparable change, and a comparative
+    from an earlier file with no basis recorded is not taken for a file whose basis is known. The filing's own stated EPS
+    change is not read in its place (a review dropped that: "EPS declined by 5%" was read as +5%). Wipro (26 Oct 2026): EPS 3.23
+    against standalone 2.74 and 2.50 stored as consolidated, +18% beside profit +1.5%. Read at the call."""
+    return (_env("EPS_BASE_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_eps_whole() -> bool:
     """CARD_EPS_WHOLE (default off; F188, TODO 89): on a results table the EPS line is the whole company's (continuing and
     discontinued operations together), with the continuing-operations EPS shown beside it only when the two differ; an older
@@ -198,6 +218,14 @@ def eps_share_adjust() -> bool:
     period's EPS divided by the split, bonus or consolidation factor between the two periods), or left out where the share
     count changed and no record says why. Off: cards compare EPS as the file states it. Read at the call."""
     return (_env("EPS_SHARE_ADJUST", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
+def eps_share_count_check() -> bool:
+    """EPS_SHARE_COUNT_CHECK (default off; F211, TODO 79): memory's EPS lines keep EPS as filed and EPS on today's shares, and
+    adjust only when NSE's corporate-action record and the share-count change (profit over EPS) agree; a recorded action the
+    share count does not follow, or a share-count jump with no record, is marked "possible split or bonus, not confirmed" and
+    nothing is adjusted. Memory only: EPS is never shown on cards or stock pages. Read at the call."""
+    return (_env("EPS_SHARE_COUNT_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
 def _env_int(name: str, default: int) -> int:
@@ -264,6 +292,10 @@ class Settings:
     # A results file whose lines fail SEBI's own sums has those lines left off the card (xbrl.untrusted_lines, item 23,
     # F140); XBRL_SUMS=0 turns it off
     xbrl_sums: bool = field(default_factory=lambda: _env("XBRL_SUMS", "1") not in ("0", "false", "no"))
+    # The row-name map (line_map.py, TODO 93, F209). The map itself is data and its refactored readers (the cross-checks'
+    # row names, screener_fill's rows) behave as before, switch or not. LINE_MAP=1 is reserved for changes that would alter
+    # a figure (the PDF reader taking its labels from the map, TODO 93 item 4); none is built, so it does nothing yet
+    line_map: bool = field(default_factory=lambda: _env("LINE_MAP", "0") in ("1", "true", "yes"))
     # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
     # not reachable or another run on the same address is already calling it (NSE limits by IP).
     nse_annual_xbrl: bool = field(default_factory=lambda: _env("NSE_ANNUAL_XBRL", "1") not in ("0", "false", "no"))

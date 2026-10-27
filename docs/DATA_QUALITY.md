@@ -75,6 +75,26 @@ Wherever a correction can be automated it must be, but only on proof:
   its column and basis proven.** A figure read only by OCR (a scanned page) can hold or list a figure, never correct one
   (owner, 26 Oct 2026: scanned copies, units and OCR misreads).
 
+### The row-name map (TODO 93, F209)
+
+Lines are called different things in each source, and a template changes the name again: an NBFC's revenue from operations
+sits beside its interest earned, a bank has no revenue line, an insurer's top line is premium. `bse_intel/line_map.py` is the
+one place that says what each canonical line (revenue, total income, PAT, owners' PAT, minorities, finance cost, interest
+earned and expended, NII, provisions, GNPA, EPS basic and continuing ...) is called in:
+
+- XBRL, per template (Ind AS, other-than-bank, NBFC, banking, general and life insurance), copied from the code's own tag
+  tables; a test fails if the map and `xbrl.py` differ. `xbrl_seen` lists names found in a stored sample of a template that
+  the code does not read yet (diluted EPS, a bank's minority share, an NBFC's fees and commission income): candidates, not lines.
+- screener.in and Tijori, from the stored sample pages (4 and 2 companies, one a bank, none an NBFC or insurer).
+- the PDF labels `pdf_referee` matches.
+
+An empty entry means nobody has looked yet, never that the source has no such line (`line_map.unverified(key)`). A new row
+name that goes wrong on a card is added here with a test, not in the reader. `scripts/line_map_coverage.py` lists, over
+stored files and with no network, what each source covers and the gaps. **Still to measure:** the coverage over 10 companies
+of each template, which needs the stored files (`raw/xbrl/`, `raw/screener/<day>/`, `raw/tijori/<day>/`) on the runner; until
+it is run the map is proven on the sample files only. GI and other-than-bank have no sample in the repo. `LINE_MAP` (off) is
+reserved for the PDF reader using the map.
+
 ## What not to do
 
 - Do not loosen a check until a card passes; calibrate it against the measured baselines

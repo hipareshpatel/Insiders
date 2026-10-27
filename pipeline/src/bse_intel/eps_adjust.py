@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 
 from .periods import due_date, prior_quarter_period, prior_year_period
-from .settings import card_eps_follows_profit, eps_share_adjust
+from .settings import card_eps_follows_profit, eps_base_check, eps_share_adjust, eps_share_count_check
 
 # Owner, 25 Oct 2026: a preferential allotment, rights issue, QIP, ESOPs or a merger is real dilution, so EPS growth
 # shows the reported change there. Only a recorded split, bonus or consolidation is adjusted for; with no record, a share
@@ -216,3 +216,144 @@ def follow_profit(row: dict, dossier: dict | None, periods: dict, profit, printe
     if hidden:
         row["eps_note"] = "; ".join(dict.fromkeys(([row["eps_note"]] if row.get("eps_note") else []) + [h["reason"] for h in hidden]))
     return row, hidden
+
+
+# ---- EPS_SHARE_COUNT_CHECK (F211, TODO 79): memory keeps EPS as filed and EPS on today's shares, and adjusts only when the
+# record and the share count agree. `compare` above adjusts on the record alone (unless the file already restated) and blanks
+# an unrecorded exact-ratio jump; this check also refuses a recorded action the share count did not follow.
+AGREE_TOLERANCE = 0.05          # the share-count ratio is within 5% of the recorded factor (rounding of EPS and profit)
+NOT_CONFIRMED = "possible split or bonus, not confirmed"
+
+
+def share_count_check_enabled() -> bool:
+    return eps_share_count_check()
+
+
+@dataclass
+class ShareCheck:
+    status: str                          # "none" (one share base), "confirmed" (record and share count agree) or "not_confirmed"
+    eps_as_filed: float | None = None    # the older period's EPS as its own file states it
+    eps_today: float | None = None       # the same on the newer period's share count; only when confirmed
+    note: str | None = None
+
+
+def share_check(dossier: dict | None, new_period: str, old_period: str, eps_new, eps_old,
+                profit_new=None, profit_old=None) -> ShareCheck:
+    """Whether the older EPS may be put on the newer period's shares. Confirmed only when a recorded split, bonus or
+    consolidation between the periods and the implied share count (profit over EPS) moved by the same factor."""
+    if eps_new is None or eps_old is None:
+        return ShareCheck("none", eps_old)
+    factor = factor_between(dossier, old_period, new_period)
+    new_shares, old_shares = implied_shares(profit_new, eps_new), implied_shares(profit_old, eps_old)
+    ratio = new_shares / old_shares if new_shares and old_shares else None
+    if abs(factor - 1) < 1e-9:       # no record
+        if exact_ratio(ratio):
+            return ShareCheck("not_confirmed", eps_old, note=f"{NOT_CONFIRMED}: share count moved {ratio:.2f}x between "
+                                                             f"{old_period} and {new_period}, no corporate action on record")
+        return ShareCheck("none", eps_old)
+    if ratio is None:
+        return ShareCheck("not_confirmed", eps_old, note=f"{NOT_CONFIRMED}: a corporate action is on record but the share count cannot be worked out")
+    if abs(ratio - 1) < abs(ratio / factor - 1) and abs(ratio - 1) <= AGREE_TOLERANCE:
+        return ShareCheck("none", eps_old)        # the file already restated the older EPS to the new share count
+    if abs(ratio / factor - 1) <= AGREE_TOLERANCE:
+        old_end, new_end = due_date(old_period).isoformat(), due_date(new_period).isoformat()
+        actions = sorted(_actions_between(dossier, old_end, new_end), key=lambda a: a["ex_date"])
+        return ShareCheck("confirmed", eps_old, eps_old / factor, "adjusted for " + " and ".join(describe(a) for a in actions))
+    return ShareCheck("not_confirmed", eps_old, note=f"{NOT_CONFIRMED}: a corporate action is on record (x{factor:g}) "
+                                                     f"but the share count moved {ratio:.2f}x")
+
+
+def same_profit(*getters) -> list | None:
+    """The profit of each getter on one metric line: the owners' for all when all have it, else the total for all; None when
+    neither line is complete (a zero is a figure, it does not fall through to the other line)."""
+    for name in ("pat_owners", "pat"):
+        values = [g(name) for g in getters]
+        if all(v is not None for v in values):
+            return values
+    return None
+
+
+# ---- EPS_BASE_CHECK (F208, TODO 78): the same test on the file's own stored EPS changes (memory keeps `yoy_pct` / `qoq_pct`).
+def base_check_result(tagged, dossier: dict | None) -> int:
+    """Take out, in place, every EPS YoY / QoQ of a results file that the profit does not carry (``follows``) with no share-count
+    event on record between the periods, so it is not stored as a comparable change. The EPS figures stay (memory keeps
+    them); only the change goes, with `eps_note` saying why. Profit is the owners', else the total, from the same file.
+    Returns how many changes were taken out."""
+    if not eps_base_check() or tagged is None or getattr(tagged, "kind", None) != "RESULTS":
+        return 0
+    by = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+
+    removed = 0
+    for m in tagged.metrics:
+        if m.metric != "eps" or m.value is None:
+            continue
+        for slot, back in (("yoy_pct", prior_year_period(m.period)), ("qoq_pct", prior_quarter_period(m.period))):
+            change = getattr(m, slot)
+            if not back or change is None:
+                continue
+            pair = same_profit(lambda n, p=m.period: by.get((n, p)), lambda n, p=back: by.get((n, p)))
+            if pair is None or not (pair[0] > 0 and pair[1] > 0):
+                continue   # no profit on one line for both periods, or a loss on either side: no percentage to judge by
+            profit_pct = (pair[0] / pair[1] - 1) * 100
+            if share_event(dossier, back, m.period) is None and not follows(profit_pct, change, by.get(("eps", back))):
+                setattr(m, slot, None)
+                m.eps_note = f"EPS {change:+g}% {slot[:3].upper()} is above profit {profit_pct:+.1f}% and no share-count event is on record"
+                removed += 1
+    return removed
+
+
+# EPS_BASE_CHECK, the class behind Wipro (F208): an AI-read results card stored the STANDALONE EPS (2.74, 2.50, 2.89) as consolidated,
+# beside the consolidated profit. The company's share count does not depend on the basis, so profit over EPS shows which profit an
+# EPS was divided by: the consolidated profit over a standalone EPS gives 1,298 Cr shares where the files say 1,047.
+SHARE_MATCH_PCT = 3.0   # profit / EPS agrees with the file-derived share count within this (EPS prints two decimals; buybacks move a few %)
+
+
+def _share_reference(metrics: dict, period: str) -> tuple[str, float] | None:
+    """The quarter and share count (profit over EPS, the profit's unit over the EPS) of the exchange file's own EPS nearest in time
+    to ``period``, for quarters only, from consolidated figures of memory. None when no file EPS has a profit beside it."""
+    from .dossier import XBRL_SOURCE
+
+    target = due_date(period)
+    if target is None:
+        return None
+    best = None
+    for (name, p), e in metrics.items():
+        if name != "eps" or not p.startswith("Q") or p == period or not e.get("value"):
+            continue
+        if not str(e.get("value_news_id") or e.get("source_news_id") or "").startswith(XBRL_SOURCE):
+            continue
+        profit = same_profit(lambda n, p=p: (metrics.get((n, p)) or {}).get("value"))
+        end = due_date(p)
+        if profit and profit[0] > 0 and end and e["value"] > 0 and (best is None or abs((end - target).days) < best[0]):
+            best = (abs((end - target).days), p, profit[0] / e["value"])
+    return (best[1], best[2]) if best else None
+
+
+def misbased_eps(metrics: dict, standalone: dict | None, period: str, value, basis: str | None,
+                 dossier: dict | None = None) -> str | None:
+    """Why an AI-read per-share figure stored as CONSOLIDATED is probably the standalone one, else None. It must differ from the
+    file-derived share count by more than 3% with the consolidated profit, and match it within 3% with the standalone profit of
+    that quarter. With near-equal profits on both bases (no subsidiaries) both match, so nothing is done; nor when a split,
+    bonus, consolidation, buyback or rights issue is on record between the reference quarter and this one (the share count moved)."""
+    if not eps_base_check() or basis != "CONSOLIDATED" or not value or value <= 0 or not period.startswith("Q"):
+        return None
+    found = _share_reference(metrics, period)
+    if not found:
+        return None
+    ref_period, ref = found
+    old, new = sorted((ref_period, period), key=lambda p: due_date(p))
+    if share_event(dossier, old, new) is not None:
+        return None
+    stand = {(e.get("metric"), e.get("period")): e.get("value") for e in (standalone or {}).get("metrics", [])}
+    pair = same_profit(lambda n: (metrics.get((n, period)) or {}).get("value"), lambda n: stand.get((n, period)))
+    if pair is None or not (pair[0] > 0 and pair[1] > 0):
+        return None
+    own, alone = pair
+
+    def off(profit) -> float:
+        return abs(profit / value / ref - 1) * 100
+
+    if off(own) > SHARE_MATCH_PCT and off(alone) <= SHARE_MATCH_PCT:
+        return (f"EPS {value:g} for {period} fits the standalone profit ({alone:g}), not the consolidated ({own:g}): "
+                f"shares {alone / value:.0f} vs {own / value:.0f} against {ref:.0f} from the files")
+    return None

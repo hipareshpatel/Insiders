@@ -57,3 +57,39 @@ left the prompt in a test), CARD_EBITDA_PROFIT_V2, CARD_TWO_PARTS, CARD_GUIDANCE
 first), every MEMORY_* switch (they write stored memory). Not measured on live cards before switching on: the audit of
 27 Oct's cards against the 26 Oct benchmark (18.8% WRONG) is the measurement, and with eight at once it cannot say which
 switch helped.
+
+## Runs tracker (owner, 27 Oct 2026: "I don't see you are tracking those")
+Every maintenance run stays here until its result is read and acted on; the 15-minute tick updates it. Read 27 Oct 08:17 IST.
+
+| Run | Command | Result | Next |
+|---|---|---|---|
+| 40431994775 | restated-pdf-trial, 60 companies | 28 restated figures found, 0 stored; many are digit or unit slips (CHENNPETRO 19,438 -> 19,43,839; BATAINDIA 788.21 -> 0.79; CIPLA PAT 1,305 -> 305) | Reader bug: fix in code, re-run the trial. Nothing stored, nothing live |
+| 40429782319 | restated-pdf-trial, 12 companies | 360ONE 3, TITAN 4 (before the PR 170 fix) | 360ONE: check against its own-period files |
+| 40405063481 | screener-referee | 6,827 pairs: ours = NSE's file 3,675, screener = file 22, neither 7, no file 226; 2,897 not run (5 h budget) | Run again to finish the 2,897 |
+| 40378668456 | tijori-referee | 838 pairs: ours = file 758, Tijori = file 17, no file 63 | Look at the 17 |
+| 40371891447 | screener-explain | 6,844 rows: 1,492 unexplained | Input of pdf-referee "explained" |
+| 40381457050 / 40383247868 | memory-gaps / memory-gaps-fill | 2,628 company-quarters missing; the fill tried 373 companies and filled only 79 | Find why so few fill |
+| 40432958750 | seed-memory next pass | 155 companies, 0 failures; the universe is seeded | Done |
+| 40388620844 | seed-memory, whole universe | Failed: 2 of 12 shards lost their runner (GitHub side) | Covered by 40432958750 |
+| 40429585773 | bse-results-test | 16 of 16 calls OK; BSE = NSE 7 of 7 | Done |
+| 40429581504 (+ 40387691940, 40402679817, 40410658355) | call-memory | All docs read in the end; 31 of 36 points kept on the last 3; the earlier fails were provider limits | Score and second blind sample |
+| 40388046768 | pdf-referee-ensemble, 20 pairs | 1 matched ours, 24 unsure | Trial only |
+| 40387696323 | pdf-referee | Failed: runner lost (GitHub side), log gone | Same step now in 40393302149 |
+| 40414799620 | pdf-referee-ensemble hardset | Running: 11 readers done, scoring started 08:08 IST | Read the reader scores |
+| 40407491267 | release-check | Running 5 h with no change since 03:19 IST: probably hung; GitHub stops it about 09:19 IST | Re-run in parts if it ends with nothing |
+| 40393302149 | pdf-referee "explained" | Running 4 h 40 min in the step that lost its runner before; GitHub stops it about 09:36 IST | Read what it saved |
+| not run | memory-gaps-fill-bse dry run, text-backfill | Never ran (skipped in the chain) | Dispatch |
+| not found | seed signs APARINDS Q1FY27, PVRINOX Q1FY25, GLENMARK Q4FY26 | No run re-read them | seed-memory with ids |
+
+## 27 Oct 2026, ~09:00 IST: reviewed builds merged and on (owner: "Once reviewed, merge and switch them on too")
+Merged after independent review: F209 (row-name map, a pure refactor; its LINE_MAP switch does nothing yet), F210 (company-page
+financials on screener's formulas: on through `VITE_SCREENER_LINES` in deploy-web.yml), F211 (EPS share-count check, memory only:
+on), F208 (Wipro: an AI-read standalone EPS stored as consolidated is refused; stored EPS changes the profit does not carry are
+not kept: on). EPS is never shown, so F208 and F211 change memory only. The suite with every live switch on together: 1,864 passed.
+Still in review: F205 (watch verdicts), F206 (one line a results row), F212 (restated reader).
+- ~09:10 IST: F206 merged and on (`CARD_RESULTS_ONE_LINE`), F212 merged (no switch: the restated reader only stores fewer
+  figures; MEMORY_RESTATED stays off). Known cost of F206: when this quarter's EBITDA is only the release's and the comparatives
+  are the file's, the EBITDA change is left off even where it would have been right (Shree Cement and Crompton tests under the
+  switch): a missing change, never a wrong one. All other tests unchanged with every live switch on.
+- File cap (owner rule, 100 NSE/BSE files a run): run 40441227348 (memory-gaps-fill over every company) cancelled before it
+  passed the cap; the cap is being built (F213). No NSE/BSE maintenance run is dispatched until it is in.

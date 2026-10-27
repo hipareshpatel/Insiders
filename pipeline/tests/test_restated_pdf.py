@@ -240,3 +240,76 @@ def test_total_income_is_never_read_as_a_restated_revenue():
          "sources": [source("xbrl:res:1:Q3FY25", 17740.0, "2025-02-04")], "source_news_id": "xbrl:res:1:Q3FY25"}]}
     assert rp.find(d, got, "Q3FY26", "CONSOLIDATED") == []
     assert all(c["metric"] != "revenue" for c in rp.comparatives(got, "Q3FY26", "CONSOLIDATED"))
+
+
+# --- F212: a restated figure must be a plausible restatement, not a reading error (trial 40431994775, 27 Oct 2026) ----
+
+UNIT_SLIPS = [(3250.73, 3.25), (788.21, 0.7882), (4018.96, 4.018), (28785.92, 28.785), (19438.39, 1943839.0),
+              (1001.59, 100159.0)]
+OTHER_ERRORS = [(1475.75, -141475.75), (1503.68, 5415.38), (283.88, 934.17), (1.22, 310.99), (1305.01, 305.01),
+                (-7.16, 0.1551)]
+REAL_RESTATEMENTS = [(1409.9, 1409.6), (19523.88, 19372.67), (1651.42, 1627.81),
+                     (911.46, 966.58), (759.83, 780.0), (1114.95, 1098.06)]     # the last three: 360ONE
+
+
+def test_a_ratio_that_is_a_power_of_ten_is_a_unit_slip_never_a_restatement():
+    for original, printed in UNIT_SLIPS:
+        assert "unit slip" in rp.plausible(original, printed), (original, printed)
+
+
+def test_a_lost_leading_digit_a_sign_flip_and_a_far_move_are_held():
+    assert rp.plausible(1305.01, 305.01) == "a leading digit lost"
+    assert rp.plausible(1475.75, -141475.75) == "sign flip"
+    assert rp.plausible(-7.16, 0.1551) == "sign flip"
+    assert rp.plausible(1503.68, 5415.38).startswith("moves more than")
+    assert rp.plausible(283.88, 934.17).startswith("moves more than")
+    for original, printed in OTHER_ERRORS:
+        assert rp.plausible(original, printed), (original, printed)
+
+
+def test_real_restatements_and_the_360one_case_still_pass_the_band():
+    for original, printed in REAL_RESTATEMENTS:
+        assert rp.plausible(original, printed) == "", (original, printed)
+
+
+def test_joined_cells_are_unreadable():
+    assert rp.unreadable(1943839.0, [1943.8, 1500.0, 19438.39]).startswith("joined")     # more digits than any neighbour
+    assert rp.unreadable(100159.0, [1001.59, 900.2, 4100.5]).startswith("joined")
+    assert rp.unreadable(-141475.75, [1450.2, 1398.4, 5600.1], "revenue").startswith("joined")   # a bracket merged
+    assert rp.unreadable(1475.75, [1450.2, 1398.4, 5600.1], "revenue") == ""
+    assert rp.unreadable(-7.16, [3.0, -2.0], "pat") == ""                                  # a loss is a figure
+
+
+def _only(monkeypatch, value, joined=""):
+    monkeypatch.setattr(rp, "comparatives", lambda rows, period, basis: [
+        {"metric": "revenue", "period": "Q3FY24", "basis": basis, "value": value, "joined": joined}])
+
+
+def test_find_stores_only_plausible_comparatives_and_reports_the_rest(monkeypatch):
+    d = dossier()
+    for printed, joined, stored_n in [(6476.8, "", 0), (64.768, "", 0), (629.79, "", 1), (640.0, "joined cells: x", 0)]:
+        _only(monkeypatch, printed, joined)
+        bad = []
+        found = rp.find(d, [], "Q4FY24", "CONSOLIDATED", rejected=bad)
+        assert (len(found), len(bad)) == (stored_n, 1 - stored_n), printed
+    assert bad[0]["reason"] == "joined cells: x"
+
+
+def test_the_360one_figure_is_still_found_in_a_real_page():
+    found = rp.find(dossier(), rows(), "Q4FY24", "CONSOLIDATED", "nse-77")
+    assert [(r["original"], r["restated"]) for r in found] == [(647.68, 629.79)]    # 2.8%: inside the band
+
+
+def test_a_rejected_reading_never_clears_an_older_restatement(monkeypatch):
+    d = dossier()
+    rp.merge(d, rp.find(d, rows(), "Q4FY24", "CONSOLIDATED", "nse-77"))
+    _only(monkeypatch, 6476.8)
+    records = rp.find(d, [], "Q1FY25", "CONSOLIDATED")
+    cleared = [(c["metric"], c["period"]) for c in rp.comparatives([], "Q1FY25", "CONSOLIDATED")
+               if rp._unchanged(d, c, "CONSOLIDATED")]
+    assert records == [] and cleared == []
+
+
+def test_comparatives_carry_the_rows_other_figures_for_the_joined_check():
+    got = pr.figure_for(rows(), "Q3FY24", "revenue", "CONSOLIDATED")
+    assert got["siblings"] and 791.74 in got["siblings"][0] and 629.79 not in got["siblings"][0]

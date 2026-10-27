@@ -93,6 +93,17 @@ def start(sink, item: dict) -> bool:
     return True
 
 
+def defer(sink, item: dict, reason: str) -> None:
+    """The reading never ran for want of a day's quota (F203): the attempt `start` counted is given back and the filing stays
+    queued ('retry'), so a spent quota never uses up a filing's MAX_ATTEMPTS. Only the queue job calls this."""
+    key = f"callmem:s:{item['day']}"
+    states = _load(sink, key)
+    item["attempts"] = max(0, int(item.get("attempts", 0)) - 1)
+    states[item["news_id"]] = {"state": "retry", "attempts": item["attempts"], "at": _stamp(), "for": item.get("at", ""),
+                               "reason": reason[:200]}
+    sink.kv_set(key, json.dumps(states, ensure_ascii=False), _stamp())
+
+
 def settle(sink, item: dict, state: str, reason: str | None = None, count: bool = True) -> str:
     """Record the outcome of one reading: 'done' or 'gave_up' leave the queue, 'retry' counts an attempt (unless ``count`` is
     false: the attempt was counted when the reading started) and becomes 'gave_up' at MAX_ATTEMPTS. Returns the state stored.

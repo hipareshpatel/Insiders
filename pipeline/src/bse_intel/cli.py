@@ -906,7 +906,8 @@ class PermanentSkip(Exception):
     """A call document that can never be read (not in the ledger, an invitation): it leaves the queue at once."""
 
 
-def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path | None, read_text, paid) -> dict:
+def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path | None, read_text, paid, gap_s: float = 0.0,
+                        retry_until: float | None = None) -> dict:
     """One transcript or deck through the call-memory reading and its checks (call_memory.py); with `apply` the kept points
     are merged into the dossier's `call_memory` by the three-way write the pipeline uses. Returns the report row. A document
     that can never be read (not in the ledger, an invitation) raises PermanentSkip; any other error is transient. No stored text
@@ -932,7 +933,7 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
         raise PermanentSkip("an invitation to a call, not a transcript or deck")
     prior = call_memory.prior_points(dossier, news_id, filing.filed_at)
     started = time.monotonic()
-    reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid)
+    reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid, gap_s, retry_until)
     kept, dropped = call_memory.check_points(reply.points, text, blocks, scope=f"{filing.scrip_code}:{news_id}")
     row |= {"symbol": filing.symbol, "company": filing.company_name, "filed_at": filing.filed_at, "kind": kind,
             "model": reply.served_by, "chars": len(text), "prompt_chars": reply.prompt_chars, "pages": doc.page_count,
@@ -940,7 +941,7 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
             "dropped": len(dropped), "counts_by_type": call_memory.counts_by_type(kept),
             "dropped_by_reason": {r: sum(d["reason"] == r for d in dropped) for r in sorted({d["reason"] for d in dropped})},
             "prior_points": len(prior), "reason": reply.reason, "applied": False, "parts": reply.parts,
-            "parts_failed": reply.parts_failed, "attempts": reply.attempts, "assembled_quotes": sum(p.quote_assembled for p in kept)}
+            "parts_failed": reply.parts_failed, "parts_failed_capacity": reply.parts_failed_capacity, "attempts": reply.attempts, "assembled_quotes": sum(p.quote_assembled for p in kept)}
     if apply and kept:
         merged = json.loads(json.dumps(dossier))
         call_memory.remember(merged, news_id, filing.filed_at, kept)
@@ -980,12 +981,16 @@ def _call_memory_pending(args, settings, sink) -> int:
     pipeline = _pipeline(settings, sink)
     paid = call_memory.paid_providers(settings)
     read_text = mre.read_text_from(sink)
+    gap_s = call_memory.pace_gap_s(settings)   # F203: one document at a time, a gap of the route's per-minute window between requests
     counts = {"done": 0, "gave_up": 0, "retry": 0}
     left = 0
+    last_requests = 0
     for n, item in enumerate(items):
         if time.monotonic() >= deadline:
             left = len(items) - n
             break
+        if n and last_requests and gap_s:
+            time.sleep(min(gap_s * last_requests, max(0.0, deadline - time.monotonic())))
         news_id = item["news_id"]
         reason = None
         if args.apply:   # the attempt counts before the reading: a run killed mid-reading still counts it
@@ -996,14 +1001,31 @@ def _call_memory_pending(args, settings, sink) -> int:
             except Exception as exc:   # noqa: BLE001 - read it anyway; the state is written after
                 log.warning("%s: queue state not saved: %s", news_id, exc)
         try:
-            row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid)
+            # a wait for a retry may run ten minutes past the budget (the job's own timeout leaves room for it)
+            row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid, gap_s, deadline + 600)
+            last_requests = int(row.get("parts") or 1) * int(row.get("attempts") or 1)
             state = "done"
-            if row.get("parts_failed") and int(item.get("attempts", 0)) < call_queue.MAX_ATTEMPTS:
-                # some parts unread: the points kept are written, and the whole document is read again (which replaces them)
-                state, reason = "retry", f"parts failed: {row['parts_failed']}"
+            if row.get("parts_failed_capacity") and int(item.get("attempts", 0)) < call_queue.MAX_ATTEMPTS:
+                # some parts unread for capacity: the points kept are written, and the whole document is read again (which
+                # replaces them). A part that failed on content would fail again: it is not read again (F203)
+                state, reason = "retry", f"parts failed: {row['parts_failed_capacity']}"
             print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "kind", "model", "asked", "kept", "dropped")}, ensure_ascii=False))
         except PermanentSkip as exc:   # nothing to read now or later
             state, reason = "gave_up", f"PermanentSkip: {exc}"
+        except call_memory.DayQuotaExhausted as exc:
+            # F203: every free model is at its day's ceiling. Stop; this filing and the rest stay queued, no attempt lost
+            print(json.dumps({"news_id": news_id, "state": "retry", "error": f"day quota: {exc}"[:300]}, ensure_ascii=False))
+            if args.apply:
+                try:
+                    call_queue.defer(sink, item, f"day quota: {exc}")
+                except Exception as e2:   # noqa: BLE001 - the state keeps the started attempt; harmless
+                    log.warning("%s: queue state not saved: %s", news_id, e2)
+            left = len(items) - n
+            break
+        except call_memory.CallReadFailed as exc:
+            last_requests = 1
+            # capacity: read again by a later run; content (no JSON, a reply the schema refuses) would answer the same
+            state, reason = ("retry", str(exc)) if exc.capacity else ("gave_up", f"content: {exc}")
         except Exception as exc:   # noqa: BLE001 - one document never stops the rest; a transient failure is retried
             state, reason = "retry", f"{type(exc).__name__}: {exc}"
         if state != "done":
@@ -1040,11 +1062,19 @@ def cmd_call_memory(args, settings, sink) -> int:
     pipeline = _pipeline(settings, sink)
     paid = call_memory.paid_providers(settings)
     read_text = mre.read_text_from(sink)
+    gap_s = call_memory.pace_gap_s(settings)   # the same pacing as the queue job (F203)
     report: list[dict] = []
-    for news_id in ids:
+    for n, news_id in enumerate(ids):
         row: dict = {"news_id": news_id}
+        if n and report and "error" not in report[-1] and gap_s:
+            time.sleep(gap_s * int(report[-1].get("parts") or 1) * int(report[-1].get("attempts") or 1))
         try:
-            row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid)
+            row = _read_call_document(pipeline, sink, news_id, args.apply, out_dir, read_text, paid, gap_s)
+        except call_memory.DayQuotaExhausted as exc:   # the rest would be refused too: stop, say so
+            row["error"] = f"DayQuotaExhausted: {exc}"[:300]
+            report.append(row)
+            print(json.dumps({k: row.get(k) for k in ("news_id", "error")}, ensure_ascii=False))
+            break
         except Exception as exc:   # noqa: BLE001 - one document never stops the rest
             row["error"] = f"{type(exc).__name__}: {exc}"[:300]
         report.append(row)

@@ -1039,4 +1039,5 @@ class CallMemoryOutput(_Lenient):
     prompt_chars: int = 0
     parts: int = 1                  # set by code: the requests the document was read in
     parts_failed: list[int] = Field(default_factory=list)
+    parts_failed_capacity: list[int] = Field(default_factory=list)   # of those, the parts that failed for capacity only (F203)
     attempts: int = 1               # set by code: 2 when the parts that got server errors were asked again after a wait

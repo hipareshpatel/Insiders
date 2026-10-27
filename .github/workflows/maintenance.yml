@@ -242,6 +242,7 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -724,6 +725,13 @@ jobs:
           git diff --cached --quiet && { echo "nothing new"; exit 0; }
           git commit -qm "${{ inputs.command }}: exported for the live review (maintenance.yml)"
           git push -q origin "$BRANCH"
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-capped-0
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: ignore
 
   # The results history, in parallel (owner, 2026-10-21: "let it get filled today", "NSE will not block it with suitable
   # rate"): twelve runners, so twelve addresses, each pacing its own NSE calls (3-5 s) and walking every twelfth company
@@ -742,6 +750,8 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP_SHARDS: ${{ inputs.ids != '' && '1' || '12' }}   # F213: the run's cap is split over the shards (FILE_CAP // 12 each); an ids run is one shard
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -778,6 +788,13 @@ jobs:
         with:
           name: seed-more-${{ matrix.shard }}
           path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seed-capped-${{ matrix.shard }}
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: ignore
 
   seed-next:
@@ -819,6 +836,8 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP_SHARDS: "4"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 4)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -850,6 +869,13 @@ jobs:
         with:
           name: gaps-more-${{ matrix.shard }}
           path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaps-capped-${{ matrix.shard }}
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: ignore
 
   gaps-next:
@@ -945,6 +971,8 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP_SHARDS: "6"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 6)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -978,6 +1006,13 @@ jobs:
           name: textback-more-${{ matrix.shard }}
           path: ${{ runner.temp }}/more/
           if-no-files-found: ignore
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: textback-capped-${{ matrix.shard }}
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: ignore
 
   # The text backfill's BSE part (TODO 87): one runner, the cards whose file is on BSE, the pipeline's BSE client and pace.
   textback-bse:
@@ -988,6 +1023,7 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -1018,6 +1054,13 @@ jobs:
         with:
           name: textback-more-bse
           path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: textback-bse-capped-0
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
           if-no-files-found: ignore
 
   # The Tijori download (F189, TODO 92). One runner for the whole universe (about 1,900 pages at 6 a second: 5 to 6 minutes);
@@ -1073,6 +1116,8 @@ jobs:
     defaults:
       run:
         working-directory: pipeline
+    env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
     steps:
       - name: Runner resources
         working-directory: .   # before checkout the pipeline folder does not exist yet
@@ -1121,6 +1166,13 @@ jobs:
           name: pdf-ensemble-pdfs
           path: ${{ runner.temp }}/pdfs/
           retention-days: 7
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-ensemble-fetch-capped-0
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: ignore
 
   pdf-ensemble-read:
     permissions:   # read only: these jobs install third-party packages and run their model code
@@ -1284,12 +1336,23 @@ jobs:
           pattern: '*-more-*'
           path: more
           merge-multiple: true
+      - uses: actions/download-artifact@v4
+        continue-on-error: true   # no marker at all: no job reached the file cap
+        with:
+          pattern: '*-capped-*'
+          path: capped
+          merge-multiple: true
       - name: Start the next command
         env:
           GH_TOKEN: ${{ github.token }}
           CMD: ${{ inputs.command }}
           THEN: ${{ inputs.then }}
         run: |
+          # F213: a run that reached the file cap is not "done": nothing moves on and nothing is dispatched again by itself
+          if [ -n "$(ls -A capped 2>/dev/null || true)" ]; then
+            echo "file cap reached: dispatch again for the rest ($CMD; then='$THEN' is not started)"
+            exit 0
+          fi
           left=$(ls -A more 2>/dev/null || true)
           case "$CMD" in
             seed-memory|memory-gaps-fill)

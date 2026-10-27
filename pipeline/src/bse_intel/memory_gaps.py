@@ -228,8 +228,8 @@ def fill(sink, report: dict, seed_fn, time_budget: float, restart: bool = False,
     """Seed (results only) the companies with gaps, one ``seed_fn(scrip, since)`` call each: the seed's per-company
     function; a NSE refusal (SourceBlockedError) propagates, as in seed-memory. A company an earlier pass already tried
     is skipped unless ``restart`` (the tried list is saved after every company, so a stopped run resumes). ``more`` is
-    true when the time budget ended the run with companies left."""
-    from .nse import SourceBlockedError
+    true when the time budget or the file cap (``capped``, F213) ended the run with companies left."""
+    from .nse import FileCapReached, SourceBlockedError
 
     key = TRIED_KEY + (f":{shard[0]}of{shard[1]}" if shard else "")
     tried = {} if restart else _load_tried(sink.kv_get(key))
@@ -237,7 +237,7 @@ def fill(sink, report: dict, seed_fn, time_budget: float, restart: bool = False,
     todo = [s for s, r in sorted(report["companies"].items()) if has_gap(r)]
     if shard:
         todo = todo[shard[0]::shard[1]]
-    attempted, failed, more = [], [], False
+    attempted, failed, more, capped = [], [], False, False
     deadline = clock() + time_budget
     for scrip in todo:
         wanted = _gap_signature(report["companies"][scrip])
@@ -251,6 +251,12 @@ def fill(sink, report: dict, seed_fn, time_budget: float, restart: bool = False,
         ok = True
         try:
             seed_fn(scrip, since_for(report["companies"][scrip]))
+        except FileCapReached as exc:
+            # the run's file cap (F213): this company is not finished, so it is neither tried nor failed nor counted as
+            # attempted; the tried list as saved after the last finished company is where the next run resumes
+            log.warning("memory-gaps fill stops at %s: %s", scrip, exc)
+            more = capped = True
+            break
         except SourceBlockedError:
             raise
         except Exception as exc:
@@ -264,4 +270,4 @@ def fill(sink, report: dict, seed_fn, time_budget: float, restart: bool = False,
             fails[scrip] = fails.get(scrip, 0) + 1
         sink.kv_set(key, json.dumps(tried, sort_keys=True), now_iso())
         sink.kv_set(key + ":failed", json.dumps(fails, sort_keys=True), now_iso())
-    return {"attempted": attempted, "failed": failed, "more": more}
+    return {"attempted": attempted, "failed": failed, "more": more, "capped": capped}

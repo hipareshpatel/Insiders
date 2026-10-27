@@ -1394,7 +1394,7 @@ def fetch_with_retry(src, url: str, attempts: int = 3, pause: float = 4.0) -> tu
 def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
     """Download the candidate results PDFs of the open pairs of a screener-referee CSV into ``out_dir`` (``<key>.pdf`` and
     ``manifest.json``: key -> url), once, for the per-reader jobs. Reads NSE only."""
-    from .nse import NseClient
+    from .nse import FileCapReached, NseClient
     from .pdf_referee import MAX_CANDIDATES, Sources, load_csv, open_pairs
     os.environ["PDF_READERS"] = DEFAULT_READERS
     os.makedirs(out_dir, exist_ok=True)
@@ -1405,9 +1405,12 @@ def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
     periods = list(dict.fromkeys((p["symbol"], p["period"]) for p in pairs))
     if limit:
         periods = periods[:limit]
+    capped = False   # the run's file cap (F213): what is collected so far is kept, the rest waits for the next run
     with NseClient() as nse:
         src = Sources(nse, ocr=False)
         for symbol, period in periods:
+            if capped:
+                break
             listed = src.filings(symbol, period)
             if isinstance(listed, str):
                 continue
@@ -1415,7 +1418,12 @@ def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
                 key = pdf_key(f.pdf_url)
                 if key in seen:
                     continue
-                data, why = fetch_with_retry(src, f.pdf_url)
+                try:
+                    data, why = fetch_with_retry(src, f.pdf_url)
+                except FileCapReached:
+                    capped = True
+                    print("file cap reached: the rest waits for the next run")
+                    break
                 if data:
                     with open(os.path.join(out_dir, f"{key}.pdf"), "wb") as fh:
                         fh.write(data)

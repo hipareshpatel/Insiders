@@ -37,6 +37,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from . import pipeline as P
 from .bse import AttachmentError, AttachmentTooLarge, SourceBlockedError
+from .nse import FileCapReached
 from .extract import Document
 from .timeutil import now_iso
 
@@ -173,7 +174,7 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
         todo = todo[shard[0]::shard[1]]
     queue = [r for r in todo if r["news_id"] not in before]
     totals = {"filings": len(todo), "skipped_failed_before": len(todo) - len(queue), "fetched": 0, "written": 0,
-              "failed": 0, "more": False, "ocr": ocr, "source": source}
+              "failed": 0, "more": False, "capped": False, "ocr": ocr, "source": source}
     reasons: Counter = Counter()
     read_seconds = 0.0
 
@@ -222,6 +223,13 @@ def run(sink, rows: list[dict], client, shard: tuple[int, int] | None = None, ti
             kind, payload = futures.pop(i).result()
             totals["fetched"] += 1
             if kind == "error":
+                if isinstance(payload, FileCapReached):
+                    # the run's file cap (F213): this filing was not fetched, so it is not written, not kept as failed
+                    # and not counted; the rest waits for the next run (the failed list and the stored texts resume it)
+                    totals["fetched"] -= 1
+                    totals["more"] = totals["capped"] = True
+                    log.warning("%s", payload)
+                    break
                 if isinstance(payload, SourceBlockedError):
                     refused += 1
                     if source != "bse" or not served or refused >= REFUSED_STOP:
@@ -292,4 +300,6 @@ def render(outcome: dict, counts: dict | None = None) -> str:
         lines.append(f"  failed: {why:<30} {n}")
     if outcome.get("stopped"):
         lines.append(f"stopped: {outcome['stopped']}")
+    if outcome.get("capped"):
+        lines.append("file cap reached: the rest waits for the next run")
     return "\n".join(lines)

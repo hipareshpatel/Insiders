@@ -27,6 +27,8 @@ from urllib.parse import urlparse
 
 import httpx
 
+from .file_cap import files
+
 from . import nse as nse_api
 
 log = logging.getLogger(__name__)
@@ -68,6 +70,7 @@ class HttpFetcher:
         client.warm_up()
 
     def get(self, url: str) -> Response:
+        files.take(url)   # a file for the file cap (F213)
         start = time.monotonic()
         try:
             r = self._client._client.get(url)
@@ -136,7 +139,13 @@ def run_round(name: str, pause: tuple[float, float], workers: int, urls: list[st
             if not first and pause[1] > 0:
                 sleep(rng.uniform(*pause))
             first = False
-            resp = fetcher.get(url)
+            try:
+                resp = fetcher.get(url)
+            except nse_api.FileCapReached:
+                with lock:   # the run's file cap (F213): this file and the rest of the list wait for the next run
+                    result.stopped = result.stopped or "file cap reached"
+                stop.set()
+                return
             row = _record(url, resp)
             with lock:
                 result.requests.append(row)

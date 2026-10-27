@@ -33,7 +33,7 @@ import time
 from collections import Counter
 
 from .metrics import CONSOLIDATED
-from .nse import SourceBlockedError
+from .nse import FileCapReached, SourceBlockedError
 from .periods import canonical_period, quarter_index
 from .screener_crosscheck import _close, _neighbours, CLASSES
 from . import xbrl
@@ -254,6 +254,7 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
     for r in pairs:
         by_company.setdefault((r["scrip"], r["symbol"], r.get("basis") or ""), []).append(r)
     started, done, blocked, out_of_time = clock(), 0, False, False
+    capped = False   # the run's file cap (F213): the pairs left are not_run and read by the next run
     results: list[dict] = []
     calls = {"list": 0, "files": 0, "companies": 0}
 
@@ -264,19 +265,23 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
     for (scrip, symbol, basis), items in by_company.items():
         if not blocked and time_budget is not None and clock() - started > time_budget:
             out_of_time = True
-        why = "blocked" if blocked else "time budget" if out_of_time else "limit" if limit is not None and done >= limit else ""
+        why = "blocked" if blocked else "file cap" if capped else "time budget" if out_of_time else "limit" if limit is not None and done >= limit else ""
         if why:
             results += [not_run(r, why) for r in items]
             continue
         files = CompanyFiles(nse, symbol, basis or None, sink)
         calls["companies"] += 1
         for r in items:
-            if blocked:
-                results.append(not_run(r, "blocked"))
+            if blocked or capped:
+                results.append(not_run(r, "blocked" if blocked else "file cap"))
                 continue
             try:
                 results.append({**r, **referee_pair(files, r)})
                 done += 1
+            except FileCapReached as exc:
+                capped = True
+                log.warning("file cap reached (%s): stopping the referee; the rest waits for the next run", exc)
+                results.append(not_run(r, "file cap"))
             except SourceBlockedError as exc:
                 blocked = True
                 log.warning("NSE refused (%s): stopping the referee", exc)
@@ -285,7 +290,10 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
         calls["files"] += files.calls["files"]
         if progress and calls["companies"] % every == 0:
             progress(summarise(results, calls, blocked, out_of_time))
-    return summarise(results, calls, blocked, out_of_time)
+    summary = summarise(results, calls, blocked, out_of_time)
+    if capped:
+        summary["file_cap_reached"] = True
+    return summary
 
 
 def summarise(results: list[dict], calls: dict, blocked: bool = False, out_of_time: bool = False) -> dict:
@@ -351,6 +359,8 @@ def render(summary: dict) -> str:
         lines.append("stopped: NSE refused the session")
     if summary["out_of_time"]:
         lines.append("stopped: time budget")
+    if summary.get("file_cap_reached"):
+        lines.append("file cap reached: the rest waits for the next run")
     return "\n".join(lines)
 
 

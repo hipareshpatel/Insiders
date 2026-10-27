@@ -62,3 +62,20 @@ def test_a_grounded_core_catalyst_and_timeline_stay():
     out = _out(card={"core_catalyst": "A ₹125 Cr NCD raise"}, timeline_entry="")
     assert ground_all_fields(out, SOURCES) == []
     assert out.card.core_catalyst == "A ₹125 Cr NCD raise" and out.timeline_entry == out.card.headline
+
+
+def test_a_figure_code_computed_from_the_filing_is_kept():
+    # review of F204: the call passed no computed figures, so a verified sum the main check forgives was dropped here first
+    out = _out(card={"track_next": {"catalysts": ["NCD proceeds of ₹229.9 Cr in total"]}})
+    ground_all_fields(out, SOURCES)
+    assert out.card.track_next.catalysts == []
+    out = _out(card={"track_next": {"catalysts": ["NCD proceeds of ₹229.9 Cr in total"]}})
+    ground_all_fields(out, SOURCES, [229.9])
+    assert out.card.track_next.catalysts == ["NCD proceeds of ₹229.9 Cr in total"]
+
+
+def test_the_pipeline_passes_its_computed_figures():
+    from bse_intel import pipeline
+    out = _out(card={"track_next": {"catalysts": ["NCD proceeds of ₹125 Cr"]}})
+    quant = pipeline.check_quant(out.card.quantified_impact, *SOURCES)
+    assert pipeline.derived_figures(out.card, quant, SOURCES) == []

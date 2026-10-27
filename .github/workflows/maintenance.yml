@@ -343,6 +343,8 @@ jobs:
           flags=""
           [ "$APPLY" = "true" ] && flags="$flags --apply"
           [ "$RESTART" = "true" ] && flags="$flags --restart"
+          # F218: the fill reads BSE through the ported adapter, which uses requests (the `bse` extra), as bse-results-test
+          "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"
           timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps-fill-bse --time-budget 17400 $flags --json "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.json" --csv "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.csv" | tee "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.txt" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4

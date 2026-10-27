@@ -24,9 +24,11 @@ def _encode(row) -> str:
 
 
 class PlatformSink(Sink):
-    def __init__(self, base_url: str, token: str, timeout: float = 60.0, transport: httpx.BaseTransport | None = None):
+    def __init__(self, base_url: str, token: str, timeout: float = 60.0, transport: httpx.BaseTransport | None = None,
+                 attempts: int = 4):
         if not base_url or not token:
             raise ValueError("PLATFORM_API_URL and INGEST_TOKEN are required for the platform sink")
+        self._attempts = max(1, attempts)   # F216: a long read-only run sets a small number so one dead request ends fast
         self._http = httpx.Client(
             base_url=base_url.rstrip("/") + "/api/internal",
             headers={"Authorization": f"Bearer {token}"},
@@ -38,12 +40,12 @@ class PlatformSink(Sink):
         self._http.close()
 
     def _request(self, method: str, url: str, idempotent: bool = True, **kwargs) -> httpx.Response:
-        for attempt in range(4):
+        for attempt in range(self._attempts):
             try:
                 resp = self._http.request(method, url, **kwargs)
             except httpx.TransportError as exc:
                 # A connect failure never reached the Worker; anything later may have been applied.
-                if attempt == 3 or not (idempotent or isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout))):
+                if attempt == self._attempts - 1 or not (idempotent or isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout))):
                     # Any transport failure is the site's, not the filing's: a read or write timeout raised as itself
                     # reached the pipeline's generic handler and spent one of the filing's attempts, so a slow Worker
                     # could use up a filing's three (survey, 24 Oct 2026). A filing's writes are idempotent (a re-run
@@ -55,7 +57,7 @@ class PlatformSink(Sink):
                 continue
             # 429 and 503 mean the request was not processed; other 5xx may have been applied.
             if resp.status_code in (429, 503) or (resp.status_code >= 500 and idempotent):
-                if attempt == 3:
+                if attempt == self._attempts - 1:
                     raise SinkUnavailable(f"the platform API at {self._http.base_url} answered {resp.status_code} "
                                           f"through every retry: {resp.text[:200]}")
                 time.sleep(2 ** (attempt + 1))

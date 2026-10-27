@@ -117,6 +117,16 @@ def memory_year_check() -> bool:
     return (_env("MEMORY_YEAR_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_watch_verdict() -> bool:
+    """CARD_WATCH_VERDICT (default off; F205, TODO 106): code decides a watch's or guidance's MET / MISSED / NOT DUE from the
+    target's direction (at or below, at or above, a range), the target's period against the filing's (a later period is not
+    due, no missed signal) and the figure on the target's own kind and unit (``watch_code.py``); a card sentence that says
+    met when code says missed, or the reverse, is cut with a change-log note. MAHABANK's GNPA 1.25% "missed" a 1.45% ceiling;
+    SAKAR's FY27 target "missed" on a Q2 card; APL Apollo's 9.63 lakh t "meets" a 10 lakh t watch; Unimech's breach on a
+    target memory shows met. Read at the call."""
+    return (_env("CARD_WATCH_VERDICT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def memory_call_v2() -> bool:
     """MEMORY_CALL_V2 (default off; TODO 83, F180): every earnings-call transcript and investor deck gets a second, memory-only
     AI reading (call_memory.py) whose typed points, each with its page and exact quote, are checked by code and kept in the
@@ -330,6 +340,14 @@ class Settings:
     # row names, screener_fill's rows) behave as before, switch or not. LINE_MAP=1 is reserved for changes that would alter
     # a figure (the PDF reader taking its labels from the map, TODO 93 item 4); none is built, so it does nothing yet
     line_map: bool = field(default_factory=lambda: _env("LINE_MAP", "0") in ("1", "true", "yes"))
+    # The PDF page and row matcher fixes of the hard-set root cause (F215), each off by default. PDF_DATES_2DIGIT: dates with
+    # a two-digit year ("31-Mar-24", "31Mar-23") count in the results-page header (the live card path never sets it);
+    # PDF_PAGE_RANK: split-line date headers and 3-metric pages pass the page gate, results pages rank above segment pages,
+    # scanned PDFs are searched to PDF_SCAN_PAGE_LIMIT_ON pages; PDF_ROW_FIXES: a row with one extra non-date figure and
+    # a total profit row followed by owners' / minority sub-lines are read (basis, unit and text-layer proofs unchanged)
+    pdf_dates_2digit: bool = field(default_factory=lambda: _env("PDF_DATES_2DIGIT", "0") in ("1", "true", "yes"))
+    pdf_page_rank: bool = field(default_factory=lambda: _env("PDF_PAGE_RANK", "0") in ("1", "true", "yes"))
+    pdf_row_fixes: bool = field(default_factory=lambda: _env("PDF_ROW_FIXES", "0") in ("1", "true", "yes"))
     # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
     # not reachable or another run on the same address is already calling it (NSE limits by IP).
     nse_annual_xbrl: bool = field(default_factory=lambda: _env("NSE_ANNUAL_XBRL", "1") not in ("0", "false", "no"))

@@ -76,7 +76,9 @@ import json
 import os
 import pathlib
 import random
+import signal
 import sys
+import time
 import tomllib
 from collections import Counter, OrderedDict
 
@@ -93,6 +95,7 @@ from bse_intel.dossier import dossier_as_of, latest_fundamentals, results_snapsh
 from bse_intel.extract import Document  # noqa: E402
 from bse_intel.grounding import declared_unit  # noqa: E402
 from bse_intel.models import Card, DealValue, Filing, Pass2Output  # noqa: E402
+from bse_intel.sinks.base import SinkUnavailable  # noqa: E402
 from onoff_facts import tagged_from_memory  # noqa: E402
 
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
@@ -645,14 +648,52 @@ class FileSource:
 
 
 # ---------------------------------------------------------------- the run
-def run(source, wanted: tuple[str, ...]) -> dict:
+_STOP: list[str] = []   # a SIGTERM or SIGINT (GitHub's cancel) puts its name here; the loop then ends cleanly
+DEAD_RUN = 10   # cards in a row whose platform reads all failed: the Worker is down, so stop and keep what is done
+
+
+def _on_signal(signum, _frame) -> None:
+    _STOP.append(signal.Signals(signum).name)
+
+
+def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadline: float | None = None) -> dict:
+    """One pass over the stored cards. F216: every record is appended to out/records.jsonl as it is computed, and the
+    pass ends cleanly (`stopped` says why) at the deadline (time.monotonic), on SIGTERM/SIGINT, or when the platform
+    stops answering, so a long run always has something to upload."""
     records = {name: [] for name, _ in CHECKS}
     seen = {name: 0 for name, _ in CHECKS}
     skipped = {name: Counter() for name, _ in CHECKS}
     errors = {name: [] for name, _ in CHECKS}
     cards = 0
-    for row in source.rows():
+    stopped = None
+    dead = 0
+    sink_file = open(out / "records.jsonl", "a", encoding="utf-8") if out else None
+
+    def keep(name: str, rec: dict) -> None:
+        records[name].append(rec)
+        if sink_file:
+            sink_file.write(json.dumps({"check": name, "record": rec}, ensure_ascii=False, default=str) + "\n")
+
+    rows = iter(source.rows())
+    while True:
+        if _STOP:
+            stopped = f"stopped by {_STOP[0]}"
+            break
+        if deadline is not None and time.monotonic() >= deadline:
+            stopped = "time budget reached"
+            break
+        if dead >= DEAD_RUN:
+            stopped = f"the platform did not answer for {DEAD_RUN} cards in a row"
+            break
+        try:
+            row = next(rows)
+        except StopIteration:
+            break
+        except SinkUnavailable as exc:
+            stopped = f"the platform did not answer the card list ({exc})"
+            break
         cards += 1
+        dead_card = False
         try:
             raw = row.get("card_json")
             card = json.loads(raw) if isinstance(raw, str) else raw or {}
@@ -663,7 +704,13 @@ def run(source, wanted: tuple[str, ...]) -> dict:
         results = (card.get("event_type") or row.get("event_type")) == "RESULTS"
         period = (card.get("results") or {}).get("period")
         scrip = str(row.get("scrip_code"))
-        body = source.text_body(row["news_id"])
+        try:
+            body = source.text_body(row["news_id"])
+        except SinkUnavailable:
+            dead += 1
+            for name in wanted:
+                skipped[name]["platform did not answer"] += 1
+            continue
         try:
             text = Document.from_cache(json.loads(gzip.decompress(body))).select_text(10_000_000, []) if body else None
         except Exception:
@@ -689,7 +736,7 @@ def run(source, wanted: tuple[str, ...]) -> dict:
                         rec = check_table(card, memory(), row, text, period, switch)
                         rec["has_text"] = text is not None
                         seen[name] += 1
-                        records[name].append(rec)
+                        keep(name, rec)
                 elif name == "consolidated_only":
                     if not results or not period or card.get("basis") != "CONSOLIDATED":
                         skipped[name]["not a consolidated results card"] += 1
@@ -701,7 +748,7 @@ def run(source, wanted: tuple[str, ...]) -> dict:
                             skipped[name]["no consolidated figures in memory"] += 1
                         else:
                             seen[name] += 1
-                            records[name].append(rec)
+                            keep(name, rec)
                 elif name == "two_parts":
                     if text is None:
                         skipped[name]["no text"] += 1
@@ -709,47 +756,53 @@ def run(source, wanted: tuple[str, ...]) -> dict:
                         skipped[name]["no memory"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_two_parts(card, memory(), row, text))
+                        keep(name, check_two_parts(card, memory(), row, text))
                 elif name == "grounded_figures":
                     seen[name] += 1
-                    records[name].append(check_grounded(card, memory() or None, row, text, period, results))
+                    keep(name, check_grounded(card, memory() or None, row, text, period, results))
                 elif name == "guidance_dated":
                     if not any(isinstance(x, dict) and x.get("type") in GUIDANCE_SIGNALS for x in card.get("signals") or []) \
                             and not memory():
                         skipped[name]["no guidance signal and no memory"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_guidance(card, memory() or None, row))
+                        keep(name, check_guidance(card, memory() or None, row))
                 elif name == "year_check":
                     if not results or not period:
                         skipped[name]["not a results card with a period"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_year(card, memory() or None, row, text, period))
+                        keep(name, check_year(card, memory() or None, row, text, period))
                 elif name == "footer_plausible":
                     if not _kpi_specs(card):
                         skipped[name]["no footer KPI on the card"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_footer(card, memory() or None, row, text, period if results else None))
+                        keep(name, check_footer(card, memory() or None, row, text, period if results else None))
                 elif name in ("eps_follows_profit", "eps_whole"):
                     if not results or not period:
                         skipped[name]["not a results card with a period"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_eps(card, memory() or None, row, text, period, switch))
+                        keep(name, check_eps(card, memory() or None, row, text, period, switch))
                 elif name == "one_basis":
                     seen[name] += 1
-                    records[name].append(check_one_basis(card, memory() or None, row, period if results else None))
+                    keep(name, check_one_basis(card, memory() or None, row, period if results else None))
                 else:
                     if text is None:
                         skipped[name]["no text"] += 1
                     else:
                         seen[name] += 1
-                        records[name].append(check_quote_exact(card, text, row))
+                        keep(name, check_quote_exact(card, text, row))
             except Exception as exc:   # a card a check cannot read is reported, not hidden
                 errors[name].append({"news_id": row.get("news_id"), "error": f"{type(exc).__name__}: {exc}"})
-    return {"cards": cards, "records": records, "seen": seen, "skipped": skipped, "errors": errors}
+                dead_card = dead_card or isinstance(exc, SinkUnavailable)
+        dead = dead + 1 if dead_card else 0
+        if sink_file:
+            sink_file.flush()   # this card's records are on disk before the next one is read
+    if sink_file:
+        sink_file.close()
+    return {"cards": cards, "records": records, "seen": seen, "skipped": skipped, "errors": errors, "stopped": stopped}
 
 
 def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n: int, stamp: str) -> dict:
@@ -881,6 +934,8 @@ def main() -> int:
     ap.add_argument("--sample", type=int, default=20)
     ap.add_argument("--only", default=",".join(n for n, _ in CHECKS))
     ap.add_argument("--stamp", default="2026-10-26")
+    ap.add_argument("--time-budget", type=float, default=0,
+                    help="seconds; the pass stops cleanly then and the summaries are written from what is done (0 = none)")
     args = ap.parse_args()
     if bool(args.platform) == bool(args.cards):
         ap.error("give OUT_DIR and one of --platform or --cards FILE --texts DIR")
@@ -891,12 +946,18 @@ def main() -> int:
     out = pathlib.Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     source = PlatformSource(args.limit) if args.platform else FileSource(args.cards, args.texts or ".", args.dossiers, args.limit)
-    result = run(source, wanted)
+    signal.signal(signal.SIGTERM, _on_signal)
+    signal.signal(signal.SIGINT, _on_signal)
+    deadline = time.monotonic() + args.time_budget if args.time_budget > 0 else None
+    result = run(source, wanted, out, deadline)
+    if result["stopped"]:
+        print(f"::warning::release check stopped early ({result['stopped']}); results below cover {result['cards']} cards")
     totals = {name: finish(name, switch, result, out, args.seed, args.sample, args.stamp)
               for name, switch in CHECKS if name in wanted}
     (out / "release-check.json").write_text(json.dumps(totals, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "release-check.txt").write_text("\n".join(
-        [f"Release check, {args.stamp}: {result['cards']} stored cards read", ""]
+        [f"Release check, {args.stamp}: {result['cards']} stored cards read"
+         + (f" (PARTIAL, stopped early: {result['stopped']})" if result["stopped"] else ""), ""]
         + [f"{n:18} {t['switch']}: checked {t['cards_checked']}, changed {t['cards_changed']}, added {t['lines_added']}, "
            f"removed {t['lines_removed']}, changed lines {t['lines_changed']}, errors {t['errors']}, sample {t['sample']}"
            f", not replayable {t.get('not_replayable_cards', 0)}"

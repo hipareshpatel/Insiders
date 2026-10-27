@@ -60,6 +60,7 @@ log = logging.getLogger(__name__)
 
 MAX_PAGES = 4               # statement pages passed to the readers (MinerU takes about a minute a page)
 SCAN_PAGE_LIMIT = 12        # scanned pages are searched only in short PDFs
+SCAN_PAGE_LIMIT_RANKED = 30  # with PDF_PAGE_RANK: the 25-26 page scans are searched too; at most MAX_PAGES pages are read either way
 DPI = 200
 WORKER_TIMEOUT = 900        # seconds for one reader on one PDF
 LAYER_MIN_CHARS = 40        # fewer characters on a page: no text layer
@@ -449,6 +450,11 @@ def _period_index(row, period: str) -> int | None:
     return row.dates.index(target[1]) if target[1] in row.dates else None
 
 
+def _row_fixes() -> bool:
+    from .settings import get_settings
+    return get_settings().pdf_row_fixes
+
+
 def _other(basis: str | None) -> str | None:
     from .pdf_referee import CONSOLIDATED, STANDALONE
     return {CONSOLIDATED: STANDALONE, STANDALONE: CONSOLIDATED}.get(basis or "")
@@ -458,7 +464,7 @@ def reading_of(reader: "Reader", rows: list, layers: dict[int, PageLayer], perio
                anywhere: bool = True) -> Reading:
     """One reader's figure for the pair, with the proof the rule needs: the basis proven from a title (rows with no proven
     basis are never taken), the printed cell found in the text layer on its row and column, the source and the printed precision."""
-    from .pdf_referee import figure_for
+    from .pdf_referee import _TOTAL_INCOME, figure_for
     got = figure_for(rows, period, metric, basis)
     values = got["values"]
     if not values:
@@ -473,6 +479,10 @@ def reading_of(reader: "Reader", rows: list, layers: dict[int, PageLayer], perio
     if len(distinct) > 1:
         return Reading(reader.name, reader.family, "conflict", note="rows differ: " + ", ".join(f"{d:g}" for d in distinct[:4]))
     value, label, page = values[0]
+    if metric == "revenue" and _row_fixes() and all(_TOTAL_INCOME.search(lab) for _, lab, _ in values):
+        # memory's revenue is revenue from operations: "Total income" includes other income, so a table that prints no such row
+        # has no figure for the pair (the key tags it revenue_total_not_printed); F215, PDF_ROW_FIXES
+        return Reading(reader.name, reader.family, "none", note=f"only 'Total income' printed ({value:g}), which includes other income")
     layer = layers.get(page)
     has_layer = bool(layer and layer.has_layer)
     token = ""
@@ -541,24 +551,63 @@ def _has_date_header(layer: PageLayer) -> bool:
     from .pdf_referee import _dates_in
     if any(len(_dates_in(line)) >= 2 for line in layer.text.splitlines()):
         return True
-    return any(len(_dates_in(" ".join([b.label] + b.nums))) >= 2 for b in layer.bands())
+    if any(len(_dates_in(" ".join([b.label] + b.nums))) >= 2 for b in layer.bands()):
+        return True
+    from .settings import get_settings
+    if get_settings().pdf_page_rank:     # F215: each date of the header on a line of its own ("-31Mar-23" / "31-Dec-22" / ...)
+        lines = layer.text.splitlines()
+        counts = [len(_dates_in(line)) if len(line.strip()) <= 16 else 0 for line in lines]     # a line of its own, not prose
+        return any(sum(counts[i:i + 8]) >= 3 for i in range(len(lines)))
+    return False
+
+
+_SPLIT_DATE = re.compile(r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}\s*,?\s+20\d{2}\b", re.I)
+_SEGMENT_HEAD = re.compile(r"\bsegment", re.I)
+
+
+def _split_date_header(layer: PageLayer) -> bool:
+    """A header whose dates the text layer breaks over lines ("September 30," then "2024" on a line of its own): two or more
+    dates once the whitespace between day and year is one space (F215, PDF_PAGE_RANK). A cover letter says "September 30, 2024"
+    twice too, so the caller also asks for labelled rows."""
+    return len(_SPLIT_DATE.findall(layer.text)) >= 2
+
+
+def _segment_page(layer: PageLayer) -> bool:
+    """A segment-wise page: "segment" in its first lines, where a results page has its title (F215, PDF_PAGE_RANK)."""
+    return bool(_SEGMENT_HEAD.search("\n".join(layer.text.splitlines()[:HEADER_LINES // 2])))
 
 
 def statement_pages(layers: dict[int, PageLayer], max_pages: int = MAX_PAGES) -> list[int]:
     """Pages that hold a results table: a "Statement of ... Results" heading or a header with two dates and the period
     words (a page of the text layer), best first; a page that also has labelled revenue, profit and EPS rows ranks above one that
-    only repeats the heading (a segment or notes page); pages with no text layer fill what is left in a short PDF."""
+    only repeats the heading (a segment or notes page); pages with no text layer fill what is left in a short PDF.
+
+    With PDF_PAGE_RANK (F215): a page whose date header is split over lines, or one with three metric kinds under a results
+    heading, passes the date gate too; a segment page ranks below a page of the statement itself before the top ``max_pages``
+    are taken; scanned pages are searched in PDFs of up to ``SCAN_PAGE_LIMIT_RANKED`` pages."""
+    from .settings import get_settings
+    ranked = get_settings().pdf_page_rank
     scored: list[tuple[int, int]] = []
     for page, layer in layers.items():
         if not layer.has_layer:
             continue
+        kinds = None
         if not _has_date_header(layer):
-            continue
+            if not ranked:
+                continue
+            kinds = _metric_kinds(layer)
+            if not ((kinds >= 2 and _split_date_header(layer)) or (kinds >= 3 and _RESULTS_HEAD.search(layer.text))):
+                continue
         score = (2 if _RESULTS_HEAD.search(layer.text) else 0) + (1 if _PERIOD_WORDS.search(layer.text) else 0)
         if score:
-            scored.append((-(score + 2 * _metric_kinds(layer)), page))
+            if kinds is None:
+                kinds = _metric_kinds(layer)
+            rank = score + 2 * kinds
+            if ranked and kinds < 3 and _segment_page(layer):
+                rank -= 3
+            scored.append((-rank, page))
     pages = [p for _, p in sorted(scored)][:max_pages]
-    if len(pages) < max_pages and len(layers) <= SCAN_PAGE_LIMIT:
+    if len(pages) < max_pages and len(layers) <= (SCAN_PAGE_LIMIT_RANKED if ranked else SCAN_PAGE_LIMIT):
         pages += [p for p, layer in layers.items() if not layer.has_layer][: max_pages - len(pages)]
     return sorted(pages)
 
@@ -1439,8 +1488,18 @@ def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
     return 0
 
 
-def read_all(name: str, pdf_dir: str, out_path: str) -> int:
-    """Run ONE reader over every PDF of ``pdf_dir`` (this process loads only that reader) and write its tables."""
+def _save_readings(out_path: str, name: str, started: float, result: dict) -> None:
+    import time
+    tmp = out_path + ".part"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump({"reader": name, "seconds": round(time.monotonic() - started), "pdfs": result}, fh)
+    os.replace(tmp, out_path)   # a reader killed half-way leaves the last complete file, never a torn one
+
+
+def read_all(name: str, pdf_dir: str, out_path: str, budget_s: float | None = None) -> int:
+    """Run ONE reader over every PDF of ``pdf_dir`` (this process loads only that reader) and write its tables.
+    F216: the file is rewritten every 5 PDFs, and after ``budget_s`` seconds (env PDF_READ_BUDGET_S from the CLI) the
+    PDFs not yet read are marked "not read: time budget" (settled as unavailable) so the job still uploads what it has."""
     import time
     reader = READERS[name]
     with open(os.path.join(pdf_dir, "manifest.json"), encoding="utf-8") as fh:
@@ -1451,8 +1510,12 @@ def read_all(name: str, pdf_dir: str, out_path: str) -> int:
         print(f"{name}: unavailable (package not installed)")
         result = {k: {"url": u, "pages": [], "tables": [], "error": "unavailable"} for k, u in manifest.items()}
     else:
-        for key, url in manifest.items():
+        for n, (key, url) in enumerate(manifest.items(), 1):
             entry = {"url": url, "pages": [], "tables": [], "error": ""}
+            if budget_s and time.monotonic() - started >= budget_s:
+                entry["error"] = "not read: time budget"
+                result[key] = entry
+                continue
             try:
                 with open(os.path.join(pdf_dir, f"{key}.pdf"), "rb") as fh:
                     data = fh.read()
@@ -1462,9 +1525,10 @@ def read_all(name: str, pdf_dir: str, out_path: str) -> int:
             except Exception as exc:   # noqa: BLE001 - one PDF failing leaves the rest
                 entry["error"] = f"{type(exc).__name__}: {exc}"[:200]
             result[key] = entry
+            if n % 5 == 0:
+                _save_readings(out_path, name, started, result)
     seconds = round(time.monotonic() - started)
-    with open(out_path, "w", encoding="utf-8") as fh:
-        json.dump({"reader": name, "seconds": seconds, "pdfs": result}, fh)
+    _save_readings(out_path, name, started, result)
     done = sum(1 for e in result.values() if not e["error"])
     print(f"{name}: {done} of {len(result)} PDFs read in {seconds} s")
     return 0
@@ -1477,7 +1541,7 @@ if __name__ == "__main__":
     if len(argv) in (3, 4) and argv[0] == "--collect":
         sys.exit(collect(argv[1], argv[2], int(argv[3]) if len(argv) == 4 else None))
     if len(argv) == 4 and argv[0] == "--read":
-        sys.exit(read_all(argv[1], argv[2], argv[3]))
+        sys.exit(read_all(argv[1], argv[2], argv[3], float(os.environ.get("PDF_READ_BUDGET_S") or 0) or None))
     print("usage: python -m bse_intel.pdf_readers --worker <reader> <pdf> <out.json> | --collect <csv> <dir> [limit] "
           "| --read <reader> <dir> <out.json>", file=sys.stderr)
     sys.exit(2)

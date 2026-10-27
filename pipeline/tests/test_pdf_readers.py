@@ -261,6 +261,25 @@ def test_a_reader_missing_its_package_writes_unavailable_for_every_pdf(monkeypat
     assert json.loads((tmp_path / "o.json").read_text())["pdfs"]["k1"]["error"] == "unavailable"
 
 
+def test_read_all_saves_as_it_goes_and_marks_the_unread_after_its_budget(monkeypatch, tmp_path):
+    """F216: the readings file is rewritten every 5 PDFs and a reader out of time leaves the rest marked, not missing."""
+    import json
+    keys = [f"k{i}" for i in range(7)]
+    (tmp_path / "manifest.json").write_text(json.dumps({k: "u" for k in keys}))
+    for k in keys:
+        (tmp_path / f"{k}.pdf").write_bytes(b"not a pdf")
+    saved = []
+    real = prd._save_readings
+    monkeypatch.setattr(prd, "_save_readings", lambda o, n, s, r: (saved.append(len(r)), real(o, n, s, r)))
+    monkeypatch.setattr(prd, "READERS", {"camelot": FakeReader("camelot", "camelot", grid())})
+    assert prd.read_all("camelot", str(tmp_path), str(tmp_path / "o.json")) == 0
+    assert saved == [5, 7]   # once after the fifth PDF, once at the end
+    saved.clear()
+    assert prd.read_all("camelot", str(tmp_path), str(tmp_path / "o2.json"), budget_s=1e-9) == 0
+    stored = json.loads((tmp_path / "o2.json").read_text())["pdfs"]
+    assert set(stored) == set(keys) and all(e["error"] == "not read: time budget" for e in stored.values())
+
+
 # --- independent review fixes: basis, vetoes, cell-level proof, exact tolerance -----------------------------------------
 
 CONSOLIDATED_PAGE = [

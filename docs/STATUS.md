@@ -118,7 +118,9 @@ unexplained rows is not started (owner to say).
 - The go-live bar against long cards: measured 25 Oct, 2.7% of lines wrong; at about 13 lines a card, 5% WRONG needs
   about 0.39%. The owner chose long cards (25 Oct); the two may not fit together. Decide after the audit in section 3.
 - Commit trailer: CLAUDE.md says no AI model names in commits; the 27 Oct handover asked for a trailer that names one.
-  Commits since PR #190 leave the model name out.
+  Correction (28 Oct, 01:00 IST): several commits of 27-28 Oct night (PRs #198, #199) still name a model in their
+  Co-Authored-By line, and older commits on `main` do too; merged history is not rewritten. From 28 Oct the lead
+  session's commits use "Co-Authored-By: Claude" with no model name, as CLAUDE.md says.
 - From earlier: B3 (held cards hidden, flagged or approve/reject), A2/A3 (backfill pace, re-writing cards after it),
   B5 (prices from bhavcopy), G9 (a Cloudflare rate-limit rule), Workers Paid renewal before about 21 Nov (otherwise set
   `D1_PLAN=free`; reminder `trig_0197dpX6XnQXDm8B3vxWAUC8`, 18 Nov). G8 (delete the BSE client) is dropped: the BSE

@@ -110,3 +110,28 @@ test("no EPS row on the stock page, in any table, with or without a split on rec
   for (const t of [quarterlyTable(metrics), annualTable(metrics)]) assert.ok(!t.rows.some((r) => /eps|per share/i.test(r.label)));
   assert.ok(quarterlyTable(metrics).rows.some((r) => r.label === "Net profit"));
 });
+
+test("screener mode (F210) builds Sales, Expenses, Operating profit and Other income by screener's formulas; off is unchanged", () => {
+  const q = [m("revenue", "Q2FY27", 1000), m("excise_duty", "Q2FY27", 50), m("total_expenses", "Q2FY27", 900), m("finance_cost", "Q2FY27", 10),
+    m("depreciation", "Q2FY27", 20), m("other_income", "Q2FY27", 5), m("exceptional_items", "Q2FY27", -3), m("share_associates", "Q2FY27", 2),
+    m("pbt", "Q2FY27", 100), m("tax_expense", "Q2FY27", 25), m("pat", "Q2FY27", 77)];
+  const on = quarterlyTable(q, true), row = (t: ReturnType<typeof quarterlyTable>, l: string) => t.rows.find((r) => r.label === l)!.cells[0]!;
+  assert.equal(row(on, "Sales"), 950);                                   // net of excise
+  assert.equal(row(on, "Expenses"), 870);                                // 900 - 10 - 20
+  assert.equal(row(on, "Operating profit"), 80);
+  assert.equal(Math.round(row(on, "OPM %") * 10) / 10, 8.4);
+  assert.equal(row(on, "Other income"), 4);                              // 5 - 3 + 2
+  assert.equal(row(on, "Profit before tax"), 102);
+  assert.ok(!on.rows.some((r) => r.label === "Exceptional items"));
+  const off = quarterlyTable(q), offDefault = quarterlyTable(q, false);
+  assert.deepEqual(off, offDefault);
+  assert.equal(row(off, "Sales"), 1000);
+});
+
+test("screener mode: other liabilities is the plug and the minority sits inside it", () => {
+  const sheet = { period: "Q4FY26", as_of: "2026-05-01", source_news_id: "xbrl:res:1:x", equity_capital_cr: 10, reserves_cr: 90, gross_debt_cr: 20,
+    minority_interest_cr: 5, total_liabilities_cr: 50, total_assets_cr: 200, fixed_assets_cr: 100 };
+  const t = balanceTable([sheet], true);
+  assert.equal(t.rows.find((r) => r.label === "Other liabilities")!.cells[0], 80);
+  assert.ok(!t.rows.some((r) => r.label === "Minority interest"));
+});

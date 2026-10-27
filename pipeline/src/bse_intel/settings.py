@@ -200,6 +200,14 @@ def eps_share_adjust() -> bool:
     return (_env("EPS_SHARE_ADJUST", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def eps_share_count_check() -> bool:
+    """EPS_SHARE_COUNT_CHECK (default off; F211, TODO 79): memory's EPS lines keep EPS as filed and EPS on today's shares, and
+    adjust only when NSE's corporate-action record and the share-count change (profit over EPS) agree; a recorded action the
+    share count does not follow, or a share-count jump with no record, is marked "possible split or bonus, not confirmed" and
+    nothing is adjusted. Memory only: EPS is never shown on cards or stock pages. Read at the call."""
+    return (_env("EPS_SHARE_COUNT_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def _env_int(name: str, default: int) -> int:
     value = _env(name)
     return int(value) if value is not None else default

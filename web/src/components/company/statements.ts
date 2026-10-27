@@ -53,13 +53,29 @@ export function isBank(metrics: Metric[]): boolean {
   return quarters("interest_earned") > 0 && quarters("interest_earned") >= quarters("revenue");
 }
 
-/** Screener's lines for one period, from memory's metrics. */
-function lines(v: Values, p: string, bank: boolean): Record<string, Cell> {
+/** Screener's lines for one period, from memory's metrics. `screener` (TODO 52, F210, default off) builds the lines by
+ *  the formulas docs/design/screener-mapping.md measures: Sales net of excise duty, Expenses = total expenses less
+ *  interest and depreciation, Operating profit = Sales - Expenses, Other income as the plug that holds exceptional items
+ *  and the associates' share, PBT and Tax % with the associates' share, a lender's Revenue = total income - other income. */
+function lines(v: Values, p: string, bank: boolean, screener = false): Record<string, Cell> {
   const g = (m: string) => get(v, m, p);
+  if (screener && !bank && g("revenue") != null && g("total_expenses") != null && g("finance_cost") != null && g("depreciation") != null) {
+    const sales = g("revenue")! - (g("excise_duty") ?? 0);
+    const expenses = g("total_expenses")! - g("finance_cost")! - g("depreciation")!;
+    const op = sales - expenses;
+    const assoc = g("share_associates") ?? 0;
+    const pbt = g("pbt") != null ? g("pbt")! + assoc : null;
+    return {
+      revenue: sales, expenses, ebitda: op, opm: pct(op, sales), other_income: (g("other_income") ?? 0) + (g("exceptional_items") ?? 0) + assoc,
+      interest: g("finance_cost"), depreciation: g("depreciation"), pbt, tax_pct: pct(g("tax_expense"), pbt),
+      pat: g("pat"), pat_owners: g("pat_owners"),
+    };
+  }
   if (bank) {
     // a bank's OperatingExpenses tag is the total, employee cost inside it (RBI Form B): HDFC Bank's Q4FY25
     // 86,779 + 33,489 - 46,986 - 43,904 = 29,378, its own pre-provision profit 29,379
-    const revenue = g("interest_earned"), interest = g("interest_expended"), opex = g("other_expenses");
+    const lenderTop = screener && g("total_income") != null && g("other_income") != null ? g("total_income")! - g("other_income")! : null;
+    const revenue = lenderTop ?? g("interest_earned"), interest = g("interest_expended"), opex = g("other_expenses");
     const nii = sub(revenue, interest);
     const ppop = g("pre_provision_operating_profit") ?? (nii != null && opex != null ? nii + (g("other_income") ?? 0) - opex : null);
     return {
@@ -106,15 +122,15 @@ const byEnd = (a: string, b: string) => periodEnd(a).localeCompare(periodEnd(b))
 const periodsOf = (metrics: Metric[], test: RegExp) => [...new Set(metrics.map((m) => m.period).filter((p) => test.test(p)))].sort(byEnd);
 
 /** Quarterly results, the latest twelve quarters. */
-export function quarterlyTable(metrics: Metric[]): Table {
+export function quarterlyTable(metrics: Metric[], screener = false): Table {
   const bank = isBank(metrics), v = collect(metrics);
   const quarters = periodsOf(metrics, /^Q[1-4]FY\d{2}$/).slice(-QUARTERS);
-  return table(quarters, quarters.map((q) => lines(v, q, bank)), bank);
+  return table(quarters, quarters.map((q) => lines(v, q, bank, screener)), bank);
 }
 
 const ADDITIVE = ["revenue", "total_income", "other_income", "finance_cost", "depreciation", "exceptional_items", "pbt", "tax_expense",
   "pat", "pat_owners", "ebitda", "interest_earned", "interest_expended", "employee_cost", "other_expenses", "provisions",
-  "pre_provision_operating_profit"];
+  "pre_provision_operating_profit", "total_expenses", "total_income", "excise_duty", "share_associates"];
 
 /** The four quarters to the latest one, when memory has all four and the latest is after the last year's end. */
 export function ttmQuarters(metrics: Metric[]): string[] | null {
@@ -129,10 +145,10 @@ export function ttmQuarters(metrics: Metric[]): string[] | null {
 }
 
 /** Profit and loss by year, the latest six, with a TTM column (owner: "year and TTM in year"). */
-export function annualTable(metrics: Metric[]): Table {
+export function annualTable(metrics: Metric[], screener = false): Table {
   const bank = isBank(metrics), v = collect(metrics);
   const years = periodsOf(metrics, /^FY\d{2}$/).slice(-YEARS);
-  const cols = years.map((y) => lines(v, y, bank));
+  const cols = years.map((y) => lines(v, y, bank, screener));
   const ttm = ttmQuarters(metrics);
   if (ttm) {
     for (const metric of ADDITIVE) {
@@ -140,7 +156,7 @@ export function annualTable(metrics: Metric[]): Table {
       if (parts.every((x) => x != null)) (v.get(metric) ?? v.set(metric, new Map()).get(metric)!).set("TTM", parts.reduce((a, b) => a! + b!, 0)!);
     }
     v.get("ebitda_margin")?.delete("TTM");
-    cols.push(lines(v, "TTM", bank));
+    cols.push(lines(v, "TTM", bank, screener));
   }
   return table([...years, ...(ttm ? ["TTM"] : [])], cols, bank);
 }
@@ -172,17 +188,20 @@ export function balanceSnapshots(sheets: Snapshot[]): Snapshot[] {
 }
 
 /** The balance sheet as screener.in prints it: what funds the company, then what it owns. */
-export function balanceTable(sheets: Snapshot[]): Table {
+export function balanceTable(sheets: Snapshot[], screener = false): Table {
   const snaps = balanceSnapshots(sheets);
   const col = (f: (s: Snapshot) => Cell) => snaps.map(f);
   const debt = (s: Snapshot) => num(s, "gross_debt_cr");
   const rows: Row[] = [
     { label: "Equity capital", cells: col((s) => num(s, "equity_capital_cr")) },
     { label: "Reserves", cells: col((s) => num(s, "reserves_cr")) },
-    { label: "Minority interest", cells: col((s) => num(s, "minority_interest_cr")) },   // so the side adds up (F-06)
+    ...(screener ? [] : [{ label: "Minority interest", cells: col((s) => num(s, "minority_interest_cr")) }]),   // so the side adds up (F-06); screener files it in Other liabilities
     { label: "Deposits", cells: col((s) => num(s, "deposits_cr")) },   // a bank's, and an NBFC's public deposits
     { label: "Borrowings", cells: col(debt) },
-    { label: "Other liabilities", cells: col((s) => sub(sub(num(s, "total_liabilities_cr"), debt(s) ?? 0), num(s, "deposits_cr") ?? 0)) },
+    // screener's plug: total less equity, reserves, borrowings and deposits, the minority inside it (mapping 1d)
+    { label: "Other liabilities", cells: col((s) => screener
+      ? sub(num(s, "total_assets_cr"), [num(s, "equity_capital_cr"), num(s, "reserves_cr"), debt(s), num(s, "deposits_cr")].reduce<number>((a, b) => a + (b ?? 0), 0))
+      : sub(sub(num(s, "total_liabilities_cr"), debt(s) ?? 0), num(s, "deposits_cr") ?? 0)) },
     { label: "Total liabilities", cells: col((s) => num(s, "total_assets_cr")), strong: true },
     { label: "Advances / loans", cells: col((s) => num(s, "advances_cr")) },
     { label: "Fixed assets", cells: col((s) => num(s, "fixed_assets_cr")) },

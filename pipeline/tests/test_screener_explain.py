@@ -232,3 +232,15 @@ def test_a_recorded_bonus_explains_a_small_eps_too():
     bonus = [{"kind": "BONUS", "factor": 2.0, "ex_date": "2025-01-10", "subject": "Bonus 1:1"}]
     r = run([row("Q1FY25", "eps", 0.19, 0.09)], {"1": {"financial_metrics": [], "corporate_actions": bonus}})["rows"][0]
     assert r["explain_verdict"] == "share_adjusted"
+
+
+def test_screeners_revenue_net_of_excise_explains_the_difference():
+    dossier = {"financial_metrics": metrics("Q2FY25", revenue=200.52, excise_duty=15.61)}   # PICCADIL, measured 27 Oct 2026
+    r = run([row("Q2FY25", "revenue", 200.52, 185)], {"1": dossier})["rows"][0]
+    assert r["explain_verdict"] == "excise_netted" and "15.61" in r["detail"]
+
+
+def test_excise_that_does_not_reach_screener_explains_nothing():
+    dossier = {"financial_metrics": metrics("Q2FY25", revenue=200.52, excise_duty=3.0)}
+    r = run([row("Q2FY25", "revenue", 200.52, 185)], {"1": dossier})["rows"][0]
+    assert r["explain_verdict"] != "excise_netted"

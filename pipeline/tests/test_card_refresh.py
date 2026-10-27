@@ -74,6 +74,34 @@ def test_run_writes_back_only_cards_that_changed():
     assert card_refresh.run(pipeline)["changed"] == 0   # a second run finds nothing to change
 
 
+def test_a_dry_run_can_list_each_changed_cards_blocks_before_and_after():
+    stored = [{"news_id": "n1", "scrip_code": "500001", "symbol": "DEMO", "company_name": "Demo Rail Ltd",
+               "filing_date": FILED[:10], "filed_at": FILED, "headline": "h", "card_json": json.dumps(_card()), "held": 0}]
+
+    class Sink:
+        def query(self, name, params):
+            return [r for r in stored if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
+
+        def get_dossier(self, scrip):
+            return _dossier()
+
+        def company(self, scrip):
+            return {"scrip_code": scrip, "market_cap_cr": 2400.0, "last_price": 240.0, "price_date": FILED[:10]}
+
+        def execute(self, statement, rows):
+            raise AssertionError("a dry run writes nothing")
+
+    pipeline = SimpleNamespace(sink=Sink(), prompts=SimpleNamespace(sector_for=lambda industry: SimpleNamespace(footer=())),
+                               _prices=None, _buckets=None)
+    diffs: list = []
+    report = card_refresh.run(pipeline, dry_run=True, diffs=diffs)
+    (d,) = diffs
+    assert report["changed"] == 1 and d["news_id"] == "n1" and "signals" in d["changed"]
+    assert set(d["before"]) == set(d["after"]) == set(d["changed"]) - {"impact"}
+    assert d["before"]["signals"] == _card()["signals"] and d["after"]["signals"] != d["before"]["signals"]
+    assert card_refresh.run(pipeline, dry_run=True)["changed"] == 1   # without the list: counts only, as before
+
+
 def test_a_refreshed_card_with_a_clear_event_becomes_high():
     card = {**_card(), "event_type": "RESULTS", "deal_value": None, "signals": [],
             "results": {"pat": {"value": 50.0, "prev_year": 30.0, "yoy_pct": 66.7}}, "score": {"vetoes": [], "reasons": []}}

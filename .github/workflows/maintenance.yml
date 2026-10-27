@@ -280,7 +280,16 @@ jobs:
       - name: Refresh card blocks
         if: inputs.command == 'refresh-card-blocks' || inputs.command == 'both'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-card-blocks ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
+        # a dry run also saves each changed card's blocks, before and after (artifact refresh-diff)
+        run: |
+          mkdir -p "$RUNNER_TEMP/refresh-diff"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-card-blocks ${{ inputs.dry_run && '--dry-run --diff-out "$RUNNER_TEMP/refresh-diff/refresh-diff.json"' || '' }}
+      - uses: actions/upload-artifact@v4
+        if: always() && (inputs.command == 'refresh-card-blocks' || inputs.command == 'both') && inputs.dry_run
+        with:
+          name: refresh-diff
+          path: ${{ runner.temp }}/refresh-diff/
+          if-no-files-found: ignore
       - name: Refresh company summaries
         if: (inputs.command == 'refresh-summaries' || inputs.command == 'both') && !inputs.dry_run
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs

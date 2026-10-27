@@ -44,7 +44,7 @@ from .bse import AttachmentError, AttachmentTooLarge, SourceBlockedError, parse_
 from .nse import FileCapReached
 from .dossier import _norm, keep_concurrent_writes
 from .memory_gaps import has_gap, main_basis, since_for
-from .periods import canonical_period, quarter_index
+from .periods import canonical_period, quarter_from_index, quarter_index
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
@@ -52,7 +52,7 @@ log = logging.getLogger(__name__)
 EXCHANGE = "BSE"
 TRIED_KEY = "bsefill:tried"            # kv: companies a real run already handled
 REASONS = ("mcap below cut-off", "mcap unknown", "no symbol", "nse list unavailable", "nse has results",
-           "bse lists nothing", "bse fetch failed", "no new quarter", "quarter held", "basis differs", "not a gap quarter")
+           "bse lists nothing", "bse lists no needed quarter", "bse fetch failed", "no new quarter", "quarter held", "basis differs", "not a gap quarter")
 
 
 class _Scratch:
@@ -168,14 +168,32 @@ class PortedBse:
         return body
 
 
-class _RecordingBse:
-    """The BSE client, remembering which files the archive listed."""
+def needed_quarters(wanted: set[str]) -> set[str]:
+    """The quarters whose files the fill downloads (owner, 27 Oct 2026: "We should download which we need"): each quarter
+    memory lacks, and the quarters just before and after it. The neighbours are what the seed's own checks read: the unit
+    check needs a quarter's neighbours (xbrl.scale_slip) and a quarter filed only inside a longer period is worked out from
+    the quarter before (seed._derive_quarters). Before this the seed read every quarter from the oldest gap to today."""
+    out = set()
+    for period in wanted:
+        index = quarter_index(period)
+        if index is None:
+            out.add(period)
+            continue
+        out.update(quarter_from_index(i) for i in (index - 1, index, index + 1))
+    return out
 
-    def __init__(self, bse):
-        self._bse, self.links = bse, []
+
+class _RecordingBse:
+    """The BSE client, remembering which files the archive listed; with ``needed``, only those quarters' files are listed
+    to the seed, so it downloads nothing else."""
+
+    def __init__(self, bse, needed: set[str] | None = None):
+        self._bse, self.links, self.listed, self._needed = bse, [], 0, needed
 
     def results_xbrl(self, scrip: str):
-        self.links = list(self._bse.results_xbrl(scrip))
+        every = list(self._bse.results_xbrl(scrip))
+        self.listed = len(every)
+        self.links = [link for link in every if self._needed is None or link.period in self._needed]
         return self.links
 
     def download(self, *args, **kwargs):
@@ -336,7 +354,7 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         # TODO(batch counter): the shared batch-of-100 download counter hooks in here, before BSE is called for the company
         before = sink.get_dossier(scrip)
         scratch = _Scratch(sink, scrip, before)
-        recorder = _RecordingBse(bse)
+        recorder = _RecordingBse(bse, needed_quarters(wanted))
         stats = SeedStats()
         try:
             seed_results(scratch, recorder, scrip, company.get("company_name") or scrip, since_for(result),
@@ -356,7 +374,7 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         if stats.failures:
             failed.append(f"{scrip} {symbol}: " + "; ".join(stats.failures)[:160])
         if not recorder.links:
-            skip("bse lists nothing")
+            skip("bse lists no needed quarter" if recorder.listed else "bse lists nothing")
             done(scrip)
             continue
         fresh, why = new_figures(before, scratch.dossier, scrip, wanted, chosen_urls(recorder.links))

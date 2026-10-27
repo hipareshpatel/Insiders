@@ -190,7 +190,8 @@ def test_a_gap_inside_nses_range_is_not_filled_from_bse():
     out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True, pre_nse=True)
     # the quarters older than Q3FY26 stay candidates (BSE is asked) but the file's Q4FY26 and Q1FY27 are not written
     assert out["companies_pre_nse"] == 1 and out["companies_filled"] == 0 and out["rows"] == []
-    assert sink.writes == 0 and sink.dossiers == {} and out["skipped"].get("not a gap quarter")
+    # and the file holding only those quarters is not even downloaded (F218: only the quarters needed)
+    assert sink.writes == 0 and sink.dossiers == {} and out["skipped"].get("bse lists no needed quarter")
 
 
 def test_the_switch_off_and_rows_without_a_quarter_leave_a_company_nse_lists_alone():
@@ -322,3 +323,12 @@ def test_every_downloaded_file_is_kept_in_our_store_and_read_from_it_next_time(m
     assert bse.download("u1") == b"<xbrl/>"
     assert fake.calls == ["u1"]   # the second time from our store, not BSE (and not counted toward the cap)
     assert bse.files == {"downloaded": 1, "kept": 1, "from_store": 1}
+
+
+def test_only_the_missing_quarters_and_their_neighbours_are_downloaded():
+    """Owner, 27 Oct 2026: "We should download which we need": not every quarter from the oldest gap to today."""
+    assert bf.needed_quarters({"Q1FY24", "Q4FY23"}) == {"Q3FY23", "Q4FY23", "Q1FY24", "Q2FY24"}
+    links = [XbrlLink(p, "CONSOLIDATED", f"https://x/{p}.xml", "2025-01-01T00:00:00")
+             for p in ("Q3FY23", "Q4FY23", "Q1FY24", "Q2FY24", "Q3FY24", "Q1FY27")]
+    recorder = bf._RecordingBse(SimpleNamespace(results_xbrl=lambda scrip: links), bf.needed_quarters({"Q4FY23"}))
+    assert [link.period for link in recorder.results_xbrl("1")] == ["Q3FY23", "Q4FY23", "Q1FY24"]

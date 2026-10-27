@@ -139,3 +139,16 @@ def test_a_total_income_line_never_confirms_a_revenue_slip(monkeypatch):
     monkeypatch.setattr(pdf_referee, "read_document", read)
     sink, stats = _seed(bse, Nse())
     assert ("revenue", "Q4FY24") not in _memory(sink) and stats.rescaled == 0 and len(stats.slip_held) == 1
+
+
+def test_one_agreeing_row_beside_a_disagreeing_one_is_no_proof(monkeypatch):
+    """Review of #170: a segment line that happens to print the corrected figure never confirms the slip alone."""
+    bse = _setup(monkeypatch, 1758.6, [])
+
+    def read(payload, ocr=True, max_ocr_pages=6):
+        return [Row("revenue", "Revenue from operations", "CONSOLIDATED", 10.0, [17586.0], [("quarter", Q4)], [Q4], set(), 0),
+                Row("revenue", "Revenue from operations - Pharma", "CONSOLIDATED", 10.0, [1758.6], [("quarter", Q4)], [Q4],
+                    set(), 0)], ""
+    monkeypatch.setattr(pdf_referee, "read_document", read)
+    sink, stats = _seed(bse, Nse())
+    assert ("revenue", "Q4FY24") not in _memory(sink) and stats.rescaled == 0 and "disagree" in stats.slip_held[0]

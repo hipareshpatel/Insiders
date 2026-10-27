@@ -548,15 +548,7 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
     for r in rows:
         if r.metric == "revenue":
             best[r.key] = min(best.get(r.key, 9), r.rank)
-    kept = [r for r in rows if r.metric != "revenue" or r.rank == best[r.key]]
-    if _row_fixes():
-        # "Total income" includes other income: it is never the revenue from operations when the page has a revenue row on the
-        # same basis (AIIL: "Revenue from operations" 886.01 beside "Total Income" 903.11, in another table of a reader's grid).
-        # A page whose only revenue line is "Total income" keeps it: ``reading_of`` and ``verdict_of`` then say "only 'Total
-        # income' printed" (restated-pdf's Titan page), the explicit reason; 27 Oct 2026, PDF_ROW_FIXES
-        revenue_bases = {r.basis for r in kept if r.metric == "revenue" and r.rank in (0, 1)}
-        kept = [r for r in kept if not (r.metric == "revenue" and r.rank == 2 and r.basis in revenue_bases)]
-    return kept
+    return [r for r in rows if r.metric != "revenue" or r.rank == best[r.key]]
 
 
 BASELINE_SHARE = 0.45        # a figure farther than this share of the distance to the next label is not trusted to its row

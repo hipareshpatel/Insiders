@@ -35,7 +35,13 @@ CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be 
 # One request reads this much of the document (whole pages); a longer one is read in parts. The first measured run's
 # 6,000-token replies were too short for a whole document's points; Gemini Flash's 32,000-token reply is not (run 2, 26 Oct)
 PART_CHARS = 60_000
-RETRY_WAIT_S = 20.0      # a document whose provider answered server errors is tried once more after this wait (run 5, F180)
+RETRY_WAIT_S = 20.0      # the shortest wait before a failed part is asked again (run 5, F180)
+# F203 (27 Oct 2026): about half the documents of the measured runs 6-8 failed on free-provider capacity (5xx, 429, "paced").
+# A part that failed only for capacity is asked again, up to MAX_PART_ATTEMPTS in all, after these waits: the gateway pauses a
+# model 60 s after its first 429, 300 s after the second (ai.gateway.RATE_PAUSES), so the waits clear those pauses.
+MAX_PART_ATTEMPTS = 4
+RETRY_WAITS = (65.0, 130.0, 305.0)
+DEFAULT_GAP_S = 12.0     # seconds between two requests when providers.toml gives the route no per-minute limit
 # what one provider's failure says (the gateway's outcome details): a server error, a timeout or an overload is worth another
 # try; a refusal of the request itself (400, 401, 403, 404) would answer the same. A 429 or "circuit open" says neither.
 _SERVER_ERROR = re.compile(r"\b(?:http|status|code|error)[ :=]*5\d\d\b|\b5\d\d\s+(?:internal|bad gateway|service|gateway|server)|"
@@ -43,6 +49,25 @@ _SERVER_ERROR = re.compile(r"\b(?:http|status|code|error)[ :=]*5\d\d\b|\b5\d\d\s
                           r"connection (?:reset|error|aborted)", re.I)
 _REFUSAL = re.compile(r"\b(?:http|status|code|error)[ :=]*(?:400|401|403|404)\b|\b(?:400|401|403|404)\s+(?:bad request|unauthori|"
                       r"forbidden|not found|invalid)|bad request|model\b.{0,40}\bnot found|not found.{0,20}\bmodel|unauthori[sz]ed|forbidden|invalid api key", re.I)
+
+# a failure of capacity, not of content: a 429, "paced", a busy slot, a cooling model, an open circuit, a 5xx or a timeout
+_CAPACITY = re.compile(r"429|rate.?limit|paced|busy|circuit|cooling|cooldown|quota|server ?error|\b(?:HTTP|status|error)\W{0,3}5\d\d\b|"
+                       r"\b50[234]\b|time[sd]? ?out|overload|service unavailable|temporarily unavailable|bad gateway|"
+                       r"connection ?(?:error|reset|refused|aborted|closed)", re.I)
+
+
+class CallReadFailed(RuntimeError):
+    """Every part of a document failed. `capacity` is true when each failure was one of capacity (worth a later retry) and
+    false when one was of content (no JSON, a reply the schema refuses: the same document would answer the same)."""
+
+    def __init__(self, message: str, capacity: bool):
+        super().__init__(message)
+        self.capacity = capacity
+
+
+class DayQuotaExhausted(RuntimeError):
+    """Every free model of the route is at its daily ceiling: the caller stops and leaves the rest queued for tomorrow."""
+
 
 _PAGE_MARK = re.compile(r"^(?:-{3}|={5})\s*page\s+(\d+)\s+of\s+\d+[^\n]*$", re.I | re.M)
 
@@ -83,16 +108,20 @@ def parts(text: str, limit: int = PART_CHARS) -> list[str]:
 
 
 def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, blocks: str = "", prior: list[dict] | None = None,
-         paid: frozenset[str] | set[str] = frozenset()) -> CallMemoryOutput:
+         paid: frozenset[str] | set[str] = frozenset(), gap_s: float = 0.0, retry_until: float | None = None) -> CallMemoryOutput:
     """The document read in parts of whole pages (PART_CHARS), one AI call each, on the call_memory route (free models with
     their own quota, not the cards' Gemini Flash days) and never a paid provider (the daily path costs $0, CLAUDE.md D24).
     A part whose reply is not JSON is skipped and counted; if every part fails it raises, the caller logs it and the card
-    stands (the points wait for a re-run of `call-memory --ids`). The models and prompt size ride on the result."""
+    stands (the points wait for a re-run of `call-memory --ids`). The models and prompt size ride on the result.
+    Pacing (F203): `gap_s` seconds between two requests (pace_gap_s); a part that failed for capacity only is asked again after
+    RETRY_WAITS, MAX_PART_ATTEMPTS in all, never past `retry_until` (a time.monotonic() value); a part that failed for content
+    is not. Every model at its daily ceiling raises DayQuotaExhausted; every part failed raises CallReadFailed."""
     route = next((r for r in ("call_memory", "pass2_long", "pass2_bulk") if gateway.has_route(r)), "pass2_bulk")
     scope = getattr(gateway, "card_scope", None)
-    chunks = parts(text)
+    chunks = parts(text, PART_CHARS)
     points: dict[int, list] = {}
     models, chars, reasons, errors = [], 0, [], {}
+    news_id = getattr(filing, "news_id", "?")
 
     def attempt(i: int, chunk: str) -> None:
         system, user = prompts.call_memory(filing, kind, industry, chunk, prior, part=(i, len(chunks)))
@@ -105,7 +134,7 @@ def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, b
                                                allow=lambda target: target.provider not in paid)
         except Exception as exc:   # noqa: BLE001 - one part's failure leaves the others
             errors[i] = exc
-            log.warning("%s: call memory part %d of %d failed: %s", getattr(filing, "news_id", "?"), i, len(chunks), exc)
+            log.warning("%s: call memory part %d of %d failed: %s", news_id, i, len(chunks), exc)
             return
         errors.pop(i, None)
         points[i] = list(result.value.points)
@@ -113,22 +142,41 @@ def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, b
         if result.value.reason:
             reasons.append(result.value.reason)
 
+    def day_quota() -> None:
+        # every model at its daily ceiling: nothing was asked, tomorrow's quota is the wait (F203)
+        spent = [exc for exc in errors.values() if getattr(exc, "quota_exhausted", False)]
+        if spent:
+            raise DayQuotaExhausted(f"{news_id}: {spent[-1]}")
+
     for i, chunk in enumerate(chunks, 1):
+        if i > 1 and gap_s:
+            time.sleep(gap_s)
         attempt(i, chunk)
+        day_quota()
     attempts = 1
-    # run 5: every model of the route answered server errors for 5 of 10 documents. Once the route's models have all failed
-    # with a server error or a timeout, the parts that failed are asked again after a short wait; a refusal (4xx) is not
-    redo = [i for i, exc in errors.items() if provider_error(exc)]
-    if redo:
-        attempts = 2
-        log.info("%s: call memory retries parts %s after %.0f s", getattr(filing, "news_id", "?"), redo, RETRY_WAIT_S)
-        time.sleep(RETRY_WAIT_S)
-        for i in redo:
+    # run 5: every model of the route answered server errors for 5 of 10 documents; runs 6-8 (F203): 429s and "paced" too.
+    # Parts that failed for capacity are asked again after a wait that clears the gateway's pause; content failures are not
+    while attempts < MAX_PART_ATTEMPTS:
+        redo = [i for i, exc in sorted(errors.items()) if capacity_error(exc)]
+        if not redo:
+            break
+        wait = max(RETRY_WAITS[min(attempts - 1, len(RETRY_WAITS) - 1)], RETRY_WAIT_S)
+        if retry_until is not None and time.monotonic() + wait > retry_until:
+            log.info("%s: call memory leaves parts %s for a later run (no time for the wait)", news_id, redo)
+            break
+        attempts += 1
+        log.info("%s: call memory asks parts %s again (attempt %d of %d) after %.0f s", news_id, redo, attempts, MAX_PART_ATTEMPTS, wait)
+        time.sleep(wait)
+        for n, i in enumerate(redo):
+            if n and gap_s:
+                time.sleep(gap_s)
             attempt(i, chunks[i - 1])
+        day_quota()
     failed = sorted(errors)
     if len(failed) == len(chunks):
-        raise RuntimeError(f"every part of the call-memory reading failed ({len(chunks)}, {attempts} attempt"
-                           f"{'s' if attempts > 1 else ''}): {errors[failed[-1]]}")
+        raise CallReadFailed(f"every part of the call-memory reading failed ({len(chunks)}, {attempts} attempt"
+                             f"{'s' if attempts > 1 else ''}): {errors[failed[-1]]}",
+                             capacity=all(capacity_error(errors[i]) for i in failed))
     all_points = [pt for i in sorted(points) for pt in points[i]]
     out = CallMemoryOutput(points=[], reason="; ".join(reasons)[:300] or None)
     out.points = all_points
@@ -136,7 +184,32 @@ def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, b
     out.served_by = ", ".join(sorted(set(models)))
     out.prompt_chars = chars
     out.parts, out.parts_failed = len(chunks), failed
+    out.parts_failed_capacity = [i for i in failed if capacity_error(errors[i])]
     return out
+
+
+def capacity_error(exc: BaseException) -> bool:
+    """A failure of capacity only (F203): every model that was tried answered a 429, "paced", a busy slot, a cooling pause, a
+    5xx or a timeout, and none refused the request (400, 401, 403, 404) or failed on content (no JSON, a reply the schema
+    refuses). Read from the gateway's per-model outcomes (those at a daily ceiling or unavailable say nothing either way).
+    Not the card's cap, and not a day's quota (that is DayQuotaExhausted)."""
+    if getattr(exc, "capped", False) or getattr(exc, "quota_exhausted", False):
+        return False
+    outcomes = getattr(exc, "outcomes", None)
+    details = [str(o[-1]) for o in outcomes if o[1] in ("failed", "transient")] if outcomes else [str(exc)]
+    return bool(details) and all(_CAPACITY.search(d) for d in details) and not any(_REFUSAL.search(d) for d in details)
+
+
+def pace_gap_s(settings) -> float:
+    """Seconds to leave between two requests of the call_memory route (F203): a minute over the lowest per-minute request limit
+    of its models (rpm 5 on Gemini Flash: 12 s), so one document's parts and the next document never ask a model faster than
+    its window; DEFAULT_GAP_S when providers.toml states none. Never more than a minute."""
+    try:
+        targets = settings.load_toml("providers.toml").get("routes", {}).get("call_memory", [])
+        rpms = [int(t["limits"]["rpm"]) for t in targets if (t.get("limits") or {}).get("rpm")]
+    except Exception:   # noqa: BLE001 - a missing file or an odd entry: the default
+        rpms = []
+    return min(60.0, 60.0 / min(rpms)) if rpms else DEFAULT_GAP_S
 
 
 def provider_error(exc: BaseException) -> bool:

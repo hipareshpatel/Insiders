@@ -50,6 +50,7 @@ class SeedStats:
     derived: int = 0            # quarters worked out as a longer period less the earlier quarters (the file holds no quarter of its own)
     standalone_periods: int = 0  # a consolidated filer's standalone quarters, kept apart (dossier.put_standalone)
     failures: list[str] = field(default_factory=list)
+    slip_held: list[str] = field(default_factory=list)   # quarters held out: a unit slip the filing's PDF text layer did not confirm (F200)
 
     def line(self) -> str:
         return (f"{self.companies} companies: {self.results_periods} results quarters from {self.results_files} XBRL files, "
@@ -57,6 +58,7 @@ class SeedStats:
                 f"{self.skipped} skipped, {len(self.failures)} failures"
                 + (f", {self.results_from_nse} quarters from NSE where BSE served nothing" if self.results_from_nse else "")
                 + (f", {self.rescaled} files in the wrong unit put right" if self.rescaled else "")
+                + (f", {len(self.slip_held)} quarters held for an unconfirmed unit slip" if self.slip_held else "")
                 + (f", {self.misdated} files dated to the wrong months refused" if self.misdated else "")
                 + (f", {self.derived} quarters worked out from a longer period" if self.derived else ""))
 
@@ -185,15 +187,26 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         dossier = sink.get_dossier(scrip) if dropped else None
         if dossier is not None and any([forget_source(dossier, f"xbrl:res:{scrip}:{period}") for period in dropped]):
             sink.put_dossier(scrip, dossier)
-    for period, (filed_on, url, parsed, _) in found.items():
+    from .slip_check import PdfCheck
+    check = PdfCheck(nse, symbol)   # the PDF text-layer check of a unit slip: nothing is fetched unless one is found (F200)
+    held_slips: dict[str, str] = {}
+    unsure: set[str] = set()   # held because no PDF could settle the slip: what memory holds from the file stays
+    for period, (filed_on, url, parsed, _) in list(found.items()):
         others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]
-        if xbrl_fast_path.fix_scale(parsed, others, scrip):
+        if xbrl_fast_path.fix_scale(parsed, others, scrip, verify=check):
             stats.rescaled += 1
+        elif getattr(parsed, "slip_held", ""):
+            held_slips[period] = parsed.slip_held
+            if getattr(parsed, "slip_unsure", False):
+                unsure.add(period)
+            continue
         xbrl_fast_path.drop_long_year(parsed, others, scrip)   # an 18-month "year" dated as twelve (Siemens)
+    _hold_slips(sink, scrip, found, held_slips, stats, unsure)
     _drop_misdated(sink, scrip, found, stats)
     _derive_quarters(found, stats)
     for period, (filed_on, url, parsed, _) in sorted(found.items()):
         _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats)
+    _flag_slips(sink, scrip, held_slips)
     if keep_standalone and found:
         _mark_standalone_only(sink, scrip, found)
     # a consolidated filer's standalone files too, kept apart for the company page's standalone view (owner,
@@ -201,6 +214,40 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     consolidated = [p for p, (_, _, result, _) in found.items() if result.basis == "CONSOLIDATED"]
     if nse is not None and symbol and consolidated:
         _seed_standalone(sink, nse, scrip, symbol, since, set(consolidated), cache_root, stats)
+
+
+def _hold_slips(sink, scrip: str, found: dict, held: dict[str, str], stats: SeedStats,
+                unsure: set[str] = frozenset()) -> None:
+    """A quarter whose file looks tagged in the wrong unit and whose PDF does not print the corrected figure (or cannot be
+    read) is kept out of memory, and what an earlier seed stored from it leaves too (owner, 27 Oct 2026, F200: a missing
+    quarter is better than a wrong one). Listed in the dossier's ``scale_held`` and the stats, for memory_gaps and the
+    referees; a quarter that later seeds cleanly leaves the list (_write_results)."""
+    if not held:
+        return
+    dossier = sink.get_dossier(scrip)
+    changed = False
+    for period, why in held.items():
+        found.pop(period, None)
+        stats.skipped += 1
+        stats.slip_held.append(f"{scrip} {period}: {why}")
+        if period in unsure:
+            continue
+        changed = bool(dossier is not None and forget_source(dossier, f"xbrl:res:{scrip}:{period}")) or changed
+    if changed:
+        sink.put_dossier(scrip, dossier)
+
+
+def _flag_slips(sink, scrip: str, held: dict[str, str]) -> None:
+    """The held quarters in the dossier's ``scale_held`` (after the quarters that did seed are written)."""
+    if not held:
+        return
+    dossier = sink.get_dossier(scrip)
+    if dossier is None:
+        return
+    listed = sorted(set(dossier.get("scale_held") or []) | set(held), key=lambda p: quarter_index(p) or 0)
+    if listed != list(dossier.get("scale_held") or []):
+        dossier["scale_held"] = listed
+        sink.put_dossier(scrip, dossier)
 
 
 _PERIOD_END_QUARTER = {"Q1": 1, "Q2": 2, "H1": 2, "Q3": 3, "9M": 3, "Q4": 4, "H2": 4, "FY": 4}
@@ -333,6 +380,11 @@ def _write_results(sink, scrip: str, name: str, company: dict | None, period: st
     if parsed.balance_sheet and not parsed.balance_sheet.is_empty():
         out.dossier_delta.balance_sheet = parsed.balance_sheet
     dossier = sink.get_dossier(scrip) or new_dossier(filing, company or {})
+    if period in (dossier.get("scale_held") or []):    # held for an unconfirmed unit slip before, seeds cleanly now (F200)
+        left = [p for p in dossier["scale_held"] if p != period]
+        dossier["scale_held"] = left
+        if not left:
+            dossier.pop("scale_held")
     sink.put_dossier(scrip, merge(dossier, out, filing, None, now_iso(), basis=parsed.basis,
                                   fy_end_month=getattr(parsed, "fy_end_month", None), own_period=period))
     stats.results_periods += 1

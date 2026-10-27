@@ -289,7 +289,7 @@ class FakeGateway:
     def complete_json(self, route, system, user, schema, bulk=False, allow=None, **kw):
         self.calls.append({"route": route, "system": system, "user": user, "bulk": bulk, "allow": allow})
         if self.fail:
-            raise RuntimeError("every provider failed")
+            raise RuntimeError(self.fail if isinstance(self.fail, str) else "every provider failed")
         return SimpleNamespace(value=CallMemoryOutput.model_validate({"points": self.points}), model_label="fake/model")
 
 
@@ -478,14 +478,16 @@ def test_a_transient_failure_stays_queued_and_is_given_up_after_three_attempts(m
     monkeypatch.setenv("MEMORY_CALL_V2", "1")
     sink = _queued_world(settings)
     call_queue.enqueue(sink, "call-2", "123", "x")
-    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([], fail=True), prompts=PromptEngine(s)))
+    monkeypatch.setattr(cm.time, "sleep", lambda s: None)   # the waits between the asks and the documents
+    busy = "route: no provider could serve the request (a: InternalServerError; b: rate limited (429); paced)"
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([], fail=busy), prompts=PromptEngine(s)))
     for attempt in (1, 2):
         assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124   # left in the queue
         assert [i["attempts"] for i in call_queue.pending(sink)] == [attempt]
     assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0   # third failure: given up, nothing left
     assert call_queue.pending(sink) == [] and sink.puts == []
     states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
-    assert states["call-2"]["state"] == "gave_up" and states["call-2"]["attempts"] == 3 and "every provider failed" in states["call-2"]["reason"]
+    assert states["call-2"]["state"] == "gave_up" and states["call-2"]["attempts"] == 3 and "rate limited (429)" in states["call-2"]["reason"]
 
 
 def test_no_stored_text_yet_stays_queued(monkeypatch, settings, tmp_path):
@@ -679,7 +681,7 @@ def test_a_partly_read_document_is_written_and_read_again(monkeypatch, settings,
     sink = _queued_world(settings)
     call_queue.enqueue(sink, "call-2", "123", "x")
     monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([_raw(_point())]), prompts=PromptEngine(s)))
-    monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: {"news_id": "call-2", "parts_failed": [2]})
+    monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: {"news_id": "call-2", "parts_failed": [2], "parts_failed_capacity": [2]})
     assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124
     assert [(i["news_id"], i["attempts"]) for i in call_queue.pending(sink)] == [("call-2", 1)]
 
@@ -772,7 +774,8 @@ class FlakyGateway(FakeGateway):
     def complete_json(self, *a, **kw):
         if self.errors:
             self.calls.append({})
-            raise RuntimeError(self.errors.pop(0))
+            err = self.errors.pop(0)
+            raise err if isinstance(err, BaseException) else RuntimeError(err)
         return super().complete_json(*a, **kw)
 
 
@@ -787,16 +790,116 @@ def test_a_server_error_on_every_model_is_retried_once_and_the_attempts_are_coun
     gateway = FlakyGateway(["route: no provider could serve the request (a: InternalServerError 503; b: circuit open)"],
                            [_raw(_point())])
     out = _read(gateway, settings)
-    assert out.attempts == 2 and len(out.points) == 1 and out.parts_failed == [] and waits == [cm.RETRY_WAIT_S]
+    assert out.attempts == 2 and len(out.points) == 1 and out.parts_failed == [] and waits == [cm.RETRY_WAITS[0]]
     assert len(gateway.calls) == 2
 
 
-def test_a_second_server_error_fails_the_reading_and_says_two_attempts(monkeypatch, settings):
-    monkeypatch.setattr(cm.time, "sleep", lambda s: None)
-    gateway = FlakyGateway(["503 InternalServerError", "request timed out"], [])
-    with pytest.raises(RuntimeError, match="2 attempts"):
+def test_capacity_errors_are_asked_again_up_to_the_bound_and_the_reading_then_fails(monkeypatch, settings):
+    waits = []
+    monkeypatch.setattr(cm.time, "sleep", waits.append)
+    gateway = FlakyGateway(["503 InternalServerError", "request timed out", "rate limited (429)", "paced"], [])
+    with pytest.raises(cm.CallReadFailed, match=f"{cm.MAX_PART_ATTEMPTS} attempts") as caught:
         _read(gateway, settings)
-    assert len(gateway.calls) == 2
+    assert caught.value.capacity is True
+    assert len(gateway.calls) == cm.MAX_PART_ATTEMPTS and waits == list(cm.RETRY_WAITS)
+
+
+def test_a_429_then_success_waits_out_the_gateways_pause(monkeypatch, settings):
+    waits = []
+    monkeypatch.setattr(cm.time, "sleep", waits.append)
+    gateway = FlakyGateway([_failed("rate limited (429)", "paced")], [_raw(_point())])
+    out = _read(gateway, settings)
+    assert out.attempts == 2 and len(out.points) == 1 and waits == [65.0] and out.parts_failed_capacity == []
+
+
+def test_a_day_quota_stops_the_reading_without_a_retry(monkeypatch, settings):
+    from bse_intel.ai.gateway import AllProvidersFailed
+    monkeypatch.setattr(cm.time, "sleep", lambda s: pytest.fail("no wait on a spent day"))
+    spent = AllProvidersFailed("call_memory", [("g", "ceiling", "rpd 19/20 (95% safety limit)")])
+    assert spent.quota_exhausted
+    gateway = FlakyGateway([spent], [])
+    with pytest.raises(cm.DayQuotaExhausted):
+        _read(gateway, settings)
+    assert len(gateway.calls) == 1
+
+
+def test_part_one_failing_for_capacity_is_asked_again_while_part_two_is_kept(monkeypatch, settings):
+    waits = []
+    monkeypatch.setattr(cm.time, "sleep", waits.append)
+    monkeypatch.setattr(cm, "PART_CHARS", 100)
+    text = "--- Page 1 of 2 ---\n" + "a" * 150 + "\n--- Page 2 of 2 ---\n" + "b" * 150 + "\n"
+    asked = []
+
+    class PartGateway(FakeGateway):
+        def complete_json(self, route, system, user, schema, **kw):
+            asked.append(user)
+            if len(asked) == 1:   # part 1, first ask
+                raise _failed("InternalServerError", "paced")
+            return super().complete_json(route, system, user, schema, **kw)
+
+    filing = _filing("c3", "2026-11-10T19:00:00+05:30", "CONCALL_PRESENTATION", "Earnings call transcript")
+    out = cm.read(PartGateway([_raw(_point())]), PromptEngine(settings), filing, "transcript", "Realty", text, "", None, frozenset(),
+                  gap_s=12.0)
+    assert out.parts == 2 and out.parts_failed == [] and out.attempts == 2
+    assert len(asked) == 3 and "aaaa" in asked[2] and "bbbb" not in asked[2]   # the ask repeated is part 1 alone
+    assert waits == [12.0, 65.0]   # the gap between the parts, then the wait before the retry
+
+
+def test_a_content_failure_is_not_asked_again(monkeypatch, settings):
+    monkeypatch.setattr(cm.time, "sleep", lambda s: pytest.fail("no wait for a content failure"))
+    gateway = FlakyGateway([_failed("ValidationError: reply is not JSON")], [])
+    with pytest.raises(cm.CallReadFailed) as caught:
+        _read(gateway, settings)
+    assert caught.value.capacity is False and len(gateway.calls) == 1
+
+
+def test_capacity_error_kinds():
+    assert cm.capacity_error(_failed("InternalServerError", "rate limited (429)", "paced"))
+    assert cm.capacity_error(_failed("busy: concurrency limit", "circuit open"))
+    assert not cm.capacity_error(_failed("rate limited (429)", "ValidationError: points: field required"))
+    assert not cm.capacity_error(_failed("HTTP 403 forbidden", "paced"))
+    assert not cm.capacity_error(SimpleNamespace(capped=True))
+    # review of #168: a number in a content failure is not a 5xx, nor a "connection" in its text a network failure
+    assert not cm.capacity_error(_failed("ValidationError: value 500 not in the quote"))
+    assert not cm.capacity_error(_failed("no JSON: the connection between revenue and margin"))
+    assert cm.capacity_error(_failed("HTTP 502 bad gateway", "503 UNAVAILABLE", "connection reset by peer"))
+    assert cm.capacity_error(_failed("APIConnectionError", "APITimeoutError"))   # the gateway's bare class names
+
+
+def test_the_gap_is_a_minute_over_the_routes_lowest_requests_per_minute(settings):
+    assert cm.pace_gap_s(settings) == 12.0   # providers.toml: rpm 5 on the call_memory route's Gemini models
+    assert cm.pace_gap_s(SimpleNamespace(load_toml=lambda name: {})) == cm.DEFAULT_GAP_S
+
+
+def test_a_day_quota_stops_the_queue_job_and_leaves_every_filing_queued_without_losing_an_attempt(monkeypatch, settings, tmp_path):
+    from bse_intel.ai.gateway import AllProvidersFailed
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    monkeypatch.setattr(cm.time, "sleep", lambda s: None)
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "x")
+    call_queue.enqueue(sink, "call-3", "123", "x")
+    spent = AllProvidersFailed("call_memory", [("g", "ceiling", "rpd 19/20 (95% safety limit)")])
+    gateway = FakeGateway([], fail=False)
+    gateway.complete_json = lambda *a, **k: (_ for _ in ()).throw(spent)
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=gateway, prompts=PromptEngine(s)))
+    assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 124
+    assert sorted(i["news_id"] for i in call_queue.pending(sink)) == ["call-2", "call-3"]
+    assert [i["attempts"] for i in call_queue.pending(sink)] == [0, 0]
+    states = json.loads(next(v for k, v in sink.kv.items() if k.startswith("callmem:s:")))
+    assert states["call-2"]["state"] == "retry" and "day quota" in states["call-2"]["reason"] and "call-3" not in states
+
+
+def test_the_queue_job_leaves_a_gap_between_documents(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    waits = []
+    monkeypatch.setattr(cm.time, "sleep", waits.append)
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "x")
+    call_queue.enqueue(sink, "call-3", "123", "x")
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=FakeGateway([_raw(_point())]), prompts=PromptEngine(s)))
+    monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: {"parts": 2, "attempts": 1})
+    cli.cmd_call_memory(_pending_args(tmp_path), settings, sink)
+    assert waits == [24.0]   # one gap of 12 s per request of the first document, none before the first
 
 
 def test_a_refusal_is_not_retried(monkeypatch, settings):

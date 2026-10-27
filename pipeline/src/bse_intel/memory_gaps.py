@@ -98,7 +98,7 @@ def check(dossier: dict | None, today: date, quarters: int = QUARTERS) -> dict:
     yago = prior_year_period(latest)
     basis = main_basis(dossier) if dossier else None
     out = {"basis": basis, "latest": latest, "year_ago": yago, "missing": [], "partial": [],
-           "no_xbrl": basis is None, "standalone_only": [], "missing_latest": False, "missing_year_ago": False}
+           "no_xbrl": basis is None, "standalone_only": [], "scale_held": sorted((dossier or {}).get("scale_held") or []), "missing_latest": False, "missing_year_ago": False}
     have: dict[str, set[str]] = {}
     standalone_only: set[str] = set()
     if basis:

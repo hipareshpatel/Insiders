@@ -1,0 +1,157 @@
+"""The one-time BSE fill of memory gaps for companies NSE lists no results for (F201): the market-cap filter, NSE read at run
+time, nothing overwritten, the BSE label, and a dry run that writes nothing."""
+import json
+from datetime import date
+from types import SimpleNamespace
+
+from bse_intel import bse_gap_fill as bf
+from bse_intel import memory_gaps as mg
+from bse_intel.bse import XbrlLink
+from bse_intel.dossier import label
+
+from test_seed import GI_XML
+
+TODAY = date(2026, 10, 25)   # the newest quarter past its deadline is Q1FY27
+Q1FY27_XML = GI_XML.replace(b"2026-07-01", b"2026-04-01").replace(b"2026-09-30", b"2026-06-30")
+URL = "https://www.bseindia.com/xml-data/corpfiling/AttachLive/q1fy27.xml"
+SETTINGS = SimpleNamespace(universe_min_mcap_cr=500.0, text_cache_dir=None)
+
+
+class Sink:
+    def __init__(self, companies, dossiers=None):
+        self.companies, self.dossiers, self.kv, self.writes = companies, dict(dossiers or {}), {}, 0
+
+    def company(self, scrip):
+        return self.companies.get(scrip)
+
+    def get_dossier(self, scrip):
+        d = self.dossiers.get(scrip)
+        return json.loads(json.dumps(d)) if d is not None else None
+
+    def put_dossier(self, scrip, dossier):
+        self.writes += 1
+        self.dossiers[scrip] = dossier
+
+    def kv_get(self, key):
+        return self.kv.get(key)
+
+    def kv_set(self, key, value, at=None):
+        self.kv[key] = value
+
+
+class Nse:
+    def __init__(self, rows=None, failed=()):
+        self.rows, self.integrated_failed, self.asked = rows or {}, set(failed), []
+
+    def financial_results(self, symbol, quarterly=True):
+        self.asked.append(symbol)
+        return self.rows.get(symbol, [])
+
+
+class Bse:
+    def __init__(self, links=None, files=None):
+        self.links, self.files, self.listed, self.downloaded = links or {}, files or {}, [], []
+
+    def results_xbrl(self, scrip):
+        self.listed.append(scrip)
+        return self.links.get(scrip, [])
+
+    def download(self, url, max_bytes=0):
+        self.downloaded.append(url)
+        return self.files.get(url)
+
+
+def company(symbol, cap):
+    return {"symbol": symbol, "company_name": symbol.title(), "market_cap_cr": cap}
+
+
+def setup(companies, nse=None, bse=None, dossiers=None):
+    sink = Sink(companies, dossiers)
+    report = mg.survey(sink, sorted(companies), TODAY)
+    symbols = {s: c["symbol"] for s, c in companies.items()}
+    link = XbrlLink("Q1FY27", "STANDALONE", URL, "2026-08-10T18:00:00")
+    return sink, report, symbols, nse or Nse(), bse or Bse({s: [link] for s in companies}, {URL: Q1FY27_XML})
+
+
+def test_a_class_b_company_above_the_cut_off_is_filled_and_labelled_bse():
+    sink, report, symbols, nse, bse = setup({"1": company("NIRLON", 900.0)})
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert out["companies_class_b"] == 1 and out["companies_filled"] == 1 and out["quarters_filled"] == 1
+    entries = {e["metric"]: e for e in sink.dossiers["1"]["financial_metrics"]}
+    assert entries["revenue"]["period"] == "Q1FY27" and entries["revenue"]["value"] == 6651.87
+    for entry in entries.values():
+        assert entry["exchange"] == "BSE" and entry["source_url"] == URL and entry["lab"]["exchange"] == "BSE"
+        assert all(s["exchange"] == "BSE" for s in entry.get("sources", [])) and entry["source_news_id"].startswith("xbrl:res:1:")
+    assert {r["source"] for r in out["rows"]} == {"BSE"}
+    assert "Q1FY27" not in mg.check(sink.dossiers["1"], TODAY)["missing"]
+
+
+def test_market_cap_filter_skips_small_and_unknown_without_asking_anyone():
+    companies = {"1": company("SMALL", 120.0), "2": company("UNKNOWN", None), "3": company("EDGE", 500.0)}
+    sink, report, symbols, nse, bse = setup(companies)
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert out["skipped"]["mcap below cut-off"] == 1 and out["skipped"]["mcap unknown"] == 1
+    assert nse.asked == ["EDGE"] and bse.listed == ["3"] and out["companies_filled"] == 1 and "1" not in sink.dossiers
+
+
+def test_a_company_nse_lists_results_for_is_left_alone_and_a_failed_nse_list_is_not_empty():
+    companies = {"1": company("HASNSE", 900.0), "2": company("FLAKY", 900.0)}
+    sink, report, symbols, _, bse = setup(companies)
+    nse = Nse({"HASNSE": [object()]}, failed={"FLAKY"})
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert out["skipped"] == {"nse has results": 1, "nse list unavailable": 1}
+    assert out["companies_class_b"] == 0 and bse.listed == [] and sink.writes == 0
+
+
+def test_never_overwrites_a_figure_memory_holds():
+    held = {"financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1.0, "basis": "STANDALONE",
+                                   "source_news_id": "xbrl:res:1:Q1FY27", "unit": "INR_CR",
+                                   "lab": label("file", "results", "2026-08-01")}]}
+    sink, report, symbols, nse, bse = setup({"1": company("PARTIAL", 900.0)}, dossiers={"1": held})
+    # the quarter is partial (revenue held, pat missing), so it is no gap quarter: the file adds nothing and revenue stays
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert [e["value"] for e in sink.dossiers["1"]["financial_metrics"] if e["metric"] == "revenue"] == [1.0]
+    assert out["quarters_filled"] == 0
+    # a quarter that is a gap for one metric only: the figure the file also holds for the other is skipped
+    before = {"financial_metrics": [dict(held["financial_metrics"][0])]}
+    after = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q1FY27", "value": 6651.87, "basis": "STANDALONE", "sources": [{"news_id": "xbrl:res:1:Q1FY27"}]},
+        {"metric": "pat", "period": "Q1FY27", "value": 946.4, "basis": "STANDALONE", "sources": [{"news_id": "xbrl:res:1:Q1FY27"}]}]}
+    fresh, why = bf.new_figures(before, after, "1", {"Q1FY27"}, {"Q1FY27": URL})
+    assert [e["metric"] for e in fresh] == ["pat"] and why == {"quarter held": 1}
+
+
+def test_a_figure_on_another_basis_than_memory_main_basis_is_not_added():
+    before = {"financial_metrics": [{"metric": "revenue", "period": "Q4FY26", "value": 5.0, "basis": "CONSOLIDATED",
+                                     "source_news_id": "xbrl:res:1:Q4FY26", "lab": label("file", "results", None)}]}
+    after = {"financial_metrics": [{"metric": "pat", "period": "Q1FY27", "value": 9.0, "basis": "STANDALONE",
+                                    "sources": [{"news_id": "xbrl:res:1:Q1FY27"}]}]}
+    fresh, why = bf.new_figures(before, after, "1", {"Q1FY27"}, {})
+    assert fresh == [] and why == {"basis differs": 1}
+
+
+def test_a_dry_run_writes_nothing_and_keeps_no_state():
+    sink, report, symbols, nse, bse = setup({"1": company("NIRLON", 900.0)})
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=False)
+    assert out["companies_filled"] == 1 and out["figures_filled"] >= 2 and out["figures_written"] == 0
+    assert sink.writes == 0 and sink.dossiers == {} and sink.kv == {}
+    again = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=False)
+    assert again["companies_filled"] == 1 and "dry run" in bf.render(out)
+
+
+def test_an_apply_run_remembers_handled_companies_and_restart_forgets():
+    sink, report, symbols, nse, bse = setup({"1": company("NIRLON", 900.0)})
+    bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    second = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert second["companies_skipped_tried"] == 1 and second["companies_filled"] == 0
+    assert bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True, restart=True)["companies_skipped_tried"] == 0
+
+
+def test_bse_listing_nothing_is_counted_and_the_time_budget_leaves_more():
+    sink, report, symbols, nse, _ = setup({"1": company("A", 900.0), "2": company("B", 900.0)})
+    out = bf.run(sink, report, symbols, nse, Bse(), SETTINGS, apply=True)
+    assert out["skipped"]["bse lists nothing"] == 2
+    ticks = iter([0, 0, 99, 99])
+    late = bf.run(sink, report, symbols, nse, Bse(), SETTINGS, apply=True, restart=True, time_budget=10,
+                  clock=lambda: next(ticks))
+    assert late["more"] is True

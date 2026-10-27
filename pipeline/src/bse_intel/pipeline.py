@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -67,7 +67,7 @@ from .signals import priced_for
 from .sinks.platform import PlatformSink
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
-from . import eps_adjust, no_eps
+from . import eps_adjust, no_eps, restated_pdf
 from . import annual_xbrl
 from . import xbrl_store
 from . import directions
@@ -221,6 +221,7 @@ class Stats:
     xbrl: int = 0           # filings whose figures came from their XBRL file
     duplicates: int = 0     # repeat submissions of an earlier filing's text (no AI call)
     memory_only: int = 0    # older backfill filings read into memory with no card (settings.backfill_cards_from)
+    slip_held: list[str] = field(default_factory=list)   # unit slips the filing's PDF text layer did not confirm: figures held out (F200)
     attachment_changed: int = 0  # known filings the exchange now serves with another file, queued again
     days_discovered: list[str] = field(default_factory=list)
     critic: dict = field(default_factory=dict)   # the shadow critic's counts this run (critic.py); empty when it did not run
@@ -2984,11 +2985,25 @@ class Pipeline:
             data = self._xbrl_file(url, self.nse if self.nse is not None and "nseindia" in url else None)
             parsed = xbrl_fast_path.parse(data, filing.news_id) if data else None
             if parsed:
-                xbrl_fast_path.fix_scale(parsed, [*history, *tagged.metrics], filing.scrip_code)
+                xbrl_fast_path.fix_scale(parsed, [*history, *tagged.metrics], filing.scrip_code,
+                                         verify=self._slip_check(filing))
+                if parsed.slip_held:   # the comparative's unit is unconfirmed: no change is stated against it (F200)
+                    self._note_slip_held(filing, parsed)
+                    continue
                 xbrl_fast_path.drop_long_year(parsed, [*history, *tagged.metrics], filing.scrip_code)
                 earlier.append(parsed)
         if earlier:
             xbrl_fast_path.add_comparatives(tagged, *earlier)
+
+    def _slip_check(self, filing: Filing, period: str | None = None, pdf_url: str | None = None):
+        """The PDF text-layer check of a unit slip (slip_check.PdfCheck, F200); fetches nothing until a slip is found."""
+        from .slip_check import PdfCheck
+        return PdfCheck(self.nse, filing.symbol or "", pdf_url, period)
+
+    def _note_slip_held(self, filing: Filing, tagged) -> None:
+        """A detected unit slip the filing's PDF did not confirm: counted and listed for the run's summary (F200)."""
+        with self._lock:
+            self.stats.slip_held.append(f"{filing.news_id} {tagged.period}: {tagged.slip_held}")
 
     def _xbrl_file(self, url: str, client=None, max_bytes: int = 8_000_000) -> bytes | None:
         """An XBRL file by URL, cached under the text cache's xbrl folder (as seed.py keeps NSE's)."""
@@ -3430,11 +3445,20 @@ class Pipeline:
             # A file tagged in the wrong unit, told by the company's quarters in memory (xbrl.fix_scale):
             # confirm() above accepts the figures at any unit, so it cannot.
             history = dossier.get("financial_metrics") or []
-            xbrl_fast_path.fix_scale(tagged, history, filing.news_id)
+            # Two sources (F200): a slip is corrected only where the filing's own PDF text layer prints the corrected figure;
+            # otherwise the file's figures are left out (no card figures, nothing for memory) and the filing is flagged.
+            xbrl_fast_path.fix_scale(tagged, history, filing.news_id,
+                                     verify=self._slip_check(filing, tagged.period, filing.pdf_url))
+            if tagged.slip_held:
+                self._note_slip_held(filing, tagged)
+                tagged = None
+        if tagged:
             xbrl_fast_path.drop_long_year(tagged, history, filing.news_id)   # an 18-month "year" dated as twelve
             xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
             eps_adjust.adjust_result(tagged, dossier)   # EPS_SHARE_ADJUST (F153): EPS changes on one share count
+            if card_yoy_restated():
+                restated_pdf.apply_to_result(tagged, dossier)   # CARD_YOY_RESTATED (F202): YoY on the restated year-ago figure
             text = tagged.table(explicit_basis=card_consolidated_only()) + "\n\n" + text  # exact figures first; they also ground the card
         # An annual report's statements as the company tagged them, in crore and on a named basis, where the PDF
         # prints lakh or million with standalone and consolidated side by side (12 of 31 cards held, round 3d).

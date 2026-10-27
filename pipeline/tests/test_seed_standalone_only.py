@@ -47,3 +47,12 @@ def test_seed_keeps_a_standalone_only_quarter_with_the_switch(monkeypatch):
         else:
             assert ("Q1FY26", "STANDALONE") in periods
             assert d["standalone_only"] == ["Q1FY26"]
+
+
+def test_the_standalone_only_rule_is_on_unless_switched_off(monkeypatch):
+    """Owner, 27 Oct 2026 (TODO 99): on by default; MEMORY_STANDALONE_ONLY=0 turns it off."""
+    from bse_intel.settings import memory_standalone_only
+    monkeypatch.delenv("MEMORY_STANDALONE_ONLY", raising=False)
+    assert memory_standalone_only()
+    monkeypatch.setenv("MEMORY_STANDALONE_ONLY", "0")
+    assert not memory_standalone_only()

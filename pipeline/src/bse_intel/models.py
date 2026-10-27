@@ -710,6 +710,8 @@ class FinancialMetric(_Lenient):
     file_basis: str | None = Field(default=None, exclude=True)   # CONSOLIDATED / STANDALONE as the file states it
     # EPS only (eps_adjust.py, EPS_SHARE_ADJUST): why its YoY / QoQ is adjusted for a bonus or split, or left out
     eps_note: str | None = Field(default=None, exclude=True)
+    # CARD_YOY_RESTATED (restated_pdf.py): "vs restated" when the YoY is worked against a restated year-ago figure
+    yoy_note: str | None = Field(default=None, exclude=True)
 
     @model_validator(mode="after")
     def _per_share_only_for_shares(self) -> "FinancialMetric":
@@ -1037,4 +1039,5 @@ class CallMemoryOutput(_Lenient):
     prompt_chars: int = 0
     parts: int = 1                  # set by code: the requests the document was read in
     parts_failed: list[int] = Field(default_factory=list)
+    parts_failed_capacity: list[int] = Field(default_factory=list)   # of those, the parts that failed for capacity only (F203)
     attempts: int = 1               # set by code: 2 when the parts that got server errors were asked again after a wait

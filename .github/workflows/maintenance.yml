@@ -110,7 +110,11 @@
 #   different families agree on the row, period column and basis, and none differs (`pdf_disagree` otherwise; two OCR families
 #   on a page with no text layer give `pdf_scanned_lead`). `limit` caps the company periods fetched. Every job logs the runner's
 #   CPUs, RAM and free disk first. Artifact `pdf-referee-ensemble` (referee-pdf.csv with a `readers` column, summary.json,
-#   markdown). Writes nothing to memory, cards or the branch. No AI.
+#   markdown). Writes nothing to memory, cards or the branch. No AI. F199: `ids` = `hardset` reads docs/bench/hardpdf/key.csv (340
+#   public NSE figures of 21 hard PDFs, the answer key) instead of a referee artifact: the fetch job downloads the key's own
+#   pdf_url, the settle job asks every reader and the settle rule each key row and scores them (artifact `pdf-referee-ensemble`:
+#   hardset-score.json / .md, hardset-readings.json): per reader and for the ensemble right / wrong / abstain, per difficulty
+#   tag, and the ensemble's false settlements one by one. `limit` = the first N PDFs.
 # - screener-explain: read only (owner 26 Oct 2026). Of the `screener-referee` pairs where our figure equals NSE's own file,
 #   which differences a later bonus, split or consolidation (the dossier's corporate actions) or a later results file
 #   (memory's stored later-file source, else NSE's file) explains. The job takes the newest unexplained `screener-referee`
@@ -124,13 +128,19 @@
 #   filings named in `ids` (transcripts and decks, news ids): stored text and memory in, one AI call each on the free providers
 #   (never DeepSeek), the checked points and every dropped point with its reason out. One <news_id>.json each and summary.json go up
 #   as the artifact `call-memory`. Writes nothing to memory (the measurement run; --apply is for the laptop).
+# - memory-gaps-fill-bse: the one-time fill (F201, TODO 100, owner 27 Oct 2026) of the results quarters memory lacks for companies
+#   whose NSE results list is empty (listed on NSE in 2026, earlier quarters on BSE only), from BSE's results XBRL through the seed's
+#   BSE path, for companies at the universe's market-cap floor (500 Cr) or more. NSE's list is read at run time; a figure memory
+#   already holds is never overwritten; each figure written carries exchange BSE and the file's address. A dry run unless the
+#   input `apply` is set (the summary, a CSV of every figure and the log go up as the artifact `memory-gaps-fill-bse`). `restart`
+#   tries the companies an earlier apply run handled. The daily pipeline stays NSE only. Group maint-nse-memory.
 # None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 # CONCURRENCY GROUPS (owner, 26 Oct 2026; F164). Jobs wait in the group of their SOURCE and what they WRITE, so jobs on
 # different sources run side by side, and two jobs that write the same store never run together. cancel-in-progress is
 # false and a group keeps one waiting run (a newer one replaces the waiting one): do not queue two commands of one group.
 #   group              commands
-#   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, fill-memory, fill-trades,
+#   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, memory-gaps-fill-bse, fill-memory, fill-trades,
 #                      label-memory-apply, screener-fill-apply, prune-companies-apply (writes memory and companies),
 #                      text-backfill (reads NSE; writes only text/ objects)
 #   maint-cards        writes cards in D1 (or commits to the branch): refresh-card-blocks, refresh-summaries, both,
@@ -161,10 +171,10 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols)
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols)
         type: string
         default: ''
       since:
@@ -195,6 +205,10 @@ on:
         description: commands to run after this one succeeds, comma separated; name:restart passes restart=true (see the header)
         type: string
         default: ''
+      apply:
+        description: memory-gaps-fill-bse only - write the figures (labelled BSE); without it a dry run that writes nothing
+        type: boolean
+        default: false
       dry_run:
         description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned)
         type: boolean
@@ -207,7 +221,7 @@ permissions:
 concurrency:
   # groups by source and by what a job writes: the table in the header comment
   group: >-
-    ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
+    ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
@@ -285,6 +299,27 @@ jobs:
         with:
           name: bse-verify-kept
           path: ${{ runner.temp }}/bsekept/
+          if-no-files-found: ignore
+      - name: Memory gaps from BSE (NSE-empty companies)
+        if: inputs.command == 'memory-gaps-fill-bse'
+        env:
+          APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script
+          RESTART: ${{ inputs.restart }}
+        run: |
+          # a dry run unless `apply`: it reads NSE and BSE and writes nothing to memory
+          set -o pipefail
+          code=0
+          mkdir -p "$RUNNER_TEMP/gapsbse"
+          flags=""
+          [ "$APPLY" = "true" ] && flags="$flags --apply"
+          [ "$RESTART" = "true" ] && flags="$flags --restart"
+          timeout 320m "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps-fill-bse --time-budget 17400 $flags --json "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.json" --csv "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.csv" | tee "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.txt" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'memory-gaps-fill-bse'
+        with:
+          name: memory-gaps-fill-bse
+          path: ${{ runner.temp }}/gapsbse/
           if-no-files-found: ignore
       - name: Memory gaps (reads only)
         if: inputs.command == 'memory-gaps'
@@ -1031,6 +1066,7 @@ jobs:
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
       - name: Take the newest referee artifact (screener-referee, or tijori-referee with ids=tijori)
+        if: inputs.ids != 'hardset'
         env:
           GH_TOKEN: ${{ github.token }}
           IDS: ${{ inputs.ids }}
@@ -1044,7 +1080,16 @@ jobs:
           unzip -o -q "$RUNNER_TEMP/in/artifact.zip" -d "$RUNNER_TEMP/in"
           if [ "$name" = "tijori-referee" ]; then cp "$RUNNER_TEMP/in/referee-tijori.csv" "$RUNNER_TEMP/in/referee-xbrl.csv"; fi
           cp "$RUNNER_TEMP/in/referee-xbrl.csv" "$RUNNER_TEMP/pdfs/referee-xbrl.csv"
+      - name: Download the hard test set's PDFs (ids=hardset; reads NSE, the key's own pdf_url)
+        if: inputs.ids == 'hardset'
+        env:
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pdfs"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --collect ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" ${LIMIT}
       - name: Download the candidate PDFs (reads NSE)
+        if: inputs.ids != 'hardset'
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
@@ -1176,7 +1221,17 @@ jobs:
           pattern: pdf-readings-*
           path: ${{ runner.temp }}/readings
           merge-multiple: true
+      - name: Score every reader and the ensemble against the answer key (ids=hardset)
+        if: inputs.ids == 'hardset'
+        env:
+          PDF_READERS: native,camelot,pdfplumber,tabula,rapidtable,tatr,docling,mineru,paddle,marker,surya
+          PDF_READER_TABLES_DIR: ${{ runner.temp }}/readings
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/pdfreferee"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/pdfreferee" ${LIMIT}
       - name: Settle the pairs (the native reader here; the others from their files)
+        if: inputs.ids != 'hardset'
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"
           PDF_READERS: native,camelot,pdfplumber,tabula,rapidtable,tatr,docling,mineru,paddle,marker,surya

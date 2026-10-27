@@ -74,6 +74,10 @@ Read before changing anything:
   owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
+- At most 100 files from NSE or BSE in one run (owner rule, 27 Oct 2026: "no more then 100 files from NSE or BSE each
+  times"). A file is a downloaded document (PDF, XBRL, ZIP, attachment); list and search calls are not files. One run is one
+  live pipeline run or one maintenance dispatch, all its shards together. What is over the cap waits for the next run; it
+  never spends a filing's attempt.
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

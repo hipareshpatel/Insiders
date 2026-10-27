@@ -2,7 +2,7 @@
 6 months (R2 lifecycle rule xbrl-180d, deploy-web.yml), so a later run, a reload or a referee reads our copy and asks
 NSE only for files we do not hold. Best effort: a failure logs a warning and the download goes on. Only the platform
 sink has an R2; local and laptop sinks keep their local cache alone. New files stop going in once the store holds
-XBRL_STORE_MAX_MB (owner, 26 Oct 2026: 500); reads always work."""
+XBRL_STORE_MAX_MB (owner, 27 Oct 2026: 2 GB of the 5 GB R2 budget; was 500 MB); reads always work."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 PREFIX = "raw/xbrl/"
 TOTAL_KEY = PREFIX + "_total.json"   # {"bytes": n}: the gzipped bytes put so far, kept so a run need not list the folder
 SAVE_EVERY = 50                      # puts between writes of the total (it is also written when the process exits)
-DEFAULT_MAX_MB = 500   # owner, 26 Oct 2026: 500 MB (was 100), room for the whole results history
+DEFAULT_MAX_MB = 2000   # owner, 27 Oct 2026: "Yes, raise it to 2 GB" (was 500, before that 100); R2 holds 5 GB in all
 
 _lock = threading.Lock()
 _state: dict = {"total": None, "unsaved": 0, "puts": 0, "warned": False, "exit_hook": False, "sink": None}

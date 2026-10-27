@@ -1,5 +1,7 @@
 # Task board
 
+> **History since 27 Oct 2026.** The current state and the one list of open work are in [`docs/STATUS.md`](STATUS.md). Read this file for its findings; do not work from its lists.
+
 The cloud session (project lead, owner's decision 2026-10-19) writes tasks here; the laptop session works them.
 **Laptop: after every `git pull`, read this file and do the OPEN tasks owned by "laptop", highest priority first.**
 

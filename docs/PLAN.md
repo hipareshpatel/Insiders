@@ -1,5 +1,7 @@
 # Plan to go-live and after
 
+> **History since 27 Oct 2026.** The current state and the one list of open work are in [`docs/STATUS.md`](STATUS.md). Read this file for its findings; do not work from its lists.
+
 The single plan, rewritten 2026-10-19 for the setup the owner chose on 2026-10-18/19: **NSE only, online only**
 (GitHub Actions + Cloudflare, no laptop on the daily path), companies at or above ₹500 Cr. What each item built and
 measured is in [TRACKER.md](TRACKER.md) (decisions D1-D34, findings F1-F77); the rules every session follows are in

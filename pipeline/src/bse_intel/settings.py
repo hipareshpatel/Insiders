@@ -228,12 +228,13 @@ def eps_share_adjust() -> bool:
 
 
 def file_cap() -> int:
-    """FILE_CAP (default 100; owner rule, 27 Oct 2026, F213): the most NSE/BSE files one run downloads; the rest waits for the
-    next run. 0 = no cap. Read at the call."""
+    """FILE_CAP (default 0 = no cap; F213): the most NSE/BSE files one run downloads, the rest waiting for the next run. The
+    owner set a cap of 100 on 27 Oct 2026 and lifted it the same day ("Ignore rule of 100, continue with existing rule");
+    set FILE_CAP to bring it back. Read at the call."""
     try:
-        return max(0, int((_env("FILE_CAP", "100") or "100").strip()))
+        return max(0, int((_env("FILE_CAP", "0") or "0").strip()))
     except ValueError:
-        return 100
+        return 0
 
 
 def file_cap_used() -> int:

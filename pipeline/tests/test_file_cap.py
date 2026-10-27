@@ -27,6 +27,7 @@ XML = b"<?xml version='1.0'?><xbrl/>"
 def _env(monkeypatch):
     for name in ("FILE_CAP", "FILE_CAP_SHARDS", "FILE_CAP_USED", "FILE_CAP_MARKER_DIR", "GITHUB_ENV"):
         monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("FILE_CAP", "100")   # the cap is off by default since the owner lifted it (27 Oct); these tests set it
 
 
 def nse_client(hits=None):
@@ -37,6 +38,11 @@ def nse_client(hits=None):
     client = NseClient(transport=httpx.MockTransport(handler), sleep=lambda s: None, retries=1, pause=(0, 0))
     client._warmed = True
     return client
+
+
+def test_the_cap_is_off_by_default(monkeypatch):
+    monkeypatch.delenv("FILE_CAP")
+    assert settings_module.file_cap() == 0      # owner, 27 Oct 2026: "Ignore rule of 100"
 
 
 def test_defaults_and_the_shard_split():

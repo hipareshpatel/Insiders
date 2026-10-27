@@ -65,6 +65,11 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    figures, no refusal, stopped at its 500-file cap. Batch 2 (run 40524728754) started 20:18 IST. Each further batch
    needs the owner's go. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
    Q4FY26) goes into memory unchecked; screener and tijori comparisons are the check.
+   Checked 27 Oct night (`docs/bench/bse-fill-batches-1-2-check.md`): revenue and profit agree with screener in 98-99%
+   of 1,776 pairs; of 89 differences read in the company's PDF, BSE right 82, **wrong 4** (Eco Recycling Q4FY25 profit,
+   Vadilal Enterprises Q3FY25 profit, Pradeep Metals Q4FY26 profit, Veljan Denison Q3FY26 EPS: the company's own XBRL
+   on BSE differs from its own PDF; tax sign flipped, prior-year tax left out, a discontinued line added, standalone
+   EPS in the consolidated file). The four are in memory now; taking them out waits for item 6 and the owner.
 3. **After the full BSE download: the BSE fill keeps its record as it goes and compares with memory before writing**
    (today the list of what it wrote is saved only at the end, and a refusal or a kill loses it).
 4. **Before any `refresh-card-blocks`: a dry run** to list what `CARD_ONE_BASIS` now changes on stored cards (a refresh

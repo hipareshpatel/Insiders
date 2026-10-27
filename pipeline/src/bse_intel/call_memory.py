@@ -53,7 +53,7 @@ _REFUSAL = re.compile(r"\b(?:http|status|code|error)[ :=]*(?:400|401|403|404)\b|
 # a failure of capacity, not of content: a 429, "paced", a busy slot, a cooling model, an open circuit, a 5xx or a timeout
 _CAPACITY = re.compile(r"429|rate.?limit|paced|busy|circuit|cooling|cooldown|quota|server ?error|\b(?:HTTP|status|error)\W{0,3}5\d\d\b|"
                        r"\b50[234]\b|time[sd]? ?out|overload|service unavailable|temporarily unavailable|bad gateway|"
-                       r"connection (?:error|reset|refused|aborted|closed)", re.I)
+                       r"connection ?(?:error|reset|refused|aborted|closed)", re.I)
 
 
 class CallReadFailed(RuntimeError):

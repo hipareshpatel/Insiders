@@ -863,6 +863,7 @@ def test_capacity_error_kinds():
     assert not cm.capacity_error(_failed("ValidationError: value 500 not in the quote"))
     assert not cm.capacity_error(_failed("no JSON: the connection between revenue and margin"))
     assert cm.capacity_error(_failed("HTTP 502 bad gateway", "503 UNAVAILABLE", "connection reset by peer"))
+    assert cm.capacity_error(_failed("APIConnectionError", "APITimeoutError"))   # the gateway's bare class names
 
 
 def test_the_gap_is_a_minute_over_the_routes_lowest_requests_per_minute(settings):

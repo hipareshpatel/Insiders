@@ -87,6 +87,7 @@ TAX_PCT_ABS = 1.0                                  # screener prints whole perce
 SMALL_ABS, SMALL_REL = 1.0, 0.01                   # small_gap: a mismatch of at most 1 Cr or 1% of screener's value (not a match)
 SMALL_GAP_LINES = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt")
 TAX_PCT_SMALL_PBT, TAX_PCT_SMALL_ABS = 10.0, 1.5   # tax_follows_pbt: below 10 Cr of PBT one Cr of tax moves the % by 10 points
+ASSOCIATES_OTHER_INCOME_MIN = 5.0   # crore: below it a chance match is too likely (shuffle test, 27 Oct 2026)
 ASSOCIATES_MIN = 1.0                               # a share of associates' profit under 1 Cr is not a rule's gap
 STEADY_OLDER_MIN, STEADY_OLDER_SPREAD, STEADY_OLDER_OFF = 3, 0.03, 0.03
 STEADY_OLDER_LINES = ("revenue", *SMALL_GAP_LINES)
@@ -213,7 +214,10 @@ def screener_views(dossier: dict | None, figures: dict, period: str, today: str 
             out["pbt"] = [(v("pbt") + share, "associates_in_pbt")]
         if other is not None:
             views = out.setdefault("other_income", [])
-            views.append((other + share, "associates_in_other_income"))
+            # shuffle test, run 40505771830: with a 1 Cr floor another company's share closed 6.6% as many gaps as the real
+            # ones did; at 5 Cr, 3% (950 of 1,420 kept); the same floor as the exceptional-items rule
+            if abs(share) >= ASSOCIATES_OTHER_INCOME_MIN:
+                views.append((other + share, "associates_in_other_income"))
             if exceptional_counts:
                 views.append((other + exceptional + share, "associates_in_other_income"))
     if exceptional:

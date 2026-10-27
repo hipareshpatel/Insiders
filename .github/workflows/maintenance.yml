@@ -267,12 +267,15 @@ jobs:
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "${{ (inputs.command == 'pdf-referee' || inputs.command == 'pdf-referee-tijori') && '.[ocr]' || '.' }}"
       - name: Refresh card blocks
         if: inputs.command == 'refresh-card-blocks' || inputs.command == 'both'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-card-blocks ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Refresh company summaries
         if: (inputs.command == 'refresh-summaries' || inputs.command == 'both') && !inputs.dry_run
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel refresh-summaries'
       - name: Requeue failed filings
         if: inputs.command == 'requeue-failed'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
           SINCE: ${{ inputs.since }}
@@ -280,6 +283,7 @@ jobs:
       # owner, 25 Oct 2026: can GitHub's machines reach BSE at all? (reads three public BSE addresses; no AI, no writes)
       - name: Probe BSE from GitHub
         if: inputs.command == 'probe-bse'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         working-directory: .
         run: |
           ua="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
@@ -295,11 +299,16 @@ jobs:
           done
       - name: BSE results through the adapter (reads only)
         if: inputs.command == 'bse-results-test'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: |
           "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"
           "$RUNNER_TEMP/venv/bin/python" scripts/bse_results_test.py /tmp/bse_results.json
       - name: BSE check of the kept BSE-only companies (reads only)
         if: inputs.command == 'bse-verify-kept'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           code=0
           "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"
@@ -314,6 +323,7 @@ jobs:
           if-no-files-found: ignore
       - name: Memory gaps from BSE (NSE-empty companies)
         if: inputs.command == 'memory-gaps-fill-bse'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script
           RESTART: ${{ inputs.restart }}
@@ -328,7 +338,7 @@ jobs:
           flags=""
           [ "$APPLY" = "true" ] && flags="$flags --apply"
           [ "$RESTART" = "true" ] && flags="$flags --restart"
-          timeout 320m "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps-fill-bse --time-budget 17400 $flags --json "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.json" --csv "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.csv" | tee "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.txt" || code=$?
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps-fill-bse --time-budget 17400 $flags --json "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.json" --csv "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.csv" | tee "$RUNNER_TEMP/gapsbse/memory-gaps-fill-bse.txt" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'memory-gaps-fill-bse'
@@ -338,6 +348,10 @@ jobs:
           if-no-files-found: ignore
       - name: Memory gaps (reads only)
         if: inputs.command == 'memory-gaps'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           code=0
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-gaps --json "$RUNNER_TEMP/memory-gaps.json" --csv "$RUNNER_TEMP/memory-gaps.csv" || code=$?
@@ -351,6 +365,10 @@ jobs:
           if-no-files-found: ignore
       - name: Restated report (reads only)
         if: inputs.command == 'restated-report'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           mkdir -p "$RUNNER_TEMP/restated"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel restated-report --json "$RUNNER_TEMP/restated/restated-report.json"
@@ -362,7 +380,10 @@ jobs:
           if-no-files-found: ignore
       - name: Restated PDF trial (reads only; F202)
         if: inputs.command == 'restated-pdf-trial'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           IDS: ${{ inputs.ids }}
           LIMIT: ${{ inputs.limit }}
         run: |
@@ -379,7 +400,10 @@ jobs:
           if-no-files-found: ignore
       - name: Memory recall export (reads only)
         if: inputs.command == 'memory-recall-export'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           LIMIT: ${{ inputs.limit }}
         run: |
           mkdir -p "$RUNNER_TEMP/recall"
@@ -392,6 +416,10 @@ jobs:
           if-no-files-found: ignore
       - name: NSE self-check (reads only)
         if: inputs.command == 'nse-selfcheck'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           mkdir -p "$RUNNER_TEMP/selfcheck"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel nse-selfcheck --json "$RUNNER_TEMP/selfcheck/nse-selfcheck.json" --csv "$RUNNER_TEMP/selfcheck/nse-selfcheck.csv" --referee-csv "$RUNNER_TEMP/selfcheck/nse-selfcheck-referee.csv"
@@ -403,6 +431,10 @@ jobs:
           if-no-files-found: ignore
       - name: Prediction units (reads only)
         if: inputs.command == 'prediction-units'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           mkdir -p "$RUNNER_TEMP/predunits"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel prediction-units --json "$RUNNER_TEMP/predunits/prediction-units.json"
@@ -414,7 +446,10 @@ jobs:
           if-no-files-found: ignore
       - name: Call memory (reads only; free AI providers)
         if: inputs.command == 'call-memory'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           IDS: ${{ inputs.ids }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
@@ -440,6 +475,10 @@ jobs:
           if-no-files-found: ignore
       - name: Prune companies (dry run, reads only)
         if: inputs.command == 'prune-companies'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           code=0
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel prune-companies --json "$RUNNER_TEMP/prune-companies.json" --csv "$RUNNER_TEMP/prune-companies.csv" || code=$?
@@ -447,6 +486,7 @@ jobs:
           exit "$code"
       - name: Prune companies (backup to R2, then remove)
         if: inputs.command == 'prune-companies-apply'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: |
           code=0
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel prune-companies --apply --json "$RUNNER_TEMP/prune-companies.json" --csv "$RUNNER_TEMP/prune-companies.csv" || code=$?
@@ -460,6 +500,7 @@ jobs:
           if-no-files-found: ignore
       - name: Label memory (dry run, counts only)
         if: inputs.command == 'label-memory'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: |
           code=0
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel label-memory --dry-run --json "$RUNNER_TEMP/label-memory.json" || code=$?
@@ -467,6 +508,7 @@ jobs:
           exit "$code"
       - name: Label memory (writes memory)
         if: inputs.command == 'label-memory-apply'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: |
           code=0
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel label-memory --json "$RUNNER_TEMP/label-memory.json" || code=$?
@@ -491,10 +533,14 @@ jobs:
           if-no-files-found: ignore
       - name: Audit the precision rule (reads only)
         if: inputs.command == 'audit-precision'
+        timeout-minutes: 290   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "25"   # F216: one dead request ends in ~1 min, not minutes
+          PLATFORM_ATTEMPTS: "2"
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/precision"
-          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/audit_precision.py "$RUNNER_TEMP/precision" --platform --doc "$RUNNER_TEMP/precision/precision-sample-2026-10-26.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/audit_precision.py "$RUNNER_TEMP/precision" --platform --time-budget 15600 --doc "$RUNNER_TEMP/precision/precision-sample-2026-10-26.md" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'audit-precision'
@@ -504,10 +550,14 @@ jobs:
           if-no-files-found: ignore
       - name: Release check of the card switches (reads only)
         if: inputs.command == 'release-check'
+        timeout-minutes: 290   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "25"   # F216: one dead request ends in ~1 min, not minutes
+          PLATFORM_ATTEMPTS: "2"
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/release-check"
-          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/release_check.py "$RUNNER_TEMP/release-check" --platform || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/release_check.py "$RUNNER_TEMP/release-check" --platform --time-budget 15600 || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'release-check'
@@ -517,6 +567,10 @@ jobs:
           if-no-files-found: ignore
       - name: Cross-check memory against the stored screener pages (reads only)
         if: inputs.command == 'screener-crosscheck'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/crosscheck"
@@ -530,6 +584,10 @@ jobs:
           if-no-files-found: ignore
       - name: Cross-check memory against the stored Tijori pages (reads only)
         if: inputs.command == 'tijori-crosscheck'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/tijori-crosscheck"
@@ -543,7 +601,10 @@ jobs:
           if-no-files-found: ignore
       - name: Referee the Tijori cross-check's leads and sign differences with NSE's results XBRL (reads only)
         if: inputs.command == 'tijori-referee'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the files are on the archive host; the results lists keep the API's 3-5 s
           LIMIT: ${{ inputs.limit }}
         run: |
@@ -560,7 +621,10 @@ jobs:
           if-no-files-found: ignore
       - name: Referee the cross-check's disagreeing pairs with NSE's results XBRL (reads only)
         if: inputs.command == 'screener-referee'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
         run: |
@@ -577,6 +641,7 @@ jobs:
           if-no-files-found: ignore
       - name: Take the newest screener-referee artifact (the input of pdf-referee)
         if: inputs.command == 'pdf-referee' || inputs.command == 'screener-explain' || inputs.command == 'pdf-referee-tijori'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           GH_TOKEN: ${{ github.token }}
           IDS: ${{ inputs.ids }}
@@ -596,7 +661,10 @@ jobs:
           ls -l "$RUNNER_TEMP/in/referee-xbrl.csv"
       - name: Explain the referee's pairs by corporate actions and later files (reads only)
         if: inputs.command == 'screener-explain'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
         run: |
           code=0
@@ -612,7 +680,10 @@ jobs:
           if-no-files-found: ignore
       - name: Referee the open pairs with the filing PDF (reads only)
         if: inputs.command == 'pdf-referee' || inputs.command == 'pdf-referee-tijori'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
           LIMIT: ${{ inputs.limit }}
           SAMPLE: ${{ inputs.sample }}
@@ -633,6 +704,10 @@ jobs:
           if-no-files-found: ignore
       - name: NSE speed test (reads only)
         if: inputs.command == 'nse-speedtest'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/speedtest"
@@ -646,21 +721,29 @@ jobs:
           if-no-files-found: ignore
       - name: Failed filings by reason (reads only)
         if: inputs.command == 'failed-report'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel failed-report'
       - name: Publish held cards without their unquoted points
         if: inputs.command == 'release-pruned'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned ${{ inputs.dry_run && ''--dry-run'' || '''' }}'
       - name: Apply the owner's verdicts
         if: inputs.command == 'apply-verdicts' && !inputs.dry_run
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel apply-verdicts'
       # The whole universe's last two quarters in one go (owner, 2026-10-21: "you can do it in one go, NSE will not block
       # it with suitable rate. let it get filled today"); the nightly run keeps it current after. Then the seed passes.
       # the AI pipeline pauses while these write memory (pause.py), as in the nightly run; it resumes before the seed
       - name: Pause the AI pipeline
         if: inputs.command == 'fill-memory' || inputs.command == 'fill-trades'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pause-ai --minutes 330'
       - name: Wait for a running pipeline to stop
         if: inputs.command == 'fill-memory' || inputs.command == 'fill-trades'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -673,34 +756,42 @@ jobs:
       - name: Shareholding patterns into memory, in one go
         id: shp
         if: inputs.command == 'fill-memory'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           DAYS: ${{ inputs.days }}
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel shareholding-sync --days "$DAYS" --max-files 100000 --time-budget 9000'
       - name: Governance reports into memory, in one go
         if: inputs.command == 'fill-memory' && !cancelled()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # F169
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel governance-sync --pages 8 --max-files 100000 --time-budget 4800'
       - name: A year of pledge events into memory
         if: inputs.command == 'fill-memory' && !cancelled()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel pledge-sync --days 365 --time-budget 1800'
       - name: DGTR cases into memory
         if: inputs.command == 'fill-memory' && !cancelled()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel dgtr-sync --pages 5 --time-budget 1200'
       # six months of insider trades (SEBI PIT Reg 7 filings, each with its XBRL) and of bulk and block deals (owner)
       - name: Six months of insider trades into memory
         if: inputs.command == 'fill-trades' && !cancelled()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel insider-sync --days 180 --time-budget 9000'
       - name: Six months of bulk and block deals into memory
         if: inputs.command == 'fill-trades' && !cancelled()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel deals-backfill --days 180 --time-budget 2400'
       - name: Resume the AI pipeline
         if: (inputs.command == 'fill-memory' || inputs.command == 'fill-trades') && always()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel resume-ai'
       # no pause for market hours (owner, 2026-10-21: fill it today; NSE's pacing is per request in nse_api)
       - name: Start the next seed-memory pass
         if: inputs.command == 'fill-memory' && !cancelled()
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           GH_TOKEN: ${{ github.token }}
           THEN: ${{ inputs.then }}   # handed on to the seed passes, which chain it when they finish
@@ -709,13 +800,16 @@ jobs:
           echo "next pass started"
       - name: Export held cards
         if: inputs.command == 'export-held'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel export-held --out "../docs/audit/live/held-$(date -u +%F).json"'
       - name: Export the critic's verdicts
         if: inputs.command == 'export-critic'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel critic-export --since "$(date -u -d "-1 day" +%F)" --out "../docs/audit/live/critic-$(date -u +%F).json"'
       # into the working branch, as T19 planned (the owner accepted held drafts in the public repository, 2026-10-20)
       - name: Commit the export
         if: inputs.command == 'export-held' || inputs.command == 'export-critic'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         working-directory: .
         # the files are copied aside and back (audit-export.yml does the same): written in main's tree, a file the branch
         # already has (audit-export's held-<date>.json the same day) made the checkout refuse; nothing new is no commit
@@ -1259,6 +1353,8 @@ jobs:
           PDF_MINERU_BIN: ${{ runner.temp }}/venv/bin/mineru
           MINERU_MODEL_SOURCE: huggingface
           SURYA_INFERENCE_KEEP_ALIVE: "true"   # one llama-server for all PDFs (each PDF is a worker process of its own)
+          PDF_READ_BUDGET_S: "16200"   # F216: the PDFs not read by then are marked, and the file (saved every 5 PDFs) still uploads
+        timeout-minutes: 300
         run: |
           mkdir -p "$RUNNER_TEMP/readings"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_readers --read "${{ matrix.reader }}" "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/readings/${{ matrix.reader }}.json"

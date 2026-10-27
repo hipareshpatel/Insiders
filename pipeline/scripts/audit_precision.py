@@ -37,7 +37,9 @@ import os
 import pathlib
 import random
 import re
+import signal
 import sys
+import time
 from collections import Counter
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -235,10 +237,37 @@ def filing_text(body: bytes) -> str:
 VARIANTS = ("off", "f156", "on", "on_display")
 
 
+_STOP: list[str] = []   # SIGTERM / SIGINT (GitHub's cancel): the loop ends cleanly and the summaries are written
+
+
+def _on_signal(signum, _frame) -> None:
+    _STOP.append(signal.Signals(signum).name)
+
+
 def audit(rows, args) -> dict:
+    """F216: each card's off/on problems are appended to out/cards.jsonl as they are found, and the pass ends cleanly
+    (summary.stopped) at --time-budget, on a cancel signal, or when the platform stops answering."""
     cards, skipped = 0, Counter()
     per_card = []
-    for row, get_text in rows:
+    stopped = None
+    deadline = time.monotonic() + args.time_budget if getattr(args, "time_budget", 0) > 0 else None
+    out_dir = getattr(args, "out_dir", None)
+    log = open(pathlib.Path(out_dir) / "cards.jsonl", "a", encoding="utf-8") if out_dir else None
+    rows = iter(rows)
+    while True:
+        if _STOP:
+            stopped = f"stopped by {_STOP[0]}"
+            break
+        if deadline is not None and time.monotonic() >= deadline:
+            stopped = "time budget reached"
+            break
+        try:
+            row, get_text = next(rows)
+        except StopIteration:
+            break
+        except Exception as exc:   # the card list itself (the platform) stopped answering
+            stopped = f"the card list could not be read ({type(exc).__name__}: {exc})"
+            break
         try:
             card = json.loads(row["card_json"]) if isinstance(row.get("card_json"), str) else (row.get("card_json") or {})
             body = get_text(row["news_id"])
@@ -261,7 +290,13 @@ def audit(rows, args) -> dict:
             and not (card.get("review") or {}).get("held")
         per_card.append({"row": row, "card": card, "text": text, "held": held, "probs": probs, "stored": stored,
                          "reasons": reasons, "only_quote_numbers": only_quote_numbers, "n_issues": len(issues)})
-    summary = {"cards_checked": cards, "skipped": dict(skipped), "variants": {}}
+        if log:
+            log.write(json.dumps({"news_id": row.get("news_id"), "held": held, "probs": probs, "stored": stored},
+                                 ensure_ascii=False) + "\n")
+            log.flush()
+    if log:
+        log.close()
+    summary = {"cards_checked": cards, "skipped": dict(skipped), "variants": {}, "stopped": stopped}
     lines = []
     for v in VARIANTS[1:]:
         s = {"held_cards": 0, "published_cards": 0, "held_only_quote_number_reasons": 0,
@@ -401,6 +436,7 @@ def main() -> int:
     ap.add_argument("--doc")
     ap.add_argument("--stamp", default="2026-10-26")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--time-budget", type=float, default=0, help="seconds; the pass then ends cleanly and writes what is done (0 = none)")
     args = ap.parse_args()
     if args.selftest:
         return selftest()
@@ -410,7 +446,12 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
     args.doc = args.doc or str(out / "precision-sample.md")
     rows = rows_from_platform(args.limit) if args.platform else rows_from_files(args.cards, args.texts or ".")
+    args.out_dir = str(out)
+    signal.signal(signal.SIGTERM, _on_signal)
+    signal.signal(signal.SIGINT, _on_signal)
     result = audit(rows, args)
+    if result["summary"].get("stopped"):
+        print(f"::warning::precision audit stopped early ({result['summary']['stopped']}); {result['summary']['cards_checked']} cards done")
     (out / "summary.json").write_text(json.dumps(result["summary"], ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "lines.json").write_text(json.dumps(result["lines"], ensure_ascii=False, indent=1), encoding="utf-8")
     write_sample(result, args)

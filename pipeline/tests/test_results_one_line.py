@@ -379,6 +379,7 @@ def test_the_period_is_compared_in_full_and_after_the_figure_too(monkeypatch):
                         ("Acme revenue ₹3,245 Cr in FY26", q4), ("Acme revenue ₹3,245 Cr for the year", q4),
                         ("Q4FY26 results: FY revenue ₹3,245 Cr", q4), ("Acme FY27E revenue ₹4,000 Cr", q4),
                         ("Acme projected revenue ₹1,000 Cr", q4), ("Acme targets revenue of ₹1,000 Cr", q4),
+                        ("Acme Q4FY26E revenue ₹9,000 Cr", q4), ("Acme revenue ₹3,245 Cr in Fiscal 2026", q4),
                         ("Acme Q4 revenue ₹800 Cr", fy), ("Acme Q4FY26 revenue ₹800 Cr", fy), ("Acme 9M FY26 revenue ₹2,400 Cr", fy),
                         ("Acme H1FY26 revenue ₹2,400 Cr", fy), ("Acme FY25 revenue ₹2,900 Cr", fy), ("Acme Q3 revenue ₹1,300 Cr", h1)):
         assert headline(text, block) == text, (text, block["period"])

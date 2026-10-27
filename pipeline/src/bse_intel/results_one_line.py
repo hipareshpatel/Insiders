@@ -40,10 +40,10 @@ _KEY_EBITDA = re.compile(r"(?:operating )?EBITDA", re.I)
 # 2026 refresh dry run: "VRL FY26 revenue ... ₹3,245 Cr (company-reported; results table ₹852.85 Cr)" set the year's revenue
 # against the quarter's row, 126 of 289 labels; a guided or target figure is no result at all, 32 more)
 _PERIOD = re.compile(r"(?<![A-Za-z0-9])(?:Q([1-4])|([1-4])Q|H([12])|(9M|12M))(?:\s?(?:FY|CY)\s?'?|')?(\d{2,4})?E?(?![A-Za-z0-9])"
-                     r"|(?<![A-Za-z0-9])(?:FY|CY)\s?'?(\d{2,4})?E?(?![A-Za-z0-9])"
+                     r"|(?<![A-Za-z0-9])(?:FY|CY|fiscal\s)\s?'?(\d{2,4})?E?(?![A-Za-z0-9])"
                      r"|\b(nine[- ]months?|twelve[- ]months?|full[- ]year|annual|yearly|half[- ]year|for the year)\b", re.I)
 _GUIDANCE = re.compile(r"\b(?:guid\w*|targets?|outlook|expect\w*|aims?|plans?|project(?:s|ed|ion)?|forecast\w*|estimate\w*|"
-                       r"ambition|by FY\s?\d{2})\b", re.I)
+                       r"ambition|by FY\s?\d{2}|(?:Q[1-4]|H[12]|9M)?\s?FY\s?'?\d{2,4}E)\b", re.I)   # FY27E: an estimate
 
 
 def _periods(text: str) -> list[tuple[int, str, int | None, int | None]]:

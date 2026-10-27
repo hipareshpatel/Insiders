@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 from datetime import date
 
@@ -149,7 +150,14 @@ class PortedBse:
         except ported.Missing:
             return None
         except ported.Blocked as exc:
-            raise self.refusal(exc) from exc
+            # the adapter raises Blocked for every status but 200 and a file's 404: only 401/403/429 (or a status it does not
+            # name) stop the run; a 410 is that quarter's gap, as the old path had it; any other status fails this company
+            status = re.search(r"HTTP (\d{3})", str(exc))
+            if status is None or int(status.group(1)) in ported.STOP_STATUSES:
+                raise self.refusal(exc) from exc
+            if status.group(1) == "410":
+                return None
+            raise AttachmentError(str(exc)) from exc
         except ported.Failed as exc:
             raise AttachmentError(str(exc)) from exc
         self.files["downloaded"] += 1

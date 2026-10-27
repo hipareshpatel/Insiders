@@ -252,7 +252,9 @@ def test_the_ported_client_lists_the_archive_and_fetches_files_through_the_adapt
     url = "https://www.bseindia.com/XBRLFILES/FourOneUploadDocument/a.xml"
     saved = []
     fake = _Adapter({"Result_Arch_ng/w": _ARCHIVE, url: b"<xbrl/>", "gone": ported.Missing("HTTP 404"),
-                     "dead": ported.Failed("HTTP 503 after 3 retries")})
+                     "dead": ported.Failed("HTTP 503 after 3 retries"),
+                     "removed": ported.Blocked("HTTP 410 from removed (requests)"),
+                     "bad": ported.Blocked("HTTP 400 from bad (requests)")})
     with bf.PortedBse(fake) as bse:
         bse.raw = SimpleNamespace(save=lambda *a: saved.append(a))
         bse.warm_up()
@@ -261,6 +263,12 @@ def test_the_ported_client_lists_the_archive_and_fetches_files_through_the_adapt
         assert saved and saved[0][1] == {"scrip_cd": "532811"}   # the archive's JSON as received
         assert bse.download(url) == b"<xbrl/>"
         assert bse.download("gone") is None   # that quarter's gap, not a refusal
+        assert bse.download("removed") is None   # a 410 too, as the old path had it
+        try:
+            bse.download("bad")
+            raise AssertionError("a 400 must fail the company, not stop the run")
+        except AttachmentError:
+            pass
         try:
             bse.download("dead")
             raise AssertionError("a dead file must raise")

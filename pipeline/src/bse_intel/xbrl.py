@@ -756,7 +756,7 @@ def _lender_revenue(values: dict, check: bool) -> int:
     income while "other income" is 0 or absent and "other revenue from operations" is above 0: the NBFC template's
     RevenueFromOperations then holds the other income as well, and the file cannot settle it. Aptus Finance, Q4FY26 and
     Q3FY26: 593.12 = Income, OtherIncome 0, OtherRevenueFromOperations 18.78 (the PDF's other income); the PDF's revenue
-    from operations is 574.34 (TODO 109, 27 Oct 2026). Returns how many periods lost their revenue."""
+    from operations is 574.34 (TODO 111, 27 Oct 2026). Returns how many periods lost their revenue."""
     held = 0
     for key in [k for k in values if k[0] == _OTHER_REVENUE]:
         other = values.pop(key)
@@ -777,16 +777,17 @@ def _fits_shares(profit: float | None, eps: float, refs: list[float]) -> bool:
 
 
 def filer_profit(values: dict) -> int:
-    """XBRL_FILER_CHECKS (TODO 109): where a file's owners' and minority profit do not add up to its whole profit, the EPS
-    share count of its other periods says which side is right, in place. Returns how many periods it changed.
+    """XBRL_FILER_CHECKS (TODO 111): where a file's owners' and minority profit do not add up to its whole profit, the EPS
+    share count of its other periods says whether the whole profit stands, in place. Returns how many periods it changed.
 
-    * the owners' profit, or owners' + minority, fits the count and the whole profit does not: the whole profit is the sum
-      (ABREL Q4FY26: ProfitLossForPeriod -110.31 beside owners +10.84 and minority -5.45, EPS +0.98 on 5.5 crore shares
-      fits 5.39, the PDF's total; Adani Enterprises Q4FY25: 1,382.17 beside 3,844.91 + 169.99 = 4,014.90 = the PDF, EPS
-      32.98 on 117 crore shares). The continuing profit goes with it: it was built on the wrong chain;
-    * the whole profit fits and the others do not: nothing here, `owners_share` drops the owners' figure as before (Adani
-      Ports' Q4FY26 shares of other comprehensive income);
-    * neither or both fit: the whole profit is held, as two figures in the file contradict it and nothing says which;
+    * the whole profit fits the count and the owners' side does not: nothing here, `owners_share` drops the owners' figure
+      as before (Adani Ports' Q4FY26 shares of other comprehensive income);
+    * otherwise the whole profit and the continuing profit built on it are held: two figures in the file contradict it.
+      Never replaced by owners' + minority: the file is one source, and the sum can be wrong too (blind review, 27 Oct 2026:
+      a minority tagged with the wrong sign, or shares of other comprehensive income, made a right profit of 150 into 50 or
+      120); the right figure comes from a second source, the PDF (owner's two-source rule). Measured: ABREL Q4FY26
+      ProfitLossForPeriod -110.31 beside owners +10.84 and minority -5.45 (the PDF's total is 5.39); Adani Enterprises
+      Q4FY25 1,382.17 beside 3,844.91 + 169.99 (the PDF's 4,014.90);
     * no EPS or no other period to give a share count: nothing here.
     A 0 minority is the template's filler and starts nothing."""
     changed = 0
@@ -806,15 +807,10 @@ def filer_profit(values: dict) -> int:
         if not eps or not refs:
             continue
         sums_fit = _fits_shares(owners, eps, refs) or _fits_shares(total, eps, refs)
-        whole_fits = _fits_shares(whole, eps, refs)
-        if sums_fit and not whole_fits:
-            values[("pat", label)] = round(total, 2)
-            values.pop(("pat_continuing", label), None)
-        elif whole_fits and not sums_fit:
+        if _fits_shares(whole, eps, refs) and not sums_fit:
             continue
-        else:
-            values.pop(("pat", label))
-            values.pop(("pat_continuing", label), None)
+        values.pop(("pat", label))
+        values.pop(("pat_continuing", label), None)
         changed += 1
     return changed
 
@@ -956,7 +952,7 @@ def eps_signs(values: dict, minority_labels: frozenset | set = frozenset(), file
       except for a year that does not equal the sum of its four quarters in the file, which loses them too, as one of
       the two is wrong and the file does not say which (Anup Engineering FY25: whole profit -22.06 Cr beside EPS 59.25
       where its Q4 gives 2.0 crore shares and this gives 0.37; screener 59.07).
-    With `filer_checks` (XBRL_FILER_CHECKS, TODO 109): where the other periods contradict the profit and nothing
+    With `filer_checks` (XBRL_FILER_CHECKS, TODO 111): where the other periods contradict the profit and nothing
     corroborates it (no year-against-quarters check that ran and agreed, no owners' and minority profit that add up to it),
     the EPS stays and the profit lines of that period (whole and continuing) are held, also where the year check cannot
     run: Anup Engineering FY25's file has the Q4 only, EPS 59.25 on 2.0 crore shares beside a profit of -22.06 (the PDF

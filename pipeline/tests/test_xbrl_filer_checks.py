@@ -1,4 +1,4 @@
-"""XBRL_FILER_CHECKS (F219, TODO 109): where the filer's own XBRL contradicts itself, two signals must agree."""
+"""XBRL_FILER_CHECKS (F219, TODO 111): where the filer's own XBRL contradicts itself, two signals must agree."""
 from __future__ import annotations
 
 from bse_intel import xbrl
@@ -21,21 +21,22 @@ def _abrel(extra=None):
     return values
 
 
-def test_owners_plus_minority_replaces_a_whole_profit_the_eps_contradicts_abrel(monkeypatch):
+def test_a_whole_profit_the_eps_contradicts_is_held_abrel(monkeypatch):
     values = _abrel()
     assert filer_profit(values) == 1
-    assert values[("pat", "Q4FY26")] == 5.39 and ("pat_continuing", "Q4FY26") not in values
+    assert ("pat", "Q4FY26") not in values and ("pat_continuing", "Q4FY26") not in values   # held, never the sum
     values = _abrel()
     owners_share(values)
     assert values[("pat", "Q4FY26")] == -110.31   # the old reading: the sum is not checked, the owners' figure is dropped
     assert ("pat_owners", "Q4FY26") not in values
 
 
-def test_adani_enterprises_owners_and_minority_are_kept_when_the_share_count_fits_them(monkeypatch):
+def test_adani_enterprises_wrong_whole_profit_is_held_and_the_owners_figure_kept(monkeypatch):
     values = {("pat", "Q4FY25"): 1382.17, ("pat_owners", "Q4FY25"): 3844.91, ("pat_minority", "Q4FY25"): 169.99,
               ("eps", "Q4FY25"): 32.98, ("pat", "FY25"): 7099.0, ("pat_owners", "FY25"): 7099.0, ("eps", "FY25"): 60.67}
-    assert filer_profit(values) == 1 and values[("pat", "Q4FY25")] == 4014.90
-    assert owners_share(values) == 0 and values[("pat_owners", "Q4FY25")] == 3844.91   # now adds up
+    assert filer_profit(values) == 1 and ("pat", "Q4FY25") not in values
+    owners_share(values)
+    assert values[("pat_owners", "Q4FY25")] == 3844.91   # the EPS backs it
     off = {("pat", "Q4FY25"): 1382.17, ("pat_owners", "Q4FY25"): 3844.91, ("pat_minority", "Q4FY25"): 169.99,
            ("eps", "Q4FY25"): 32.98, ("pat", "FY25"): 7099.0, ("pat_owners", "FY25"): 7099.0, ("eps", "FY25"): 60.67}
     assert owners_share(off) == 1 and ("pat_owners", "Q4FY25") not in off and off[("pat", "Q4FY25")] == 1382.17
@@ -75,7 +76,7 @@ def test_parse_uses_the_switch(monkeypatch):
     assert off[("pat", "Q4FY26")] == -110.31
     _on(monkeypatch)
     on = {(m.metric, m.period): m.value for m in xbrl.parse(raw).metrics}
-    assert on[("pat", "Q4FY26")] == 5.39
+    assert ("pat", "Q4FY26") not in on
 
 
 def test_anup_profit_is_held_beside_an_eps_the_other_period_supports():
@@ -131,3 +132,13 @@ def test_a_commercial_company_keeps_its_revenue_with_the_switch_on(monkeypatch):
     _on(monkeypatch)
     raw = _aptus(monkeypatch, True)
     assert "revenue" in {m.metric for m in xbrl.parse(raw).metrics}
+
+
+def test_a_right_whole_profit_is_never_replaced_by_a_wrong_sum():
+    # blind review, 27 Oct 2026: a minority tagged with the wrong sign (-50 for +50), or owners' and minority shares of
+    # other comprehensive income, beside a right profit of 150 on an owners' EPS of 10 (10 crore shares elsewhere)
+    for minority in (-50.0, 20.0):
+        values = {("pat", "Q"): 150.0, ("pat_owners", "Q"): 100.0, ("pat_minority", "Q"): minority, ("eps", "Q"): 10.0,
+                  ("pat", "P"): 100.0, ("eps", "P"): 10.0}
+        filer_profit(values)
+        assert values.get(("pat", "Q")) not in (50.0, 120.0)

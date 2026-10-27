@@ -139,7 +139,10 @@ unexplained rows is not started (owner to say).
 - Fixed 27 Oct night: the `file_cap` input (the 100-file first test) now reaches every job that marks the cap: seed-memory,
   memory-gaps-fill, text-backfill and the PDF ensemble's download, beside `run` and `textback-bse`. Empty means no cap.
 - `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign). Measured 28 Oct: 12 of the 31
-  memory errors in the screener referee are flipped EPS signs.
+  memory errors in the screener referee are flipped EPS signs. Read 28 Oct, 03:20 IST: the code already refuses the
+  Alembic Q4FY26 case (26 Oct: owners' and whole profit of opposite signs), yet memory still holds -2.61 there, so at least
+  part of the 12 is memory written before that fix. Putting it right means re-reading only those filings through today's
+  code (the routine in DATA_QUALITY.md, a memory write): waits for the owner's go, with item 6.
 - Fixed 28 Oct, 01:30 IST (PR #200, merged 01:33 IST): the "company-reported" label on a headline or key number is no longer added to a
   figure of another period (a year, nine months, a half, another quarter), to a guided or target figure, or to the
   earlier figure after "from". It was live since 27 Oct (`CARD_RESULTS_ONE_LINE`); cards written since then keep the

@@ -309,6 +309,9 @@ jobs:
         env:
           APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script
           RESTART: ${{ inputs.restart }}
+          # F214 (TODO 108; owner 27 Oct: merge and switch on once reviewed): also the quarters older than a company's first
+          # NSE results row. A repository variable BSE_FILL_PRE_NSE=0 turns it off.
+          BSE_FILL_PRE_NSE: ${{ vars.BSE_FILL_PRE_NSE || '1' }}
         run: |
           # a dry run unless `apply`: it reads NSE and BSE and writes nothing to memory
           set -o pipefail

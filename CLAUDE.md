@@ -74,14 +74,13 @@ Read before changing anything:
   owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
-- At most 100 files from NSE or BSE in one run (owner rule, 27 Oct 2026: "no more then 100 files from NSE or BSE each
-  times"; asked to choose, the owner chose "Cap: 100 files a run" over parallel batches or counting only). A file is a
-  downloaded document (PDF, XBRL, ZIP, attachment); list and search calls and stored copies are not files. One run is one
-  live pipeline run or one maintenance dispatch, all its shards together. What is over the cap waits for the next run; it
-  never spends a filing's attempt and is never marked failed. The cap is the owner's rule, not a response to a block. Measured
-  refusals so far: a bare curl with wrong headers (403, 25 Oct); and maintenance run 40441180783 (27 Oct, 08:25 IST), the
-  BSE adapter got "403 Access Denied" in memory-gaps-fill-bse two hours after the same adapter answered 16 of 16 calls
-  (run 40429585773). Cause not yet diagnosed (headers, rate or that runner's address: look at the response body first).
+- No cap on NSE/BSE files a run (owner, 27 Oct 2026: set a cap of 100 a run, then "Ignore rule of 100, continue with
+  existing rule but ensure we save files else after 5 hours we are ending with zero"). The cap code (F213) stays, off
+  (FILE_CAP=0). Every long run must save its results as it goes and upload them even when it is stopped by its time
+  budget or by GitHub's 6-hour limit: a run that ends with nothing saved is a defect. Measured refusals so far: a bare curl
+  with wrong headers (403, 25 Oct); maintenance run 40441180783 (27 Oct, 08:25 IST), the BSE adapter got "403 Access
+  Denied" in memory-gaps-fill-bse two hours after the same adapter answered 16 of 16 calls (run 40429585773); cause not yet
+  diagnosed (look at the response body first).
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

@@ -68,6 +68,9 @@ jobs:
       CARD_FOOTER_PLAUSIBLE: ${{ vars.CARD_FOOTER_PLAUSIBLE || '1' }}   # F182: a footer figure that cannot be right
       QUOTE_EXACT_NUMBERS: ${{ vars.QUOTE_EXACT_NUMBERS || '1' }}
       CARD_EPS_FOLLOWS_PROFIT: ${{ vars.CARD_EPS_FOLLOWS_PROFIT || '1' }}   # F183 (EPS is not shown; memory side only)
+      # Owner, 27 Oct: "Once reviewed, merge and switch them on too". Memory side only (EPS is never shown):
+      EPS_BASE_CHECK: ${{ vars.EPS_BASE_CHECK || '1' }}   # F208: standalone EPS stored as consolidated refused (Wipro)
+      EPS_SHARE_COUNT_CHECK: ${{ vars.EPS_SHARE_COUNT_CHECK || '1' }}   # F211: split/bonus adjusted only when record and share count agree
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

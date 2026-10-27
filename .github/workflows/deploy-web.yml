@@ -39,6 +39,10 @@ jobs:
         run: |
           sed -i -E 's/("database_id": ")[0-9a-f-]*"/\1${{ vars.D1_DATABASE_ID }}"/' wrangler.jsonc
       - run: npm run build
+        env:
+          # F210 (TODO 52): screener's own line formulas on the company financials table; owner 27 Oct: switch on once
+          # reviewed. A repository variable VITE_SCREENER_LINES=0 turns it off.
+          VITE_SCREENER_LINES: ${{ vars.VITE_SCREENER_LINES || '1' }}
       - run: npx wrangler d1 migrations apply bse-index-nse --remote
       - run: npx wrangler deploy
       # F147: filing texts under text/ in R2 are deleted 180 days after they are written (owner, 25 Oct 2026).

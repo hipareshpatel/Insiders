@@ -80,3 +80,10 @@ Every maintenance run stays here until its result is read and acted on; the 15-m
 | 40393302149 | pdf-referee "explained" | Running 4 h 40 min in the step that lost its runner before; GitHub stops it about 09:36 IST | Read what it saved |
 | not run | memory-gaps-fill-bse dry run, text-backfill | Never ran (skipped in the chain) | Dispatch |
 | not found | seed signs APARINDS Q1FY27, PVRINOX Q1FY25, GLENMARK Q4FY26 | No run re-read them | seed-memory with ids |
+
+## 27 Oct 2026, ~09:00 IST: reviewed builds merged and on (owner: "Once reviewed, merge and switch them on too")
+Merged after independent review: F209 (row-name map, a pure refactor; its LINE_MAP switch does nothing yet), F210 (company-page
+financials on screener's formulas: on through `VITE_SCREENER_LINES` in deploy-web.yml), F211 (EPS share-count check, memory only:
+on), F208 (Wipro: an AI-read standalone EPS stored as consolidated is refused; stored EPS changes the profit does not carry are
+not kept: on). EPS is never shown, so F208 and F211 change memory only. The suite with every live switch on together: 1,864 passed.
+Still in review: F205 (watch verdicts), F206 (one line a results row), F212 (restated reader).

@@ -23,6 +23,7 @@ from .call_summary import card_takeaways, remember_call_points
 from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
+from .nse import FileCapReached
 from . import footer_plausible, results_one_line
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
@@ -166,6 +167,8 @@ def _call_text(pipeline, row: dict) -> str | None:
 
         pdf = pipeline._attachment(row["pdf_url"], ATTACHMENT_MAX_BYTES)
         return Document(pdf, max_ocr_pages=0).select_text(10_000_000, []) or None if pdf else None
+    except FileCapReached:
+        raise   # the run's file cap (F213): run() stops fetching transcripts; the unchecked cards are re-checked next run
     except Exception as exc:  # noqa: BLE001 - one unreachable transcript must not stop the refresh
         log.warning("call %s: transcript not read for the re-check: %s", row["news_id"], exc)
         return None
@@ -180,6 +183,7 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
     companies: dict[str, dict | None] = {}
     dirty: set[str] = set()   # companies whose memory took call takeaways from their stored cards
     rechecks = 0              # call cards whose takeaways today's check passed more of (recheck_calls)
+    capped = False            # the run's file cap (F213) ended the transcript fetches
     while True:
         rows = sink.query("export_cards", [after[0], after[1], page])
         if not rows:
@@ -226,8 +230,15 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
             if card.get("event_type") == "CONCALL_PRESENTATION" and card.get("call_takeaways"):
                 from .call_summary import TAKEAWAY_CHECK_VERSION
 
-                if (new.get("takeaway_check") or 1) < TAKEAWAY_CHECK_VERSION:
-                    rechecked = recheck_calls(new, _call_text(pipeline, row))
+                text = None
+                if (new.get("takeaway_check") or 1) < TAKEAWAY_CHECK_VERSION and not capped:
+                    try:
+                        text = _call_text(pipeline, row)
+                    except FileCapReached as exc:
+                        capped = True
+                        log.warning("file cap reached (%s): no more transcripts are fetched; the rest waits for the next run", exc)
+                if (new.get("takeaway_check") or 1) < TAKEAWAY_CHECK_VERSION and not capped:
+                    rechecked = recheck_calls(new, text)
                     if new.get("takeaway_check") == TAKEAWAY_CHECK_VERSION:
                         changed.append("call_takeaways")
                         if rechecked:
@@ -255,4 +266,4 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
         for scrip in dirty:
             sink.put_dossier(scrip, dossiers[scrip])
     return {"cards": seen, "changed": written, "failed": failed, "by_block": changed_keys, "dry_run": dry_run,
-            "memories_with_call_points": len(dirty), "call_cards_rechecked": rechecks}
+            "memories_with_call_points": len(dirty), "call_cards_rechecked": rechecks, "file_cap_reached": capped}

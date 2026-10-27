@@ -36,6 +36,7 @@ import time
 from datetime import date
 
 from .bse import SourceBlockedError
+from .nse import FileCapReached
 from .dossier import _norm, keep_concurrent_writes
 from .memory_gaps import has_gap, main_basis, since_for
 from .periods import canonical_period, quarter_index
@@ -193,7 +194,7 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
 
     rows: list[dict] = []
     failed: list[str] = []
-    more = False
+    more = capped = False
     deadline = clock() + time_budget
     for scrip in todo:
         if scrip in tried:
@@ -234,9 +235,10 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
                 skip("nse has results")
                 done(scrip)
                 continue
-            totals["companies_pre_nse"] += 1
+            counted = "companies_pre_nse"
         else:
-            totals["companies_class_b"] += 1
+            counted = "companies_class_b"
+        totals[counted] += 1
         # TODO(batch counter): the shared batch-of-100 download counter hooks in here, before BSE is called for the company
         before = sink.get_dossier(scrip)
         scratch = _Scratch(sink, scrip, before)
@@ -245,6 +247,12 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         try:
             seed_results(scratch, recorder, scrip, company.get("company_name") or scrip, since_for(result),
                          settings.text_cache_dir, stats, company, nse=None, symbol="")
+        except FileCapReached:
+            # the run's file cap (F213): this company is not finished, so it is not marked handled and nothing is written
+            # for it; the handled list as saved is where the next run resumes
+            totals[counted] -= 1
+            more = capped = True
+            break
         except SourceBlockedError:
             raise
         except Exception as exc:
@@ -277,7 +285,7 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
             totals["figures_written"] += _write(sink, scrip, fresh, scratch.dossier)
         if not stats.failures:
             done(scrip)
-    return {"apply": apply, "more": more, "failed": failed, "rows": rows, "min_mcap_cr": floor, **totals}
+    return {"apply": apply, "more": more, "capped": capped, "failed": failed, "rows": rows, "min_mcap_cr": floor, **totals}
 
 
 def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None) -> int:
@@ -318,7 +326,7 @@ def render(outcome: dict) -> str:
              f"companies filled               {outcome['companies_filled']}",
              f"quarters filled                {outcome['quarters_filled']}",
              f"figures filled                 {outcome['figures_filled']} (written {outcome['figures_written']})",
-             f"more left (time budget)        {outcome['more']}",
+             f"more left (time or cap)         {outcome['more']}" + (" (file cap reached: the rest waits for the next run)" if outcome.get("capped") else ""),
              "skipped, by reason:"]
     lines += [f"  {reason}: {s[reason]}" for reason in REASONS if s.get(reason)] or ["  none"]
     return "\n".join(lines)

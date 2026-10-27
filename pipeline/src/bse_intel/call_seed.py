@@ -19,6 +19,7 @@ import time
 from datetime import timedelta
 
 from .bse import SourceBlockedError
+from .nse import FileCapReached
 from .models import Filing
 from .timeutil import now_iso, today_ist
 
@@ -126,6 +127,10 @@ def _seed_company(pipeline, company: dict, start, end, deadline: float) -> dict:
         try:
             outcome = pipeline.analyze(filing, bulk=True, memory_complete=True)   # memory written; card dropped
             counts["seeded" if outcome.update.get("status") not in ("FAILED", "PENDING") else "failed"] += 1
+        except FileCapReached as exc:   # the run's file cap (F213): this company is not finished; the next run resumes at it
+            log.warning("call seed: %s; stopping, the rest waits for the next run", exc)
+            counts["capped"] = counts["stopped"] = True
+            break
         except SourceBlockedError as exc:
             log.warning("call seed: NSE refused %s (%s); stopping", filing.news_id, exc)
             counts["refused"] = counts["stopped"] = True
@@ -156,7 +161,7 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
     lock = Lock()
 
     def one(company: dict) -> None:
-        if time.monotonic() > deadline or report.get("refused"):
+        if time.monotonic() > deadline or report.get("refused") or report.get("capped"):
             with lock:
                 report["stopped"] = True
             return
@@ -167,6 +172,8 @@ def run(pipeline, deadline: float, restart: bool = False, scrips: set[str] | Non
                 report[k] += counts[k]
             if counts["refused"]:
                 report["refused"] = True
+            if counts.get("capped"):
+                report["capped"] = True
             if counts["stopped"]:
                 report["stopped"] = True
                 return
@@ -206,7 +213,7 @@ def next_run(report: dict, utc_hour: int) -> bool:
     the backstop."""
     # a run NSE refused does not start another at once: the schedule tries again later
     more = (bool(report.get("stopped")) and not report.get("done") and not report.get("refused")
-            and report.get("companies", 0) > 0)
+            and not report.get("capped") and report.get("companies", 0) > 0)
     return more and utc_hour in NIGHT_UTC_HOURS
 
 

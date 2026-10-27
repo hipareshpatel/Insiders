@@ -227,6 +227,32 @@ def eps_share_adjust() -> bool:
     return (_env("EPS_SHARE_ADJUST", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def file_cap() -> int:
+    """FILE_CAP (default 100; owner rule, 27 Oct 2026, F213): the most NSE/BSE files one run downloads; the rest waits for the
+    next run. 0 = no cap. Read at the call."""
+    try:
+        return max(0, int((_env("FILE_CAP", "100") or "100").strip()))
+    except ValueError:
+        return 100
+
+
+def file_cap_used() -> int:
+    """FILE_CAP_USED (default 0): files an earlier process of the same dispatch (the same job) already downloaded, written to
+    GITHUB_ENV by file_cap.py; one dispatch is one budget, so the next process holds the cap less this. Read at the call."""
+    try:
+        return max(0, int((_env("FILE_CAP_USED", "0") or "0").strip()))
+    except ValueError:
+        return 0
+
+
+def file_cap_shards() -> int:
+    """FILE_CAP_SHARDS (default 1): how many shards of one run share the cap; each shard process holds FILE_CAP // shards."""
+    try:
+        return max(1, int((_env("FILE_CAP_SHARDS", "1") or "1").strip()))
+    except ValueError:
+        return 1
+
+
 def eps_share_count_check() -> bool:
     """EPS_SHARE_COUNT_CHECK (default off; F211, TODO 79): memory's EPS lines keep EPS as filed and EPS on today's shares, and
     adjust only when NSE's corporate-action record and the share-count change (profit over EPS) agree; a recorded action the

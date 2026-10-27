@@ -88,7 +88,7 @@ def sync(pipeline, deadline: float, pages: int = 1, max_files: int = MAX_FILES, 
         try:
             data = nse.download(row["xbrl"])
         except nse_api.SourceBlockedError as exc:
-            report["stopped"] = f"NSE refused the session: {exc}"
+            report["stopped"] = nse_api.stop_reason(exc)
             break
         except Exception as exc:  # one file must not end the step; the next run tries it again
             report["errors"].append(f"{row['symbol']}: {type(exc).__name__}: {exc}"[:200])
@@ -160,7 +160,7 @@ def shareholding_sync(pipeline, deadline: float, days: int = SHAREHOLDING_DAYS, 
         try:
             data = nse.download(row.xbrl_url)
         except nse_api.SourceBlockedError as exc:
-            report["stopped"] = f"NSE refused the session: {exc}"
+            report["stopped"] = nse_api.stop_reason(exc)
             break
         except Exception as exc:  # one file must not end the step; the next run tries it again
             report["errors"].append(f"{row.symbol}: {type(exc).__name__}: {exc}"[:200])

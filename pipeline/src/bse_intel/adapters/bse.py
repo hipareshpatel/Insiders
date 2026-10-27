@@ -48,6 +48,8 @@ from typing import Any, Protocol, TypeVar
 
 import requests
 
+from ..file_cap import files
+
 log = logging.getLogger(__name__)
 
 API = 'https://api.bseindia.com/BseIndiaAPI/api/'
@@ -116,7 +118,10 @@ class BSEClient:
                   file: bool = False) -> bytes:
         """`file`: one filing's file (a 404 is Missing, not a refusal), kept
         gzip-compressed in the raw store (no timestamp, so the same file is one
-        blob), with the SHA-256 of the bytes as sent."""
+        blob), with the SHA-256 of the bytes as sent. A file counts once toward the run's file cap (file_cap.py, F213; past it
+        FileCapReached): list and JSON calls do not."""
+        if file:
+            files.take(url)
         last = None
         for _ in range(RETRIES + 1):
             self._wait()

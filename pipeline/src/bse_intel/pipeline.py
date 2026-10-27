@@ -2567,6 +2567,17 @@ class Pipeline:
                 return self._failed(filing, exc, final=True)
             except AttachmentNotYet as exc:
                 return self._deferred(filing, f"deferred: {exc}"[:300])
+            except nse_api.FileCapReached as exc:
+                # the run's file cap (F213, owner rule 100 files a run): stop the run, leave this filing and the rest
+                # queued; no attempt is spent and nothing is marked failed. The next run goes on.
+                with self._lock:
+                    if not self._blocked:
+                        self._blocked = exc
+                        self.stats.stopped_reason = "file cap reached: the rest waits for the next run"
+                        log.warning("stopping: %s", exc)
+                # an earlier "deferred Nx: ..." note keeps its count and reason (_deferrals, _cap_deferrals read them)
+                return self._deferred(filing, filing.last_error if _DEFERRED.match(filing.last_error or "")
+                                      else "deferred: file cap reached")
             except SourceBlockedError as exc:
                 # NSE answered 401, 403 or 429 (or BSE refused): stop the run politely; the work stays queued and no
                 # filing's attempt is spent (owner, 2026-10-18)
@@ -2839,6 +2850,8 @@ class Pipeline:
             with stages.stage("xbrl"):
                 data = self._attachment(link.url, 8_000_000)
             return xbrl_fast_path.parse(data, filing.news_id)
+        except nse_api.FileCapReached:
+            raise   # the run's file cap (F213): the filing waits for the next run, not a card without its extra
         except Exception as exc:  # an extra: the consolidated card stands without it
             log.warning("standalone results file for %s unavailable (%s)", filing.news_id, exc)
             return None
@@ -3091,6 +3104,8 @@ class Pipeline:
 
         try:
             matches, checked = event_xbrl.match(filing, self._event_files(filing), read, doc.layer_text() or "")
+        except nse_api.FileCapReached:
+            raise   # the run's file cap (F213): the filing waits for the next run, not a card read without its XBRL
         except nse_api.SourceBlockedError as exc:
             log.error("NSE refused the session; events are read from their PDF for the rest of this run: %s", exc)
             with self._lock:
@@ -3137,6 +3152,8 @@ class Pipeline:
                 parsed = annual_xbrl.parse(data) if data else None
                 if parsed and parsed.period_end.year == year and parsed.period_end.isoformat() < filing.filed_at[:10]:
                     reports.append(parsed)
+        except nse_api.FileCapReached:
+            raise   # the run's file cap (F213): the filing waits for the next run
         except nse_api.SourceBlockedError as exc:
             log.error("NSE refused the session; annual reports are read from their PDF for the rest of this run: %s", exc)
             with self._lock:
@@ -4371,6 +4388,9 @@ class Pipeline:
                     self._run_critic(deadline)
             if mode in ("backfill", "all") and not self._halted(bulk=True) and os.environ.get("PIPELINE_TODAY") != "only":
                 self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
+        except nse_api.FileCapReached as exc:
+            self.stats.stopped_reason = self.stats.stopped_reason or "file cap reached: the rest waits for the next run"
+            log.warning("%s", exc)   # the cap is a planned stop, not an error: the status stays as it was
         except SourceBlockedError as exc:
             status, error = "ERROR", str(exc)
             self.stats.stopped_reason = self.stats.stopped_reason or "the source refused the session; work stays queued"

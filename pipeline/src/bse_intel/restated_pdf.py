@@ -226,14 +226,21 @@ def read_company(src, symbol: str, dossier: dict, quarters: int = 6, rejected: l
     return records, cleared, reasons
 
 
-def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None = None, dry_run: bool = False) -> dict:
+def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None = None, dry_run: bool = False,
+        resume_after: str | None = None) -> dict:
     """Maintenance pass: for each company (scrip -> NSE symbol) read its latest quarters' PDFs and store what they restate.
     One company's failure is a reason, not a stop; a refusal by NSE stops the pass (it propagates). ``dry_run`` writes
-    nothing and lists every restated figure found in ``stats["found"]`` (with both figures and their sources), for review."""
-    from .nse import SourceBlockedError
+    nothing and lists every restated figure found in ``stats["found"]`` (with both figures and their sources), for review.
+    The run's file cap (F213) ends the pass: ``stats["capped"]``, the company it stopped in is ``stopped_at`` (not stored, not
+    counted) and ``last_done`` is the last company finished, where the next run resumes (``resume_after``)."""
+    from .nse import FileCapReached, SourceBlockedError
     src = pr.Sources(nse, ocr=False)
-    stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}, "found": [], "rejected": []}
-    for scrip, symbol in list(symbols.items())[:limit]:
+    stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}, "found": [], "rejected": [], "capped": False,
+             "stopped_at": None, "last_done": None}
+    items = list(symbols.items())
+    if resume_after:
+        items = [(k, v) for k, v in items if k > resume_after]
+    for scrip, symbol in items[:limit]:
         dossier = sink.get_dossier(scrip)
         if not dossier:
             continue
@@ -242,10 +249,15 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         refused: list[dict] = []
         try:
             records, cleared, reasons = read_company(src, symbol, dossier, quarters, refused)
+        except FileCapReached:
+            stats["companies"] -= 1
+            stats["capped"], stats["stopped_at"] = True, scrip
+            break
         except SourceBlockedError:
             raise
         except Exception as exc:   # noqa: BLE001
             stats["reasons"][symbol] = [type(exc).__name__]
+            stats["last_done"] = scrip
             continue
         finally:
             src.release()
@@ -255,12 +267,14 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         stats["rejected"] += [{"scrip": scrip, "symbol": symbol, **r} for r in refused]    # reading errors (F212), never stored
         if dry_run:
             stats["found"] += [{"scrip": scrip, "symbol": symbol, **r} for r in records]
+            stats["last_done"] = scrip
             continue
         if merge(dossier, records, cleared):
             dossier["restated_checked_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
             keep_concurrent_writes(dossier, read, sink.get_dossier(scrip))
             sink.put_dossier(scrip, dossier)
             stats["stored"] += 1
+        stats["last_done"] = scrip
     return stats
 
 

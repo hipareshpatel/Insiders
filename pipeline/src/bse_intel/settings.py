@@ -59,11 +59,11 @@ def card_ebitda_profit_v2() -> bool:
 
 
 def memory_standalone_only() -> bool:
-    """MEMORY_STANDALONE_ONLY (default off; TODO 49, F162): a quarter for which NSE lists no consolidated results file is kept
+    """MEMORY_STANDALONE_ONLY (default ON since the owner's Yes, 27 Oct 2026, TODO 99; 0 turns it off; TODO 49, F162): a quarter for which NSE lists no consolidated results file is kept
     from its standalone file (basis STANDALONE, listed in the dossier's ``standalone_only``), even when the company's other
     quarters are consolidated (Jyothy Labs after it sold its only subsidiary, ABB India before its first one). Off, such a
     quarter is dropped, as before. Read at the call."""
-    return (_env("MEMORY_STANDALONE_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return (_env("MEMORY_STANDALONE_ONLY", "1") or "1").strip().lower() in ("1", "true", "yes", "on")
 
 
 def memory_restated() -> bool:

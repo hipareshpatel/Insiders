@@ -232,9 +232,11 @@ def test_nse_pacing_is_three_to_five_seconds_unless_a_bulk_load_sets_a_range(mon
         assert pause_from_env() == (3.0, 5.0)
 
 
-def test_a_standalone_only_quarter_is_not_seeded_beside_consolidated_ones_and_leaves_memory():
+def test_a_standalone_only_quarter_is_not_seeded_beside_consolidated_ones_and_leaves_memory(monkeypatch):
     """Heritage (T5, 2026-10-20): NSE listed only a standalone re-filing for Q4FY25 and Q2FY26; the seed put its PAT
-    (20.51) beside five consolidated sources (38.17), and a card said PAT +16.7% YoY where it fell 37%."""
+    (20.51) beside five consolidated sources (38.17), and a card said PAT +16.7% YoY where it fell 37%. With the
+    standalone-only rule off (F162 is on by default since 27 Oct; its on path is tested in test_seed_standalone_only)."""
+    monkeypatch.setenv("MEMORY_STANDALONE_ONLY", "0")
     seed_mod._nse_rows.cache_clear()
 
     def xml(basis, start, end, pat):

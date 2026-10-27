@@ -12,13 +12,18 @@ from bse_intel.dossier import results_snapshot
 from bse_intel.settings import card_results_one_line
 
 NID = "nse-1"
-TAGGED = {"by": "file", "doc": "results"}
-STATED = {"by": "ai", "doc": "call"}
 
 
-def _m(metric, period, value, news_id=NID, lab=None):
-    return {"metric": metric, "period": period, "value": value, "unit": "INR_CR", "as_of": "2026-10-26T10:00:00",
-            "source_news_id": news_id, "basis": "CONSOLIDATED", **({"lab": lab} if lab else {})}
+def _src(news_id, value, by, basis="CONSOLIDATED"):
+    return {"news_id": news_id, "as_of": "2026-10-26T10:00:00", "value": value, "unit": "INR_CR", "basis": basis,
+            "lab": {"by": by, "doc": "results", "basis": basis}}
+
+
+def _m(metric, period, sources, value=None, basis="CONSOLIDATED"):
+    """A memory entry the shape live memory has (a figure with every source that stated it)."""
+    srcs = [_src(n, v, by, basis) for n, v, by in sources]
+    return {"metric": metric, "period": period, "value": srcs[0]["value"] if value is None else value, "unit": "INR_CR",
+            "as_of": "2026-10-26T10:00:00", "source_news_id": srcs[0]["news_id"], "sources": srcs}
 
 
 def _dossier(rows):
@@ -34,11 +39,24 @@ def _on(monkeypatch):
     monkeypatch.setenv("CARD_RESULTS_ONE_LINE", "1")
 
 
-# Five Star, Q2FY27: total income 875.0 against comparatives that are revenue from operations
-FIVESTAR = _dossier([
-    _m("total_revenue", "Q2FY27", 875.0, lab=TAGGED), _m("pat", "Q2FY27", 299.32, lab=TAGGED),
-    _m("revenue", "Q2FY26", 799.44, "xbrl:res:1:Q2FY26", TAGGED), _m("revenue", "Q1FY27", 828.98, "xbrl:res:1:Q1FY27", TAGGED),
-    _m("pat", "Q2FY26", 286.0, "xbrl:res:1:Q2FY26", TAGGED), _m("pat", "Q1FY27", 290.0, "xbrl:res:1:Q1FY27", TAGGED)])
+def _x(period):
+    return f"xbrl:res:1:{period}"
+
+
+# Five Star, Q2FY27 (card nse-106828629, the slides): the card's own reading of total income, 875.0, is stored as `revenue`
+# beside the file's revenue 858.48 (nse-106828630) and its total income 875.03; the comparatives are the file's
+def _fivestar(total_comparatives=True):
+    rows = [_m("revenue", "Q2FY27", [(NID, 875.0, "ai"), ("nse-2", 858.48, "file")], value=858.48, basis="STANDALONE"),
+            _m("total_income", "Q2FY27", [("nse-2", 875.03, "file")], basis="STANDALONE"),
+            _m("pat", "Q2FY27", [("nse-2", 299.32, "file")], basis="STANDALONE"),
+            _m("revenue", "Q2FY26", [(_x("Q2FY26"), 799.44, "file")], basis="STANDALONE"),
+            _m("revenue", "Q1FY27", [(_x("Q1FY27"), 828.98, "file")], basis="STANDALONE"),
+            _m("pat", "Q2FY26", [(_x("Q2FY26"), 286.0, "file")], basis="STANDALONE"),
+            _m("pat", "Q1FY27", [(_x("Q1FY27"), 290.0, "file")], basis="STANDALONE")]
+    if total_comparatives:
+        rows += [_m("total_income", "Q2FY26", [(_x("Q2FY26"), 806.5, "file")], basis="STANDALONE"),
+                 _m("total_income", "Q1FY27", [(_x("Q1FY27"), 838.74, "file")], basis="STANDALONE")]
+    return _dossier(rows)
 
 
 def test_switch_is_off_by_default_and_reads_the_environment(monkeypatch):
@@ -48,75 +66,92 @@ def test_switch_is_off_by_default_and_reads_the_environment(monkeypatch):
 
 
 def test_off_the_table_and_the_card_are_unchanged():
-    table = results_snapshot(FIVESTAR, NID)
+    table = results_snapshot(_fivestar(), NID)
     assert table["revenue"]["yoy_pct"] == 9.5 and results_one_line.NOTES_KEY not in table   # the live card's wrong +9.5%
     card = {"headline": "Acme: revenue ₹1,153 Cr", "key_numbers": [{"label": "EBITDA", "value": "₹189 Cr"}],
-            "results": {"revenue": {"value": 1131.87}, "ebitda": {"value": 169.47}, "one_line": ["x"]}}
+            "results": {"revenue": {"value": 1131.87}, "ebitda": {"value": 169.47}, "one_line": ["x"],
+                        "lines": [{"key": "revenue", "label": "Revenue"}, {"key": "ebitda", "label": "EBITDA"}]}}
     before = copy.deepcopy(card)
     assert results_one_line.apply_card_json(card) == [] and card == before
 
 
-def test_fivestar_total_income_with_no_total_income_comparatives_has_no_change(monkeypatch):
+def test_fivestar_card_time_total_income_takes_total_income_comparatives(monkeypatch):
     _on(monkeypatch)
-    table = results_snapshot(FIVESTAR, NID)
+    table = results_snapshot(_fivestar(), NID)
     row = table["revenue"]
     assert row["value"] == 875.0
-    assert "prev_year" not in row and "yoy_pct" not in row and "prev_quarter" not in row and "qoq_pct" not in row
+    assert row["prev_year"] == 806.5 and row["yoy_pct"] == 8.5 and row["prev_quarter"] == 838.74 and row["qoq_pct"] == 4.3
     assert next(s for s in table["lines"] if s["key"] == "revenue")["label"] == "Total income"
-    assert len(table["one_line"]) == 3 and "total income" in table["one_line"][0]
+    assert any("total income" in n for n in table["one_line"])
     assert table["pat"]["yoy_pct"] == 4.7   # the other rows are untouched
     card = {"results": table}
     logged = list(table["one_line"])
-    assert results_one_line.apply_card_json(card) == logged
-    assert "one_line" not in card["results"]   # the notes moved to the change log
+    assert results_one_line.apply_card_json(card) == logged and "one_line" not in card["results"]
 
 
-def test_fivestar_comparatives_are_recomputed_from_total_income_when_the_tagged_data_has_it(monkeypatch):
+def test_fivestar_without_total_income_comparatives_has_no_change(monkeypatch):
     _on(monkeypatch)
-    rows = copy.deepcopy(FIVESTAR["financial_metrics"]) + [
-        _m("total_income", "Q2FY26", 810.2, "xbrl:res:1:Q2FY26", TAGGED), _m("total_income", "Q1FY27", 841.4, "xbrl:res:1:Q1FY27", TAGGED)]
-    row = results_snapshot(_dossier(rows), NID)["revenue"]
-    assert row["prev_year"] == 810.2 and row["yoy_pct"] == 8.0   # the true +8% / +4% of the audit
-    assert row["prev_quarter"] == 841.4 and row["qoq_pct"] == 4.0
+    table = results_snapshot(_fivestar(total_comparatives=False), NID)
+    row = table["revenue"]
+    assert row["value"] == 875.0
+    assert "prev_year" not in row and "yoy_pct" not in row and "prev_quarter" not in row and "qoq_pct" not in row
+    assert len(table["one_line"]) == 3
 
 
 def test_a_revenue_row_on_one_line_is_left_as_it_was(monkeypatch):
-    rows = [_m("revenue", "Q2FY27", 900.0, lab=TAGGED), _m("pat", "Q2FY27", 90.0, lab=TAGGED),
-            _m("revenue", "Q2FY26", 800.0, "xbrl:res:1:Q2FY26", TAGGED), _m("revenue", "Q1FY27", 850.0, "xbrl:res:1:Q1FY27", TAGGED)]
+    rows = [_m("revenue", "Q2FY27", [("nse-2", 900.0, "file")]), _m("pat", "Q2FY27", [("nse-2", 90.0, "file")]),
+            _m("revenue", "Q2FY26", [(_x("Q2FY26"), 800.0, "file")]), _m("revenue", "Q1FY27", [(_x("Q1FY27"), 850.0, "file")]),
+            _m("total_income", "Q2FY26", [(_x("Q2FY26"), 810.0, "file")])]
     off = results_snapshot(_dossier(rows), NID)
     _on(monkeypatch)
     assert results_snapshot(_dossier(rows), NID) == off
 
 
-# Gravita, Q2FY27: this quarter's EBITDA worked out from the file (169.47), the comparatives the company's own (133.0, 192)
-def _grw(parts_prior=True):
-    rows = [_m("revenue", "Q2FY27", 695.3, lab=TAGGED), _m("pat", "Q2FY27", 129.0, lab=TAGGED),
-            _m("ebitda", "Q2FY27", 169.47, lab=TAGGED), _m("ebitda_margin", "Q2FY27", 24.37, lab=TAGGED),
-            _m("revenue", "Q2FY26", 568.0, "xbrl:res:2:Q2FY26", TAGGED), _m("revenue", "Q1FY27", 633.0, "xbrl:res:2:Q1FY27", TAGGED),
-            _m("ebitda", "Q2FY26", 133.0, "call-1", STATED), _m("ebitda", "Q1FY27", 192.0, "call-2", STATED),
-            _m("ebitda_margin", "Q2FY26", 23.4, "call-1", STATED), _m("ebitda_margin", "Q1FY27", 30.3, "call-2", STATED)]
-    if parts_prior:   # the tagged parts of Q2FY26: 110 + 12 + 16 - 4 = 134.0
-        rows += [_m("pbt", "Q2FY26", 110.0, "xbrl:res:2:Q2FY26", TAGGED), _m("finance_cost", "Q2FY26", 12.0, "xbrl:res:2:Q2FY26", TAGGED),
-                 _m("depreciation", "Q2FY26", 16.0, "xbrl:res:2:Q2FY26", TAGGED), _m("other_income", "Q2FY26", 4.0, "xbrl:res:2:Q2FY26", TAGGED)]
-    return _dossier(rows)
+# Garware Hi-Tech, Q2FY27 (card nse-106824515): this quarter's EBITDA 169.47 is the file's, worked out by code (a calc source),
+# the comparatives memory shows are the company's stated 133.0 and 192 beside the file's own 119.44 and 172.0
+def _grw(prior_file=True):
+    def base(p, stated, file, margin_stated, margin_file, revenue):
+        ebitda = [("nse-c", stated, "unknown")] + ([(_x(p), file, "calc")] if prior_file else [])
+        margin = [("nse-c", margin_stated, "unknown")] + ([(_x(p), margin_file, "calc")] if prior_file else [])
+        return [_m("ebitda", p, ebitda, value=stated), _m("ebitda_margin", p, margin, value=margin_stated),
+                _m("revenue", p, [(_x(p), revenue, "file")])]
+    return _dossier([
+        _m("revenue", "Q2FY27", [(NID, 695.53, "unknown"), (_x("Q2FY27"), 695.53, "file")]), _m("pat", "Q2FY27", [(NID, 129.0, "unknown")]),
+        _m("ebitda", "Q2FY27", [(NID, 189.0, "unknown"), (_x("Q2FY27"), 169.47, "calc")], value=169.47),
+        _m("ebitda_margin", "Q2FY27", [(_x("Q2FY27"), 24.37, "calc")])]
+        + base("Q2FY26", 133.0, 119.44, 23.4, 20.97, 569.69) + base("Q1FY27", 192.0, 172.0, 30.3, 27.17, 633.08))
 
 
-def test_grwrhitech_off_shows_the_mixed_bases(monkeypatch):
+def test_grwrhitech_off_shows_the_mixed_bases():
     row = results_snapshot(_grw(), NID)["ebitda"]
     assert row["prev_year"] == 133.0 and row["yoy_pct"] == 27.4   # the audit's +27.4% on the company's 133.0
 
 
-def test_grwrhitech_comparatives_are_worked_out_the_same_way_or_dropped(monkeypatch):
+def test_grwrhitech_comparatives_are_the_files_own_or_dropped(monkeypatch):
     _on(monkeypatch)
     table = results_snapshot(_grw(), NID)
     row, margin = table["ebitda"], table["ebitda_margin"]
-    assert row["value"] == 169.47 and row["prev_year"] == 134.0 and row["yoy_pct"] == 26.5   # worked out from the tagged parts
-    assert "prev_quarter" not in row and "qoq_pct" not in row                                # no tagged parts for Q1FY27
-    assert margin["prev_year"] == round(134.0 / 568.0 * 100, 2) and "prev_quarter" not in margin and "qoq_bps" not in margin
-    assert margin["yoy_bps"] == round((24.37 - margin["prev_year"]) * 100)
-    assert any("stated figure" in n for n in table["one_line"])
-    bare = results_snapshot(_grw(parts_prior=False), NID)
-    assert "prev_year" not in bare["ebitda"] and "yoy_pct" not in bare["ebitda"] and "prev_year" not in bare["ebitda_margin"]
+    assert row["value"] == 169.47 and row["prev_year"] == 119.44 and row["yoy_pct"] == 41.9
+    assert row["prev_quarter"] == 172.0 and row["qoq_pct"] == -1.5
+    assert margin["prev_year"] == 20.97 and margin["yoy_bps"] == round((24.37 - 20.97) * 100)
+    assert margin["prev_quarter"] == 27.17 and margin["qoq_bps"] == round((24.37 - 27.17) * 100)
+    assert any("another footing" in n for n in table["one_line"])
+    bare = results_snapshot(_grw(prior_file=False), NID)   # no file figure for the comparatives: no change at all
+    assert "prev_year" not in bare["ebitda"] and "yoy_pct" not in bare["ebitda"] and "prev_quarter" not in bare["ebitda"]
+    assert "prev_year" not in bare["ebitda_margin"] and "qoq_bps" not in bare["ebitda_margin"]
+
+
+def test_an_ebitda_row_whose_comparatives_are_the_files_own_is_left_alone(monkeypatch):
+    rows = _grw()
+    for e in rows["financial_metrics"]:
+        if e["metric"] in ("ebitda", "ebitda_margin") and e["period"] != "Q2FY27":
+            e["value"] = e["sources"][-1]["value"]
+    off = results_snapshot(rows, NID)
+    _on(monkeypatch)
+    assert results_snapshot(rows, NID) == off
+
+
+LINES = [{"key": "revenue", "label": "Revenue"}, {"key": "ebitda", "label": "EBITDA"}]
 
 
 # LMW: the headline states the CFO's spoken revenue, the block the statement's
@@ -124,7 +159,7 @@ def test_lmw_headline_revenue_on_another_basis_is_labelled(monkeypatch):
     _on(monkeypatch)
     card = {"headline": "LMW Q2FY27: revenue rises 30% to ₹1,153 Cr, orders strong",
             "key_numbers": [{"label": "Revenue", "value": "₹1,153 Cr", "change": "+30% YoY"}],
-            "results": {"revenue": {"value": 1131.87}, "lines": [{"key": "revenue", "label": "Revenue"}]}}
+            "results": {"revenue": {"value": 1131.87}, "lines": LINES}}
     notes = results_one_line.apply_card_json(card)
     assert card["headline"].endswith("(company-reported; results table ₹1,131.87 Cr)")
     assert card["key_numbers"][0]["label"] == "Revenue (company-reported; results table ₹1,131.87 Cr)"
@@ -136,7 +171,7 @@ def test_lmw_headline_revenue_on_another_basis_is_labelled(monkeypatch):
 def test_a_headline_on_the_blocks_figure_is_not_touched(monkeypatch):
     _on(monkeypatch)
     card = {"headline": "LMW Q2FY27: revenue ₹1,131.87 Cr", "key_numbers": [{"label": "Revenue", "value": "₹1,131.87 Cr"}],
-            "results": {"revenue": {"value": 1131.87}}}
+            "results": {"revenue": {"value": 1131.87}, "lines": LINES}}
     before = copy.deepcopy(card)
     assert results_one_line.apply_card_json(card) == [] and card == before
 
@@ -147,7 +182,7 @@ def test_two_ebitda_key_numbers_are_each_named(monkeypatch):
     card = {"headline": "Acme Q2FY27: net profit up", "key_numbers": [
         {"label": "EBITDA", "value": "₹189 Cr", "change": "+42% YoY"}, {"label": "EBITDA", "value": "₹169.47 Cr"},
         {"label": "Net profit", "value": "₹129 Cr"}],
-        "results": {"ebitda": {"value": 169.47}, "revenue": {"value": 695.3}}}
+        "results": {"ebitda": {"value": 169.47}, "revenue": {"value": 695.3}, "lines": LINES}}
     results_one_line.apply_card_json(card)
     assert card["key_numbers"][0]["label"] == "EBITDA (company-reported; results table ₹169.47 Cr)"
     assert card["key_numbers"][1]["label"] == "EBITDA (calculated from the statement)"
@@ -156,5 +191,57 @@ def test_two_ebitda_key_numbers_are_each_named(monkeypatch):
 
 def test_a_lone_ebitda_on_the_blocks_figure_stays_plain(monkeypatch):
     _on(monkeypatch)
-    card = {"key_numbers": [{"label": "EBITDA", "value": "₹169.5 Cr"}], "results": {"ebitda": {"value": 169.47}}}
+    card = {"key_numbers": [{"label": "EBITDA", "value": "₹169.5 Cr"}], "results": {"ebitda": {"value": 169.47}, "lines": LINES}}
     assert results_one_line.apply_card_json(card) == [] and card["key_numbers"][0]["label"] == "EBITDA"
+
+
+def test_a_total_income_figure_is_not_compared_with_a_revenue_row_and_the_reverse(monkeypatch):
+    _on(monkeypatch)
+    card = {"headline": "Acme: total income ₹875 Cr", "key_numbers": [{"label": "Total income", "value": "₹875 Cr"}],
+            "results": {"revenue": {"value": 858.48}, "lines": LINES}}
+    before = copy.deepcopy(card)
+    assert results_one_line.apply_card_json(card) == [] and card == before
+    card["results"]["lines"] = [{"key": "revenue", "label": "Total income"}]   # a total-income row: revenue is not its figure
+    card["headline"], card["key_numbers"] = "Acme: revenue ₹858.48 Cr", [{"label": "Revenue", "value": "₹858.48 Cr"}]
+    card["results"]["revenue"]["value"] = 875.0
+    before = copy.deepcopy(card)
+    assert results_one_line.apply_card_json(card) == [] and card == before
+
+
+def test_a_row_the_table_does_not_show_is_not_cited(monkeypatch):
+    _on(monkeypatch)
+    card = {"headline": "Bank: revenue ₹900 Cr", "key_numbers": [{"label": "Revenue", "value": "₹900 Cr"}],
+            "results": {"revenue": {"value": 1131.87}, "lines": [{"key": "interest_earned", "label": "Interest earned"}]}}
+    before = copy.deepcopy(card)
+    assert results_one_line.apply_card_json(card) == [] and card == before
+
+
+def test_the_headline_figure_is_the_amount_not_the_change(monkeypatch):
+    _on(monkeypatch)
+    card = {"headline": "Acme: revenue up ₹50 Cr to ₹1,131.87 Cr, margin steady", "results": {"revenue": {"value": 1131.87}, "lines": LINES}}
+    assert results_one_line.apply_card_json(card) == [] and "company-reported" not in card["headline"]
+
+
+def test_a_small_gap_is_not_labelled(monkeypatch):
+    _on(monkeypatch)
+    card = {"headline": "Acme: revenue ₹10 Cr", "key_numbers": [{"label": "Revenue", "value": "₹10 Cr"}],
+            "results": {"revenue": {"value": 10.4}, "lines": LINES}}
+    assert results_one_line.apply_card_json(card) == []
+
+
+def test_a_refresh_logs_the_notes_and_leaves_no_stray_key(monkeypatch):
+    from test_card_refresh import FILED, _card, _dossier
+
+    from bse_intel import card_refresh
+    from bse_intel.models import Filing
+
+    filing = Filing(news_id="n1", scrip_code="500001", company_name="Demo Rail Ltd", headline="h", subject="",
+                    filed_at=FILED, filing_date=FILED[:10])
+    card = {**_card(), "headline": "Demo Rail: revenue ₹1,153 Cr",
+            "results": {"revenue": {"value": 1131.87}, "lines": LINES, "one_line": ["n"]}}
+    new, changed = card_refresh.refresh(copy.deepcopy(card), _dossier(), filing, None)
+    assert new["results"]["one_line"] == ["n"] and "company-reported" not in new["headline"]   # off: nothing
+    _on(monkeypatch)
+    new, changed = card_refresh.refresh(copy.deepcopy(card), _dossier(), filing, None)
+    assert "one_line" not in new["results"] and new["headline"].endswith("(company-reported; results table ₹1,131.87 Cr)")
+    assert new["grounding"]["one_line"][0] == "n" and "headline" in changed and "grounding" in changed

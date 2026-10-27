@@ -2544,7 +2544,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
     if card_results_one_line():   # CARD_RESULTS_ONE_LINE: each row one statement line (F206; off: nothing)
         from . import results_one_line
-        results_one_line.snapshot_rows(out, lines, table, periods, period)
+        results_one_line.snapshot_rows(out, lines, table, periods, period, lookup)
     if with_eps and "eps" in out:
         lines.append({"key": "eps", "label": "EPS (₹)", "unit": "inr"})
     if v2:

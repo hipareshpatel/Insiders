@@ -216,6 +216,10 @@ on:
         description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned)
         type: boolean
         default: false
+      min_mcap_cr:
+        description: memory-gaps-fill-bse only - fill only companies with at least this market cap (Rs Cr); empty means the universe's 500
+        type: string
+        default: ''
       file_cap:
         description: a test run's cap on NSE/BSE files (owner, 27 Oct 2026, the first test of a fetch is 100 files); empty means no cap
         type: string
@@ -335,6 +339,9 @@ jobs:
           # F214 (TODO 108; owner 27 Oct: merge and switch on once reviewed): also the quarters older than a company's first
           # NSE results row. A repository variable BSE_FILL_PRE_NSE=0 turns it off.
           BSE_FILL_PRE_NSE: ${{ vars.BSE_FILL_PRE_NSE || '1' }}
+          # a test on bigger companies (owner, 27 Oct 2026): the fill's market-cap floor for this run only; the universe file
+          # it reads is not rebuilt here, so nothing else changes
+          UNIVERSE_MIN_MCAP_CR: ${{ inputs.min_mcap_cr || vars.UNIVERSE_MIN_MCAP_CR || '500' }}
         run: |
           # a dry run unless `apply`: it reads NSE and BSE and writes nothing to memory
           set -o pipefail

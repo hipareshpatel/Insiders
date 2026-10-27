@@ -9,7 +9,8 @@ from bse_intel.dossier import label
 from bse_intel.models import FinancialMetric
 
 NAME = "INTEGRATED_FILING_INDAS_1664294_06052026105412_WEB.xml"
-URL = sx.ARCHIVE_XBRL_BASE + NAME
+BASE = "https://nsearchives.nseindia.com/corporate/xbrl/"
+URL = BASE + NAME
 
 
 def result(values, basis="CONSOLIDATED"):
@@ -35,8 +36,8 @@ def row(period="Q2FY26", metric="revenue", ours=1000.0, theirs=1100.0, basis="CO
             "memory_value": ours, "screener_value": theirs, "shifted": [], "note": ""}
 
 
-def dossier(file=NAME, basis="CONSOLIDATED", sources=False):
-    lab = {**label("file", "results", "2026-05-06T18:00:00+05:30", basis=basis, ok=True), **({"file": file} if file else {})}
+def dossier(file=URL, basis="CONSOLIDATED", sources=False):
+    lab = {**label("file", "results", "2026-05-06T18:00:00+05:30", basis=basis, ok=True), **({"file_url": file} if file else {})}
     entry = {"metric": "revenue", "period": "Q2FY26", "value": 1000.0, "source_news_id": "xbrl:res:1:Q2FY26", "basis": basis, "lab": lab}
     if sources:
         entry = {"metric": "revenue", "period": "Q2FY26", "value": 1000.0, "source_news_id": "xbrl:res:1:Q2FY26",
@@ -105,12 +106,12 @@ def test_a_file_without_the_figure_is_still_no_file(parsed):
     nse = FakeNse({URL: b"q2"})
     d = dossier()
     d["financial_metrics"].append({"metric": "pat", "period": "Q3FY26", "value": 1.0, "source_news_id": "xbrl:res:1:Q3FY26",
-                                   "basis": "CONSOLIDATED", "lab": {"by": "file", "file": "Q3.xml"}})
+                                   "basis": "CONSOLIDATED", "lab": {"by": "file", "file_url": BASE + "Q3.xml"}})
     r = sx.run(nse, [row()], names_for=names(d))["rows"][0]
     assert r["verdict"] == "not_run"   # the next quarter's file (named, but not on the archive) was needed too
     d["financial_metrics"].append({"metric": "pat", "period": "Q2FY27", "value": 1.0, "source_news_id": "xbrl:res:1:Q2FY27",
-                                   "basis": "CONSOLIDATED", "lab": {"by": "file", "file": "Q2FY27.xml"}})
-    files = {URL: b"q2", sx.ARCHIVE_XBRL_BASE + "Q3.xml": b"q2", sx.ARCHIVE_XBRL_BASE + "Q2FY27.xml": b"q2"}
+                                   "basis": "CONSOLIDATED", "lab": {"by": "file", "file_url": BASE + "Q2FY27.xml"}})
+    files = {URL: b"q2", BASE + "Q3.xml": b"q2", BASE + "Q2FY27.xml": b"q2"}
     r = sx.run(FakeNse(files), [row()], names_for=names(d))["rows"][0]
     assert r["verdict"] == "no_file"
 
@@ -135,9 +136,44 @@ def test_the_seed_stamps_the_file_name_on_its_figures():
         {"metric": "pat", "period": "Q2FY26", "source_news_id": "xbrl:res:1:Q2FY26",
          "sources": [{"news_id": "xbrl:res:1:Q2FY26", "lab": {"by": "file"}}, {"news_id": "card:9", "lab": {"by": "ai"}}]},
         {"metric": "pat", "period": "Q1FY26", "source_news_id": "xbrl:res:1:Q1FY26", "lab": {"by": "file"}}]}
-    assert seed.stamp_file(d, "xbrl:res:1:Q2FY26", NAME) == 2
-    assert sx.file_names(d, "1", "CONSOLIDATED") == {"Q2FY26": NAME}
-    assert "file" not in d["financial_metrics"][2]["lab"] and "file" not in d["financial_metrics"][1]["sources"][1]["lab"]
+    assert seed.stamp_file(d, "xbrl:res:1:Q2FY26", URL) == 2
+    assert sx.file_names(d, "1", "CONSOLIDATED") == {"Q2FY26": URL}
+    assert "file_url" not in d["financial_metrics"][2]["lab"] and "file_url" not in d["financial_metrics"][1]["sources"][1]["lab"]
+
+
+class MemSink:
+    def __init__(self):
+        self.d = {}
+
+    def get_dossier(self, scrip):
+        return self.d.get(scrip)
+
+    def put_dossier(self, scrip, dossier):
+        self.d[scrip] = dossier
+
+
+def _seeded(url, from_nse):
+    sink = MemSink()
+    parsed = result({("revenue", "Q2FY26"): 1000.0})
+    seed._write_results(sink, "1", "Demo", None, "Q2FY26", "2026-05-06", url, parsed, seed.SeedStats(), from_nse)
+    return sink.d["1"]
+
+
+def test_only_an_nse_file_is_stamped_and_with_its_full_url():
+    odd = "https://nsearchives.nseindia.com/other/folder/X_1.xml"   # not proven to always sit in /corporate/xbrl/
+    assert sx.file_names(_seeded(odd, True), "1", "CONSOLIDATED") == {"Q2FY26": odd}
+    bse = "https://www.bseindia.com/XBRLFILES/FourOne/x.xml"
+    assert sx.file_names(_seeded(bse, False), "1", "CONSOLIDATED") == {}   # a BSE-sourced figure gets no stamp
+
+
+def test_archive_only_reads_the_stored_url_unchanged_and_its_store_key_matches(parsed, monkeypatch):
+    odd = "https://nsearchives.nseindia.com/other/folder/X_1.xml"
+    parsed[b"q2"] = result({("revenue", "Q2FY26"): 1000.0})
+    asked = []
+    monkeypatch.setattr(xbrl_store, "get", lambda sink, url: asked.append(xbrl_store.key(url)) or None)
+    nse = FakeNse({odd: b"q2"})
+    sx.run(nse, [row()], names_for=names(_seeded(odd, True)))
+    assert nse.downloads == [odd] and asked == [xbrl_store.key(odd)]
 
 
 # --- parallel reads (owner 27 Oct 2026: "use multiple downloads at once") ----------------------------------------------
@@ -148,10 +184,10 @@ def _many(n=12):
     for i in range(n):
         scrip, name = str(100 + i), f"F{i}.xml"
         rows.append({**row(), "scrip": scrip, "symbol": f"S{i}"})
-        d = dossier(file=name)
+        d = dossier(file=BASE + name)
         d["financial_metrics"][0]["source_news_id"] = f"xbrl:res:{scrip}:Q2FY26"
         dossiers[scrip] = d
-        files[sx.ARCHIVE_XBRL_BASE + name] = b"q2" if i % 3 else None   # every third file is not on the archive
+        files[BASE + name] = b"q2" if i % 3 else None   # every third file is not on the archive
     return rows, dossiers, files
 
 

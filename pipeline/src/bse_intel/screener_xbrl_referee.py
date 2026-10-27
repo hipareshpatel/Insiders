@@ -15,8 +15,8 @@ downloaded once per run and read with the pipeline's own XBRL reader (``xbrl.par
   whole crore, so it gets the cross-check's own tolerance (``screener_crosscheck._close``).
 
 Archive-only mode (``--archive-only``, owner 27 Oct 2026: "Run NSE on archive site which do not block access and we can do
-super fast"): no results list is fetched. Memory records each seeded figure's file name (``lab.file`` of its
-``xbrl:res:<scrip>:<period>`` source, F222); the file's URL is rebuilt as ``ARCHIVE_XBRL_BASE + name`` and read from the XBRL
+super fast"): no results list is fetched. Memory records each seeded figure's file name (``lab.file_url`` of its
+``xbrl:res:<scrip>:<period>`` source, F222); the file is read at that stored URL (never rebuilt) from the XBRL
 store first, else from the archive host (``NseClient.download``). A pair that needs a period with no name in memory, or whose
 file the archive does not serve, is ``not_run`` (never an API call).
 
@@ -56,11 +56,10 @@ VERDICTS = ("ours_matches_official", "screener_matches_official", "both_match", 
 OURS_ABS, OURS_REL = 0.011, 0.0001
 LENDER_TEMPLATES = xbrl.LENDER_TEMPLATES
 MAX_FILE_BYTES = 8_000_000
-ARCHIVE_XBRL_BASE = "https://nsearchives.nseindia.com/corporate/xbrl/"   # the host and folder nse.py builds every results url on
 
 
 def file_names(dossier: dict | None, scrip: str, basis: str | None) -> dict[str, str]:
-    """quarter -> the exchange file's name memory recorded for it (``lab.file``, stamped by the seed, F222), on ``basis``:
+    """quarter -> the NSE file url memory recorded for it (``lab.file_url``, stamped by the seed, F222), on ``basis``:
     read from the sources whose id is ``xbrl:res:<scrip>:<quarter>``. {} when memory holds none (a seed before F222)."""
     out: dict[str, str] = {}
     prefix = f"xbrl:res:{scrip}:"
@@ -68,8 +67,8 @@ def file_names(dossier: dict | None, scrip: str, basis: str | None) -> dict[str,
         rows = entry.get("sources") or [{"news_id": entry.get("source_news_id"), "lab": entry.get("lab"), "basis": entry.get("basis")}]
         for row in rows:
             nid, lab = str(row.get("news_id") or ""), row.get("lab") or {}
-            if nid.startswith(prefix) and lab.get("file") and (row.get("basis") or lab.get("basis")) in (None, basis):
-                out[nid[len(prefix):]] = lab["file"]
+            if nid.startswith(prefix) and lab.get("file_url") and (row.get("basis") or lab.get("basis")) in (None, basis):
+                out[nid[len(prefix):]] = lab["file_url"]
     return out
 
 
@@ -156,7 +155,8 @@ class CompanyFiles:
             if not name:
                 self.missing = True
                 return None, "", f"no file name in memory for {quarter}"
-            url = ARCHIVE_XBRL_BASE + name
+            url = name   # the url the seed fetched, as stored: never rebuilt
+            name = url.rsplit("/", 1)[-1]
         else:
             row = self._list().get(quarter)
             if row is None:

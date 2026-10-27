@@ -248,3 +248,52 @@ def base_check_result(tagged, dossier: dict | None) -> int:
                 m.eps_note = f"EPS {change:+g}% {slot[:3].upper()} is above profit {profit_pct:+.1f}% and no share-count event is on record"
                 removed += 1
     return removed
+
+
+# EPS_BASE_CHECK, the class behind Wipro (F208): an AI-read results card stored the STANDALONE EPS (2.74, 2.50, 2.89) as consolidated,
+# beside the consolidated profit. The company's share count does not depend on the basis, so profit over EPS shows which profit an
+# EPS was divided by: the consolidated profit over a standalone EPS gives 1,298 Cr shares where the files say 1,047.
+SHARE_MATCH_PCT = 3.0   # profit / EPS agrees with the file-derived share count within this (EPS prints two decimals; buybacks move a few %)
+
+
+def _share_reference(metrics: dict, period: str) -> float | None:
+    """The share count (profit over EPS, the profit's unit over the EPS) of the exchange file's own EPS nearest in time to ``period``,
+    for quarters only, from consolidated figures of memory. None when no file EPS has a profit beside it."""
+    from .dossier import XBRL_SOURCE
+
+    target = due_date(period)
+    if target is None:
+        return None
+    best = None
+    for (name, p), e in metrics.items():
+        if name != "eps" or not p.startswith("Q") or p == period or not e.get("value"):
+            continue
+        if not str(e.get("value_news_id") or e.get("source_news_id") or "").startswith(XBRL_SOURCE):
+            continue
+        profit = next((metrics[(n, p)]["value"] for n in ("pat_owners", "pat") if metrics.get((n, p), {}).get("value")), None)
+        end = due_date(p)
+        if profit and profit > 0 and end and e["value"] > 0 and (best is None or abs((end - target).days) < best[0]):
+            best = (abs((end - target).days), profit / e["value"])
+    return best[1] if best else None
+
+
+def misbased_eps(metrics: dict, standalone: dict | None, period: str, value, basis: str | None) -> str | None:
+    """Why an AI-read per-share figure stored as CONSOLIDATED is probably the standalone one, else None. It must differ from the
+    file-derived share count by more than 3% with the consolidated profit, and match it within 3% with the standalone profit of
+    that quarter. With near-equal profits on both bases (no subsidiaries) both match, so nothing is done."""
+    if not eps_base_check() or basis != "CONSOLIDATED" or not value or value <= 0 or not period.startswith("Q"):
+        return None
+    ref = _share_reference(metrics, period)
+    own = next((metrics[(n, period)]["value"] for n in ("pat_owners", "pat") if metrics.get((n, period), {}).get("value")), None)
+    alone = next((e["value"] for n in ("pat_owners", "pat") for e in (standalone or {}).get("metrics", [])
+                  if e.get("metric") == n and e.get("period") == period and e.get("value")), None)
+    if not (ref and own and alone and own > 0 and alone > 0):
+        return None
+
+    def off(profit) -> float:
+        return abs(profit / value / ref - 1) * 100
+
+    if off(own) > SHARE_MATCH_PCT and off(alone) <= SHARE_MATCH_PCT:
+        return (f"EPS {value:g} for {period} fits the standalone profit ({alone:g}), not the consolidated ({own:g}): "
+                f"shares {alone / value:.0f} vs {own / value:.0f} against {ref:.0f} from the files")
+    return None

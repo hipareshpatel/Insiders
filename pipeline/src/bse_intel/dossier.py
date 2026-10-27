@@ -1167,6 +1167,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
         m_by = getattr(m, "by", None) or item_by
+        if m_by not in ("file", "calc") and key[0] == "eps":
+            # EPS_BASE_CHECK (F208): a standalone EPS an AI read stored as consolidated is dropped, not moved (moving a figure
+            # worked out from a ratio would write a second guess into the standalone block, which only files fill)
+            from . import eps_adjust
+            why = eps_adjust.misbased_eps(metrics, d.get(STANDALONE_KEY), key[1], m.value, basis)
+            if why:
+                log.info("memory: eps %s %s from %s refused: %s", key[1], m.value, news_id, why)
+                continue
         lab = label(m_by, "results" if m_by in ("file", "calc") else doc, updated_at,
                     basis=(getattr(m, "file_basis", None) if m_by in ("file", "calc") else None) or basis, unit=m.unit, ok=True,
                     src=getattr(m, "derived_from", None) if m_by == "calc" else None)

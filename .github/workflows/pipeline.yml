@@ -56,6 +56,18 @@ jobs:
       RESULTS_RICH: ${{ vars.RESULTS_RICH || '1' }}     # 0: results cards without the model's quoted facts and memory points
       MEMORY_CALL_V2: ${{ vars.MEMORY_CALL_V2 }}   # F180: 1 = queue each transcript and deck for call-memory.yml (the same variable turns that job on)
       EPS_SHARE_ADJUST: ${{ vars.EPS_SHARE_ADJUST || '1' }}   # F153, live-bug fix (25 Oct): EPS changes on one share count across splits/bonuses; 0 turns it off
+      # Owner, 27 Oct 2026: "Whatever can be switch ON, do it so at least we can see improvements in today's card". On:
+      # the built card switches that leave every other test unchanged when switched on together (checked 27 Oct). A
+      # repository variable set to 0 turns one off. Still off: CARD_CONSOLIDATED_ONLY, CARD_EBITDA_PROFIT_V2,
+      # CARD_TWO_PARTS and CARD_GUIDANCE_DATED (they change other behaviour and need their on/off first).
+      CARD_GROUND_ALL_FIELDS: ${{ vars.CARD_GROUND_ALL_FIELDS || '1' }}   # F204: figures in the timeline, risks, targets
+      CARD_GROUNDED_FIGURES: ${{ vars.CARD_GROUNDED_FIGURES || '1' }}
+      CARD_ONE_BASIS: ${{ vars.CARD_ONE_BASIS || '1' }}   # F173: one basis a figure
+      CARD_SAME_DEFINITION: ${{ vars.CARD_SAME_DEFINITION || '1' }}
+      CARD_YOY_RESTATED: ${{ vars.CARD_YOY_RESTATED || '1' }}   # F202: restated comparatives when memory holds them
+      CARD_FOOTER_PLAUSIBLE: ${{ vars.CARD_FOOTER_PLAUSIBLE || '1' }}   # F182: a footer figure that cannot be right
+      QUOTE_EXACT_NUMBERS: ${{ vars.QUOTE_EXACT_NUMBERS || '1' }}
+      CARD_EPS_FOLLOWS_PROFIT: ${{ vars.CARD_EPS_FOLLOWS_PROFIT || '1' }}   # F183 (EPS is not shown; memory side only)
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

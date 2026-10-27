@@ -345,3 +345,4 @@ Run from the cloud session's machine and again from GitHub (run 40189201441, sam
   bytes, BETA nse-106825182, CGCL nse-106815515, NHPC nse-106633606). The public site cannot tell held from failed, so
   the final state comes from maintenance `failed-report` (queued behind the memory-gaps fill: same concurrency group).
   The 12 listed by company only (KRSNAA ... RBLBANK) need their news ids from the requeue run to be judged.
+| 108 | Fill from BSE the memory quarters older than a company's first NSE results file | 914 missing company-quarters in 231 companies (listed late on NSE, e.g. 531201, 544602, 532767) exist only on BSE; F201 skipped every company NSE lists any row for | Yes | Built (F214) behind `BSE_FILL_PRE_NSE`, off; on/off over stored cards pending (dry run `memory-gaps-fill-bse` with the switch on first) |

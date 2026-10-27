@@ -75,7 +75,10 @@ def test_a_figure_code_computed_from_the_filing_is_kept():
 
 
 def test_the_pipeline_passes_its_computed_figures():
+    # the same list check_card_all forgives: only verified impacts whose inputs are all in the filing
+    from types import SimpleNamespace
     from bse_intel import pipeline
-    out = _out(card={"track_next": {"catalysts": ["NCD proceeds of ₹125 Cr"]}})
-    quant = pipeline.check_quant(out.card.quantified_impact, *SOURCES)
-    assert pipeline.derived_figures(out.card, quant, SOURCES) == []
+    out = _out()
+    quant = SimpleNamespace(items=[{"check": "VERIFIED", "computed": 229.9}, {"check": "MISMATCH", "computed": 999.0},
+                                   {"check": "VERIFIED", "computed": 450.0, "unsourced_inputs": ["450"]}])
+    assert pipeline.derived_figures(out.card, quant, SOURCES) == [229.9]

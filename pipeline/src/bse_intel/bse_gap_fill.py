@@ -30,6 +30,7 @@ R2 copy of a file; ``--apply`` writes the new figures into the stored dossier th
 
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import os
@@ -517,34 +518,58 @@ def write_atomic(path, text: str) -> None:
 
 class Record:
     """The fill's output kept on disk as it goes (the CSV of every figure and the JSON summary of ``run``). ``start`` writes the
-    CSV header; ``company`` appends a filled company's rows (flushed to disk) and rewrites the summary; ``progress`` rewrites
-    the summary when it changed. The summary written here carries ``in_progress: true``; the command's final write has the
-    same content as before this record existed, so a run that completes ends with the same two files. ``rows`` and
-    ``snapshot`` are what was last recorded, for a run a refusal stopped. ``extra`` gives the summary's trailing keys."""
+    CSV header; ``company`` appends a filled company's rows (one write, flushed to disk) and rewrites the summary; ``progress``
+    rewrites the summary when it changed. The summary written here carries ``in_progress: true``; the command's final write has
+    the same content as before this record existed, so a run that completes ends with the same two files. ``rows`` and
+    ``snapshot`` are what was last recorded, for a run a refusal stopped. ``extra`` gives the summary's trailing keys.
+
+    A disk error here (a full disk) is logged once and never stops the fill: what goes into memory does not depend on the
+    record, and the command's final write still tries to save the files whole."""
 
     def __init__(self, csv_path=None, json_path=None, extra=None):
         self.csv_path, self.json_path, self.extra = csv_path, json_path, extra
         self.rows: list[dict] = []
         self.snapshot: dict | None = None
         self._last = None
+        self._warned = False
+
+    def _failed(self, exc: OSError) -> None:
+        if not self._warned:
+            self._warned = True
+            log.warning("the fill's record could not be written (%s); the fill goes on, memory is not affected", exc)
 
     def start(self) -> None:
         self.rows = []
         if self.csv_path:
-            write_atomic(self.csv_path, CSV_HEADER + "\n")
+            try:
+                write_atomic(self.csv_path, CSV_HEADER + "\n")
+            except OSError as exc:
+                self._failed(exc)
+
+    def _append(self, data: bytes) -> None:
+        """One write on an append-mode descriptor, then fsync: a kill leaves whole rows or none of the company's."""
+        fd = os.open(self.csv_path, os.O_WRONLY | os.O_APPEND | os.O_CREAT, 0o644)
+        try:
+            os.write(fd, data)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
 
     def company(self, rows: list[dict], snapshot: dict) -> None:
         self.rows.extend(rows)
         if self.csv_path and rows:
-            with open(self.csv_path, "a", encoding="utf-8", newline="") as handle:
-                handle.write("".join(csv_row(r) + "\n" for r in rows))
-                handle.flush()
-                os.fsync(handle.fileno())
+            try:
+                self._append("".join(csv_row(r) + "\n" for r in rows).encode("utf-8"))
+            except OSError as exc:
+                self._failed(exc)
         self.progress(snapshot)
 
     def progress(self, snapshot: dict) -> None:
-        self.snapshot = {k: v for k, v in snapshot.items() if k != "rows"}
+        self.snapshot = copy.deepcopy({k: v for k, v in snapshot.items() if k != "rows"})
         text = summary_text(self.snapshot, (self.extra() if self.extra else {}) | {"in_progress": True})
         if self.json_path and text != self._last:
-            write_atomic(self.json_path, text)
-            self._last = text
+            try:
+                write_atomic(self.json_path, text)
+                self._last = text
+            except OSError as exc:
+                self._failed(exc)

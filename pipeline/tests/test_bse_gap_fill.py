@@ -440,3 +440,97 @@ def test_a_complete_runs_files_equal_what_the_command_wrote_before(tmp_path):
         f"{r['scrip']},{r['symbol']},{r['period']},{r['metric']},{r['value']},{r.get('basis') or ''},{r['source']},"
         f"{r.get('url') or ''}" for r in plain["rows"]]
     assert (tmp_path / "fill.csv").read_text(encoding="utf-8") == "\n".join(old_csv) + "\n"
+
+
+# the command end to end, with fakes for both exchanges
+def drive_command(monkeypatch, tmp_path, stop_at=None, apply=True):
+    from bse_intel import cli, nse as nse_module, raw, universe
+
+    companies = {s: company(n, 900.0) for s, n in (("1", "AAA"), ("2", "BBB"), ("3", "CCC"))}
+    urls = {s: URL.replace("q1fy27", f"q1fy27-{s}") for s in companies}
+    files = {urls[s]: Q1FY27_XML.replace(b"66518700000", f"{s}5518700000".encode()) for s in companies}
+    links = {s: [XbrlLink("Q1FY27", "STANDALONE", urls[s], "2026-08-10T18:00:00")] for s in companies}
+
+    class FakeBse(StopsAt):
+        def __init__(self):
+            super().__init__(stop_at, links, files)
+            self.files, self.keep = {"downloaded": 0, "kept": 0, "from_store": 0}, None
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return None
+
+        def warm_up(self):
+            return None
+
+        def download(self, url, max_bytes=0):
+            return files.get(url)
+
+    class FakeNse(Nse):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return None
+
+    universe_file = SimpleNamespace(built=True, included=set(companies), symbols={c["symbol"]: s for s, c in companies.items()})
+    monkeypatch.setattr(universe, "load_nse", lambda sink: universe_file)
+    monkeypatch.setattr(cli, "today_ist", lambda: TODAY)
+    monkeypatch.setattr(bf, "PortedBse", FakeBse)
+    monkeypatch.setattr(nse_module, "NseClient", FakeNse)
+    monkeypatch.setattr(raw, "attach", lambda *args, **kwargs: None)
+    args = SimpleNamespace(scrips=None, as_of=None, quarters=8, apply=apply, time_budget=17400.0, restart=False,
+                           json=str(tmp_path / "o.json"), csv=str(tmp_path / "o.csv"))
+    sink = Sink(companies)
+    return cli.cmd_memory_gaps_fill_bse(args, SETTINGS, sink), sink
+
+
+def test_the_command_stopped_by_a_refusal_keeps_the_companies_filled_before_it(monkeypatch, tmp_path):
+    code, sink = drive_command(monkeypatch, tmp_path, stop_at="3")
+    assert code == 75
+    lines = (tmp_path / "o.csv").read_text(encoding="utf-8").splitlines()
+    assert {line.split(",")[0] for line in lines[1:]} == {"1", "2"}
+    assert len({line.split(",")[4] for line in lines[1:] if line.split(",")[3] == "revenue"}) == 2   # each company's own file
+    summary = json.loads((tmp_path / "o.json").read_text(encoding="utf-8"))
+    assert summary["companies_filled"] == 2 and "in_progress" not in summary and "rows" not in summary
+    assert any(f.startswith("refused:") for f in summary["failed"]) and sorted(sink.dossiers) == ["1", "2"]
+
+
+def test_the_command_run_to_the_end_writes_the_files_the_old_command_wrote(monkeypatch, tmp_path):
+    code, sink = drive_command(monkeypatch, tmp_path)
+    assert code == 0 and sorted(sink.dossiers) == ["1", "2", "3"]
+    csv_text = (tmp_path / "o.csv").read_text(encoding="utf-8")
+    summary = json.loads((tmp_path / "o.json").read_text(encoding="utf-8"))
+    keys = ("scrip", "symbol", "period", "metric", "value", "basis", "source", "url")
+    rows = [dict(zip(keys, line.split(","))) for line in csv_text.splitlines()[1:]]
+    assert {r["scrip"] for r in rows} == {"1", "2", "3"} and "in_progress" not in summary
+    assert len({r["value"] for r in rows if r["metric"] == "revenue"}) == 3   # each company's own file
+    # what the old command wrote: the header and a line per row; the summary without rows, plus bse_files and as_of
+    assert csv_text == "\n".join(["scrip,symbol,period,metric,value,basis,source,url"] + [",".join(r[k] for k in keys) for r in rows]) + "\n"
+    assert list(summary)[-2:] == ["bse_files", "as_of"] and summary["figures_written"] == len(rows)
+    assert (tmp_path / "o.json").read_text(encoding="utf-8") == json.dumps(summary, ensure_ascii=False, indent=1) + "\n"
+
+
+def test_a_disk_error_in_the_record_does_not_stop_the_fill(monkeypatch, tmp_path):
+    def full_disk(self, data):
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(bf.Record, "_append", full_disk)
+    code, sink = drive_command(monkeypatch, tmp_path)
+    assert code == 0 and sorted(sink.dossiers) == ["1", "2", "3"]
+    assert len((tmp_path / "o.csv").read_text(encoding="utf-8").splitlines()) > 3   # the command's final write is whole
+
+
+def test_the_record_warns_once_and_carries_on_when_the_disk_fails(tmp_path, caplog):
+    record = bf.Record(tmp_path / "missing" / "o.csv", tmp_path / "missing" / "o.json")
+    row = {"scrip": "1", "symbol": "A", "period": "Q1FY27", "metric": "revenue", "value": 1, "source": "BSE"}
+    record.start()
+    record.company([row], {"failed": [], "skipped": {}})
+    record.company([row], {"failed": [], "skipped": {}})
+    assert len(record.rows) == 2 and sum("could not be written" in m for m in caplog.messages) == 1
+    live = {"failed": ["x"], "skipped": {"a": 1}}
+    record.progress(live)
+    live["failed"].append("y")
+    assert record.snapshot["failed"] == ["x"]

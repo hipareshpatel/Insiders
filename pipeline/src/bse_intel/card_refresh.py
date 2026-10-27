@@ -186,8 +186,11 @@ def _call_text(pipeline, row: dict) -> str | None:
         return None
 
 
-def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: int = 50) -> dict:
-    """Every stored card (or the given companies'), in date order, written back when a block changed."""
+def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: int = 50,
+        diffs: list | None = None) -> dict:
+    """Every stored card (or the given companies'), in date order, written back when a block changed. With ``diffs``,
+    each changed card's changed blocks, before and after, are added to it (28 Oct 2026: a dry run that would change
+    3,214 of 7,895 cards gave only counts, nothing the owner could read)."""
     sink = pipeline.sink
     after, seen, written, failed = ["", ""], 0, 0, 0
     changed_keys: dict[str, int] = {}
@@ -265,6 +268,14 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
                 continue
             for k in changed:
                 changed_keys[k] = changed_keys.get(k, 0) + 1
+            if diffs is not None:
+                keys = sorted(set(changed) - {"impact"})
+                stored = json.loads(row["card_json"])   # the card as stored: the call recheck marks takeaways in place
+                diffs.append({"news_id": row["news_id"], "scrip_code": scrip, "symbol": row.get("symbol"),
+                              "filed_at": row["filed_at"], "changed": sorted(set(changed)),
+                              "impact": [row.get("impact_level"), impact],
+                              "impact_reasons": (new.get("score") or {}).get("reasons") if "impact" in changed else None,
+                              "before": {k: stored.get(k) for k in keys}, "after": {k: new.get(k) for k in keys}})
             out = dict(row)
             out.pop("card_json")
             batch.append({**out, "impact_level": impact, "card": new})

@@ -160,12 +160,13 @@ def read_company(src, symbol: str, dossier: dict, quarters: int = 6) -> tuple[li
     return records, cleared, reasons
 
 
-def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None = None) -> dict:
+def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None = None, dry_run: bool = False) -> dict:
     """Maintenance pass: for each company (scrip -> NSE symbol) read its latest quarters' PDFs and store what they restate.
-    One company's failure is a reason, not a stop; a refusal by NSE stops the pass (it propagates)."""
+    One company's failure is a reason, not a stop; a refusal by NSE stops the pass (it propagates). ``dry_run`` writes
+    nothing and lists every restated figure found in ``stats["found"]`` (with both figures and their sources), for review."""
     from .nse import SourceBlockedError
     src = pr.Sources(nse, ocr=False)
-    stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}}
+    stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}, "found": []}
     for scrip, symbol in list(symbols.items())[:limit]:
         dossier = sink.get_dossier(scrip)
         if not dossier:
@@ -184,6 +185,9 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         if reasons:
             stats["reasons"][symbol] = reasons
         stats["restated"] += len(records)
+        if dry_run:
+            stats["found"] += [{"scrip": scrip, "symbol": symbol, **r} for r in records]
+            continue
         if merge(dossier, records, cleared):
             dossier["restated_checked_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
             keep_concurrent_writes(dossier, read, sink.get_dossier(scrip))

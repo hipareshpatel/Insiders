@@ -207,3 +207,12 @@ class _Src:
 
     def rows(self, url):
         return self.got, ""
+
+
+def test_a_dry_run_lists_what_it_found_and_writes_nothing():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    nse = FakeNse([filing(url=url)], {url: make_pdf(CONSOLIDATED_Q4)})
+    sink = Sink(dossier())
+    stats = rp.run(nse, sink, {"1": "X"}, quarters=1, dry_run=True)
+    assert sink.puts == 0 and "restated_figures" not in sink.d and stats["stored"] == 0
+    assert [(f["symbol"], f["metric"], f["original"], f["restated"]) for f in stats["found"]] == [("X", "revenue", 647.68, 629.79)]

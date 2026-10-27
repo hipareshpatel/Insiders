@@ -881,12 +881,12 @@ def cmd_restated_pdf(args, settings, sink) -> int:
     pr.be_gentle()
     try:
         with NseClient() as nse:
-            stats = restated_pdf.run(nse, sink, symbols, args.quarters, args.limit)
+            stats = restated_pdf.run(nse, sink, symbols, args.quarters, args.limit, dry_run=args.dry_run)
     except SourceBlockedError as exc:
         print(f"NSE refused ({exc}): stopped")
         return REFUSED
-    print(f"restated-pdf: {stats['companies']} companies read, {stats['restated']} restated figures found, "
-          f"{stats['stored']} dossiers changed, {len(stats['reasons'])} companies with quarters not read")
+    print(f"restated-pdf{' (dry run, nothing written)' if args.dry_run else ''}: {stats['companies']} companies read, "
+          f"{stats['restated']} restated figures found, {stats['stored']} dossiers changed, {len(stats['reasons'])} companies with quarters not read")
     if args.json:
         Path(args.json).write_text(json.dumps(stats, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return 0
@@ -2005,6 +2005,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--quarters", type=int, default=6, help="how many of each company's latest quarters to read")
     p.add_argument("--limit", type=int, help="stop after this many companies")
     p.add_argument("--json", help="write the counts and the reasons to this file")
+    p.add_argument("--dry-run", action="store_true", help="write nothing; list every restated figure found in --json")
     p.set_defaults(func=cmd_restated_pdf)
 
     p = sub.add_parser("memory-recall-export", help="sample recent call transcripts and decks with their full text, memory and card, for the recall audit (read only, no AI)")

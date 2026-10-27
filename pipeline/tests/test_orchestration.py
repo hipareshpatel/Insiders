@@ -685,7 +685,8 @@ def test_near_the_free_write_cap_a_live_run_only_makes_cards(settings, monkeypat
     pipeline.run(mode="live", time_budget_s=30)
     today = today_ist().isoformat()
     assert "discover" in calls and "catch-up" not in calls
-    assert [c for c in calls if c[0] == "process"] == [("process", today, today)]   # the window's earlier days wait
+    made = [c for c in calls if c[0] == "process"]
+    assert made and set(made) == {("process", today, today)}   # the window's earlier days wait; today is looked at again
 
 
 def test_a_spare_writer_failing_while_the_better_ones_are_at_their_day_waits_for_them(settings):
@@ -842,9 +843,10 @@ def test_a_crash_keeps_where_it_happened_and_the_four_crashes_of_25_oct_are_gone
     assert _bps(math.inf, 1.0) == (0, 0)
 
 
-def test_today_can_be_read_by_its_own_quick_run_and_the_memory_sweeps_run_hourly(settings, monkeypatch):
-    """Owner, 25 Oct 2026: a new filing waited ~42 min for the next 41-minute run. PIPELINE_TODAY=only reads today's
-    filings and stops; PIPELINE_TODAY=skip reads the earlier days first and today last."""
+def test_one_run_reads_today_first_and_again_after_each_slice_of_older_work(settings):
+    """Owner, 27 Oct 2026: one run instead of two (pipeline-today.yml removed). Today's filings first, then the window's
+    earlier days and the backfill in slices, today looked for again after each, so a filing broadcast mid-run waits a
+    slice for its card, not the whole run."""
     from test_pipeline import build
 
     pipeline, sink, _ = build(settings, [], {}, {})
@@ -852,16 +854,47 @@ def test_today_can_be_read_by_its_own_quick_run_and_the_memory_sweeps_run_hourly
     pipeline.process = lambda day_from, day_to, *a, **k: read.append((day_from, day_to))
     pipeline._backfill = lambda *a, **k: read.append("backfill")
     today = now_ist().date().isoformat()
-    monkeypatch.setenv("PIPELINE_TODAY", "only")
+    order = []
+    pipeline._discover_safely = lambda day, full: order.append("discover") or 0
+    pipeline._sweep_held = lambda: order.append("sweep")
+    real_process = pipeline.process
+    pipeline.process = lambda *a, **k: order.append("process") or real_process(*a, **k)
     pipeline.run("live", time_budget_s=60)
-    assert read == [(today, today)]
+    assert order.index("discover") < order.index("sweep") < order.index("process")   # housekeeping before cards, as before
+    assert read[0] == (today, today) and "backfill" not in read
+    earlier = [r for r in read if r != (today, today)]
+    assert earlier and read[read.index(earlier[0]) + 1] == (today, today)   # today again after the older slice
     read.clear()
-    monkeypatch.setenv("PIPELINE_TODAY", "skip")
     pipeline.run("all", time_budget_s=60)
-    assert read[1] == (today, today) and read[0] != read[1] and read[-1] == "backfill"   # today last, as a safety net
+    assert read[0] == (today, today) and read[-2:] == ["backfill", (today, today)]
     assert pipeline._memory_syncs_due() is True and pipeline._memory_syncs_due() is False   # once in the hour
     sink.kv_set("memory_syncs:last", "2020-01-01T00:00:00+05:30", "x")
     assert pipeline._memory_syncs_due() is True
+
+
+def test_a_slice_that_used_all_its_time_is_followed_by_another_until_the_deadline(settings, monkeypatch):
+    import time
+
+    from test_pipeline import build
+
+    pipeline, _, _ = build(settings, [], {}, {})
+    monkeypatch.setattr(pipeline_module, "SLICE_S", 0.02)
+    calls, looks = [], []
+
+    def busy(until):   # more work than a slice holds
+        calls.append(until)
+        while time.monotonic() < until:
+            time.sleep(0.005)
+
+    pipeline._in_slices(busy, time.monotonic() + 0.07, lambda: looks.append(1))
+    assert len(calls) >= 3 and len(looks) == len(calls)
+    calls.clear()
+    looks.clear()
+    pipeline._in_slices(lambda until: calls.append(until), time.monotonic() + 5, lambda: looks.append(1))
+    assert len(calls) == 1 and len(looks) == 1   # finished early: nothing left, one look for today after it
+    calls.clear()
+    pipeline._in_slices(busy, time.monotonic() + 0.05, None)
+    assert len(calls) == 1   # a backfill-only run has no today to look for: one piece, no slices
 
 
 def test_a_pdf_cut_short_on_nse_waits_and_then_fails_with_that_reason(settings):

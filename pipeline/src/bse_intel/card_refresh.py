@@ -24,12 +24,12 @@ from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
 from .impact import high_reasons
 from .nse import FileCapReached
-from . import footer_plausible, results_one_line
+from . import footer_plausible, one_basis, results_one_line
 from .dossier import call_results_snapshot, dossier_as_of, latest_fundamentals, results_snapshot
 from .models import Card, Filing, Pass2Output
 from .prices import point_in_time
 from .signals import SIGNALS_OFF, priced_for, scale_parts, volume_strip
-from .settings import card_footer_plausible, card_results_one_line
+from .settings import card_footer_plausible, card_one_basis, card_results_one_line
 
 log = logging.getLogger(__name__)
 
@@ -94,6 +94,18 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
         if end and not _discussed(end, _date.fromisoformat(filing.filed_at[:10])):
             new["results"] = None
     new["signals"] = [s for s in card.get("signals") or [] if s.get("type") not in SIGNALS_OFF]
+    if card_one_basis():
+        # the table and the key numbers read against the card's stated basis, as at card time (F173; off: nothing). Before
+        # 27 Oct 2026 the refresh never did this, so a refreshed card could show a table the live run would have removed
+        new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}
+        if new.get("results"):
+            new["results"] = {**new["results"], "lines": [dict(s) for s in new["results"].get("lines") or []]}
+        notes = one_basis.apply_card_json(new, dossier)
+        grounding = {k: v for k, v in (new.get("grounding") or {}).items() if k != "one_basis"}   # no stale note
+        if notes:
+            grounding["one_basis"] = notes
+        if grounding or "grounding" in new:
+            new["grounding"] = grounding
     if card_results_one_line():
         # the table's notes go to the change log and a figure on another basis is labelled, as at card time (F206; off: nothing)
         new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}
@@ -102,7 +114,7 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
         if notes := results_one_line.apply_card_json(new):
             new["grounding"] = {**(new.get("grounding") or {}), "one_line": notes}
     changed = [k for k in (*BLOCKS, "signals") if json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
-    changed += [k for k in ("headline", "key_numbers", "grounding") if card_results_one_line() and k not in changed
+    changed += [k for k in ("headline", "key_numbers", "grounding") if (card_results_one_line() or card_one_basis()) and k not in changed
                 and json.dumps(new.get(k), sort_keys=True) != json.dumps(card.get(k), sort_keys=True)]
     hidden = footer_plausible.card_notes(new) if card_footer_plausible() else []
     if (new.get("grounding") or {}).get("footer_hidden", []) != hidden:   # F182: for the owner's Issues page; a stale note goes

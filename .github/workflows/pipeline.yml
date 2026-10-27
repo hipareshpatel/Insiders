@@ -1,6 +1,7 @@
-# Runs the filings pipeline: live filings first, then historical backfill,
-# within a time budget. State lives in D1, so every run resumes where the
-# last one stopped.
+# Runs the filings pipeline, the one run for every filing (owner, 27 Oct 2026: the quick run pipeline-today.yml is gone):
+# today's new filings first, then the window's earlier days, the catch-ups and the backfill in slices of a few minutes,
+# today's filings looked for again after each slice, within a time budget. State lives in D1, so every run resumes
+# where the last one stopped.
 #
 # Source: NSE (owner, 2026-10-18: online-only, NSE only). NSE answers every call the pipeline makes from a
 # GitHub-hosted runner (measured 2026-10-18 with online-probe.yml), so ubuntu-latest is the runner; the
@@ -40,6 +41,11 @@ concurrency:
   group: bse-pipeline
   cancel-in-progress: false
 
+# The card and memory switches come from pipeline/config/switches.toml, the same in every job; a repository variable of
+# the same name wins over it (settings._switch). REPO_VARS carries them all, so none has to be listed here.
+env:
+  REPO_VARS: ${{ toJSON(vars) }}
+
 jobs:
   run:
     if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'
@@ -55,24 +61,6 @@ jobs:
       RESULTS_FACTS: ${{ vars.RESULTS_FACTS || '1' }}   # 0: results cards without the figures computed in code (facts.py)
       RESULTS_RICH: ${{ vars.RESULTS_RICH || '1' }}     # 0: results cards without the model's quoted facts and memory points
       MEMORY_CALL_V2: ${{ vars.MEMORY_CALL_V2 }}   # F180: 1 = queue each transcript and deck for call-memory.yml (the same variable turns that job on)
-      EPS_SHARE_ADJUST: ${{ vars.EPS_SHARE_ADJUST || '1' }}   # F153, live-bug fix (25 Oct): EPS changes on one share count across splits/bonuses; 0 turns it off
-      # Owner, 27 Oct 2026: "Whatever can be switch ON, do it so at least we can see improvements in today's card". On:
-      # the built card switches that leave every other test unchanged when switched on together (checked 27 Oct). A
-      # repository variable set to 0 turns one off. Still off: CARD_CONSOLIDATED_ONLY, CARD_EBITDA_PROFIT_V2,
-      # CARD_TWO_PARTS and CARD_GUIDANCE_DATED (they change other behaviour and need their on/off first).
-      CARD_GROUND_ALL_FIELDS: ${{ vars.CARD_GROUND_ALL_FIELDS || '1' }}   # F204: figures in the timeline, risks, targets
-      CARD_GROUNDED_FIGURES: ${{ vars.CARD_GROUNDED_FIGURES || '1' }}
-      CARD_ONE_BASIS: ${{ vars.CARD_ONE_BASIS || '1' }}   # F173: one basis a figure
-      CARD_SAME_DEFINITION: ${{ vars.CARD_SAME_DEFINITION || '1' }}
-      CARD_YOY_RESTATED: ${{ vars.CARD_YOY_RESTATED || '1' }}   # F202: restated comparatives when memory holds them
-      CARD_FOOTER_PLAUSIBLE: ${{ vars.CARD_FOOTER_PLAUSIBLE || '1' }}   # F182: a footer figure that cannot be right
-      QUOTE_EXACT_NUMBERS: ${{ vars.QUOTE_EXACT_NUMBERS || '1' }}
-      CARD_EPS_FOLLOWS_PROFIT: ${{ vars.CARD_EPS_FOLLOWS_PROFIT || '1' }}   # F183 (EPS is not shown; memory side only)
-      # Owner, 27 Oct: "Once reviewed, merge and switch them on too". Memory side only (EPS is never shown):
-      EPS_BASE_CHECK: ${{ vars.EPS_BASE_CHECK || '1' }}   # F208: standalone EPS stored as consolidated refused (Wipro)
-      EPS_SHARE_COUNT_CHECK: ${{ vars.EPS_SHARE_COUNT_CHECK || '1' }}   # F211: split/bonus adjusted only when record and share count agree
-      CARD_RESULTS_ONE_LINE: ${{ vars.CARD_RESULTS_ONE_LINE || '1' }}   # F206 (TODO 107): a results row's figures from one statement line
-      CARD_WATCH_VERDICT: ${{ vars.CARD_WATCH_VERDICT || '1' }}   # F205 (TODO 106): code decides met / missed / not due from memory's own figure
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -114,15 +102,6 @@ jobs:
           path: data/text_cache
           key: text-cache-${{ github.run_id }}
           restore-keys: text-cache-
-      # today's texts, read by the quick run (pipeline-today.yml), are added in, so this run's own saved cache holds them
-      - uses: actions/cache/restore@v4
-        with:
-          path: data/text_today
-          key: text-today-${{ github.run_id }}
-          restore-keys: text-today-
-      - name: Add today's texts
-        working-directory: .
-        run: mkdir -p data/text_cache && cp -rn data/text_today/. data/text_cache/ 2>/dev/null || true
       # The DeepSeek drain (owner, 21 Oct 2026: "use deepseek for pending and let's clear them"): while
       # pipeline/config/drain_until holds a UTC time still ahead, the prepaid DeepSeek key (D24) is passed, preferred on
       # every route that has it and the run uses 8 workers. Past that time, or with the file gone, runs are free-tier only
@@ -139,8 +118,6 @@ jobs:
             export DEEPSEEK_API_KEY="$DEEPSEEK_SECRET" PREFER_MODEL=deepseek:deepseek-flash PIPELINE_WORKERS=8
             echo "DeepSeek drain on until $until UTC"
           fi
-          # today's filings are the quick run's (pipeline-today.yml, every 15 minutes; owner, 25 Oct 2026)
-          export PIPELINE_TODAY="${{ vars.PIPELINE_TODAY_SPLIT != 'off' && 'skip' || '' }}"
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel run --mode "${{ inputs.mode || 'all' }}" --time-budget "${{ inputs.time_budget || '2400' }}"
       # GitHub drops scheduled runs when busy (21 Oct 2026: market-data and nightly never fired); a daily job with no run
       # recorded 45 minutes after its slot is started here, once a day

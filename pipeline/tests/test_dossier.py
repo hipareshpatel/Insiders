@@ -39,9 +39,11 @@ def test_a_call_figure_on_another_definition_is_not_stored_as_the_line():
     assert not other_definition({}, ("revenue", "Q2FY27"), 2575.0, "INR_CR", 38.0, 93.0)       # no comparatives
 
 
-def test_an_ebitda_its_own_filings_tell_two_ways_has_no_changes():
+def test_an_ebitda_its_own_filings_tell_two_ways_has_no_changes(monkeypatch):
     """Shree Cement Q2FY27: the statement's EBITDA with other income (₹1,128.74 Cr) and the press release's without it
     (₹1,016 Cr), beside XBRL comparatives without it: the card said +15.9% YoY for -2.1% (daily audit, 23 Oct 2026)."""
+    # without CARD_RESULTS_ONE_LINE: under it the release's EBITDA has no changes even when read once (its known cost, OPS 27 Oct)
+    monkeypatch.setenv("CARD_RESULTS_ONE_LINE", "0")
     from bse_intel.dossier import results_snapshot
 
     def m(metric, period, value, *sources):

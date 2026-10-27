@@ -13,6 +13,23 @@ from bse_intel.settings import Settings
 
 
 @pytest.fixture(autouse=True)
+def _switches(monkeypatch):
+    """Tests run on the code's defaults, every switch off unless a test turns one on. With BSE_INTEL_TEST_SWITCHES=live
+    they run with the switches config/switches.toml turns on, each set as an environment variable, so a test that removes
+    one still turns it off: the mix every job runs (CI runs the suite both ways)."""
+    import os
+
+    from bse_intel import settings as _settings
+
+    live = os.environ.get("BSE_INTEL_TEST_SWITCHES") == "live"
+    names = _settings.switches_on() if live else []
+    monkeypatch.setenv("BSE_INTEL_SWITCHES", "off")
+    monkeypatch.delenv("REPO_VARS", raising=False)
+    for name in names:
+        monkeypatch.setenv(name, "1")
+
+
+@pytest.fixture(autouse=True)
 def _sums_off_for_partial_files(request, monkeypatch):
     """The hand-made XBRL files of test_xbrl and test_seed are partial and do not add up (3 tests fail with the sums
     check on); every other module runs with it on, as production does (F140)."""

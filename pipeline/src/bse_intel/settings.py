@@ -22,6 +22,55 @@ def _env(name: str, default: str | None = None) -> str | None:
     return value if value not in (None, "") else default
 
 
+_TRUE = ("1", "true", "yes", "on")
+
+
+@cache
+def _switch_file(path: str) -> dict:
+    try:
+        with open(path, "rb") as fh:
+            return tomllib.load(fh).get("on", {})
+    except FileNotFoundError:
+        return {}
+
+
+def _repo_vars() -> dict:
+    """The repository variables a workflow passes as REPO_VARS (``toJSON(vars)``); {} outside a workflow."""
+    import json
+
+    try:
+        found = json.loads(_env("REPO_VARS", "{}") or "{}")
+    except ValueError:
+        return {}
+    return found if isinstance(found, dict) else {}
+
+
+def _switch(name: str, default: bool = False) -> bool:
+    """A card or memory switch, the same in every job (owner, 27 Oct 2026: "one list for every job"): an environment
+    variable a workflow step sets, else the repository variable of that name (REPO_VARS), else config/switches.toml,
+    else the switch's code default (off for all but MEMORY_STANDALONE_ONLY). Read at the call, so a script can run the same code with the switch off and on."""
+    value = _env(name)
+    if value is None:
+        value = str(_repo_vars().get(name, "") or "") or None
+    if value is None:
+        value = _switch_file(switch_file()).get(name, default)
+        return value is True or str(value).strip().lower() in _TRUE   # a written "0" or false is off
+    return value.strip().lower() in _TRUE
+
+
+def switch_file() -> str:
+    """config/switches.toml, or BSE_INTEL_SWITCHES ("off": no file, every switch at its code default; the unit tests)."""
+    path = _env("BSE_INTEL_SWITCHES")
+    if path:
+        return path
+    return str(Path(_env("BSE_INTEL_CONFIG_DIR", str(_PIPELINE_DIR / "config"))) / "switches.toml")
+
+
+def switches_on() -> list[str]:
+    """The switches config/switches.toml turns on."""
+    return sorted(k for k, v in _switch_file(switch_file()).items() if v is True or str(v).strip().lower() in _TRUE)
+
+
 def _local_ocr() -> bool:
     from .ocr import available
     return available()
@@ -45,17 +94,17 @@ def d1_plan() -> tuple[int, int]:
 
 
 def quote_exact_numbers() -> bool:
-    """QUOTE_EXACT_NUMBERS (default off; F156): a figure of a card's claim matches the quote's figure token for token
+    """QUOTE_EXACT_NUMBERS (on in config/switches.toml; F156): a figure of a card's claim matches the quote's figure token for token
     (grouping commas and the claim's own rounding allowed), never as the front digits of a longer one ("95" of 951.96).
     Read at the call, so a script can run the same check on and off."""
-    return (_env("QUOTE_EXACT_NUMBERS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("QUOTE_EXACT_NUMBERS")
 
 
 def card_ebitda_profit_v2() -> bool:
     """CARD_EBITDA_PROFIT_V2 (default off; TODO 11, 14, 15, F151): a results card shows the company's printed EBITDA first
     and ours as "Operating EBITDA (calculated)", and one profit line only. Read at the call, so a script can run the same
     card code with the switch off and on."""
-    return (_env("CARD_EBITDA_PROFIT_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_EBITDA_PROFIT_V2")
 
 
 def memory_standalone_only() -> bool:
@@ -63,49 +112,49 @@ def memory_standalone_only() -> bool:
     from its standalone file (basis STANDALONE, listed in the dossier's ``standalone_only``), even when the company's other
     quarters are consolidated (Jyothy Labs after it sold its only subsidiary, ABB India before its first one). Off, such a
     quarter is dropped, as before. Read at the call."""
-    return (_env("MEMORY_STANDALONE_ONLY", "1") or "1").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("MEMORY_STANDALONE_ONLY", default=True)
 
 
 def bse_fill_pre_nse() -> bool:
     """BSE_FILL_PRE_NSE (default off; TODO 108, F214): the BSE gap fill (F201) also fills, for a company NSE does list, the
     quarters strictly older than its first NSE results row. Off, a company NSE lists any row for is left alone. Read at
     the call."""
-    return (_env("BSE_FILL_PRE_NSE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("BSE_FILL_PRE_NSE")
 
 
 def card_yoy_restated() -> bool:
-    """CARD_YOY_RESTATED (default off; TODO 104, F202): a results card's YoY is worked against the restated year-ago figure
+    """CARD_YOY_RESTATED (on in config/switches.toml; TODO 104, F202): a results card's YoY is worked against the restated year-ago figure
     where memory holds one (read from a later filing's PDF text layer, restated_pdf.py) and says "vs restated". The history
     keeps the original. Read at the call."""
-    return (_env("CARD_YOY_RESTATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_YOY_RESTATED")
 
 
 def memory_restated() -> bool:
     """MEMORY_RESTATED (default off; F167, TODO 53): the memory view a card reads names a restated comparative as such
     ("restated in Q2FY27's filing, first filed X") instead of the bare "restated <date>" note. Read at the call."""
-    return (_env("MEMORY_RESTATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("MEMORY_RESTATED")
 
 
 def memory_screener() -> bool:
     """MEMORY_SCREENER (default off; TODO 48, F161): a memory figure labelled by="screener" (the one-time screener.in fill)
     is read like any other. Off, every reader skips it, so no card changes. Read at the call."""
-    return (_env("MEMORY_SCREENER", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("MEMORY_SCREENER")
 
 
 def card_two_parts() -> bool:
     """CARD_TWO_PARTS (default off; TODO 21, F152): a card carries a `parts` block that sorts every line into part 1,
     "From the filing (checked)", or part 2, "Our reading (AI)", by a code rule, and a part 2 line whose figure or claim
     fails the existing checks is hidden alone instead of the card being held. Read at the call."""
-    return (_env("CARD_TWO_PARTS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_TWO_PARTS")
 
 
 def card_same_definition() -> bool:
-    """CARD_SAME_DEFINITION (default off; F155): a line's year-ago and previous-quarter figures are shown only when they
+    """CARD_SAME_DEFINITION (on in config/switches.toml; F155): a line's year-ago and previous-quarter figures are shown only when they
     are on the definition of the figure beside them. Piramal Finance's Q2FY27 release headlines profit before tax 580
     (after the associates' share) while memory's previous quarter, 344.12, is the file's, before it: the card said
     +68.5% where the release's own 443 gives +31%. Where the figure shown matches no file-tagged source and
     another source for the quarter states a different one, the changes are left off. Read at the call."""
-    return (_env("CARD_SAME_DEFINITION", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_SAME_DEFINITION")
 
 
 def memory_year_check() -> bool:
@@ -114,17 +163,17 @@ def memory_year_check() -> bool:
     not on a card, not as the input of a derived quarter (Q4 = FY - 9M), not as the base of a change. (B) A period's owners'
     profit under 5% of its profit, where the year before it was 80% or more, is held with its minorities' figure (the labels
     are swapped: Glenmark FY26, Nitco FY25). Each held figure carries a reason. Read at the call."""
-    return (_env("MEMORY_YEAR_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("MEMORY_YEAR_CHECK")
 
 
 def card_watch_verdict() -> bool:
-    """CARD_WATCH_VERDICT (default off; F205, TODO 106): code decides a watch's or guidance's MET / MISSED / NOT DUE from the
+    """CARD_WATCH_VERDICT (on in config/switches.toml; F205, TODO 106): code decides a watch's or guidance's MET / MISSED / NOT DUE from the
     target's direction (at or below, at or above, a range), the target's period against the filing's (a later period is not
     due, no missed signal) and the figure on the target's own kind and unit (``watch_code.py``); a card sentence that says
     met when code says missed, or the reverse, is cut with a change-log note. MAHABANK's GNPA 1.25% "missed" a 1.45% ceiling;
     SAKAR's FY27 target "missed" on a Q2 card; APL Apollo's 9.63 lakh t "meets" a 10 lakh t watch; Unimech's breach on a
     target memory shows met. Read at the call."""
-    return (_env("CARD_WATCH_VERDICT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_WATCH_VERDICT")
 
 
 def memory_call_v2() -> bool:
@@ -134,26 +183,26 @@ def memory_call_v2() -> bool:
     than 5% away from the file's, is not added as a source of that metric (Sobha's own "operational cash flow" +755 Cr
     beside the statutory -342 Cr; Vishal Mega Mart's operating EBITDA margin 7.7% beside the file's 12.1%). Off until the
     measured pass in docs/design/call-memory.md. Read at the call."""
-    return (_env("MEMORY_CALL_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("MEMORY_CALL_V2")
 
 
 def card_ground_all_fields() -> bool:
-    """CARD_GROUND_ALL_FIELDS (default off; TODO 105, F204): the figures in the timeline entry, the core catalyst and the
+    """CARD_GROUND_ALL_FIELDS (on in config/switches.toml; TODO 105, F204): the figures in the timeline entry, the core catalyst and the
     track-next lists (milestones, pending approvals, catalysts, risks, KPI targets) go through the same grounding as the
     points, and a sentence with a figure the filing and memory do not state is dropped (blind audit of 27 Oct 2026: a
     timeline's "NCDs of up to Rs 175 Cr" for 125, a risk's "dilution of 1%" for 4.9%, a target of 13.1 in no source).
     Read at the call."""
-    return (_env("CARD_GROUND_ALL_FIELDS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_GROUND_ALL_FIELDS")
 
 
 def card_grounded_figures() -> bool:
-    """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
+    """CARD_GROUNDED_FIGURES (on in config/switches.toml; 26 Oct 2026 live audit): three places where our own code damaged a right figure
     are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on
     the deal: DSSL's Rs 137.15 Cr order showed 0. (2) The Reg 30 template's own "withdrawal/cancellation or suspension"
     row is not a withdrawal: Omaxe's RERA approval showed CANCELLED. (3) A KPI whose figure is in MW or GW is not shown
     as crore or given a change beside a figure of another unit: Emmvee's order book showed 10,404 cr, +104,990.9% QoQ.
     Read at the call."""
-    return (_env("CARD_GROUNDED_FIGURES", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_GROUNDED_FIGURES")
 
 
 def card_guidance_dated() -> bool:
@@ -163,27 +212,27 @@ def card_guidance_dated() -> bool:
     EBITDA margin band and one stored as due FY26 in August 2026 were "missed" on a Q2FY27 card; Union Bank's FCNR target
     was "missed" by a filing that never mentions FCNR. Otherwise no verdict: a dated "management said X on <date>" line
     stands instead (a KPI watch item follows the same rule). Read at the call."""
-    return (_env("CARD_GUIDANCE_DATED", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_GUIDANCE_DATED")
 
 
 def card_one_basis() -> bool:
-    """CARD_ONE_BASIS (default off; live audit of 26 Oct 2026, class "two bases of one figure"): a card states one basis for a
+    """CARD_ONE_BASIS (on in config/switches.toml; live audit of 26 Oct 2026, class "two bases of one figure"): a card states one basis for a
     figure. A profit, or its change, whose quarter or comparison base holds a discontinued operation is labelled with it (an
     EPS change across one is taken out); a line whose quote carries the company's adjusted basis ("non-GAAP") is labelled
     with it; a results table on another basis (standalone against consolidated) than the card states is removed; a
     presentation's own EBITDA is labelled beside the table's. Read at the call."""
-    return (_env("CARD_ONE_BASIS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_ONE_BASIS")
 
 
 def card_results_one_line() -> bool:
-    """CARD_RESULTS_ONE_LINE (default off; TODO 107, F206; live audit of 26 Oct 2026, class "two bases in the results block"):
+    """CARD_RESULTS_ONE_LINE (on in config/switches.toml; TODO 107, F206; live audit of 26 Oct 2026, class "two bases in the results block"):
     each row of the results block takes its current and comparative figures from one statement line (revenue from
     operations with revenue from operations, total income with total income; an EBITDA our code works out from the
     tagged file with one worked out the same way). A comparative from another line is worked out again from the same line
     when the tagged data has it, else its change is left out. A headline or key-number revenue or EBITDA on another
     basis than the block's row is labelled "company-reported", and two EBITDA figures on one card are each named.
     Read at the call."""
-    return (_env("CARD_RESULTS_ONE_LINE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_RESULTS_ONE_LINE")
 
 
 def card_consolidated_only() -> bool:
@@ -191,34 +240,34 @@ def card_consolidated_only() -> bool:
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the
     pass-2 prompt says to state consolidated figures only, and a standalone figure the model writes on a consolidated card
     is taken out. Turned on together with CARD_EBITDA_PROFIT_V2 for the release check. Read at the call."""
-    return (_env("CARD_CONSOLIDATED_ONLY", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_CONSOLIDATED_ONLY")
 
 
 def card_footer_plausible() -> bool:
-    """CARD_FOOTER_PLAUSIBLE (default off; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
+    """CARD_FOOTER_PLAUSIBLE (on in config/switches.toml; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
     why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest of the company's own
     last four periods of the same metric and kind, or a NIM outside what its type of lender can earn (home-loan lender
     1-15%, bank 1-8.5%). No low side and no margin range (independent review: a collapse is news; Power Grid's ~85% is real).
     GIC Housing Finance showed a NIM of 19.63% against its FY26 3.41% (26 Oct 2026). Read at the call."""
-    return (_env("CARD_FOOTER_PLAUSIBLE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_FOOTER_PLAUSIBLE")
 
 
 def card_eps_follows_profit() -> bool:
-    """CARD_EPS_FOLLOWS_PROFIT (default off; F183, TODO 78): on a results table an EPS change that does not follow the profit
+    """CARD_EPS_FOLLOWS_PROFIT (on in config/switches.toml; F183, TODO 78): on a results table an EPS change that does not follow the profit
     change by more than 5 points plus share-count noise and rounding, with no split, bonus, buyback or rights issue on record,
     is not shown, nor the comparative it rests on. An EPS change below the profit change (real dilution) is shown; nothing is
     ever replaced by a figure read from the filing's words. Wipro's card (26 Oct 2026) showed EPS 3.23 against 2.74 and 2.50, +18%,
     beside profit +1%. Read at the call."""
-    return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_EPS_FOLLOWS_PROFIT")
 
 
 def eps_base_check() -> bool:
-    """EPS_BASE_CHECK (default off; F208, TODO 78): on a results file, an EPS YoY / QoQ that the profit does not carry (same
+    """EPS_BASE_CHECK (on in config/switches.toml; F208, TODO 78): on a results file, an EPS YoY / QoQ that the profit does not carry (same
     test as CARD_EPS_FOLLOWS_PROFIT) with no share-count event on record is not stored as a comparable change, and a comparative
     from an earlier file with no basis recorded is not taken for a file whose basis is known. The filing's own stated EPS
     change is not read in its place (a review dropped that: "EPS declined by 5%" was read as +5%). Wipro (26 Oct 2026): EPS 3.23
     against standalone 2.74 and 2.50 stored as consolidated, +18% beside profit +1.5%. Read at the call."""
-    return (_env("EPS_BASE_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("EPS_BASE_CHECK")
 
 
 def card_eps_whole() -> bool:
@@ -227,14 +276,14 @@ def card_eps_whole() -> bool:
     period without a whole-company figure in memory falls back to the EPS it has, and a change is left out rather than set
     across the two bases. ABB India's Q4FY26 card showed 16.14 (continuing, from a profit of ₹341.91 Cr) beside a company
     profit of ₹1,783.65 Cr, where screener says 84.17. Off: the line is the `eps` memory holds, as before. Read at the call."""
-    return (_env("CARD_EPS_WHOLE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("CARD_EPS_WHOLE")
 
 
 def eps_share_adjust() -> bool:
-    """EPS_SHARE_ADJUST (default off; F153, TODO 43): an EPS change on a card is worked out on today's share count (the older
+    """EPS_SHARE_ADJUST (on in config/switches.toml; F153, TODO 43): an EPS change on a card is worked out on today's share count (the older
     period's EPS divided by the split, bonus or consolidation factor between the two periods), or left out where the share
     count changed and no record says why. Off: cards compare EPS as the file states it. Read at the call."""
-    return (_env("EPS_SHARE_ADJUST", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("EPS_SHARE_ADJUST")
 
 
 def xbrl_filer_checks() -> bool:
@@ -243,7 +292,7 @@ def xbrl_filer_checks() -> bool:
     share count of the file's other periods; (B) a profit the EPS and the other periods' share count contradict is held,
     not kept, even where the year-against-quarters check cannot run; (C) a lender's revenue that equals its total income
     beside an "other revenue from operations" is held. Off: the reader copies the file as before. Read at the call."""
-    return (_env("XBRL_FILER_CHECKS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("XBRL_FILER_CHECKS")
 
 
 def file_cap() -> int:
@@ -274,11 +323,11 @@ def file_cap_shards() -> int:
 
 
 def eps_share_count_check() -> bool:
-    """EPS_SHARE_COUNT_CHECK (default off; F211, TODO 79): memory's EPS lines keep EPS as filed and EPS on today's shares, and
+    """EPS_SHARE_COUNT_CHECK (on in config/switches.toml; F211, TODO 79): memory's EPS lines keep EPS as filed and EPS on today's shares, and
     adjust only when NSE's corporate-action record and the share-count change (profit over EPS) agree; a recorded action the
     share count does not follow, or a share-count jump with no record, is marked "possible split or bonus, not confirmed" and
     nothing is adjusted. Memory only: EPS is never shown on cards or stock pages. Read at the call."""
-    return (_env("EPS_SHARE_COUNT_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+    return _switch("EPS_SHARE_COUNT_CHECK")
 
 
 def _env_int(name: str, default: int) -> int:

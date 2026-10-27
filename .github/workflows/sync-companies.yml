@@ -20,6 +20,11 @@ concurrency:
   group: bse-sync-companies
   cancel-in-progress: false
 
+# The card and memory switches come from pipeline/config/switches.toml, the same in every job; a repository variable of
+# the same name wins over it (settings._switch). REPO_VARS carries them all, so none has to be listed here.
+env:
+  REPO_VARS: ${{ toJSON(vars) }}
+
 jobs:
   sync:
     if: github.event_name != 'schedule' || vars.PIPELINE_SCHEDULE == 'on'

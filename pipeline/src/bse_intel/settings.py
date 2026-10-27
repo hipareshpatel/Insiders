@@ -264,6 +264,10 @@ class Settings:
     # A results file whose lines fail SEBI's own sums has those lines left off the card (xbrl.untrusted_lines, item 23,
     # F140); XBRL_SUMS=0 turns it off
     xbrl_sums: bool = field(default_factory=lambda: _env("XBRL_SUMS", "1") not in ("0", "false", "no"))
+    # The row-name map (line_map.py, TODO 93, F209). The map itself is data and its refactored readers (the cross-checks'
+    # row names, screener_fill's rows) behave as before, switch or not. LINE_MAP=1 is reserved for changes that would alter
+    # a figure (the PDF reader taking its labels from the map, TODO 93 item 4); none is built, so it does nothing yet
+    line_map: bool = field(default_factory=lambda: _env("LINE_MAP", "0") in ("1", "true", "yes"))
     # An annual report's own XBRL from NSE, as a table in front of its text (annual_xbrl.py). Off where NSE is
     # not reachable or another run on the same address is already calling it (NSE limits by IP).
     nse_annual_xbrl: bool = field(default_factory=lambda: _env("NSE_ANNUAL_XBRL", "1") not in ("0", "false", "no"))

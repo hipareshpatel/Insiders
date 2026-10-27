@@ -38,6 +38,7 @@ import time
 
 import httpx
 
+from . import line_map
 from .dossier import (SCREENER_KEY, SCREENER_PREFIX, _entry_basis, _norm, keep_concurrent_writes, put_screener,
                       screener_figures)
 from .metrics import CONSOLIDATED, STANDALONE, _figures, is_lender
@@ -96,6 +97,15 @@ def _number(cell: str) -> float | None:
         return None
 
 
+def _row_of(rows: dict[str, list[float | None]], key: str) -> list[float | None]:
+    """The first non-empty row among the names the line map gives the line on screener ("Sales", else "Revenue"); [] when
+    none (what ``rows.get(a) or rows.get(b) or []`` was)."""
+    for name in line_map.screener_rows(key):
+        if rows.get(name):
+            return rows[name]
+    return []
+
+
 def _section_table(body: str, section_id: str) -> tuple[list[str], dict[str, list[float | None]], str] | None:
     """A results section of a company page ("quarters", "profit-loss"): its column titles, its rows by label (the
     trailing "+" of an expandable label removed) and the section's own text; None when there is no such table."""
@@ -129,8 +139,8 @@ def parse_page(body: str) -> dict | None:
     if not got:
         return None
     columns, rows, section = got
-    sales = rows.get("Sales") or rows.get("Revenue") or []
-    profit = rows.get("Net Profit") or []
+    sales = _row_of(rows, "revenue")
+    profit = _row_of(rows, "pat")
     quarters: dict[str, dict] = {}
     for i, column in enumerate(columns):
         period = period_of(column)
@@ -154,7 +164,7 @@ def parse_full(body: str) -> dict | None:
     if page is None:
         return None
     columns, rows, _ = _section_table(body, "quarters")
-    eps = rows.get("EPS in Rs") or []
+    eps = _row_of(rows, "eps")
     for i, column in enumerate(columns):
         period = period_of(column)
         if period:
@@ -163,9 +173,9 @@ def parse_full(body: str) -> dict | None:
     pl = _section_table(body, "profit-loss")
     if pl:
         columns, rows, _ = pl
-        sales = rows.get("Sales") or rows.get("Revenue") or []
-        profit = rows.get("Net Profit") or []
-        eps = rows.get("EPS in Rs") or []
+        sales = _row_of(rows, "revenue")
+        profit = _row_of(rows, "pat")
+        eps = _row_of(rows, "eps")
         for i, column in enumerate(columns):
             year = year_of(column)
             if year:

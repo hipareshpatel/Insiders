@@ -4298,15 +4298,20 @@ class Pipeline:
 
     def _fresh(self, today: date, deadline: float, memory_complete: bool) -> None:
         """Today's new filings: looked for again (one NSE call; yesterday's too before 09:00 IST) and made into cards before
-        any older work goes on. The run's whole deadline: today's filings are never cut short for older work. Out of AI
-        quota, new filings are still recorded (no AI) and wait for the next run; ``process`` stops on the quota itself."""
-        if self._blocked:
-            return
+        any older work goes on. The run's whole deadline: today's filings are never cut short for older work. Today's own
+        queue is worked in slices of SLICE_S with a look for new filings before each, so a busy day does not hide a
+        filing broadcast mid-run (27 Oct 2026: today's queue took the whole first single run and NSE was asked twice in
+        40 minutes). Out of AI quota, new filings are still recorded (no AI) and wait for the next run; ``process``
+        stops on the quota itself."""
         days = [today - timedelta(days=1), today] if now_ist().hour < 9 else [today]
-        for day in days:
-            self._discover_safely(day, full=False)
-        self.process(today.isoformat(), today.isoformat(), deadline, bulk=False, memory_complete=memory_complete,
-                     history_first=True)
+        while not self._blocked:
+            for day in days:
+                self._discover_safely(day, full=False)
+            end = min(deadline, time.monotonic() + SLICE_S)
+            self.process(today.isoformat(), today.isoformat(), end, bulk=False, memory_complete=memory_complete,
+                         history_first=True)
+            if time.monotonic() < end or self._halted(bulk=False):
+                return   # today's queue is empty for now (or the route is out of quota): back to the older work
 
     def _in_slices(self, step, until: float, fresh, slice_s: float | None = None) -> None:
         """Older work in slices (SLICE_S unless given), today's new filings looked for between them. A slice that ends

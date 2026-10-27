@@ -872,6 +872,29 @@ def test_one_run_reads_today_first_and_again_after_each_slice_of_older_work(sett
     assert pipeline._memory_syncs_due() is True
 
 
+def test_a_busy_today_is_worked_in_slices_with_a_look_for_new_filings_before_each(settings, monkeypatch):
+    """27 Oct 2026, the first single run: today's queue took all 40 minutes and NSE was asked for new filings twice."""
+    import time
+
+    from test_pipeline import build
+
+    pipeline, _, _ = build(settings, [], {}, {})
+    monkeypatch.setattr(pipeline_module, "SLICE_S", 0.02)
+    looks, slices = [], []
+    pipeline._discover_safely = lambda day, full: looks.append(day) or 0
+
+    def process(day_from, day_to, until, *a, **k):   # two full slices of today's filings, then the queue is empty
+        slices.append(until)
+        while len(slices) <= 2 and time.monotonic() < until:
+            time.sleep(0.005)
+        return []
+
+    pipeline.process = process
+    pipeline._fresh(today_ist(), time.monotonic() + 5, True)
+    assert len(slices) == 3 and len(looks) >= 3   # a look before every slice
+    assert all(until <= time.monotonic() + 5 for until in slices)
+
+
 def test_a_slice_that_used_all_its_time_is_followed_by_another_until_the_deadline(settings, monkeypatch):
     import time
 

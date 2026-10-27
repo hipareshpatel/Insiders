@@ -110,6 +110,12 @@ unexplained rows is not started (owner to say).
 
 ## 6. Facts that changed (older files still say otherwise)
 
+- **The PDF reader is not reliable** (owner, 27 Oct). The 98.5% in older files is OCR text on a few hand-picked
+  filings (17 Oct). Measured 27 Oct on the hard set of 340 key figures (run 40414799620): our reader 65 right, 10
+  wrong, 265 no answer (about 19% right; 13% of its answers wrong); the best of 11 readers about the same. In the PDF
+  check of memory (run 40393302149) a third of the pairs it reached ended unsure or unreadable, and it read the wrong
+  line in 9 of 18 hand-settled cases. A figure from the PDF reader alone is a lead, never a confirmed figure, until
+  TODO 112 (an answer key and pass marks) says otherwise.
 - BSE answers GitHub's machines through the ported adapter (`adapters/bse.py`; measured 25 and 27 Oct); a bare probe got
   403. The pipeline's daily path is still NSE only; BSE fills memory gaps.
 - Branch: the session's own branch (now `ccr-e9a25af8-4vz8up`); PRs to `main`; after a merge the branch restarts from

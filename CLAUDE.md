@@ -165,6 +165,10 @@ Read before changing anything:
   The extraction benchmark is the current work. Everything is in `docs/bench/` (reports, score tables,
   answer keys) and `pipeline/scripts/bench_*.py`; PDFs and raw engine outputs are local in `data/bench/`.
   Measured (scorer audited independently, then reproduced exactly - see docs/bench/scorer-audit.md):
+  **(Correction, owner 27 Oct 2026: these 17 Oct figures measured OCR text on 7-8 hand-picked filings, not our reader
+  finding the right line. Measured 27 Oct on the hard set of 340 key figures (run 40414799620): our reader gave 65
+  right, 10 wrong and no answer for 265, so about 19% right overall and 13% of its answers wrong; no reader of 11 did
+  better than 19%. Do not quote 98.5% as the PDF reader's accuracy.)**
   results statements, 195 printed figures: **RapidOCR 98.5%** on the right row and column, PyMuPDF
   reading-order text (what we run) 80.0%, pdfplumber/pymupdf4llm/combinations 56-80%, MinerU standard
   ~100% on 7 filings but ~1 min/page and 2.7 GB, MinerU basic 69%. Non-results pages (84 pages, 14 types,

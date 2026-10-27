@@ -158,6 +158,17 @@ def card_one_basis() -> bool:
     return (_env("CARD_ONE_BASIS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_results_one_line() -> bool:
+    """CARD_RESULTS_ONE_LINE (default off; TODO 107, F206; live audit of 26 Oct 2026, class "two bases in the results block"):
+    each row of the results block takes its current and comparative figures from one statement line (revenue from
+    operations with revenue from operations, total income with total income; an EBITDA our code works out from the
+    tagged file with one worked out the same way). A comparative from another line is worked out again from the same line
+    when the tagged data has it, else its change is left out. A headline or key-number revenue or EBITDA on another
+    basis than the block's row is labelled "company-reported", and two EBITDA figures on one card are each named.
+    Read at the call."""
+    return (_env("CARD_RESULTS_ONE_LINE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

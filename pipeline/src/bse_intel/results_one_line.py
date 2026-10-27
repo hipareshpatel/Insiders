@@ -74,34 +74,51 @@ def _set_changes(row: dict, slot: str, now: float, base: float | None, bps: bool
         row[f"{label}_pct"] = round((now - base) / base * 100, 1)
 
 
-def _is_total_income(table: dict, period: str, value: float) -> bool | None:
-    """Whether the quarter's revenue figure is total income: it is a figure of the total-income line and not the file's
-    revenue from operations (Five Star: the card's own reading, 875.0, stored as `revenue`, the file's revenue 858.48 and
-    its total income 875.03). None when the figure is neither's."""
+def _revenue_line(table: dict, period: str, value: float) -> str | None:
+    """Which line the quarter's revenue figure is on: "total" (total income), "ops" (revenue from operations), "unsure", or
+    None (neither's figure). A figure the file's own revenue states is ops. Else, one that is a figure of the total-income
+    line is total (Five Star: the card's own reading, 875.0, stored as `revenue` beside the file's 858.48, equals the total
+    income 875.03, tagged or not). Else, one that only an untagged source states, while another source of the line states
+    a different figure within an other-income's share, is "unsure": the file may not agree it is revenue from operations."""
     total = [table[(n, period)] for n in _REVENUE_TOTAL if (n, period) in table]
     ops = [table[(n, period)] for n in _REVENUE_OPS if (n, period) in table]
-    on_ops = any(_near(value, v) for e in ops for v in (_tagged_values(e) or [e.get("value")]))
-    on_total = any(_near(value, v) for e in total for v in (_tagged_values(e) or [e.get("value")]))
-    if on_total and not on_ops:
-        return True
-    if on_ops and not on_total:
-        return False
-    return False if on_ops else None
+    if any(_near(value, v) for e in ops for v in _tagged_values(e)):
+        return "ops"
+    if any(_near(value, v) for e in total for v in (_tagged_values(e) or [e.get("value")])):
+        return "total"
+    if not any(_near(value, e.get("value")) or any(_near(value, v) for v in _source_values(e)) for e in ops):
+        return None
+    others = [v for e in ops for v in _source_values(e) if not _near(value, v) and abs(v - value) <= 0.1 * abs(value)]
+    return "unsure" if others else "ops"
+
+
+def _source_values(entry: dict) -> list[float]:
+    from .dossier import _sources
+
+    return [src["value"] for src in _sources(entry) if isinstance(src.get("value"), (int, float))]
 
 
 def _revenue_row(out: dict, lines: list[dict], table: dict, periods: dict, period: str, lookup, notes: list[str]) -> None:
     row = out.get("revenue")
     if not isinstance(row, dict) or row.get("value") is None:   # the row is data of the block even where its lens does not list it
         return
-    total = _is_total_income(table, period, row["value"])
-    if total is None:
+    kind = _revenue_line(table, period, row["value"])
+    if kind is None:
         return
+    total = kind == "total"
     names = _REVENUE_TOTAL if total else _REVENUE_OPS
     other = _REVENUE_OPS if total else _REVENUE_TOTAL
     line = "total income" if total else "revenue from operations"
     for slot in ("prev_year", "prev_quarter"):
         p, shown = periods.get(slot), row.get(slot)
         if not p or shown is None:
+            continue
+        if kind == "unsure":
+            # only a comparative the file states on revenue from operations is held back: this quarter's figure may be another line
+            if any(_near(shown, v) for n in _REVENUE_OPS if (n, p) in table for v in _tagged_values(table[(n, p)])):
+                _set_changes(row, slot, row["value"], None, False)
+                notes.append(f"results revenue {slot}: this quarter's {_cr(row['value'])} is stated by an untagged source only and "
+                             f"another source gives a different figure for the line, so {p} and its change are left out")
             continue
         mine = [table[(n, p)] for n in names if (n, p) in table]
         theirs = [table[(n, p)] for n in other if (n, p) in table]
@@ -178,15 +195,20 @@ def _differs(shown: float, block: float, share: float) -> bool:
     return abs(shown - block) > share * abs(block) and abs(shown - block) > _FLOOR_CR
 
 
-def _headline_figure(text: str, end: int) -> float | None:
-    """The ₹ crore figure a word in the headline states: the one after "to" or "at", else the last in its clause ("Revenue up
-    ₹50 Cr to ₹700 Cr" states 700)."""
-    clause = re.split(r";|, (?=[A-Za-z])| and ", text[end:end + 90])[0]
-    found = list(re.finditer(_FIG, clause, re.I))
-    if not found:
-        return None
-    pick = next((m for m in found if re.search(r"\b(?:to|at)\s*$", clause[:m.start()], re.I)), found[-1])
-    return float(pick.group(1).replace(",", ""))
+def _headline_figures(text: str) -> list[tuple[str, float]]:
+    """Each ₹ crore figure of the headline bound to the nearest metric word before it in its clause ("EBITDA margin 27.2% on
+    revenue of ₹696 Cr" states revenue 696). A figure that is a change ("up ₹50 Cr to ₹700 Cr", "by ₹50 Cr") is not an amount."""
+    found = []
+    for fig in re.finditer(_FIG, text, re.I):
+        before = text[:fig.start()]
+        clause = re.split(r";|, (?=[A-Za-z])", before)[-1]
+        words = list(_HEAD_WORD.finditer(clause))
+        if not words:
+            continue
+        if re.search(r"\b(?:up|down|by|rises?|falls?|adds?|added)\s*$", before, re.I) or re.match(r"\s*to\s*₹", text[fig.end():], re.I):
+            continue
+        found.append((words[-1].group(1), float(fig.group(1).replace(",", ""))))
+    return found
 
 
 def apply_card_json(card_json: dict) -> list[str]:
@@ -231,13 +253,13 @@ def apply_card_json(card_json: dict) -> list[str]:
             notes.append(f"key_numbers {label}: two EBITDA figures on the card, this one named as the statement's")
     headline = card_json.get("headline")
     if isinstance(headline, str) and not _STATED.search(headline):
-        for match in _HEAD_WORD.finditer(headline):
-            which, figure = which_of(match.group(1)), _headline_figure(headline, match.end())
-            if which is None or figure is None:
+        for word, figure in _headline_figures(headline):
+            which = which_of(word)
+            if which is None:
                 continue
             block = rows[which][0]
             if _differs(figure, block, 0.03 if which == "ebitda" else 0.015):
                 card_json["headline"] = f"{headline.rstrip().rstrip('.')} ({tag(block)})"
-                notes.append(f"headline: {match.group(1)} {_cr(figure)} is not the block's ({_cr(block)}), labelled company-reported")
+                notes.append(f"headline: {word} {_cr(figure)} is not the block's ({_cr(block)}), labelled company-reported")
                 break
     return notes

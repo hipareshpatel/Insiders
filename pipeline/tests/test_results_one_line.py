@@ -245,3 +245,60 @@ def test_a_refresh_logs_the_notes_and_leaves_no_stray_key(monkeypatch):
     new, changed = card_refresh.refresh(copy.deepcopy(card), _dossier(), filing, None)
     assert "one_line" not in new["results"] and new["headline"].endswith("(company-reported; results table ₹1,131.87 Cr)")
     assert new["grounding"]["one_line"][0] == "n" and "headline" in changed and "grounding" in changed
+
+
+# Five Star at card time: three shapes of memory (live memory with its labels and sources taken away, as the card saw it)
+def _untag(rows):
+    for e in rows["financial_metrics"]:
+        for s in e["sources"]:
+            if s["lab"]["by"] == "file" and not s["news_id"].startswith("xbrl:"):
+                s["lab"] = {"by": "unknown"}
+    return rows
+
+
+def _five(shape):
+    rows = _untag(_fivestar())
+    revenue = next(e for e in rows["financial_metrics"] if e["metric"] == "revenue" and e["period"] == "Q2FY27")
+    revenue["value"] = 875.0
+    if shape == "B":   # no total income anywhere
+        rows["financial_metrics"] = [e for e in rows["financial_metrics"] if e["metric"] != "total_income"]
+    if shape == "C":   # revenue has only the card's own AI reading
+        revenue["sources"] = [s for s in revenue["sources"] if s["news_id"] == NID]
+    return rows
+
+
+@pytest.mark.parametrize("shape", ["A", "C"])
+def test_fivestar_card_time_untagged_total_income_is_total_income(monkeypatch, shape):
+    off = results_snapshot(_five(shape), NID)["revenue"]
+    assert off["yoy_pct"] == 9.5   # the wrong figure of the audit
+    _on(monkeypatch)
+    row = results_snapshot(_five(shape), NID)["revenue"]
+    assert row["prev_year"] == 806.5 and row["yoy_pct"] == 8.5 and row["prev_quarter"] == 838.74 and row["qoq_pct"] == 4.3
+
+
+def test_fivestar_card_time_without_total_income_holds_the_changes_back(monkeypatch):
+    _on(monkeypatch)
+    table = results_snapshot(_five("B"), NID)
+    assert table["revenue"] == {"value": 875.0} and len(table["one_line"]) == 2
+
+
+def test_a_figure_the_file_states_as_revenue_is_left_alone(monkeypatch):
+    rows = _fivestar()   # the file's 858.48 is revenue from operations
+    next(e for e in rows["financial_metrics"] if e["metric"] == "revenue" and e["period"] == "Q2FY27")["value"] = 858.48
+    off = dict(results_snapshot(rows, "nse-2")["revenue"])
+    _on(monkeypatch)
+    assert results_snapshot(rows, "nse-2")["revenue"] == off
+
+
+def test_each_headline_figure_is_bound_to_its_own_metric_word(monkeypatch):
+    _on(monkeypatch)
+    block = {"revenue": {"value": 696.0}, "ebitda": {"value": 189.0}, "lines": LINES}
+
+    def headline(text):
+        card = {"headline": text, "results": copy.deepcopy(block)}
+        results_one_line.apply_card_json(card)
+        return card["headline"]
+
+    assert headline("Garware: EBITDA margin 27.2% on revenue of ₹696 Cr") == "Garware: EBITDA margin 27.2% on revenue of ₹696 Cr"
+    assert headline("Acme: revenue up ₹50 Cr to ₹696 Cr, EBITDA ₹189 Cr") == "Acme: revenue up ₹50 Cr to ₹696 Cr, EBITDA ₹189 Cr"
+    assert headline("Acme: EBITDA ₹169 Cr, revenue ₹696 Cr").endswith("(company-reported; results table ₹189 Cr)")

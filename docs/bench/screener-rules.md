@@ -7,10 +7,10 @@ example where we have one. A rule screener states but our measurement contradict
 
 | # | Screener's rule (their words, shortened) | Lines it touches | In our checks | Measured |
 |---|---|---|---|---|
-| 1 | Sales = total revenue - other income - (excise duty + VAT + sales tax), in all cases | revenue | `screener_explain` `excise_netted` (27 Oct) | PICCADIL Q2FY25: 200.52 with excise 15.61, screener 185 |
+| 1 | Sales = total revenue - other income - (excise duty + VAT + sales tax), in all cases | revenue | `screener_explain` `excise_netted` (27 Oct); operating profit too (F220, `matches_screener_view:excise`) | PICCADIL Q2FY25: 200.52 with excise 15.61, screener 185 |
 | 2 | Sales are net of discounts; discounts some companies put in other expenses are netted from sales | revenue | not checkable: NSE's results XBRL tags no discount line | none found |
 | 3 | Only revenue from operations is sales; other income is its own line | revenue, other income | yes: our revenue is revenue from operations | screener support email, 27 Oct (SONACOMS) |
-| 4 | Other income also holds exceptional and extraordinary items | other income, PBT | not compared yet | ADANIENT Q4FY25: other income 635.78 + exceptional items 3,945.73 = 4,581.51 (statement p12); screener 4,582 |
+| 4 | Other income also holds exceptional and extraordinary items | other income, PBT | yes since 27 Oct 2026 (F220): other income is compared, class `matches_screener_view:exceptional_in_other_income`; PBT itself is unaffected | ADANIENT Q4FY25: other income 635.78 + exceptional items 3,945.73 = 4,581.51 (statement p12); screener 4,582 |
 | 5 | Net Profit is the profit attributable to the owners | profit | **contradicted**: screener's quarterly and yearly Net Profit is the whole profit | ADANIENT Q4FY25 screener 4,015 = whole 4,014.90 (owners 3,844.91); FY25 8,005 = whole 8,004.99; ABREL Q4FY26 screener 5 = whole 5.39 (owners 10.84) |
 | 6 | Earlier years are replaced by the figures the next annual report restates | all | `screener_explain` `restated_later` | BENGALASM Q3FY25, SGMART Q2FY25 / Q3FY25, ACC Q2FY26, AMBUJACEM Q1FY25 |
 | 7 | (guide) EPS of earlier periods on today's share count after a bonus or split | EPS | `screener_explain` `share_adjusted` | MCX 1:5 split, record date 2 Jan 2026 |

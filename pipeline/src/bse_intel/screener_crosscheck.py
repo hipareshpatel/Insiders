@@ -10,6 +10,16 @@ memory's basis with the exchange file's figure only (``metrics._figures``: ``xbr
   in memory; screener-referee run 40288810286, checked on the 25 Oct backup),
 - pat: Net Profit against our ``pat`` (a lender's profit is a different definition, so a difference is not a mismatch),
 - eps: EPS in Rs against our ``eps`` (or ``basic_eps``), where both have it.
+- the six other lines of screener's quarterly table (27 Oct 2026, quarters only; ``six_pairs``): Operating Profit against
+  our ``ebitda``, Other Income against ``other_income``, Interest against ``finance_cost``, Depreciation against
+  ``depreciation``, Profit before tax against ``pbt``, Tax % against our tax over ``pbt`` (``tax_expense``, else
+  ``current_tax`` + ``deferred_tax``). Screener prints whole crore, so a money line is a match within ₹0.5 Cr (or 0.5%) and
+  Tax % within one percentage point. A lender page (Revenue / Financing Profit layout) is not read for Operating Profit and
+  Interest: its table is a different one. A gap is named only when one of screener's own rules (docs/bench/screener-rules.md
+  rows 1 and 4) closes it and the gap is more than twice the tolerance: ``exceptional_in_other_income`` (screener's Other
+  Income holds the exceptional items), ``excise_in_operating_profit``, ``exceptional_in_operating_profit``; anything
+  else is ``mismatch``. These lines are counted apart (``six_pairs``, ``six_by_class``), never in ``pairs`` or ``by_class``;
+  the XBRL, explain and PDF referees read revenue, profit and EPS only and pass these rows through unread.
 
 Each pair gets one class:
 
@@ -67,7 +77,16 @@ STEADY_MIN = 4
 STEADY_RATIO_SPREAD = 0.02       # relative spread of theirs/ours
 STEADY_DIFF_SPREAD = (2.0, 0.05)  # max spread of the difference: ₹2 Cr or 5% of its median
 
-CLASSES = ("match", "wrong_quarter", "scale", "naming", "lender_definition", "steady_line_difference", "mismatch")
+VIEW = "matches_screener_view:"   # a class prefix: screener's own treatment of our figure closes the gap (never stored)
+CLASSES = ("match", "wrong_quarter", "scale", "naming", "lender_definition", "steady_line_difference",
+           VIEW + "excise", VIEW + "share_adjust", "mismatch")
+# the six other lines: our metric names (Tax % is a ratio of two of ours)
+SIX_METRICS = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt", "tax_pct")
+SIX_LENDER_SKIP = ("ebitda", "finance_cost")      # a lender page's Operating Profit and Interest are not these lines
+SIX_ABS, SIX_REL = 0.5, 0.005                      # screener prints whole crore: half a crore, or 0.5%
+TAX_PCT_ABS = 1.0                                  # screener prints whole percent
+SIX_EXPLAINED = (VIEW + "exceptional_in_other_income", VIEW + "excise", "exceptional_in_operating_profit")
+SIX_CLASSES = ("match", *SIX_EXPLAINED, "mismatch")
 GAP_CLASSES = ("screener_only", "memory_only")
 WORKERS = 8
 
@@ -87,6 +106,12 @@ _SCREENER_LINE = {"revenue": "Sales", "pat": "Net Profit", "eps": "EPS"}
 def _close(ours: float, theirs: float, metric: str) -> bool:
     absolute, relative = (EPS_ABS, EPS_REL) if metric == "eps" else (MONEY_ABS, MONEY_REL)
     return abs(ours - theirs) <= max(absolute, relative * abs(ours))
+
+
+def _apart(ours: float, theirs: float, metric: str) -> bool:
+    """More than twice the match tolerance: a rule credited with a gap this wide did not match by chance."""
+    absolute, relative = (EPS_ABS, EPS_REL) if metric == "eps" else (MONEY_ABS, MONEY_REL)
+    return abs(ours - theirs) > 2 * max(absolute, relative * abs(theirs)) + 1e-9
 
 
 def _is_scale(ours: float, theirs: float) -> bool:
@@ -139,6 +164,123 @@ def _steady(pairs: list[dict]) -> bool:
     diffs = [p["memory_value"] - p["screener_value"] for p in usable]
     median = abs(statistics.median(diffs))
     return (max(diffs) - min(diffs)) <= max(STEADY_DIFF_SPREAD[0], STEADY_DIFF_SPREAD[1] * median)
+
+
+# --- the screener view of our figures ----------------------------------------------------------------------------
+
+def screener_view(dossier: dict | None, figures: dict, period: str, today: str | None = None) -> dict[str, tuple[float, str]]:
+    """Our figures of one period as screener's documented rules print them: ``{metric: (value, rule)}``, only for a metric a
+    rule changes. Pure: nothing is stored or shown on a card (memory keeps the company's own figures).
+
+    - ``revenue``: revenue less excise duty (rule ``excise``; screener's Sales is net of it, rules row 1);
+    - ``ebitda``: Operating Profit likewise net of excise (``excise``);
+    - ``other_income``: other income plus the exceptional items (``exceptional_in_other_income``, rules row 4);
+    - ``eps``: EPS divided by the factor of a share split or bonus after the period (``share_adjust``, rules row 7);
+    - ``exceptional_after_tax``: the exceptional items less their share of the tax, tax x exceptional / pbt (screener's
+      support article 42), the whole item when that tax exceeds it. Shown for the record: no compared line reads it yet.
+    """
+    def v(name: str) -> float | None:
+        return _value(figures, name, period)
+
+    out: dict[str, tuple[float, str]] = {}
+    excise, exceptional = v("excise_duty"), v("exceptional_items")
+    if excise:
+        for metric in ("revenue", "ebitda"):
+            if v(metric) is not None:
+                out[metric] = (v(metric) - excise, "excise")
+    if exceptional and v("other_income") is not None:
+        out["other_income"] = (v("other_income") + exceptional, "exceptional_in_other_income")
+    if exceptional:
+        pbt, tax = v("pbt"), v("tax_expense")
+        if tax is None and v("current_tax") is not None and v("deferred_tax") is not None:
+            tax = v("current_tax") + v("deferred_tax")
+        if pbt and tax is not None:
+            on_exceptional = tax * exceptional / pbt
+            out["exceptional_after_tax"] = (exceptional if abs(on_exceptional) > abs(exceptional)
+                                            else exceptional - on_exceptional, "exceptional_after_tax")
+    if v("eps") is not None and dossier:
+        from .screener_explain import share_factor   # screener_explain imports this module
+        from .timeutil import today_ist
+        factor, actions = share_factor(dossier, period, today or today_ist().isoformat())
+        if actions and abs(factor - 1) > 1e-9:
+            out["eps"] = (v("eps") / factor, "share_adjust")
+    return out
+
+
+# --- the six other lines -----------------------------------------------------------------------------------------
+
+def _six_close(ours: float, theirs: float, metric: str) -> bool:
+    if metric == "tax_pct":
+        return abs(ours - theirs) <= TAX_PCT_ABS + 1e-9
+    return abs(ours - theirs) <= max(SIX_ABS + 1e-9, SIX_REL * abs(ours))
+
+
+def _six_apart(ours: float, theirs: float, metric: str) -> bool:
+    """An explanation counts only for a gap of more than twice the tolerance (screener_explain.apart's rule): within it, a
+    second line can match by chance."""
+    tol = TAX_PCT_ABS if metric == "tax_pct" else max(SIX_ABS, SIX_REL * abs(theirs))
+    return abs(ours - theirs) > 2 * tol + 1e-9
+
+
+def classify_six(metric: str, ours: float, theirs: float, figures: dict, period: str,
+                 view: dict | None = None) -> tuple[str, str]:
+    """(class, note) of one pair of the six lines: a match, a gap one of screener's own rules closes, or a mismatch."""
+    if _six_close(ours, theirs, metric):
+        return "match", ""
+    if not _six_apart(ours, theirs, metric):
+        return "mismatch", ""
+    view = view or {}
+    if metric in view and _six_close(view[metric][0], theirs, metric):
+        rule = view[metric][1]
+        return VIEW + rule, f"screener's view of our figure: {ours:g} -> {view[metric][0]:g} ({rule})"
+    exceptional = _value(figures, "exceptional_items", period)
+    if metric == "ebitda":
+        if exceptional:
+            for sign, word in ((1, "plus"), (-1, "less")):
+                if _six_close(ours + sign * exceptional, theirs, metric):
+                    return "exceptional_in_operating_profit", \
+                        f"screener's Operating Profit is ours {word} exceptional items {exceptional:g}"
+    return "mismatch", ""
+
+
+def _our_tax_pct(figures: dict, period: str) -> tuple[float, dict] | None:
+    """Our tax over our profit before tax, in percent: the tax total, else current plus deferred tax (both must be there)."""
+    pbt = figures.get(("pbt", period))
+    if not pbt or not pbt.get("value"):
+        return None
+    tax = _value(figures, "tax_expense", period)
+    if tax is None:
+        current, deferred = _value(figures, "current_tax", period), _value(figures, "deferred_tax", period)
+        if current is None or deferred is None:
+            return None
+        tax = current + deferred
+    return tax / pbt["value"] * 100, pbt
+
+
+def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_layout: bool,
+              dossier: dict | None = None) -> list[dict]:
+    """The pairs of the six other lines, quarters only."""
+    out: list[dict] = []
+    for period, row in quarters.items():
+        for metric in SIX_METRICS:
+            theirs = row.get(metric)
+            if theirs is None or (metric in SIX_LENDER_SKIP and (lender or lender_layout)):
+                continue
+            if metric == "tax_pct":
+                got = _our_tax_pct(figures, period)
+                if got is None:
+                    continue
+                ours, entry = got
+            else:
+                entry = figures.get((_norm(metric), period))
+                if not entry or entry.get("value") is None:
+                    continue
+                ours = entry["value"]
+            cls, note = classify_six(metric, ours, theirs, figures, period, screener_view(dossier, figures, period))
+            out.append({"period": period, "metric": metric, "memory_value": ours, "screener_value": theirs, "class": cls,
+                        "shifted": [], "memory_source_id": _value_source(entry), "memory_filed": entry.get("as_of") or "",
+                        "note": note})
+    return out
 
 
 # --- one company --------------------------------------------------------------------------------------------------
@@ -236,7 +378,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
     """Pairs and gaps for one company. ``pages`` maps a basis to parse_full's result. Pure."""
     basis = main_basis(dossier) if dossier else None
     out = {"scrip": scrip, "symbol": symbol, "basis": basis, "sector": (dossier or {}).get("sector")
-           or (dossier or {}).get("industry") or "unknown", "pairs": [], "gaps": [], "suspects": [], "skipped": None}
+           or (dossier or {}).get("industry") or "unknown", "pairs": [], "six_pairs": [], "gaps": [], "suspects": [], "skipped": None}
     if not basis:
         out["skipped"] = "no memory basis"
         return out
@@ -272,6 +414,10 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                     if len(shifted) > 1:
                         note += f" (chance risk: {len(shifted)} columns match)"
                 cls = classify(entry["value"], theirs, metric, shifted_to, lender, named)
+                if cls == "mismatch" and metric in ("revenue", "eps"):   # the existing "naming" (revenue less excise) keeps its place
+                    got = screener_view(dossier, figures, period).get(metric)
+                    if got and _close(got[0], theirs, metric) and _apart(entry["value"], theirs, metric):
+                        cls, note = VIEW + got[1], f"screener's view of our figure: {entry['value']:g} -> {got[0]:g} ({got[1]})"
                 if cls == "naming":
                     note = f"screener {_SCREENER_LINE[metric]} = our {named}"
                 pairs.append({"period": period, "metric": metric, "memory_value": entry["value"], "screener_value": theirs,
@@ -283,6 +429,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
             p["class"] = "steady_line_difference"
             p["note"] = "near-constant difference or ratio across quarters"
     out["pairs"] = pairs
+    out["six_pairs"] = six_pairs(figures, page["quarters"], lender, bool(page.get("lender_layout")), dossier)
     # gaps: a quarter of the span screener shows, one side has and the other lacks
     ours_quarters = {p for (m, p) in figures if m in ("revenue", "interest_earned", "pat") and quarter_index(p)}
     theirs_quarters = {p for p, row in page["quarters"].items() if row.get("revenue") is not None or row.get("pat") is not None}
@@ -343,7 +490,7 @@ def official_texts(sink, scrip: str, cache: dict | None = None):
 def attach_referee(result: dict, by_period: dict[str, list[str]], text) -> None:
     """The verdict on each wrong_quarter, scale and mismatch pair of a company, from the official text of the quarter (a
     year: its Q4 filing; a wrong_quarter: also the filing of the quarter ours equals)."""
-    for pair in result["pairs"]:
+    for pair in result["pairs"]:   # the six other lines are not in "pairs": the text search is for revenue, profit and EPS
         if pair["class"] not in REFEREED:
             continue
         wanted = [pair["period"]] + list(pair.get("shifted") or [])[:1]
@@ -390,6 +537,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     skipped: dict[str, int] = {}
     worst = []
     rows = []
+    six_by_class: dict[str, dict[str, int]] = {}
     for r in results:
         if r["skipped"]:
             skipped[r["skipped"]] = skipped.get(r["skipped"], 0) + 1
@@ -407,6 +555,10 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
                 rows.append({**base, **p})
                 if p["class"] in ("mismatch", "scale", "wrong_quarter"):
                     bad += 1
+        for p in r.get("six_pairs", []):
+            six_by_class.setdefault(p["metric"], {c: 0 for c in SIX_CLASSES})[p["class"]] += 1
+            if p["class"] != "match":
+                rows.append({**base, **p})
         for s in r.get("suspects", []):
             suspects[s["kind"]] += 1
             rows.append({**base, **s})
@@ -421,6 +573,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     total = sum(by_class.values())
     return {"pages_day": pages_day, "companies": len(results), "companies_compared": sum(1 for r in results if not r["skipped"]),
             "skipped": skipped, "pairs": total, "by_class": by_class, "by_metric": by_metric, "by_sector": by_sector,
+            "six_pairs": sum(sum(row.values()) for row in six_by_class.values()), "six_by_class": six_by_class,
             "gaps": gaps, "memory_period_suspect": suspects, "verdicts": verdicts, "naming": naming,
             "worst_companies": worst[:25], "rows": rows}
 
@@ -467,6 +620,10 @@ def render(summary: dict) -> str:
              f"compared                     {summary['companies_compared']}",
              f"pairs compared               {summary['pairs']}"]
     lines += [f"  {name:26}{c[name]}" for name in CLASSES]
+    if summary.get("six_by_class"):
+        lines += [f"six other lines, pairs       {summary['six_pairs']}"]
+        for metric, row in sorted(summary["six_by_class"].items()):
+            lines += [f"  {metric:16}" + "  ".join(f"{k} {n}" for k, n in row.items() if n)]
     lines += [f"memory_period_suspect        {sum(summary['memory_period_suspect'].values())}"]
     lines += [f"  {k:26}{v}" for k, v in summary["memory_period_suspect"].items()]
     lines += ["referee verdicts:"] + [f"  {k:34}{v}" for k, v in sorted(summary["verdicts"].items())]
@@ -525,6 +682,13 @@ def to_markdown(summary: dict, date: str) -> str:
         out += ["Companies not compared: " + ", ".join(f"{k} {n}" for k, n in sorted(summary["skipped"].items())) + ".", ""]
     out += ["## By metric", "", "| Metric | " + " | ".join(CLASSES) + " |", "|---|" + "---|" * len(CLASSES)]
     out += [f"| {m} | " + " | ".join(str(row[k]) for k in CLASSES) + " |" for m, row in sorted(summary["by_metric"].items())]
+    if summary.get("six_by_class"):
+        out += ["", "## The six other lines (quarters; Operating Profit, Other Income, Interest, Depreciation, Profit before tax, "
+                    "Tax %)", "", f"{summary['six_pairs']} pairs, counted apart from the table above. Explained: screener's "
+                    "own rules close the gap (docs/bench/screener-rules.md).", "",
+                "| Metric | " + " | ".join(SIX_CLASSES) + " |", "|---|" + "---|" * len(SIX_CLASSES)]
+        out += [f"| {m} | " + " | ".join(str(row[k]) for k in SIX_CLASSES) + " |"
+                for m, row in sorted(summary["six_by_class"].items())]
     out += ["", "## Sectors with the most unexplained pairs (mismatch, scale, wrong_quarter)", "",
             "| Sector | Pairs | Wrong |", "|---|---|---|"]
     sectors = sorted(summary["by_sector"].items(),

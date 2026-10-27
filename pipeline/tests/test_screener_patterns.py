@@ -146,3 +146,10 @@ def test_other_income_with_the_associates_share_alone_or_with_the_exceptional_it
     assert [rule for _, rule in views["other_income"]] == ["exceptional_in_other_income", "associates_in_other_income",
                                                             "associates_in_other_income"]
     assert sc.screener_view({}, figs({"other_income": 10.0, "share_associates": 30.0}), Q)["other_income"][0] == 40.0
+
+
+def test_steady_older_needs_two_later_matches_and_still_goes_to_the_referee():
+    # blind review, 27 Oct 2026: one later quarter is thin evidence; and a steady run can be our error (a wrong basis)
+    assert "steady_older" not in classes(run_many("ebitda", [100.0] * 4, [90, 90, 90, 100], "Operating Profit"), "ebitda")
+    from bse_intel import screener_xbrl_referee as sx
+    assert "steady_older" not in sx.NOT_PAIRS

@@ -332,7 +332,7 @@ def steady_older(pairs: list[dict], six: list[dict]) -> None:
     more consecutive quarters of mismatches whose screener/ours ratio stays within 3% of the run's median, the median off 1 by
     at least 3%, and every later quarter of that line that was compared is a match (read from the full pair list, which holds
     the matches too). The restatement pattern: screener holds a restated figure or another definition for the older quarters
-    only. It needs at least one later quarter."""
+    only. It needs at least two later quarters (blind review, 27 Oct 2026: one is thin evidence)."""
     for line in STEADY_OLDER_LINES:
         rows = sorted((p for p in (pairs if line == "revenue" else six) if p["metric"] == line and quarter_index(p["period"])),
                       key=lambda p: quarter_index(p["period"]))
@@ -342,7 +342,7 @@ def steady_older(pairs: list[dict], six: list[dict]) -> None:
             while end < len(rows) and _steady_ok(rows[start:end + 1]):
                 end += 1
             run = rows[start:end]
-            if len(run) >= STEADY_OLDER_MIN and rows[end:] and all(p["class"] == "match" for p in rows[end:]):
+            if len(run) >= STEADY_OLDER_MIN and len(rows[end:]) >= 2 and all(p["class"] == "match" for p in rows[end:]):
                 median = statistics.median(p["screener_value"] / p["memory_value"] for p in run)
                 if abs(median - 1) >= STEADY_OLDER_OFF:
                     for p in run:

@@ -1570,7 +1570,8 @@ def _eps_on_one_basis(dossier: dict, entries: list[dict], known: list[dict]) -> 
     from . import eps_adjust
     from .periods import prior_year_period
 
-    if not eps_adjust.enabled():
+    checking = eps_adjust.share_count_check_enabled()
+    if not eps_adjust.enabled() and not checking:
         return entries
     value = {(e["metric"], e["period"]): e["value"] for e in known if e.get("value") is not None}
 
@@ -1583,6 +1584,17 @@ def _eps_on_one_basis(dossier: dict, entries: list[dict], known: list[dict]) -> 
         old = value.get(("eps", back)) if back else None
         if e.get("yoy_pct") is None or old is None:
             out.append(e)
+            continue
+        if checking:   # EPS_SHARE_COUNT_CHECK (F211): as filed beside on today's shares, adjusted only when confirmed
+            seen = eps_adjust.share_check(dossier, e["period"], back, e["value"], old, profit(e["period"]), profit(back))
+            if seen.status == "none":
+                out.append(e)
+                continue
+            extra = {"eps_prior_as_filed": seen.eps_as_filed, "eps_share_status": seen.status, "eps_note": seen.note}
+            if seen.status == "confirmed" and seen.eps_today > 0:
+                out.append({**e, **extra, "eps_prior_today": seen.eps_today, "yoy_pct": round((e["value"] / seen.eps_today - 1) * 100, 1)})
+            else:
+                out.append({**e, **extra, "yoy_pct": None})
             continue
         result = eps_adjust.compare(dossier, e["period"], back, e["value"], old, profit(e["period"]), profit(back))
         if result.kind == "same":

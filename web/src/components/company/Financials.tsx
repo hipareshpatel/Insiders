@@ -11,6 +11,9 @@ import { Panel } from "./Panel";
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
   "November", "December"];
 
+// TODO 52 / F210: screener's own formulas for the lines (statements.ts `screener`); build-time switch, default off
+const SCREENER_LINES = (import.meta.env?.VITE_SCREENER_LINES ?? "") === "1";
+
 export function Financials({ dossier }: { dossier: Dossier }) {
   // consolidated and standalone, as screener.in switches them (owner, 2026-10-21); memory's main figures are the
   // consolidated ones for a group that files both, its standalone file is kept apart (dossier.put_standalone)
@@ -22,8 +25,8 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   const sheets = useAlone ? alone.balance_sheet ?? [] : dossier.balance_sheet;
   const label = useAlone ? "Standalone" : main === "CONSOLIDATED" ? "Consolidated" : main === "STANDALONE" ? "Standalone" : null;
   const bank = isBank(metrics);
-  const quarterly = quarterlyTable(metrics), annual = annualTable(metrics);
-  const balance = balanceTable(sheets), cash = cashFlowTable(metrics), ratios = ratioTable(metrics, sheets);
+  const quarterly = quarterlyTable(metrics, SCREENER_LINES), annual = annualTable(metrics, SCREENER_LINES);
+  const balance = balanceTable(sheets, SCREENER_LINES), cash = cashFlowTable(metrics), ratios = ratioTable(metrics, sheets);
   const top = bank ? "interest_earned" : "revenue";
   const boxes = [
     { title: bank ? "Compounded revenue growth" : "Compounded sales growth", rows: growth(metrics, top) },

@@ -109,3 +109,22 @@ def test_no_slip_no_pdf_fetched(monkeypatch):
     nse = Nse()
     sink, stats = _seed(bse, nse)
     assert (nse.lists, nse.pdfs, ocr) == (0, 0, []) and stats.results_periods == 4 and not stats.slip_held
+
+
+def _reseed(sink, bse):
+    stats = SeedStats()
+    seed_results(sink, bse, "530019", "Jubilant Pharmova", "2024-01-01", None, stats, company={}, nse=Nse(),
+                 symbol="JUBLPHARMA")
+    return stats
+
+
+def test_a_pdf_that_cannot_be_read_never_deletes_what_memory_holds(monkeypatch):
+    """Review of #168: an NSE hiccup (no PDF read) holds the quarter but leaves the earlier seed's figures; only a PDF
+    that prints another figure removes them."""
+    sink, _ = _seed(_setup(monkeypatch, 1758.6, []), Nse())
+    assert _memory(sink)[("revenue", "Q4FY24")] == 1758.6
+    stats = _reseed(sink, _setup(monkeypatch, None, []))
+    assert len(stats.slip_held) == 1 and _memory(sink)[("revenue", "Q4FY24")] == 1758.6
+    assert sink.dossiers["530019"]["scale_held"] == ["Q4FY24"]
+    _reseed(sink, _setup(monkeypatch, 175.86, []))
+    assert ("revenue", "Q4FY24") not in _memory(sink)

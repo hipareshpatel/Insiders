@@ -859,6 +859,10 @@ def test_capacity_error_kinds():
     assert not cm.capacity_error(_failed("rate limited (429)", "ValidationError: points: field required"))
     assert not cm.capacity_error(_failed("HTTP 403 forbidden", "paced"))
     assert not cm.capacity_error(SimpleNamespace(capped=True))
+    # review of #168: a number in a content failure is not a 5xx, nor a "connection" in its text a network failure
+    assert not cm.capacity_error(_failed("ValidationError: value 500 not in the quote"))
+    assert not cm.capacity_error(_failed("no JSON: the connection between revenue and margin"))
+    assert cm.capacity_error(_failed("HTTP 502 bad gateway", "503 UNAVAILABLE", "connection reset by peer"))
 
 
 def test_the_gap_is_a_minute_over_the_routes_lowest_requests_per_minute(settings):

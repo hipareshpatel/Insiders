@@ -10,11 +10,13 @@ from the page's own header, and a figure it cannot prove is not stored.
 CARD_YOY_RESTATED (settings) makes a card's YoY use the restated base, saying "vs restated"; the history never changes."""
 from __future__ import annotations
 
+import copy
 import logging
 import re
 from datetime import datetime, timezone
 
 from . import pdf_referee as pr
+from .dossier import keep_concurrent_writes
 from .periods import prior_quarter_period, prior_year_period
 
 log = logging.getLogger("bse_intel.restated_pdf")
@@ -86,6 +88,15 @@ def find(dossier: dict, rows: list, period: str, basis: str, filing_id: str = ""
     return found
 
 
+def _unchanged(dossier: dict, comparative: dict, basis: str) -> bool:
+    """Whether a printed comparative was checked against memory's original and found the same: only such a figure
+    clears an older restatement (a comparative memory holds no original for proves nothing; review of #168)."""
+    entry = next((e for e in dossier.get("financial_metrics", [])
+                  if (e.get("metric"), e.get("period")) == (comparative["metric"], comparative["period"])), None)
+    original = original_of(entry, basis)
+    return original is not None and not differs(original[0], comparative["value"])
+
+
 def _key(period: str) -> tuple[int, int]:
     m = re.fullmatch(r"Q([1-4])FY(\d{2})", period or "")
     return (int(m.group(2)), int(m.group(1))) if m else (0, 0)
@@ -144,7 +155,7 @@ def read_company(src, symbol: str, dossier: dict, quarters: int = 6) -> tuple[li
             records += mine
             seen = {(r["metric"], r["period"]) for r in mine}
             cleared += [(c["metric"], c["period"], basis, period) for c in comparatives(rows, period, basis)
-                        if (c["metric"], c["period"]) not in seen]
+                        if (c["metric"], c["period"]) not in seen and _unchanged(dossier, c, basis)]
             break
     return records, cleared, reasons
 
@@ -159,6 +170,7 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         dossier = sink.get_dossier(scrip)
         if not dossier:
             continue
+        read = copy.deepcopy(dossier)   # the PDFs take minutes: what another writer stores meanwhile is kept (review of #168)
         stats["companies"] += 1
         try:
             records, cleared, reasons = read_company(src, symbol, dossier, quarters)
@@ -174,6 +186,7 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         stats["restated"] += len(records)
         if merge(dossier, records, cleared):
             dossier["restated_checked_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+            keep_concurrent_writes(dossier, read, sink.get_dossier(scrip))
             sink.put_dossier(scrip, dossier)
             stats["stored"] += 1
     return stats

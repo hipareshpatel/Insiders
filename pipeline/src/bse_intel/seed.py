@@ -190,15 +190,18 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     from .slip_check import PdfCheck
     check = PdfCheck(nse, symbol)   # the PDF text-layer check of a unit slip: nothing is fetched unless one is found (F200)
     held_slips: dict[str, str] = {}
+    unsure: set[str] = set()   # held because no PDF could settle the slip: what memory holds from the file stays
     for period, (filed_on, url, parsed, _) in list(found.items()):
         others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]
         if xbrl_fast_path.fix_scale(parsed, others, scrip, verify=check):
             stats.rescaled += 1
         elif getattr(parsed, "slip_held", ""):
             held_slips[period] = parsed.slip_held
+            if getattr(parsed, "slip_unsure", False):
+                unsure.add(period)
             continue
         xbrl_fast_path.drop_long_year(parsed, others, scrip)   # an 18-month "year" dated as twelve (Siemens)
-    _hold_slips(sink, scrip, found, held_slips, stats)
+    _hold_slips(sink, scrip, found, held_slips, stats, unsure)
     _drop_misdated(sink, scrip, found, stats)
     _derive_quarters(found, stats)
     for period, (filed_on, url, parsed, _) in sorted(found.items()):
@@ -213,7 +216,8 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         _seed_standalone(sink, nse, scrip, symbol, since, set(consolidated), cache_root, stats)
 
 
-def _hold_slips(sink, scrip: str, found: dict, held: dict[str, str], stats: SeedStats) -> None:
+def _hold_slips(sink, scrip: str, found: dict, held: dict[str, str], stats: SeedStats,
+                unsure: set[str] = frozenset()) -> None:
     """A quarter whose file looks tagged in the wrong unit and whose PDF does not print the corrected figure (or cannot be
     read) is kept out of memory, and what an earlier seed stored from it leaves too (owner, 27 Oct 2026, F200: a missing
     quarter is better than a wrong one). Listed in the dossier's ``scale_held`` and the stats, for memory_gaps and the
@@ -226,6 +230,8 @@ def _hold_slips(sink, scrip: str, found: dict, held: dict[str, str], stats: Seed
         found.pop(period, None)
         stats.skipped += 1
         stats.slip_held.append(f"{scrip} {period}: {why}")
+        if period in unsure:
+            continue
         changed = bool(dossier is not None and forget_source(dossier, f"xbrl:res:{scrip}:{period}")) or changed
     if changed:
         sink.put_dossier(scrip, dossier)

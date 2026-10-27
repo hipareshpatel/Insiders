@@ -4,7 +4,9 @@
 in the wrong unit. That is one source (our own memory) judging another (the file). The correction is made only when the
 filing's own PDF, read from its text layer (never OCR or AI), prints the corrected figure for the quarter's column on the
 file's basis. A PDF that disagrees, or cannot be read, leaves the quarter out of memory (a missing quarter is better than
-a wrong one) and the caller records it as held.
+a wrong one) and the caller records it as held. The check answers True (agrees), False (the PDF prints another figure)
+or None (no PDF could be read, or it has no such figure): only False removes what an earlier seed stored from the file;
+None leaves memory as it was, so an NSE hiccup never deletes figures.
 
 The PDF is fetched only when a slip is found, so the normal path makes no extra NSE call.
 """
@@ -21,7 +23,7 @@ _XBRL_ROUNDING = 0.0051   # the file's crore figures are rounded to two decimals
 
 
 class PdfCheck:
-    """Callable ``(result, metric, corrected_crore) -> (agrees, why)`` reading the quarter's results PDF text layer."""
+    """Callable ``(result, metric, corrected_crore) -> (agrees, why)``, agrees True / False / None (unsure) reading the quarter's results PDF text layer."""
 
     def __init__(self, nse, symbol: str = "", pdf_url: str | None = None, pdf_period: str | None = None):
         self.nse, self.symbol = nse, (symbol or "").strip().upper()
@@ -46,13 +48,13 @@ class PdfCheck:
 
     def __call__(self, result, metric: str, corrected: float) -> tuple[bool, str]:
         if self.sources is None:
-            return False, "no NSE client to fetch the PDF"
+            return None, "no NSE client to fetch the PDF"
         period, basis = result.period, result.basis
         metric = "revenue" if metric in ("revenue", "total_income", "interest_earned") else metric
         try:
             urls = self._urls(period)
             if isinstance(urls, str):
-                return False, urls
+                return None, urls
             reasons: list[str] = []
             for url in urls:
                 rows, why = self.sources.rows(url)
@@ -69,11 +71,11 @@ class PdfCheck:
                         return True, f"PDF p{page} prints {value:g} Cr ({label})"
                 shown = ", ".join(f"{v:g}" for v, _, _ in got["values"])
                 return False, f"PDF prints {shown} Cr, not the corrected {corrected:g} Cr"
-            return False, "; ".join(dict.fromkeys(reasons))[:200] or "no results PDF read"
+            return None, "; ".join(dict.fromkeys(reasons))[:200] or "no results PDF read"
         except SourceBlockedError:
             raise
         except Exception as exc:   # noqa: BLE001 - an unreadable PDF holds the quarter, it does not stop the run
-            return False, f"PDF check failed ({type(exc).__name__})"
+            return None, f"PDF check failed ({type(exc).__name__})"
 
 
 def _half_unit(rows, metric: str, page: int) -> float:

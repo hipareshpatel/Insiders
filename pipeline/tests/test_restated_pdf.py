@@ -168,3 +168,42 @@ def test_the_maintenance_pass_reads_the_text_layer_and_stores_what_it_proves():
     assert sink.d["restated_figures"][0]["restated"] == 629.79 and sink.d["financial_metrics"][0]["value"] == 647.68
     assert stats["reasons"] == {}
     assert rp.run(nse, sink, {"1": "X"}, quarters=1)["stored"] == 0   # nothing new: no write
+
+
+def test_a_comparative_memory_holds_no_original_for_never_clears_a_restatement():
+    """Review of #168: only a figure compared with memory's original and found the same clears an older restatement."""
+    d = stored(dossier())
+    d["financial_metrics"][0]["sources"] = [source("nse-5", 647.68, "2024-01-30", restated_from="Q4FY24")]
+    _, cleared, _ = rp.read_company(_Src(rows()), "X", d, quarters=1)
+    assert ("revenue", "Q3FY24", "CONSOLIDATED", "Q4FY24") not in cleared
+    assert d["restated_figures"][0]["restated"] == 629.79
+
+
+def test_the_pass_keeps_what_another_writer_stored_while_the_pdfs_were_read():
+    """Review of #168: the PDFs take minutes; a card or deals write in that gap is not overwritten."""
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    nse = FakeNse([filing(url=url)], {url: make_pdf(CONSOLIDATED_Q4)})
+    sink = Sink(dossier())
+    real = sink.get_dossier
+    calls = []
+
+    def get(scrip):
+        calls.append(scrip)
+        got = real(scrip)
+        if len(calls) == 2:          # the re-read just before the write: a deal arrived meanwhile
+            got = {**got, "deals": [{"id": "d1"}]}
+        return got
+    sink.get_dossier = get
+    rp.run(nse, sink, {"1": "X"}, quarters=1)
+    assert sink.d["deals"] == [{"id": "d1"}] and sink.d["restated_figures"][0]["restated"] == 629.79
+
+
+class _Src:
+    def __init__(self, got):
+        self.got = got
+
+    def filings(self, symbol, period):
+        return [filing(url="u")]
+
+    def rows(self, url):
+        return self.got, ""

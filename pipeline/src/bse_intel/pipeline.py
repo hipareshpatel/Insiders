@@ -47,7 +47,7 @@ from . import stages
 from . import order_band
 from . import call_memory, call_queue, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
-from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
+from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, DossierDelta, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_ground_all_fields, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -3597,6 +3597,8 @@ class Pipeline:
             if consolidated_only:
                 changes += standalone_figures_removed(candidate, tagged, standalone_file)
             changes += one_basis.apply(candidate, tagged, history)   # CARD_ONE_BASIS: one basis a figure (off: nothing)
+            if card_ground_all_fields():   # CARD_GROUND_ALL_FIELDS: figures in the fields the check never read (off: nothing)
+                changes += ground_all_fields(candidate, sources)
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)

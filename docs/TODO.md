@@ -1,5 +1,7 @@
 # To-do list: improvements waiting to be built together
 
+> **History since 27 Oct 2026.** The current state and the one list of open work are in [`docs/STATUS.md`](STATUS.md). Read this file for its findings; do not work from its lists.
+
 The owner asked on 25 Oct 2026 to collect the improvements here and build them all together, to save time and
 tokens. How it works:
 

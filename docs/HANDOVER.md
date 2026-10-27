@@ -1,5 +1,7 @@
 # Handover: state of the platform and the work in hand (24 Oct 2026, 16:45 IST)
 
+> **History since 27 Oct 2026.** The current state and the one list of open work are in [`docs/STATUS.md`](STATUS.md). Read this file for its findings; do not work from its lists.
+
 Written by the lead cloud session at the end of 24 Oct 2026, before the owner moves to another account. A new session
 should be able to carry on from this file alone. It links to the detailed records rather than repeating them.
 

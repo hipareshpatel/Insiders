@@ -20,14 +20,14 @@
 NSE corporate-filing intelligence platform (NSE only and online only since 2026-10-18/19, D34: GitHub Actions +
 Cloudflare; the laptop builds and runs audit rounds, the BSE code is an off-path backup): Python pipeline
 (`pipeline/`), Cloudflare Worker with Hono and React (`web/`), shared SQL (`db/`). It must run at $0 a month on free
-tiers. **docs/PLAN.md is the single current plan** (rewritten 2026-10-19: status, go-live checklist, after go-live,
-build next, open decisions).
+tiers. **`docs/STATUS.md` is the one current page** (27 Oct 2026: what runs, the go-live bar, the latest measurement,
+the open work in order, what waits for the owner). `docs/PLAN.md`, `docs/HANDOVER.md`, `docs/TODO.md` and
+`docs/TASKS.md` are history: read them for findings, not for what to do next.
 
 Read before changing anything:
 - `docs/BLUEPRINT.md`: the spec (modules are numbered; "Module 35" means section 35).
-- `docs/PLAN.md`: the phases from smoke test to go-live, how it runs after, open decisions and the
-  single "Pending work" list. Work from that list and tick items off there.
-- `docs/TRACKER.md`: decisions D1–D28, what is built and what is not.
+- `docs/STATUS.md`: the current state and the one list of open work. Work from that list and keep it current.
+- `docs/TRACKER.md`: decisions D1–D43 and findings F1–F222, what is built and what is not.
 - `docs/SPEC.md`: the design as built. `docs/SETUP.md`: setup and the CLI commands table (moved from `README.md` on
   2026-10-20, owner: the repository is public, so the README stays one neutral line with nothing about the project).
 - `docs/DATA_QUALITY.md`: the cleaning stages and **the routine when data is wrong** (fix the class in
@@ -38,10 +38,11 @@ Read before changing anything:
 
 ## Rules
 
-- **Tasks come from `docs/TASKS.md`** (the cloud session leads, owner 2026-10-19). After every `git pull`, read it
-  and work the OPEN tasks for your session in priority order; report there and commit with the task id.
-- One working branch at a time, the one the session is given (25 Oct 2026, owner left it to the lead session: the
-  session branch `ccr-b604559f-45p2yh` replaced `claude/gracious-goodall-jn9buu`). PRs go from it to `main`; once a PR
+- **Tasks come from `docs/STATUS.md` section 3** (the cloud session leads, owner 2026-10-19; one status page since
+  27 Oct 2026, `docs/TASKS.md` is history). After every `git pull`, read it and work its open items in order; record
+  what changed there.
+- One working branch at a time, the one the session is given (25 Oct 2026, owner left it to the lead session; on
+  27 Oct 2026 the session branch is `ccr-e9a25af8-4vz8up`, which replaced `ccr-b604559f-45p2yh`). PRs go from it to `main`; once a PR
   is merged, restart the branch from `main`. `claude/gracious-goodall-jn9buu` is parked, not deleted: it holds the
   unmerged F126d EBITDA check, the narrowed-grounding change and their audit files (owner: stopped, parked for later,
   `docs/TODO.md`). Never rewrite another branch's pushed history. `git pull` before editing.
@@ -133,20 +134,19 @@ Read before changing anything:
 
 ## Status and next steps
 
-- **Start here (24 Oct 2026, account switch): `docs/HANDOVER.md`.** It holds the state, the two main tasks (the 95%-right
-  go-live gate and the wrong-card audit loop: audit, fix the class, on/off over stored cards, blind sample, ship, record),
-  the daily routine to recreate on the new account (its prompt verbatim), the open WRONG classes and every pending item.
-  Latest day: 65 cards, 38% right, 23% WRONG (24 Oct); fixes F108-F111 merged (#91-#94). **Go-live bar since 24 Oct
-  (owner, D42): WRONG on the checked face ≤ 5%, pooled with its 95% interval (`pipeline/scripts/daily_audit/rates.py`);
-  the shadow critic is off (D41).**
-- **Now (2026-10-20): production is live.** `pipeline.yml` on `main` every 15 min (GitHub Actions, D1 `bse-index-nse`,
-  Worker `insiders`); the live window is the last 7 days, today first; `deploy-web.yml` deploys every merge to `main`.
+- **Start here (27 Oct 2026): `docs/STATUS.md`.** `docs/HANDOVER.md` (24 Oct) keeps the wrong-card audit loop (audit,
+  fix the class, on/off over stored cards, blind sample, ship, record) and the open WRONG classes of 24 Oct; its state
+  and pending list are history. Latest measurement: cards filed 26 Oct, 154 audited, 18.8% WRONG (13.4-25.7%).
+  **Go-live bar since 24 Oct (owner, D42): WRONG on the checked face ≤ 5%, pooled with its 95% interval
+  (`pipeline/scripts/daily_audit/rates.py`); the shadow critic is off (D41).**
+- **Production is live since 2026-10-20.** `pipeline.yml` on `main` every 15 min, the one run for every filing since
+  27 Oct (GitHub Actions, D1 `bse-index-nse`, Worker `insiders`); the live window is the last 7 days, today first; `deploy-web.yml` deploys every merge to `main`.
   The cloud session leads: it merges green PRs from this branch to `main` (owner's approvals, `docs/APPROVALS.md`),
   logs operations in `docs/OPS.md`, and runs no-AI maintenance from GitHub (`maintenance.yml`: refresh-card-blocks,
-  refresh-summaries, export-held, requeue-failed [--ids], seed-memory). Quality: live review 3, 7 of 27 WRONG (26%);
-  the go-live gate (≤ 5%) is not met yet. Owner rules: no AI re-runs for testing, review live cards only; any fix that
+  refresh-summaries, export-held, requeue-failed [--ids], seed-memory). The go-live gate (≤ 5%) is not met yet. Owner rules: no AI re-runs for testing, review live cards only; any fix that
   makes a check accept more gets the on/off audit over stored cards plus an independent sample
-  (`pipeline/scripts/audit_quote_rules.py`). What is pending: the "Pending work" list at the top of `docs/PLAN.md`.
+  (`pipeline/scripts/audit_quote_rules.py`). AI re-runs for testing need no separate OK since 26 Oct
+  (`docs/APPROVALS.md`). What is pending: `docs/STATUS.md` section 3.
 - Everything below is the laptop-era record (2026-10-16 to 19), kept for its findings; its "next" items are superseded.
 
 - Done: all blueprint modules. Module 42 (promoter pledges) built 2026-10-19 from NSE's SAST Reg 31 encumbrance feed

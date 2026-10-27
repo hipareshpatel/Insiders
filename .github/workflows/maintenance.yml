@@ -825,15 +825,29 @@ jobs:
         if: inputs.command == 'export-critic'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel critic-export --since "$(date -u -d "-1 day" +%F)" --out "../docs/audit/live/critic-$(date -u +%F).json"'
-      # into the working branch, as T19 planned (the owner accepted held drafts in the public repository, 2026-10-20)
-      - name: Commit the export
+      # kept as an artifact every time; into the working branch only when the repository variable AUDIT_BRANCH names one,
+      # as T19 planned (the owner accepted held drafts in the public repository, 2026-10-20); 27 Oct 2026: the default was a
+      # parked branch no session reads
+      - name: Collect the export
         if: inputs.command == 'export-held' || inputs.command == 'export-critic'
+        working-directory: .
+        run: |
+          mkdir -p "$RUNNER_TEMP/audit-export"
+          for f in $(git ls-files --others --modified docs/audit/live/); do cp "$f" "$RUNNER_TEMP/audit-export/"; done
+      - uses: actions/upload-artifact@v4
+        if: inputs.command == 'export-held' || inputs.command == 'export-critic'
+        with:
+          name: ${{ inputs.command }}
+          path: ${{ runner.temp }}/audit-export/
+          if-no-files-found: ignore
+      - name: Commit the export
+        if: (inputs.command == 'export-held' || inputs.command == 'export-critic') && vars.AUDIT_BRANCH != ''
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         working-directory: .
         # the files are copied aside and back (audit-export.yml does the same): written in main's tree, a file the branch
         # already has (audit-export's held-<date>.json the same day) made the checkout refuse; nothing new is no commit
         env:
-          BRANCH: ${{ vars.AUDIT_BRANCH || 'claude/gracious-goodall-jn9buu' }}
+          BRANCH: ${{ vars.AUDIT_BRANCH }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -875,6 +889,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       FILE_CAP_SHARDS: ${{ inputs.ids != '' && '1' || '12' }}   # F213: the run's cap is split over the shards (FILE_CAP // 12 each); an ids run is one shard
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
@@ -961,6 +976,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       FILE_CAP_SHARDS: "4"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 4)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
@@ -1096,6 +1112,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       FILE_CAP_SHARDS: "6"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 6)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
@@ -1243,6 +1260,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
     steps:
       - name: Runner resources
         working-directory: .   # before checkout the pipeline folder does not exist yet

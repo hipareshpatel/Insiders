@@ -59,10 +59,10 @@ def get(sink, url: str) -> bytes | None:
         return None
 
 
-def put(sink, url: str, data: bytes) -> None:
-    """Keep a downloaded file, unless the store is full (the total is read once a process)."""
+def put(sink, url: str, data: bytes) -> bool:
+    """Keep a downloaded file, unless the store is full (the total is read once a process). True when it was kept."""
     if not enabled(sink) or not data:
-        return
+        return False
     try:
         body = gzip.compress(data, mtime=0)   # mtime 0: the same file is the same bytes
         with _lock:
@@ -73,7 +73,7 @@ def put(sink, url: str, data: bytes) -> None:
                     _state["warned"] = True
                     log.warning("xbrl store holds %.1f MB, at or over XBRL_STORE_MAX_MB: no new files are kept",
                                 _state["total"] / 1e6)
-                return
+                return False
         sink.put_object(key(url), body, content_type="application/gzip")
         with _lock:
             _state["total"] += len(body)
@@ -86,8 +86,10 @@ def put(sink, url: str, data: bytes) -> None:
             due = _state["puts"] % SAVE_EVERY == 0
         if due:
             flush()
+        return True
     except Exception as exc:  # noqa: BLE001 - the durable copy is best effort
         log.warning("xbrl store write failed for %s: %s", url, exc)
+        return False
 
 
 def flush() -> None:

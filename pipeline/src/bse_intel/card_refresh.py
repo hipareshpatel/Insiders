@@ -270,10 +270,12 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
                 changed_keys[k] = changed_keys.get(k, 0) + 1
             if diffs is not None:
                 keys = sorted(set(changed) - {"impact"})
+                stored = json.loads(row["card_json"])   # the card as stored: the call recheck marks takeaways in place
                 diffs.append({"news_id": row["news_id"], "scrip_code": scrip, "symbol": row.get("symbol"),
                               "filed_at": row["filed_at"], "changed": sorted(set(changed)),
                               "impact": [row.get("impact_level"), impact],
-                              "before": {k: card.get(k) for k in keys}, "after": {k: new.get(k) for k in keys}})
+                              "impact_reasons": (new.get("score") or {}).get("reasons") if "impact" in changed else None,
+                              "before": {k: stored.get(k) for k in keys}, "after": {k: new.get(k) for k in keys}})
             out = dict(row)
             out.pop("card_json")
             batch.append({**out, "impact_level": impact, "card": new})

@@ -28,6 +28,11 @@ concurrency:
   group: call-memory   # its own group; a running reading is never cancelled, the next one waits
   cancel-in-progress: false
 
+# The card and memory switches come from pipeline/config/switches.toml, the same in every job; a repository variable of
+# the same name wins over it (settings._switch). REPO_VARS carries them all, so none has to be listed here.
+env:
+  REPO_VARS: ${{ toJSON(vars) }}
+
 jobs:
   run:
     if: vars.MEMORY_CALL_V2 == '1'

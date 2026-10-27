@@ -114,6 +114,8 @@ def test_our_year_ago_ebitda_is_left_off_when_the_release_states_another_change(
     """Crompton Q2FY27: its year-ago finance cost was regrouped (5.16 first filed, 11.63 in this year's column), so the
     year-ago EBITDA is 165 for the company and 158.37 in memory: +29.4% where the release says +24.1%."""
     monkeypatch.setenv("CARD_EBITDA_PROFIT_V2", "1")
+    # without CARD_RESULTS_ONE_LINE: under it the release's EBITDA has no changes at all (its known cost, OPS 27 Oct)
+    monkeypatch.setenv("CARD_RESULTS_ONE_LINE", "0")
     off_text = results_snapshot(_crompton(), "nse-106820175", printed="EBITDA of Rs. 205 Cr for the quarter")
     assert off_text["ebitda"]["yoy_pct"] == 29.4                                  # no stated change: kept as before
     on = results_snapshot(_crompton(), "nse-106820175", printed=CROMPTON_RELEASE)

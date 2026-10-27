@@ -1,0 +1,26 @@
+# The switches every job runs with: the live pipeline, the quick run, the card refresh, the nightly annual-report
+# re-run, the seed and the maintenance jobs (owner, 27 Oct 2026: "one list for every job"). Before this file each
+# workflow set its own, and the quick run that writes today's cards had none of the ones the main run turned on.
+#
+# A switch not listed here is off. A repository variable of the same name, when set, wins over this file in every job
+# (workflows pass all repository variables in REPO_VARS), so "0" there turns one off everywhere without a code change.
+# An environment variable set by a workflow step wins over both.
+#
+# Turned on 27 Oct 2026 (owner: "Whatever can be switch ON, do it"); not yet measured on live cards: the release check
+# (run 40407491267) stopped at 6 hours with nothing saved. The measurement is a blind audit of cards written after this
+# file is live.
+
+[on]
+EPS_SHARE_ADJUST = true          # F153: EPS changes on one share count across splits and bonuses (live-bug fix, 25 Oct)
+CARD_GROUND_ALL_FIELDS = true    # F204: figures in the timeline, risks and targets are grounded too
+CARD_GROUNDED_FIGURES = true     # F171
+CARD_ONE_BASIS = true            # F173: one basis a figure
+CARD_SAME_DEFINITION = true      # F155
+CARD_YOY_RESTATED = true         # F202: restated comparatives when memory holds them
+CARD_FOOTER_PLAUSIBLE = true     # F182: a footer figure that cannot be right is left off
+QUOTE_EXACT_NUMBERS = true       # F156
+CARD_EPS_FOLLOWS_PROFIT = true   # F183 (EPS is not shown; memory side only)
+EPS_BASE_CHECK = true            # F208: standalone EPS stored as consolidated refused (Wipro)
+EPS_SHARE_COUNT_CHECK = true     # F211: split/bonus adjusted only when the record and the share count agree
+CARD_RESULTS_ONE_LINE = true     # F206: a results row's figures from one statement line
+CARD_WATCH_VERDICT = true        # F205: code decides met / missed / not due

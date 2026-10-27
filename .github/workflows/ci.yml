@@ -23,6 +23,10 @@ jobs:
           cache-dependency-path: pipeline/pyproject.toml
       - run: pip install -e ".[dev]"
       - run: python -m pytest -q
+      # the same suite with the switches config/switches.toml turns on: the mix every job runs
+      - run: python -m pytest -q
+        env:
+          BSE_INTEL_TEST_SWITCHES: live
 
   web:
     runs-on: ubuntu-latest

@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 01:40 IST.
+Last updated: 28 Oct 2026, 02:12 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -65,8 +65,11 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    figures, no refusal, stopped at its 500-file cap. Batch 2 (run 40524728754): 43 companies, 277 quarters, 7,277
    figures. Batch 3 (run 40541696607, done 23:54 IST): 40 companies, 210 quarters, 5,444 figures, 428 BSE files kept,
    no refusal; 157 quarters skipped because BSE's basis differs from memory's, 148 held, 16 fetches failed (NBFC files
-   that came back empty). Batch 4 (run 40561999277) started 00:09 IST 28 Oct. The owner said to run the rest back to
-   back (27 Oct), stopping at once on any refusal. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
+   that came back empty). Batch 4 (run 40561999277, 00:09-01:24 IST 28 Oct): 1 company, 1 quarter, 27 figures, no
+   refusal, "more left: False": **the BSE fill is done** under today's rules. Totals: 133 companies, 809 quarters, 21,072
+   figures. Left out on purpose: 54 quarters where BSE's basis differs from memory's, 82 held, 127 with no new quarter.
+   23 BSE lender files (NBFC template, e.g. TATACAP, PIRAMALFIN Q2FY26) came back empty: the known gap of 16 Oct (BSE's
+   NBFC path answers a plain fetch with its homepage; `seed.py`), not a refusal. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
    Q4FY26) goes into memory unchecked; screener and tijori comparisons are the check.
    Checked 27 Oct night (`docs/bench/bse-fill-batches-1-2-check.md`): revenue and profit agree with screener in 98-99%
    of 1,776 pairs; of 89 differences read in the company's PDF, BSE right 82, **wrong 4** (Eco Recycling Q4FY25 profit,

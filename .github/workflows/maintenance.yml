@@ -128,6 +128,9 @@
 #   filings named in `ids` (transcripts and decks, news ids): stored text and memory in, one AI call each on the free providers
 #   (never DeepSeek), the checked points and every dropped point with its reason out. One <news_id>.json each and summary.json go up
 #   as the artifact `call-memory`. Writes nothing to memory (the measurement run; --apply is for the laptop).
+# - restated-pdf-trial: read only (F202, TODO 104). restated-pdf --dry-run: the latest six quarters' results PDFs of the companies
+#   in `ids` (or the first `limit` of the universe), text layer only, and every comparative that differs from memory's original
+#   listed with both figures and their sources (artifact `restated-pdf-trial`). Writes nothing; storing waits for its review.
 # - memory-gaps-fill-bse: the one-time fill (F201, TODO 100, owner 27 Oct 2026) of the results quarters memory lacks for companies
 #   whose NSE results list is empty (listed on NSE in 2026, earlier quarters on BSE only), from BSE's results XBRL through the seed's
 #   BSE path, for companies at the universe's market-cap floor (500 Cr) or more. NSE's list is read at run time; a figure memory
@@ -150,7 +153,7 @@
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -171,10 +174,10 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
         default: both
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols)
+        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -190,7 +193,7 @@ on:
         type: string
         default: '110'
       limit:
-        description: text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); memory-recall-export - filings in the sample (empty = 20)
+        description: text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies
         type: string
         default: ''
       no_ocr:
@@ -226,7 +229,7 @@ concurrency:
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","pdf-referee-ensemble","restated-report","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -343,6 +346,23 @@ jobs:
         if: always() && inputs.command == 'restated-report'
         with:
           name: restated-report
+          path: ${{ runner.temp }}/restated/
+          if-no-files-found: ignore
+      - name: Restated PDF trial (reads only; F202)
+        if: inputs.command == 'restated-pdf-trial'
+        env:
+          IDS: ${{ inputs.ids }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/restated"
+          args=(--dry-run --json "$RUNNER_TEMP/restated/restated-pdf-trial.json")
+          if [ -n "$IDS" ]; then args+=(--scrips "$IDS"); fi
+          if [ -n "$LIMIT" ]; then args+=(--limit "$LIMIT"); fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel restated-pdf "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'restated-pdf-trial'
+        with:
+          name: restated-pdf-trial
           path: ${{ runner.temp }}/restated/
           if-no-files-found: ignore
       - name: Memory recall export (reads only)

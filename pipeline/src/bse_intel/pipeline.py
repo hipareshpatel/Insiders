@@ -4341,11 +4341,11 @@ class Pipeline:
 
     def _slice(self, step, end: float) -> None:
         """One slice of a step: no filing starts past ``end``; a filing started keeps the run's deadline."""
-        self._slice_end = end
+        outer, self._slice_end = self._slice_end, end
         try:
             step()
         finally:
-            self._slice_end = None
+            self._slice_end = outer
 
     def _discover_window(self, live_from: date, today: date, days: int = 2) -> None:
         """Discover the live window's earlier days that no run has read in full, newest first, ``days`` a run.

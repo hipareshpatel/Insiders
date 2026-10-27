@@ -886,15 +886,17 @@ def test_a_busy_today_is_worked_in_slices_with_a_look_for_new_filings_before_eac
 
     def process(day_from, day_to, deadline, *a, **k):   # two full slices of today's filings, then the queue is empty
         assert deadline == run_deadline   # the filings keep the run's deadline; the slice end only stops new starts
-        slices.append(pipeline._slice_end)
+        slices.append((pipeline._slice_end, len(looks)))
         while len(slices) <= 2 and not pipeline._stop_starting(deadline):
             time.sleep(0.005)
         return []
 
     pipeline.process = process
     pipeline._fresh(today_ist(), run_deadline, True)
-    assert len(slices) == 3 and len(looks) >= 3 and all(slices)   # a look before every slice
-    assert pipeline._slice_end is None
+    per_day = len(looks) // 3
+    assert len(slices) == 3 and per_day in (1, 2) and len(looks) == 3 * per_day
+    assert [n for _, n in slices] == [per_day, 2 * per_day, 3 * per_day]   # a new look before every slice
+    assert all(end for end, _ in slices) and pipeline._slice_end is None
 
 
 def test_today_is_not_looked_at_in_a_loop_once_the_run_is_over(settings):
@@ -905,7 +907,13 @@ def test_today_is_not_looked_at_in_a_loop_once_the_run_is_over(settings):
 
     pipeline, _, _ = build(settings, [], {}, {})
     looks, made = [], []
-    pipeline._discover_safely = lambda day, full: looks.append(day) or 0
+
+    def look(day, full):
+        looks.append(day)
+        assert len(looks) <= 4, "looked again and again past the deadline"   # fails instead of hanging
+        return 0
+
+    pipeline._discover_safely = look
     pipeline.process = lambda *a, **k: made.append(1) or []
     pipeline._fresh(today_ist(), time.monotonic() - 1, True)
     assert 1 <= len(looks) <= 2 and made == []   # one look (the new filings are recorded), no cards, no loop

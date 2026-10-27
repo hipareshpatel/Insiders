@@ -216,3 +216,27 @@ def test_a_dry_run_lists_what_it_found_and_writes_nothing():
     stats = rp.run(nse, sink, {"1": "X"}, quarters=1, dry_run=True)
     assert sink.puts == 0 and "restated_figures" not in sink.d and stats["stored"] == 0
     assert [(f["symbol"], f["metric"], f["original"], f["restated"]) for f in stats["found"]] == [("X", "revenue", 647.68, 629.79)]
+
+
+TITAN_Q3 = [   # Titan's real Q3FY26 layout: revenue split into sub-lines with no total; "Total income" includes other income
+    "Statement of Consolidated Unaudited Financial Results for the quarter and nine months ended 31 December 2025",
+    "(Rs. in crore)",
+    "Particulars 3 months ended 3 months ended 3 months ended 9 months ended 9 months ended Year ended",
+    "31-12-2025 30-09-2025 31-12-2024 31-12-2025 31-12-2024 31-03-2025",
+    "I. Revenue from operations",
+    "- Sale of products/ services 24,915 16,461 17,550 56,190 43,246 57,143",
+    "- Other operating revenues 501 2,264 190 4,474 2,294 3,313",
+    "II. Other income 151 112 128 368 370 486",
+    "III. Total income (I +II) 25,567 18,837 17,868 61,032 45,910 60,942",
+]
+
+
+def test_total_income_is_never_read_as_a_restated_revenue():
+    """Restated-pdf trial, 27 Oct 2026: Titan's four 'restatements' were its Total income (17,868) against revenue (17,740)."""
+    got, why = pr.read_document(make_pdf(TITAN_Q3), ocr=False)
+    assert got, why
+    d = {"financial_metrics": [
+        {"metric": "revenue", "period": "Q3FY25", "value": 17740.0, "unit": "INR_CR", "basis": "CONSOLIDATED",
+         "sources": [source("xbrl:res:1:Q3FY25", 17740.0, "2025-02-04")], "source_news_id": "xbrl:res:1:Q3FY25"}]}
+    assert rp.find(d, got, "Q3FY26", "CONSOLIDATED") == []
+    assert all(c["metric"] != "revenue" for c in rp.comparatives(got, "Q3FY26", "CONSOLIDATED"))

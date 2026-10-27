@@ -50,6 +50,7 @@ class PdfCheck:
         if self.sources is None:
             return None, "no NSE client to fetch the PDF"
         period, basis = result.period, result.basis
+        top_line = metric == "revenue"   # revenue from operations: a "Total income" line is not it
         metric = "revenue" if metric in ("revenue", "total_income", "interest_earned") else metric
         try:
             urls = self._urls(period)
@@ -62,14 +63,19 @@ class PdfCheck:
                     reasons.append(why)
                     continue
                 got = pdf_referee.figure_for(rows, period, metric, basis)
+                if top_line:
+                    got["values"] = pdf_referee.revenue_only(got["values"])
                 if not got["values"]:
                     reasons.append(got["unsure"] or f"no {metric} figure of the {period} column on the {basis} basis")
                     continue
-                for value, label, page in got["values"]:
-                    tolerance = _XBRL_ROUNDING + _half_unit(rows, metric, page)
-                    if abs(value - corrected) <= tolerance:
-                        return True, f"PDF p{page} prints {value:g} Cr ({label})"
+                agree = [abs(value - corrected) <= _XBRL_ROUNDING + _half_unit(rows, metric, page)
+                         for value, _label, page in got["values"]]
                 shown = ", ".join(f"{v:g}" for v, _, _ in got["values"])
+                if all(agree):
+                    value, label, page = got["values"][0]
+                    return True, f"PDF p{page} prints {value:g} Cr ({label})"
+                if any(agree):   # proven rows that disagree with each other (a segment line beside the total): no proof
+                    return None, f"PDF rows disagree ({shown} Cr)"
                 return False, f"PDF prints {shown} Cr, not the corrected {corrected:g} Cr"
             return None, "; ".join(dict.fromkeys(reasons))[:200] or "no results PDF read"
         except SourceBlockedError:

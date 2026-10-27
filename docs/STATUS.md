@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 27 Oct 2026, 22:20 IST.
+Last updated: 28 Oct 2026, 00:25 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -62,8 +62,11 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 1. **Blind audit of about 50 cards written by the single run** (28 Oct afternoon IST, once enough new cards exist):
    the first measurement of the 13 switches. Independent reviewers, the fix author does not grade.
 2. **BSE memory fill, batch by batch** (owner, 27 Oct). Batch 1 (run 40504758920): 49 companies, 321 quarters, 8,324
-   figures, no refusal, stopped at its 500-file cap. Batch 2 (run 40524728754) started 20:18 IST. Each further batch
-   needs the owner's go. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
+   figures, no refusal, stopped at its 500-file cap. Batch 2 (run 40524728754): 43 companies, 277 quarters, 7,277
+   figures. Batch 3 (run 40541696607, done 23:54 IST): 40 companies, 210 quarters, 5,444 figures, 428 BSE files kept,
+   no refusal; 157 quarters skipped because BSE's basis differs from memory's, 148 held, 16 fetches failed (NBFC files
+   that came back empty). Batch 4 (run 40561999277) started 00:09 IST 28 Oct. The owner said to run the rest back to
+   back (27 Oct), stopping at once on any refusal. Risk the owner accepted: a wrong BSE figure (about 1 in 100 in the checks so far, e.g. Kovai
    Q4FY26) goes into memory unchecked; screener and tijori comparisons are the check.
    Checked 27 Oct night (`docs/bench/bse-fill-batches-1-2-check.md`): revenue and profit agree with screener in 98-99%
    of 1,776 pairs; of 89 differences read in the company's PDF, BSE right 82, **wrong 4** (Eco Recycling Q4FY25 profit,
@@ -72,11 +75,19 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    EPS in the consolidated file). The four are in memory now; taking them out waits for item 6 and the owner.
 3. **After the full BSE download: the BSE fill keeps its record as it goes and compares with memory before writing**
    (today the list of what it wrote is saved only at the end, and a refusal or a kill loses it).
-4. **Before any `refresh-card-blocks`: a dry run** to list what `CARD_ONE_BASIS` now changes on stored cards (a refresh
-   now applies it; before 27 Oct it never did).
+4. **`refresh-card-blocks` waits for the owner.** The dry run (run 40546510549, 27 Oct 23:08 IST) would change **3,214
+   of 7,895 stored cards**: the results block on 2,876, grounding 1,344, headline 288, key numbers 287, memory context
+   270, fundamentals 140, scale 123. That is far more than `CARD_ONE_BASIS` alone; the refresh rebuilds every block
+   with today's code and switches. Not run for real. Next: a list of 30 changed cards, before and after, read by a
+   blind reviewer, so the owner can decide with evidence.
 5. **FROM_ZERO step 2** (owner: yes to A-H): F first, a reliable PDF reader for results statements, scored on a
    hand-checked answer key of about 50 statements with pass marks set before scoring (`docs/FROM_ZERO.md`, TODO 112).
    Then B on (`XBRL_FILER_CHECKS`, after its on/off over stored memory, TODO 111), C, D, E, G.
+   Done 27 Oct night: the answer key for normal statements (`docs/bench/normalpdf/`, PR #197). Built, not merged: three
+   reader fixes behind `PDF_ROW_FIXES` (garbled unit lines, a boxed table's basis, revenue/profit labels). On the hard
+   set of 340 figures, with the maintenance switches on: 104 right, 0 wrong before; 155 right, 1 wrong after. The one
+   wrong is the key's mistake: the PDF prints 610.27, the key has the XBRL's 610.26 (owner to say whether the key
+   follows the printed page). In review now.
 6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Today `bse_gap_fill.KNOWN_WRONG` only
    stops a future fill, and nothing removes a wrong figure already written.
 7. **The docs clean-up the owner planned for later** (one doc per purpose, the one-off tools out of the live code); not

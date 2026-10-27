@@ -804,7 +804,7 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
     (bse_gap_fill.py, F201): a dry run by default (decides, writes nothing), --apply writes figures labelled BSE. NSE's list is
     read now for each gap company above the market-cap floor; the seed's BSE path reads the files. No AI."""
     from . import bse_gap_fill, memory_gaps, universe
-    from .bse import BseClient, SourceBlockedError   # the base class: NSE's refusal and BSE's both
+    from .bse import SourceBlockedError   # the base class: NSE's refusal and BSE's both
     from .nse import NseClient
 
     nse_universe = universe.load_nse(sink)
@@ -822,9 +822,10 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
     symbols = {scrip: ((sink.company(scrip) or {}).get("symbol") or by_scrip.get(scrip, "")).strip().upper()
                for scrip, r in report["companies"].items() if memory_gaps.has_gap(r)}
     refused = False
-    with BseClient() as bse, NseClient() as nse:
+    with bse_gap_fill.PortedBse() as bse, NseClient() as nse:   # the ported adapter, BSE's own page headers (F218)
         raw.attach(bse, sink, "bse", settings)
         raw.attach(nse, sink, "nse", settings)
+        bse.keep = sink   # every BSE file downloaded is kept in our XBRL store, a dry run's too
         bse.warm_up()
         try:
             outcome = bse_gap_fill.run(sink, report, symbols, nse, bse, settings, args.apply, args.time_budget, args.restart)
@@ -833,9 +834,11 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
             refused = True
             outcome = {"apply": args.apply, "more": False, "failed": [f"refused: {exc}"[:200]], "rows": [],
                        "min_mcap_cr": float(settings.universe_min_mcap_cr), "companies_with_gaps": 0,
-                       "companies_skipped_tried": 0, "companies_class_b": 0, "companies_filled": 0, "quarters_filled": 0,
+                       "companies_skipped_tried": 0, "companies_class_b": 0, "companies_pre_nse": 0, "companies_filled": 0, "quarters_filled": 0,
                        "figures_filled": 0, "figures_written": 0, "skipped": {}}
     print(bse_gap_fill.render(outcome))
+    print("BSE files: {downloaded} downloaded, {kept} kept in our XBRL store, {from_store} read from it".format(**bse.files))
+    outcome["bse_files"] = dict(bse.files)
     for line in outcome["failed"][:20]:
         print(f"  {line}")
     if not args.apply:

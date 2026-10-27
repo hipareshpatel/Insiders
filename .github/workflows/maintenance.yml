@@ -216,6 +216,10 @@ on:
         description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned)
         type: boolean
         default: false
+      file_cap:
+        description: a test run's cap on NSE/BSE files (owner, 27 Oct 2026, the first test of a fetch is 100 files); empty means no cap
+        type: string
+        default: ''
 
 permissions:
   contents: write   # export-held commits its file to the working branch; the other commands only read the repository
@@ -251,6 +255,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -1129,6 +1134,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}

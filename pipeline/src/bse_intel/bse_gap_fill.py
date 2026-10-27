@@ -35,7 +35,11 @@ import logging
 import time
 from datetime import date
 
-from .bse import SourceBlockedError
+import requests
+
+from . import xbrl_store
+from .adapters import bse as ported
+from .bse import AttachmentError, AttachmentTooLarge, SourceBlockedError, parse_results_archive
 from .nse import FileCapReached
 from .dossier import _norm, keep_concurrent_writes
 from .memory_gaps import has_gap, main_basis, since_for
@@ -72,6 +76,88 @@ class _Scratch:
 
     def company(self, scrip: str):
         return self._sink.company(scrip)
+
+
+class _LastAnswer(requests.Session):
+    """A requests session that keeps its last answer, so a refusal's own body can be logged (CLAUDE.md: look at the
+    response body first). The request itself is the adapter's, unchanged."""
+
+    last = None
+
+    def get(self, *args, **kwargs):
+        self.last = super().get(*args, **kwargs)
+        return self.last
+
+
+class PortedBse:
+    """The ported adapter (adapters/bse.py: BSE's own page headers, its session and its 4-6 s pace) behind the two calls
+    seed_results makes, ``results_xbrl`` and ``download``. The old client (bse.py) sends no Sec-Fetch-Site and a different
+    Referer; it got "403 Access Denied" in this fill twice on 27 Oct 2026 (runs 40441180783 and 40450783308), while the
+    adapter answered 16 of 16 calls the same morning (run 40429585773). A refusal stops the run as SourceBlockedError with
+    the status and the first bytes of BSE's answer; a 404 file is None (that quarter's gap).
+
+    Every file downloaded is kept in our XBRL store (``keep``, the real sink; xbrl_store.py), a dry run's too (owner, 27 Oct
+    2026: "Don't discard those 100 files"): the seed reads through a scratch sink that never touches R2, so before this a dry
+    run threw its files away. A file already in the store is read from there and not downloaded or counted again."""
+
+    ARCHIVE = "Result_Arch_ng/w"
+
+    def __init__(self, client=None):
+        self._session = _LastAnswer() if client is None else None
+        self._client = client or ported.BSEClient(session=self._session)
+        self.raw = None   # a raw.RawStore (raw.attach): the archive's JSON is saved as received
+        self.keep = None  # the real sink: downloaded files go into its XBRL store
+        self.files = {"downloaded": 0, "kept": 0, "from_store": 0}
+
+    def __enter__(self) -> "PortedBse":
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self._client.close()
+
+    def warm_up(self) -> None:
+        return None   # the adapter needs no page load first
+
+    def refusal(self, exc: Exception) -> SourceBlockedError:
+        last = getattr(self._session, "last", None)
+        body = " ".join((last.text if last is not None else "")[:300].split())
+        server = last.headers.get("Server", "") if last is not None else ""
+        log.error("BSE refused: %s; server %r; body %r", exc, server, body)
+        return SourceBlockedError(f"BSE refused: {exc}; body {body[:150]!r}")
+
+    def results_xbrl(self, scrip: str):
+        params = {"scrip_cd": scrip}
+        try:
+            body = self._client.get(self.ARCHIVE, params, "results_archive", {"scrip": scrip})
+        except ported.Blocked as exc:
+            raise self.refusal(exc) from exc
+        try:
+            data = json.loads(body.decode("utf-8", errors="replace"))
+        except ValueError:
+            raise self.refusal(ported.Blocked(f"not JSON from {self.ARCHIVE} ({body[:60]!r})")) from None
+        if self.raw is not None:
+            self.raw.save(ported.API + self.ARCHIVE, params, 200, body)
+        return parse_results_archive((data.get("Table") or []) if isinstance(data, dict) else [])
+
+    def download(self, url: str, max_bytes: int = 30_000_000) -> bytes | None:
+        held = xbrl_store.get(self.keep, url)
+        if held:
+            self.files["from_store"] += 1
+            return held
+        try:
+            body = self._client.fetch_url(url, {}, "results_xbrl", file=True)   # counts once toward the file cap
+        except ported.Missing:
+            return None
+        except ported.Blocked as exc:
+            raise self.refusal(exc) from exc
+        except ported.Failed as exc:
+            raise AttachmentError(str(exc)) from exc
+        self.files["downloaded"] += 1
+        if xbrl_store.put(self.keep, url, body):   # best effort; it logs when the store is full or R2 fails
+            self.files["kept"] += 1
+        if len(body) > max_bytes:
+            raise AttachmentTooLarge(url, max_bytes)
+        return body
 
 
 class _RecordingBse:
@@ -322,7 +408,7 @@ def render(outcome: dict) -> str:
              f"{outcome['min_mcap_cr']:g} Cr:",
              f"companies with a gap           {outcome['companies_with_gaps']} ({outcome['companies_skipped_tried']} handled before)",
              f"NSE lists nothing (class b)    {outcome['companies_class_b']}",
-             f"NSE lists only later quarters  {outcome['companies_pre_nse']}",
+             f"NSE lists only later quarters  {outcome.get('companies_pre_nse', 0)}",
              f"companies filled               {outcome['companies_filled']}",
              f"quarters filled                {outcome['quarters_filled']}",
              f"figures filled                 {outcome['figures_filled']} (written {outcome['figures_written']})",

@@ -78,9 +78,13 @@ Read before changing anything:
   existing rule but ensure we save files else after 5 hours we are ending with zero"). The cap code (F213) stays, off
   (FILE_CAP=0). Every long run must save its results as it goes and upload them even when it is stopped by its time
   budget or by GitHub's 6-hour limit: a run that ends with nothing saved is a defect. Measured refusals so far: a bare curl
-  with wrong headers (403, 25 Oct); maintenance run 40441180783 (27 Oct, 08:25 IST), the BSE adapter got "403 Access
-  Denied" in memory-gaps-fill-bse two hours after the same adapter answered 16 of 16 calls (run 40429585773); cause not yet
-  diagnosed (look at the response body first).
+  with wrong headers (403, 25 Oct); maintenance runs 40441180783 and 40450783308 (27 Oct, 08:25 and 10:11 IST),
+  memory-gaps-fill-bse got "403 Access Denied" through the old client (`bse.py`: no Sec-Fetch-Site, another Referer), while
+  the ported adapter answered 16 of 16 calls that morning (run 40429585773). The fill now reads through the adapter (F218)
+  and logs the refusal's body; whether the headers were the cause is measured by its next run.
+- The first test of a fetch from NSE or BSE (a new or changed download path) runs on 100 files: Maintenance input
+  `file_cap` = 100 (owner, 27 Oct 2026). Every file it downloads is kept in our store, a dry run's too ("Don't discard
+  those 100 files"); the full run follows only once the test is read.
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

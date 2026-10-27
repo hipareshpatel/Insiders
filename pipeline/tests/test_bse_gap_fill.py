@@ -210,3 +210,107 @@ def test_the_pre_nse_switch_is_read_from_the_environment_and_a_dry_run_writes_no
     out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=False)
     assert out["companies_pre_nse"] == 1 and out["quarters_filled"] == 1 and out["figures_written"] == 0
     assert sink.writes == 0 and sink.dossiers == {} and sink.kv == {}
+
+
+# F218: the fill reads BSE through the ported adapter (BSE's own page headers), and a refusal prints its summary
+
+
+class _Adapter:
+    """Stands in for adapters.bse.BSEClient: answers by path or URL, or raises what it is given."""
+
+    def __init__(self, answers):
+        self.answers, self.calls, self.closed = answers, [], False
+
+    def _answer(self, key):
+        self.calls.append(key)
+        got = self.answers[key]
+        if isinstance(got, Exception):
+            raise got
+        return got
+
+    def get(self, path, params, dataset, covers=None):
+        return self._answer(path)
+
+    def fetch_url(self, url, params, dataset, covers=None, file=False):
+        assert file   # a filing's file: counted toward the file cap, a 404 is Missing
+        return self._answer(url)
+
+    def close(self):
+        self.closed = True
+
+
+_ARCHIVE = json.dumps({"Table": [
+    {"Quarter": "Consolidated-Dec-24;DQ2024-2025;124.00;c", "Fld_QuarterName": "Quarter", "stand_xbrl_link": None,
+     "conso_xbrl_link": "/XBRLFILES/FourOneUploadDocument/a.xml", "Filing_Date_Time": "2025-02-12T15:53:53",
+     "Revised_Date_Time": None}]}).encode()
+
+
+def test_the_ported_client_lists_the_archive_and_fetches_files_through_the_adapter():
+    from bse_intel.adapters import bse as ported
+    from bse_intel.bse import AttachmentError
+
+    url = "https://www.bseindia.com/XBRLFILES/FourOneUploadDocument/a.xml"
+    saved = []
+    fake = _Adapter({"Result_Arch_ng/w": _ARCHIVE, url: b"<xbrl/>", "gone": ported.Missing("HTTP 404"),
+                     "dead": ported.Failed("HTTP 503 after 3 retries")})
+    with bf.PortedBse(fake) as bse:
+        bse.raw = SimpleNamespace(save=lambda *a: saved.append(a))
+        bse.warm_up()
+        links = bse.results_xbrl("532811")
+        assert [(link.period, link.basis, link.url) for link in links] == [("Q3FY25", "CONSOLIDATED", url)]
+        assert saved and saved[0][1] == {"scrip_cd": "532811"}   # the archive's JSON as received
+        assert bse.download(url) == b"<xbrl/>"
+        assert bse.download("gone") is None   # that quarter's gap, not a refusal
+        try:
+            bse.download("dead")
+            raise AssertionError("a dead file must raise")
+        except AttachmentError:
+            pass
+    assert fake.closed
+
+
+def test_a_refusal_through_the_ported_client_stops_with_bses_own_answer():
+    from bse_intel.adapters import bse as ported
+    from bse_intel.bse import SourceBlockedError
+
+    bse = bf.PortedBse()
+    bse._client = _Adapter({"Result_Arch_ng/w": ported.Blocked("HTTP 403 from x (requests)")})
+    bse._session.last = SimpleNamespace(text="<HTML><HEAD><TITLE>Access Denied</TITLE></HEAD>\n<BODY>Reference #18.ab",
+                                        headers={"Server": "AkamaiGHost"})
+    try:
+        bse.results_xbrl("532811")
+        raise AssertionError("a refusal must raise")
+    except SourceBlockedError as exc:
+        assert "HTTP 403" in str(exc) and "Access Denied" in str(exc) and "Reference #18.ab" in str(exc)
+    bse._client = _Adapter({"Result_Arch_ng/w": b"<html>maintenance</html>"})
+    bse._session.last = None
+    try:
+        bse.results_xbrl("532811")
+        raise AssertionError("a page that is not JSON must raise")
+    except SourceBlockedError as exc:
+        assert "not JSON" in str(exc)
+
+
+def test_the_summary_of_a_run_bse_refused_before_any_company_prints():
+    """Run 40450783308 (27 Oct 2026): BSE refused, then the summary raised KeyError 'companies_pre_nse'."""
+    outcome = {"apply": False, "more": False, "failed": ["refused: x"], "rows": [], "min_mcap_cr": 500.0,
+               "companies_with_gaps": 0, "companies_skipped_tried": 0, "companies_class_b": 0, "companies_filled": 0,
+               "quarters_filled": 0, "figures_filled": 0, "figures_written": 0, "skipped": {}}
+    assert "NSE lists only later quarters  0" in bf.render(outcome)
+
+
+def test_every_downloaded_file_is_kept_in_our_store_and_read_from_it_next_time(monkeypatch):
+    """Owner, 27 Oct 2026: "Don't discard those 100 files": a dry run's downloads go into our XBRL store too."""
+    from bse_intel import xbrl_store
+
+    store = {}
+    monkeypatch.setattr(xbrl_store, "enabled", lambda sink: sink is not None)
+    monkeypatch.setattr(xbrl_store, "put", lambda sink, url, data: store.__setitem__(url, data) or True)
+    monkeypatch.setattr(xbrl_store, "get", lambda sink, url: store.get(url) if sink is not None else None)
+    fake = _Adapter({"u1": b"<xbrl/>"})
+    bse = bf.PortedBse(fake)
+    bse.keep = object()
+    assert bse.download("u1") == b"<xbrl/>" and store == {"u1": b"<xbrl/>"}
+    assert bse.download("u1") == b"<xbrl/>"
+    assert fake.calls == ["u1"]   # the second time from our store, not BSE (and not counted toward the cap)
+    assert bse.files == {"downloaded": 1, "kept": 1, "from_store": 1}

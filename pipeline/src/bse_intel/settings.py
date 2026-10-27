@@ -66,6 +66,13 @@ def memory_standalone_only() -> bool:
     return (_env("MEMORY_STANDALONE_ONLY", "1") or "1").strip().lower() in ("1", "true", "yes", "on")
 
 
+def bse_fill_pre_nse() -> bool:
+    """BSE_FILL_PRE_NSE (default off; TODO 108, F214): the BSE gap fill (F201) also fills, for a company NSE does list, the
+    quarters strictly older than its first NSE results row. Off, a company NSE lists any row for is left alone. Read at
+    the call."""
+    return (_env("BSE_FILL_PRE_NSE", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_yoy_restated() -> bool:
     """CARD_YOY_RESTATED (default off; TODO 104, F202): a results card's YoY is worked against the restated year-ago figure
     where memory holds one (read from a later filing's PDF text layer, restated_pdf.py) and says "vs restated". The history

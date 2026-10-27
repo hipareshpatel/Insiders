@@ -41,6 +41,8 @@ from . import xbrl_store
 
 log = logging.getLogger(__name__)
 
+# steady_older is not here: a run of older quarters off by a steady ratio can be our error (a wrong basis), so the referee
+# still sees it (blind review, 27 Oct 2026)
 NOT_PAIRS = ("match", "naming", "screener_only", "memory_only", "memory_period_suspect", *SIX_EXPLAINED)
 VERDICTS = ("ours_matches_official", "screener_matches_official", "both_match", "neither", "no_file", "not_run")
 OURS_ABS, OURS_REL = 0.011, 0.0001

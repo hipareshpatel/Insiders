@@ -78,14 +78,20 @@ STEADY_DIFF_SPREAD = (2.0, 0.05)  # max spread of the difference: ₹2 Cr or 5% 
 
 VIEW = "matches_screener_view:"   # a class prefix: screener's own treatment of our figure closes the gap (never stored)
 CLASSES = ("match", "wrong_quarter", "scale", "naming", "lender_definition", "steady_line_difference",
-           VIEW + "excise", VIEW + "share_adjust", "mismatch")
+           VIEW + "excise", VIEW + "share_adjust", "steady_older", "mismatch")
 # the six other lines: our metric names (Tax % is a ratio of two of ours)
 SIX_METRICS = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt", "tax_pct")
 SIX_LENDER_SKIP = ("ebitda", "finance_cost")      # a lender page's Operating Profit and Interest are not these lines
 SIX_ABS, SIX_REL = 0.5, 0.005                      # screener prints whole crore: half a crore, or 0.5%
 TAX_PCT_ABS = 1.0                                  # screener prints whole percent
-SIX_EXPLAINED = (VIEW + "exceptional_in_other_income",)
-SIX_CLASSES = ("match", *SIX_EXPLAINED, "mismatch")
+SMALL_ABS, SMALL_REL = 1.0, 0.01                   # small_gap: a mismatch of at most 1 Cr or 1% of screener's value (not a match)
+SMALL_GAP_LINES = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt")
+TAX_PCT_SMALL_PBT, TAX_PCT_SMALL_ABS = 10.0, 1.5   # tax_follows_pbt: below 10 Cr of PBT one Cr of tax moves the % by 10 points
+ASSOCIATES_MIN = 1.0                               # a share of associates' profit under 1 Cr is not a rule's gap
+STEADY_OLDER_MIN, STEADY_OLDER_SPREAD, STEADY_OLDER_OFF = 3, 0.03, 0.03
+STEADY_OLDER_LINES = ("revenue", *SMALL_GAP_LINES)
+SIX_EXPLAINED = (VIEW + "exceptional_in_other_income", VIEW + "associates_in_pbt", VIEW + "associates_in_other_income")
+SIX_CLASSES = ("match", *SIX_EXPLAINED, "small_gap", "tax_sign_on_loss", "tax_follows_pbt", "steady_older", "mismatch")
 GAP_CLASSES = ("screener_only", "memory_only")
 WORKERS = 8
 
@@ -174,35 +180,54 @@ def screener_view(dossier: dict | None, figures: dict, period: str, today: str |
     - ``revenue``: revenue less excise duty (rule ``excise``; screener's Sales is net of it, rules row 1);
     - ``other_income``: other income plus the exceptional items (``exceptional_in_other_income``, rules row 4);
     - ``eps``: EPS divided by the factor of a share split or bonus after the period (``share_adjust``, rules row 7);
+    - ``pbt``: profit before tax plus the associates' share (``associates_in_pbt``, rules row 16: our PBT is the taxonomy's,
+      without the share, screener's has it);
+    - ``other_income`` also: plus the associates' share (``associates_in_other_income``, rule 16), alone or together with the
+      exceptional items (``screener_views`` lists every candidate; this function keeps the first);
     - ``exceptional_after_tax``: the exceptional items less their share of the tax, tax x exceptional / pbt (screener's
       support article 42), the whole item when that tax exceeds it. Shown for the record: no compared line reads it yet.
     """
+    return {k: vs[0] for k, vs in screener_views(dossier, figures, period, today).items()}
+
+
+def screener_views(dossier: dict | None, figures: dict, period: str, today: str | None = None) -> dict[str, list[tuple[float, str]]]:
+    """``screener_view`` with every candidate view of a metric, in the order they are tried."""
     def v(name: str) -> float | None:
         return _value(figures, name, period)
 
-    out: dict[str, tuple[float, str]] = {}
+    out: dict[str, list[tuple[float, str]]] = {}
     excise, exceptional = v("excise_duty"), v("exceptional_items")
     if excise:
         if v("revenue") is not None:   # not Operating Profit: ours (PBT + interest + depreciation - other income) never held it
-            out["revenue"] = (v("revenue") - excise, "excise")
+            out["revenue"] = [(v("revenue") - excise, "excise")]
     # a small exceptional item beside a few crore of gap would "explain" it by chance (blind review, 27 Oct 2026: other income
     # 10 against 7.2 with exceptional -3): the item must be at least 5 Cr and a quarter of our other income
-    if exceptional and v("other_income") is not None and abs(exceptional) >= max(5.0, 0.25 * abs(v("other_income"))):
-        out["other_income"] = (v("other_income") + exceptional, "exceptional_in_other_income")
+    other = v("other_income")
+    exceptional_counts = bool(exceptional) and other is not None and abs(exceptional) >= max(5.0, 0.25 * abs(other))
+    if exceptional_counts:
+        out["other_income"] = [(other + exceptional, "exceptional_in_other_income")]
+    share = v("share_associates")
+    if share is not None and abs(share) >= ASSOCIATES_MIN:
+        # rules row 16: profit from associates is always other ordinary income, so screener's PBT and other income hold it
+        if v("pbt") is not None:
+            out["pbt"] = [(v("pbt") + share, "associates_in_pbt")]
+        if other is not None:
+            views = out.setdefault("other_income", [])
+            views.append((other + share, "associates_in_other_income"))
+            if exceptional_counts:
+                views.append((other + exceptional + share, "associates_in_other_income"))
     if exceptional:
-        pbt, tax = v("pbt"), v("tax_expense")
-        if tax is None and v("current_tax") is not None and v("deferred_tax") is not None:
-            tax = v("current_tax") + v("deferred_tax")
+        pbt, tax = v("pbt"), _our_tax(figures, period)
         if pbt and tax is not None:
             on_exceptional = tax * exceptional / pbt
-            out["exceptional_after_tax"] = (exceptional if abs(on_exceptional) > abs(exceptional)
-                                            else exceptional - on_exceptional, "exceptional_after_tax")
+            out["exceptional_after_tax"] = [(exceptional if abs(on_exceptional) > abs(exceptional)
+                                             else exceptional - on_exceptional, "exceptional_after_tax")]
     if v("eps") is not None and dossier:
         from .screener_explain import share_factor   # screener_explain imports this module
         from .timeutil import today_ist
         factor, actions = share_factor(dossier, period, today or today_ist().isoformat())
         if actions and abs(factor - 1) > 1e-9:
-            out["eps"] = (v("eps") / factor, "share_adjust")
+            out["eps"] = [(v("eps") / factor, "share_adjust")]
     return out
 
 
@@ -222,30 +247,57 @@ def _six_apart(ours: float, theirs: float, metric: str) -> bool:
 
 
 def classify_six(metric: str, ours: float, theirs: float, figures: dict, period: str,
-                 view: dict | None = None) -> tuple[str, str]:
-    """(class, note) of one pair of the six lines: a match, a gap one of screener's own rules closes, or a mismatch."""
+                 view: dict | None = None, row: dict | None = None) -> tuple[str, str]:
+    """(class, note) of one pair of the six lines, in this order: a match; a gap one of screener's own rules closes (a gap of
+    more than twice the tolerance; ``view`` is ``screener_views``); ``small_gap`` (a money line off by at most 1 Cr or 1%:
+    counted apart, not a match); for Tax %, ``tax_sign_on_loss`` and ``tax_follows_pbt`` (``row`` is screener's quarter);
+    else a mismatch."""
     if _six_close(ours, theirs, metric):
         return "match", ""
-    if not _six_apart(ours, theirs, metric):
-        return "mismatch", ""
-    view = view or {}
-    if metric in view and _six_close(view[metric][0], theirs, metric):
-        rule = view[metric][1]
-        return VIEW + rule, f"screener's view of our figure: {ours:g} -> {view[metric][0]:g} ({rule})"
+    if _six_apart(ours, theirs, metric):
+        for value, rule in (view or {}).get(metric, []):
+            if _six_close(value, theirs, metric):
+                return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
+    if metric in SMALL_GAP_LINES and abs(ours - theirs) <= max(SMALL_ABS, SMALL_REL * abs(theirs)) + 1e-9:
+        return "small_gap", f"{ours:g} against {theirs:g}: gap {abs(ours - theirs):.2f}"
+    if metric == "tax_pct":
+        return _classify_tax(theirs, figures, period, row or {})
     return "mismatch", ""
 
 
-def _our_tax_pct(figures: dict, period: str) -> tuple[float, dict] | None:
-    """Our tax over our profit before tax, in percent: the tax total, else current plus deferred tax (both must be there)."""
-    pbt = figures.get(("pbt", period))
-    if not pbt or not pbt.get("value"):
-        return None
+def _classify_tax(theirs: float, figures: dict, period: str, row: dict) -> tuple[str, str]:
+    tax, pbt = _our_tax(figures, period), _value(figures, "pbt", period)
+    if tax is None or not pbt:
+        return "mismatch", ""
+    signed = tax / abs(pbt) * 100        # screener divides by |pbt| (63MOONS Q4FY24: ours +110, screener -110, pbt -33)
+    if abs(signed - theirs) <= TAX_PCT_ABS + 1e-9:
+        return "tax_sign_on_loss", f"tax {tax:g} / |pbt {pbt:g}| = {signed:.1f}%"
+    their_pbt = row.get("pbt")
+    if their_pbt and not _six_close(pbt, their_pbt, "pbt"):     # the tax % gap is the PBT gap carried over
+        carried = tax / abs(their_pbt) * 100
+        tol = TAX_PCT_SMALL_ABS if abs(their_pbt) < TAX_PCT_SMALL_PBT else TAX_PCT_ABS
+        if abs(carried - theirs) <= tol + 1e-9:
+            return "tax_follows_pbt", f"tax {tax:g} / |screener pbt {their_pbt:g}| = {carried:.1f}%"
+    return "mismatch", ""
+
+
+def _our_tax(figures: dict, period: str) -> float | None:
+    """Our tax amount as stored: the tax total, else current plus deferred tax (both must be there). Never back-derived."""
     tax = _value(figures, "tax_expense", period)
     if tax is None:
         current, deferred = _value(figures, "current_tax", period), _value(figures, "deferred_tax", period)
         if current is None or deferred is None:
             return None
         tax = current + deferred
+    return tax
+
+
+def _our_tax_pct(figures: dict, period: str) -> tuple[float, dict] | None:
+    """Our tax over our profit before tax, in percent."""
+    pbt = figures.get(("pbt", period))
+    tax = _our_tax(figures, period)
+    if not pbt or not pbt.get("value") or tax is None:
+        return None
     return tax / pbt["value"] * 100, pbt
 
 
@@ -268,11 +320,50 @@ def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_lay
                 if not entry or entry.get("value") is None:
                     continue
                 ours = entry["value"]
-            cls, note = classify_six(metric, ours, theirs, figures, period, screener_view(dossier, figures, period))
+            cls, note = classify_six(metric, ours, theirs, figures, period, screener_views(dossier, figures, period), row)
             out.append({"period": period, "metric": metric, "memory_value": ours, "screener_value": theirs, "class": cls,
                         "shifted": [], "memory_source_id": _value_source(entry), "memory_filed": entry.get("as_of") or "",
                         "note": note})
     return out
+
+
+def steady_older(pairs: list[dict], six: list[dict]) -> None:
+    """Class ``steady_older`` (27 Oct 2026, in place): of one line (revenue and the five money lines, quarters only), three or
+    more consecutive quarters of mismatches whose screener/ours ratio stays within 3% of the run's median, the median off 1 by
+    at least 3%, and every later quarter of that line that was compared is a match (read from the full pair list, which holds
+    the matches too). The restatement pattern: screener holds a restated figure or another definition for the older quarters
+    only. It needs at least two later quarters (blind review, 27 Oct 2026: one is thin evidence)."""
+    for line in STEADY_OLDER_LINES:
+        rows = sorted((p for p in (pairs if line == "revenue" else six) if p["metric"] == line and quarter_index(p["period"])),
+                      key=lambda p: quarter_index(p["period"]))
+        start = 0
+        while start < len(rows):
+            end = start
+            while end < len(rows) and _steady_ok(rows[start:end + 1]):
+                end += 1
+            run = rows[start:end]
+            if len(run) >= STEADY_OLDER_MIN and len(rows[end:]) >= 2 and all(p["class"] == "match" for p in rows[end:]):
+                median = statistics.median(p["screener_value"] / p["memory_value"] for p in run)
+                if abs(median - 1) >= STEADY_OLDER_OFF:
+                    for p in run:
+                        p["class"] = "steady_older"
+                        p["note"] = f"screener/ours x{median:.3f} for {len(run)} quarters, every later quarter matches"
+                    start = end
+                    continue
+            start += 1
+
+
+def _steady_ok(run: list[dict]) -> bool:
+    """Consecutive quarters, all unexplained mismatches of positive figures, every ratio within 3% of the run's median."""
+    if any(p["class"] != "mismatch" or not p["memory_value"] or not p["screener_value"] or
+           (p["memory_value"] > 0) != (p["screener_value"] > 0) for p in run):
+        return False
+    index = [quarter_index(p["period"]) for p in run]
+    if any(b - a != 1 for a, b in zip(index, index[1:])):
+        return False
+    ratios = [p["screener_value"] / p["memory_value"] for p in run]
+    median = statistics.median(ratios)
+    return all(abs(r / median - 1) <= STEADY_OLDER_SPREAD for r in ratios)
 
 
 # --- one company --------------------------------------------------------------------------------------------------
@@ -422,6 +513,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
             p["note"] = "near-constant difference or ratio across quarters"
     out["pairs"] = pairs
     out["six_pairs"] = six_pairs(figures, page["quarters"], lender, bool(page.get("lender_layout")), dossier)
+    steady_older(pairs, out["six_pairs"])
     # gaps: a quarter of the span screener shows, one side has and the other lacks
     ours_quarters = {p for (m, p) in figures if m in ("revenue", "interest_earned", "pat") and quarter_index(p)}
     theirs_quarters = {p for p, row in page["quarters"].items() if row.get("revenue") is not None or row.get("pat") is not None}

@@ -889,6 +889,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       FILE_CAP_SHARDS: ${{ inputs.ids != '' && '1' || '12' }}   # F213: the run's cap is split over the shards (FILE_CAP // 12 each); an ids run is one shard
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
@@ -975,6 +976,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       FILE_CAP_SHARDS: "4"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 4)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
@@ -1110,6 +1112,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
       FILE_CAP_SHARDS: "6"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 6)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
@@ -1257,6 +1260,7 @@ jobs:
         working-directory: pipeline
     env:
       FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
     steps:
       - name: Runner resources
         working-directory: .   # before checkout the pipeline folder does not exist yet

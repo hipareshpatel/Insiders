@@ -31,3 +31,14 @@ def test_the_critic_export_runs_only_with_the_critic_on():
     step = next(s for s in re.split(r"\n\s+- (?=name:|uses:)", _text("audit-export.yml"))
                 if s.startswith("name: The shadow critic's verdicts"))
     assert "if: vars.CRITIC == '1'" in step
+
+
+def test_every_job_that_marks_the_file_cap_also_reads_it():
+    """CLAUDE.md: a new or changed NSE/BSE download path is first tested on 100 files (file_cap). The seed, gap-fill,
+    text-backfill and PDF-download jobs left the marker but never read the cap (27 Oct 2026)."""
+    text = _text("maintenance.yml")
+    jobs = re.split(r"\n  (?=[a-z][a-z0-9-]*:\n)", text.split("\njobs:\n", 1)[1])
+    marked = [j for j in jobs if "FILE_CAP_MARKER_DIR:" in j]
+    assert len(marked) >= 6
+    for job in marked:
+        assert "FILE_CAP: ${{ inputs.file_cap || '0' }}" in job, job.split(":", 1)[0]

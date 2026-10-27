@@ -86,8 +86,8 @@ unexplained rows is not started (owner to say).
 - Fixed 27 Oct night: the audit exports are kept as a GitHub artifact (`audit-export`, or the command's name) and are
   committed only to the branch the repository variable `AUDIT_BRANCH` names (before, a parked branch); the critic's
   export runs only with the repository variable `CRITIC` at 1.
-- `FILE_CAP` (the 100-file first test) is wired only into the `run` and `textback-bse` jobs of `maintenance.yml`, not
-  into seed-memory, memory-gaps-fill or text-backfill.
+- Fixed 27 Oct night: the `file_cap` input (the 100-file first test) now reaches every job that marks the cap: seed-memory,
+  memory-gaps-fill, text-backfill and the PDF ensemble's download, beside `run` and `textback-bse`. Empty means no cap.
 - `xbrl.eps_signs` still flips an EPS sign from one source (the same file's profit sign).
 - `screener-fill-apply` sits in the `maint-nse-memory` group, so it can run beside `screener-fill` and
   `screener-download`.

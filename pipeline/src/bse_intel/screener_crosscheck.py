@@ -17,8 +17,7 @@ memory's basis with the exchange file's figure only (``metrics._figures``: ``xbr
   Tax % within one percentage point. A lender page (Revenue / Financing Profit layout) is not read for Operating Profit and
   Interest: its table is a different one. A gap is named only when one of screener's own rules (docs/bench/screener-rules.md
   rows 1 and 4) closes it and the gap is more than twice the tolerance: ``exceptional_in_other_income`` (screener's Other
-  Income holds the exceptional items), ``excise_in_operating_profit``, ``exceptional_in_operating_profit``; anything
-  else is ``mismatch``. These lines are counted apart (``six_pairs``, ``six_by_class``), never in ``pairs`` or ``by_class``;
+  Income holds the exceptional items; an item of at least ₹5 Cr and a quarter of our other income); anything else is ``mismatch``. These lines are counted apart (``six_pairs``, ``six_by_class``), never in ``pairs`` or ``by_class``;
   the XBRL, explain and PDF referees read revenue, profit and EPS only and pass these rows through unread.
 
 Each pair gets one class:
@@ -85,7 +84,7 @@ SIX_METRICS = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt", 
 SIX_LENDER_SKIP = ("ebitda", "finance_cost")      # a lender page's Operating Profit and Interest are not these lines
 SIX_ABS, SIX_REL = 0.5, 0.005                      # screener prints whole crore: half a crore, or 0.5%
 TAX_PCT_ABS = 1.0                                  # screener prints whole percent
-SIX_EXPLAINED = (VIEW + "exceptional_in_other_income", VIEW + "excise", "exceptional_in_operating_profit")
+SIX_EXPLAINED = (VIEW + "exceptional_in_other_income",)
 SIX_CLASSES = ("match", *SIX_EXPLAINED, "mismatch")
 GAP_CLASSES = ("screener_only", "memory_only")
 WORKERS = 8
@@ -173,7 +172,6 @@ def screener_view(dossier: dict | None, figures: dict, period: str, today: str |
     rule changes. Pure: nothing is stored or shown on a card (memory keeps the company's own figures).
 
     - ``revenue``: revenue less excise duty (rule ``excise``; screener's Sales is net of it, rules row 1);
-    - ``ebitda``: Operating Profit likewise net of excise (``excise``);
     - ``other_income``: other income plus the exceptional items (``exceptional_in_other_income``, rules row 4);
     - ``eps``: EPS divided by the factor of a share split or bonus after the period (``share_adjust``, rules row 7);
     - ``exceptional_after_tax``: the exceptional items less their share of the tax, tax x exceptional / pbt (screener's
@@ -185,10 +183,11 @@ def screener_view(dossier: dict | None, figures: dict, period: str, today: str |
     out: dict[str, tuple[float, str]] = {}
     excise, exceptional = v("excise_duty"), v("exceptional_items")
     if excise:
-        for metric in ("revenue", "ebitda"):
-            if v(metric) is not None:
-                out[metric] = (v(metric) - excise, "excise")
-    if exceptional and v("other_income") is not None:
+        if v("revenue") is not None:   # not Operating Profit: ours (PBT + interest + depreciation - other income) never held it
+            out["revenue"] = (v("revenue") - excise, "excise")
+    # a small exceptional item beside a few crore of gap would "explain" it by chance (blind review, 27 Oct 2026: other income
+    # 10 against 7.2 with exceptional -3): the item must be at least 5 Cr and a quarter of our other income
+    if exceptional and v("other_income") is not None and abs(exceptional) >= max(5.0, 0.25 * abs(v("other_income"))):
         out["other_income"] = (v("other_income") + exceptional, "exceptional_in_other_income")
     if exceptional:
         pbt, tax = v("pbt"), v("tax_expense")
@@ -233,13 +232,6 @@ def classify_six(metric: str, ours: float, theirs: float, figures: dict, period:
     if metric in view and _six_close(view[metric][0], theirs, metric):
         rule = view[metric][1]
         return VIEW + rule, f"screener's view of our figure: {ours:g} -> {view[metric][0]:g} ({rule})"
-    exceptional = _value(figures, "exceptional_items", period)
-    if metric == "ebitda":
-        if exceptional:
-            for sign, word in ((1, "plus"), (-1, "less")):
-                if _six_close(ours + sign * exceptional, theirs, metric):
-                    return "exceptional_in_operating_profit", \
-                        f"screener's Operating Profit is ours {word} exceptional items {exceptional:g}"
     return "mismatch", ""
 
 

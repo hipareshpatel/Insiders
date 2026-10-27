@@ -1,6 +1,8 @@
 """The six other lines of screener's quarterly table (27 Oct 2026): parsing, tolerances, screener's own rules as classes, the
 lender skip, and that the referees downstream pass the new metrics through."""
 
+import pytest
+
 from bse_intel import screener_crosscheck as sc
 from bse_intel import screener_xbrl_referee as sx
 from bse_intel.screener_fill import parse_full
@@ -88,11 +90,13 @@ def test_a_gap_inside_the_tolerance_or_without_a_rule_is_not_explained():
     assert six(result, "finance_cost")["class"] == "mismatch" and six(result, "tax_pct")["class"] == "mismatch"
 
 
-def test_operating_profit_named_by_excise_or_by_exceptional_items():
+def test_operating_profit_is_never_explained_by_excise_or_exceptional_items():
+    # blind review, 27 Oct 2026: our operating profit (PBT + interest + depreciation - other income) never held excise, and
+    # screener documents no exceptional rule for it, so either would only match a gap by chance
     excise = run(dossier({**OURS, "ebitda": 30.0, "excise_duty": 10.0}), NON_LENDER)
-    assert six(excise, "ebitda")["class"] == "matches_screener_view:excise"
+    assert six(excise, "ebitda")["class"] == "mismatch"
     exceptional = run(dossier({**OURS, "ebitda": 8.0, "exceptional_items": 12.0}), NON_LENDER)
-    assert six(exceptional, "ebitda")["class"] == "exceptional_in_operating_profit"
+    assert six(exceptional, "ebitda")["class"] == "mismatch"
     plain = run(dossier({**OURS, "ebitda": 33.0}), NON_LENDER)
     assert six(plain, "ebitda")["class"] == "mismatch"
 
@@ -149,7 +153,7 @@ def test_the_view_applies_each_rule_and_never_touches_the_figures():
     f = figs({"revenue": 200.0, "ebitda": 50.0, "excise_duty": 15.0, "other_income": 10.0, "exceptional_items": 90.0,
               "pbt": 400.0, "tax_expense": 100.0})
     v = sc.screener_view({}, f, Q)
-    assert v["revenue"] == (185.0, "excise") and v["ebitda"] == (35.0, "excise")
+    assert v["revenue"] == (185.0, "excise") and "ebitda" not in v
     assert v["other_income"] == (100.0, "exceptional_in_other_income")
     assert v["exceptional_after_tax"][0] == 67.5          # article 42: tax on the item = 100 x 90 / 400 = 22.5
     assert f[("revenue", Q)]["value"] == 200.0
@@ -175,3 +179,9 @@ def test_an_eps_before_a_bonus_is_put_on_todays_share_count():
     assert next(p for p in run(d, rows)["pairs"] if p["metric"] == "eps")["class"] == "matches_screener_view:share_adjust"
     d["corporate_actions"] = []
     assert next(p for p in run(d, rows)["pairs"] if p["metric"] == "eps")["class"] == "mismatch"
+
+
+def test_a_small_exceptional_item_does_not_explain_an_other_income_gap():
+    # blind review, 27 Oct 2026: other income 10 against screener's 7.2 beside exceptional -3 is a chance match
+    assert "other_income" not in sc.screener_view({}, figs({"other_income": 10.0, "exceptional_items": -3.0}), Q)
+    assert sc.screener_view({}, figs({"other_income": 635.78, "exceptional_items": 3945.73}), Q)["other_income"][0] == pytest.approx(4581.51)

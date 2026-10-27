@@ -161,3 +161,10 @@ def test_an_associates_share_under_5_cr_does_not_explain_other_income():
     assert klass(small, "other_income") != "matches_screener_view:associates_in_other_income"
     pbt = run_one({"pbt": 100.0, "share_associates": 3.0}, [("Profit before tax", [103])])
     assert klass(pbt, "pbt") == "matches_screener_view:associates_in_pbt"   # the PBT rule keeps its 1 Cr floor (4.3%)
+
+
+def test_a_small_associates_share_with_no_exceptional_items_leaves_no_empty_view():
+    # run 40512034352 crashed (IndexError in screener_view): a 3 Cr share, no exceptional items, an empty list left behind
+    f = figs({"other_income": 10.0, "share_associates": 3.0, "pbt": 100.0})
+    assert "other_income" not in sc.screener_views({}, f, Q)
+    assert "other_income" not in sc.screener_view({}, f, Q) and "pbt" in sc.screener_view({}, f, Q)

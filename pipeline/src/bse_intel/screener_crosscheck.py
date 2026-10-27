@@ -213,13 +213,15 @@ def screener_views(dossier: dict | None, figures: dict, period: str, today: str 
         if v("pbt") is not None:
             out["pbt"] = [(v("pbt") + share, "associates_in_pbt")]
         if other is not None:
-            views = out.setdefault("other_income", [])
+            views = out.get("other_income", [])
             # shuffle test, run 40505771830: with a 1 Cr floor another company's share closed 6.6% as many gaps as the real
             # ones did; at 5 Cr, 3% (950 of 1,420 kept); the same floor as the exceptional-items rule
             if abs(share) >= ASSOCIATES_OTHER_INCOME_MIN:
                 views.append((other + share, "associates_in_other_income"))
             if exceptional_counts:
                 views.append((other + exceptional + share, "associates_in_other_income"))
+            if views:   # an empty list here crashed screener_view (run 40512034352: a share under 5 Cr, no exceptional)
+                out["other_income"] = views
     if exceptional:
         pbt, tax = v("pbt"), _our_tax(figures, period)
         if pbt and tax is not None:

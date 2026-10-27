@@ -25,7 +25,7 @@ import re
 from dataclasses import dataclass, field
 
 from .currency import CODE_PATTERN
-from .models import Card
+from .models import Card, TrackNext
 from .periods import quarter_index
 
 _NUMBER = re.compile(r"(?<![A-Za-z\d.])[-+]?\(?\d[\d,]*(?:\.\d+)?\)?")
@@ -510,6 +510,55 @@ def check_card(card: Card, *sources: str, derived=()) -> GroundingResult:
     if checked == 0:
         return GroundingResult(1.0, 0, [])
     return GroundingResult(round(1 - len(ungrounded) / checked, 3), checked, ungrounded, headline_bad, amounts_bad)
+
+
+def _ungrounded_in(text: str | None, sources: tuple[str, ...], derived=()) -> list[str]:
+    """The figures of one free sentence that the sources do not state, by the card check itself (as a card whose only
+    text is the sentence); percentages are read too, small whole ones included."""
+    if not text or not text.strip():
+        return []
+    stub = Card.model_construct(headline=text, takeaway="", what_happened=[], why_it_matters=[], deal_value=None,
+                                key_numbers=[], notable_changes=[], track_next=TrackNext())
+    return check_card(stub, *sources, derived=derived).ungrounded
+
+
+_SENTENCE_END = re.compile(r"(?<=[.;!?])\s+(?=[A-Z\u20b9])")
+
+
+def ground_all_fields(out, sources: tuple[str, ...], derived=()) -> list[str]:
+    """CARD_GROUND_ALL_FIELDS (F204): the card fields the grounding check never read. A list item (a milestone, pending
+    approval, catalyst, risk, KPI to verify) with a figure the sources do not state is removed; the timeline entry loses
+    its sentences with such a figure, falling back to the headline (when it is grounded) or to nothing; the core catalyst
+    is set to None. Returns what was dropped, for the card's change log (the field only, never the text)."""
+    card = out.card
+    if card is None:
+        return []
+    dropped: list[str] = []
+
+    def bad(text: str | None) -> bool:
+        return bool(_ungrounded_in(text, sources, derived))
+
+    track = card.track_next
+    for name in ("pending_approvals", "catalysts", "risks"):
+        items = getattr(track, name)
+        kept = [t for t in items if not bad(t)]
+        dropped += [f"track_next.{name}: ungrounded figure, dropped"] * (len(items) - len(kept))
+        setattr(track, name, kept)
+    for name, text_of in (("milestones", lambda m: f"{m.what} {m.when or ''}"),
+                          ("kpis_to_verify", lambda k: f"{k.kpi} {k.target or ''}")):
+        items = getattr(track, name)
+        kept = [i for i in items if not bad(text_of(i))]
+        dropped += [f"track_next.{name}: ungrounded figure, dropped"] * (len(items) - len(kept))
+        setattr(track, name, kept)
+    if card.core_catalyst and bad(card.core_catalyst):
+        card.core_catalyst = None
+        dropped.append("core_catalyst: ungrounded figure, dropped")
+    entry = getattr(out, "timeline_entry", "") or ""
+    if entry and bad(entry):
+        kept = " ".join(s for s in _SENTENCE_END.split(entry) if not bad(s)).strip()
+        out.timeline_entry = kept or (card.headline if card.headline and not bad(card.headline) else "")
+        dropped.append("timeline_entry: ungrounded figure, dropped")
+    return dropped
 
 
 def quote_sum(value: float, decimals: int, kind: str, crore: bool, quote: str, unit: float | None = None) -> bool:

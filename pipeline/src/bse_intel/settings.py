@@ -120,6 +120,15 @@ def memory_call_v2() -> bool:
     return (_env("MEMORY_CALL_V2", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def card_ground_all_fields() -> bool:
+    """CARD_GROUND_ALL_FIELDS (default off; TODO 105, F204): the figures in the timeline entry, the core catalyst and the
+    track-next lists (milestones, pending approvals, catalysts, risks, KPI targets) go through the same grounding as the
+    points, and a sentence with a figure the filing and memory do not state is dropped (blind audit of 27 Oct 2026: a
+    timeline's "NCDs of up to Rs 175 Cr" for 125, a risk's "dilution of 1%" for 4.9%, a target of 13.1 in no source).
+    Read at the call."""
+    return (_env("CARD_GROUND_ALL_FIELDS", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_grounded_figures() -> bool:
     """CARD_GROUNDED_FIGURES (default off; 26 Oct 2026 live audit): three places where our own code damaged a right figure
     are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on

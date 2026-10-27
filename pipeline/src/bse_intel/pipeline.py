@@ -47,7 +47,7 @@ from . import stages
 from . import order_band
 from . import call_memory, call_queue, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
-from .grounding import (DEFAULT_THRESHOLD, SourceIndex, _tokens, change_derived, check_card, check_claims,
+from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
 from .models import EVENT_TAGS, DossierDelta, Filing, MemoryOutput, Pass1Result, Pass2Output, RepeatVerdict, TimelineVerdict
 from .periods import (canonical_period, due_date, prior_quarter_period, prior_year_period, quarter_from_index,
@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_ground_all_fields, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -1877,6 +1877,17 @@ def _named_in(name: str, text: str) -> bool:
     return all(re.search(rf"\b{re.escape(w)}\b", hay) for w in words)
 
 
+def derived_figures(card, quant, sources: tuple[str, ...]) -> list[float]:
+    """Figures code computed from the filing's own: an impact verified from sourced inputs, and a deal's
+    size from its buyers' shares x price (apply_deal_guards). SML's ₹554.65 Cr - 85,33,053 shares at ₹650
+    - was held as a number the filing does not print (loop round 3b, 2026-10-17)."""
+    derived = [i["computed"] for i in quant.items
+               if i.get("check") == "VERIFIED" and not i.get("unsourced_inputs") and i.get("computed") is not None]
+    if card.deal_value and card.deal_value.tranches and sources:
+        derived.append(gate.tranche_total_cr(card.deal_value.tranches, sources[0]))
+    return derived
+
+
 def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...], history: list[dict] | None = None) -> CardChecks:
     """Memory-id hygiene, then the number, math, claim and scale checks (`history`: the dossier's
     stored financial metrics, which the reply's quarterly figures are compared with)."""
@@ -1888,13 +1899,7 @@ def check_card_all(out: Pass2Output, view: dict | None, sources: tuple[str, ...]
         card.deal_value.updates_deal_id = None  # only a deal the model was shown can be updated
     reconcile_call_read(card, view)
     quant = check_quant(card.quantified_impact, *sources)
-    # Figures code computed from the filing's own: an impact verified from sourced inputs, and a deal's
-    # size from its buyers' shares x price (apply_deal_guards). SML's ₹554.65 Cr - 85,33,053 shares at ₹650
-    # - was held as a number the filing does not print (loop round 3b, 2026-10-17).
-    derived = [i["computed"] for i in quant.items
-               if i.get("check") == "VERIFIED" and not i.get("unsourced_inputs") and i.get("computed") is not None]
-    if card.deal_value and card.deal_value.tranches and sources:
-        derived.append(gate.tranche_total_cr(card.deal_value.tranches, sources[0]))
+    derived = derived_figures(card, quant, sources)
     grounding = check_card(card, *sources, derived=derived)
     checked = grounding.checked + quant.checked_inputs
     ungrounded = grounding.ungrounded + quant.unsourced
@@ -3597,6 +3602,11 @@ class Pipeline:
             if consolidated_only:
                 changes += standalone_figures_removed(candidate, tagged, standalone_file)
             changes += one_basis.apply(candidate, tagged, history)   # CARD_ONE_BASIS: one basis a figure (off: nothing)
+            if card_ground_all_fields():   # CARD_GROUND_ALL_FIELDS: figures in the fields the check never read (off: nothing)
+                # with the same computed figures the main check forgives (review of F204: else true sums were dropped)
+                derived = (derived_figures(candidate.card, check_quant(candidate.card.quantified_impact, *sources), sources)
+                           if candidate.card is not None else [])
+                changes += ground_all_fields(candidate, sources, derived)
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)

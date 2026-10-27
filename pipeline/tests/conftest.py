@@ -25,6 +25,10 @@ def _switches(monkeypatch):
     names = _settings.switches_on() if live else []
     monkeypatch.setenv("BSE_INTEL_SWITCHES", "off")
     monkeypatch.delenv("REPO_VARS", raising=False)
+    # switches a shell may have exported (the maintenance jobs set the first three to 1) never leak into a test
+    for name in ("PDF_DATES_2DIGIT", "PDF_PAGE_RANK", "PDF_ROW_FIXES", "BSE_FILL_PRE_NSE"):
+        if name not in names:
+            monkeypatch.delenv(name, raising=False)
     for name in names:
         monkeypatch.setenv(name, "1")
 

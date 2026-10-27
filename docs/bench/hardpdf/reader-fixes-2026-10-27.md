@@ -59,7 +59,7 @@ Branch `pdf-reader-fixes`. Not pushed. The diagnosis is `docs/bench/hardpdf/why-
 
 ## The three fixes, one by one
 
-All behaviour changes are in `pipeline/src/bse_intel/pdf_referee.py`, each guarded by `_row_fixes()` (`PDF_ROW_FIXES`). Tests: `pipeline/tests/test_pdf_row_fixes.py` (49 tests, real text from the diagnosis; every test that checks a change fails on the old code with the switch on and passes now; the tests that check "nothing else moves" pass on both).
+All behaviour changes are in `pipeline/src/bse_intel/pdf_referee.py`, each guarded by `_row_fixes()` (`PDF_ROW_FIXES`). Tests: `pipeline/tests/test_pdf_row_fixes.py` (51 tests, real text from the diagnosis; every test that checks a change fails on the old code with the switch on and passes now; the tests that check "nothing else moves" pass on both).
 
 ### 1. Garbled unit lines
 
@@ -79,7 +79,7 @@ All behaviour changes are in `pipeline/src/bse_intel/pdf_referee.py`, each guard
 - **3a. A revenue heading is not joined to its first sub-line.** The wrapped-label rule joined `(a) Revenue from operations` with `interest income 21,742 ...` (INDOSTAR) and `1. Revenue from operations` with `a. Fees and commision Income` (CENTRUM), making a second, wrong revenue row. Now a line that is itself a revenue-from-operations or interest-earned label is never joined, and a next line that starts with its own `a.` / `ii.` is never a wrapped tail. A real wrap (`Total income from` / `operations 1,000.50 ...`) is still joined. Result: ARMANFIN +10 right (the same joined row), CENTRUM +9.
 - **3b. `Total (a)` under `(a) Revenue from Operations` is revenue** (VLS Finance). Only when a heading `(x) Revenue from Operations` is above it with nothing but sub-lines between (no other total, no `(b)` step). `Total (b)` or a `Total (a)` after a `(b)` step is not. VLS: +10 right; "Total Income (a+b)" is no longer the revenue.
 - **3c. A letter or roman prefix before the profit label** (`J.`, `H.`, `iii.`, `(c)`). Unit-tested (`J. Net Profit/(Loss) for the period (H-I)` now reads; `J. Profit before tax`, `K. Other comprehensive income for the period`, `Earnings per share for the period` still do not). **No effect on the native score**: UNIONBANK's statement page is still not found (a scan with a garbled text layer), so no UNIONBANK figure changed.
-- **3d. "Total income" is never revenue when a revenue line exists.** On a page, a total-income row is dropped when the same page has a revenue-from-operations or interest-earned row on the same basis, or a revenue heading above it whose figures a reader lost (AIIL's "Revenue from operations" above "Total Income"; UNIONBANK's `A. TOTAL INCOME (1+2)` under `1 Interest Earned`). Both cases are unit-tested. With a total-income row alone nothing changes. **No effect on the native score**: native already read AIIL right, and `reading_of` already turned a total-income-only answer into "no answer".
+- **3d. "Total income" is never revenue when a revenue line exists.** On a page, a total-income row is dropped when the same page has a revenue-from-operations or interest-earned row on the same basis (AIIL: "Revenue from operations" 886.01 beside "Total Income" 903.11, in another table of a reader's grid). A page whose only revenue line is "Total income" keeps that row, so `reading_of` and `verdict_of` still give the explicit reason "only 'Total income' printed" (a first version also dropped it when a revenue heading had lost its figures; that left Titan's page in restated-pdf with no row at all, "no results row found", and was taken out after review). UNIONBANK's `A. TOTAL INCOME (1+2)` and AIIL's heading-only case are therefore answered by that explicit "no answer", unit-tested. **No effect on the native score**: native already read AIIL right.
 
 ### A narrowing the measurement forced
 
@@ -140,5 +140,7 @@ Done on a copy of the new code with only that fix removed; right / wrong / no an
 
 From `pipeline/` of the worktree, with `PYTHONPATH` set to the worktree's `src` (the shared venv is installed in editable mode from the main checkout, so the worktree's code had to be put first):
 
-- `python -m pytest -q -p no:cacheprovider`: 2121 passed, 4 skipped.
-- The same with `BSE_INTEL_TEST_SWITCHES=live`: 2121 passed, 4 skipped (the switches of config/switches.toml on).
+- `python -m pytest -q -p no:cacheprovider`: 2124 passed, 4 skipped.
+- The same with `BSE_INTEL_TEST_SWITCHES=live`: 2124 passed, 4 skipped.
+- The same with `PDF_DATES_2DIGIT`, `PDF_PAGE_RANK`, `PDF_ROW_FIXES` and `BSE_FILL_PRE_NSE` exported as 1 in the shell: 2124 passed, 4 skipped (`tests/conftest.py` now removes those four from the environment in every test, so a shell variable never leaks in).
+- After review: the restated-pdf Titan test now runs with the switch off and on, and re-scoring the hard set gave the same 155 / 1 / 184 for (c) and the same 65 / 10 / 265 for (a).

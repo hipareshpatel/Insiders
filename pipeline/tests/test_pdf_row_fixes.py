@@ -99,10 +99,23 @@ def test_a_line_that_is_not_clearly_a_unit_gives_none(line):
 
 def test_two_different_units_near_the_header_give_none(on):
     on("PDF_ROW_FIXES")
-    for second in ('(" in lakhs}', "Ct In Lakhs"):         # a garbled line and a bare one, naming another unit: two units are none
+    for second in ('(" in lakhs}', "Ct In Lakhs"):         # two lines the garbled matcher reads, naming two units: no unit
         page = SUNDARM_P3.replace("Quarter Ended Year Ended", second + "\nQuarter Ended Year Ended")
         rows = pr.parse_page(page, 3, True)
         assert vals(rows, "Q4FY24", "revenue", "STANDALONE") == []
+
+
+def test_a_garbled_line_and_a_bare_line_naming_other_units_give_none(on):
+    # "f{ in crorest" only the garbled matcher reads (crore); "lakhs" alone on a line only the bare reader reads (lakh): the union
+    # of the two is two units, so none. Before the garbled fallback the bare line alone gave lakh, 15.7169 for 1,571.69 crore.
+    assert pr._garbled_units(["f{ in crorest", "lakhs"], 1) == ({1}, {100})
+    assert pr._garbled_unit(["f{ in crorest", "lakhs"], 1) is None
+    page = SUNDARM_P3.replace("Quarter Ended Year Ended", "lakhs\nQuarter Ended Year Ended")
+    assert vals(pr.parse_page(page, 3, True), "Q4FY24", "revenue", "STANDALONE") == [15.7169]    # off: the bare line alone, lakh
+    on("PDF_ROW_FIXES")
+    assert vals(pr.parse_page(page, 3, True), "Q4FY24", "revenue", "STANDALONE") == []
+    agree = SUNDARM_P3.replace("Quarter Ended Year Ended", "crores\nQuarter Ended Year Ended")   # the same unit twice: read
+    assert vals(pr.parse_page(agree, 3, True), "Q4FY24", "revenue", "STANDALONE") == [1571.69]
 
 
 # --- 2. the basis of a table with its own heading ----------------------------------------------------------------------------
@@ -264,7 +277,8 @@ def test_total_b_is_not_a_revenue_total(on):
     page = VLS_P10.replace("Total (a)  9,754.03", "Subtotal  9,754.03").replace("Total (b)", "Total (a)")
     rows = pr.parse_page(page, 10, True)
     # "Total (a)" now stands under "(b) Other Income", after a "(b)" step: not the revenue total, so only total income is left
-    assert vals(rows, "Q4FY24", "revenue", "STANDALONE") == []
+    got = prd.reading_of(_Reader, rows, {}, "Q4FY24", "revenue", "STANDALONE")
+    assert got.status == "none" and "only 'Total income' printed" in got.note
 
 
 UNION_P3 = "\n".join([          # p3, OCR of the standalone page: lettered lines, "Interest Earned" over a figure line
@@ -282,6 +296,10 @@ UNION_P3 = "\n".join([          # p3, OCR of the standalone page: lettered lines
     "J.  Net Profit/(Loss) for the period (H-I)  4,60,363  4,71,974  3,58,991  13,00,222  10,33,776  13,64,831"])
 
 
+class _Reader:
+    name, family, ocr_family = "r", "f", "o"
+
+
 def test_a_lettered_profit_label_is_read_and_total_income_is_not_revenue_union_bank(on):
     rows = pr.parse_page(UNION_P3, 3, False)
     assert vals(rows, "Q3FY25", "pat", "STANDALONE") == []                   # off: "J." is not a prefix the label matcher knows
@@ -289,7 +307,8 @@ def test_a_lettered_profit_label_is_read_and_total_income_is_not_revenue_union_b
     on("PDF_ROW_FIXES")
     rows = pr.parse_page(UNION_P3, 3, False)
     assert vals(rows, "Q3FY25", "pat", "STANDALONE") == [4603.63]            # key: 4,60,363 lakh
-    assert vals(rows, "Q3FY25", "revenue", "STANDALONE") == []               # total income is not revenue: no figure, never a guess
+    got = prd.reading_of(_Reader, rows, {}, "Q3FY25", "revenue", "STANDALONE")
+    assert got.status == "none" and "Total income" in got.note               # total income is not revenue: no figure, never a guess
 
 
 @pytest.mark.parametrize("label", ["J. Net Profit/(Loss) for the period (H-I)", "iii. Profit for the period (1-2)",
@@ -316,10 +335,39 @@ def test_total_income_is_not_revenue_when_the_revenue_heading_lost_its_figures_a
     page = "\n".join(AIIL_HEAD + ["Revenue from operations", "Other Income 17.10 1.58 0.91 21.08 3.13",
                                   "Total Income 903.11 493.11 (117.23) 2,433.09 377.36"])
     rows = pr.parse_page(page, 17, True)
-    assert vals(rows, "Q4FY24", "revenue", "STANDALONE") == [903.11]          # off: "Total Income" given as revenue (wrong: 886.01)
+    assert prd.reading_of(_Reader, rows, {}, "Q4FY24", "revenue", "STANDALONE").value == 903.11     # off: given as revenue (wrong: 886.01)
     on("PDF_ROW_FIXES")
     rows = pr.parse_page(page, 17, True)
-    assert vals(rows, "Q4FY24", "revenue", "STANDALONE") == []
+    got = prd.reading_of(_Reader, rows, {}, "Q4FY24", "revenue", "STANDALONE")
+    assert got.status == "none" and "only 'Total income' printed" in got.note
+    verdict = pr.verdict_of(pr.figure_for(rows, "Q4FY24", "revenue", "STANDALONE")["values"], None, None, None, "revenue")
+    assert verdict[0] == "pdf_unsure" and "only 'Total income' printed" in verdict[3]
+
+
+TITAN_LINES = [   # restated-pdf's Titan page: the revenue heading has no figures and no total line follows, only "Total income"
+    "Statement of Consolidated Unaudited Financial Results for the quarter and nine months ended 31 December 2025",
+    "(Rs. in crore)",
+    "Particulars 3 months ended 3 months ended 3 months ended 9 months ended 9 months ended Year ended",
+    "31-12-2025 30-09-2025 31-12-2024 31-12-2025 31-12-2024 31-03-2025",
+    "I. Revenue from operations",
+    "- Sale of products/ services 24,915 16,461 17,550 56,190 43,246 57,143",
+    "- Other operating revenues 501 2,264 190 4,474 2,294 3,313",
+    "II. Other income 151 112 128 368 370 486",
+    "III. Total income (I +II) 25,567 18,837 17,868 61,032 45,910 60,942"]
+
+
+def test_a_page_with_only_total_income_keeps_its_row_and_its_explicit_verdict_titan(on):
+    for state in ("off", "on"):
+        if state == "on":
+            on("PDF_ROW_FIXES")
+        rows = pr.parse_page("\n".join(TITAN_LINES), 7, True)
+        assert [r.label[:12] for r in rows] == ["III. Total i"]                   # the page's row stays: not "no results row"
+        values = pr.figure_for(rows, "Q3FY25", "revenue", "CONSOLIDATED")["values"]
+        assert [round(v, 2) for v, _, _ in values] == [17868.0]
+        verdict = pr.verdict_of(values, 17740.0, None, None, "revenue")
+        assert verdict[0] == "pdf_unsure" and "only 'Total income' printed" in verdict[3]
+        got = prd.reading_of(_Reader, rows, {}, "Q3FY25", "revenue", "CONSOLIDATED")
+        assert (got.status == "none") == (state == "on")
 
 
 def test_total_income_is_not_revenue_when_a_revenue_row_is_on_the_page_aiil(on):

@@ -416,7 +416,7 @@ def _odd_figures(line: str, start: int) -> set[int]:
 # the revenue total a lender prints as "Total (a)" under the heading "(a) Revenue from Operations" (VLS Finance), with the
 # income total beside it as "Total Income (a+b)": the total of (a) is the revenue (27 Oct 2026, PDF_ROW_FIXES)
 _TOTAL_A = re.compile(r"^\W*total\s*\(\s*a\s*\)", re.I)
-_REVENUE_HEADING = re.compile(r"^\W*(?:\(\s*\w+\s*\)|\w{1,4}\.?)?\W*(?:total\s+)?revenue\s+from\s+operations\W*$", re.I)
+_REVENUE_HEADING = re.compile(r"^\W*(?:(?:\(\s*\w+\s*\)|\w{1,4}\.?)\W*)?(?:total\s+)?revenue\s+from\s+operations\W*$", re.I)
 _STEP_BREAK = re.compile(r"^\W*(?:\(\s*b\s*\)|total\b)", re.I)
 # a sub-line printed with its own letter or roman number ("a. Fees and commission"), never the end of a wrapped label
 _SUB_LINE = re.compile(r"^(?:[a-z]|[ivx]{2,4})[.)]\s")
@@ -461,8 +461,6 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
             lines[i], lines[i + 1] = f"{a} {b}", ""
             if positions is not None:
                 positions[i], positions[i + 1] = positions[i] + positions[i + 1], []
-    headings: list[int] = []        # lines of a revenue heading with no figure of its own (27 Oct 2026, PDF_ROW_FIXES)
-    at_line: dict[int, int] = {}    # id of a row -> the line it was read from
     for i, line in enumerate(lines):
         label_probe = line.strip()
         if not label_probe:
@@ -482,8 +480,6 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
         nums = numbers_on(line)
         first = next((k for k, (_, fig) in enumerate(nums) if fig), None)
         if first is None:
-            if fixes and metric == "revenue" and rank in (0, 1):
-                headings.append(i)
             continue
         # a line with several metrics' words keeps to its first figure onwards
         figures = [v for v, fig in nums[first:] if fig]
@@ -509,7 +505,6 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
                     units = garbled | bare
                     unit = units.pop() if len(units) == 1 and None not in units else None
         row = Row(metric, label, basis, unit, figures, None, [], set(), page, rank=rank, key=(header, basis))
-        at_line[id(row)] = i
         row.odd = _odd_figures(line, start) or None
         if i in bad_lines:
             row.unproven = "the row's figures are not nearer its label's baseline than the next label's"
@@ -555,12 +550,12 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
             best[r.key] = min(best.get(r.key, 9), r.rank)
     kept = [r for r in rows if r.metric != "revenue" or r.rank == best[r.key]]
     if _row_fixes():
-        # "Total income" includes other income: it is never the revenue from operations when the page has a revenue line, whether
-        # that line is another row of the page on the same basis or a heading whose figures a reader lost (AIIL: "Revenue from
-        # operations" 886.01 above "Total Income" 903.11); 27 Oct 2026, PDF_ROW_FIXES
+        # "Total income" includes other income: it is never the revenue from operations when the page has a revenue row on the
+        # same basis (AIIL: "Revenue from operations" 886.01 beside "Total Income" 903.11, in another table of a reader's grid).
+        # A page whose only revenue line is "Total income" keeps it: ``reading_of`` and ``verdict_of`` then say "only 'Total
+        # income' printed" (restated-pdf's Titan page), the explicit reason; 27 Oct 2026, PDF_ROW_FIXES
         revenue_bases = {r.basis for r in kept if r.metric == "revenue" and r.rank in (0, 1)}
-        kept = [r for r in kept if not (r.metric == "revenue" and r.rank == 2 and (
-            r.basis in revenue_bases or any(h < at_line[id(r)] and (r.key[0] is None or h > r.key[0]) for h in headings)))]
+        kept = [r for r in kept if not (r.metric == "revenue" and r.rank == 2 and r.basis in revenue_bases)]
     return kept
 
 

@@ -1439,8 +1439,18 @@ def collect(csv_path: str, out_dir: str, limit: int | None = None) -> int:
     return 0
 
 
-def read_all(name: str, pdf_dir: str, out_path: str) -> int:
-    """Run ONE reader over every PDF of ``pdf_dir`` (this process loads only that reader) and write its tables."""
+def _save_readings(out_path: str, name: str, started: float, result: dict) -> None:
+    import time
+    tmp = out_path + ".part"
+    with open(tmp, "w", encoding="utf-8") as fh:
+        json.dump({"reader": name, "seconds": round(time.monotonic() - started), "pdfs": result}, fh)
+    os.replace(tmp, out_path)   # a reader killed half-way leaves the last complete file, never a torn one
+
+
+def read_all(name: str, pdf_dir: str, out_path: str, budget_s: float | None = None) -> int:
+    """Run ONE reader over every PDF of ``pdf_dir`` (this process loads only that reader) and write its tables.
+    F216: the file is rewritten every 5 PDFs, and after ``budget_s`` seconds (env PDF_READ_BUDGET_S from the CLI) the
+    PDFs not yet read are marked "not read: time budget" (settled as unavailable) so the job still uploads what it has."""
     import time
     reader = READERS[name]
     with open(os.path.join(pdf_dir, "manifest.json"), encoding="utf-8") as fh:
@@ -1451,8 +1461,12 @@ def read_all(name: str, pdf_dir: str, out_path: str) -> int:
         print(f"{name}: unavailable (package not installed)")
         result = {k: {"url": u, "pages": [], "tables": [], "error": "unavailable"} for k, u in manifest.items()}
     else:
-        for key, url in manifest.items():
+        for n, (key, url) in enumerate(manifest.items(), 1):
             entry = {"url": url, "pages": [], "tables": [], "error": ""}
+            if budget_s and time.monotonic() - started >= budget_s:
+                entry["error"] = "not read: time budget"
+                result[key] = entry
+                continue
             try:
                 with open(os.path.join(pdf_dir, f"{key}.pdf"), "rb") as fh:
                     data = fh.read()
@@ -1462,9 +1476,10 @@ def read_all(name: str, pdf_dir: str, out_path: str) -> int:
             except Exception as exc:   # noqa: BLE001 - one PDF failing leaves the rest
                 entry["error"] = f"{type(exc).__name__}: {exc}"[:200]
             result[key] = entry
+            if n % 5 == 0:
+                _save_readings(out_path, name, started, result)
     seconds = round(time.monotonic() - started)
-    with open(out_path, "w", encoding="utf-8") as fh:
-        json.dump({"reader": name, "seconds": seconds, "pdfs": result}, fh)
+    _save_readings(out_path, name, started, result)
     done = sum(1 for e in result.values() if not e["error"])
     print(f"{name}: {done} of {len(result)} PDFs read in {seconds} s")
     return 0
@@ -1477,7 +1492,7 @@ if __name__ == "__main__":
     if len(argv) in (3, 4) and argv[0] == "--collect":
         sys.exit(collect(argv[1], argv[2], int(argv[3]) if len(argv) == 4 else None))
     if len(argv) == 4 and argv[0] == "--read":
-        sys.exit(read_all(argv[1], argv[2], argv[3]))
+        sys.exit(read_all(argv[1], argv[2], argv[3], float(os.environ.get("PDF_READ_BUDGET_S") or 0) or None))
     print("usage: python -m bse_intel.pdf_readers --worker <reader> <pdf> <out.json> | --collect <csv> <dir> [limit] "
           "| --read <reader> <dir> <out.json>", file=sys.stderr)
     sys.exit(2)

@@ -4,7 +4,24 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 27 Oct 2026, 21:45 IST.
+Last updated: 27 Oct 2026, 22:20 IST.
+
+## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
+
+Freedom inside a fence, with a short daily message to the owner.
+- **Without asking:** code fixes with a test and an independent blind review (a separate subagent, not the smallest
+  model), merging once CI is green, read-only jobs, the BSE fill batches (stop at once on any refusal), keeping this page
+  current.
+- **Ask the owner first:** anything that costs money, keys, deleting data, account or repository settings, switching on a
+  switch that changes what cards say before it is measured, changing the go-live bar, big design choices.
+- **Stop at once and tell the owner:** any NSE or BSE refusal; a measured rise in WRONG; anything shipped that breaks a
+  run.
+- **Never:** get around a site's blocks, ignore robots.txt (never screener `/company/source/` pages), hand-edit stored
+  data, print keys, put AI model names in commits.
+- **The owner's message:** short, plain English, IST: what changed, the WRONG rate with its range, what is next, what
+  waits for the owner.
+- Routine: "Overnight work loop" (`trig_01DZ25syuiJGt8HTbMxedqNP`), hourly 23:07-06:07 IST on 27-28 Oct, in the lead
+  session; the 06:07 run sends the morning message and switches it off.
 
 ## 1. What runs
 
@@ -14,7 +31,7 @@ Last updated: 27 Oct 2026, 21:45 IST.
 | Switches | One list, `pipeline/config/switches.toml`, for every job. A repository variable of the same name wins over the file in every job (`0` turns one off). CI runs the tests with the switches off and with the file's switches on | 27 Oct, PR #190 |
 | Site | https://insiders.reply-bd3.workers.dev; `deploy-web.yml` deploys every merge to `main` | 20 Oct |
 | Maintenance | `maintenance.yml`, started by hand, one command a run (no AI) | |
-| Daily card audit routine | **Off** since 24 Oct night (trigger `trig_01JtXb9RSm63zmvoar8VyXsx`, disabled). The 26 and 27 Oct audits were done by hand | owner to decide (section 5) |
+| Daily card audit routine | **Off** since 24 Oct night (trigger `trig_01JtXb9RSm63zmvoar8VyXsx`, disabled). The 26 and 27 Oct audits were done by hand; an overnight work loop runs 27-28 Oct (section 0) | owner to decide (section 5) |
 
 Switches on (the file): EPS_SHARE_ADJUST, CARD_GROUND_ALL_FIELDS, CARD_GROUNDED_FIGURES, CARD_ONE_BASIS,
 CARD_SAME_DEFINITION, CARD_YOY_RESTATED, CARD_FOOTER_PLAUSIBLE, QUOTE_EXACT_NUMBERS, CARD_EPS_FOLLOWS_PROFIT,

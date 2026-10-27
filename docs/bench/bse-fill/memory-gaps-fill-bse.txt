@@ -1,0 +1,25 @@
+memory gaps as of 2026-10-27: latest quarter past its deadline Q1FY27, checked Q2FY25..Q1FY27
+companies checked            1855
+no xbrl results at all       121
+missing the latest quarter   143
+missing the year-ago quarter 277
+companies with any gap       433
+missing company-quarters     2188
+partial (one of revenue/PAT) 338
+filled, standalone only      170
+BSE fill of memory gaps (dry run, nothing written), market cap at least 500 Cr:
+companies with a gap           433 (0 handled before)
+NSE lists nothing (class b)    7
+NSE lists only later quarters  1
+companies filled               7
+quarters filled                53
+figures filled                 1417 (written 0)
+more left (time or cap)         True (file cap reached: the rest waits for the next run)
+skipped, by reason:
+  nse has results: 1
+  no new quarter: 1
+  basis differs: 5
+  not a gap quarter: 2178
+BSE files: 100 downloaded, 100 kept in our XBRL store, 0 read from it
+dry run: nothing changed (--apply writes the figures, each labelled exchange BSE)
+files downloaded 100 of cap 100; file cap reached: the rest waits for the next run

@@ -81,7 +81,8 @@ Read before changing anything:
   with wrong headers (403, 25 Oct); maintenance runs 40441180783 and 40450783308 (27 Oct, 08:25 and 10:11 IST),
   memory-gaps-fill-bse got "403 Access Denied" through the old client (`bse.py`: no Sec-Fetch-Site, another Referer), while
   the ported adapter answered 16 of 16 calls that morning (run 40429585773). The fill now reads through the adapter (F218)
-  and logs the refusal's body; whether the headers were the cause is measured by its next run.
+  and logs the refusal's body. Measured 27 Oct 2026, run 40474143469 (100-file test): the adapter got an answer to every
+  call, 100 files, no refusal (`docs/bench/bse-fill-2026-10-27.md`).
 - The first test of a fetch from NSE or BSE (a new or changed download path) runs on 100 files: Maintenance input
   `file_cap` = 100 (owner, 27 Oct 2026). Every file it downloads is kept in our store, a dry run's too ("Don't discard
   those 100 files"); the full run follows only once the test is read.

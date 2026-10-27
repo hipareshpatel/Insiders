@@ -28,8 +28,10 @@ _REVENUE_OPS = ("revenue", "revenue_from_operations", "net_sales")
 _REVENUE_TOTAL = ("total_income", "total_revenue")
 _NEAR = 0.005   # a stored figure within this share (and 0.011) of a row's value is the figure the row shows
 _FLOOR_CR = 1.0   # a headline or key number is on another basis only when it is also this far from the block's figure
-_STATED = re.compile(r"reported|calculated|computed|filing|presentation|company|statement|table|own definition|"
+_STATED = re.compile(r"reported|calculated|computed|filing|presentation|statement|table|own definition|"
                      r"derived|tagged|excluding|adjusted|underlying", re.I)
+_OTHER_METRIC = re.compile(r"\b(?:PAT|profit|loss|EBITDA|margin|income|revenue|sales|EPS|orders?|debt|cash|dividend)\b", re.I)
+_CLAUSE = re.compile(r";|, (?=[A-Za-z])|\b(?:and|as|with|while)\b", re.I)
 _FIG = r"₹\s?(-?[\d,]+(?:\.\d+)?)\s*(?:cr|crore)\b"
 _HEAD_WORD = re.compile(r"\b(total income|revenue|EBITDA)\b", re.I)
 _KEY_REVENUE = re.compile(r"(?:q[1-4]\s*(?:fy\d{2})?\s*)?(?:consolidated\s+|standalone\s+)?(total income|revenue(?: from operations)?)", re.I)
@@ -195,19 +197,27 @@ def _differs(shown: float, block: float, share: float) -> bool:
     return abs(shown - block) > share * abs(block) and abs(shown - block) > _FLOOR_CR
 
 
-def _headline_figures(text: str) -> list[tuple[str, float]]:
-    """Each ₹ crore figure of the headline bound to the nearest metric word before it in its clause ("EBITDA margin 27.2% on
-    revenue of ₹696 Cr" states revenue 696). A figure that is a change ("up ₹50 Cr to ₹700 Cr", "by ₹50 Cr") is not an amount."""
+def _stated_near(text: str, lo: int, hi: int) -> bool:
+    """Whether the words within three of text[lo:hi] name a basis (a company's name does not count)."""
+    return bool(_STATED.search(" ".join(text[:lo].split()[-3:] + [text[lo:hi]] + text[hi:].split()[:3])))
+
+
+def _headline_figures(text: str) -> list[tuple[str, float, bool]]:
+    """Each ₹ crore figure of the headline bound to the nearest metric word before it, in its clause and with no other metric
+    word between ("EBITDA margin 27.2% on revenue of ₹696 Cr" states revenue 696; "Revenue up 22% and PAT ₹129 Cr" states no
+    revenue). A figure that is a change ("up ₹50 Cr to ₹700 Cr", "by ₹50 Cr") is not an amount. The flag says the words
+    around it already name a basis."""
     found = []
     for fig in re.finditer(_FIG, text, re.I):
         before = text[:fig.start()]
-        clause = re.split(r";|, (?=[A-Za-z])", before)[-1]
+        clause = _CLAUSE.split(before)[-1]
         words = list(_HEAD_WORD.finditer(clause))
-        if not words:
+        if not words or _OTHER_METRIC.search(clause[words[-1].end():]):
             continue
         if re.search(r"\b(?:up|down|by|rises?|falls?|adds?|added)\s*$", before, re.I) or re.match(r"\s*to\s*₹", text[fig.end():], re.I):
             continue
-        found.append((words[-1].group(1), float(fig.group(1).replace(",", ""))))
+        start = len(before) - len(clause) + words[-1].start()
+        found.append((words[-1].group(1), float(fig.group(1).replace(",", "")), _stated_near(text, start, fig.end())))
     return found
 
 
@@ -252,10 +262,10 @@ def apply_card_json(card_json: dict) -> list[str]:
             key["label"] = f"{label} (calculated from the statement)"
             notes.append(f"key_numbers {label}: two EBITDA figures on the card, this one named as the statement's")
     headline = card_json.get("headline")
-    if isinstance(headline, str) and not _STATED.search(headline):
-        for word, figure in _headline_figures(headline):
+    if isinstance(headline, str) and "(company-reported; results table" not in headline:   # not twice
+        for word, figure, stated in _headline_figures(headline):
             which = which_of(word)
-            if which is None:
+            if which is None or stated:
                 continue
             block = rows[which][0]
             if _differs(figure, block, 0.03 if which == "ebitda" else 0.015):

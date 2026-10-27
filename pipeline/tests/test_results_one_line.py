@@ -302,3 +302,25 @@ def test_each_headline_figure_is_bound_to_its_own_metric_word(monkeypatch):
     assert headline("Garware: EBITDA margin 27.2% on revenue of ₹696 Cr") == "Garware: EBITDA margin 27.2% on revenue of ₹696 Cr"
     assert headline("Acme: revenue up ₹50 Cr to ₹696 Cr, EBITDA ₹189 Cr") == "Acme: revenue up ₹50 Cr to ₹696 Cr, EBITDA ₹189 Cr"
     assert headline("Acme: EBITDA ₹169 Cr, revenue ₹696 Cr").endswith("(company-reported; results table ₹189 Cr)")
+    # a figure of another metric is not the revenue's, however near the word "Revenue" is
+    for text in ("Acme: Revenue up 22% and PAT ₹129 Cr", "Acme: Revenue rises 22% as PAT jumps to ₹129 Cr",
+                 "Acme: Revenue up 22%, net profit ₹129 Cr", "Acme: Revenue 22% higher with EBITDA margin ₹27 Cr"):
+        assert headline(text) == text
+
+
+def test_a_basis_word_counts_only_near_the_figure_and_a_company_name_is_no_basis(monkeypatch):
+    _on(monkeypatch)
+    block = {"revenue": {"value": 1131.87}, "lines": LINES}
+
+    def headline(text):
+        card = {"headline": text, "results": copy.deepcopy(block)}
+        results_one_line.apply_card_json(card)
+        return card["headline"]
+
+    # "Company" in a name does not say what the figure is; "statement" far from it does not either
+    assert headline("Tata Consumer Company: revenue ₹1,153 Cr").endswith("(company-reported; results table ₹1,131.87 Cr)")
+    far = "Acme Q2FY27 results: net profit per the filing up 12%, margin steady, orders strong, revenue ₹1,153 Cr"
+    assert headline(far).endswith("(company-reported; results table ₹1,131.87 Cr)")
+    # but a basis word beside the figure leaves it alone
+    near = "Acme: revenue ₹1,153 Cr as reported"
+    assert headline(near) == near

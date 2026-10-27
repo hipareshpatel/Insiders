@@ -370,17 +370,39 @@ def test_a_page_with_only_total_income_keeps_its_row_and_its_explicit_verdict_ti
         assert (got.status == "none") == (state == "on")
 
 
-def test_total_income_is_not_revenue_when_a_revenue_row_is_on_the_page_aiil(on):
-    # the date header printed again between the two rows (a reader that splits the table): two tables, two keys
-    again = ["Particulars Quarter Ended Year Ended Vear Ended", "No. 31.03.2024 31.12.2023 31.03.2023 31.03.2024 31.03.2023"]
+TWO_TABLES = ["Statement of Audited Standalone Financial Results for the Quarter and Year Ended March 31, 2024", "(Rs In Crores)",
+              "Particulars Quarter Ended Year Ended", "No. 31.03.2024 31.12.2023 31.03.2023 31.03.2024 31.03.2023",
+              "(Audited) {Unaudited) (Audited) (Audited) (Audited)",
+              "Other Income 17.10 1.58 0.91 21.08 3.13",
+              "Total Income 903.11 493.11 (117.23) 2,433.09 377.36",
+              "Segment: trading",
+              "Particulars Quarter Ended Year Ended", "No. 31.03.2024 31.12.2023 31.03.2023 31.03.2024 31.03.2023",
+              "Revenue from operations (segment: trading) 100.00 90.00 80.00 400.00 300.00"]
+
+
+def test_total_income_beside_a_revenue_row_of_another_table_is_a_conflict_not_a_drop(on):
+    # two tables on a page, same basis and dates, each with its own header: "Total Income" 903.11 of the first and a segment's
+    # revenue 100.00 of the second. Neither is chosen over the other: two values, so no figure, with the switch off and on
+    # (an earlier version dropped the total income across tables and gave the segment's 100.00, which is wrong)
+    page = "\n".join(TWO_TABLES)
+    for state in ("off", "on"):
+        if state == "on":
+            on("PDF_ROW_FIXES")
+        rows = pr.parse_page(page, 17, True)
+        assert sorted(vals(rows, "Q4FY24", "revenue", "STANDALONE")) == [100.0, 903.11]
+        got = prd.reading_of(_Reader, rows, {}, "Q4FY24", "revenue", "STANDALONE")
+        assert got.status == "conflict" and got.value is None
+
+
+def test_total_income_beside_a_revenue_row_of_the_same_table_is_dropped(on):
     page = "\n".join(AIIL_HEAD + ["Revenue from operations 886.01 491.53 (118.14) 2,412.01 374.22",
-                                  "Other Income 17.10 1.58 0.91 21.08 3.13"] + again
-                     + ["Total Income 903.11 493.11 (117.23) 2,433.09 377.36"])
-    rows = pr.parse_page(page, 17, True)
-    assert sorted(vals(rows, "Q4FY24", "revenue", "STANDALONE")) == [886.01, 903.11]      # off: two figures (a conflict, or the wrong one)
-    on("PDF_ROW_FIXES")
-    rows = pr.parse_page(page, 17, True)
-    assert vals(rows, "Q4FY24", "revenue", "STANDALONE") == [886.01]
+                                  "Other Income 17.10 1.58 0.91 21.08 3.13",
+                                  "Total Income 903.11 493.11 (117.23) 2,433.09 377.36"])
+    for state in ("off", "on"):
+        if state == "on":
+            on("PDF_ROW_FIXES")
+        rows = pr.parse_page(page, 17, True)
+        assert vals(rows, "Q4FY24", "revenue", "STANDALONE") == [886.01]       # the existing same-table rank rule, switch or not
 
 
 def test_total_income_still_stands_when_nothing_else_is_printed(on):

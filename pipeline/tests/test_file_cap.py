@@ -15,7 +15,7 @@ from bse_intel import seed
 from bse_intel import settings as settings_module
 from bse_intel import text_backfill as tb
 from bse_intel.bse import SourceBlockedError
-from bse_intel.file_cap import files, shard_cap
+from bse_intel.file_cap import files, remaining, shard_cap
 from bse_intel.nse import FileCapReached, NseClient
 from bse_intel.timeutil import now_ist
 
@@ -25,7 +25,7 @@ XML = b"<?xml version='1.0'?><xbrl/>"
 
 @pytest.fixture(autouse=True)
 def _env(monkeypatch):
-    for name in ("FILE_CAP", "FILE_CAP_SHARDS"):
+    for name in ("FILE_CAP", "FILE_CAP_SHARDS", "FILE_CAP_USED", "FILE_CAP_MARKER_DIR", "GITHUB_ENV"):
         monkeypatch.delenv(name, raising=False)
 
 
@@ -54,7 +54,37 @@ def test_the_shard_count_comes_from_the_environment(monkeypatch):
     monkeypatch.setenv("FILE_CAP_SHARDS", "0")        # a bad value is one shard
     assert files.cap() == 10
     monkeypatch.setenv("FILE_CAP", "0")
-    assert files.cap() == 0
+    assert files.cap() is None
+
+
+def test_one_dispatch_is_one_budget_across_processes(monkeypatch, tmp_path):
+    assert remaining(100, 1, 0) == 100 and remaining(100, 1, 60) == 40 and remaining(100, 1, 130) == 0
+    assert remaining(100, 4, 10) == 15 and remaining(0, 4, 10) is None
+    env = tmp_path / "env"
+    monkeypatch.setenv("GITHUB_ENV", str(env))
+    for _ in range(30):
+        files.take()
+    files._record_used()                               # what the first process leaves for the second
+    assert env.read_text() == "FILE_CAP_USED=30\n"
+    monkeypatch.setenv("FILE_CAP_USED", "30")
+    files.reset()
+    assert files.cap() == 70
+    monkeypatch.setenv("FILE_CAP_USED", "100")         # nothing left: the second process stops at its first file
+    with pytest.raises(FileCapReached):
+        files.take()
+    assert files.used == 0
+    files._record_used()
+    assert env.read_text() == "FILE_CAP_USED=30\n"     # an unused process adds nothing
+
+
+def test_a_capped_run_leaves_a_marker_for_the_chain(monkeypatch, tmp_path):
+    monkeypatch.setenv("FILE_CAP", "1")
+    monkeypatch.setenv("FILE_CAP_MARKER_DIR", str(tmp_path / "capped"))
+    files.take()
+    assert not (tmp_path / "capped").exists()
+    with pytest.raises(FileCapReached):
+        files.take()
+    assert len(list((tmp_path / "capped").iterdir())) == 1
 
 
 def test_the_cap_stops_at_the_101st_file_and_counts_nothing_past_it(caplog):
@@ -151,6 +181,8 @@ def test_a_pipeline_filing_over_the_cap_stays_queued_with_its_attempts_unchanged
     out = pipeline._process_one(filings[0], bulk=False, memory_complete=True)
     assert out.update["status"] == "PENDING" and "attempts" not in out.update
     assert out.update["last_error"] == "deferred: file cap reached"
+    kept = filings[0].model_copy(update={"last_error": "deferred 3x: card-writing cap reached"})
+    assert pipeline._process_one(kept, bulk=False, memory_complete=True).update["last_error"] == kept.last_error
     assert isinstance(pipeline._blocked, FileCapReached)
     assert pipeline.stats.failed == 0
     assert pipeline.stats.stopped_reason == "file cap reached: the rest waits for the next run"

@@ -2575,7 +2575,9 @@ class Pipeline:
                         self._blocked = exc
                         self.stats.stopped_reason = "file cap reached: the rest waits for the next run"
                         log.warning("stopping: %s", exc)
-                return self._deferred(filing, "deferred: file cap reached")
+                # an earlier "deferred Nx: ..." note keeps its count and reason (_deferrals, _cap_deferrals read them)
+                return self._deferred(filing, filing.last_error if _DEFERRED.match(filing.last_error or "")
+                                      else "deferred: file cap reached")
             except SourceBlockedError as exc:
                 # NSE answered 401, 403 or 429 (or BSE refused): stop the run politely; the work stays queued and no
                 # filing's attempt is spent (owner, 2026-10-18)

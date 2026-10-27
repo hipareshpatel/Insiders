@@ -236,6 +236,15 @@ def file_cap() -> int:
         return 100
 
 
+def file_cap_used() -> int:
+    """FILE_CAP_USED (default 0): files an earlier process of the same dispatch (the same job) already downloaded, written to
+    GITHUB_ENV by file_cap.py; one dispatch is one budget, so the next process holds the cap less this. Read at the call."""
+    try:
+        return max(0, int((_env("FILE_CAP_USED", "0") or "0").strip()))
+    except ValueError:
+        return 0
+
+
 def file_cap_shards() -> int:
     """FILE_CAP_SHARDS (default 1): how many shards of one run share the cap; each shard process holds FILE_CAP // shards."""
     try:

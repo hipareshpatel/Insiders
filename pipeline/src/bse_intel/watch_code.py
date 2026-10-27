@@ -114,6 +114,9 @@ class Target:
     bare: bool = False   # no direction word was given
 
 
+_ROUGH = re.compile(r"\b(?:around|about|approx(?:imately|\.)?|roughly|nearly|near|close to)\b|~", re.I)
+
+
 def parse_target(target: str | None, text: str = "") -> Target | None:
     """One direction word from the closed list and ONE figure in Rs / % / tonnes, nothing else (the watch's own words may repeat).
     Rate targets (per month, run-rate), another currency, growth / delta / from-to / between, a negation outside the list, a
@@ -129,6 +132,8 @@ def parse_target(target: str | None, text: str = "") -> Target | None:
         return None
     # no direction word: a bare figure ("10 lakh tons"); judge() reads it as "at least" for the measures that only grow
     op = _OPS.get(re.sub(r"\s+", " ", hits[0].group(0).lower())) if hits else (">=", False)
+    if not hits and (_ROUGH.search(t) or re.search(r"(?:^|[\s(])[-\u2212]\s*(?:rs\.?|inr|\u20b9)?\s*\d", t, re.I)):
+        return None    # "around / about / ~ X" is neither a floor nor a ceiling; a negative bare figure is a loss limit
     rest = t[:hits[0].start()] + " " + t[hits[0].end():] if hits else t
     for pattern in (_DATE, _CALENDAR, _PERIOD_TOKEN):
         rest = pattern.sub(" ", rest)

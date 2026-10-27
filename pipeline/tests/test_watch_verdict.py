@@ -421,3 +421,11 @@ def test_c2_a_clause_hanging_on_the_cut_one_takes_the_sentence_with_it():
     j = _judged("at least Rs 100 Cr", wc.MISSED, "revenue")
     s = "Driven by exports, revenue beat the Rs 100 Cr target, which management called a milestone."
     assert wc._cut(s, j) == (None, s)
+
+
+def test_a_rough_or_negative_bare_target_gives_no_verdict():
+    # review of e23e300: "around Rs 100 Cr" is neither a floor nor a ceiling; "-Rs 50 Cr" is a loss limit
+    from bse_intel.watch_code import parse_target
+    for target in ("around Rs 100 Cr", "about ₹100 Cr", "approx. ₹100 Cr", "~₹100 Cr", "roughly 10 lakh tons", "-₹50 Cr"):
+        assert parse_target(target) is None, target
+    assert parse_target("10 lakh tons") is not None

@@ -219,3 +219,65 @@ def test_follows_allows_dilution_and_noise_but_not_eps_far_above_profit():
     assert follows(0.0, 15.0, base=0.08)                     # a small EPS: its last printed digit is 12.5% of 0.08
     assert follows(0.0, 25.0, base=0.08) is False            # 0.08 to 0.10 is more than rounding
     assert follows(-10.0, 5.0) is False                      # EPS up while profit fell, no buyback on record
+
+
+# ---- EPS_BASE_CHECK (F208, TODO 78)
+def _wipro_file(eps_qoq=2.74, eps_yoy=2.50):
+    """Wipro Q2FY27 as the card had it: consolidated profit 3,199.7 against 3,356.3 (QoQ) and 3,262.4 (YoY), consolidated EPS
+    3.23 against the standalone EPS 2.74 and 2.50 an AI read of the results PDF had stored as consolidated."""
+    m = FinancialMetric
+    metrics_ = [m(metric="eps", period="Q2FY27", value=3.23, unit="INR", yoy_pct=round((3.23 / eps_yoy - 1) * 100, 1),
+                  qoq_pct=round((3.23 / eps_qoq - 1) * 100, 1)),
+                m(metric="eps", period="Q1FY27", value=eps_qoq, unit="INR"), m(metric="eps", period="Q2FY26", value=eps_yoy, unit="INR"),
+                m(metric="pat_owners", period="Q2FY27", value=3200.6), m(metric="pat_owners", period="Q1FY27", value=3352.0),
+                m(metric="pat_owners", period="Q2FY26", value=3246.2)]
+    return XbrlResult("RESULTS", "CONSOLIDATED", "Q2FY27", metrics_)
+
+
+def test_base_check_off_keeps_every_stored_change(monkeypatch):
+    monkeypatch.delenv("EPS_BASE_CHECK", raising=False)
+    t, same = _wipro_file(), _wipro_file()
+    assert eps_adjust.base_check_result(t, {}) == 0
+    assert t.table() == same.table() and t.metrics[0].yoy_pct == same.metrics[0].yoy_pct == 29.2
+
+
+def test_base_check_takes_out_the_wipro_changes_and_keeps_the_figures(monkeypatch):
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    t = _wipro_file()
+    assert eps_adjust.base_check_result(t, {}) == 2
+    eps = t.metrics[0]
+    assert eps.value == 3.23 and eps.yoy_pct is None and eps.qoq_pct is None
+    assert "above profit" in eps.eps_note and "no share-count event" in eps.eps_note
+    assert t.metrics[1].value == 2.74   # the comparative stays in memory; only the change goes
+
+
+def test_base_check_keeps_a_change_the_profit_carries_and_one_beside_a_share_event(monkeypatch):
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    ok = _wipro_file(eps_qoq=3.2, eps_yoy=3.17)   # EPS -> a few tenths of a point from the profit changes
+    assert eps_adjust.base_check_result(ok, {}) == 0 and ok.metrics[0].qoq_pct is not None
+    bonus = {"corporate_actions": [{"ex_date": "2026-09-01", "kind": "BUYBACK", "subject": "Buy Back"}]}
+    ev = _wipro_file()
+    assert eps_adjust.base_check_result(ev, bonus) == 0 and ev.metrics[0].yoy_pct is not None
+
+
+def test_base_check_leaves_a_loss_side_alone(monkeypatch):
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    t = _wipro_file()
+    t.metrics[4].value = -5.0
+    assert eps_adjust.base_check_result(t, {}) == 1   # the QoQ side has no percentage; only the YoY one goes
+
+
+def _file(basis, period, value):
+    return XbrlResult("RESULTS", basis, period, [FinancialMetric(metric="pat", period=period, value=value, unit="INR_CR")])
+
+
+def test_a_comparative_with_no_basis_is_refused_only_when_the_switch_is_on(monkeypatch):
+    from bse_intel.xbrl import add_comparatives
+    monkeypatch.delenv("EPS_BASE_CHECK", raising=False)
+    now = _file("CONSOLIDATED", "Q2FY27", 3200.0)
+    add_comparatives(now, _file(None, "Q1FY27", 3350.0))
+    assert ("pat", "Q1FY27") in {(m.metric, m.period) for m in now.metrics} and now.metrics[0].qoq_pct is not None
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    now = _file("CONSOLIDATED", "Q2FY27", 3200.0)
+    add_comparatives(now, _file(None, "Q1FY27", 3350.0), _file("STANDALONE", "Q2FY26", 2600.0), _file("CONSOLIDATED", "Q2FY26", 3260.0))
+    assert {m.period for m in now.metrics} == {"Q2FY27", "Q2FY26"} and now.metrics[0].qoq_pct is None and now.metrics[0].yoy_pct is not None

@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 
 from .periods import due_date, prior_quarter_period, prior_year_period
-from .settings import card_eps_follows_profit, eps_share_adjust
+from .settings import card_eps_follows_profit, eps_base_check, eps_share_adjust
 
 # Owner, 25 Oct 2026: a preferential allotment, rights issue, QIP, ESOPs or a merger is real dilution, so EPS growth
 # shows the reported change there. Only a recorded split, bonus or consolidation is adjusted for; with no record, a share
@@ -216,3 +216,35 @@ def follow_profit(row: dict, dossier: dict | None, periods: dict, profit, printe
     if hidden:
         row["eps_note"] = "; ".join(dict.fromkeys(([row["eps_note"]] if row.get("eps_note") else []) + [h["reason"] for h in hidden]))
     return row, hidden
+
+
+# ---- EPS_BASE_CHECK (F208, TODO 78): the same test on the file's own stored EPS changes (memory keeps `yoy_pct` / `qoq_pct`).
+def base_check_result(tagged, dossier: dict | None) -> int:
+    """Take out, in place, every EPS YoY / QoQ of a results file that the profit does not carry (``follows``) with no share-count
+    event on record between the periods, so it is not stored as a comparable change. The EPS figures stay (memory keeps
+    them); only the change goes, with `eps_note` saying why. Profit is the owners', else the total, from the same file.
+    Returns how many changes were taken out."""
+    if not eps_base_check() or tagged is None or getattr(tagged, "kind", None) != "RESULTS":
+        return 0
+    by = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
+
+    def profit(period: str):
+        return by.get(("pat_owners", period)) or by.get(("pat", period))
+
+    removed = 0
+    for m in tagged.metrics:
+        if m.metric != "eps" or m.value is None:
+            continue
+        for slot, back in (("yoy_pct", prior_year_period(m.period)), ("qoq_pct", prior_quarter_period(m.period))):
+            change = getattr(m, slot)
+            if not back or change is None:
+                continue
+            now_p, was_p = profit(m.period), profit(back)
+            if not (now_p and was_p and now_p > 0 and was_p > 0):
+                continue   # a loss on either side: no percentage to judge by
+            profit_pct = (now_p / was_p - 1) * 100
+            if share_event(dossier, back, m.period) is None and not follows(profit_pct, change, by.get(("eps", back))):
+                setattr(m, slot, None)
+                m.eps_note = f"EPS {change:+g}% {slot[:3].upper()} is above profit {profit_pct:+.1f}% and no share-count event is on record"
+                removed += 1
+    return removed

@@ -184,6 +184,15 @@ def card_eps_follows_profit() -> bool:
     return (_env("CARD_EPS_FOLLOWS_PROFIT", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
 
 
+def eps_base_check() -> bool:
+    """EPS_BASE_CHECK (default off; F208, TODO 78): on a results file, an EPS YoY / QoQ that the profit does not carry (same
+    test as CARD_EPS_FOLLOWS_PROFIT) with no share-count event on record is not stored as a comparable change, and a comparative
+    from an earlier file with no basis recorded is not taken for a file whose basis is known. The filing's own stated EPS
+    change is not read in its place (a review dropped that: "EPS declined by 5%" was read as +5%). Wipro (26 Oct 2026): EPS 3.23
+    against standalone 2.74 and 2.50 stored as consolidated, +18% beside profit +1.5%. Read at the call."""
+    return (_env("EPS_BASE_CHECK", "0") or "0").strip().lower() in ("1", "true", "yes", "on")
+
+
 def card_eps_whole() -> bool:
     """CARD_EPS_WHOLE (default off; F188, TODO 89): on a results table the EPS line is the whole company's (continuing and
     discontinued operations together), with the continuing-operations EPS shown beside it only when the two differ; an older

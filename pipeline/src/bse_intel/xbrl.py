@@ -30,6 +30,7 @@ from datetime import date
 
 from .models import BalanceSheet, FinancialMetric, Ownership
 from .periods import canonical_period, prior_quarter_period, prior_year_period, quarter_from_index, quarter_index
+from .settings import eps_base_check
 
 log = logging.getLogger(__name__)
 
@@ -1252,8 +1253,9 @@ def add_comparatives(result: XbrlResult, *earlier: XbrlResult) -> int:
     if result.kind != "RESULTS":
         return 0
     known = {(m.metric, m.period): m for m in result.metrics}
+    base_check = eps_base_check()   # EPS_BASE_CHECK (F208): an earlier file with no basis recorded is not taken for a file whose basis is known
     for other in earlier:
-        if other and other.kind == "RESULTS" and (not result.basis or other.basis in (None, result.basis)):
+        if other and other.kind == "RESULTS" and (not result.basis or other.basis in ((result.basis,) if base_check else (None, result.basis))):
             for m in other.metrics:
                 if (m.metric, m.period) not in known:
                     known[(m.metric, m.period)] = m

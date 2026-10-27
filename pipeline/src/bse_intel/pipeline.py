@@ -3462,6 +3462,7 @@ class Pipeline:
             xbrl_fast_path.settle_pbt(tagged, filed_text)
             self._xbrl_comparatives(filing, tagged, history)
             eps_adjust.adjust_result(tagged, dossier)   # EPS_SHARE_ADJUST (F153): EPS changes on one share count
+            eps_adjust.base_check_result(tagged, dossier)   # EPS_BASE_CHECK (F208): a change the profit does not carry is not kept
             if card_yoy_restated():
                 restated_pdf.apply_to_result(tagged, dossier)   # CARD_YOY_RESTATED (F202): YoY on the restated year-ago figure
             text = tagged.table(explicit_basis=card_consolidated_only()) + "\n\n" + text  # exact figures first; they also ground the card

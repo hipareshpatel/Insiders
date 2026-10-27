@@ -106,6 +106,7 @@ PRICED_FIELDS = ("last_price", "price_date", "market_cap_cr", "size_category", "
 D1_FREE_DAILY_WRITES, D1_NEAR_CAP = int(os.environ.get("D1_DAILY_WRITE_CAP") or d1_plan()[1]), 0.95
 REQUEUE_AFTER_HOUR, REQUEUE_KEY = 22, "failed:requeued_on"   # the nightly extra try for failed filings
 LIVE_DAYS = 7            # an unfinished filing stays in the live window this long
+SLICE_S = 180            # older work between two looks for today's new filings (one run, owner 27 Oct 2026)
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
@@ -2048,7 +2049,8 @@ class Pipeline:
         else:
             filings = self.bse.announcements(day, known=None if full else known)
         count = self._record(key, filings, noise, known, sources)
-        self.stats.days_discovered.append(key)
+        if key not in self.stats.days_discovered:   # today is looked at again after each slice: listed once
+            self.stats.days_discovered.append(key)
         return count
 
     def discover_company(self, scrip: str, day_from: date, day_to: date) -> int:
@@ -4292,6 +4294,30 @@ class Pipeline:
             self._kv_set("live:since", today.isoformat())
         return today - timedelta(days=LIVE_DAYS)
 
+    def _fresh(self, today: date, deadline: float, memory_complete: bool) -> None:
+        """Today's new filings: looked for again (one NSE call; yesterday's too before 09:00 IST) and made into cards before
+        any older work goes on. The run's whole deadline: today's filings are never cut short for older work. Out of AI
+        quota, new filings are still recorded (no AI) and wait for the next run; ``process`` stops on the quota itself."""
+        if self._blocked:
+            return
+        days = [today - timedelta(days=1), today] if now_ist().hour < 9 else [today]
+        for day in days:
+            self._discover_safely(day, full=False)
+        self.process(today.isoformat(), today.isoformat(), deadline, bulk=False, memory_complete=memory_complete,
+                     history_first=True)
+
+    def _in_slices(self, step, until: float, fresh) -> None:
+        """Older work in slices of SLICE_S, today's new filings looked for between them. A slice that ends before its own
+        deadline had nothing left to do (or the route is out of quota), so the step is finished for this run."""
+        while time.monotonic() < until and not self._blocked:
+            end = min(until, time.monotonic() + SLICE_S)
+            step(end)
+            more = time.monotonic() >= end
+            if fresh:
+                fresh()
+            if not more:
+                return
+
     def _discover_window(self, live_from: date, today: date, days: int = 2) -> None:
         """Discover the live window's earlier days that no run has read in full, newest first, ``days`` a run.
         The live runs read only today (and yesterday before 09:00); a day before go-live, or one the runs
@@ -4318,55 +4344,46 @@ class Pipeline:
         try:
             today = today_ist()
             live_from = self._live_from(today) if mode in ("live", "all") else today
-            if mode in ("live", "all"):
-                days = [today - timedelta(days=1), today] if now_ist().hour < 9 else [today]
-                for day in days:
-                    self._discover_safely(day, full=False)
+            backfill_done = self.sink.kv_get("backfill:complete") == "1"
+            # one run for every filing (owner, 27 Oct 2026: "one run instead of two"; it replaces pipeline-today.yml):
+            # today's new filings first, then the older work in slices, today looked for again after each slice, so a
+            # filing broadcast during the run waits minutes for its card, not the whole run
+            fresh = partial(self._fresh, today, deadline, backfill_done) if mode in ("live", "all") else None
+            if fresh:
+                fresh()
                 # the window's earlier days cost ~2,000 ledger writes each: under the daily write budget, like the
                 # backfill, so today's filings keep the free tier's headroom (20 Oct: 80,013 writes by 11:30 IST)
-                today_only = os.environ.get("PIPELINE_TODAY") == "only"   # the quick run: today's filings and nothing else
-                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget and not today_only:
+                if writes_at_start + self.stats.d1_rows_written < self.settings.d1_daily_write_budget:
                     self._discover_window(live_from, today)
-                if not today_only:
-                    self._requeue_failed_nightly(live_from)
-                    self._sweep_held()
-                if self._on_nse() and not today_only:
+                self._requeue_failed_nightly(live_from)
+                self._sweep_held()
+                if self._on_nse():
                     self.retriage_returning(today, started + time_budget_s * 0.2)
+                fresh()
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
-                backfill_done = self.sink.kv_get("backfill:complete") == "1"
-                # today's filings first, then the rest of the window, so a catch-up never holds today's news. Near the
-                # day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the catch-ups and the memory syncs wait for
-                # the reset (05:30 IST) and the run only turns today's filings into cards (20 Oct 2026: 91,080 by 20:30
-                # IST, ~400 writes a run on the window's backlog)
-                # PIPELINE_TODAY splits the work between two workflows (owner, 25 Oct 2026: a filing waited ~42 min for the
-                # next 41-minute run): "only" reads today's filings and stops (pipeline-today.yml, every 15 min); "skip"
-                # (pipeline.yml) reads the window's earlier days first and today last, a safety net for quick runs
-                # GitHub drops: today's filings are normally done by then. Unset: today first, as before.
-                split = os.environ.get("PIPELINE_TODAY", "")
-                days_to_read = [(today, today), (live_from, today - timedelta(days=1))]
-                if split == "only":
-                    days_to_read = days_to_read[:1]
-                elif split == "skip":
-                    days_to_read = days_to_read[::-1]
-                for day_from, day_to in days_to_read:
-                    near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
-                    if near_cap and day_from != today:
-                        break
-                    self.process(day_from.isoformat(), day_to.isoformat(), live_deadline, bulk=False,
-                                 memory_complete=backfill_done, history_first=True)
+                # Near the day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the
+                # catch-ups and the memory syncs wait for the reset (05:30 IST) and the run only turns today's filings
+                # into cards (20 Oct 2026: 91,080 by 20:30 IST, ~400 writes a run on the window's backlog)
+                near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
+                if not near_cap and live_from < today:
+                    earlier = (live_from.isoformat(), (today - timedelta(days=1)).isoformat())
+                    self._in_slices(lambda until: self.process(*earlier, until, bulk=False, memory_complete=backfill_done,
+                                                               history_first=True), live_deadline, fresh)
                 near_cap = writes_at_start + self.stats.d1_rows_written >= D1_FREE_DAILY_WRITES * D1_NEAR_CAP
                 if near_cap:
                     log.warning("D1 writes near the free tier's daily %d: earlier days, catch-ups and memory syncs "
                                 "skipped this run", D1_FREE_DAILY_WRITES)
-                if self._on_nse() and time.monotonic() < live_deadline and not near_cap and split != "only":
+                if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
                     from . import event_catchup   # cards made before their event XBRL landed
 
                     caught = event_catchup.catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("event XBRL catch-up: %s", json.dumps(caught))
+                    fresh()
                     caught = event_catchup.results_catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("results XBRL catch-up: %s", json.dumps(caught))
+                    fresh()
                     # at most hourly: the three sweeps took ~17 of a run's 24 live minutes and mostly filed nothing (25 Oct
                     # 2026: shareholding "filed": 5 of 1,069 companies looked at)
                     if time.monotonic() < live_deadline and self._memory_syncs_due():
@@ -4383,16 +4400,24 @@ class Pipeline:
                         synced = pledges.sync(self, live_deadline)
                         if synced["filed"] or synced["stopped"] or synced["errors"]:
                             log.info("pledge memory: %s", json.dumps(synced))
+                        fresh()
                     if time.monotonic() < live_deadline and self._dgtr_due():
                         self._dgtr_sync(live_deadline)
                     if time.monotonic() < live_deadline and self._annual_catchup_due():
                         self._annual_catchup(live_deadline)
+                        fresh()
                 # its own slot of at most CRITIC_MAX_S from the run's time, before the backfill: inside the live part it
                 # got none whenever the live filings used their share (21 Oct 05:33 IST: 6 cards queued, 0 judged)
-                if split != "only":
-                    self._run_critic(deadline)
-            if mode in ("backfill", "all") and not self._halted(bulk=True) and os.environ.get("PIPELINE_TODAY") != "only":
-                self._backfill(today, deadline, writes_at_start, max_backfill_days, live_from - timedelta(days=1))
+                self._run_critic(deadline)
+            if mode in ("backfill", "all") and not self._halted(bulk=True):
+                history_to = live_from - timedelta(days=1)
+                days = [max_backfill_days]   # history days are discovered in the first slice only, as in one call before
+
+                def backfill(until: float) -> None:
+                    self._backfill(today, until, writes_at_start, days[0], history_to)
+                    days[0] = 0
+
+                self._in_slices(backfill, deadline, fresh)
         except nse_api.FileCapReached as exc:
             self.stats.stopped_reason = self.stats.stopped_reason or "file cap reached: the rest waits for the next run"
             log.warning("%s", exc)   # the cap is a planned stop, not an error: the status stays as it was

@@ -35,13 +35,13 @@ from collections import Counter
 from .metrics import CONSOLIDATED
 from .nse import FileCapReached, SourceBlockedError
 from .periods import canonical_period, quarter_index
-from .screener_crosscheck import _close, _neighbours, CLASSES
+from .screener_crosscheck import _close, _neighbours, CLASSES, SIX_EXPLAINED, SIX_METRICS
 from . import xbrl
 from . import xbrl_store
 
 log = logging.getLogger(__name__)
 
-NOT_PAIRS = ("match", "naming", "screener_only", "memory_only", "memory_period_suspect")
+NOT_PAIRS = ("match", "naming", "screener_only", "memory_only", "memory_period_suspect", *SIX_EXPLAINED)
 VERDICTS = ("ours_matches_official", "screener_matches_official", "both_match", "neither", "no_file", "not_run")
 OURS_ABS, OURS_REL = 0.011, 0.0001
 LENDER_TEMPLATES = xbrl.LENDER_TEMPLATES
@@ -250,6 +250,10 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
     ``progress`` (optional) gets the summary so far every ``every`` companies, so a run stopped by hand keeps its work
     (26 Oct 2026: a cancelled 2 h run had written nothing)."""
     pairs = disagreeing(rows)
+    # the cross-check's six other lines (Operating Profit ... Tax %) are not refereed here: a file is read for revenue,
+    # profit and EPS only; their rows pass through as not_run
+    skipped = [r for r in pairs if r["metric"] in SIX_METRICS]
+    pairs = [r for r in pairs if r["metric"] not in SIX_METRICS]
     by_company: dict[tuple[str, str, str], list[dict]] = {}
     for r in pairs:
         by_company.setdefault((r["scrip"], r["symbol"], r.get("basis") or ""), []).append(r)
@@ -262,6 +266,7 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
         return {**r, "verdict": "not_run", "reason": why, "official_value": None, "official_file": "", "official_from": "",
                 "period_finding": ""}
 
+    results += [not_run(r, "metric not refereed") for r in skipped]
     for (scrip, symbol, basis), items in by_company.items():
         if not blocked and time_budget is not None and clock() - started > time_budget:
             out_of_time = True

@@ -156,19 +156,33 @@ def year_of(column: str) -> str | None:
     return f"FY{int(m[1]) % 100:02d}" if m else None
 
 
+# the six other lines of screener's quarterly table (27 Oct 2026), by our line key; "Tax %" is a ratio, no line of ours
+SIX_LINES = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt")
+TAX_ROW = "Tax %"
+LENDER_ROW = "Financing Profit"   # a lender page's own layout: "Revenue", "Interest", "Financing Profit", "Financing Margin %"
+
+
 def parse_full(body: str) -> dict | None:
-    """parse_page plus EPS per quarter and the annual profit and loss section: ``{"basis", "quarters": {period:
-    {"revenue", "pat", "eps"}}, "annual": {"FY25": {"revenue", "pat", "eps"}}}`` (``annual`` empty when the page has no
-    such section). Used by the cross-check, which reads stored pages."""
+    """parse_page plus EPS per quarter, the six other lines (``ebitda`` = Operating Profit, ``other_income``,
+    ``finance_cost`` = Interest, ``depreciation``, ``pbt`` = Profit before tax, ``tax_pct`` = Tax %; None where the page has
+    no such row) and the annual profit and loss section: ``{"basis", "lender_layout", "quarters": {period: {"revenue",
+    "pat", "eps", ...six}}, "annual": {"FY25": {"revenue", "pat", "eps"}}}`` (``annual`` empty when the page has no such
+    section). ``lender_layout`` is true on a page that has Financing Profit (its Interest row is not a non-lender's).
+    Used by the cross-check, which reads stored pages."""
     page = parse_page(body)
     if page is None:
         return None
     columns, rows, _ = _section_table(body, "quarters")
     eps = _row_of(rows, "eps")
+    six = {key: _row_of(rows, key) for key in SIX_LINES}
+    six["tax_pct"] = rows.get(TAX_ROW) or []
+    page["lender_layout"] = bool(rows.get(LENDER_ROW))
     for i, column in enumerate(columns):
         period = period_of(column)
         if period:
             page["quarters"][period]["eps"] = eps[i] if i < len(eps) else None
+            for key, row in six.items():
+                page["quarters"][period][key] = row[i] if i < len(row) else None
     annual: dict[str, dict] = {}
     pl = _section_table(body, "profit-loss")
     if pl:

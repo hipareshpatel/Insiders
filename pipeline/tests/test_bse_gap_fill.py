@@ -345,3 +345,29 @@ def test_an_old_gaps_earlier_quarters_are_not_cut_by_the_seeds_since():
     since = bf.fill_since(result, bf.needed_quarters({"Q4FY24"}))
     assert since == "2023-03-31"   # Q4FY23 ends then; its file comes after, so it is kept
     assert since <= mg.since_for(result)
+
+
+def test_a_quarter_known_wrong_on_bse_is_never_filled_from_it(monkeypatch):
+    monkeypatch.setitem(bf.KNOWN_WRONG, ("1", "Q1FY27"), "test: the company corrected this quarter after filing")
+    sink, report, symbols, nse, bse = setup({"1": company("KOVAI", 900.0)})
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert out["skipped"]["known wrong on bse"] == 1 and out["figures_written"] == 0 and sink.writes == 0
+    assert not any(r["period"] == "Q1FY27" for r in out["rows"])   # BSE's file for it was there and was not used
+
+
+def test_the_known_wrong_list_holds_kovais_corrected_quarter():
+    assert ("523323", "Q4FY26") in bf.KNOWN_WRONG
+
+
+def test_a_known_wrong_quarter_is_left_out_while_the_companys_other_gaps_are_filled(monkeypatch):
+    q4fy26 = GI_XML.replace(b"2026-07-01", b"2026-01-01").replace(b"2026-09-30", b"2026-03-31")
+    wrong_url = "https://www.bseindia.com/xml-data/corpfiling/AttachLive/q4fy26.xml"
+    monkeypatch.setitem(bf.KNOWN_WRONG, ("1", "Q4FY26"), "test: the company corrected this quarter after filing")
+    links = [XbrlLink("Q1FY27", "STANDALONE", URL, "2026-08-10T18:00:00"),
+             XbrlLink("Q4FY26", "STANDALONE", wrong_url, "2026-05-22T18:00:00")]
+    sink, report, symbols, nse, _ = setup({"1": company("KOVAI", 900.0)})
+    bse = Bse({"1": links}, {URL: Q1FY27_XML, wrong_url: q4fy26})
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    periods = {e["period"] for e in sink.dossiers["1"]["financial_metrics"]}
+    assert "Q1FY27" in periods and "Q4FY26" not in periods
+    assert {r["period"] for r in out["rows"]} == {"Q1FY27"} and out["skipped"]["known wrong on bse"] == 1

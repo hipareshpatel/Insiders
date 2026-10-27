@@ -82,7 +82,7 @@ def test_adanient_other_income_holds_the_exceptional_items():
 def test_a_gap_inside_the_tolerance_or_without_a_rule_is_not_explained():
     # within twice the tolerance a second line matches by chance: plain mismatch
     d = dossier({**OURS, "other_income": 4558.0, "exceptional_items": 24.4})    # gap 24 is past 0.5% (22.9) but not twice it
-    assert six(run(d, NON_LENDER), "other_income")["class"] == "mismatch"
+    assert six(run(d, NON_LENDER), "other_income")["class"] == "small_gap"     # not the view's class: 24 is 0.5% of 4,582
     d = dossier({**OURS, "exceptional_items": 10.0})                              # no rule closes 635.78 -> 4,582
     assert six(run(d, NON_LENDER), "other_income")["class"] == "mismatch"
     d = dossier({**OURS, "finance_cost": 9.0, "tax_expense": 600.0})

@@ -41,7 +41,7 @@ from . import xbrl_store
 
 log = logging.getLogger(__name__)
 
-NOT_PAIRS = ("match", "naming", "screener_only", "memory_only", "memory_period_suspect", *SIX_EXPLAINED)
+NOT_PAIRS = ("match", "naming", "screener_only", "memory_only", "memory_period_suspect", "steady_older", *SIX_EXPLAINED)
 VERDICTS = ("ours_matches_official", "screener_matches_official", "both_match", "neither", "no_file", "not_run")
 OURS_ABS, OURS_REL = 0.011, 0.0001
 LENDER_TEMPLATES = xbrl.LENDER_TEMPLATES

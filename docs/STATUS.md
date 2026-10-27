@@ -78,6 +78,10 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    EPS in the consolidated file). The four are in memory now; taking them out waits for item 6 and the owner.
 3. **After the full BSE download: the BSE fill keeps its record as it goes and compares with memory before writing**
    (today the list of what it wrote is saved only at the end, and a refusal or a kill loses it).
+   First half done (branch `bse-fill-record`): after each company the fill appends its rows to the CSV and rewrites the
+   summary JSON (`bse_gap_fill.Record`; a dry run records what it would write; a refusal keeps what was filled before it).
+   The upload step already runs `if: always()` after the fill step's own `timeout-minutes`. Second half (compare with memory
+   before writing) is still open.
 4. **`refresh-card-blocks` waits for the owner.** The dry run (run 40546510549, 27 Oct 23:08 IST) would change **3,214
    of 7,895 stored cards**: the results block on 2,876, grounding 1,344, headline 288, key numbers 287, memory context
    270, fundamentals 140, scale 123. That is far more than `CARD_ONE_BASIS` alone; the refresh rebuilds every block

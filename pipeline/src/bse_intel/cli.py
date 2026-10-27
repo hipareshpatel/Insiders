@@ -826,13 +826,17 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
     symbols = {scrip: ((sink.company(scrip) or {}).get("symbol") or by_scrip.get(scrip, "")).strip().upper()
                for scrip, r in report["companies"].items() if memory_gaps.has_gap(r)}
     refused = False
+    # the files are kept as the run goes (a refusal, a crash or a kill leaves what was done): the CSV gets each filled company's
+    # rows, the JSON is rewritten after each; the final write below has the same content as before
+    record = bse_gap_fill.Record(args.csv, args.json, lambda: {"bse_files": dict(bse.files), "as_of": report["as_of"]})
     with bse_gap_fill.PortedBse() as bse, NseClient() as nse:   # the ported adapter, BSE's own page headers (F218)
         raw.attach(bse, sink, "bse", settings)
         raw.attach(nse, sink, "nse", settings)
         bse.keep = sink   # every BSE file downloaded is kept in our XBRL store, a dry run's too
         bse.warm_up()
         try:
-            outcome = bse_gap_fill.run(sink, report, symbols, nse, bse, settings, args.apply, args.time_budget, args.restart)
+            outcome = bse_gap_fill.run(sink, report, symbols, nse, bse, settings, args.apply, args.time_budget, args.restart,
+                                       record=record)
         except SourceBlockedError as exc:
             logging.getLogger("bse_intel.bse_gap_fill").error("an exchange refused the session; stopping: %s", exc)
             refused = True
@@ -840,6 +844,9 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
                        "min_mcap_cr": float(settings.universe_min_mcap_cr), "companies_with_gaps": 0,
                        "companies_skipped_tried": 0, "companies_class_b": 0, "companies_pre_nse": 0, "companies_filled": 0, "quarters_filled": 0,
                        "figures_filled": 0, "figures_written": 0, "skipped": {}}
+            if record.snapshot is not None:   # what was filled before the refusal stays in the files and the summary
+                outcome = {**record.snapshot, "more": False, "failed": [*record.snapshot["failed"], f"refused: {exc}"[:200]],
+                           "rows": record.rows}
     print(bse_gap_fill.render(outcome))
     print("BSE files: {downloaded} downloaded, {kept} kept in our XBRL store, {from_store} read from it".format(**bse.files))
     outcome["bse_files"] = dict(bse.files)
@@ -848,10 +855,9 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
     if not args.apply:
         print("dry run: nothing changed (--apply writes the figures, each labelled exchange BSE)")
     if args.json:
-        Path(args.json).write_text(json.dumps({k: v for k, v in outcome.items() if k != "rows"} | {"as_of": report["as_of"]},
-                                              ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+        bse_gap_fill.write_atomic(args.json, bse_gap_fill.summary_text(outcome, {"as_of": report["as_of"]}))
     if args.csv:
-        Path(args.csv).write_text(bse_gap_fill.to_csv(outcome), encoding="utf-8")
+        bse_gap_fill.write_atomic(args.csv, bse_gap_fill.to_csv(outcome))
     if refused:
         return REFUSED
     if outcome.get("capped"):   # F213: the file cap is a planned stop, exit 0 so no chain restarts it at once

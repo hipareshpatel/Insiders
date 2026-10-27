@@ -4,6 +4,7 @@ The figures are the real ones of the hard-PDF set (360ONE's consolidated Q3FY24 
 in the next one); the PDFs themselves are rebuilt here, because the real ones' text layers are garbled and only OCR reads them."""
 from __future__ import annotations
 
+import pytest
 from test_pdf_referee import FakeNse, filing, make_pdf
 
 from bse_intel import pdf_referee as pr
@@ -231,8 +232,13 @@ TITAN_Q3 = [   # Titan's real Q3FY26 layout: revenue split into sub-lines with n
 ]
 
 
-def test_total_income_is_never_read_as_a_restated_revenue():
-    """Restated-pdf trial, 27 Oct 2026: Titan's four 'restatements' were its Total income (17,868) against revenue (17,740)."""
+@pytest.mark.parametrize("row_fixes", ["0", "1"])
+def test_total_income_is_never_read_as_a_restated_revenue(monkeypatch, row_fixes):
+    """Restated-pdf trial, 27 Oct 2026: Titan's four 'restatements' were its Total income (17,868) against revenue (17,740).
+    The same with PDF_ROW_FIXES on, as the maintenance jobs run: the page's row is kept (never "no results row")."""
+    from bse_intel.settings import get_settings
+    monkeypatch.setenv("PDF_ROW_FIXES", row_fixes)
+    get_settings.cache_clear()
     got, why = pr.read_document(make_pdf(TITAN_Q3), ocr=False)
     assert got, why
     d = {"financial_metrics": [

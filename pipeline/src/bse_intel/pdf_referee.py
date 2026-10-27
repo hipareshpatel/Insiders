@@ -111,7 +111,13 @@ _INTEREST_SUB = re.compile(r"^\W*(?:\(?[a-d]\)|\(?[ivx]+\)|[a-d]\.|[ivx]+\.)\s*(
 _TOTAL_INCOME = re.compile(r"^\W*(?:[\divx]+\W+|[a-d]\W+)?total\s+income\b(?!\s+(?:from|tax))", re.I)
 _PAT_NAME = re.compile(r"^\W*(?:[ivx]+\W+|\d+\W+|[a-d]\)\s*)?(?:net\s+|total\s+)?(?:profit|loss)\b[^\d]{0,40}?"
                        r"(?:for\s+the\s+(?:period|year|quarter)|after\s+tax|after\s+taxes)", re.I)
+# the same with a letter before the label ("J. Net Profit/(Loss) for the period (H-I)": Union Bank's lettered lines); 27 Oct 2026, PDF_ROW_FIXES
+_PAT_NAME_LETTERED = re.compile(_PAT_NAME.pattern.replace(r"|[a-d]\)\s*)?", r"|[a-d]\)\s*|[a-z][.)]\s*)?", 1), re.I)
 _PAT_TOTAL = re.compile(r"for\s+the\s+(?:period|year|quarter)", re.I)
+# a "for the period" line printed as the line above less another ("IX Profit for the period / year (VII-VIII)", VIII being the share
+# of non-controlling interest): the owners' share, not the bottom line the tie-break below looks for (SPANDANA consolidated: 216.32
+# against the profit after tax of 216.33); with PDF_ROW_FIXES such a line is no tie-break and two rows that differ stay a conflict
+_PAT_LESS = re.compile(r"\(\s*[\w.]+\s*[-\u2013]\s*[\w.]+\s*\)")
 _PAT_NOT = re.compile(r"before|attributable|owners|comprehensive|continuing|discontinued|per\s+share|margin|%|"
                       r"minority|non[- ]controlling|exceptional|share\s+of", re.I)
 _EPS = re.compile(r"earnings?\s+per\s+(?:equity\s+)?share[^\d]{0,60}basic|^\W*(?:\(?[a-d]\)?\W+)?basic\b", re.I)
@@ -210,6 +216,22 @@ def _basis_above(lines: list[str], at: int) -> str | None:
         if _TITLE.search(line) and (found := _words_basis(line)):
             return found
     return None
+
+
+def _basis_above_boxed(lines: list[str], at: int) -> tuple[str | None, bool]:
+    """``_basis_above``, but a short heading line between the row and the title that names the other basis ("STANDALONE
+    INFORMATION" at the top of a table on a page titled "CONSOLIDATED ... STATEMENT OF ASSETS AND LIABILITIES", EMKAY p12) takes
+    the table out of the title's basis: no basis, so no figure (27 Oct 2026, PDF_ROW_FIXES). A heading that names the title's own basis
+    changes nothing, and a heading with no title above it is not used. Returns (basis, contested): a contested table is never
+    given the "no word means standalone" default either."""
+    heading = None
+    for back in range(at - 1, max(-1, at - 120), -1):
+        line = lines[back]
+        if _TITLE.search(line) and (found := _words_basis(line)):
+            return (None, True) if heading is not None and heading != found else (found, False)
+        if heading is None and len(line.strip()) <= 60 and not any(f for _, f in numbers_on(line)):
+            heading = _words_basis(line)
+    return None, False
 
 
 def _groups(region: str, dates: list[date]) -> list[str] | None:
@@ -332,6 +354,35 @@ def _bare_unit(lines: list[str], header: int) -> float | None:
     return found.pop() if len(found) == 1 and None not in found else None
 
 
+# A unit line the text layer or OCR garbled: junk or the lost rupee sign before "in", the unit word, a stray letter or two after it
+# and a short tail ("(\" in crores unless otherwise stated)", "f{ in crorest", "Ct In Lakhs}"). Only crore, lakh, million and thousand
+# are units (27 Oct 2026, PDF_ROW_FIXES); anything else, or two different units near the header, is no unit.
+_GARBLED_UNIT = re.compile(r"^[^\w]{0,4}(?:[^\W\d_]{1,3}[^\w]{0,4})?(?:in|ln)\s+(crores?|lakhs?|lacs?|millions?|thousands?)[a-z]{0,2}(?![a-z])"
+                           r"[^\w]*(?:(?:unless|except|other)\b[^\d]{0,40})?$", re.I)
+
+
+def _garbled_units(lines: list[str], header: int) -> tuple[set, set]:
+    """(the units named by garbled unit lines, the units named by the lines ``_bare_unit`` reads) near the header; a unit that
+    is not in ``_PER_CRORE`` is None."""
+    garbled, bare = set(), set()
+    for line in lines[max(0, header - 8): header + 2]:
+        probe = line.strip()
+        if len(probe) <= 70 and (m := _GARBLED_UNIT.match(probe)):
+            garbled.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
+        clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)
+        if len(clean) <= 40 and (m := _BARE_UNIT.match(clean)):
+            bare.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
+    return garbled, bare
+
+
+def _garbled_unit(lines: list[str], header: int) -> float | None:
+    """The unit when a garbled unit line is near the header and every unit line there names the same one, as figures per
+    crore; None when there is no such line or two units are named (27 Oct 2026, PDF_ROW_FIXES)."""
+    garbled, bare = _garbled_units(lines, header)
+    units = garbled | bare
+    return units.pop() if garbled and len(units) == 1 and None not in units else None
+
+
 _DATE_TOKEN = re.compile(r"\d{1,2}\s?[./-]\s?\d{1,2}\s?[./-]\s?[\dOolI\]\[|]{1,4}(?!\d)")
 
 
@@ -362,6 +413,26 @@ def _odd_figures(line: str, start: int) -> set[int]:
     return {k for k, d in enumerate(decimals) if not d}
 
 
+# the revenue total a lender prints as "Total (a)" under the heading "(a) Revenue from Operations" (VLS Finance), with the
+# income total beside it as "Total Income (a+b)": the total of (a) is the revenue (27 Oct 2026, PDF_ROW_FIXES)
+_TOTAL_A = re.compile(r"^\W*total\s*\(\s*a\s*\)", re.I)
+_REVENUE_HEADING = re.compile(r"^\W*(?:(?:\(\s*\w+\s*\)|\w{1,4}\.?)\W*)?(?:total\s+)?revenue\s+from\s+operations\W*$", re.I)
+_STEP_BREAK = re.compile(r"^\W*(?:\(\s*b\s*\)|total\b)", re.I)
+# a sub-line printed with its own letter or roman number ("a. Fees and commission"), never the end of a wrapped label
+_SUB_LINE = re.compile(r"^(?:[a-z]|[ivx]{2,4})[.)]\s")
+
+
+def _revenue_heading_above(lines: list[str], at: int) -> bool:
+    """A heading "(a) Revenue from Operations" with only sub-lines between it and line ``at`` (no other total, no "(b)" step)."""
+    for back in range(at - 1, max(-1, at - 14), -1):
+        line = lines[back].strip()
+        if _REVENUE_HEADING.match(line):
+            return True
+        if _STEP_BREAK.match(line):
+            return False
+    return False
+
+
 def parse_page(text: str, page: int, consolidated_anywhere: bool,
                positions: list[list[tuple]] | None = None, bad_lines: frozenset[int] | set[int] = frozenset()) -> list[Row]:
     """The metric rows (revenue, pat, eps) of one page's text, each with the column proof it has. ``positions`` are the words
@@ -382,6 +453,11 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
         a, b = lines[i].strip(), lines[i + 1].strip()
         if a and len(a) <= 60 and re.search(r"[A-Za-z]$", a) and not any(f for _, f in numbers_on(a)) \
                 and re.match(r"[a-z]", b) and any(f for _, f in numbers_on(b)):
+            if _row_fixes() and (_revenue_rank(a) in (0, 1) or _SUB_LINE.match(b)):
+                # a revenue heading is not a wrapped label, and its first sub-line must not be read as its total: INDOSTAR's
+                # "(a) Revenue from operations" + "interest income 21,742 ..." gave 217.42 against 234.18; CENTRUM's "1. Revenue
+                # from operations" + "a. Fees and commission" gave 19.95 against 22.25 (27 Oct 2026, PDF_ROW_FIXES)
+                continue
             lines[i], lines[i + 1] = f"{a} {b}", ""
             if positions is not None:
                 positions[i], positions[i + 1] = positions[i] + positions[i + 1], []
@@ -390,9 +466,12 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
         if not label_probe:
             continue
         metric, rank = None, 0
-        if (rank_ := _revenue_rank(label_probe)) is not None:
+        fixes = _row_fixes()
+        if fixes and _TOTAL_A.match(label_probe) and _revenue_heading_above(lines, i):
+            metric = "revenue"
+        elif (rank_ := _revenue_rank(label_probe)) is not None:
             metric, rank = "revenue", rank_
-        elif _PAT_NAME.search(label_probe) and not _PAT_NOT.search(label_probe):
+        elif (_PAT_NAME_LETTERED if fixes else _PAT_NAME).search(label_probe) and not _PAT_NOT.search(label_probe):
             metric = "pat"
         elif _EPS.search(label_probe) and any(_EPS_CONTEXT.search(lines[j]) for j in range(max(0, i - 6), i + 1)):
             metric = "eps"
@@ -408,14 +487,23 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
         start = next((m.start() for m, (_, fig) in zip(_NUMBER.finditer(line), nums) if fig), 0)
         label = line[:start].strip()
         # basis
-        basis = _basis_above(lines, i)
-        if basis is None and not consolidated_anywhere:
+        contested = False
+        if fixes:
+            basis, contested = _basis_above_boxed(lines, i)
+        else:
+            basis = _basis_above(lines, i)
+        if basis is None and not consolidated_anywhere and not contested:
             basis = STANDALONE
         unit = unit_before(text, offsets[i])
         # header: the nearest line above with two or more dates
         header = next((b for b in range(i - 1, max(-1, i - HEADER_LOOKBACK), -1) if len(_dates_in(lines[b])) >= 2), None)
         if unit is None and header is not None:
             unit = _bare_unit(lines, header)
+            if fixes:
+                garbled, bare = _garbled_units(lines, header)
+                if garbled:      # a garbled unit line is there: it and the clean lines must name one and the same unit
+                    units = garbled | bare
+                    unit = units.pop() if len(units) == 1 and None not in units else None
         row = Row(metric, label, basis, unit, figures, None, [], set(), page, rank=rank, key=(header, basis))
         row.odd = _odd_figures(line, start) or None
         if i in bad_lines:
@@ -638,7 +726,7 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
             continue
         value = cell if metric == "eps" else cell / r.unit
         values.append((value, r.label[:60], r.page))
-        totals.append(bool(_PAT_TOTAL.search(r.label)))
+        totals.append(bool(_PAT_TOTAL.search(r.label)) and not (_row_fixes() and _PAT_LESS.search(r.label)))
         siblings.append([f / (1 if metric == "eps" else r.unit) for k, f in enumerate(r.figures)
                          if k != index and f is not None])
     if metric == "pat" and _row_fixes() and len({round(v, 4) for v, _, _ in values}) > 1 and any(totals):

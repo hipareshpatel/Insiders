@@ -324,3 +324,39 @@ def test_a_basis_word_counts_only_near_the_figure_and_a_company_name_is_no_basis
     # but a basis word beside the figure leaves it alone
     near = "Acme: revenue ₹1,153 Cr as reported"
     assert headline(near) == near
+
+
+# the refresh dry run of 28 Oct 2026: the year's revenue set against the quarter's row, and guided figures, were labelled
+def test_a_figure_of_another_period_or_a_guided_one_is_not_labelled(monkeypatch):
+    _on(monkeypatch)
+    block = {"period": "Q4FY26", "revenue": {"value": 852.85}, "ebitda": {"value": 16.37}, "lines": LINES}
+
+    def headline(text, results=block):
+        card = {"headline": text, "results": copy.deepcopy(results)}
+        results_one_line.apply_card_json(card)
+        return card["headline"]
+
+    for text in ("VRL Logistics FY26 revenue rose 2% YoY to ₹3,245 Cr; PAT jumped 29% to ₹237 Cr",
+                 "Solex Energy FY26 revenue rose 144% to ₹1,618 Cr; Q4 up 248% YoY",
+                 "Acme 9M FY26 revenue ₹2,400 Cr", "Acme 9MFY26 revenue ₹2,400 Cr", "Acme Q3FY26 revenue ₹700 Cr",
+                 "Coforge H1FY27: revenue ₹11,698.5 Cr", "Himadri H1 FY27 revenue rises 43% YoY to ₹3,123 Cr",
+                 "Ircon guides FY27 revenue flat at ~₹9,000 Cr", "Adani Ports guides for FY31 revenue of ₹91,500 Cr",
+                 "SML Mahindra Q4FY26 revenue up 16% YoY; FY31 revenue target set at ₹15,000 Cr",
+                 "Kanoria Q4FY26 EBITDA jumped to ₹16.37 Cr from ₹1.8 Cr"):
+        assert headline(text) == text, text
+    # the block's own quarter, or no period named, is still compared
+    assert headline("Acme Q4FY26 revenue ₹1,000 Cr").endswith("(company-reported; results table ₹852.85 Cr)")
+    assert headline("Acme Q4 FY26: revenue ₹1,000 Cr").endswith("(company-reported; results table ₹852.85 Cr)")
+    assert headline("Acme: revenue ₹1,000 Cr").endswith("(company-reported; results table ₹852.85 Cr)")
+    # a year's row against a year's figure is compared too
+    year = {**block, "period": "FY26", "revenue": {"value": 3245.0}}
+    assert headline("Acme FY26 revenue ₹3,500 Cr", year).endswith("(company-reported; results table ₹3,245 Cr)")
+
+
+def test_a_key_number_of_another_quarter_is_not_labelled(monkeypatch):
+    _on(monkeypatch)
+    card = {"key_numbers": [{"label": "Q3 revenue", "value": "₹700 Cr"}, {"label": "Q4 revenue", "value": "₹1,000 Cr"}],
+            "results": {"period": "Q4FY26", "revenue": {"value": 852.85}, "lines": LINES}}
+    results_one_line.apply_card_json(card)
+    assert card["key_numbers"][0]["label"] == "Q3 revenue"
+    assert card["key_numbers"][1]["label"] == "Q4 revenue (company-reported; results table ₹852.85 Cr)"

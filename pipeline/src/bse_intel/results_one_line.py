@@ -36,6 +36,25 @@ _FIG = r"₹\s?(-?[\d,]+(?:\.\d+)?)\s*(?:cr|crore)\b"
 _HEAD_WORD = re.compile(r"\b(total income|revenue|EBITDA)\b", re.I)
 _KEY_REVENUE = re.compile(r"(?:q[1-4]\s*(?:fy\d{2})?\s*)?(?:consolidated\s+|standalone\s+)?(total income|revenue(?: from operations)?)", re.I)
 _KEY_EBITDA = re.compile(r"(?:operating )?EBITDA", re.I)
+# a period a headline names: the block is one period's row, and a figure of another period is not on another basis (28 Oct
+# 2026 refresh dry run: "VRL FY26 revenue ... ₹3,245 Cr (company-reported; results table ₹852.85 Cr)" set the year's revenue
+# against the quarter's row, 126 of 289 labels; a guided or target figure is no result at all, 32 more)
+_PERIOD = re.compile(r"\b(?:(Q[1-4])|9M|H[12])\s*'?(?:FY|CY)?\s*'?\d{0,4}\b|\b(?:(?:FY|CY)\s*'?\d{2,4}|nine[- ]months?|full[- ]year|"
+                     r"annual|half[- ]year)\b", re.I)
+_GUIDANCE = re.compile(r"\b(?:guid\w*|targets?|outlook|expects?|aims?|plans?|projects?|forecasts?|ambition|by FY\s*\d{2})\b", re.I)
+
+
+def _other_period(text: str, period: str | None) -> bool:
+    """Whether the last period named in ``text`` (a headline up to a figure, or a key number's label) is not the block's
+    period: a year, nine months or a half against a quarter's row, or another quarter. No period named is no other period."""
+    named = list(_PERIOD.finditer(text))
+    if not named:
+        return False
+    quarter = named[-1].group(1)
+    own = re.match(r"(Q[1-4])", period or "", re.I)
+    if quarter:
+        return own is not None and quarter.upper() != own.group(1).upper()
+    return own is not None or not period   # a year (or 9M, or a half) against a quarter's row, or a row of no known period
 
 
 def _cr(value: float) -> str:
@@ -202,11 +221,12 @@ def _stated_near(text: str, lo: int, hi: int) -> bool:
     return bool(_STATED.search(" ".join(text[:lo].split()[-3:] + [text[lo:hi]] + text[hi:].split()[:3])))
 
 
-def _headline_figures(text: str) -> list[tuple[str, float, bool]]:
+def _headline_figures(text: str) -> list[tuple[str, float, bool, int]]:
     """Each ₹ crore figure of the headline bound to the nearest metric word before it, in its clause and with no other metric
     word between ("EBITDA margin 27.2% on revenue of ₹696 Cr" states revenue 696; "Revenue up 22% and PAT ₹129 Cr" states no
-    revenue). A figure that is a change ("up ₹50 Cr to ₹700 Cr", "by ₹50 Cr") is not an amount. The flag says the words
-    around it already name a basis."""
+    revenue). A figure that is a change ("up ₹50 Cr to ₹700 Cr", "by ₹50 Cr") or the earlier figure ("to ₹16.37 Cr from
+    ₹1.8 Cr") is not the amount. The flag says the words around it already name a basis; the last item is where the figure
+    starts."""
     found = []
     for fig in re.finditer(_FIG, text, re.I):
         before = text[:fig.start()]
@@ -214,10 +234,10 @@ def _headline_figures(text: str) -> list[tuple[str, float, bool]]:
         words = list(_HEAD_WORD.finditer(clause))
         if not words or _OTHER_METRIC.search(clause[words[-1].end():]):
             continue
-        if re.search(r"\b(?:up|down|by|rises?|falls?|adds?|added)\s*$", before, re.I) or re.match(r"\s*to\s*₹", text[fig.end():], re.I):
+        if re.search(r"\b(?:up|down|by|rises?|falls?|adds?|added|from)\s*$", before, re.I) or re.match(r"\s*to\s*₹", text[fig.end():], re.I):
             continue
         start = len(before) - len(clause) + words[-1].start()
-        found.append((words[-1].group(1), float(fig.group(1).replace(",", "")), _stated_near(text, start, fig.end())))
+        found.append((words[-1].group(1), float(fig.group(1).replace(",", "")), _stated_near(text, start, fig.end()), fig.start()))
     return found
 
 
@@ -228,6 +248,7 @@ def apply_card_json(card_json: dict) -> list[str]:
     results = card_json.get("results")
     if not card_results_one_line() or not isinstance(results, dict):
         return []
+    period = results.get("period")
     notes = [str(n) for n in results.pop(NOTES_KEY, None) or []]
     shown = {s.get("key"): s for s in results.get("lines") or [] if isinstance(s, dict)}
     rows = {}
@@ -252,7 +273,7 @@ def apply_card_json(card_json: dict) -> list[str]:
         word = (_KEY_REVENUE.fullmatch(label) or _KEY_EBITDA.fullmatch(label))
         which = which_of(word.group(0) if _KEY_EBITDA.fullmatch(label) else word.group(1)) if word else None
         figure = _amount(key.get("value"))
-        if which is None or figure is None or _STATED.search(label):
+        if which is None or figure is None or _STATED.search(label) or _other_period(label, period):
             continue
         block = rows[which][0]
         if _differs(figure, block, 0.03 if which == "ebitda" else 0.015):
@@ -262,10 +283,10 @@ def apply_card_json(card_json: dict) -> list[str]:
             key["label"] = f"{label} (calculated from the statement)"
             notes.append(f"key_numbers {label}: two EBITDA figures on the card, this one named as the statement's")
     headline = card_json.get("headline")
-    if isinstance(headline, str) and "(company-reported; results table" not in headline:   # not twice
-        for word, figure, stated in _headline_figures(headline):
+    if isinstance(headline, str) and "(company-reported; results table" not in headline and not _GUIDANCE.search(headline):
+        for word, figure, stated, at in _headline_figures(headline):   # not twice, and never on a guided or target figure
             which = which_of(word)
-            if which is None or stated:
+            if which is None or stated or _other_period(headline[:at], period):
                 continue
             block = rows[which][0]
             if _differs(figure, block, 0.03 if which == "ebitda" else 0.015):

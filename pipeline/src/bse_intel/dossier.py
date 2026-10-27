@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, memory_call_v2,
+from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, eps_base_check, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -1137,6 +1137,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         tagged_q = [_period(m.period) for m in delta.financial_metrics
                     if getattr(m, "by", None) in ("file", "calc") and m.value is not None and _period(m.period).startswith("Q")]
         own_period = max(tagged_q, key=lambda p: (str(due_date(p) or ""), p), default=None)
+    # EPS_BASE_CHECK (F208): the delta's own profit figures, so the check does not depend on where its EPS stands in the list
+    delta_profit = {(_norm(m.metric), _period(m.period)): {"value": m.value} for m in delta.financial_metrics
+                    if m.value is not None and _norm(m.metric) in ("pat", "pat_owners")} if eps_base_check() else {}
     for m in delta.financial_metrics:
         if m.value is None:
             continue
@@ -1167,6 +1170,14 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
         m_by = getattr(m, "by", None) or item_by
+        if m_by not in ("file", "calc") and key[0] == "eps":
+            # EPS_BASE_CHECK (F208): a standalone EPS an AI read stored as consolidated is dropped, not moved (moving a figure
+            # worked out from a ratio would write a second guess into the standalone block, which only files fill)
+            from . import eps_adjust
+            why = eps_adjust.misbased_eps({**metrics, **delta_profit}, d.get(STANDALONE_KEY), key[1], m.value, basis, d)
+            if why:
+                log.info("memory: eps %s %s from %s refused: %s", key[1], m.value, news_id, why)
+                continue
         lab = label(m_by, "results" if m_by in ("file", "calc") else doc, updated_at,
                     basis=(getattr(m, "file_basis", None) if m_by in ("file", "calc") else None) or basis, unit=m.unit, ok=True,
                     src=getattr(m, "derived_from", None) if m_by == "calc" else None)
@@ -1570,7 +1581,8 @@ def _eps_on_one_basis(dossier: dict, entries: list[dict], known: list[dict]) -> 
     from . import eps_adjust
     from .periods import prior_year_period
 
-    if not eps_adjust.enabled():
+    checking = eps_adjust.share_count_check_enabled()
+    if not eps_adjust.enabled() and not checking:
         return entries
     value = {(e["metric"], e["period"]): e["value"] for e in known if e.get("value") is not None}
 
@@ -1583,6 +1595,17 @@ def _eps_on_one_basis(dossier: dict, entries: list[dict], known: list[dict]) -> 
         old = value.get(("eps", back)) if back else None
         if e.get("yoy_pct") is None or old is None:
             out.append(e)
+            continue
+        if checking:   # EPS_SHARE_COUNT_CHECK (F211): as filed beside on today's shares, adjusted only when confirmed
+            seen = eps_adjust.share_check(dossier, e["period"], back, e["value"], old, profit(e["period"]), profit(back))
+            if seen.status == "none":
+                out.append(e)
+                continue
+            extra = {"eps_prior_as_filed": seen.eps_as_filed, "eps_share_status": seen.status, "eps_note": seen.note}
+            if seen.status == "confirmed" and seen.eps_today > 0:
+                out.append({**e, **extra, "eps_prior_today": seen.eps_today, "yoy_pct": round((e["value"] / seen.eps_today - 1) * 100, 1)})
+            else:
+                out.append({**e, **extra, "yoy_pct": None})
             continue
         result = eps_adjust.compare(dossier, e["period"], back, e["value"], old, profit(e["period"]), profit(back))
         if result.kind == "same":
@@ -2542,6 +2565,9 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
             out["held"] = held_here   # each with its reason; the figure itself is not shown
     lens, rows = next(((name, rows) for name, top, rows in _LENSES if top in out), ("company", _LENSES[-1][2]))
     lines = [{"key": key, "label": label, "unit": unit} for key, label, unit in rows if key in out]
+    if card_results_one_line():   # CARD_RESULTS_ONE_LINE: each row one statement line (F206; off: nothing)
+        from . import results_one_line
+        results_one_line.snapshot_rows(out, lines, table, periods, period, lookup)
     if with_eps and "eps" in out:
         lines.append({"key": "eps", "label": "EPS (₹)", "unit": "inr"})
     if v2:

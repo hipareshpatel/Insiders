@@ -74,6 +74,14 @@ Read before changing anything:
   owner calls). Blind audit reviews run on the mid model at least, never the smallest. A task of a few tool calls is
   done directly. Subagents follow every rule here; a fix's author never reviews it.
 
+- At most 100 files from NSE or BSE in one run (owner rule, 27 Oct 2026: "no more then 100 files from NSE or BSE each
+  times"; ON by default). A file is a downloaded document (PDF, XBRL, ZIP, attachment); list and search calls and stored
+  copies (R2, text cache, XBRL store) are not files. `FILE_CAP` (default 100, 0 = no cap) is counted by one process-wide
+  counter (`file_cap.py`, F213) called before every download; past it `FileCapReached` (a kind of `SourceBlockedError`, but
+  not a refusal) makes the run stop its loop and leave the rest: the live pipeline leaves the filing queued with no attempt
+  spent, the seeds and fills do not mark the unfinished company tried or done, and the next run goes on. A sharded
+  maintenance job sets `FILE_CAP_SHARDS` and each shard holds `FILE_CAP // shards` (at least 1). A capped run exits 0, so no
+  chain restarts it at once.
 - No EPS numbers on cards or on stock pages (owner rule, 26 Oct 2026). Memory keeps EPS for its checks; it is never shown
   and never given to the AI for card text.
 - Explain everything to the owner in very simple English: short sentences, everyday words, no code names unless asked

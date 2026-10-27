@@ -110,3 +110,55 @@ test("no EPS row on the stock page, in any table, with or without a split on rec
   for (const t of [quarterlyTable(metrics), annualTable(metrics)]) assert.ok(!t.rows.some((r) => /eps|per share/i.test(r.label)));
   assert.ok(quarterlyTable(metrics).rows.some((r) => r.label === "Net profit"));
 });
+
+test("screener mode (F210) builds Sales, Expenses, Operating profit and Other income by screener's formulas; off is unchanged", () => {
+  const q = [m("revenue", "Q2FY27", 1000), m("excise_duty", "Q2FY27", 50), m("total_expenses", "Q2FY27", 900), m("finance_cost", "Q2FY27", 10),
+    m("depreciation", "Q2FY27", 20), m("other_income", "Q2FY27", 5), m("exceptional_items", "Q2FY27", -3), m("share_associates", "Q2FY27", 2),
+    m("pbt", "Q2FY27", 100), m("tax_expense", "Q2FY27", 25), m("pat", "Q2FY27", 77)];
+  const on = quarterlyTable(q, true), row = (t: ReturnType<typeof quarterlyTable>, l: string) => t.rows.find((r) => r.label === l)!.cells[0]!;
+  assert.equal(row(on, "Sales"), 950);                                   // net of excise
+  assert.equal(row(on, "Expenses"), 820);                                // 900 - 10 - 20 - 50 excise, as Sales
+  assert.equal(row(on, "Operating profit"), 130);                      // 950 - 820 = 1000 - 900 + 30
+  assert.equal(Math.round(row(on, "OPM %") * 10) / 10, 13.7);
+  assert.equal(row(on, "Other income"), 4);                              // 5 - 3 + 2
+  assert.equal(row(on, "Profit before tax"), 102);
+  assert.ok(!on.rows.some((r) => r.label === "Exceptional items"));
+  const off = quarterlyTable(q), offDefault = quarterlyTable(q, false);
+  assert.deepEqual(off, offDefault);
+  assert.equal(row(off, "Sales"), 1000);
+});
+
+test("screener mode: other liabilities is the plug and the minority sits inside it", () => {
+  const sheet = { period: "Q4FY26", as_of: "2026-05-01", source_news_id: "xbrl:res:1:x", equity_capital_cr: 10, reserves_cr: 90, gross_debt_cr: 20,
+    minority_interest_cr: 5, total_liabilities_cr: 50, total_assets_cr: 200, fixed_assets_cr: 100 };
+  const t = balanceTable([sheet], true);
+  assert.equal(t.rows.find((r) => r.label === "Other liabilities")!.cells[0], 80);
+  assert.ok(!t.rows.some((r) => r.label === "Minority interest"));
+});
+
+test("screener mode: one table never mixes definitions, TTM needs every part in all four quarters, a missing part is no zero", () => {
+  const full = (q: string) => [m("revenue", q, 1000), m("total_expenses", q, 900), m("finance_cost", q, 10), m("depreciation", q, 20), m("pbt", q, 70), m("pat", q, 50)];
+  // a column lacking total expenses: the whole quarterly table keeps the usual lines
+  const mixed = [...full("Q1FY27"), m("revenue", "Q2FY27", 1100), m("finance_cost", "Q2FY27", 10), m("depreciation", "Q2FY27", 20), m("pbt", "Q2FY27", 80), m("pat", "Q2FY27", 60)];
+  const t = quarterlyTable(mixed, true);
+  assert.deepEqual(t.rows.find((r) => r.label === "Sales")!.cells, [1000, 1100]);
+  assert.ok(t.rows.some((r) => r.label === "Exceptional items") === false);
+  assert.deepEqual(quarterlyTable(mixed, true), quarterlyTable(mixed, false));
+  // TTM: excise in three of four quarters gives no derived TTM cell; in all four or none it does
+  const qs = ["Q3FY26", "Q4FY26", "Q1FY27", "Q2FY27"];
+  const year = [m("revenue", "FY26", 3600), m("total_expenses", "FY26", 3200), m("finance_cost", "FY26", 40), m("depreciation", "FY26", 80), m("pat", "FY26", 200)];
+  const base = qs.flatMap(full);
+  const partial = annualTable([...base, ...year, ...qs.slice(0, 3).map((q) => m("excise_duty", q, 10))], true);
+  assert.equal(partial.rows.find((r) => r.label === "Sales")!.cells[1], null);
+  const none = annualTable([...base, ...year], true);
+  assert.equal(none.rows.find((r) => r.label === "Sales")!.cells[1], 4000);
+  const all = annualTable([...base, ...year, ...qs.map((q) => m("excise_duty", q, 10))], true);
+  assert.equal(all.rows.find((r) => r.label === "Sales")!.cells[1], 3960);
+  // lender revenue: total income less other income; without total income the table keeps interest earned throughout
+  const bankQ = (q: string, ti?: number) => [m("interest_earned", q, 500), m("interest_expended", q, 300), m("other_income", q, 50), m("pbt", q, 100), m("pat", q, 75), ...(ti ? [m("total_income", q, ti)] : [])];
+  assert.equal(quarterlyTable([...bankQ("Q1FY27", 600), ...bankQ("Q2FY27", 620)], true).rows.find((r) => r.label === "Interest earned")!.cells[0], 550);
+  assert.equal(quarterlyTable([...bankQ("Q1FY27", 600), ...bankQ("Q2FY27")], true).rows.find((r) => r.label === "Interest earned")!.cells[0], 500);
+  // other liabilities is empty when reserves is missing
+  const sheet = { period: "Q4FY26", as_of: "2026-05-01", source_news_id: "xbrl:res:1:x", equity_capital_cr: 10, gross_debt_cr: 20, total_assets_cr: 200, fixed_assets_cr: 100 };
+  assert.ok(!balanceTable([sheet], true).rows.some((r) => r.label === "Other liabilities"));
+});

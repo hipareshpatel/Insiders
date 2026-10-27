@@ -181,7 +181,7 @@ def sync(pipeline, deadline: float, days: int = 3, scrips: set[str] | None = Non
             try:
                 xml = nse.fetch(row["xmlFileName"], max_bytes=2_000_000)
             except nse_api.SourceBlockedError as exc:
-                report["stopped"] = f"NSE refused the session: {exc}"
+                report["stopped"] = nse_api.stop_reason(exc)
                 break
             except Exception as exc:  # left unread: the next run tries it again
                 report["errors"].append(f"{row.get('symbol')} {filing_id}: {type(exc).__name__}: {exc}"[:200])

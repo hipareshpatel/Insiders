@@ -742,6 +742,7 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_SHARDS: ${{ inputs.ids != '' && '1' || '12' }}   # F213: the run's cap is split over the shards (FILE_CAP // 12 each); an ids run is one shard
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -819,6 +820,7 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_SHARDS: "4"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 4)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
@@ -945,6 +947,7 @@ jobs:
       run:
         working-directory: pipeline
     env:
+      FILE_CAP_SHARDS: "6"   # F213: the run's cap of 100 files is split over the shards (each holds FILE_CAP // 6)
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}

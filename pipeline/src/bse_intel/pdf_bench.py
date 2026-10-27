@@ -135,7 +135,7 @@ def to_markdown(s: dict) -> str:
 
 def collect(key_csv: str, out_dir: str, limit: int | None = None) -> int:
     """Download the key's PDFs from NSE into ``out_dir`` (``<key>.pdf``, manifest.json, failed.json), as ``pdf_readers.collect``."""
-    from .nse import NseClient
+    from .nse import FileCapReached, NseClient
     from .pdf_readers import DEFAULT_READERS, fetch_with_retry, pdf_key
     from .pdf_referee import Sources
     os.environ["PDF_READERS"] = DEFAULT_READERS
@@ -147,7 +147,11 @@ def collect(key_csv: str, out_dir: str, limit: int | None = None) -> int:
     with NseClient() as nse:
         src = Sources(nse, ocr=False)
         for url in dict.fromkeys(p["pdf_url"] for p in pairs):
-            data, why = fetch_with_retry(src, url)
+            try:
+                data, why = fetch_with_retry(src, url)
+            except FileCapReached:   # the run's file cap (F213): what is collected so far is kept
+                print("file cap reached: the rest waits for the next run")
+                break
             if data:
                 with open(os.path.join(out_dir, f"{pdf_key(url)}.pdf"), "wb") as fh:
                     fh.write(data)

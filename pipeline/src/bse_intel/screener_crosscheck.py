@@ -46,6 +46,7 @@ import re
 import statistics
 from concurrent.futures import ThreadPoolExecutor
 
+from . import line_map
 from .dossier import _norm
 from .memory_gaps import main_basis, quarter_end
 from .metrics import CONSOLIDATED, STANDALONE, _figures, _value_source, is_lender
@@ -74,8 +75,8 @@ CSV_HEADER = ("scrip,symbol,sector,basis,period,metric,class,memory_value,screen
               "memory_filed,note").split(",")
 
 # our metric names for each compared line; a lender's revenue line is its revenue from operations, a bank's interest earned
-_OURS = {"revenue": ("revenue",), "pat": ("pat",), "eps": ("eps", "basic_eps")}
-_LENDER_OURS = {"revenue": ("revenue", "interest_earned"), "pat": ("pat",), "eps": ("eps", "basic_eps")}
+_OURS = {k: line_map.crosscheck_ours(k) for k in ("revenue", "pat", "eps")}
+_LENDER_OURS = {k: line_map.crosscheck_ours(k, lender=True) for k in ("revenue", "pat", "eps")}
 
 
 _SCREENER_LINE = {"revenue": "Sales", "pat": "Net Profit", "eps": "EPS"}

@@ -526,7 +526,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
     import contextlib
 
     from .bse import BseClient
-    from .nse import NseClient, SourceBlockedError
+    from .nse import FileCapReached, NseClient, SourceBlockedError
     from .seed import SeedStats, seed_results, seed_shareholding
 
     log = logging.getLogger("bse_intel.seed")
@@ -602,7 +602,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
     # their memory entries with the same figures
     last_done, saved = None, done_through if args.universe else None
     priority_set = set(priority) if args.universe else set()
-    refused = False
+    refused = capped = False
     with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse, \
             contextlib.ExitStack() as checkpoint:
         if args.universe:
@@ -620,6 +620,10 @@ def cmd_seed_memory(args, settings, sink) -> int:
                 try:
                     seed_results(sink, bse, scrip, name, args.since, cache_root, stats, company,
                                  nse=nse, symbol=symbol)
+                except FileCapReached as exc:
+                    log.warning("%s; the seed stops here and the next run resumes at this company", exc)
+                    capped = True   # F213: this company is not done (the resume point stays before it); nothing is marked
+                    break
                 except SourceBlockedError as exc:
                     stats.failures.append(f"{scrip} results: {exc}"[:200])
                     log.error("NSE refused the session; stopping the seed: %s", exc)
@@ -631,6 +635,10 @@ def cmd_seed_memory(args, settings, sink) -> int:
             if not args.results_only and symbol:
                 try:
                     seed_shareholding(sink, nse, scrip, symbol, name, args.since, cache_root, stats, company)
+                except FileCapReached as exc:
+                    log.warning("%s; the seed stops here and the next run resumes at this company", exc)
+                    capped = True
+                    break
                 except SourceBlockedError as exc:
                     stats.failures.append(f"{scrip} shareholding: {exc}"[:200])
                     log.error("NSE refused the session; stopping the shareholding seed: %s", exc)
@@ -654,7 +662,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
     print(json.dumps({"companies": stats.companies, "results_files": stats.results_files,
                       "results_periods": stats.results_periods, "shareholding_files": stats.shareholding_files,
                       "shareholding_periods": stats.shareholding_periods, "skipped": stats.skipped,
-                      "failures": stats.failures[:20], "refused": refused}, ensure_ascii=False))
+                      "failures": stats.failures[:20], "refused": refused, "file_cap_reached": capped}, ensure_ascii=False))
     # REFUSED when NSE refused, as the other NSE syncs: it returned 0, the shard wrote no "more" marker and the job
     # record said ok, so the seed chain stopped with nothing to show for it (survey, 24 Oct 2026)
     return REFUSED if refused else 0
@@ -785,6 +793,9 @@ def cmd_memory_gaps(args, settings, sink) -> int:
         Path(args.csv).write_text(memory_gaps.to_csv(final), encoding="utf-8")
     if refused:
         return REFUSED
+    if outcome and outcome.get("capped"):   # F213: the file cap is a planned stop, not "run again now": exit 0, no chain
+        print("file cap reached: the rest waits for the next run")
+        return 0
     return MORE_LEFT if outcome and outcome["more"] else 0
 
 
@@ -836,6 +847,8 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
         Path(args.csv).write_text(bse_gap_fill.to_csv(outcome), encoding="utf-8")
     if refused:
         return REFUSED
+    if outcome.get("capped"):   # F213: the file cap is a planned stop, exit 0 so no chain restarts it at once
+        return 0
     return MORE_LEFT if outcome["more"] else 0
 
 
@@ -879,12 +892,22 @@ def cmd_restated_pdf(args, settings, sink) -> int:
         symbols = {s: by_scrip[s] for s in sorted(nse_universe.included) if s in by_scrip}
     from . import pdf_referee as pr
     pr.be_gentle()
+    resume_key = "restated_pdf:last_done"   # F213: where a run that hit the file cap stopped; the next run goes on from there
+    resume = None if (args.restart or args.scrips or args.dry_run) else (sink.kv_get(resume_key) or None)
     try:
         with NseClient() as nse:
-            stats = restated_pdf.run(nse, sink, symbols, args.quarters, args.limit, dry_run=args.dry_run)
+            stats = restated_pdf.run(nse, sink, symbols, args.quarters, args.limit, dry_run=args.dry_run, resume_after=resume)
     except SourceBlockedError as exc:
         print(f"NSE refused ({exc}): stopped")
         return REFUSED
+    if not args.dry_run and not args.scrips:
+        if stats["capped"]:
+            if stats["last_done"]:
+                sink.kv_set(resume_key, stats["last_done"], now_iso())
+            print("file cap reached: the rest waits for the next run (it resumes after "
+                  f"{stats['last_done'] or 'the start'}; stopped in {stats['stopped_at']})")
+        else:
+            sink.kv_set(resume_key, "", now_iso())   # a finished pass starts the next from the first company
     print(f"restated-pdf{' (dry run, nothing written)' if args.dry_run else ''}: {stats['companies']} companies read, "
           f"{stats['restated']} restated figures found, {stats['stored']} dossiers changed, {len(stats['reasons'])} companies with quarters not read")
     if args.json:
@@ -1398,6 +1421,8 @@ def cmd_text_backfill(args, settings, sink) -> int:
         Path(args.json).write_text(json.dumps(body, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if refused:
         return REFUSED
+    if outcome.get("capped"):   # F213: the file cap is a planned stop, exit 0 so no chain restarts it at once
+        return 0
     return MORE_LEFT if outcome["more"] else 0
 
 
@@ -2006,6 +2031,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, help="stop after this many companies")
     p.add_argument("--json", help="write the counts and the reasons to this file")
     p.add_argument("--dry-run", action="store_true", help="write nothing; list every restated figure found in --json")
+    p.add_argument("--restart", action="store_true", help="ignore where a run that hit the file cap stopped; begin at the first company")
     p.set_defaults(func=cmd_restated_pdf)
 
     p = sub.add_parser("memory-recall-export", help="sample recent call transcripts and decks with their full text, memory and card, for the recall audit (read only, no AI)")
@@ -2224,8 +2250,8 @@ def main(argv: list[str] | None = None) -> int:
         code = 2
     finally:
         _record_writes(sink)
-        from .file_batch import files
-        print(files.summary(), flush=True)   # "files N in B batches" (F213)
+        from .file_cap import files
+        print(files.summary(), flush=True)   # "files downloaded N of cap C" (F213)
     _record_job(sink, args.command, code)
     return code
 

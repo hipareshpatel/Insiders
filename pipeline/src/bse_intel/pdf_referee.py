@@ -69,7 +69,7 @@ from .extract import _MUPDF, Document, upright_text
 from .grounding import _PER_CRORE, unit_before
 from .memory_gaps import quarter_end
 from .metrics import CONSOLIDATED, STANDALONE
-from .nse import SourceBlockedError
+from .nse import FileCapReached, SourceBlockedError
 from .periods import explicit_date
 from .screener_crosscheck import _close
 from .screener_referee import _DATE, _NUMBER, numbers_on
@@ -550,6 +550,7 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
     if target is None:
         return {"values": [], "unsure": "", "found": 0, "reason": f"no column for the period {period}"}
     values: list[tuple[float, str, int]] = []
+    siblings: list[list[float]] = []       # per value: the row's other figures, in the same unit (a joined-cell check)
     unsure: list[str] = []
     seen = 0
     for r in rows:
@@ -594,7 +595,9 @@ def figure_for(rows: list[Row], period: str, metric: str, basis: str | None) -> 
             continue
         value = cell if metric == "eps" else cell / r.unit
         values.append((value, r.label[:60], r.page))
-    return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen}
+        siblings.append([f / (1 if metric == "eps" else r.unit) for k, f in enumerate(r.figures)
+                         if k != index and f is not None])
+    return {"values": values, "unsure": "; ".join(dict.fromkeys(unsure)), "found": seen, "siblings": siblings}
 
 
 def revenue_only(values: list[tuple[float, str, int]]) -> list[tuple[float, str, int]]:
@@ -931,6 +934,7 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
     decided = {pair_key(r): r for r in (saved or []) if r.get("pdf_verdict") and r["pdf_verdict"] != "not_run"}
     src = Sources(nse, ocr)
     started, done, blocked, out_of_time, resumed = clock(), 0, False, False, 0
+    capped = False   # the run's file cap (F213) was reached: the pairs left are not_run, not decided, and read next run
     last_save, since_save, symbol_now = started, 0, None
     results: list[dict] = []
 
@@ -951,18 +955,22 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
                 todo.append(r)
         if not blocked and time_budget is not None and clock() - started > time_budget:
             out_of_time = True
-        why = "blocked" if blocked else "time budget" if out_of_time else "limit" if limit is not None and done >= limit else ""
+        why = "blocked" if blocked else "file cap" if capped else "time budget" if out_of_time else "limit" if limit is not None and done >= limit else ""
         if why:
             results += [not_run(r, why) for r in todo]
             continue
         for r in todo:
-            if blocked:
-                results.append(not_run(r, "blocked"))
+            if blocked or capped:
+                results.append(not_run(r, "blocked" if blocked else "file cap"))
                 continue
             try:
                 results.append({**r, **referee_pair(src, r)})
                 done += 1
                 since_save += 1
+            except FileCapReached as exc:
+                capped = True
+                log.warning("file cap reached (%s): stopping the PDF referee; the rest waits for the next run", exc)
+                results.append(not_run(r, "file cap"))
             except SourceBlockedError as exc:
                 blocked = True
                 log.warning("NSE refused (%s): stopping the PDF referee", exc)
@@ -976,6 +984,8 @@ def run(nse, rows: list[dict], limit: int | None = None, time_budget: float | No
         summary["resumed"] = resumed
     if sample:
         summary["sample"] = {"drawn": len(pairs), "pool": pool, "seed": seed}
+    if capped:
+        summary["file_cap_reached"] = True
     return summary
 
 
@@ -1038,6 +1048,8 @@ def render(summary: dict) -> str:
         lines.append("stopped: NSE refused the session")
     if summary["out_of_time"]:
         lines.append("stopped: time budget")
+    if summary.get("file_cap_reached"):
+        lines.append("file cap reached: the rest waits for the next run")
     return "\n".join(lines)
 
 

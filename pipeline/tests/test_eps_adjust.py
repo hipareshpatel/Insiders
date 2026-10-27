@@ -268,19 +268,49 @@ def test_base_check_leaves_a_loss_side_alone(monkeypatch):
 
 
 def _file(basis, period, value):
-    return XbrlResult("RESULTS", basis, period, [FinancialMetric(metric="pat", period=period, value=value, unit="INR_CR")])
+    m = FinancialMetric
+    return XbrlResult("RESULTS", basis, period, [m(metric="pat", period=period, value=value, unit="INR_CR"),
+                                                 m(metric="eps", period=period, value=value / 1000, unit="INR")])
 
 
-def test_a_comparative_with_no_basis_is_refused_only_when_the_switch_is_on(monkeypatch):
+def test_a_comparative_with_no_basis_gives_no_eps_only_when_the_switch_is_on(monkeypatch):
     from bse_intel.xbrl import add_comparatives
     monkeypatch.delenv("EPS_BASE_CHECK", raising=False)
     now = _file("CONSOLIDATED", "Q2FY27", 3200.0)
     add_comparatives(now, _file(None, "Q1FY27", 3350.0))
-    assert ("pat", "Q1FY27") in {(m.metric, m.period) for m in now.metrics} and now.metrics[0].qoq_pct is not None
+    assert ("eps", "Q1FY27") in {(m.metric, m.period) for m in now.metrics} and now.metrics[1].qoq_pct is not None
     monkeypatch.setenv("EPS_BASE_CHECK", "1")
     now = _file("CONSOLIDATED", "Q2FY27", 3200.0)
     add_comparatives(now, _file(None, "Q1FY27", 3350.0), _file("STANDALONE", "Q2FY26", 2600.0), _file("CONSOLIDATED", "Q2FY26", 3260.0))
-    assert {m.period for m in now.metrics} == {"Q2FY27", "Q2FY26"} and now.metrics[0].qoq_pct is None and now.metrics[0].yoy_pct is not None
+    got = {(m.metric, m.period) for m in now.metrics}
+    assert ("pat", "Q1FY27") in got and ("eps", "Q1FY27") not in got     # its profit is still taken: only EPS is the switch's
+    assert now.metrics[0].qoq_pct is not None and now.metrics[1].qoq_pct is None and now.metrics[1].yoy_pct is not None
+    assert not any(m.value == 2.6 for m in now.metrics)                  # the standalone file is refused as before
+
+
+def test_base_check_uses_one_profit_line_for_both_periods(monkeypatch):
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    t = _wipro_file()
+    # owners' profit only on the current quarter: the year-ago and quarter-ago use the total on both sides
+    t.metrics = [m for m in t.metrics if not (m.metric == "pat_owners" and m.period != "Q2FY27")]
+    t.metrics += [FinancialMetric(metric="pat", period=p, value=v) for p, v in (("Q2FY27", 3199.7), ("Q1FY27", 3356.3), ("Q2FY26", 3262.4))]
+    assert eps_adjust.base_check_result(t, {}) == 2
+    # a zero owners' profit is a figure: no fall through to the total; no percentage, no removal
+    z = _wipro_file()
+    for m in z.metrics:
+        if m.metric == "pat_owners":
+            m.value = 0.0
+    assert eps_adjust.base_check_result(z, {}) == 0 and eps_adjust.same_profit(lambda n: 0.0 if n == "pat_owners" else 5.0) == [0.0]
+
+
+def test_a_bonus_between_the_reference_and_the_figure_is_not_a_basis_mix(monkeypatch):
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    metrics_ = {("eps", "Q3FY26"): _wentry("eps", "Q3FY26", 10.0), ("pat_owners", "Q3FY26"): _wentry("pat_owners", "Q3FY26", 1000.0),
+                ("pat_owners", "Q4FY26"): _wentry("pat_owners", "Q4FY26", 1000.0)}
+    standalone = {"metrics": [{"metric": "pat_owners", "period": "Q4FY26", "value": 500.0}]}
+    assert "fits the standalone" in eps_adjust.misbased_eps(metrics_, standalone, "Q4FY26", 5.0, "CONSOLIDATED")   # no record: found
+    bonus = {"corporate_actions": [{"ex_date": "2026-01-20", "kind": "BONUS", "factor": 2.0, "subject": "Bonus 1:1"}]}
+    assert eps_adjust.misbased_eps(metrics_, standalone, "Q4FY26", 5.0, "CONSOLIDATED", bonus) is None   # the count doubled: real 5.0
 
 
 # ---- EPS_BASE_CHECK: a standalone EPS an AI read stored as consolidated (Wipro, F208)
@@ -295,6 +325,7 @@ def _wipro_memory():
     metrics_ = {}
     for p, profit, eps in rows:
         metrics_[("pat_owners", p)] = _wentry("pat_owners", p, profit)
+        metrics_[("pat", p)] = _wentry("pat", p, round(profit * 1.005, 1))   # the standalone block has the total only, so that line decides
         if eps:
             metrics_[("eps", p)] = _wentry("eps", p, eps)
     standalone = {"metrics": [{"metric": "pat", "period": p, "value": v} for p, v in
@@ -346,3 +377,23 @@ def test_the_store_refuses_the_misbased_eps_only_when_on(monkeypatch):
     assert [m["value"] for m in run()] == [2.5]       # off: stored as before
     monkeypatch.setenv("EPS_BASE_CHECK", "1")
     assert run() == []                                # on: the standalone figure under the consolidated label is not stored
+
+
+def test_the_store_does_not_depend_on_where_the_delta_lists_its_profit(monkeypatch):
+    from bse_intel.dossier import merge, new_dossier
+    from bse_intel.models import Filing, Pass2Output
+    monkeypatch.setenv("EPS_BASE_CHECK", "1")
+    f = Filing(news_id="nse-1", scrip_code="507685", company_name="Wipro Ltd", headline="h", subject="",
+               filed_at="2026-10-15T15:47:35+05:30", filing_date="2026-10-15", event_type="RESULTS")
+    d = new_dossier(f)
+    memory, d["standalone"] = _wipro_memory()
+    d["financial_metrics"] = [e for (n, p), e in memory.items() if p != "Q2FY26"]   # memory has no Q2FY26 profit yet
+    d["standalone"]["metrics"].append({"metric": "pat_owners", "period": "Q2FY26", "value": 2614.2})
+    rows = [{"metric": "eps", "period": "Q2FY26", "value": 2.5, "unit": "INR_PER_SHARE"},
+            {"metric": "pat_owners", "period": "Q2FY26", "value": 3246.2}]   # the EPS is listed before its own profit
+    out = Pass2Output.model_validate({"is_material": True, "event_type": "RESULTS", "timeline_entry": "t",
+                                      "card": {"headline": "Wipro results", "impact_level": "MODERATE", "takeaway": "t",
+                                               "what_happened": ["Results."], "basis": "CONSOLIDATED"},
+                                      "dossier_delta": {"financial_metrics": rows}})
+    merged = merge(d, out, f, None, "now")
+    assert [m for m in merged["financial_metrics"] if m["metric"] == "eps" and m["period"] == "Q2FY26"] == []

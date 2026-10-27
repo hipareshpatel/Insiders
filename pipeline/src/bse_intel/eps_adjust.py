@@ -218,6 +218,16 @@ def follow_profit(row: dict, dossier: dict | None, periods: dict, profit, printe
     return row, hidden
 
 
+def same_profit(*getters) -> list | None:
+    """The profit of each getter on one metric line: the owners' for all when all have it, else the total for all; None when
+    neither line is complete (a zero is a figure, it does not fall through to the other line)."""
+    for name in ("pat_owners", "pat"):
+        values = [g(name) for g in getters]
+        if all(v is not None for v in values):
+            return values
+    return None
+
+
 # ---- EPS_BASE_CHECK (F208, TODO 78): the same test on the file's own stored EPS changes (memory keeps `yoy_pct` / `qoq_pct`).
 def base_check_result(tagged, dossier: dict | None) -> int:
     """Take out, in place, every EPS YoY / QoQ of a results file that the profit does not carry (``follows``) with no share-count
@@ -228,9 +238,6 @@ def base_check_result(tagged, dossier: dict | None) -> int:
         return 0
     by = {(m.metric, m.period): m.value for m in tagged.metrics if m.value is not None}
 
-    def profit(period: str):
-        return by.get(("pat_owners", period)) or by.get(("pat", period))
-
     removed = 0
     for m in tagged.metrics:
         if m.metric != "eps" or m.value is None:
@@ -239,10 +246,10 @@ def base_check_result(tagged, dossier: dict | None) -> int:
             change = getattr(m, slot)
             if not back or change is None:
                 continue
-            now_p, was_p = profit(m.period), profit(back)
-            if not (now_p and was_p and now_p > 0 and was_p > 0):
-                continue   # a loss on either side: no percentage to judge by
-            profit_pct = (now_p / was_p - 1) * 100
+            pair = same_profit(lambda n, p=m.period: by.get((n, p)), lambda n, p=back: by.get((n, p)))
+            if pair is None or not (pair[0] > 0 and pair[1] > 0):
+                continue   # no profit on one line for both periods, or a loss on either side: no percentage to judge by
+            profit_pct = (pair[0] / pair[1] - 1) * 100
             if share_event(dossier, back, m.period) is None and not follows(profit_pct, change, by.get(("eps", back))):
                 setattr(m, slot, None)
                 m.eps_note = f"EPS {change:+g}% {slot[:3].upper()} is above profit {profit_pct:+.1f}% and no share-count event is on record"
@@ -256,9 +263,9 @@ def base_check_result(tagged, dossier: dict | None) -> int:
 SHARE_MATCH_PCT = 3.0   # profit / EPS agrees with the file-derived share count within this (EPS prints two decimals; buybacks move a few %)
 
 
-def _share_reference(metrics: dict, period: str) -> float | None:
-    """The share count (profit over EPS, the profit's unit over the EPS) of the exchange file's own EPS nearest in time to ``period``,
-    for quarters only, from consolidated figures of memory. None when no file EPS has a profit beside it."""
+def _share_reference(metrics: dict, period: str) -> tuple[str, float] | None:
+    """The quarter and share count (profit over EPS, the profit's unit over the EPS) of the exchange file's own EPS nearest in time
+    to ``period``, for quarters only, from consolidated figures of memory. None when no file EPS has a profit beside it."""
     from .dossier import XBRL_SOURCE
 
     target = due_date(period)
@@ -270,25 +277,33 @@ def _share_reference(metrics: dict, period: str) -> float | None:
             continue
         if not str(e.get("value_news_id") or e.get("source_news_id") or "").startswith(XBRL_SOURCE):
             continue
-        profit = next((metrics[(n, p)]["value"] for n in ("pat_owners", "pat") if metrics.get((n, p), {}).get("value")), None)
+        profit = same_profit(lambda n, p=p: (metrics.get((n, p)) or {}).get("value"))
         end = due_date(p)
-        if profit and profit > 0 and end and e["value"] > 0 and (best is None or abs((end - target).days) < best[0]):
-            best = (abs((end - target).days), profit / e["value"])
-    return best[1] if best else None
+        if profit and profit[0] > 0 and end and e["value"] > 0 and (best is None or abs((end - target).days) < best[0]):
+            best = (abs((end - target).days), p, profit[0] / e["value"])
+    return (best[1], best[2]) if best else None
 
 
-def misbased_eps(metrics: dict, standalone: dict | None, period: str, value, basis: str | None) -> str | None:
+def misbased_eps(metrics: dict, standalone: dict | None, period: str, value, basis: str | None,
+                 dossier: dict | None = None) -> str | None:
     """Why an AI-read per-share figure stored as CONSOLIDATED is probably the standalone one, else None. It must differ from the
     file-derived share count by more than 3% with the consolidated profit, and match it within 3% with the standalone profit of
-    that quarter. With near-equal profits on both bases (no subsidiaries) both match, so nothing is done."""
+    that quarter. With near-equal profits on both bases (no subsidiaries) both match, so nothing is done; nor when a split,
+    bonus, consolidation, buyback or rights issue is on record between the reference quarter and this one (the share count moved)."""
     if not eps_base_check() or basis != "CONSOLIDATED" or not value or value <= 0 or not period.startswith("Q"):
         return None
-    ref = _share_reference(metrics, period)
-    own = next((metrics[(n, period)]["value"] for n in ("pat_owners", "pat") if metrics.get((n, period), {}).get("value")), None)
-    alone = next((e["value"] for n in ("pat_owners", "pat") for e in (standalone or {}).get("metrics", [])
-                  if e.get("metric") == n and e.get("period") == period and e.get("value")), None)
-    if not (ref and own and alone and own > 0 and alone > 0):
+    found = _share_reference(metrics, period)
+    if not found:
         return None
+    ref_period, ref = found
+    old, new = sorted((ref_period, period), key=lambda p: due_date(p))
+    if share_event(dossier, old, new) is not None:
+        return None
+    stand = {(e.get("metric"), e.get("period")): e.get("value") for e in (standalone or {}).get("metrics", [])}
+    pair = same_profit(lambda n: (metrics.get((n, period)) or {}).get("value"), lambda n: stand.get((n, period)))
+    if pair is None or not (pair[0] > 0 and pair[1] > 0):
+        return None
+    own, alone = pair
 
     def off(profit) -> float:
         return abs(profit / value / ref - 1) * 100

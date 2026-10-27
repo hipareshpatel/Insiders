@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, eps_base_check, memory_call_v2,
+from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -1310,6 +1310,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         items = [("KPI", k.kpi, k.check_in, k.target, None) for k in track.kpis_to_verify]
         items += [("APPROVAL", a, None, None, None) for a in track.pending_approvals]
         items += [("CONCERN", c.concern, None, None, c.management_response) for c in delta.analyst_concerns]
+        # F205: with the switch on, a KPI watch keeps the metric and period the model tagged it with; watch_code reads them
+        # only as a cross-check of its own mapping, never as the source of a verdict
+        tagged = {k.kpi: {"metric": _norm(k.metric), "period": _period(k.period)}
+                  for k in track.kpis_to_verify if card_watch_verdict() and k.metric and k.period}
         for kind, text, check_in, target, response in items:
             wid = "w_" + _hash(filing.scrip_code, kind, _norm(text))
             if wid in watch:
@@ -1323,6 +1327,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                 "check_by": check_by.isoformat() if check_by else None, "created_on": as_of,
                 "source_news_id": news_id, "status": "OPEN", "status_history": [], "lab": text_lab(),
                 **({"response": response.strip()} if response else {}),
+                **(tagged.get(text, {}) if kind == "KPI" else {}),
             }
     for update in delta.watch_updates:
         w = watch.get(update.watch_id)
@@ -1330,9 +1335,17 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # SML: "Approval met: CCI approval ..." with the evidence "CCI approval pending"
+        code = None
+        if card_watch_verdict():   # F205: the target's direction, period and unit decide
+            from .watch_code import NOT_DUE, watch_code_verdict
+            code = watch_code_verdict(w, update.evidence, d["financial_metrics"], news_id, as_of)
+            if code == NOT_DUE and update.status in ("MET", "MISSED"):
+                continue  # a later period's target is not judged by this filing
         status = watch_verdict(w, update.status, update.evidence, as_of)
         if status == "PENDING" and update.status != "PENDING":
             continue  # no news, another item's news, or an earlier quarter's figure: settles nothing yet
+        if code in ("MET", "MISSED") and status in ("MET", "MISSED"):
+            status = code
         w["status_history"] = sorted(w.get("status_history", []) + [{
             "status": status, "evidence": update.evidence, "as_of": as_of, "source_news_id": news_id,
         }], key=lambda h: h["as_of"])

@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_ground_all_fields, card_two_parts, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_ground_all_fields, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -3727,6 +3727,10 @@ class Pipeline:
         # Market data as it stood when the filing came out: the stored daily series (history fill on
         # the laptop), else today's figures, dropped when they are too new for this filing.
         priced = point_in_time(company, filing.filed_at, self._prices, self._buckets) or priced_for(company, filing)
+        watch_cuts: list[str] = []
+        if card_watch_verdict() and out.card is not None:   # F205: a sentence against the code's watch verdict is cut
+            from . import watch_code
+            watch_cuts = watch_code.drop_contradicting(out.card, watch_code.verdicts_for(before, current, out, filing))
         signals = compute_signals(before, current, out, filing, priced) + text_signals(text, event_type)
         if (review or {}).get("status") == "UNRESOLVED" and not checks.only_style:
             # a held card's line stays out of the company's story: Heritage's held Q2FY27 board outcome and its
@@ -3768,7 +3772,8 @@ class Pipeline:
                           "unit_fixes": unit_fixes or None, "change_fixes": change_fixes or None,
                           "quotes_missing": quotes_missing or None, "quotes_dropped": quotes_dropped or None,
                           "quotes_paraphrased": checks.quote_style or None, "out_of_fit": checks.scale or None,
-                          "call_takeaways_unverified": takeaway_notes or None},
+                          "call_takeaways_unverified": takeaway_notes or None,
+                          **({"watch_verdict_cut": watch_cuts} if watch_cuts else {})},
             "review": review,
             "model": result.model_label,
             "pack": result.pack,

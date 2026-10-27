@@ -31,7 +31,7 @@ from . import eps_adjust
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period, results_due
-from .settings import card_guidance_dated
+from .settings import card_guidance_dated, card_watch_verdict
 
 STRAIN_GAP_PP = 15.0      # receivable/inventory growth minus revenue growth, percentage points
 MAX_OVERDUE_SIGNALS = 2
@@ -299,6 +299,10 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
                 continue
+        if card_watch_verdict() and update.status in ("DELIVERED", "DELAYED", "MISSED"):   # F205: two periods of one metric
+            from .watch_code import relative_guidance_verdict
+            if relative_guidance_verdict(g, after.get("financial_metrics", [])) == "MET":
+                update = update.model_copy(update={"status": "DELIVERED"})
         if update.status == "DELIVERED":
             out.append(Signal("PROMISE_DELIVERED", "POSITIVE",
                               f"\"{g['statement']}\" (guided {when}). {update.evidence}".strip(), g["id"]))
@@ -312,9 +316,17 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             continue
         if w["kind"] == "APPROVAL" and update.status == "MET" and not approval_granted(update.evidence):
             continue  # "Approval met" with evidence that it is still pending
+        code = None
+        if card_watch_verdict():   # F205: code reads the target's direction, period and unit
+            from .watch_code import NOT_DUE, watch_code_verdict
+            code = watch_code_verdict(w, update.evidence, after.get("financial_metrics", []), filing.news_id, filing.filed_at)
+            if code == NOT_DUE and update.status in ("MET", "MISSED"):
+                continue  # a verdict claimed for a later period than this filing's is not judged
         status = watch_verdict(w, update.status, update.evidence, filing.filed_at)
         if status == "PENDING":
             continue  # no news, another item's news, or an earlier quarter's figure
+        if code in ("MET", "MISSED"):
+            status = code
         if dated and status in ("MET", "MISSED"):
             why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id)
             if why:
@@ -348,6 +360,16 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         if why:
             out.append(Signal("WATCH_RESOLVED", "INFO", said_on(g, why), g["id"]))
             continue
+        if card_watch_verdict():   # F205: memory's own two figures settle "Q1FY27 revenue to surpass Q4FY26"
+            from .watch_code import relative_guidance_verdict
+            verdict = relative_guidance_verdict(g, after.get("financial_metrics", []))
+            if verdict == "MET":
+                out.append(Signal("PROMISE_DELIVERED", "POSITIVE",
+                                  f"\"{g['statement']}\" (guided {g.get('given_on', '')[:10]}): memory's figures show it met.", g["id"]))
+                continue
+            if verdict == "MISSED":
+                out.append(Signal("GUIDANCE_BREACH", "WARNING", f"Missed: \"{g['statement']}\" (memory's figures).", g["id"]))
+                continue
         out.append(Signal("GUIDANCE_BREACH", "WARNING",
                           f"Deadline passed: \"{g['statement']}\" was due {g['due']}, with no delivery on record.",
                           g["id"]))

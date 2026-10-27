@@ -132,6 +132,8 @@ def parse_target(target: str | None, text: str = "") -> Target | None:
         return None
     # no direction word: a bare figure ("10 lakh tons"); judge() reads it as "at least" for the measures that only grow
     op = _OPS.get(re.sub(r"\s+", " ", hits[0].group(0).lower())) if hits else (">=", False)
+    if re.search(r"[-\u2212]\s*(?:rs\.?|inr|\u20b9)", t, re.I):
+        return None    # a minus before the rupee mark ("at least -Rs 5 Cr") would lose its sign: a loss target gets no verdict
     if not hits and (_ROUGH.search(t) or re.search(r"(?:^|[\s(])[-\u2212]\s*(?:rs\.?|inr|\u20b9)?\s*\d", t, re.I)):
         return None    # "around / about / ~ X" is neither a floor nor a ceiling; a negative bare figure is a loss limit
     rest = t[:hits[0].start()] + " " + t[hits[0].end():] if hits else t

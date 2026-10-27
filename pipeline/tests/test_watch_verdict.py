@@ -426,6 +426,7 @@ def test_c2_a_clause_hanging_on_the_cut_one_takes_the_sentence_with_it():
 def test_a_rough_or_negative_bare_target_gives_no_verdict():
     # review of e23e300: "around Rs 100 Cr" is neither a floor nor a ceiling; "-Rs 50 Cr" is a loss limit
     from bse_intel.watch_code import parse_target
-    for target in ("around Rs 100 Cr", "about ₹100 Cr", "approx. ₹100 Cr", "~₹100 Cr", "roughly 10 lakh tons", "-₹50 Cr"):
+    for target in ("around Rs 100 Cr", "about ₹100 Cr", "approx. ₹100 Cr", "~₹100 Cr", "roughly 10 lakh tons", "-₹50 Cr",
+                   "at least -₹5 Cr", "above -Rs 5 Cr", "at least −₹5 Cr"):
         assert parse_target(target) is None, target
     assert parse_target("10 lakh tons") is not None

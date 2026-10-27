@@ -235,6 +235,7 @@ class XbrlResult:
     memory_extra: list[FinancialMetric] = field(default_factory=list)
     ratio_basis: str | None = None              # STANDALONE when a consolidated bank file's ratios came from it
     fy_end_month: int | None = None             # the company's year end, from DateOfEndOfFinancialYear (3 = March)
+    slip_held: str = ""                         # why a detected unit slip was not corrected (fix_scale, F200): the file's figures are held out
 
     def memory_metrics(self) -> list[FinancialMetric]:
         """What memory stores from this file: the figures a card reads and the memory-only ones (F166)."""
@@ -1155,12 +1156,24 @@ def settle_pbt(result: XbrlResult | None, text: str) -> list[str]:
     return changed
 
 
-def fix_scale(result: XbrlResult | None, history, source: str = "") -> int:
+def fix_scale(result: XbrlResult | None, history, source: str = "", verify=None) -> int:
     """Put a results file tagged in the wrong unit right (scale_slip): every ₹ crore amount, the balance
     sheet's included, times the power of ten found. EPS, per-share and percentage figures are left as
-    they are. Returns the power applied, 0 for none."""
+    they are. Returns the power applied, 0 for none.
+
+    Two sources (owner, 27 Oct 2026, F200): the slip is told from the company's other quarters, and only applied when
+    ``verify(result, metric, corrected_value)`` -> (agrees, why), the filing's PDF text layer (slip_check.PdfCheck),
+    prints the corrected figure. With no ``verify``, or a PDF that disagrees or cannot be read, nothing is multiplied,
+    ``result.slip_held`` says why and the caller keeps the file's figures out of memory."""
     k = scale_slip(result, history) if result else 0
     if not k:
+        return 0
+    metric = next((m for m in _SCALE_REFERENCE if _quarters(result.metrics).get(result.period, {}).get(m)), None)
+    corrected = round(_quarters(result.metrics)[result.period][metric] * 10 ** k, 2)
+    agrees, why = verify(result, metric, corrected) if verify else (False, "no PDF check available")
+    if not agrees:
+        result.slip_held = f"unit slip 10^{k} not confirmed by the filing's PDF ({why})"
+        log.warning("XBRL %s %s: %s; the quarter's figures are held out of memory", source, result.period, result.slip_held)
         return 0
     factor = 10 ** k
     for m in result.metrics:

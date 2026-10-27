@@ -110,6 +110,8 @@ def test_a_quarter_tagged_in_the_wrong_unit_reaches_memory_put_right(monkeypatch
             return url.encode()
 
     monkeypatch.setattr(seed_mod.xbrl_fast_path, "parse", lambda data: files[data.decode()])
+    from bse_intel import slip_check
+    monkeypatch.setattr(slip_check.PdfCheck, "__call__", lambda self, result, metric, corrected: (True, "PDF agrees"))  # F200
     sink, stats = Sink(), SeedStats()
     seed_results(sink, Served(links), "530019", "Jubilant Pharmova", "2024-01-01", None, stats, company={})
 

@@ -537,7 +537,7 @@ def test_a_results_file_tagged_in_the_wrong_unit_is_put_right_and_a_real_fall_is
 
     slipped = _quarter("Q4FY24", 1758.6, -61.8, -3.69, scale=0.1)
     assert xbrl.scale_slip(slipped, history) == 1
-    assert xbrl.fix_scale(slipped, history, "530019") == 1
+    assert xbrl.fix_scale(slipped, history, "530019", verify=lambda r, m, c: (True, "PDF prints it")) == 1
     figures = {m.metric: m.value for m in slipped.metrics}
     assert figures == {"revenue": 1758.6, "pat": -61.8, "eps": -3.69, "ebitda_margin": 14.2}
     assert slipped.balance_sheet.net_worth_cr == 6100.0

@@ -43,7 +43,7 @@ from .adapters import bse as ported
 from .bse import AttachmentError, AttachmentTooLarge, SourceBlockedError, parse_results_archive
 from .nse import FileCapReached
 from .dossier import _norm, keep_concurrent_writes
-from .memory_gaps import has_gap, main_basis, since_for
+from .memory_gaps import has_gap, main_basis, quarter_end, since_for
 from .periods import canonical_period, quarter_from_index, quarter_index
 from .timeutil import now_iso
 
@@ -187,6 +187,14 @@ def needed_quarters(wanted: set[str]) -> set[str]:
             continue
         out.update(quarter_from_index(i) for i in range(index - BEFORE, index + AFTER + 1))
     return out
+
+
+def fill_since(result: dict, needed: set[str]) -> str:
+    """The seed's ``since`` (it keeps only files filed on or after it): early enough for the oldest needed quarter's file, which
+    is filed after its quarter ends. since_for alone reaches about a quarter before the oldest gap, so an old gap's four
+    quarters before it were dropped and the unit and long-year checks went without them (blind review, 27 Oct 2026)."""
+    ends = [end.isoformat() for end in (quarter_end(q) for q in needed) if end is not None]
+    return min([since_for(result), *ends])
 
 
 class _RecordingBse:
@@ -360,10 +368,11 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
         # TODO(batch counter): the shared batch-of-100 download counter hooks in here, before BSE is called for the company
         before = sink.get_dossier(scrip)
         scratch = _Scratch(sink, scrip, before)
-        recorder = _RecordingBse(bse, needed_quarters(wanted))
+        needed = needed_quarters(wanted)
+        recorder = _RecordingBse(bse, needed)
         stats = SeedStats()
         try:
-            seed_results(scratch, recorder, scrip, company.get("company_name") or scrip, since_for(result),
+            seed_results(scratch, recorder, scrip, company.get("company_name") or scrip, fill_since(result, needed),
                          settings.text_cache_dir, stats, company, nse=None, symbol="")
         except FileCapReached:
             # the run's file cap (F213): this company is not finished, so it is not marked handled and nothing is written

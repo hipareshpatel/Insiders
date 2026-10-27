@@ -336,3 +336,12 @@ def test_only_the_missing_quarters_and_what_their_checks_read_are_downloaded():
     assert [link.period for link in recorder.results_xbrl("1")] == ["Q4FY22", "Q1FY23", "Q2FY23", "Q3FY23", "Q4FY23",
                                                                     "Q1FY24"]
     assert recorder.listed == len(periods)
+
+
+def test_an_old_gaps_earlier_quarters_are_not_cut_by_the_seeds_since():
+    """Blind review, 27 Oct 2026: a Q4FY24 gap with Q2FY27 the latest quarter; since_for alone (~100 days before the gap's
+    quarter end) dropped the Q4FY23-Q3FY24 files the unit and long-year checks read."""
+    result = {"missing": ["Q4FY24"], "year_ago": "Q2FY26", "latest": "Q2FY27"}
+    since = bf.fill_since(result, bf.needed_quarters({"Q4FY24"}))
+    assert since == "2023-03-31"   # Q4FY23 ends then; its file comes after, so it is kept
+    assert since <= mg.since_for(result)

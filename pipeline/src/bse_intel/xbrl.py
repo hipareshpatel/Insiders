@@ -1180,10 +1180,12 @@ def _exact_of(exact: dict | None, metric: str, period: str, value: float) -> flo
     return raw if isinstance(raw, (int, float)) and abs(raw - value) <= 0.0051 else value
 
 
-_SHARES_MIN_PAT = 0.001   # crore (₹10,000): below it a profit says nothing about the share count, rounded or not
+_SHARES_MIN_PAT = 0.001   # crore (₹10,000): below it a profit says nothing about the share count, even unrounded
+_SHARES_MIN_PAT_STORED = 0.05   # the same floor for a quarter from history (stored, rounded to 0.01, no unrounded figure): a
+#                                 profit of 0.04 is 25% rounding noise, and the history is the yardstick the file is judged by
 
 
-def _shares(figures: dict[str, float]) -> float | None:
+def _shares(figures: dict[str, float], floor: float = _SHARES_MIN_PAT) -> float | None:
     """The share count a quarter's profit and EPS imply, in crore: EPS is per share and keeps its value
     whatever unit a file's amounts are tagged in, so a file in the wrong unit moves this with them.
 
@@ -1191,7 +1193,7 @@ def _shares(figures: dict[str, float]) -> float | None:
     statement prints ₹21.70 Cr (IMPAL Q1FY27, 28 Oct 2026), and a floor of ₹0.5 Cr read that quarter's share count as unknown,
     so the slip was never confirmed by the share count and the file went into memory at a hundredth of its value."""
     pat, eps = figures.get("pat"), figures.get("eps")
-    if pat and eps and abs(eps) >= 0.5 and abs(pat) >= _SHARES_MIN_PAT:
+    if pat and eps and abs(eps) >= 0.5 and abs(pat) >= floor:
         return abs(pat / eps)
     return None
 
@@ -1228,7 +1230,7 @@ def scale_slip(result: XbrlResult, history) -> int:
     # grew from 2 to 40 crore a quarter while its share count rose tenfold (split), which looked like a slip in its
     # Q2FY24 and Q4FY24 files and put memory at 10x (Tijori referee, 26 Oct 2026, F196).
     by_revenue = power(own[metric], [f.get(metric) for f in others])
-    by_shares = power(_shares(own), [_shares(f) for f in others])
+    by_shares = power(_shares(own), [_shares(f, _SHARES_MIN_PAT_STORED) for f in others])
     slip = by_revenue if by_revenue is not None and by_revenue == by_shares else 0
     index = quarter_index(result.period)
     by_quarter = _quarters(history)
@@ -1316,6 +1318,7 @@ def fix_scale(result: XbrlResult | None, history, source: str = "", verify=None)
                 base = raw if isinstance(raw, (int, float)) and abs(raw - value) <= 0.0051 else value
                 setattr(sheet, name, round(base * factor, 2))
     result.exact_values = {key: round(v * factor, 6) for key, v in result.exact_values.items()}
+    result.balance_exact = result.balance_prior_exact = None   # used: nothing can read the unscaled copies later
     log.warning("XBRL %s %s: amounts tagged at 10^%d of their value (revenue and the share count its profit "
                 "and EPS imply both off by it against the company's other quarters); multiplied by %g",
                 source, result.period, -k, factor)

@@ -81,6 +81,19 @@ def test_two_figures_in_different_columns_are_never_joined():
         assert one(pdf, exp("total_expenses", 10246.0, "Q2FY27", "CONSOLIDATED")).status != "found_unique", gap
 
 
+def test_a_lone_line_number_is_not_joined_to_the_figure_after_it():
+    """A line number ("2.", "(a)", "iv") with no label word before it, then a figure: "2." "123" is two things, not 2.123."""
+    row = [xk.Word(20, 0, 26, 8, "2."), xk.Word(27, 0, 40, 8, "123")]
+    assert [w.text for w in xk._mend_numbers(row)] == ["2.", "123"]
+    figs, rest = xk.figures_in(row)
+    assert [f.num.value for f in figs] == [123.0] and [w.text for w in rest] == ["2."]
+    for numbering in ("(a)", "iv", "(2)", "ii."):
+        assert [w.text for w in xk._mend_numbers([xk.Word(20, 0, 28, 8, numbering), xk.Word(29, 0, 42, 8, "123")])] \
+            == [numbering, "123"], numbering
+    labelled = [xk.Word(0, 0, 25, 8, "Total"), xk.Word(30, 0, 36, 8, "2."), xk.Word(37, 0, 50, 8, "123")]
+    assert [w.text for w in xk._mend_numbers(labelled)] == ["Total", "2.123"], "after a label word, a cut decimal is still mended"
+
+
 def test_the_mender_joins_only_what_is_a_number_as_printed():
     words = [xk.Word(0, 0, 10, 8, "10"), xk.Word(13, 0, 28, 8, "246"), xk.Word(100, 0, 110, 8, "7"), xk.Word(112, 0, 130, 8, "86")]
     joined = xk._mend_numbers(words)

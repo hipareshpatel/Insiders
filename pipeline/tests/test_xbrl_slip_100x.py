@@ -111,6 +111,26 @@ def test_a_real_fall_with_the_same_shares_is_not_a_slip():
     assert xbrl.scale_slip(same_shares, _history()) == 0, "profit and EPS say the unit is right"
 
 
+def test_history_quarters_with_a_profit_of_a_few_paise_do_not_move_the_yardstick():
+    """History is stored and rounded to 0.01 with no unrounded figure: a profit of 0.04 Cr is 25% rounding noise in the share count
+    it implies. The file being checked keeps the 0.001 floor (its figures are unrounded); history needs 0.05."""
+    noisy = {"Q1FY25", "Q2FY25", "Q3FY25", "Q4FY25", "Q1FY26"}
+    history = [m for m in _history() if m.period not in noisy or m.metric == "revenue"]
+    history += [FinancialMetric(metric=name, period=q, value=value, unit=unit)
+                for q in noisy for name, value, unit in (("pat", 0.04, "INR_CR"), ("eps", 0.8, "INR"))]
+    assert xbrl._shares({"pat": 0.04, "eps": 0.8}) is not None, "under the file's own floor this would count"
+    assert xbrl._shares({"pat": 0.04, "eps": 0.8}, xbrl._SHARES_MIN_PAT_STORED) is None
+    assert xbrl.scale_slip(_impal(), history) == 2, "the five noisy quarters are left out; the three real ones decide"
+    assert xbrl._shares({"pat": 0.06, "eps": 0.8}, xbrl._SHARES_MIN_PAT_STORED) == 0.075
+
+
+def test_after_a_correction_no_unscaled_copy_is_left_to_read():
+    result = _impal()
+    assert xbrl.fix_scale(result, _history(), "590065", verify=_printed_revenue) == 2
+    assert result.balance_exact is None and result.balance_prior_exact is None
+    assert result.exact_values[("revenue", "Q1FY27")] == 234.29, "the unrounded figures moved with the rest"
+
+
 def test_a_file_in_the_wrong_unit_whose_neighbour_is_in_line_is_left_alone():
     result = _impal()
     neighbour = [FinancialMetric(metric="revenue", period="Q4FY26", value=2.4), FinancialMetric(metric="revenue", period="Q4FY25", value=2.5)]

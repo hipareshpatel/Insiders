@@ -258,6 +258,7 @@ _CUT_GROUP = re.compile(rf"^[{_NEG}]?\d{{1,3}}(?:,\d{{2,3}})*,\d{{1,2}}$")      
 _CUT_TAIL = re.compile(r"^\d{1,2}(?:\.\d+)?\)?$")                                # "4.66": the rest of that group, then the decimals
 _HEAD_DOT = re.compile(rf"^[{_NEG}]?[\d,]*\d\.?$")                               # "(1", "41", "(0.": a number ending where the point is
 _TAIL_DOT = re.compile(r"^\.?\d+\)?$")                                         # ".73)", "12", "13)": the decimals
+_NUMBERING = re.compile(r"^\(?(?:\d{1,2}\.|[A-Za-z]|[ivxIVX]{1,4})\)?\.?$|^\(\d{1,2}\)$")   # "2.", "(a)", "iv", "(2)": a line number
 _MEND_GAP = 0.5      # the words' gap, in their heights: a space is 0.3, a figure's neighbour column is far more
 
 
@@ -273,7 +274,11 @@ def _mend_numbers(ordered: list[Word]) -> list[Word]:
         a = ordered[i]
         b = ordered[i + 1] if i + 1 < len(ordered) else None
         joined = None
-        if b is not None and 0 <= b.x0 - a.x1 <= _MEND_GAP * max(a.h, b.h) and abs(a.yc - b.yc) <= 0.5 * max(a.h, b.h):
+        # a lone line number ("2." "(a)" "iv") with no label word before it, then a figure: "2." "123" is a line number and a
+        # figure, not 2.123
+        numbering = bool(_NUMBERING.match(a.text)) and not any(re.search(r"[A-Za-z]{3}", w.text) for w in ordered[:i])
+        if b is not None and not numbering and 0 <= b.x0 - a.x1 <= _MEND_GAP * max(a.h, b.h) \
+                and abs(a.yc - b.yc) <= 0.5 * max(a.h, b.h):
             if _HEAD_DIGITS.match(a.text) and _GROUP_TAIL.match(b.text):
                 joined = a.text + ("" if b.text.startswith(",") else ",") + b.text
             elif _CUT_GROUP.match(a.text) and _CUT_TAIL.match(b.text):

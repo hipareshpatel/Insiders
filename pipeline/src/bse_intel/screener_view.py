@@ -31,7 +31,7 @@ Corporate (Ind AS) profit and loss, crore (evidence: docs/audit/screener-rows-20
   "profit from associates is always other ordinary income") are in the note, and the note says when the two differ;
 - Interest = FinanceCosts + the financial-services finance-cost row ("Finance cost of financial services business..."; an annual
   report files that breakdown only as a text block, so for a year read from it the row is read from the Q4 results file);
-- Depreciation, Profit before tax = ProfitBeforeTax, Tax % = TaxExpense / PBT, Net Profit = ProfitLossForPeriod (the website's Net
+- Depreciation, Profit before tax = ProfitBeforeTax + associates' share + regulatory deferral movement, Tax % = TaxExpense / PBT, Net Profit = ProfitLossForPeriod (the website's Net
   Profit is the whole profit). Named rows not on the page: Tax, Net Profit (owners) (= profit for EPS), Minority share, Associates'
   share, Exceptional items, Exceptional items AT (= exceptional - tax x exceptional / PBT; the exceptional itself when that tax is
   larger than it), Profit for PE (= owners' profit - exceptional AT).
@@ -104,6 +104,7 @@ LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
 FIN_SERVICES_ROW = r"^\s*finance costs? of (a |the )?financial[- ]services"
 LOSS_ON_DISPOSAL = "LossOnDisposalDiscardDemolishmentAndDestructionOfDepreciablePropertyPlantAndEquipment"
 ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
 CORPORATE, BANK, NBFC, INSURER = "corporate", "bank", "nbfc", "insurer"
 
@@ -241,7 +242,16 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     out["Operating Profit"] = Row(op, "Sales - Expenses" + src)
     out["OPM %"] = Row(_pct(op, sales), "Operating Profit / Sales" + src)
     oi_parts, exc, share = r.cr("OtherIncome"), r.cr("ExceptionalItemsBeforeTax"), r.cr(ASSOCIATES)
-    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) - loss
+    regulatory = r.cr(REGULATORY_DEFERRAL)
+    # screener's PBT holds the associates' share ("profit from associates is always other ordinary income") and a utility's
+    # net movement in regulatory deferral balances, both of which SEBI's results format puts below the filed PBT (measured
+    # 28 Oct 2026 on the owner's screener Excel files: 39 of 55 quarters with associates, e.g. Coal India Q4FY26 14,510.7 +
+    # 116.1 = 14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; Power Grid Q1FY26 4,330.2 + 212.8 - 44.4 = 4,498.57).
+    # Reliance is the one company seen the other way (screener follows its own layout, associates after tax): it stays apart.
+    filed_pbt = pbt
+    if pbt is not None:
+        pbt = pbt + (share or 0.0) + (regulatory or 0.0)
+    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + (regulatory or 0.0) - loss
     if None not in (pbt, dep, interest, op):
         oi = pbt + dep + interest - op
         note = "PBT + Depreciation + Interest - Operating Profit"
@@ -252,9 +262,13 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
         out["Other Income"] = Row(oi, note + src)
     else:
         out["Other Income"] = Row(None, "missing a line of the identity (PBT, Depreciation, Interest, Operating Profit)" + src)
-    out["Profit before tax"] = Row(pbt, ("ProfitBeforeTax" if pbt is not None else "missing ProfitBeforeTax") + src)
+    out["Profit before tax"] = Row(pbt, ("ProfitBeforeTax" + (" + associates' share" if share else "")
+                                         + (" + regulatory deferral movement" if regulatory else "") if pbt is not None
+                                         else "missing ProfitBeforeTax") + src)
+    if filed_pbt is not None and pbt != filed_pbt:
+        out["PBT as filed"] = Row(filed_pbt, "ProfitBeforeTax" + src)
     out["Tax"] = Row(tax, "TaxExpense" + src)
-    out["Tax %"] = Row(_pct(tax, pbt), "TaxExpense / ProfitBeforeTax" + src)
+    out["Tax %"] = Row(_pct(tax, pbt), "TaxExpense / Profit before tax" + src)
     whole, owners = r.cr("ProfitLossForPeriod"), r.cr("ProfitOrLossAttributableToOwnersOfParent")
     out["Net Profit"] = Row(whole, ("ProfitLossForPeriod (whole profit)" if whole is not None else "missing ProfitLossForPeriod") + src
                             + (f"; owners' share {_fmt(owners)}" if owners is not None else ""))
@@ -384,9 +398,13 @@ def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
                               " + ".join(fixed_names + ([rou_note] if rou_note else [])) + src if fixed_names or rou
                               else "missing PropertyPlantAndEquipment" + src)
     cwip, cwip_names = total("CapitalWorkInProgress", "IntangibleAssetsUnderDevelopment")
-    out["CWIP"] = Row(cwip, (" + ".join(cwip_names) or "neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0") + src)
+    # a 0 only on a balance sheet: a results file without one (the Q4 files of FY21-FY23 often) has no CWIP to show
+    out["CWIP"] = Row(cwip if cwip_names or has_sheet else None,
+                      (" + ".join(cwip_names) or ("neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0" if has_sheet
+                                                  else "no balance sheet in the file")) + src)
     inv, inv_names = total("NoncurrentInvestments", "CurrentInvestments", "InvestmentsAccountedForUsingEquityMethod")
-    out["Investments"] = Row(inv, (" + ".join(inv_names) or "no investments element: 0") + src)
+    out["Investments"] = Row(inv if inv_names or has_sheet else None,
+                             (" + ".join(inv_names) or ("no investments element: 0" if has_sheet else "no balance sheet in the file")) + src)
     assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
     offset = min(dta, dtl) if dta is not None and dtl is not None else 0.0
     tot = None if assets is None else assets - offset

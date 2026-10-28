@@ -93,11 +93,22 @@ def test_corporate_profit_and_loss_by_the_fixed_recipes():
     assert got["Exceptional items AT"] == round(-10 - tax_on, 2) and got["Profit for PE"] == round(190 - (-10 - tax_on), 2)
 
 
+def test_associates_and_a_utilitys_regulatory_deferral_movement_are_in_pbt_and_other_income():
+    """SEBI's results format puts both below the filed PBT; screener's PBT holds them (Coal India Q4FY26 14,510.7 + 116.1 =
+    14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; measured 28 Oct 2026 on the owner's Excel files)."""
+    extra = [(sv.ASSOCIATES, "D2026", 9.0), (sv.REGULATORY_DEFERRAL, "D2026", 6.0)]
+    rows = sv.corporate_pl(sv._Reader(annual_facts(extra), end=END, months=12))
+    assert rows["Profit before tax"].value == pytest.approx(270 + 9 + 6) and rows["PBT as filed"].value == pytest.approx(270.0)
+    assert rows["Other Income"].value == pytest.approx(15.0 + 9 + 6) and "differ" not in rows["Other Income"].note
+    assert rows["Tax %"].value == pytest.approx(100 * 70 / 285)
+
+
 def test_the_other_income_note_says_when_the_parts_and_the_identity_differ():
-    share = [(sv.ASSOCIATES, "D2026", 9.0)]   # filed below PBT here: the identity leaves it out, the parts hold it
-    rows = sv.corporate_pl(sv._Reader(annual_facts(share), end=END, months=12))
-    assert rows["Other Income"].value == pytest.approx(15.0)
-    assert "parts" in rows["Other Income"].note and "differ by -9.00" in rows["Other Income"].note
+    stray = [("ProfitBeforeTax", "D2026", 273.0)]   # a PBT 3 above what its lines add up to
+    facts = xf.Facts(doc([x for x in ANNUAL if x[0] != "ProfitBeforeTax"] + stray))
+    rows = sv.corporate_pl(sv._Reader(facts, end=END, months=12))
+    assert rows["Other Income"].value == pytest.approx(18.0)
+    assert "parts" in rows["Other Income"].note and "differ by 3.00" in rows["Other Income"].note
 
 
 def test_sales_tax_and_discount_rows_of_the_other_expenses_breakdown_leave_sales_and_expenses():
@@ -341,3 +352,10 @@ def test_one_company_failing_is_that_company_skipped_not_the_run_lost():
 
 def test_the_newest_results_file_decides_the_family_by_quarter_order_not_text():
     assert sorted(["Q4FY26", "Q1FY27"], key=lambda p: sv.quarter_index(p), reverse=True)[0] == "Q1FY27"
+
+
+def test_a_file_without_a_balance_sheet_has_no_cwip_or_investments_not_zero():
+    facts = xf.Facts(doc([("RevenueFromOperations", "D2026", 5.0)]))
+    got = sv.corporate_bs(sv._Reader(facts, instant=END))
+    assert got["CWIP"].value is None and got["Investments"].value is None and got["Borrowings"].value is None
+    assert "no balance sheet" in got["CWIP"].note

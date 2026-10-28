@@ -136,8 +136,12 @@ judge until the reader measures better.
    and 29 of 50 filings give no answer. Re-scored alone, twice, on the code with #199 (28 Oct, 02:40 IST): 45 / 0 / 292 both
    times, identical on all 337 figures, so the score is repeatable; #199 added 5 right (SRF, VISL, HUHTAMAKI revenue; TBZ
    revenue and profit) and no wrong. The earlier 40-then-45 was the #199 code arriving between two runs.
-6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Today `bse_gap_fill.KNOWN_WRONG` only
-   stops a future fill, and nothing removes a wrong figure already written.
+6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Built 28 Oct, not merged or run (F223):
+   `known_wrong.py` (the list, with evidence; every memory writer skips a listed figure) and the Maintenance command
+   `memory-drop-known-wrong` (dry run by default; a backup first; `restore` undoes it). The plan for the 35 proven-wrong
+   figures and its exact runs is `docs/audit/known-wrong-2026-10-28.md`: 4 are the exchange's own file (list and drop), 31
+   are expected to be put right by re-reading the company (`seed-memory --scrips`, one company a run, 50 files at most),
+   to be confirmed by the re-read itself. Before the first run: merge, then the dry run.
 7. **The docs clean-up the owner planned for later** (one doc per purpose, the one-off tools out of the live code); not
    started.
 

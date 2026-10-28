@@ -1797,6 +1797,26 @@ def cmd_restore(args, settings, sink) -> int:
     return 0
 
 
+def cmd_memory_drop_known_wrong(args, settings, sink) -> int:
+    """Take the figures on the known-wrong list (known_wrong.py, F223) out of the stored dossiers: a dry run by default,
+    --apply backs each dossier up (backup.RunBackup, before and after) and then writes it. No AI, no exchange."""
+    from . import memory_drop
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+    outcome = memory_drop.run(sink, scrips, args.apply)
+    print(memory_drop.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["unknown"]:   # a name that is not on the list is a typo: reported, and the named ones still ran
+        print("memory-drop-known-wrong: not on the list: " + ", ".join(outcome["unknown"]), file=sys.stderr)
+        return 2
+    if outcome["error"]:
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-drop-known-wrong-<time>/, then removes the listed figures)")
+    return 0
+
+
 def cmd_missed_jobs(args, settings, sink) -> int:
     """Print the daily workflows GitHub did not start (watchdog.py), one per line, for pipeline.yml to start; with
     --started W, record that W was dispatched (after `gh workflow run` succeeded)."""
@@ -2115,6 +2135,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--force", action="store_true", help="also put back what was changed since the job (and restore a backup with no after-state: a requeue-failed --ids snapshot)")
     p.add_argument("--list", action="store_true", help="list the backups and exit")
     p.set_defaults(func=cmd_restore)
+    p = sub.add_parser("memory-drop-known-wrong", help="take the figures on the known-wrong list (known_wrong.py) out of memory: dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these listed companies (scrip codes, comma separated); default every listed company")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_drop_known_wrong)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")

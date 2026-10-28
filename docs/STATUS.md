@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 15:50 IST.
+Last updated: 28 Oct 2026, 15:17 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -68,7 +68,7 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
-**Afternoon of 28 Oct (15:50 IST):**
+**Afternoon of 28 Oct (15:17 IST):**
 - **The bulk NSE download (owner, 28 Oct, ~15:00 IST: "start downloading all the files from NSE... Don't miss annual
   reports").**
   - The owner chose XBRL now, PDFs on demand. A trial downloads the PDFs it needs (measured 28 Oct: 525 files in 349 s
@@ -81,7 +81,7 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
     - results file: 9 KB gzipped on average;
     - annual-report file: 85 KB median and 240 KB mean gzipped;
     - their facts: about 75 KB a file.
-  - Expected total: about 2 to 3.5 GB of the 5 GB R2 budget. That corrects the "about 1 GB" told to the owner at 15:10 IST,
+  - Expected total: about 2 to 3.5 GB of the 5 GB R2 budget. That corrects the "about 1 GB" told to the owner at 15:05 IST,
     which left out the annual reports' size. The raw XBRL store stops taking new files at its 2 GB cap; the facts are
     still saved past it.
   - Why a new path: today's `xbrl-facts --download` fetches only the files memory recorded, and memory misses whole

@@ -4,6 +4,11 @@
    "as_of": "2023-05-29T18:00:00+05:30",
    "cash_cr": 147.83,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -147.83,
    "net_worth_cr": 605.81,
    "period": "Q4FY23",
@@ -13,6 +18,11 @@
    "as_of": "2023-11-16T18:00:00+05:30",
    "cash_cr": 205.03,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -205.03,
    "net_worth_cr": 622.57,
    "period": "Q2FY24",
@@ -22,6 +32,11 @@
    "as_of": "2024-06-11T18:00:00+05:30",
    "cash_cr": 119.06,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -119.06,
    "net_worth_cr": 581.45,
    "period": "Q4FY24",
@@ -31,6 +46,11 @@
    "as_of": "2024-11-05T18:00:00+05:30",
    "cash_cr": 193.35,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -193.35,
    "net_worth_cr": 587.55,
    "period": "Q2FY25",
@@ -40,6 +60,11 @@
    "as_of": "2025-06-12T18:00:00+05:30",
    "cash_cr": 189.95,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -189.95,
    "net_worth_cr": 602.95,
    "period": "Q4FY25",
@@ -49,6 +74,11 @@
    "as_of": "2025-11-06T18:00:00+05:30",
    "cash_cr": 172.44,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -172.44,
    "net_worth_cr": 574.77,
    "period": "Q2FY26",
@@ -58,6 +88,11 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "cash_cr": 231.34,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results"
+   },
    "net_debt_cr": -231.34,
    "net_worth_cr": 606.19,
    "period": "Q4FY26",
@@ -67,6 +102,11 @@
    "as_of": "2026-07-17T17:57:30+05:30",
    "cash_cr": 231.34,
    "gross_debt_cr": 0.0,
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "net_debt_cr": -231.34,
    "net_worth_cr": 606.19,
    "period": "Mar-2026",
@@ -74,6 +114,11 @@
   },
   {
    "as_of": "2026-08-12T17:27:42+05:30",
+   "lab": {
+    "at": "2026-08-12T17:27:42+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "period": "Jun-2026",
    "source_news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816"
   }
@@ -112,6 +157,12 @@
  "financial_metrics": [
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -122,6 +173,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -132,6 +189,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -142,6 +205,19 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:9MFY23",
+     "finance_cost:9MFY23",
+     "depreciation:9MFY23",
+     "other_income:9MFY23",
+     "exceptional_items:9MFY23"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -152,6 +228,16 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:9MFY23",
+     "revenue:9MFY23"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -162,6 +248,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -172,6 +264,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -182,6 +280,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -192,6 +296,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -202,6 +312,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -212,6 +328,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -222,6 +344,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -232,6 +360,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -242,6 +376,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -252,6 +392,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -262,6 +408,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -272,6 +424,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -282,6 +440,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -292,6 +456,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -302,6 +472,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -312,6 +488,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -322,6 +504,12 @@
   },
   {
    "as_of": "2023-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2023-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "9MFY23",
    "qoq_pct": null,
@@ -332,6 +520,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "FY23",
    "qoq_pct": null,
@@ -342,6 +536,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "FY23",
    "qoq_pct": null,
@@ -352,6 +552,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "FY23",
    "qoq_pct": null,
@@ -362,6 +568,19 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:FY23",
+     "finance_cost:FY23",
+     "depreciation:FY23",
+     "other_income:FY23",
+     "exceptional_items:FY23"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "FY23",
    "qoq_pct": null,
@@ -372,6 +591,16 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:FY23",
+     "revenue:FY23"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "FY23",
    "qoq_pct": null,
@@ -382,6 +611,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "FY23",
    "qoq_pct": null,
@@ -392,6 +627,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "FY23",
    "qoq_pct": null,
@@ -402,6 +643,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "FY23",
    "qoq_pct": null,
@@ -412,6 +659,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "FY23",
    "qoq_pct": null,
@@ -422,6 +675,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "FY23",
    "qoq_pct": null,
@@ -432,6 +691,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "FY23",
    "qoq_pct": null,
@@ -442,6 +707,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "FY23",
    "qoq_pct": null,
@@ -452,6 +723,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "FY23",
    "qoq_pct": null,
@@ -462,6 +739,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "FY23",
    "qoq_pct": null,
@@ -472,6 +755,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "FY23",
    "qoq_pct": null,
@@ -482,6 +771,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "FY23",
    "qoq_pct": null,
@@ -492,6 +787,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "FY23",
    "qoq_pct": null,
@@ -502,6 +803,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "FY23",
    "qoq_pct": null,
@@ -512,6 +819,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "FY23",
    "qoq_pct": null,
@@ -522,6 +835,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "FY23",
    "qoq_pct": null,
@@ -532,6 +851,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "FY23",
    "qoq_pct": null,
@@ -542,6 +867,12 @@
   },
   {
    "as_of": "2023-05-29T18:00:00+05:30",
+   "lab": {
+    "at": "2023-05-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "FY23",
    "qoq_pct": null,
@@ -552,6 +883,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -562,6 +899,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -572,6 +915,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -582,6 +931,19 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q1FY24",
+     "finance_cost:Q1FY24",
+     "depreciation:Q1FY24",
+     "other_income:Q1FY24",
+     "exceptional_items:Q1FY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -592,6 +954,16 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY24",
+     "revenue:Q1FY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -602,6 +974,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -612,6 +990,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -622,6 +1006,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -632,6 +1022,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -642,6 +1038,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -652,6 +1054,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -662,6 +1070,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -672,6 +1086,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -682,6 +1102,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -692,6 +1118,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -702,6 +1134,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -712,6 +1150,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -722,6 +1166,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -732,6 +1182,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -742,6 +1198,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -752,6 +1214,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -762,6 +1230,12 @@
   },
   {
    "as_of": "2023-08-02T18:00:00+05:30",
+   "lab": {
+    "at": "2023-08-02T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q1FY24",
    "qoq_pct": null,
@@ -772,6 +1246,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -782,6 +1262,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -792,6 +1278,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -802,6 +1294,19 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q2FY24",
+     "finance_cost:Q2FY24",
+     "depreciation:Q2FY24",
+     "other_income:Q2FY24",
+     "exceptional_items:Q2FY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -812,6 +1317,16 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY24",
+     "revenue:Q2FY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -822,6 +1337,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -832,6 +1353,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -842,6 +1369,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -852,6 +1385,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -862,6 +1401,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -872,6 +1417,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -882,6 +1433,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -892,6 +1449,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -902,6 +1465,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -912,6 +1481,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -922,6 +1497,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -932,6 +1513,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -942,6 +1529,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -952,6 +1545,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -962,6 +1561,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -972,6 +1577,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -982,6 +1593,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q2FY24",
    "qoq_pct": null,
@@ -992,6 +1609,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1002,6 +1625,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1012,6 +1641,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1022,6 +1657,19 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:H1FY24",
+     "finance_cost:H1FY24",
+     "depreciation:H1FY24",
+     "other_income:H1FY24",
+     "exceptional_items:H1FY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1032,6 +1680,16 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY24",
+     "revenue:H1FY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1042,6 +1700,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1052,6 +1716,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1062,6 +1732,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1072,6 +1748,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1082,6 +1764,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1092,6 +1780,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1102,6 +1796,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1112,6 +1812,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1122,6 +1828,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1132,6 +1844,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1142,6 +1860,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1152,6 +1876,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1162,6 +1892,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1172,6 +1908,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1182,6 +1924,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1192,6 +1940,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1202,6 +1956,12 @@
   },
   {
    "as_of": "2023-11-16T18:00:00+05:30",
+   "lab": {
+    "at": "2023-11-16T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "H1FY24",
    "qoq_pct": null,
@@ -1212,6 +1972,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1222,6 +1988,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1232,6 +2004,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1242,6 +2020,19 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:9MFY24",
+     "finance_cost:9MFY24",
+     "depreciation:9MFY24",
+     "other_income:9MFY24",
+     "exceptional_items:9MFY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1252,6 +2043,16 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:9MFY24",
+     "revenue:9MFY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1262,6 +2063,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1272,6 +2079,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1282,6 +2095,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1292,6 +2111,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1302,6 +2127,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1312,6 +2143,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1322,6 +2159,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1332,6 +2175,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1342,6 +2191,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1352,6 +2207,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1362,6 +2223,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1372,6 +2239,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1382,6 +2255,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1392,6 +2271,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1402,6 +2287,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1412,6 +2303,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1422,6 +2319,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "9MFY24",
    "qoq_pct": null,
@@ -1432,6 +2335,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1442,6 +2351,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1452,6 +2367,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1462,6 +2383,19 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q3FY24",
+     "finance_cost:Q3FY24",
+     "depreciation:Q3FY24",
+     "other_income:Q3FY24",
+     "exceptional_items:Q3FY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1472,6 +2406,16 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q3FY24",
+     "revenue:Q3FY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1482,6 +2426,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1492,6 +2442,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1502,6 +2458,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1512,6 +2474,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1522,6 +2490,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1532,6 +2506,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1542,6 +2522,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1552,6 +2538,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1562,6 +2554,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1572,6 +2570,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1582,6 +2586,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1592,6 +2602,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1602,6 +2618,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1612,6 +2634,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1622,6 +2650,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1632,6 +2666,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1642,6 +2682,12 @@
   },
   {
    "as_of": "2024-02-17T18:00:00+05:30",
+   "lab": {
+    "at": "2024-02-17T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q3FY24",
    "qoq_pct": null,
@@ -1652,6 +2698,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "FY24",
    "qoq_pct": null,
@@ -1662,6 +2714,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "FY24",
    "qoq_pct": null,
@@ -1672,6 +2730,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "FY24",
    "qoq_pct": null,
@@ -1682,6 +2746,19 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:FY24",
+     "finance_cost:FY24",
+     "depreciation:FY24",
+     "other_income:FY24",
+     "exceptional_items:FY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "FY24",
    "qoq_pct": null,
@@ -1692,6 +2769,16 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:FY24",
+     "revenue:FY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "FY24",
    "qoq_pct": null,
@@ -1702,6 +2789,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "FY24",
    "qoq_pct": null,
@@ -1712,6 +2805,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "FY24",
    "qoq_pct": null,
@@ -1722,6 +2821,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "FY24",
    "qoq_pct": null,
@@ -1732,6 +2837,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "FY24",
    "qoq_pct": null,
@@ -1742,6 +2853,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "FY24",
    "qoq_pct": null,
@@ -1752,6 +2869,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "FY24",
    "qoq_pct": null,
@@ -1762,6 +2885,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "FY24",
    "qoq_pct": null,
@@ -1772,6 +2901,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "FY24",
    "qoq_pct": null,
@@ -1782,6 +2917,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "FY24",
    "qoq_pct": null,
@@ -1792,6 +2933,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "FY24",
    "qoq_pct": null,
@@ -1802,6 +2949,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "FY24",
    "qoq_pct": null,
@@ -1812,6 +2965,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "FY24",
    "qoq_pct": null,
@@ -1822,6 +2981,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "FY24",
    "qoq_pct": null,
@@ -1832,6 +2997,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "FY24",
    "qoq_pct": null,
@@ -1842,6 +3013,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "FY24",
    "qoq_pct": null,
@@ -1852,6 +3029,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "FY24",
    "qoq_pct": null,
@@ -1862,6 +3045,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "FY24",
    "qoq_pct": null,
@@ -1872,6 +3061,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1882,6 +3077,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1892,6 +3093,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1902,6 +3109,19 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q4FY24",
+     "finance_cost:Q4FY24",
+     "depreciation:Q4FY24",
+     "other_income:Q4FY24",
+     "exceptional_items:Q4FY24"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1912,6 +3132,16 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q4FY24",
+     "revenue:Q4FY24"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1922,6 +3152,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1932,6 +3168,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1942,6 +3184,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1952,6 +3200,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1962,6 +3216,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1972,6 +3232,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1982,6 +3248,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -1992,6 +3264,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2002,6 +3280,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2012,6 +3296,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2022,6 +3312,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2032,6 +3328,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2042,6 +3344,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2052,6 +3360,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2062,6 +3376,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2072,6 +3392,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2082,6 +3408,12 @@
   },
   {
    "as_of": "2024-06-11T18:00:00+05:30",
+   "lab": {
+    "at": "2024-06-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q4FY24",
    "qoq_pct": null,
@@ -2092,6 +3424,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2102,6 +3440,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2112,6 +3456,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2122,6 +3472,19 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q1FY25",
+     "finance_cost:Q1FY25",
+     "depreciation:Q1FY25",
+     "other_income:Q1FY25",
+     "exceptional_items:Q1FY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2132,6 +3495,16 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY25",
+     "revenue:Q1FY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2142,6 +3515,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2152,6 +3531,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2162,6 +3547,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2172,6 +3563,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2182,6 +3579,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2192,6 +3595,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2202,6 +3611,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2212,6 +3627,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2222,6 +3643,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2232,6 +3659,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2242,6 +3675,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2252,6 +3691,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2262,6 +3707,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2272,6 +3723,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2282,6 +3739,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2292,6 +3755,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2302,6 +3771,12 @@
   },
   {
    "as_of": "2024-08-29T18:00:00+05:30",
+   "lab": {
+    "at": "2024-08-29T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q1FY25",
    "qoq_pct": null,
@@ -2312,6 +3787,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2322,6 +3803,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2332,6 +3819,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2342,6 +3835,19 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q2FY25",
+     "finance_cost:Q2FY25",
+     "depreciation:Q2FY25",
+     "other_income:Q2FY25",
+     "exceptional_items:Q2FY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2352,6 +3858,16 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY25",
+     "revenue:Q2FY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2362,6 +3878,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2372,6 +3894,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2382,6 +3910,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2392,6 +3926,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2402,6 +3942,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2412,6 +3958,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2422,6 +3974,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2432,6 +3990,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2442,6 +4006,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2452,6 +4022,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2462,6 +4038,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2472,6 +4054,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2482,6 +4070,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2492,6 +4086,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2502,6 +4102,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2512,6 +4118,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2522,6 +4134,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -2532,6 +4150,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2542,6 +4166,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2552,6 +4182,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2562,6 +4198,19 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:H1FY25",
+     "finance_cost:H1FY25",
+     "depreciation:H1FY25",
+     "other_income:H1FY25",
+     "exceptional_items:H1FY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2572,6 +4221,16 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY25",
+     "revenue:H1FY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2582,6 +4241,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2592,6 +4257,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2602,6 +4273,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2612,6 +4289,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2622,6 +4305,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2632,6 +4321,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2642,6 +4337,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2652,6 +4353,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2662,6 +4369,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2672,6 +4385,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2682,6 +4401,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2692,6 +4417,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2702,6 +4433,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2712,6 +4449,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2722,6 +4465,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2732,6 +4481,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2742,6 +4497,12 @@
   },
   {
    "as_of": "2024-11-05T18:00:00+05:30",
+   "lab": {
+    "at": "2024-11-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -2752,6 +4513,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2762,6 +4529,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2772,6 +4545,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2782,6 +4561,19 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:9MFY25",
+     "finance_cost:9MFY25",
+     "depreciation:9MFY25",
+     "other_income:9MFY25",
+     "exceptional_items:9MFY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2792,6 +4584,16 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:9MFY25",
+     "revenue:9MFY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2802,6 +4604,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2812,6 +4620,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2822,6 +4636,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2832,6 +4652,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2842,6 +4668,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2852,6 +4684,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2862,6 +4700,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2872,6 +4716,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2882,6 +4732,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2892,6 +4748,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2902,6 +4764,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2912,6 +4780,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2922,6 +4796,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2932,6 +4812,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2942,6 +4828,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2952,6 +4844,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2962,6 +4860,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "9MFY25",
    "qoq_pct": null,
@@ -2972,6 +4876,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -2982,6 +4892,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -2992,6 +4908,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3002,6 +4924,19 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q3FY25",
+     "finance_cost:Q3FY25",
+     "depreciation:Q3FY25",
+     "other_income:Q3FY25",
+     "exceptional_items:Q3FY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3012,6 +4947,16 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q3FY25",
+     "revenue:Q3FY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3022,6 +4967,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3032,6 +4983,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3042,6 +4999,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3052,6 +5015,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3062,6 +5031,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3072,6 +5047,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3082,6 +5063,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3092,6 +5079,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3102,6 +5095,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3112,6 +5111,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3122,6 +5127,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3132,6 +5143,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3142,6 +5159,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3152,6 +5175,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3162,6 +5191,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3172,6 +5207,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3182,6 +5223,12 @@
   },
   {
    "as_of": "2025-02-13T18:00:00+05:30",
+   "lab": {
+    "at": "2025-02-13T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q3FY25",
    "qoq_pct": null,
@@ -3192,6 +5239,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "FY25",
    "qoq_pct": null,
@@ -3202,6 +5255,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "FY25",
    "qoq_pct": null,
@@ -3212,6 +5271,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "FY25",
    "qoq_pct": null,
@@ -3222,6 +5287,19 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:FY25",
+     "finance_cost:FY25",
+     "depreciation:FY25",
+     "other_income:FY25",
+     "exceptional_items:FY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "FY25",
    "qoq_pct": null,
@@ -3232,6 +5310,16 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:FY25",
+     "revenue:FY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "FY25",
    "qoq_pct": null,
@@ -3242,6 +5330,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "FY25",
    "qoq_pct": null,
@@ -3252,6 +5346,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "FY25",
    "qoq_pct": null,
@@ -3262,6 +5362,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "FY25",
    "qoq_pct": null,
@@ -3272,6 +5378,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "FY25",
    "qoq_pct": null,
@@ -3282,6 +5394,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "FY25",
    "qoq_pct": null,
@@ -3292,6 +5410,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "FY25",
    "qoq_pct": null,
@@ -3302,6 +5426,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "FY25",
    "qoq_pct": null,
@@ -3312,6 +5442,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "FY25",
    "qoq_pct": null,
@@ -3322,6 +5458,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "FY25",
    "qoq_pct": null,
@@ -3332,6 +5474,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "FY25",
    "qoq_pct": null,
@@ -3342,6 +5490,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "FY25",
    "qoq_pct": null,
@@ -3352,6 +5506,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "FY25",
    "qoq_pct": null,
@@ -3362,6 +5522,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "FY25",
    "qoq_pct": null,
@@ -3372,6 +5538,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "FY25",
    "qoq_pct": null,
@@ -3382,6 +5554,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "FY25",
    "qoq_pct": null,
@@ -3392,6 +5570,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "FY25",
    "qoq_pct": null,
@@ -3402,6 +5586,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "FY25",
    "qoq_pct": null,
@@ -3412,6 +5602,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3422,6 +5618,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3432,6 +5634,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3442,6 +5650,19 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:H2FY25",
+     "finance_cost:H2FY25",
+     "depreciation:H2FY25",
+     "other_income:H2FY25",
+     "exceptional_items:H2FY25"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3452,6 +5673,16 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H2FY25",
+     "revenue:H2FY25"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3462,6 +5693,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3472,6 +5709,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3482,6 +5725,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3492,6 +5741,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3502,6 +5757,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3512,6 +5773,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3522,6 +5789,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3532,6 +5805,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3542,6 +5821,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3552,6 +5837,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3562,6 +5853,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3572,6 +5869,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3582,6 +5885,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3592,6 +5901,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3602,6 +5917,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3612,6 +5933,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3622,6 +5949,12 @@
   },
   {
    "as_of": "2025-06-12T18:00:00+05:30",
+   "lab": {
+    "at": "2025-06-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "H2FY25",
    "qoq_pct": null,
@@ -3632,6 +5965,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3642,6 +5981,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3652,6 +5997,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3662,6 +6013,19 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q1FY26",
+     "finance_cost:Q1FY26",
+     "depreciation:Q1FY26",
+     "other_income:Q1FY26",
+     "exceptional_items:Q1FY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3672,6 +6036,16 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY26",
+     "revenue:Q1FY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3682,6 +6056,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3692,6 +6072,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3702,6 +6088,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3712,6 +6104,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3722,6 +6120,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3732,6 +6136,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3742,6 +6152,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3752,6 +6168,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3762,6 +6184,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3772,6 +6200,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3782,6 +6216,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3792,6 +6232,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3802,6 +6248,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3812,6 +6264,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3822,6 +6280,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3832,6 +6296,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3842,6 +6312,12 @@
   },
   {
    "as_of": "2025-08-11T18:00:00+05:30",
+   "lab": {
+    "at": "2025-08-11T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q1FY26",
    "qoq_pct": null,
@@ -3852,6 +6328,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3862,6 +6344,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3872,6 +6360,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3882,6 +6376,19 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q2FY26",
+     "finance_cost:Q2FY26",
+     "depreciation:Q2FY26",
+     "other_income:Q2FY26",
+     "exceptional_items:Q2FY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3892,6 +6399,16 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY26",
+     "revenue:Q2FY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3902,6 +6419,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3912,6 +6435,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3922,6 +6451,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3932,6 +6467,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3942,6 +6483,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3952,6 +6499,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3962,6 +6515,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3972,6 +6531,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3982,6 +6547,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -3992,6 +6563,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4002,6 +6579,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4012,6 +6595,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4022,6 +6611,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4032,6 +6627,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4042,6 +6643,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4052,6 +6659,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4062,6 +6675,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q2FY26",
    "qoq_pct": null,
@@ -4072,6 +6691,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4082,6 +6707,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4092,6 +6723,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4102,6 +6739,19 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:H1FY26",
+     "finance_cost:H1FY26",
+     "depreciation:H1FY26",
+     "other_income:H1FY26",
+     "exceptional_items:H1FY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4112,6 +6762,16 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY26",
+     "revenue:H1FY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4122,6 +6782,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4132,6 +6798,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4142,6 +6814,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4152,6 +6830,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4162,6 +6846,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4172,6 +6862,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4182,6 +6878,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4192,6 +6894,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4202,6 +6910,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4212,6 +6926,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4222,6 +6942,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4232,6 +6958,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4242,6 +6974,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4252,6 +6990,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4262,6 +7006,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4272,6 +7022,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4282,6 +7038,12 @@
   },
   {
    "as_of": "2025-11-06T18:00:00+05:30",
+   "lab": {
+    "at": "2025-11-06T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "H1FY26",
    "qoq_pct": null,
@@ -4292,6 +7054,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4302,6 +7070,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4312,6 +7086,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4322,6 +7102,19 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:9MFY26",
+     "finance_cost:9MFY26",
+     "depreciation:9MFY26",
+     "other_income:9MFY26",
+     "exceptional_items:9MFY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4332,6 +7125,16 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:9MFY26",
+     "revenue:9MFY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4342,6 +7145,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4352,6 +7161,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4362,6 +7177,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4372,6 +7193,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4382,6 +7209,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4392,6 +7225,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4402,6 +7241,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4412,6 +7257,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4422,6 +7273,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4432,6 +7289,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4442,6 +7305,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4452,6 +7321,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4462,6 +7337,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4472,6 +7353,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4482,6 +7369,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4492,6 +7385,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4502,6 +7401,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "9MFY26",
    "qoq_pct": null,
@@ -4512,6 +7417,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4522,6 +7433,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4532,6 +7449,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4542,6 +7465,19 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q3FY26",
+     "finance_cost:Q3FY26",
+     "depreciation:Q3FY26",
+     "other_income:Q3FY26",
+     "exceptional_items:Q3FY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4552,6 +7488,16 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q3FY26",
+     "revenue:Q3FY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4562,6 +7508,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4572,6 +7524,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4582,6 +7540,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4592,6 +7556,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4602,6 +7572,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4612,6 +7588,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4622,6 +7604,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4632,6 +7620,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4642,6 +7636,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4652,6 +7652,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4662,6 +7668,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4672,6 +7684,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4682,6 +7700,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4692,6 +7716,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4702,6 +7732,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4712,6 +7748,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4722,6 +7764,12 @@
   },
   {
    "as_of": "2026-02-05T18:00:00+05:30",
+   "lab": {
+    "at": "2026-02-05T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q3FY26",
    "qoq_pct": null,
@@ -4732,6 +7780,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "FY26",
    "qoq_pct": null,
@@ -4742,6 +7796,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "FY26",
    "qoq_pct": null,
@@ -4752,6 +7812,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "FY26",
    "qoq_pct": null,
@@ -4762,6 +7828,19 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:FY26",
+     "finance_cost:FY26",
+     "depreciation:FY26",
+     "other_income:FY26",
+     "exceptional_items:FY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "FY26",
    "qoq_pct": null,
@@ -4772,6 +7851,16 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:FY26",
+     "revenue:FY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "FY26",
    "qoq_pct": null,
@@ -4782,6 +7871,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "FY26",
    "qoq_pct": null,
@@ -4792,6 +7887,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "FY26",
    "qoq_pct": null,
@@ -4802,6 +7903,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "FY26",
    "qoq_pct": null,
@@ -4812,6 +7919,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "FY26",
    "qoq_pct": null,
@@ -4822,6 +7935,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "FY26",
    "qoq_pct": null,
@@ -4832,6 +7951,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "FY26",
    "qoq_pct": null,
@@ -4842,6 +7967,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "FY26",
    "qoq_pct": null,
@@ -4852,6 +7983,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "FY26",
    "qoq_pct": null,
@@ -4869,6 +8006,12 @@
    "sources": [
     {
      "as_of": "2026-05-28T18:00:00+05:30",
+     "lab": {
+      "at": "2026-05-28T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q4FY26",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -4877,6 +8020,11 @@
     },
     {
      "as_of": "2026-07-17T17:57:30+05:30",
+     "lab": {
+      "at": "2026-07-17T17:57:30+05:30",
+      "by": "unknown",
+      "doc": "annual"
+     },
      "news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -4892,6 +8040,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "FY26",
    "qoq_pct": null,
@@ -4902,6 +8056,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "FY26",
    "qoq_pct": null,
@@ -4912,6 +8072,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "FY26",
    "qoq_pct": null,
@@ -4922,6 +8088,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "FY26",
    "qoq_pct": null,
@@ -4939,6 +8111,12 @@
    "sources": [
     {
      "as_of": "2026-05-28T18:00:00+05:30",
+     "lab": {
+      "at": "2026-05-28T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q4FY26",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -4947,6 +8125,11 @@
     },
     {
      "as_of": "2026-07-17T17:57:30+05:30",
+     "lab": {
+      "at": "2026-07-17T17:57:30+05:30",
+      "by": "unknown",
+      "doc": "annual"
+     },
      "news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -4962,6 +8145,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "FY26",
    "qoq_pct": null,
@@ -4972,6 +8161,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "FY26",
    "qoq_pct": null,
@@ -4982,6 +8177,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "FY26",
    "qoq_pct": null,
@@ -4992,6 +8193,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5002,6 +8209,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5012,6 +8225,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5022,6 +8241,19 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:Q4FY26",
+     "finance_cost:Q4FY26",
+     "depreciation:Q4FY26",
+     "other_income:Q4FY26",
+     "exceptional_items:Q4FY26"
+    ],
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5032,6 +8264,16 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q4FY26",
+     "revenue:Q4FY26"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5042,6 +8284,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5052,6 +8300,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5062,6 +8316,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5072,6 +8332,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5082,6 +8348,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5092,6 +8364,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5102,6 +8380,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5112,6 +8396,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5122,6 +8412,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5132,6 +8428,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5142,6 +8444,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5152,6 +8460,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5162,6 +8476,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5172,6 +8492,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5182,6 +8508,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5192,6 +8524,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5202,6 +8540,12 @@
   },
   {
    "as_of": "2026-05-28T18:00:00+05:30",
+   "lab": {
+    "at": "2026-05-28T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q4FY26",
    "qoq_pct": null,
@@ -5212,6 +8556,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "metric": "net_worth",
    "period": "MAR-2026",
    "qoq_pct": null,
@@ -5222,6 +8571,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "metric": "cash_and_equivalents",
    "period": "MAR-2026",
    "qoq_pct": null,
@@ -5232,6 +8586,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "metric": "trade_receivables",
    "period": "MAR-2026",
    "qoq_pct": null,
@@ -5242,6 +8601,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "metric": "inventories",
    "period": "MAR-2026",
    "qoq_pct": null,
@@ -5252,6 +8616,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "metric": "trade_payables",
    "period": "MAR-2026",
    "qoq_pct": null,
@@ -5262,6 +8631,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "metric": "operating_cash_flow",
    "period": "FY26",
    "qoq_pct": null,
@@ -5279,6 +8653,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5287,6 +8666,19 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt:Q1FY27",
+       "finance_cost:Q1FY27",
+       "depreciation:Q1FY27",
+       "other_income:Q1FY27",
+       "exceptional_items:Q1FY27"
+      ],
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5309,6 +8701,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5317,6 +8714,12 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5339,6 +8742,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_PER_SHARE",
@@ -5347,6 +8755,12 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR",
@@ -5369,6 +8783,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5377,6 +8796,12 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5399,6 +8824,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5407,6 +8837,12 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5429,6 +8865,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5437,6 +8878,12 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5459,6 +8906,11 @@
    "sources": [
     {
      "as_of": "2026-08-12T17:27:42+05:30",
+     "lab": {
+      "at": "2026-08-12T17:27:42+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5467,6 +8919,12 @@
     },
     {
      "as_of": "2026-08-12T18:00:00+05:30",
+     "lab": {
+      "at": "2026-08-12T18:00:00+05:30",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "xbrl:res:500168:Q1FY27",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -5482,6 +8940,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5492,6 +8956,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5502,6 +8972,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5512,6 +8988,16 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY27",
+     "revenue:Q1FY27"
+    ],
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5522,6 +9008,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5532,6 +9024,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5542,6 +9040,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5552,6 +9056,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5562,6 +9072,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5572,6 +9088,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5582,6 +9104,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5592,6 +9120,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5602,6 +9136,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5612,6 +9152,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5622,6 +9168,12 @@
   },
   {
    "as_of": "2026-08-12T18:00:00+05:30",
+   "lab": {
+    "at": "2026-08-12T18:00:00+05:30",
+    "by": "file",
+    "doc": "results",
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -5634,6 +9186,11 @@
  "governance": {
   "auditor": {
    "as_of": "2026-08-12T17:27:42+05:30",
+   "lab": {
+    "at": "2026-08-12T17:27:42+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "name": "Deloitte Haskins & Sells LLP",
    "note": "Key audit matter: evaluation of disputed direct tax cases (note 32)",
    "opinion": "UNMODIFIED",
@@ -5642,6 +9199,11 @@
   "auditor_history": [
    {
     "as_of": "2026-07-17T17:57:30+05:30",
+    "lab": {
+     "at": "2026-07-17T17:57:30+05:30",
+     "by": "unknown",
+     "doc": "annual"
+    },
     "name": "Deloitte Haskins & Sells LLP",
     "note": "Key audit matter: evaluation of disputed direct tax cases (note 32)",
     "opinion": "UNMODIFIED",
@@ -5649,6 +9211,11 @@
    },
    {
     "as_of": "2026-08-12T17:27:42+05:30",
+    "lab": {
+     "at": "2026-08-12T17:27:42+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Deloitte Haskins & Sells LLP",
     "note": "Key audit matter: evaluation of disputed direct tax cases (note 32)",
     "opinion": "UNMODIFIED",
@@ -5838,12 +9405,22 @@
   "entities": [
    {
     "as_of": "2026-07-17T17:57:30+05:30",
+    "lab": {
+     "at": "2026-07-17T17:57:30+05:30",
+     "by": "unknown",
+     "doc": "annual"
+    },
     "name": "Goodyear Orient Company (Private) Limited",
     "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
     "type": "holding company (74%)"
    },
    {
     "as_of": "2026-07-17T17:57:30+05:30",
+    "lab": {
+     "at": "2026-07-17T17:57:30+05:30",
+     "by": "unknown",
+     "doc": "annual"
+    },
     "name": "The Goodyear Tire & Rubber Company",
     "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
     "type": "ultimate holding company"
@@ -5856,16 +9433,31 @@
  "operating_notes": [
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "text": "Net revenue of ₹803.45 Cr in FY26 came from a single external customer, with no other customer above 10% of revenue."
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "text": "Exports were ₹33.96 Cr of ₹2,462.23 Cr product revenue in FY26, with all non-current assets located in India."
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "text": "Income tax contingent liability of ₹1,528.7 Cr includes ₹68.95 Cr on regional service charge disallowance and ₹28.57 Cr on trademark fees."
   }
@@ -5873,6 +9465,11 @@
  "ownership": [
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "period": "MAR-2026",
    "promoter_pct": 74.0,
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345"
@@ -5881,10 +9478,27 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "500168",
+ "section_lab": {
+  "corporate_actions": {
+   "at": "2026-08-05",
+   "by": "file",
+   "doc": "other"
+  },
+  "governance_quarters": {
+   "at": "2026-04-28T15:29:46+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "auto_components",
  "segment_mix": [
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "period": "FY26",
    "revenue_cr": 110.84,
    "segment": "Tubes",
@@ -5893,6 +9507,11 @@
   },
   {
    "as_of": "2026-07-17T17:57:30+05:30",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "period": "FY26",
    "revenue_cr": 0.36,
    "segment": "Flaps",
@@ -5907,6 +9526,11 @@
    "event_type": "ANNUAL_REPORT",
    "id": "t_421cec5b",
    "impact_level": "LOW",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "summary": "Goodyear India submitted its FY26 Annual Report and notice of the 65th AGM scheduled for August 12, 2026."
   },
@@ -5915,6 +9539,11 @@
    "event_type": "RESULTS",
    "id": "t_1079c378",
    "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-08-12T17:27:42+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
    "summary": "Goodyear India reported Q1FY27 standalone results with revenue of ₹774 Cr and PAT of ₹65 Cr; impacted by an exceptional reversal of employee benefit costs."
   },
@@ -5923,6 +9552,11 @@
    "event_type": "GOVERNANCE",
    "id": "t_29cc0a5d",
    "impact_level": null,
+   "lab": {
+    "at": "2026-08-12T18:35:06+05:30",
+    "by": "unknown",
+    "doc": "other"
+   },
    "news_id": "26f7b3ad-42b5-4ce2-9efe-7cd4655569ca",
    "summary": "Goodyear India Ltd held its 65th AGM on August 12, 2026, via VC/OAVM with 1,70,71,118 shares represented by 643 members.",
    "tier": "TIMELINE"
@@ -5932,6 +9566,11 @@
    "event_type": "GOVERNANCE",
    "id": "t_1582c21a",
    "impact_level": null,
+   "lab": {
+    "at": "2026-08-12T18:37:44+05:30",
+    "by": "unknown",
+    "doc": "other"
+   },
    "news_id": "1f3950b9-b68a-4642-844e-eac55688cdd3",
    "summary": "Goodyear India Ltd held its 65th AGM on August 12, 2026, with **Ayushi Jain (COP No 14498)** as Scrutinizer, approving financials, dividend, and re-appointing **Sandeep Garg (DIN: 10360979)** as WTD.",
    "tier": "TIMELINE"
@@ -5943,6 +9582,11 @@
    "date": "2026-08-12",
    "description": "65th Annual General Meeting",
    "event_type": "AGM",
+   "lab": {
+    "at": "2026-08-12T17:27:42+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "source_news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816"
   }
  ],
@@ -5954,6 +9598,11 @@
    "created_on": "2026-07-17T17:57:30+05:30",
    "id": "w_e5b1be46",
    "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "status": "OPEN",
    "status_history": [],
@@ -5966,6 +9615,11 @@
    "created_on": "2026-07-17T17:57:30+05:30",
    "id": "w_9bc6bd45",
    "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "status": "OPEN",
    "status_history": [],
@@ -5978,6 +9632,11 @@
    "created_on": "2026-07-17T17:57:30+05:30",
    "id": "w_b3fb71ab",
    "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-07-17T17:57:30+05:30",
+    "by": "unknown",
+    "doc": "annual"
+   },
    "source_news_id": "3c2d45df-e9d5-4ebc-9917-d559d6105345",
    "status": "OPEN",
    "status_history": [],
@@ -5990,6 +9649,11 @@
    "created_on": "2026-08-12T17:27:42+05:30",
    "id": "w_5b1bd6a1",
    "kind": "KPI",
+   "lab": {
+    "at": "2026-08-12T17:27:42+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "source_news_id": "78a3b06e-d16f-4765-9056-7cbe5d350816",
    "status": "OPEN",
    "status_history": [],

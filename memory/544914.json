@@ -3,13 +3,58 @@
  "business_summary": null,
  "capital_actions": [],
  "company_name": "Steamhouse India Limited",
- "deals": [],
+ "deals": [
+  {
+   "amount_cr": 500.0,
+   "as_of": "2026-10-27T18:44:28+05:30",
+   "counterparty": "Haryana Enterprises Promotion Centre (HEPC), Government of Haryana",
+   "discount_pct": null,
+   "execution_by": null,
+   "expansion": "GREENFIELD",
+   "history": [
+    {
+     "amount_cr": 500.0,
+     "as_of": "2026-10-27T18:44:28+05:30",
+     "lab": {
+      "at": "2026-10-27T20:57:34+05:30",
+      "by": "ai",
+      "doc": "release",
+      "ok": true
+     },
+     "progress": null,
+     "source_news_id": "nse-106830839",
+     "stage": "MOU"
+    }
+   ],
+   "id": "d_203771ac",
+   "includes_gst": null,
+   "issue_price": null,
+   "kind": "CAPEX",
+   "lab": {
+    "at": "2026-10-27T20:57:34+05:30",
+    "by": "ai",
+    "doc": "release",
+    "ok": true
+   },
+   "new_shares": null,
+   "progress": null,
+   "segment": "industrial steam generation and infrastructure",
+   "seller": null,
+   "source_news_id": "nse-106830839",
+   "stage": "MOU",
+   "swap_ratio": null,
+   "target": null,
+   "tranches": [],
+   "updated_as_of": "2026-10-27T18:44:28+05:30",
+   "usage": "MERCHANT_SALE"
+  }
+ ],
  "financial_metrics": [
   {
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -28,7 +73,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -47,7 +92,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -66,7 +111,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -91,7 +136,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -114,7 +159,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -133,7 +178,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -152,7 +197,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -171,7 +216,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -190,7 +235,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -209,7 +254,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -228,7 +273,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -247,7 +292,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -266,7 +311,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -285,7 +330,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -304,7 +349,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -323,7 +368,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -342,7 +387,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -361,7 +406,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -380,7 +425,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -399,7 +444,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -418,7 +463,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -437,7 +482,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -456,7 +501,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -475,7 +520,7 @@
    "as_of": "2026-10-05T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:30:22+05:30",
+    "at": "2026-10-27T10:02:32+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -488,6 +533,44 @@
    "source_news_id": "xbrl:res:544914:Q1FY27",
    "unit": "INR_CR",
    "value": 130.87,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-05T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:02:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544914:Q1FY27",
+   "unit": "INR",
+   "value": 0.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-05T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:02:32+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544914:Q1FY27",
+   "unit": "INR",
+   "value": 0.81,
    "yoy_pct": null
   }
  ],
@@ -620,12 +703,66 @@
   "former_names": []
  },
  "industry": "Commodities > Chemicals > Chemicals & Petrochemicals > Industrial Gases",
- "last_filed_at": "2026-10-05T18:00:00+05:30",
- "operating_notes": [],
- "ownership": [],
+ "last_filed_at": "2026-10-27T18:44:28+05:30",
+ "operating_notes": [
+  {
+   "as_of": "2026-10-27T18:44:28+05:30",
+   "lab": {
+    "at": "2026-10-27T20:57:34+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106830839",
+   "text": "Signed an MoU with Haryana Enterprises Promotion Centre for a proposed investment of ₹500 crore."
+  }
+ ],
+ "ownership": [
+  {
+   "aif_pct": 7.37,
+   "as_of": "2026-10-07T11:15:00+05:30",
+   "dii_pct": 7.45,
+   "fii_pct": 0.22,
+   "fpi_pct": 0.22,
+   "holders": [
+    {
+     "category": "AIF",
+     "name": "SINGULARITY LARGE VALUE FUND III",
+     "pct": 3.61
+    },
+    {
+     "category": "Company",
+     "name": "CHARTERED FINANCE & LEASING LIMITED",
+     "pct": 1.88
+    },
+    {
+     "category": "AIF",
+     "name": "NIVESHAAY SAMBHAV FUND",
+     "pct": 1.2
+    }
+   ],
+   "lab": {
+    "at": "2026-10-27T07:19:40+05:30",
+    "by": "file",
+    "doc": "other",
+    "ok": true
+   },
+   "mf_pct": 0.08,
+   "period": "Q2FY27",
+   "promoter_pct": 77.96,
+   "retail_holders": 26945.0,
+   "source_news_id": "xbrl:shp:544914:Q2FY27"
+  }
+ ],
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "544914",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-15T16:37:10+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "chemicals",
  "segment_mix": [],
  "standalone": {
@@ -1048,6 +1185,40 @@
     "unit": "INR_CR",
     "value": 0.0,
     "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-05T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T01:39:11+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544914:Q1FY27",
+    "unit": "INR",
+    "value": 0.81,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-05T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T01:39:11+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544914:Q1FY27",
+    "unit": "INR",
+    "value": 0.81,
+    "yoy_pct": null
    }
   ]
  },
@@ -1058,13 +1229,67 @@
    "event_type": "CONCALL_PRESENTATION",
    "id": "t_cb9a84bd",
    "impact_level": null,
+   "lab": {
+    "at": "2026-10-19T16:45:17+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
    "news_id": "nse-106822057",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/CAVAIBHAVGATTANI_19102026164416_Earnings_Intimation_30102026.pdf",
    "summary": "Steamhouse India Limited scheduled an earnings call for Q2 FY27 financial results on October 30, 2026, at 1:00 PM IST with **Vishal S. Budhia**, **Vaibhav Gattani**, **Dipti Seksaria**, and **Ishika Bhandari** participating.",
    "tier": "TIMELINE"
+  },
+  {
+   "date": "2026-10-27T18:44:28+05:30",
+   "event_type": "CAPEX",
+   "id": "t_203771ac",
+   "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-27T20:57:34+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "news_id": "nse-106830839",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/CAVAIBHAVGATTANI_27102026184349_Press_Release_signed.pdf",
+   "summary": "Steamhouse India signed an MoU with the Haryana Enterprises Promotion Centre to explore ₹500 crore of industrial infrastructure opportunities."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-25T22:30:22+05:30",
- "watchlist": []
+ "updated_at": "2026-10-27T20:57:34+05:30",
+ "watchlist": [
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-10-27T18:44:28+05:30",
+   "id": "w_546e0b07",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-10-27T20:57:34+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106830839",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Statutory approvals"
+  },
+  {
+   "check_by": null,
+   "check_in": null,
+   "created_on": "2026-10-27T18:44:28+05:30",
+   "id": "w_de4c6a8a",
+   "kind": "APPROVAL",
+   "lab": {
+    "at": "2026-10-27T20:57:34+05:30",
+    "by": "ai",
+    "doc": "release"
+   },
+   "source_news_id": "nse-106830839",
+   "status": "OPEN",
+   "status_history": [],
+   "target": null,
+   "text": "Regulatory approvals"
+  }
+ ]
 }

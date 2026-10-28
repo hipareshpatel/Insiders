@@ -1,6 +1,66 @@
 {
  "balance_sheet": [
   {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "cash_cr": 0.9,
+   "current_assets_cr": 32.03,
+   "current_liabilities_cr": 12.26,
+   "cwip_cr": 0.0,
+   "equity_capital_cr": 29.59,
+   "fixed_assets_cr": 14.01,
+   "goodwill_cr": 0.0,
+   "gross_debt_cr": 6.08,
+   "inventories_cr": 2.37,
+   "investments_cr": 0.95,
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "net_worth_cr": 33.79,
+   "noncurrent_assets_cr": 14.01,
+   "noncurrent_liabilities_cr": 0.0,
+   "payables_cr": 5.44,
+   "period": "Q2FY25",
+   "receivables_cr": 27.18,
+   "reserves_cr": 4.19,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "total_assets_cr": 46.05,
+   "total_liabilities_cr": 12.26
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "cash_cr": 4.51,
+   "current_assets_cr": 53.44,
+   "current_liabilities_cr": 9.53,
+   "cwip_cr": 0.0,
+   "equity_capital_cr": 44.39,
+   "fixed_assets_cr": 13.75,
+   "goodwill_cr": 0.0,
+   "gross_debt_cr": 4.28,
+   "inventories_cr": 4.99,
+   "investments_cr": 13.31,
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
+   "net_worth_cr": 57.66,
+   "noncurrent_assets_cr": 13.75,
+   "noncurrent_liabilities_cr": 0.0,
+   "payables_cr": 4.75,
+   "period": "Q4FY25",
+   "receivables_cr": 29.33,
+   "reserves_cr": 13.27,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "total_assets_cr": 67.19,
+   "total_liabilities_cr": 9.53
+  },
+  {
    "as_of": "2025-11-03T18:00:00+05:30",
    "cash_cr": 1.45,
    "current_assets_cr": 45.08,
@@ -13,7 +73,7 @@
    "inventories_cr": 1.52,
    "investments_cr": 6.85,
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -43,7 +103,7 @@
    "inventories_cr": 1.84,
    "investments_cr": 13.04,
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -114,10 +174,3804 @@
  "deals": [],
  "financial_metrics": [
   {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.32,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q1FY25",
+     "finance_cost:Q1FY25",
+     "depreciation:Q1FY25",
+     "other_income:Q1FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q1FY25",
+     "revenue:Q1FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "PCT",
+   "value": 3.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.08,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR",
+   "value": 0.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 1.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 29.59,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 1.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 12.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 13.29,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 13.22,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 14.31,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR",
+   "value": 0.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-07-25T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:16+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY25",
+   "unit": "INR",
+   "value": 0.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q2FY25",
+     "finance_cost:Q2FY25",
+     "depreciation:Q2FY25",
+     "other_income:Q2FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 1.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY25",
+     "revenue:Q2FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "PCT",
+   "value": 5.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.2,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 29.59,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.7,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 17.18,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 19.49,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.26,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 18.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 19.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 12.5,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.21,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:H1FY25",
+     "finance_cost:H1FY25",
+     "depreciation:H1FY25",
+     "other_income:H1FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.9,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY25",
+     "revenue:H1FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "PCT",
+   "value": 1.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.5,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR",
+   "value": 0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 1.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": -0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": -0.97,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": -3.38,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 1.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 4.91,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 1.78,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 29.59,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 1.72,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 1.72,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 2.16,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 65.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 67.38,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.45,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 66.72,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR_CR",
+   "value": 67.38,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR",
+   "value": 0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:20+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY25",
+   "unit": "INR",
+   "value": 0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.07,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q3FY25",
+     "finance_cost:Q3FY25",
+     "depreciation:Q3FY25",
+     "other_income:Q3FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q3FY25",
+     "revenue:Q3FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "PCT",
+   "value": 4.29,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.25,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": -1.98,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.11,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 44.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.34,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.34,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.51,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 18.67,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 17.97,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 17.57,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 18.07,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.41,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.85,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:9MFY25",
+     "finance_cost:9MFY25",
+     "depreciation:9MFY25",
+     "other_income:9MFY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 2.19,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:9MFY25",
+     "revenue:9MFY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "PCT",
+   "value": 4.31,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.49,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.16,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": -1.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.83,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 1.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 44.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 1.46,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 1.46,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 2.31,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 48.26,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 50.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 0.85,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 49.58,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR_CR",
+   "value": 51.89,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-01-23T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:22+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.29,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -0.35,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.14,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q4FY25",
+     "finance_cost:Q4FY25",
+     "depreciation:Q4FY25",
+     "other_income:Q4FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.73,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q4FY25",
+     "revenue:Q4FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "PCT",
+   "value": 3.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.18,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -0.64,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 1.28,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -0.12,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 44.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 19.71,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 21.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -0.06,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 20.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 21.15,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 13.23,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "current_tax",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.44,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "deferred_tax",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.03,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "depreciation",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:FY25",
+     "finance_cost:FY25",
+     "depreciation:FY25",
+     "other_income:FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "ebitda",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 2.91,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:FY25",
+     "revenue:FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
+   "metric": "ebitda_margin",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "PCT",
+   "value": 4.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "employee_cost",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.68,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR",
+   "value": 0.05,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "exceptional_items",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 1.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "finance_cost",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.17,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 24.42,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "inventory_change",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -1.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -17.38,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 3.95,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": -3.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_expenses",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 2.11,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "other_income",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "paid_up_capital",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 44.39,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 2.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_continuing",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 2.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 2.77,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "purchases_stock_in_trade",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 67.97,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "raw_material_cost",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 72.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "share_associates",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 0.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_expenses",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 70.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR_CR",
+   "value": 72.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR",
+   "value": 0.05,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T10:01:24+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY25",
+   "unit": "INR",
+   "value": 0.05,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -136,7 +3990,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -155,7 +4009,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -174,7 +4028,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -199,7 +4053,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -222,7 +4076,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -241,7 +4095,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -260,7 +4114,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -279,7 +4133,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -298,7 +4152,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -317,7 +4171,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -336,7 +4190,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -355,7 +4209,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -374,7 +4228,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -393,7 +4247,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -412,26 +4266,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "Q1FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q1FY26",
-   "unit": "INR_CR",
-   "value": 0.03,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-08-07T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -450,7 +4285,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -469,7 +4304,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -488,7 +4323,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -507,7 +4342,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -526,7 +4361,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -545,7 +4380,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -564,7 +4399,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -583,7 +4418,7 @@
    "as_of": "2025-08-07T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:52+05:30",
+    "at": "2026-10-27T10:01:17+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -599,10 +4434,67 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2025-08-07T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:17+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY26",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-08-07T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:17+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY26",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-08-07T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:17+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY26",
+   "unit": "INR_CR",
+   "value": 0.03,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -621,7 +4513,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -640,7 +4532,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -659,7 +4551,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -684,7 +4576,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -707,7 +4599,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -726,7 +4618,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -745,7 +4637,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -764,7 +4656,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -783,7 +4675,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -802,7 +4694,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -821,7 +4713,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -840,7 +4732,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -859,7 +4751,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -878,7 +4770,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -897,26 +4789,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "Q2FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
-   "unit": "INR_CR",
-   "value": 0.97,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-03T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -935,7 +4808,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -954,7 +4827,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -973,7 +4846,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -992,7 +4865,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1011,7 +4884,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1030,7 +4903,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1049,7 +4922,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1068,7 +4941,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1087,7 +4960,45 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1106,7 +5017,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1125,7 +5036,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1144,7 +5055,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1163,7 +5074,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1182,7 +5093,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1201,7 +5112,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -1226,7 +5137,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -1249,7 +5160,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1268,7 +5179,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1287,7 +5198,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1306,7 +5217,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1325,7 +5236,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1344,7 +5255,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1363,7 +5274,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1382,7 +5293,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1401,7 +5312,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1420,7 +5331,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1439,7 +5350,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1458,7 +5369,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1477,7 +5388,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1496,7 +5407,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1515,7 +5426,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1534,26 +5445,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "H1FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
-   "unit": "INR_CR",
-   "value": 1.0,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-03T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1572,7 +5464,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1591,7 +5483,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1610,7 +5502,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1629,7 +5521,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1648,7 +5540,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1667,7 +5559,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1686,7 +5578,7 @@
    "as_of": "2025-11-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:55+05:30",
+    "at": "2026-10-27T10:01:21+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1702,10 +5594,86 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2025-11-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.97,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:21+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q2FY26",
+   "unit": "INR_CR",
+   "value": 1.0,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1724,7 +5692,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1743,7 +5711,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1762,7 +5730,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -1787,7 +5755,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -1810,7 +5778,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1829,7 +5797,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1848,7 +5816,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1867,7 +5835,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1886,7 +5854,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1905,7 +5873,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1924,7 +5892,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1943,7 +5911,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1962,7 +5930,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1981,7 +5949,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2000,26 +5968,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "Q3FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
-   "unit": "INR_CR",
-   "value": 0.83,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-02-09T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2038,7 +5987,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2057,7 +6006,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2076,7 +6025,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2095,7 +6044,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2114,7 +6063,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2133,7 +6082,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2152,7 +6101,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2171,7 +6120,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2190,7 +6139,45 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-02-09T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-02-09T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2209,7 +6196,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2228,7 +6215,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2247,7 +6234,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -2272,7 +6259,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -2295,7 +6282,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2314,7 +6301,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2333,7 +6320,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2352,7 +6339,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2371,7 +6358,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2390,7 +6377,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2409,7 +6396,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2428,7 +6415,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2447,7 +6434,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2466,7 +6453,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2485,7 +6472,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2504,26 +6491,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "9MFY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
-   "unit": "INR_CR",
-   "value": 1.83,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-02-09T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2542,7 +6510,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2561,7 +6529,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2580,7 +6548,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2599,7 +6567,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2618,7 +6586,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2637,7 +6605,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2656,7 +6624,7 @@
    "as_of": "2026-02-09T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:56+05:30",
+    "at": "2026-10-27T10:01:23+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2672,10 +6640,86 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2026-02-09T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
+   "unit": "INR",
+   "value": 0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-02-09T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
+   "unit": "INR",
+   "value": 0.04,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-02-09T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
+   "unit": "INR_CR",
+   "value": 0.83,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-02-09T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:23+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q3FY26",
+   "unit": "INR_CR",
+   "value": 1.83,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2694,7 +6738,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2713,7 +6757,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2732,7 +6776,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -2757,7 +6801,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -2780,7 +6824,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2799,7 +6843,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2811,14 +6855,14 @@
    "qoq_pct": null,
    "source_news_id": "xbrl:res:MITTAL:Q4FY26",
    "unit": "INR",
-   "value": -0.01,
+   "value": 0.01,
    "yoy_pct": null
   },
   {
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2837,7 +6881,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2856,7 +6900,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2875,7 +6919,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2894,7 +6938,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2913,7 +6957,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2932,7 +6976,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2951,7 +6995,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -2970,26 +7014,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "Q4FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
-   "unit": "INR_CR",
-   "value": -0.29,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3008,7 +7033,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3027,7 +7052,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3046,7 +7071,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3065,7 +7090,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3084,7 +7109,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3103,7 +7128,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3122,7 +7147,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3141,7 +7166,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3160,7 +7185,45 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-26T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
+   "unit": "INR",
+   "value": 0.01,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-26T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3179,7 +7242,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3198,7 +7261,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3217,7 +7280,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3236,7 +7299,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3255,7 +7318,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3274,7 +7337,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -3299,7 +7362,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -3322,7 +7385,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3341,7 +7404,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3360,7 +7423,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3379,7 +7442,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3398,7 +7461,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3417,7 +7480,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3436,7 +7499,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3455,7 +7518,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3474,7 +7537,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3493,7 +7556,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3512,7 +7575,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3531,7 +7594,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3550,7 +7613,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3569,7 +7632,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3588,7 +7651,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3607,26 +7670,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
-    "basis": "CONSOLIDATED",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_owners",
-   "period": "FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
-   "unit": "INR_CR",
-   "value": 1.55,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2026-05-26T18:00:00+05:30",
-   "basis": "CONSOLIDATED",
-   "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3645,7 +7689,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3664,7 +7708,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3683,7 +7727,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3702,7 +7746,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3721,7 +7765,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3740,7 +7784,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3759,7 +7803,7 @@
    "as_of": "2026-05-26T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:58+05:30",
+    "at": "2026-10-27T10:01:26+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3775,10 +7819,67 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2026-05-26T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
+   "unit": "INR",
+   "value": 0.05,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-26T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
+   "unit": "INR",
+   "value": 0.05,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-26T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:26+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_owners",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q4FY26",
+   "unit": "INR_CR",
+   "value": 1.55,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3797,7 +7898,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3816,7 +7917,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3835,7 +7936,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -3860,7 +7961,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "calc",
     "doc": "results",
@@ -3883,7 +7984,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3902,7 +8003,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3921,7 +8022,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3940,7 +8041,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3959,7 +8060,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3978,7 +8079,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -3997,7 +8098,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4016,7 +8117,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4035,7 +8136,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4054,7 +8155,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4073,7 +8174,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4092,7 +8193,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4111,7 +8212,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4130,7 +8231,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4149,7 +8250,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4168,7 +8269,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4187,7 +8288,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4206,7 +8307,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4225,7 +8326,7 @@
    "as_of": "2026-09-03T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:47:53+05:30",
+    "at": "2026-10-27T10:01:19+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -4238,6 +8339,44 @@
    "source_news_id": "xbrl:res:MITTAL:Q1FY27",
    "unit": "INR_CR",
    "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:19+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY27",
+   "unit": "INR",
+   "value": 0.02,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-09-03T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:01:19+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:MITTAL:Q1FY27",
+   "unit": "INR",
+   "value": 0.02,
    "yoy_pct": null
   }
  ],
@@ -4598,6 +8737,11 @@
     }
    ],
    "insurance_pct": 0.0,
+   "lab": {
+    "at": "2026-10-13T01:58:35+05:30",
+    "by": "file",
+    "doc": "other"
+   },
    "mf_pct": 0.0,
    "pension_pct": 0.0,
    "period": "Q2FY27",
@@ -4609,6 +8753,18 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "MITTAL",
+ "section_lab": {
+  "corporate_actions": {
+   "at": "2024-10-03",
+   "by": "file",
+   "doc": "other"
+  },
+  "governance_quarters": {
+   "at": "2026-10-13T13:40:37+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "default",
  "segment_mix": [],
  "standalone": {
@@ -4625,7 +8781,7 @@
     "inventories_cr": 1.52,
     "investments_cr": 13.8,
     "lab": {
-     "at": "2026-10-25T22:48:13+05:30",
+     "at": "2026-10-27T10:01:31+05:30",
      "basis": "STANDALONE",
      "by": "file",
      "doc": "results",
@@ -4655,7 +8811,7 @@
     "inventories_cr": 1.84,
     "investments_cr": 10.61,
     "lab": {
-     "at": "2026-10-25T22:48:22+05:30",
+     "at": "2026-10-27T10:01:34+05:30",
      "basis": "STANDALONE",
      "by": "file",
      "doc": "results",
@@ -5093,6 +9249,40 @@
     "yoy_pct": null
    },
    {
+    "as_of": "2025-08-07T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:29+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q1FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q1FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2025-08-07T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:29+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q1FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q1FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
     "as_of": "2025-11-03T18:00:00+05:30",
     "lab": {
      "at": "2026-10-25T22:48:13+05:30",
@@ -5508,6 +9698,40 @@
     "source_news_id": "xbrl:res-sa:MITTAL:Q2FY26",
     "unit": "INR_CR",
     "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2025-11-03T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:31+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q2FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q2FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2025-11-03T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:31+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q2FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q2FY26",
+    "unit": "INR",
+    "value": 0.02,
     "yoy_pct": null
    },
    {
@@ -6048,6 +10272,40 @@
     "yoy_pct": null
    },
    {
+    "as_of": "2025-11-03T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:31+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "H1FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q2FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2025-11-03T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:31+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "H1FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q2FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
     "as_of": "2026-02-09T18:00:00+05:30",
     "lab": {
      "at": "2026-10-25T22:48:17+05:30",
@@ -6463,6 +10721,40 @@
     "source_news_id": "xbrl:res-sa:MITTAL:Q3FY26",
     "unit": "INR_CR",
     "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-02-09T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:32+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q3FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q3FY26",
+    "unit": "INR",
+    "value": 0.01,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-02-09T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:32+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q3FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q3FY26",
+    "unit": "INR",
+    "value": 0.01,
     "yoy_pct": null
    },
    {
@@ -6884,6 +11176,40 @@
     "yoy_pct": null
    },
    {
+    "as_of": "2026-02-09T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:32+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "9MFY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q3FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-02-09T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:32+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "9MFY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q3FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
     "as_of": "2026-05-26T18:00:00+05:30",
     "lab": {
      "at": "2026-10-25T22:48:22+05:30",
@@ -7298,6 +11624,40 @@
     "period": "Q4FY26",
     "source_news_id": "xbrl:res-sa:MITTAL:Q4FY26",
     "unit": "INR_CR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-05-26T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:34+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q4FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q4FY26",
+    "unit": "INR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-05-26T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:34+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q4FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q4FY26",
+    "unit": "INR",
     "value": 0.0,
     "yoy_pct": null
    },
@@ -7839,6 +12199,40 @@
     "yoy_pct": null
    },
    {
+    "as_of": "2026-05-26T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:34+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q4FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-05-26T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:34+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "FY26",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q4FY26",
+    "unit": "INR",
+    "value": 0.02,
+    "yoy_pct": null
+   },
+   {
     "as_of": "2026-09-03T18:00:00+05:30",
     "lab": {
      "at": "2026-10-25T22:48:09+05:30",
@@ -8255,12 +12649,52 @@
     "unit": "INR_CR",
     "value": 0.0,
     "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-03T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:30+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q1FY27",
+    "unit": "INR",
+    "value": 0.0,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-09-03T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T10:01:30+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:MITTAL:Q1FY27",
+    "unit": "INR",
+    "value": 0.0,
+    "yoy_pct": null
    }
   ]
  },
+ "standalone_only": [
+  "Q1FY25",
+  "Q2FY25",
+  "Q3FY25",
+  "Q4FY25"
+ ],
  "symbol": "MITTAL",
  "timeline": [],
  "upcoming_events": [],
- "updated_at": "2026-10-25T22:47:58+05:30",
+ "updated_at": "2026-10-27T10:01:26+05:30",
  "watchlist": []
 }

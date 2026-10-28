@@ -12,7 +12,13 @@
    "gross_debt_cr": 29.75,
    "inventories_cr": 74.92,
    "investments_cr": 0.18,
-   "net_debt_cr": 28.53,
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true
+   },
    "net_worth_cr": 85.62,
    "noncurrent_assets_cr": 41.4,
    "noncurrent_liabilities_cr": 16.78,
@@ -37,7 +43,7 @@
    "inventories_cr": 81.11,
    "investments_cr": 0.0,
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -66,7 +72,7 @@
    "inventories_cr": 93.38,
    "investments_cr": 0.0,
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -96,7 +102,7 @@
    "inventories_cr": 110.54,
    "investments_cr": 0.0,
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -151,6 +157,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -162,6 +176,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -173,6 +195,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -184,6 +214,20 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:Q2FY25",
+     "finance_cost:Q2FY25",
+     "depreciation:Q2FY25",
+     "other_income:Q2FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -195,6 +239,18 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:Q2FY25",
+     "revenue:Q2FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -206,6 +262,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -217,6 +281,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -228,6 +300,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -239,6 +319,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -250,6 +338,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -261,6 +357,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -272,6 +376,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -283,6 +395,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -294,6 +414,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -305,6 +433,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -316,6 +452,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -327,6 +471,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -338,6 +490,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -349,6 +509,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -360,6 +528,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "share_associates",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -371,6 +547,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -382,6 +566,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -393,6 +585,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "Q2FY25",
    "qoq_pct": null,
@@ -404,17 +604,33 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
-   "metric": "capex",
-   "period": "H1FY25",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "Q2FY25",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544281:Q2FY25",
    "unit": "INR_CR",
-   "value": 2.54,
+   "value": 0.0,
    "yoy_pct": null
   },
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "current_tax",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -426,6 +642,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "deferred_tax",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -437,6 +661,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "depreciation",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -448,6 +680,20 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt_before_exceptional:H1FY25",
+     "finance_cost:H1FY25",
+     "depreciation:H1FY25",
+     "other_income:H1FY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "ebitda",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -459,6 +705,18 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "ebitda:H1FY25",
+     "revenue:H1FY25"
+    ],
+    "ok": true,
+    "unit": "PCT"
+   },
    "metric": "ebitda_margin",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -470,6 +728,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "employee_cost",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -481,6 +747,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
    "metric": "eps",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -492,6 +766,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "exceptional_items",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -503,6 +785,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "finance_cost",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -514,17 +804,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
-   "metric": "financing_cash_flow",
-   "period": "H1FY25",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY25",
-   "unit": "INR_CR",
-   "value": 4.65,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2024-11-13T18:00:00+05:30",
-   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "inventory_change",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -536,39 +823,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
-   "metric": "investing_cash_flow",
-   "period": "H1FY25",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY25",
-   "unit": "INR_CR",
-   "value": -3.71,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2024-11-13T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "metric": "net_cash_flow",
-   "period": "H1FY25",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY25",
-   "unit": "INR_CR",
-   "value": 0.46,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2024-11-13T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "metric": "operating_cash_flow",
-   "period": "H1FY25",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY25",
-   "unit": "INR_CR",
-   "value": -0.47,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2024-11-13T18:00:00+05:30",
-   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "other_expenses",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -580,6 +842,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "other_income",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -591,6 +861,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "paid_up_capital",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -602,6 +880,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "pat",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -613,6 +899,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "pat_continuing",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -624,6 +918,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "pbt",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -635,6 +937,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "purchases_stock_in_trade",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -646,6 +956,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "raw_material_cost",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -657,6 +975,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "revenue",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -668,6 +994,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "share_associates",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -679,6 +1013,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "tax_expense",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -690,6 +1032,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "total_expenses",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -701,6 +1051,14 @@
   {
    "as_of": "2024-11-13T18:00:00+05:30",
    "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
    "metric": "total_income",
    "period": "H1FY25",
    "qoq_pct": null,
@@ -710,10 +1068,238 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_discontinued",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR",
+   "value": 0.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR",
+   "value": 0.81,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": 2.54,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": 4.65,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": -3.71,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.46,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": -0.47,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex_intangible_wip",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR",
+   "value": 0.93,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2024-11-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:48+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H1FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY25",
+   "unit": "INR",
+   "value": 0.93,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -732,7 +1318,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -751,7 +1337,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -770,7 +1356,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -795,7 +1381,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -818,7 +1404,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -837,7 +1423,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -856,7 +1442,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -875,7 +1461,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -894,7 +1480,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -913,7 +1499,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -932,7 +1518,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -951,7 +1537,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -970,7 +1556,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -989,7 +1575,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1008,7 +1594,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1027,7 +1613,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1046,7 +1632,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1065,7 +1651,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1084,7 +1670,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1103,7 +1689,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1122,7 +1708,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1141,7 +1727,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1160,7 +1746,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1179,7 +1765,45 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY25",
+   "unit": "INR",
+   "value": 0.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-02-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:51+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q3FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY25",
+   "unit": "INR",
+   "value": 0.99,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-02-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1198,7 +1822,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1217,7 +1841,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1236,7 +1860,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -1261,7 +1885,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -1284,7 +1908,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1303,7 +1927,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1322,7 +1946,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1341,7 +1965,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1360,7 +1984,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1379,7 +2003,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1398,7 +2022,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1417,7 +2041,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1436,7 +2060,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1455,7 +2079,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1474,7 +2098,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1493,7 +2117,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1512,7 +2136,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1531,7 +2155,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1550,7 +2174,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1569,7 +2193,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1588,7 +2212,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1607,7 +2231,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1626,7 +2250,7 @@
    "as_of": "2025-02-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:24+05:30",
+    "at": "2026-10-27T07:14:51+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1642,10 +2266,163 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2025-02-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:51+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY25",
+   "unit": "INR",
+   "value": 1.76,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-02-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:51+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "9MFY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY25",
+   "unit": "INR",
+   "value": 1.76,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pat:FY25",
+     "pat:9MFY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR_CR",
+   "value": 6.73,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "pbt:FY25",
+     "pbt:9MFY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pbt",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR_CR",
+   "value": 9.07,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "revenue:FY25",
+     "revenue:9MFY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "revenue",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR_CR",
+   "value": 71.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "tax_expense:FY25",
+     "tax_expense:9MFY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "tax_expense",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR_CR",
+   "value": 2.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "calc",
+    "doc": "results",
+    "from": [
+     "total_income:FY25",
+     "total_income:9MFY25"
+    ],
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "total_income",
+   "period": "Q4FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR_CR",
+   "value": 72.29,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1664,7 +2441,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1683,7 +2460,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1702,7 +2479,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -1727,7 +2504,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -1750,7 +2527,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1769,7 +2546,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1788,7 +2565,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1807,7 +2584,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1826,7 +2603,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1845,7 +2622,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1864,7 +2641,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1883,7 +2660,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1902,7 +2679,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1921,7 +2698,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1940,7 +2717,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1959,7 +2736,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1978,7 +2755,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -1997,7 +2774,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2016,7 +2793,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2035,7 +2812,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2054,7 +2831,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2073,7 +2850,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2092,7 +2869,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2111,7 +2888,45 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR",
+   "value": 1.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H2FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR",
+   "value": 1.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2130,7 +2945,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2149,7 +2964,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2168,7 +2983,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2187,7 +3002,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -2212,7 +3027,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -2235,7 +3050,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2254,7 +3069,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2273,7 +3088,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2292,7 +3107,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2311,7 +3126,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2330,7 +3145,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2349,7 +3164,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2368,7 +3183,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2387,7 +3202,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2406,7 +3221,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2425,7 +3240,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2444,7 +3259,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2463,7 +3278,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2482,7 +3297,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2501,7 +3316,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2520,7 +3335,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2539,7 +3354,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2558,7 +3373,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2577,7 +3392,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2596,7 +3411,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2615,7 +3430,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2634,7 +3449,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2653,7 +3468,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2672,7 +3487,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2691,7 +3506,7 @@
    "as_of": "2025-05-29T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:27+05:30",
+    "at": "2026-10-27T07:14:54+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2707,10 +3522,48 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR",
+   "value": 3.36,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-05-29T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:54+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "FY25",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY25",
+   "unit": "INR",
+   "value": 3.36,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2729,7 +3582,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2748,7 +3601,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2767,7 +3620,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -2792,7 +3645,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -2815,7 +3668,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2834,7 +3687,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2853,7 +3706,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2872,7 +3725,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2891,7 +3744,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2910,7 +3763,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2929,7 +3782,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2948,7 +3801,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2967,7 +3820,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -2986,7 +3839,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3005,7 +3858,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3024,7 +3877,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3043,7 +3896,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3062,7 +3915,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3081,7 +3934,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3100,7 +3953,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3119,7 +3972,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3138,7 +3991,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3157,7 +4010,7 @@
    "as_of": "2025-08-08T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:16+05:30",
+    "at": "2026-10-27T07:14:46+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3173,10 +4026,48 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2025-08-08T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q1FY26",
+   "unit": "INR",
+   "value": 0.8,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-08-08T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:46+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q1FY26",
+   "unit": "INR",
+   "value": 0.8,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3195,7 +4086,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3214,7 +4105,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3233,7 +4124,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -3258,7 +4149,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -3281,7 +4172,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3300,7 +4191,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3319,7 +4210,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3338,7 +4229,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3357,7 +4248,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3376,7 +4267,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3395,7 +4286,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3414,7 +4305,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3433,7 +4324,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3452,7 +4343,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3471,7 +4362,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3490,7 +4381,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3509,7 +4400,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3528,7 +4419,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3547,7 +4438,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3566,7 +4457,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3585,7 +4476,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3604,7 +4495,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3623,15 +4514,15 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
     "ok": true,
     "unit": "INR_CR"
    },
-   "metric": "capex",
-   "period": "H1FY26",
+   "metric": "pat_discontinued",
+   "period": "Q2FY26",
    "qoq_pct": null,
    "source_news_id": "xbrl:res:544281:Q2FY26",
    "unit": "INR_CR",
@@ -3642,7 +4533,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3661,7 +4552,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3680,7 +4571,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3699,7 +4590,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -3724,7 +4615,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -3747,7 +4638,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3766,7 +4657,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3785,7 +4676,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3804,7 +4695,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3823,26 +4714,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "financing_cash_flow",
-   "period": "H1FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY26",
-   "unit": "INR_CR",
-   "value": 14.4,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-14T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3861,64 +4733,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "investing_cash_flow",
-   "period": "H1FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY26",
-   "unit": "INR_CR",
-   "value": -2.18,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-14T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "net_cash_flow",
-   "period": "H1FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY26",
-   "unit": "INR_CR",
-   "value": 9.75,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-14T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "operating_cash_flow",
-   "period": "H1FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY26",
-   "unit": "INR_CR",
-   "value": -2.48,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-14T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3937,7 +4752,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3956,7 +4771,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3975,7 +4790,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -3994,7 +4809,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4013,7 +4828,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4032,7 +4847,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4051,7 +4866,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4070,7 +4885,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4089,7 +4904,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4108,7 +4923,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4127,7 +4942,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4146,7 +4961,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4165,26 +4980,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
-    "basis": "STANDALONE",
-    "by": "file",
-    "doc": "results",
-    "ok": true,
-    "unit": "INR_CR"
-   },
-   "metric": "pat_discontinued",
-   "period": "Q2FY26",
-   "qoq_pct": null,
-   "source_news_id": "xbrl:res:544281:Q2FY26",
-   "unit": "INR_CR",
-   "value": 0.0,
-   "yoy_pct": null
-  },
-  {
-   "as_of": "2025-11-14T18:00:00+05:30",
-   "basis": "STANDALONE",
-   "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4203,7 +4999,140 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR",
+   "value": 0.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q2FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR",
+   "value": 0.33,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "capex",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR_CR",
+   "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "financing_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR_CR",
+   "value": 14.4,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "investing_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR_CR",
+   "value": -2.18,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "net_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR_CR",
+   "value": 9.75,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "operating_cash_flow",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR_CR",
+   "value": -2.48,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4222,7 +5151,7 @@
    "as_of": "2025-11-14T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:21+05:30",
+    "at": "2026-10-27T07:14:50+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4238,10 +5167,48 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR",
+   "value": 1.13,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2025-11-14T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:50+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "H1FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q2FY26",
+   "unit": "INR",
+   "value": 1.13,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4260,7 +5227,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4279,7 +5246,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4298,7 +5265,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -4323,7 +5290,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -4346,7 +5313,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4365,7 +5332,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4384,7 +5351,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4403,7 +5370,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4422,7 +5389,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4441,7 +5408,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4460,7 +5427,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4479,7 +5446,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4498,7 +5465,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4517,7 +5484,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4536,7 +5503,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4555,7 +5522,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4574,7 +5541,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4593,7 +5560,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4612,7 +5579,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4631,7 +5598,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4650,7 +5617,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4669,7 +5636,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4688,7 +5655,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4707,7 +5674,45 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY26",
+   "unit": "INR",
+   "value": 0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q3FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY26",
+   "unit": "INR",
+   "value": 0.1,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4726,7 +5731,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4745,7 +5750,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4764,7 +5769,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -4789,7 +5794,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -4812,7 +5817,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4831,7 +5836,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4850,7 +5855,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4869,7 +5874,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4888,7 +5893,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4907,7 +5912,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4926,7 +5931,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4945,7 +5950,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4964,7 +5969,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -4983,7 +5988,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5002,7 +6007,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5021,7 +6026,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5040,7 +6045,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5059,7 +6064,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5078,7 +6083,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5097,7 +6102,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5116,7 +6121,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5135,7 +6140,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5154,7 +6159,7 @@
    "as_of": "2026-05-05T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:25+05:30",
+    "at": "2026-10-27T07:14:52+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5170,10 +6175,48 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2026-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY26",
+   "unit": "INR",
+   "value": 0.21,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-05T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:52+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "9MFY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q3FY26",
+   "unit": "INR",
+   "value": 0.21,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5192,7 +6235,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5211,7 +6254,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5230,7 +6273,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -5255,7 +6298,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -5278,7 +6321,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5297,7 +6340,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5316,7 +6359,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5335,7 +6378,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5354,7 +6397,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5373,7 +6416,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5392,7 +6435,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5411,7 +6454,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5430,7 +6473,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5449,7 +6492,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5468,7 +6511,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5487,7 +6530,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5506,7 +6549,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5525,7 +6568,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5544,7 +6587,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5563,7 +6606,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5582,7 +6625,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5601,7 +6644,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5620,7 +6663,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5639,7 +6682,45 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY26",
+   "unit": "INR",
+   "value": 0.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:56+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q4FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY26",
+   "unit": "INR",
+   "value": 0.09,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5658,7 +6739,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5677,7 +6758,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5696,7 +6777,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5715,7 +6796,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -5740,7 +6821,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -5763,7 +6844,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5782,7 +6863,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5801,7 +6882,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5820,7 +6901,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5839,7 +6920,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5858,7 +6939,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5877,7 +6958,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5896,7 +6977,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5915,7 +6996,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5934,7 +7015,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5953,7 +7034,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5972,7 +7053,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -5991,7 +7072,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6010,7 +7091,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6029,7 +7110,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6048,7 +7129,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6067,7 +7148,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6086,7 +7167,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6105,7 +7186,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6124,7 +7205,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6143,7 +7224,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6162,7 +7243,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6181,7 +7262,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6200,7 +7281,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6219,7 +7300,7 @@
    "as_of": "2026-05-28T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:29+05:30",
+    "at": "2026-10-27T07:14:56+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6235,10 +7316,48 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2026-05-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:56+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY26",
+   "unit": "INR",
+   "value": 0.3,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-05-28T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:56+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "FY26",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q4FY26",
+   "unit": "INR",
+   "value": 0.3,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6257,7 +7376,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6276,7 +7395,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6295,7 +7414,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -6320,7 +7439,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "calc",
     "doc": "results",
@@ -6343,7 +7462,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6362,7 +7481,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6381,7 +7500,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6400,7 +7519,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6419,7 +7538,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6438,7 +7557,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6457,7 +7576,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6476,7 +7595,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6495,7 +7614,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6514,7 +7633,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6533,7 +7652,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6552,7 +7671,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6571,7 +7690,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6590,7 +7709,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6609,7 +7728,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6628,7 +7747,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6647,7 +7766,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6666,7 +7785,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6685,7 +7804,7 @@
    "as_of": "2026-08-13T18:00:00+05:30",
    "basis": "STANDALONE",
    "lab": {
-    "at": "2026-10-25T21:47:19+05:30",
+    "at": "2026-10-27T07:14:47+05:30",
     "basis": "STANDALONE",
     "by": "file",
     "doc": "results",
@@ -6698,6 +7817,44 @@
    "source_news_id": "xbrl:res:544281:Q1FY27",
    "unit": "INR_CR",
    "value": 0.0,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:47+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q1FY27",
+   "unit": "INR",
+   "value": 0.08,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-08-13T18:00:00+05:30",
+   "basis": "STANDALONE",
+   "lab": {
+    "at": "2026-10-27T07:14:47+05:30",
+    "basis": "STANDALONE",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544281:Q1FY27",
+   "unit": "INR",
+   "value": 0.08,
    "yoy_pct": null
   }
  ],
@@ -7181,6 +8338,176 @@
       "status": "The Appeal has been filed before Deputy Commissioner of State Tax."
      }
     ]
+   },
+   {
+    "as_of": "2026-10-26T16:19:53+05:30",
+    "board": [
+     {
+      "appointed": "2011-03-16",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Amit Bholanath Mishra",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2016-10-28",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shreeprakash Deonarain Singh",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2016-10-28",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Bharatkumar Punmaji Parmar",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2024-11-12",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Shivani Amit Mishra",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2018-06-07",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Udayan Anantrao Chindarkar",
+      "role": null,
+      "tenure_months": 99.23
+     },
+     {
+      "appointed": "2024-12-05",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sadiq Shakil Merchant",
+      "role": null,
+      "tenure_months": 21.26
+     },
+     {
+      "appointed": "2023-05-26",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Archana Rakesh Pandey",
+      "role": null,
+      "tenure_months": 40.05
+     },
+     {
+      "appointed": "2025-07-14",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Reshma Dagdu Wadkar",
+      "role": null,
+      "tenure_months": 14.18
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": false,
+    "committees": {
+     "audit committee": [
+      "Udayan Anantrao Chindarkar",
+      "Amit Bholanath Mishra",
+      "Archana Rakesh Pandey",
+      "Sadiq Shakil Merchant"
+     ],
+     "corporate social responsibility committee": [
+      "Udayan Anantrao Chindarkar",
+      "Amit Bholanath Mishra",
+      "Bharatkumar Punmaji Parmar"
+     ],
+     "nomination and remuneration committee": [
+      "Udayan Anantrao Chindarkar",
+      "Sadiq Shakil Merchant",
+      "Archana Rakesh Pandey"
+     ],
+     "risk management committee": [
+      "Amit Bholanath Mishra",
+      "Bharatkumar Punmaji Parmar",
+      "Archana Rakesh Pandey"
+     ],
+     "stakeholders relationship committee": [
+      "Udayan Anantrao Chindarkar",
+      "Sadiq Shakil Merchant",
+      "Archana Rakesh Pandey",
+      "Amit Bholanath Mishra"
+     ]
+    },
+    "complaints": {
+     "disposed": 0.0,
+     "pending": 0.0,
+     "received": 0.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [
+     "loan to promoter: ₹4.9131 Cr outstanding"
+    ],
+    "gaps": {
+     "audit committee": 76.0,
+     "board": 37.0,
+     "stakeholders relationship committee": 76.0
+    },
+    "independent_directors": 4,
+    "material_floor_cr": 0.978,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [
+     {
+      "given_cr": 0.077,
+      "kind": "loan",
+      "outstanding_cr": 4.9131,
+      "party": "promoter"
+     }
+    ],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1745851_26102026042025_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "The Appeal has been filed before the tribunal.",
+      "initiated": "2025-06-27",
+      "opposing_party": "Appeal against the demand raised of amount Rs. 57.88 Lakhs for the F.Y. 2016-17",
+      "status": "The Appeal has been filed before the tribunal."
+     },
+     {
+      "as_last_disclosed": "The Appeal has been filed before the 1st appellate authority.",
+      "initiated": "2026-03-18",
+      "opposing_party": "Appeal against the demand raised of amount Rs. 2.3 crore for the F.Y. 2023-24",
+      "status": "Appeal is pending before the 1st appellate authority."
+     },
+     {
+      "as_last_disclosed": "The Appeal has been filed before Deputy Commissioner of State Tax.",
+      "initiated": "2026-02-03",
+      "opposing_party": "Appeal against the demand raised of amount Rs. 9.33 crore for the F.Y. 2019-20",
+      "status": "The Appeal has been filed before Deputy Commissioner of State Tax."
+     },
+     {
+      "as_last_disclosed": "The Appeal has been filed before Deputy Commissioner of State Tax.",
+      "initiated": "2026-03-12",
+      "opposing_party": "Appeal against the demand raised of amount Rs. 3.10 crore for the F.Y. 2022-23",
+      "status": "The Appeal has been filed before Deputy Commissioner of State Tax."
+     }
+    ]
    }
   ]
  },
@@ -7343,6 +8670,11 @@
      "pct": 1.16
     }
    ],
+   "lab": {
+    "at": "2026-10-14T12:44:45+05:30",
+    "by": "file",
+    "doc": "other"
+   },
    "period": "Q2FY27",
    "promoter_pct": 30.95,
    "retail_holders": 15845.0,
@@ -7352,11 +8684,38 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "544281",
+ "section_lab": {
+  "corporate_actions": {
+   "at": "2026-09-21",
+   "by": "file",
+   "doc": "other"
+  },
+  "governance_quarters": {
+   "at": "2026-10-26T16:19:53+05:30",
+   "by": "file",
+   "doc": "other"
+  },
+  "market_deals": {
+   "at": "2026-07-16T15:30:00+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "construction",
  "segment_mix": [],
+ "standalone_only": [
+  "Q2FY25",
+  "Q3FY25",
+  "Q4FY25",
+  "Q1FY26",
+  "Q2FY26",
+  "Q3FY26",
+  "Q4FY26",
+  "Q1FY27"
+ ],
  "symbol": "ABINFRA",
  "timeline": [],
  "upcoming_events": [],
- "updated_at": "2026-10-25T21:47:29+05:30",
+ "updated_at": "2026-10-27T07:14:56+05:30",
  "watchlist": []
 }

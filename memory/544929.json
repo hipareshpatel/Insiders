@@ -7,7 +7,150 @@
  "financial_metrics": [],
  "governance": {
   "auditor": null,
-  "auditor_history": []
+  "auditor_history": [],
+  "quarters": [
+   {
+    "as_of": "2026-10-26T11:22:12+05:30",
+    "board": [
+     {
+      "appointed": "1996-04-25",
+      "category": "Non-Executive - Non Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Nikunj Mohanlal Kapadia",
+      "role": "Chairperson related to Promoter",
+      "tenure_months": null
+     },
+     {
+      "appointed": "1996-04-25",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Munjal Nikunj Kapadia",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "1997-06-28",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mihir Nikunj Kapadia",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2001-11-05",
+      "category": "Executive Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Pratik Nikunj Kapadia",
+      "role": null,
+      "tenure_months": null
+     },
+     {
+      "appointed": "2025-03-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Anand Shailesh Bathiya",
+      "role": null,
+      "tenure_months": 18.19
+     },
+     {
+      "appointed": "2025-03-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Chitradurga Narasimha Murthy",
+      "role": null,
+      "tenure_months": 18.19
+     },
+     {
+      "appointed": "2025-03-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Sanjay Khubchand Israni",
+      "role": null,
+      "tenure_months": 18.19
+     },
+     {
+      "appointed": "2025-03-11",
+      "category": "Non-Executive - Independent Director",
+      "ceased": null,
+      "cessation_reason": null,
+      "name": "Mita Dixit",
+      "role": null,
+      "tenure_months": 18.19
+     }
+    ],
+    "board_size": 8,
+    "chair_related_to_md": true,
+    "committees": {
+     "audit committee": [
+      "Anand Shailesh Bathiya",
+      "Sanjay Khubchand Israni",
+      "Mita Dixit"
+     ],
+     "nomination and remuneration committee": [
+      "Chitradurga Narasimha Murthy",
+      "Mita Dixit",
+      "Nikunj Mohanlal Kapadia"
+     ],
+     "risk management committee": [
+      "Sanjay Khubchand Israni",
+      "Anand Shailesh Bathiya",
+      "Pratik Nikunj Kapadia"
+     ],
+     "stakeholders relationship committee": [
+      "Mita Dixit",
+      "Chitradurga Narasimha Murthy",
+      "Mihir Nikunj Kapadia"
+     ]
+    },
+    "complaints": {
+     "disposed": 11.0,
+     "pending": 0.0,
+     "received": 11.0
+    },
+    "compliance": {
+     "audit committee": true,
+     "board": true,
+     "meetings": true,
+     "nomination and remuneration committee": true,
+     "risk management committee": true,
+     "stakeholders relationship committee": true
+    },
+    "cyber_incident": false,
+    "exceptions": [],
+    "gaps": {
+     "audit committee": 77.0,
+     "board": 77.0
+    },
+    "independent_directors": 5,
+    "material_floor_cr": 0.01,
+    "parser": 4,
+    "penalties": [],
+    "quarter_end": "2026-09-30",
+    "related_finance": [],
+    "source": "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_GOVERNANCE_1745563_26102026112305_WEB.xml",
+    "tax_litigation": [
+     {
+      "as_last_disclosed": "The GST Authority, vide assessment order dated November 07, 2024 raised a tax under section 73 of the Central GST Act, 2017 against the company",
+      "initiated": "2024-11-07",
+      "opposing_party": "Assistant Commissioner, Division - Dehradun, Central Goods & Service Tax Division- Dehradun",
+      "status": "An Appeal being filed with Commissioner (Appeals) on April 24, 2025, and same is pending for appeal hearing"
+     },
+     {
+      "as_last_disclosed": "The GST Authority, vide assessment order dated June 20, 2025 raised a tax under section 74(9) of the Central GST Act, 2017 against the company",
+      "initiated": "2025-06-20",
+      "opposing_party": "CGST Act, 2017, Commercial Tax Officer - HOSUR: Tamil Nadu",
+      "status": "An Appeal being filed with Commissioner (Appeals) on August 28, 2025 and same is pending for appeal hearing"
+     }
+    ]
+   }
+  ]
  },
  "guidance": [],
  "identity": {
@@ -47,6 +190,11 @@
     }
    ],
    "insurance_pct": 0.04,
+   "lab": {
+    "at": "2026-10-13T11:35:47+05:30",
+    "by": "file",
+    "doc": "other"
+   },
    "mf_pct": 2.28,
    "period": "Q2FY27",
    "promoter_pct": 74.95,
@@ -57,6 +205,13 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "544929",
+ "section_lab": {
+  "governance_quarters": {
+   "at": "2026-10-26T11:22:12+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "capital_goods",
  "segment_mix": [],
  "symbol": "MANIKA",

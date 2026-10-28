@@ -3,6 +3,11 @@
   {
    "as_of": "2026-10-01T17:41:34+05:30",
    "credit_rating": "Crisil A+/Stable / Crisil A1",
+   "lab": {
+    "at": "2026-10-01T17:41:34+05:30",
+    "by": "unknown",
+    "doc": "other"
+   },
    "period": "Sep-2026",
    "rating_agency": "CRISIL Ratings Limited",
    "rating_outlook": "Stable",
@@ -10,6 +15,11 @@
   },
   {
    "as_of": "2026-10-13T21:12:19+05:30",
+   "lab": {
+    "at": "2026-10-13T21:12:19+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "period": "Jun-2026",
    "source_news_id": "nse-106816460"
   }
@@ -29,6 +39,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -39,7 +54,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -69,6 +84,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -79,7 +99,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -109,6 +129,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -119,7 +144,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -149,6 +174,20 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "pbt:Q1FY27",
+       "finance_cost:Q1FY27",
+       "depreciation:Q1FY27",
+       "other_income:Q1FY27",
+       "exceptional_items:Q1FY27"
+      ],
+      "unit": "INR_CR"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -159,7 +198,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "calc",
       "doc": "results",
@@ -195,6 +234,17 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "calc",
+      "doc": "results",
+      "from": [
+       "ebitda:Q1FY27",
+       "revenue:Q1FY27"
+      ],
+      "unit": "PCT"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "PCT",
@@ -205,7 +255,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "calc",
       "doc": "results",
@@ -225,6 +275,13 @@
     {
      "as_of": "2026-10-14T19:27:57+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-14T19:27:57+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "ai",
+      "doc": "call",
+      "unit": "PCT"
+     },
      "news_id": "nse-106817751",
      "qoq_pct": null,
      "unit": "PCT",
@@ -248,6 +305,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -258,7 +320,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -288,6 +350,13 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR",
@@ -298,7 +367,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -314,6 +383,13 @@
     {
      "as_of": "2026-10-14T19:27:57+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-14T19:27:57+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "ai",
+      "doc": "call",
+      "unit": "INR_PER_SHARE"
+     },
      "news_id": "nse-106817751",
      "qoq_pct": null,
      "unit": "INR_PER_SHARE",
@@ -337,6 +413,13 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -347,7 +430,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -377,6 +460,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -387,7 +475,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -417,6 +505,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -427,7 +520,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -457,6 +550,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -467,7 +565,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -497,6 +595,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -507,7 +610,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -537,6 +640,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -547,7 +655,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -577,6 +685,13 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -587,7 +702,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -617,6 +732,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -627,7 +747,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -657,6 +777,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -667,7 +792,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -697,6 +822,13 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -707,7 +839,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -737,6 +869,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -747,7 +884,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -777,6 +914,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -787,7 +929,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -817,6 +959,13 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "basis": "CONSOLIDATED",
+      "by": "file",
+      "doc": "results",
+      "unit": "INR_CR"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -827,7 +976,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -857,6 +1006,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -867,7 +1021,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -897,6 +1051,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -907,7 +1066,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -937,6 +1096,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -947,7 +1111,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -977,6 +1141,11 @@
     {
      "as_of": "2026-10-13T21:12:19+05:30",
      "basis": "CONSOLIDATED",
+     "lab": {
+      "at": "2026-10-13T21:12:19+05:30",
+      "by": "unknown",
+      "doc": "results"
+     },
      "news_id": "nse-106816460",
      "qoq_pct": null,
      "unit": "INR_CR",
@@ -987,7 +1156,7 @@
      "as_of": "2026-10-14T18:00:00+05:30",
      "basis": "CONSOLIDATED",
      "lab": {
-      "at": "2026-10-25T22:39:08+05:30",
+      "at": "2026-10-27T10:03:38+05:30",
       "basis": "CONSOLIDATED",
       "by": "file",
       "doc": "results",
@@ -1011,7 +1180,7 @@
    "as_of": "2026-10-14T18:00:00+05:30",
    "basis": "CONSOLIDATED",
    "lab": {
-    "at": "2026-10-25T22:39:08+05:30",
+    "at": "2026-10-27T10:03:38+05:30",
     "basis": "CONSOLIDATED",
     "by": "file",
     "doc": "results",
@@ -1027,8 +1196,72 @@
    "yoy_pct": null
   },
   {
+   "as_of": "2026-10-14T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:03:38+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_continuing",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544936:Q1FY27",
+   "unit": "INR",
+   "value": 0.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-14T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:03:38+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR"
+   },
+   "metric": "eps_total",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544936:Q1FY27",
+   "unit": "INR",
+   "value": 0.27,
+   "yoy_pct": null
+  },
+  {
+   "as_of": "2026-10-14T18:00:00+05:30",
+   "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-27T10:03:38+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "file",
+    "doc": "results",
+    "ok": true,
+    "unit": "INR_CR"
+   },
+   "metric": "pat_minority",
+   "period": "Q1FY27",
+   "qoq_pct": null,
+   "source_news_id": "xbrl:res:544936:Q1FY27",
+   "unit": "INR_CR",
+   "value": -0.63,
+   "yoy_pct": null
+  },
+  {
    "as_of": "2026-10-14T19:27:57+05:30",
    "basis": "CONSOLIDATED",
+   "lab": {
+    "at": "2026-10-14T19:27:57+05:30",
+    "basis": "CONSOLIDATED",
+    "by": "ai",
+    "doc": "call",
+    "unit": "PCT"
+   },
    "metric": "export_share",
    "period": "Q1FY27",
    "qoq_pct": null,
@@ -1042,6 +1275,11 @@
  "governance": {
   "auditor": {
    "as_of": "2026-10-13T21:12:19+05:30",
+   "lab": {
+    "at": "2026-10-13T21:12:19+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "name": "Deloitte Haskins & Sells LLP",
    "opinion": "UNMODIFIED",
    "source_news_id": "nse-106816460"
@@ -1049,6 +1287,11 @@
   "auditor_history": [
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Deloitte Haskins & Sells LLP",
     "opinion": "UNMODIFIED",
     "source_news_id": "nse-106816460"
@@ -1060,36 +1303,66 @@
   "entities": [
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Hewland Engineering Limited",
     "source_news_id": "nse-106816460",
     "type": "subsidiary (90% post-acquisition)"
    },
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Hero Motors Thai Limited",
     "source_news_id": "nse-106816460",
     "type": "subsidiary"
    },
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Spur Technologies Private Limited",
     "source_news_id": "nse-106816460",
     "type": "subsidiary"
    },
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "HYM Drive Systems Private Limited",
     "source_news_id": "nse-106816460",
     "type": "subsidiary"
    },
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Hero EDU Systems Private Limited",
     "source_news_id": "nse-106816460",
     "type": "subsidiary"
    },
    {
     "as_of": "2026-10-13T21:12:19+05:30",
+    "lab": {
+     "at": "2026-10-13T21:12:19+05:30",
+     "by": "unknown",
+     "doc": "results"
+    },
     "name": "Munjal STP Industries Private Limited",
     "source_news_id": "nse-106816460",
     "type": "subsidiary"
@@ -1124,6 +1397,126 @@
     "side": "BUY",
     "symbol": "HEROMOTORS",
     "value_cr": 31.02
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "D3 STOCK VISION LLP",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.42,
+    "qty": 2709795.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 28.57
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "D3 STOCK VISION LLP",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.68,
+    "qty": 2526294.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 26.7
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.64,
+    "qty": 3156777.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 33.35
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "MANSI SHARE AND STOCK BROKING PRIVATE LIMITED",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.52,
+    "qty": 3286747.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 34.68
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.29,
+    "qty": 2500003.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 26.32
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "NEO APEX SHARE BROKING SERVICES LLP",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.33,
+    "qty": 2500003.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 26.33
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.58,
+    "qty": 3275821.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 34.59
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "SETU SECURITIES PVT LTD",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.9,
+    "qty": 2711957.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 28.72
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "SWASTIK TRADING AND INVESTMENTS",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 105.32,
+    "qty": 2688598.0,
+    "remarks": null,
+    "side": "BUY",
+    "symbol": "HEROMOTORS",
+    "value_cr": 28.32
+   },
+   {
+    "as_of": "2026-10-26T15:30:00+05:30",
+    "client": "SWASTIK TRADING AND INVESTMENTS",
+    "date": "2026-10-26",
+    "kind": "BULK",
+    "price": 106.31,
+    "qty": 2538598.0,
+    "remarks": null,
+    "side": "SELL",
+    "symbol": "HEROMOTORS",
+    "value_cr": 26.99
    }
   ]
  },
@@ -1164,6 +1557,11 @@
     }
    ],
    "insurance_pct": 0.52,
+   "lab": {
+    "at": "2026-10-21T05:22:05+05:30",
+    "by": "file",
+    "doc": "other"
+   },
    "mf_pct": 8.8,
    "period": "Q2FY27",
    "promoter_pct": 61.63,
@@ -1174,10 +1572,22 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "544936",
+ "section_lab": {
+  "market_deals": {
+   "at": "2026-10-27T07:02:57+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "auto_components",
  "segment_mix": [
   {
    "as_of": "2026-10-14T19:27:57+05:30",
+   "lab": {
+    "at": "2026-10-14T19:27:57+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
    "period": "Q1FY27",
    "revenue_cr": 155.6,
    "segment": "Gears & Transmissions",
@@ -1186,6 +1596,11 @@
   },
   {
    "as_of": "2026-10-14T19:27:57+05:30",
+   "lab": {
+    "at": "2026-10-14T19:27:57+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
    "period": "Q1FY27",
    "revenue_cr": 39.3,
    "segment": "Bike Powertrain",
@@ -1194,6 +1609,11 @@
   },
   {
    "as_of": "2026-10-14T19:27:57+05:30",
+   "lab": {
+    "at": "2026-10-14T19:27:57+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
    "period": "Q1FY27",
    "revenue_cr": 107.6,
    "segment": "Alloys & Metallics",
@@ -1621,6 +2041,40 @@
     "unit": "INR_CR",
     "value": 0.0,
     "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-21T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T04:21:31+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_continuing",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544936:Q1FY27",
+    "unit": "INR",
+    "value": 0.62,
+    "yoy_pct": null
+   },
+   {
+    "as_of": "2026-10-21T18:00:00+05:30",
+    "lab": {
+     "at": "2026-10-27T04:21:31+05:30",
+     "basis": "STANDALONE",
+     "by": "file",
+     "doc": "results",
+     "ok": true,
+     "unit": "INR"
+    },
+    "metric": "eps_total",
+    "period": "Q1FY27",
+    "source_news_id": "xbrl:res-sa:544936:Q1FY27",
+    "unit": "INR",
+    "value": 0.62,
+    "yoy_pct": null
    }
   ]
  },
@@ -1631,6 +2085,11 @@
    "event_type": "DEBT_RATINGS",
    "id": "t_b4f2e407",
    "impact_level": "LOW",
+   "lab": {
+    "at": "2026-10-01T17:41:34+05:30",
+    "by": "unknown",
+    "doc": "other"
+   },
    "news_id": "nse-106805122",
    "summary": "CRISIL Ratings reaffirmed Hero Motors' long-term credit rating at CRISIL A+/Stable and short-term rating at CRISIL A1 for ₹400 crore facilities."
   },
@@ -1639,6 +2098,11 @@
    "event_type": "GOVERNANCE",
    "id": "t_682539fd",
    "impact_level": null,
+   "lab": {
+    "at": "2026-10-01T22:48:18+05:30",
+    "by": "unknown",
+    "doc": "other"
+   },
    "news_id": "nse-106805758",
    "summary": "Hero Motors Limited’s 27th AGM on September 30, 2026, unanimously approved audited standalone and consolidated financial statements for FY2026.",
    "tier": "TIMELINE"
@@ -1648,6 +2112,11 @@
    "event_type": "RESULTS",
    "id": "t_8ce306c4",
    "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-13T21:12:19+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "news_id": "nse-106816460",
    "summary": "Q1FY27 results (consolidated): revenue ₹319.32 Cr, net profit to shareholders ₹10.2 Cr."
   },
@@ -1656,12 +2125,17 @@
    "event_type": "CONCALL_PRESENTATION",
    "id": "t_268c8e71",
    "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-14T19:27:57+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
    "news_id": "nse-106817751",
    "summary": "Hero Motors published its investor presentation for the quarter ended June 30, 2026, reporting consolidated revenue of ₹319.3 Cr."
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-25T22:39:08+05:30",
+ "updated_at": "2026-10-27T10:03:38+05:30",
  "watchlist": [
   {
    "check_by": "2026-09-30",
@@ -1669,6 +2143,11 @@
    "created_on": "2026-10-13T21:12:19+05:30",
    "id": "w_04d2490f",
    "kind": "KPI",
+   "lab": {
+    "at": "2026-10-13T21:12:19+05:30",
+    "by": "unknown",
+    "doc": "results"
+   },
    "source_news_id": "nse-106816460",
    "status": "OPEN",
    "status_history": [],

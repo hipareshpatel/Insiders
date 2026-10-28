@@ -6,8 +6,28 @@
  "deals": [],
  "financial_metrics": [],
  "governance": {
-  "auditor": null,
-  "auditor_history": []
+  "auditor": {
+   "as_of": "2026-10-24T12:17:08+05:30",
+   "lab": {
+    "at": "2026-10-27T23:53:17+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
+   "opinion": "UNMODIFIED",
+   "source_news_id": "nse-106827392"
+  },
+  "auditor_history": [
+   {
+    "as_of": "2026-10-24T12:17:08+05:30",
+    "lab": {
+     "at": "2026-10-27T23:53:17+05:30",
+     "by": "ai",
+     "doc": "other"
+    },
+    "opinion": "UNMODIFIED",
+    "source_news_id": "nse-106827392"
+   }
+  ]
  },
  "guidance": [],
  "identity": {
@@ -73,6 +93,13 @@
  "predictions": [],
  "schema_version": 3,
  "scrip_code": "SMT",
+ "section_lab": {
+  "market_deals": {
+   "at": "2026-10-23T15:30:00+05:30",
+   "by": "file",
+   "doc": "other"
+  }
+ },
  "sector": "default",
  "segment_mix": [],
  "symbol": "SMT",
@@ -82,12 +109,32 @@
    "event_type": "LITIGATION_REGULATORY",
    "id": "t_d201b6fe",
    "impact_level": "MODERATE",
+   "lab": {
+    "at": "2026-10-27T23:53:17+05:30",
+    "by": "ai",
+    "doc": "other"
+   },
    "news_id": "nse-106827392",
    "pdf_url": "https://nsearchives.nseindia.com/corporate/SAHAJANAND_24102026121647_Disclosure_Under_Reg_30_Summons_under_GST_ACT.pdf",
-   "summary": "2026-10-24: Sahajanand Medical receives GST summons from DGGI Mumbai for clinical trial reimbursement compliance"
+   "summary": "Sahajanand Medical Technologies received a GST summons under Section 70 from DGGI regarding clinical trial re-imbursements to foreign subsidiaries."
+  },
+  {
+   "date": "2026-10-26T18:32:09+05:30",
+   "event_type": "CONCALL_PRESENTATION",
+   "id": "t_5afcf45a",
+   "impact_level": null,
+   "lab": {
+    "at": "2026-10-26T21:57:15+05:30",
+    "by": "ai",
+    "doc": "call"
+   },
+   "news_id": "nse-106828945",
+   "pdf_url": "https://nsearchives.nseindia.com/corporate/SAHAJANAND_26102026183135_7_Earnings_call_Q2_FY27_26102026.pdf",
+   "summary": "Sahajanand Medical Technologies Limited will hold a conference call on Thursday, November 05, 2026 at 06:30 p.m. IST to discuss Q2 FY27 and H1 FY27 financial results.",
+   "tier": "TIMELINE"
   }
  ],
  "upcoming_events": [],
- "updated_at": "2026-10-24T13:53:32+05:30",
+ "updated_at": "2026-10-27T23:53:17+05:30",
  "watchlist": []
 }

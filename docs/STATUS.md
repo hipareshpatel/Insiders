@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 06:20 IST.
+Last updated: 28 Oct 2026, 06:55 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -67,6 +67,24 @@ in older files are history.
 Not met. The rate has stayed between 15% and 23% for a week while about 120 fixes shipped (F104-F222).
 
 ## 3. Open work, in order
+
+**Order the owner approved, 28 Oct 2026, ~06:50 IST** ("Yes, go ahead in that order"):
+1. The blind audit of about 50 cards (item 1 below), this afternoon (check-in at 15:30 IST).
+2. **The XBRL answer key**: memory's exchange-file figures located on each filing's PDF page by word position (row label,
+   column header date, unit), so every PDF reader is scored on thousands of figures instead of a few hundred typed by
+   hand, and every filing where the XBRL figure is not on the page is listed. Being built (`xbrl-key`, read only; its
+   locator is measured against the hand keys first, and its first run is on 100 files).
+3. **The PDF reader, one filing at a time**: fix everything on one PDF, then the next, a new layout each time (upright,
+   sideways, tilted, scanned, sub-headings, units, notes). Every fix is re-scored on the whole key and kept only if
+   nothing gets worse (a fix for one PDF broke the Titan test on 27 Oct). Ideas to use: one layout per company reused
+   each quarter; arithmetic checks (revenue + other income = total income, total income - expenses = profit before tax,
+   last quarter's own column equals this filing's previous-quarter column); pages sorted first by type.
+4. In parallel, once the undo is merged: a "checked" mark where the XBRL file and the printed PDF agree, and fixes
+   where the PDF and one more source agree against memory (owner's A). NSE and BSE agreeing is not two sources: a
+   company files the same XBRL to both.
+Owner's aim (28 Oct): the printed PDF as the source of truth. Measured today the XBRL is the better source (about 1 in
+100 wrong; our PDF reader 13% of its answers wrong on the hard set), so the XBRL stays the daily source and the PDF the
+judge until the reader measures better.
 
 1. **Blind audit of about 50 cards written by the single run** (28 Oct afternoon IST, once enough new cards exist):
    the first measurement of the 13 switches. Independent reviewers, the fix author does not grade.

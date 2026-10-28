@@ -26,6 +26,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 
+from .backup import BackupError, RunBackup
 from .dossier import _RESULT_METRICS, SCREENER_KEY, SCREENER_PREFIX, STANDALONE_KEY, XBRL_SOURCE, doc_kind, keep_concurrent_writes, label
 from .nse import NEWS_ID_PREFIX
 from .timeutil import now_iso
@@ -282,6 +283,7 @@ def label_all(sink, scrips: list[str], dry_run: bool, cards: dict[str, dict], re
               "new": new, "had": had, "failed": [], "more": False, "last": done_through or None}
     deadline = clock() + time_budget if time_budget else None
     labeller = Labeller(cards)
+    backup = None if dry_run else RunBackup(sink, "label-memory")   # each dossier is saved to R2 backup/ before its write
     with ThreadPoolExecutor(max_workers=READERS) as pool:
         for start in range(0, len(todo), READERS):
             if deadline is not None and clock() >= deadline:
@@ -305,7 +307,13 @@ def label_all(sink, scrips: list[str], dry_run: bool, cards: dict[str, dict], re
                     if not dry_run:
                         try:
                             keep_concurrent_writes(merged, dossier, sink.get_dossier(scrip))
+                            backup.dossier(scrip, merged)
                             sink.put_dossier(scrip, merged)
+                        except BackupError as exc:   # nothing more is written; the report so far is returned (and saved by the command)
+                            report["failed"].append(f"{scrip}: {exc}"[:200])
+                            report["error"] = f"{type(exc).__name__}: {exc}"[:300]
+                            log.error("label-memory stopped: %s", exc)
+                            break
                         except Exception as exc:   # noqa: BLE001 - one company's failed write must not stop the run
                             report["failed"].append(f"{scrip}: write {type(exc).__name__}: {exc}"[:200])
                             log.warning("label-memory %s write failed: %s", scrip, exc)
@@ -313,6 +321,8 @@ def label_all(sink, scrips: list[str], dry_run: bool, cards: dict[str, dict], re
                 report["last"] = scrip
                 if not dry_run and not report["failed"]:
                     sink.kv_set(RESUME_KEY, scrip, now_iso())   # only while nothing failed, so a failure is retried
+            if report.get("error"):
+                break
     return report
 
 

@@ -466,15 +466,44 @@ def cmd_requeue_failed(args, settings, sink) -> int:
         from . import prune
 
         ids = prune.release(sink, dry_run=True)["rerun_ids"] + [i.strip() for i in (args.ids or "").split(",") if i.strip()]
+        if not args.dry_run and not _snapshot_requeue(sink, ids):
+            return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
         return 0
     if args.ids:
         ids = [i.strip() for i in args.ids.replace("\n", ",").split(",")]
+        if not args.dry_run and not _snapshot_requeue(sink, ids):
+            return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
         return 0
     since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
+    print("requeue-failed: no backup taken (no filings named; failed filings have no card to back up)")
     print(json.dumps(requeue.requeue(sink, since, settings.max_attempts, args.attempts, args.dry_run), ensure_ascii=False))
     return 0
+
+
+def _snapshot_requeue(sink, ids: list[str]) -> bool:
+    """Before named filings are set pending (the live run re-reads them later and rewrites their cards and their companies'
+    memory): save the named filings' cards and those companies' dossiers (backup.start_scope). False when a copy did not read
+    back: nothing is requeued. The backup has no after-state (the live run rewrites the filings later, and what it or anything
+    else writes meanwhile cannot be told from the job's), so it restores only with ``--force``, the dry run listing every
+    difference. Finding the cards of named filings reads every stored card once (export_cards, about 80 pages): acceptable for
+    a named re-run, and the reason a re-run by date takes no backup."""
+    from .backup import BackupError, start_scope
+
+    ids = [i for i in dict.fromkeys(ids) if i]
+    try:
+        backup = start_scope(sink, "requeue", news_ids=ids)
+    except BackupError as exc:
+        print(f"requeue-failed: the backup did not read back, nothing requeued: {exc}")
+        return False
+    summary = backup.summary()
+    print("requeue-failed: " + (f"backup of {summary['cards']} stored cards and {summary['dossiers']} dossiers before the re-run: "
+                                f"{summary['prefix']} (no after-state: restore it only with --force; the dry run lists every difference, "
+                                "later live writes included)" if summary else "no backup taken (none of the filings has a stored card)"))
+    if backup.missing_ids and summary:
+        print(f"requeue-failed: no stored card, not in the backup: {len(backup.missing_ids)} filings")
+    return True
 
 
 def cmd_failed_report(args, settings, sink) -> int:
@@ -600,6 +629,31 @@ def cmd_seed_memory(args, settings, sink) -> int:
             print(f"Not a company key or an NSE symbol in the universe: {', '.join(unknown)}")
             return 2
     stats = SeedStats()
+    scope = None
+    if args.universe:
+        print("seed-memory: no backup taken for a whole-universe run (name companies with --scrips to get one)")
+    else:
+        from .backup import BackupError, start_scope
+
+        try:
+            scope = start_scope(sink, "seed-memory", scrips)   # the named companies' dossiers, before the first write
+        except BackupError as exc:
+            print(f"seed-memory: the backup did not read back, nothing seeded: {exc}")
+            return 1
+        if scope.summary():
+            print(f"seed-memory: backup of {scope.summary()['dossiers']} dossiers: {scope.prefix}")
+
+    seal_failed: list[str] = []
+
+    def seal_backup() -> None:
+        from .backup import save_after
+
+        try:
+            if scope is not None and scope.summary():
+                save_after(sink, scope.prefix)
+        except Exception as exc:   # noqa: BLE001 - the seed's own result stands, but the run exits non-zero: without the after-state a restore needs --force
+            seal_failed.append(str(exc))
+            print(f"seed-memory: the after-state of the backup was not saved ({exc}); restore needs --force", file=sys.stderr)
     cache_root = settings.text_cache_dir
     # the resume point is saved every SEED_SAVE_EVERY companies and when the loop ends however it ends (one kv write
     # per company before 2026-10-21); a run killed outright seeds at most that many companies again, which replaces
@@ -609,6 +663,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
     refused = capped = False
     with (BseClient() if args.source == "bse" else contextlib.nullcontext()) as bse, NseClient() as nse, \
             contextlib.ExitStack() as checkpoint:
+        checkpoint.callback(seal_backup)
         if args.universe:
             checkpoint.callback(lambda: last_done and last_done != saved and sink.kv_set(resume_key, last_done, now_iso()))
         if bse is not None:
@@ -669,7 +724,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
                       "failures": stats.failures[:20], "refused": refused, "file_cap_reached": capped}, ensure_ascii=False))
     # REFUSED when NSE refused, as the other NSE syncs: it returned 0, the shard wrote no "more" marker and the job
     # record said ok, so the seed chain stopped with nothing to show for it (survey, 24 Oct 2026)
-    return REFUSED if refused else 0
+    return REFUSED if refused else 1 if seal_failed else 0
 
 
 def cmd_prune_companies(args, settings, sink) -> int:
@@ -858,6 +913,8 @@ def cmd_memory_gaps_fill_bse(args, settings, sink) -> int:
         bse_gap_fill.write_atomic(args.json, bse_gap_fill.summary_text(outcome, {"as_of": report["as_of"]}))
     if args.csv:
         bse_gap_fill.write_atomic(args.csv, bse_gap_fill.to_csv(outcome))
+    if outcome.get("error"):   # a backup that did not read back stopped the writes (backup.py); the files above are what was done
+        return 1
     if refused:
         return REFUSED
     if outcome.get("capped"):   # F213: the file cap is a planned stop, exit 0 so no chain restarts it at once
@@ -914,7 +971,10 @@ def cmd_restated_pdf(args, settings, sink) -> int:
         print(f"NSE refused ({exc}): stopped")
         return REFUSED
     if not args.dry_run and not args.scrips:
-        if stats["capped"]:
+        if stats.get("error"):   # a backup did not read back: the pass resumes after the last company done (a finished pass would restart)
+            if stats["last_done"]:
+                sink.kv_set(resume_key, stats["last_done"], now_iso())
+        elif stats["capped"]:
             if stats["last_done"]:
                 sink.kv_set(resume_key, stats["last_done"], now_iso())
             print("file cap reached: the rest waits for the next run (it resumes after "
@@ -925,6 +985,9 @@ def cmd_restated_pdf(args, settings, sink) -> int:
           f"{stats['restated']} restated figures found, {stats['stored']} dossiers changed, {len(stats['reasons'])} companies with quarters not read")
     if args.json:
         Path(args.json).write_text(json.dumps(stats, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if stats.get("error"):
+        print(f"stopped, nothing more written: {stats['error']}")
+        return 1
     return 0
 
 
@@ -1251,6 +1314,8 @@ def cmd_screener_fill(args, settings, sink) -> int:
                                               ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     if args.csv:
         Path(args.csv).write_text(screener_fill.to_csv(outcome), encoding="utf-8")
+    if outcome.get("error"):   # a backup that did not read back stopped the writes (backup.py); the files above are what was done
+        return 1
     if refused:
         return REFUSED
     return MORE_LEFT if outcome["more"] else 0
@@ -1747,6 +1812,36 @@ def cmd_backup(args, settings, sink) -> int:
     return 0
 
 
+def cmd_restore(args, settings, sink) -> int:
+    """Put a backup from R2 backup/ back (restore.py): a dry run by default; --apply first backs up what it replaces."""
+    from . import restore
+
+    if args.list:
+        for entry in restore.list_backups(sink):
+            print(json.dumps(entry))
+        return 0
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()}
+    news_ids = {s.strip() for s in (args.news_ids or "").split(",") if s.strip()}
+    if not args.backup or bool(scrips or news_ids) == bool(args.all):
+        print("restore: give --backup and either --scrips / --news-ids or --all (not both); --list shows the backups", file=sys.stderr)
+        return 2
+    try:
+        report = restore.plan(sink, args.backup, scrips, news_ids, args.all, args.force)
+    except ValueError as exc:
+        print(f"restore: {exc}", file=sys.stderr)
+        return 2
+    print(restore.render(report))
+    if report["unknown"]:   # a name that is not in the backup is a typo or the wrong backup: nothing is written
+        print("restore: not in the backup: " + ", ".join(report["unknown"]), file=sys.stderr)
+        return 2
+    if args.apply:
+        print(json.dumps(restore.apply(sink, report)))
+    else:
+        print("dry run: nothing changed (--apply backs up what it replaces to backup/restore-<time>/, then puts the backup back; "
+              "--force also puts back what was changed since the job)")
+    return 0
+
+
 def cmd_missed_jobs(args, settings, sink) -> int:
     """Print the daily workflows GitHub did not start (watchdog.py), one per line, for pipeline.yml to start; with
     --started W, record that W was dispatched (after `gh workflow run` succeeded)."""
@@ -2056,6 +2151,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--dry-run", action="store_true", help="count what would change, write nothing")
     p.add_argument("--diff-out", help="write each changed card's changed blocks, before and after, to this JSON file")
     p.set_defaults(func=cmd_refresh_card_blocks)
+    p = sub.add_parser("restore", help="put a backup from R2 backup/ back: dry run (default) or --apply (backs up what it replaces first)")
+    p.add_argument("--backup", help="the backup's R2 prefix, backup/<job>-<time>/")
+    p.add_argument("--scrips", help="only these companies' dossiers and cards (comma separated)")
+    p.add_argument("--news-ids", help="only these cards (comma separated)")
+    p.add_argument("--all", action="store_true", help="everything in the backup (required when no filter is given)")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--force", action="store_true", help="also put back what was changed since the job (and restore a backup with no after-state: a requeue-failed --ids snapshot)")
+    p.add_argument("--list", action="store_true", help="list the backups and exit")
+    p.set_defaults(func=cmd_restore)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")

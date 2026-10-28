@@ -309,9 +309,11 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
     NSE lists be filled for the quarters older than its first NSE results row. ``record`` (a ``Record``) keeps the run's output
     on disk as it goes: each filled company's rows are appended to the CSV and the summary is rewritten, so a refusal, a crash
     or a kill leaves everything done so far (CLAUDE.md: a run that ends with nothing saved is a defect)."""
+    from .backup import BackupError, RunBackup
     from .seed import SeedStats, seed_results
     from .settings import bse_fill_pre_nse
 
+    backup = RunBackup(sink, "bse-gap-fill") if apply else None   # each dossier is saved to R2 backup/ before its first write
     if pre_nse is None:
         pre_nse = bse_fill_pre_nse()
 
@@ -428,15 +430,23 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
                 done(scrip)
             continue
         periods = {e["period"] for e in fresh}
-        totals["companies_filled"] += 1
-        totals["quarters_filled"] += len(periods)
-        totals["figures_filled"] += len(fresh)
         added = [{"scrip": scrip, "symbol": symbol, "period": entry["period"], "metric": entry["metric"],
                   "value": entry["value"], "basis": entry.get("basis"), "source": EXCHANGE, "url": entry.get("source_url")}
                  for entry in sorted(fresh, key=lambda e: (quarter_index(e["period"]) or 0, e["metric"]))]
-        rows.extend(added)
+        written = 0
         if apply:
-            totals["figures_written"] += _write(sink, scrip, fresh, scratch.dossier)
+            try:
+                written = _write(sink, scrip, fresh, scratch.dossier, backup)
+            except BackupError as exc:   # nothing more is written; the totals, summary and files count only what was written
+                totals["error"] = f"{type(exc).__name__}: {exc}"[:300]
+                failed.append(f"{scrip} {symbol}: {exc}"[:200])
+                log.error("bse-gap-fill stopped: %s", exc)
+                break
+        totals["figures_written"] += written
+        totals["companies_filled"] += 1
+        totals["quarters_filled"] += len(periods)
+        totals["figures_filled"] += len(fresh)
+        rows.extend(added)
         if record is not None:
             record.company(added, outcome())   # after the write to memory: the record never lists a figure that was not written
         if not stats.failures:
@@ -444,7 +454,7 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
     return outcome()
 
 
-def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None) -> int:
+def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None, backup=None) -> int:
     """The entries into the stored dossier through the three-way merge; never over a value that is there. A company with no
     stored dossier starts from the seeded copy emptied of every figure and statement (the new entries are added below)."""
     read = sink.get_dossier(scrip)
@@ -468,6 +478,8 @@ def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None) -> i
         added += 1
     if added:
         keep_concurrent_writes(merged, read, sink.get_dossier(scrip))
+        if backup is not None:
+            backup.dossier(scrip, merged)
         sink.put_dossier(scrip, merged)
     return added
 

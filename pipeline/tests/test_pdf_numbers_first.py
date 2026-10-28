@@ -628,3 +628,24 @@ def test_a_scan_whose_layer_garbled_the_dates_is_read_with_ocr(monkeypatch):
     same = as_ocr_boxes(statement(rows, dates=["30-Sep-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
     kept = nf.reading_from_tables(nf.analyse(partly, ocr_boxes=lambda png: same, ocr_garbled=True), "Q2FY27", "pat", "STANDALONE")
     assert kept.status == "ok" and kept.source == "textlayer"
+
+
+def test_a_date_with_the_comma_glued_to_the_year_is_read():
+    # LOTUSDEV Q2FY27: "Sep 30,2026" over every column
+    from datetime import date
+    assert nf._dates_in_text("Sep 30,2026") == [date(2026, 9, 30)]
+    assert nf._dates_in_text("September 30,2026") == [date(2026, 9, 30)]
+    assert nf._dates_in_text("1,2026 crore") == [] and nf._dates_in_text("12,345.67") == []
+    rows, want = pl()
+    pdf = statement(rows, dates=["Sep 30,2026", "June 30,2026", "Sep 30,2025", "Mar 31,2026"])
+    assert read(pdf, "pat").value == pytest.approx(crore(want["pat"][0]))
+
+
+def test_day_numbers_of_stacked_header_dates_are_not_a_row_of_figures():
+    # KIRLPNU Q2FY27 prints whole figures and "Sept 30" over "2026" in every column; the 30s lined up as a numeric row and
+    # cut the header off the table (end to end: KIRLPNU in the normal key, 8 of 8)
+    line = words((289, 319, "Sept"), (321, 330, "30"), (359, 376, "Jun"), (378, 387, "30,"), (500, 510, "30"),
+                 (600, 640, "Margin"), (641, 650, "12"), (700, 720, "May"), (740, 749, "15"))
+    parts = sorted((w.x0, w.text) for w in line if id(w) in nf.date_parts(line, 8.0))
+    assert parts == [(321, "30"), (378, "30,"), (641, "12")]   # "30" alone (x 500) is a figure; "15" stands apart from "May"
+    # "Margin 12" is taken out too (the month pattern matches "mar..."): that only ever removes a cell, never adds a figure

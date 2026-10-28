@@ -483,7 +483,8 @@ def line_text(line: list[Word]) -> str:
 
 def _dates_in_text(text: str) -> list[date]:
     from .pdf_referee import _dates_in
-    return _dates_in(text)
+    # a comma glued to the year, "Sep 30,2026" (LOTUSDEV Q2FY27, OCR and layer alike): the year is read as after a spaced comma
+    return _dates_in(re.sub(r"(?<=\d),(?=\d{4}\b)", ", ", text))
 
 
 def typical_gap(words: list[Word], height: float) -> float:
@@ -654,6 +655,19 @@ def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
 
 # --- a page into tables ---------------------------------------------------------------------------------------------------
 
+
+def date_parts(words: list[Word], height: float) -> set[int]:
+    """The ids of day numbers that are part of a header date, never figures: a whole number of one or two digits right after
+    a month word on its line ("Sept 30" over "2026" in KIRLPNU Q2FY27, whose days made a row of 30s that cut the header
+    off the table)."""
+    out: set[int] = set()
+    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    for prev, w in zip(ordered, ordered[1:]):
+        if re.fullmatch(r"\d{1,2},?", w.text) and _MONTH_WORD.match(prev.text) and abs(prev.y - w.y) <= 0.5 * height \
+                and 0 <= w.x0 - prev.x1 <= height:
+            out.add(id(w))
+    return out
+
 def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str = "textlayer") -> list[Table]:
     """The tables of one page: numeric rows, split where a header with dates stands between two rows, each with its columns'
     dates and kinds, its basis, its unit and its stitched labels."""
@@ -663,11 +677,13 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         return []
     height = text_height(words)
     words = merge_space_groups(merge_brackets(words, height), height)
-    figs = [(w, c) for w in words if (c := parse_figure(w.text)) is not None and not c.nil]
+    dated = date_parts(words, height)
+    cellable = [w for w in words if id(w) not in dated]
+    figs = [(w, c) for w in cellable if (c := parse_figure(w.text)) is not None and not c.nil]
     columns, align = find_columns(figs, height)
     if len(columns) < 2:
         return []
-    assigned = decimals_filter(assign_cells(words, columns, align, height), len(columns))
+    assigned = decimals_filter(assign_cells(cellable, columns, align, height), len(columns))
     rows = build_rows(assigned, words, columns, height)
     if len(rows) < 3:
         return []

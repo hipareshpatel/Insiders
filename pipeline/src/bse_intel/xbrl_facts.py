@@ -431,7 +431,9 @@ SINCE = "2020-04-01"      # the seed's own --since default: the selection below 
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
 GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS
+GONE_REASONS = GONE_STATUSES + ("too_large", "not_results")   # likewise a file over the size limit, or one that holds no results: a rerun would meet the same
 REFUSAL_STATUSES = (401, 403, 429, 503)      # the client's own BLOCKING_STATUS and the archive host's 503: the shard stops
+ODD_LIMIT = 3             # good-status answers that are neither XML nor JSON, in a row: a block page the keyword list misses, a refusal
 HEAD_BYTES = 2000         # of a response body kept to tell a challenge page from a file (300 bytes are logged)
 CHALLENGE = re.compile(rb"cloudflare|akamai|just a moment|attention required|access denied|incapsula|captcha|cf-chl|cf-ray|"
                        rb"edgesuite|reference #\d", re.I)
@@ -525,6 +527,9 @@ class Tap:
         self.refusal = None
 
     def hook(self, response) -> None:
+        url = response.request.url
+        if url.path in ("", "/") and (url.host or "").endswith("nseindia.com"):
+            return      # the client's warm-up visit to the home page: it tolerates a 403 there on purpose (nse.py warm_up), so it is no refusal
         try:
             body = response.read()
         except Exception:   # noqa: BLE001 - a body that cannot be read is no body
@@ -592,9 +597,13 @@ class Guard:
     failure comes back as a reason and the run goes on. The file cap still stops the run as the planned stop it is."""
 
     def __init__(self, client) -> None:
+        warm_up = getattr(client, "warm_up", None)
+        if callable(warm_up):
+            warm_up()      # the client's lazy cookie visit, before the tap: its 403 on the home page is tolerated, never a refusal
         self.tap = attach(client)
         self.refusal: dict | None = None
         self.last: dict | None = None      # the last answer of the last call: status, size, head, xml
+        self.odd = {"file": 0, "list": 0}      # block-like pages in a row, of files and of lists apart (see ODD_LIMIT)
 
     def _stop(self, exc: Exception | None, note: str = ""):
         from .nse import SourceBlockedError
@@ -610,7 +619,7 @@ class Guard:
         status = info["status"] if info else "?"
         raise SourceBlockedError(f"NSE refused the request (HTTP {status}){note}: " + (info["url"] if info else ""))
 
-    def call(self, fn, *args, limit: int = 1 << 62, **kwargs):
+    def call(self, fn, *args, limit: int = 1 << 62, kind: str = "file", **kwargs):
         """(result, reason): ``reason`` is None when the call gave something; SourceBlockedError on a refusal."""
         from .nse import FileCapReached, SourceBlockedError
 
@@ -625,13 +634,29 @@ class Guard:
             self.last = self.tap.last
             if self.tap.refusal:      # a 503 the client retried and gave up on (it raises RuntimeError for those)
                 self._stop(exc)
+            self._note_odd(kind)
             return None, failure_reason(exc, self.tap.last, limit)
         self.last = self.tap.last
         if self.tap.refusal:          # a challenge page served with a good status, or a refusal met on the way
             self._stop(None, " [challenge page or refusal in the answer]")
         if result is None or result == b"":
+            self._note_odd(kind)
             return None, failure_reason(None, self.tap.last, limit)
+        self.odd[kind] = 0
         return result, None
+
+    def _note_odd(self, kind: str) -> None:
+        """Called when a call gave nothing. A block page the keyword list does not know: a good status with a body that is neither
+        XML nor JSON (an HTML page for a list or a file). One is a counted failure; ODD_LIMIT in a row, across companies, is a
+        refusal and stops the shard. Any other outcome of the same kind (list or file) ends the run of them."""
+        info = self.tap.last
+        if info and 200 <= info["status"] < 300 and info["head"].strip() and not info["xml"] \
+                and info["head"].lstrip()[:1] not in (b"{", b"["):
+            self.odd[kind] += 1
+            if self.odd[kind] >= ODD_LIMIT:
+                self._stop(None, f" [{self.odd[kind]} block-like {kind} pages in a row: a good status with a body that is neither XML nor JSON]")
+        else:
+            self.odd[kind] = 0
 
 
 class ListingCsv:
@@ -754,7 +779,8 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                      "annual_list_skipped": {"covered": 0, "dry_run": 0},
                      "from_nse": from_nse, "lists": 0, "lists_skipped": {"stored": 0, "dry_run": 0}, "partial_lists": 0,
                      "list_failed": 0, "listed_files": 0, "skipped_stored": 0, "from_store": 0, "not_reached": 0,
-                     "failed_reasons": {}, "refusal": None, "out_of_time": False, "store_full": False, "company_errors": 0}
+                     "failed_reasons": {}, "refusal": None, "out_of_time": False, "store_full": False, "company_errors": 0,
+                     "infra_stop": False}
     stored_files = xbrl_store.stored_keys(sink)
     stored_facts = set(sink.list_objects(PREFIX))
 
@@ -787,7 +813,16 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         summary["annual_bytes"] += size
         summary["facts"] += doc["n_facts"]
 
-    def annual_company(scrip: str, symbol: str) -> None:
+    annual_rest: dict[str, tuple[str, list]] = {}      # company -> (symbol, its older years' rows), for the second pass (newest year first)
+
+    def annual_company(scrip: str, symbol: str, phase: str = "newest") -> None:
+        """The company's annual-report XBRL, newest year first. Phase "newest" asks for the list (one request) and does the newest
+        year's files of every basis, keeping the older years' rows; phase "rest" (a second pass over the companies, after every
+        company's newest year) does those. A capped or stopped run thus has every company's newest year before any older one."""
+        if phase == "rest":
+            symbol, rows = annual_rest.pop(scrip, (symbol, []))
+            annual_rows(scrip, symbol, rows)
+            return
         if dry_run and not download:
             summary["annual_list_skipped"]["dry_run"] += 1     # nothing would be fetched, --force or not: no request for a list
             return
@@ -798,7 +833,7 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             summary["annual_skipped"] = "no NSE client: the annual-report list is one request a company"
             return
         if guard is not None:
-            listing, why = guard.call(client.annual_reports, symbol)
+            listing, why = guard.call(client.annual_reports, symbol, kind="list")
             summary["annual_lists"] += 1
             if why:
                 note_failure(why, f"{scrip} annual list", guard.last, "")
@@ -815,7 +850,15 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         rows = [r for r in listing if is_ind_as(r.report_type)]
         summary["annual_not_ind_as"] += len(listing) - len(rows)
         keep_years = set(sorted({r.to_year for r in rows}, reverse=True)[:annual_years])
-        for row in (r for r in rows if r.to_year in keep_years):
+        chosen = sorted((r for r in rows if r.to_year in keep_years), key=lambda r: r.to_year, reverse=True)    # newest year first
+        newest = [r for r in chosen if chosen and r.to_year == chosen[0].to_year]
+        older = chosen[len(newest):]
+        if older:
+            annual_rest[scrip] = (symbol, older)
+        annual_rows(scrip, symbol, newest)
+
+    def annual_rows(scrip: str, symbol: str, rows: list) -> None:
+        for row in rows:
             fy = f"FY{row.to_year % 100:02d}"
             if annual_key(scrip, fy, row.basis) in stored_facts and not force:
                 summary["annual_have"] += 1
@@ -908,7 +951,7 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         check_time()
         guard.tap.rows.clear()
         stats = seed.SeedStats()
-        listed, why = guard.call(seed._rows_or_partial, client, symbol, stats, scrip)
+        listed, why = guard.call(seed._rows_or_partial, client, symbol, stats, scrip, kind="list")
         summary["lists"] += 1
         if why:
             note_failure(why, f"{scrip} list", guard.last, "", "list_failed")
@@ -957,21 +1000,24 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         if why or not data:
             note_failure(why or "no_response", f"{scrip} {label} {basis.lower()}", guard.last, row.xbrl_url)
             emit(scrip, symbol, label, basis, row, f"failed:{why}")
-            return [[label, basis, why]] if why in GONE_STATUSES else []
+            return [[label, basis, why]] if why in GONE_REASONS else []
         summary["from_store" if source == "from_store" else "downloaded"] += 1
-        emit(scrip, symbol, label, basis, row, source if keep(scrip, label, basis, row.xbrl_url, data) else "not_results")
-        return []
+        if keep(scrip, label, basis, row.xbrl_url, data):
+            emit(scrip, symbol, label, basis, row, source)
+            return []
+        emit(scrip, symbol, label, basis, row, "not_results")
+        return [[label, basis, "not_results"]]
 
     consecutive_errors = 0
     last_progress = clock()
     try:
         for scrip, symbol in (companies[:limit] if limit else companies):
             check_time()
-            if annual:
-                annual_company(scrip, symbol)
-            summary["companies"] += 1
             if from_nse:
+                summary["companies"] += 1
                 try:
+                    if annual:
+                        annual_company(scrip, symbol)
                     nse_company(scrip, symbol)
                     consecutive_errors = 0
                 except (SourceBlockedError, _OutOfTime):
@@ -982,12 +1028,17 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                     note_failure(reason, f"{scrip} {symbol}", None, "", "company_errors")
                     log.exception("xbrl-facts %s %s failed", scrip, symbol)
                     if consecutive_errors >= 5:      # R2 or the Worker down: stopping saves nothing less than going on
-                        summary["stopped"] = f"5 companies in a row failed ({reason}): stopped"
+                        summary["stopped"] = f"5 companies in a row failed ({reason}): stopped (infrastructure, not an NSE refusal)"
+                        summary["infra_stop"] = True
+                        log.error("xbrl-facts infrastructure stop: %s", summary["stopped"])
                         break
                 if progress is not None and clock() - last_progress >= 60:
                     progress(summary)
                     last_progress = clock()
                 continue
+            if annual:
+                annual_company(scrip, symbol)
+            summary["companies"] += 1
             where = plan(sink.get_dossier(scrip), scrip, stored_files, stored_facts)
             summary["files_listed"] += sum(len(where[k]) for k in ("have", "todo", "missing"))
             summary["facts_stored_before"] += len(where["have"])
@@ -1026,6 +1077,19 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             for period, _, _ in where["no_url"]:
                 summary["missing_rows"].append({"scrip": scrip, "symbol": symbol, "period": period, "basis": "", "url": "",
                                                 "reason": "memory recorded no file url for this period"})
+        if annual and not summary["infra_stop"]:
+            for scrip in list(annual_rest):          # every company's older annual years, after every company's newest
+                check_time()
+                if from_nse:
+                    try:
+                        annual_company(scrip, "", "rest")
+                    except (SourceBlockedError, _OutOfTime):
+                        raise
+                    except Exception as exc:   # noqa: BLE001 - as in the first pass: that company's gap
+                        note_failure(f"company_error:{type(exc).__name__}", f"{scrip} annual", None, "", "company_errors")
+                        log.exception("xbrl-facts %s annual (older years) failed", scrip)
+                else:
+                    annual_company(scrip, "", "rest")
     except _OutOfTime:
         summary["out_of_time"] = True
         summary["stopped"] = (f"time budget reached after {summary['companies']} companies: everything fetched is saved, "

@@ -309,15 +309,15 @@ def test_workflow_limit_means_the_n_largest_for_both_commands():
     assert len(inputs) <= 25
 
 
-def test_workflow_refuses_an_xbrl_facts_download_without_a_file_cap_before_installing():
+def test_workflow_refuses_an_xbrl_facts_download_without_a_file_cap_before_any_shard_starts_but_not_a_dry_run():
     text, doc = workflow()
-    steps = doc["jobs"]["xbrl-facts"]["steps"]
-    refuse = next(i for i, st in enumerate(steps) if "Refuse an xbrl-facts download" in st.get("name", ""))
-    install = next(i for i, st in enumerate(steps) if st.get("name") == "Install")
-    assert refuse < install
-    cond = steps[refuse]["if"]
-    assert "inputs.apply" in cond and "inputs.file_cap == ''" in cond and "'0'" in cond
-    assert "exit 1" in steps[refuse]["run"]
+    plan = doc["jobs"]["xbrl-facts-plan"]["steps"]
+    refuse = next(i for i, st in enumerate(plan) if "Refuse an xbrl-facts download" in st.get("name", ""))
+    assert refuse == 0 and doc["jobs"]["xbrl-facts"]["needs"] == "xbrl-facts-plan"   # no shard (and no install) before it
+    cond = plan[refuse]["if"]
+    assert "inputs.apply" in cond and "!inputs.dry_run" in cond and "inputs.file_cap == ''" in cond and "'0'" in cond
+    assert "exit 1" in plan[refuse]["run"]
+    assert not any("Refuse an xbrl-facts" in st.get("name", "") for st in doc["jobs"]["xbrl-facts"]["steps"])
     assert "FILE_CAP: ${{ inputs.file_cap || '0' }}" in text            # the cap the run then holds
 
 

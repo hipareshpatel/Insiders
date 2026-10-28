@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 # The exit code of a command NSE (or BSE) refused (401/403/429), apart from 2, which argparse and an AI error also
 # give: scripts/retry.sh never retries a refusal and skips the job's later NSE steps (survey review, 24 Oct 2026)
 REFUSED = 75
+INFRA_STOP = 70   # xbrl-facts: five companies in a row failed for a reason of our own (R2, the Worker); not an NSE refusal
 
 
 def _pipeline(settings, sink):
@@ -1589,6 +1590,8 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
             return 2
         shard = f"{index}/{count}"
         print(f"shard {shard}: {len(companies)} companies")
+        if not os.environ.get("FILE_CAP_SHARDS"):
+            os.environ["FILE_CAP_SHARDS"] = str(count)    # a local --shard run shares FILE_CAP as the workflow's matrix does: FILE_CAP // N each
     if args.from_nse and not (args.download or args.dry_run):
         print("--from-nse lists and downloads: give --download (with --dry-run it only lists), or --dry-run alone to ask NSE nothing")
         return 2
@@ -1629,6 +1632,8 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
         Path(args.csv).write_text(xf.to_csv(summary), encoding="utf-8")
     if summary["out_of_time"]:
         return 124
+    if summary.get("infra_stop"):
+        return INFRA_STOP         # R2 or the Worker failing, not NSE: its own code, so nobody reads it as a refusal
     return REFUSED if summary["stopped"] and not summary["capped"] else 0
 
 

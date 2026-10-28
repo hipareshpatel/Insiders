@@ -109,7 +109,7 @@
 #   stored files and, for a company whose files are all stored (marker raw/xbrl-facts/<scrip>/_listed.json, under 7 days old), the
 #   list. `shards` (1 to 8, the owner allows 8 parallel downloads and no more) runs the job as a matrix, one NseClient and one
 #   artifact (`xbrl-facts-<shard>`: summary.json and listing.csv, the CSV one line a listed file with its status and every timestamp
-#   NSE's row carries, for measuring how long after the results PDF the XBRL appears) each; `file_cap` is split over the shards. Each
+#   NSE's row carries, for measuring how long after the results PDF the XBRL appears) each; `file_cap` is split over the shards (`file_cap // shards` each, at least 1: a `file_cap` below `shards` gives every shard 1 file); `archive_pause` (empty by default) sets NSE_ARCHIVE_PAUSE_SECONDS for the shards as the seed job does. Each
 #   shard saves as it goes, stops on its time budget of 5 h 20 min (exit 124: a marker, not a failure; dispatch again), stops at once on a
 #   403, 429, 503 or a challenge page (exit 75, status and the body's first 300 bytes in the log), and counts any other empty
 #   download by reason (HTTP status, size limit, not XML) in summary.json while it goes on. The raw files in R2 (raw/xbrl/) keep to
@@ -289,12 +289,16 @@ on:
         description: xbrl-facts only - also keep the annual-report XBRL (Ind AS only, never BRSR, the latest 3 years a basis), one NSE list request a company, so the run joins the NSE memory group; a file not stored is fetched only with apply
         type: boolean
         default: false
+      archive_pause:
+        description: xbrl-facts only - seconds between two requests to the archive host, "low,high" (the seed job sets "0,0"; the API keeps its 3-5 s and a refusal from the archive host slows it back); empty keeps the shared 3-5 s pace
+        type: string
+        default: ''
       from_nse:
         description: xbrl-facts only - with apply, list each company's results files from NSE's own list (the seed's latest 12 quarters, both bases) and download every file not stored, keeping its facts as it goes; no memory write (one list request a company, not counted toward file_cap; each file is)
         type: boolean
         default: false
       shards:
-        description: xbrl-facts only - run as this many parallel runners, 1 to 8 (owner, 28 Oct 2026, 8 at most), each its own NSE client; file_cap is split over them (file_cap // shards each)
+        description: xbrl-facts only - run as this many parallel runners, 1 to 8 (owner, 28 Oct 2026, 8 at most), each its own NSE client; file_cap is split over them (file_cap // shards each, at least 1 each, so a file_cap below shards gives every shard 1 file)
         type: string
         default: '1'
       file_cap:
@@ -1639,6 +1643,11 @@ jobs:
     outputs:
       shards: ${{ steps.plan.outputs.shards }}
     steps:
+      - name: Refuse an xbrl-facts download without a file cap
+        if: inputs.apply && !inputs.dry_run && (inputs.file_cap == '' || inputs.file_cap == '0')
+        run: |
+          echo "::error::xbrl-facts with apply downloads NSE files: give file_cap (the first test of a fetch is 100 files, owner 27 Oct 2026; a full run, a number above the files left, such as 1000000)"
+          exit 1
       - id: plan
         env:
           SHARDS: ${{ inputs.shards }}   # through the environment, never pasted into the script
@@ -1672,11 +1681,6 @@ jobs:
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       DISCOVERY_SOURCE: nse
     steps:
-      - name: Refuse an xbrl-facts download without a file cap
-        if: inputs.apply && (inputs.file_cap == '' || inputs.file_cap == '0')
-        run: |
-          echo "::error::xbrl-facts with apply downloads NSE files: give file_cap (the first test of a fetch is 100 files, owner 27 Oct 2026; a full run, a number above the files left, such as 1000000)"
-          exit 1
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
@@ -1696,8 +1700,10 @@ jobs:
           FROM_NSE: ${{ inputs.from_nse }}
           SHARDS: ${{ inputs.shards || '1' }}
           SHARD: ${{ matrix.shard }}
+          ARCHIVE_PAUSE: ${{ inputs.archive_pause }}
         run: |
           code=0
+          if [ -n "$ARCHIVE_PAUSE" ]; then export NSE_ARCHIVE_PAUSE_SECONDS="$ARCHIVE_PAUSE"; fi   # F169, as the seed job: the archive host only; unset by default
           mkdir -p "$RUNNER_TEMP/xbrl-facts" "$RUNNER_TEMP/more"
           download=; if [ "$APPLY" = "true" ]; then download=--download; fi   # the files not stored: NSE, under FILE_CAP
           annual=; if [ "$ANNUAL" = "true" ]; then annual=--annual; fi        # the annual-report XBRL: a list request a company
@@ -1767,6 +1773,9 @@ jobs:
                 gh workflow run maintenance.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" -f command="$CMD" -f restart=false -f then="$THEN"
                 exit 0
               fi ;;
+            xbrl-facts)
+              # a shard that ended on its time budget left a marker: the files left need another dispatch (the same inputs), so nothing moves on
+              if [ -n "$left" ]; then echo "xbrl-facts: a shard stopped on its time budget: dispatch again for the rest ($CMD; then='$THEN' is not started)"; exit 0; fi ;;
             fill-memory)
               echo "fill-memory handed the chain to its seed-memory passes"; exit 0 ;;
           esac

@@ -7,12 +7,13 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import time
 from pathlib import Path
 
 import httpx
 import pytest
-from test_xbrl_facts import TITAN, FakeSink
+from test_xbrl_facts import SHAREHOLDING, TITAN, FakeSink
 
 from bse_intel import cli, xbrl_facts, xbrl_store
 from bse_intel.file_cap import files
@@ -42,11 +43,14 @@ class Site:
                  default=(200, TITAN), delay: float = 0.0, annual: dict[str, list[dict]] | None = None):
         self.integrated, self.older, self.served, self.default, self.delay = integrated, older or {}, served or {}, default, delay
         self.annual = annual or {}
+        self.home = (200, b"<html>NSE</html>")
         self.requests: list[str] = []
 
     def handler(self, request: httpx.Request) -> httpx.Response:
         url = str(request.url)
         self.requests.append(url)
+        if request.url.path == "/":          # the client's warm-up visit to the home page
+            return httpx.Response(self.home[0], content=self.home[1])
         symbol = request.url.params.get("symbol", "")
         if request.url.path.endswith("/integrated-filing-results"):
             return httpx.Response(200, json={"data": self.integrated.get(symbol, [])})
@@ -67,9 +71,9 @@ class Site:
     def file_requests(self) -> list[str]:
         return [u for u in self.requests if "nsearchives" in u]
 
-    def client(self, retries: int = 1) -> NseClient:
+    def client(self, retries: int = 1, warmed: bool = True) -> NseClient:
         nse = NseClient(transport=httpx.MockTransport(self.handler), sleep=lambda s: None, retries=retries, pause=(0, 0))
-        nse._warmed = True
+        nse._warmed = warmed
         return nse
 
 
@@ -103,10 +107,10 @@ def two_companies() -> Site:
     return Site({"AAA": [irow("a1", Q2, True), irow("a2", Q2, False)], "BBB": [irow("b1", Q2, True), irow("b2", Q2, False)]})
 
 
-def run(site: Site, sink=None, companies=COMPANIES, retries: int = 1, **kw):
+def run(site: Site, sink=None, companies=COMPANIES, retries: int = 1, warmed: bool = True, **kw):
     sink = sink if sink is not None else SpySink()
     kw.setdefault("download", True)
-    return sink, xbrl_facts.run(sink, companies, client=site.client(retries), from_nse=True, **kw)
+    return sink, xbrl_facts.run(sink, companies, client=site.client(retries, warmed), from_nse=True, **kw)
 
 
 # --- the selection and the shard -----------------------------------------------------------------------------------------
@@ -286,7 +290,7 @@ def test_failures_that_are_not_refusals_are_counted_by_reason_and_the_run_goes_o
     assert "nothing kept (too_large): HTTP 200, 120" in text and "nothing kept (not_xml): HTTP 200" in text
     # the 404 is remembered for the company's marker, the others are not (they may be a passing fault): its list is asked again later
     marker = json.loads(sink.objects[xbrl_facts.listed_key("1")])
-    assert marker["gone"] == [["Q2FY24", "CONSOLIDATED", "http_404"]]
+    assert {tuple(g) for g in marker["gone"]} == {("Q2FY24", "CONSOLIDATED", "http_404"), ("Q1FY24", "CONSOLIDATED", "too_large")}
 
 
 def test_a_results_file_over_the_seeds_8_mb_is_fetched_with_the_annual_report_limit():
@@ -490,11 +494,13 @@ def test_workflow_runs_xbrl_facts_as_a_matrix_of_at_most_eight_shards_and_always
     inputs = (doc.get("on") or doc.get(True))["workflow_dispatch"]["inputs"]
     assert inputs["shards"]["default"] == "1" and inputs["from_nse"]["default"] is False and len(inputs) <= 25
     plan, job = doc["jobs"]["xbrl-facts-plan"], doc["jobs"]["xbrl-facts"]
-    assert "[1-8])" in plan["steps"][0]["run"] and "exit 1" in plan["steps"][0]["run"]      # 9 or 0 or text: the run is refused
+    plan_step = next(st for st in plan["steps"] if st.get("id") == "plan")
+    assert "[1-8])" in plan_step["run"] and "exit 1" in plan_step["run"]      # 9 or 0 or text: the run is refused
     assert job["needs"] == "xbrl-facts-plan" and job["strategy"]["fail-fast"] is False
     assert job["strategy"]["matrix"]["shard"] == "${{ fromJSON(needs.xbrl-facts-plan.outputs.shards) }}"
     assert job["env"]["FILE_CAP_SHARDS"] == "${{ inputs.shards || '1' }}"
-    assert "xbrl-facts" not in doc["jobs"]["run"]["if"].split("!=")[0] and "inputs.command != 'xbrl-facts'" in doc["jobs"]["run"]["if"]
+    assert "inputs.command != 'xbrl-facts'" in doc["jobs"]["run"]["if"]
+    assert not any("xbrl-facts" in json.dumps(st) for st in doc["jobs"]["run"]["steps"])      # nothing of it is left in the generic job
     uploads = [st for st in job["steps"] if st.get("uses", "").startswith("actions/upload-artifact")]
     assert uploads and all(st["if"] == "always()" for st in uploads)                       # the summary and the CSV go up whatever happened
     assert {st["with"]["name"] for st in uploads} == {"xbrl-facts-${{ matrix.shard }}", "xbrl-facts-more-${{ matrix.shard }}",
@@ -504,3 +510,178 @@ def test_workflow_runs_xbrl_facts_as_a_matrix_of_at_most_eight_shards_and_always
     assert step["timeout-minutes"] == 335 and job["timeout-minutes"] <= 360 and 19200 / 60 + 15 <= step["timeout-minutes"]
     assert 'if [ "$code" -eq 124 ]' in step["run"]                                           # the time budget is no failure
     assert "xbrl-facts-plan" in doc["jobs"]["chain"]["needs"] and "xbrl-facts" in doc["jobs"]["chain"]["needs"]
+
+
+# --- the review's findings ----------------------------------------------------------------------------------------------------
+
+def test_a_403_on_the_home_page_warm_up_is_no_refusal():
+    """NseClient.warm_up() tolerates a 403 on the home page on purpose; the API answers all the same."""
+    site = two_companies()
+    site.home = (403, b"Access Denied")
+    sink, out = run(site, warmed=False)
+    assert out["refusal"] is None and out["stopped"] == "" and out["downloaded"] == 4 and out["lists"] == 2
+    assert site.requests[0] == "https://www.nseindia.com/"          # the warm-up did happen (before the first guarded call)
+
+
+def test_the_tap_ignores_a_home_page_answer_even_when_it_comes_later():
+    site = two_companies()
+    site.home = (403, b"Access Denied")
+    client = site.client()
+    guard = xbrl_facts.Guard(client)
+    client._client.get("https://www.nseindia.com/")
+    assert guard.tap.refusal is None and guard.tap.last is None
+
+
+def test_three_block_like_pages_in_a_row_across_companies_stop_the_shard_but_one_does_not():
+    page = (200, b"<html><body>Please wait while we check your browser</body></html>")      # no keyword the list knows
+    companies = [(str(i), f"S{i}") for i in range(1, 6)]
+    rows = {f"S{i}": [irow(f"s{i}", Q2, True)] for i in range(1, 6)}
+    site = Site(rows, served={furl(f"s{i}"): page for i in range(1, 6)})
+    sink, out = run(site, companies=companies)
+    assert "refused" in out["stopped"] and out["refusal"]["status"] == 200 and "Please wait" in out["refusal"]["body_head"]
+    assert out["failed_reasons"] == {"not_xml": 2} and len(site.file_requests) == 3          # two counted, the third stops the shard
+    # an odd answer between good ones is only a counted failure: the run of them is broken by anything else
+    site = Site(rows, served={furl("s1"): page, furl("s2"): page, furl("s4"): page})
+    sink, out = run(site, companies=companies)
+    assert out["stopped"] == "" and out["failed_reasons"] == {"not_xml": 3} and out["downloaded"] == 2
+
+
+def test_html_for_both_lists_of_three_companies_in_a_row_stops_the_shard():
+    class Html(Site):
+        def handler(self, request):
+            if request.url.path.endswith(("/integrated-filing-results", "/corporates-financial-results")):
+                self.requests.append(str(request.url))
+                return httpx.Response(200, content=b"<html><body>One moment please</body></html>")
+            return super().handler(request)
+
+    companies = [(str(i), f"S{i}") for i in range(1, 6)]
+    site = Html({})
+    sink, out = run(site, companies=companies)
+    assert "refused" in out["stopped"] and out["lists"] == 2 and out["list_failed"] == 2      # the third list is the one that stops
+    assert out["failed_reasons"] == {"list:not_xml": 2} and out["refusal"]["status"] == 200
+
+
+def test_the_cli_takes_the_file_cap_share_count_from_shard_when_the_workflow_did_not_set_it(monkeypatch):
+    monkeypatch.setenv("FILE_CAP_SHARDS", "")                    # unset as far as the cli is concerned; restored after the test
+    monkeypatch.setenv("FILE_CAP", "20")
+    monkeypatch.setattr(cli, "make_sink", lambda settings: SpySink(), raising=False)
+    monkeypatch.setattr(cli, "_universe_companies", lambda s, scrips: COMPANIES)
+    monkeypatch.setattr("bse_intel.nse.NseClient", lambda *a, **k: pytest.fail("a dry run asks NSE for nothing"))
+    assert cli.main(["xbrl-facts", "--from-nse", "--dry-run", "--shard", "0/8"]) == 0
+    assert files.cap() == 2                                      # 20 // 8
+    monkeypatch.setenv("FILE_CAP", "5")
+    assert files.cap() == 1                                      # a cap below the shards gives every shard 1
+    monkeypatch.setenv("FILE_CAP_SHARDS", "4")                   # what the workflow sets stays
+    assert cli.main(["xbrl-facts", "--from-nse", "--dry-run", "--shard", "0/8"]) == 0
+    assert files.cap() == 1 and os.environ["FILE_CAP_SHARDS"] == "4"
+
+
+def test_a_file_that_holds_no_results_or_is_over_the_limit_goes_in_the_marker_so_the_list_is_skipped(monkeypatch):
+    monkeypatch.setattr("bse_intel.nse.ANNUAL_REPORT_MAX_BYTES", 400_000)
+    site = Site({"AAA": [irow("a1", Q2, True), irow("a2", Q2, False)]},
+                served={furl("a1"): (200, SHAREHOLDING), furl("a2"): (200, b"<?xml version='1.0'?><x>" + b"a" * 450_000 + b"</x>")})
+    sink, out = run(site, companies=[("1", "AAA")])
+    assert out["not_results"] == 1 and out["failed_reasons"] == {"too_large": 1} and out["downloaded"] == 1
+    marker = json.loads(sink.objects[xbrl_facts.listed_key("1")])
+    assert {tuple(g) for g in marker["gone"]} == {("Q2FY24", "CONSOLIDATED", "not_results"), ("Q2FY24", "STANDALONE", "too_large")}
+    before = len(site.requests)
+    sink, again = run(site, sink=sink, companies=[("1", "AAA")])
+    assert len(site.requests) == before and again["lists"] == 0 and again["lists_skipped"]["stored"] == 1
+
+
+def test_an_exception_in_the_annual_part_is_that_companys_gap_and_the_run_goes_on():
+    ar = (Path(__file__).parent / "fixtures" / "nse_ar_kanorichem_fy25_consolidated.xml").read_bytes()
+
+    class Broken(SpySink):
+        def put_object(self, key, body, content_type="application/json"):
+            if key.startswith("raw/xbrl-facts/1/annual-"):
+                raise OSError("R2 hiccup")
+            super().put_object(key, body, content_type)
+
+    site = Site({"AAA": [irow("a1", Q2, True)], "BBB": [irow("b1", Q2, True)]},
+                annual={"AAA": [annual_row(2025, "CONSOLIDATED", "AR1")], "BBB": [annual_row(2025, "CONSOLIDATED", "AR2")]},
+                served={f"{BASE}AR1.xml": (200, ar), f"{BASE}AR2.xml": (200, ar)})
+    sink, out = run(site, sink=Broken(), annual=True)
+    assert out["failed_reasons"] == {"company_error:OSError": 1} and out["stopped"] == "" and out["refusal"] is None
+    assert xbrl_facts.annual_key("2", "FY25", "CONSOLIDATED") in sink.objects
+    assert xbrl_facts.key("2", "Q2FY24", "CONSOLIDATED") in sink.objects
+
+
+def test_five_companies_in_a_row_failing_is_an_infrastructure_stop_with_its_own_exit_code(monkeypatch, tmp_path, caplog):
+    class Down(SpySink):
+        def put_object(self, key, body, content_type="application/json"):
+            if key.startswith("raw/xbrl-facts/"):
+                raise OSError("R2 down")
+            super().put_object(key, body, content_type)
+
+    companies = [(str(i), f"S{i}") for i in range(1, 9)]
+    site = Site({f"S{i}": [irow(f"s{i}", Q2, True)] for i in range(1, 9)})
+    with caplog.at_level("ERROR"):
+        sink, out = run(site, sink=Down(), companies=companies)
+    assert out["infra_stop"] is True and "infrastructure, not an NSE refusal" in out["stopped"] and out["refusal"] is None
+    assert out["company_errors"] == 5 and not any("S6" in u for u in site.requests)
+    assert any("infrastructure stop" in r.getMessage() for r in caplog.records)
+    monkeypatch.setattr(cli, "make_sink", lambda settings: Down(), raising=False)
+    monkeypatch.setattr(cli, "_universe_companies", lambda s, scrips: companies)
+    monkeypatch.setattr("bse_intel.nse.NseClient", lambda *a, **k: site.client())
+    code = cli.main(["xbrl-facts", "--from-nse", "--download", "--json", str(tmp_path / "s.json")])
+    assert code == cli.INFRA_STOP == 70 and code != cli.REFUSED
+    assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["infra_stop"] is True
+
+
+def test_workflow_archive_pause_is_optional_and_empty_by_default_and_the_chain_waits_for_a_shard_with_files_left():
+    text, doc = workflow()
+    inputs = (doc.get("on") or doc.get(True))["workflow_dispatch"]["inputs"]
+    assert inputs["archive_pause"]["default"] == "" and inputs["archive_pause"]["type"] == "string" and len(inputs) <= 25
+    job = doc["jobs"]["xbrl-facts"]
+    assert "NSE_ARCHIVE_PAUSE_SECONDS" not in job["env"]                       # not set unless the input is
+    step = next(st for st in job["steps"] if st.get("name", "").startswith("Keep every fact"))
+    assert step["env"]["ARCHIVE_PAUSE"] == "${{ inputs.archive_pause }}"
+    assert 'if [ -n "$ARCHIVE_PAUSE" ]; then export NSE_ARCHIVE_PAUSE_SECONDS="$ARCHIVE_PAUSE"; fi' in step["run"]
+    chain = next(st for st in doc["jobs"]["chain"]["steps"] if st.get("name") == "Start the next command")
+    assert "xbrl-facts)" in chain["run"]
+    block = chain["run"].split("xbrl-facts)")[1].split(";;")[0]
+    assert '[ -n "$left" ]' in block and "exit 0" in block and "dispatch again" in block
+    assert "a `file_cap` below `shards` gives every shard 1 file" in text
+
+
+# --- annual reports: newest year first, across companies too ------------------------------------------------------------------
+
+def annual_site(symbols: list[str]) -> Site:
+    ar = (Path(__file__).parent / "fixtures" / "nse_ar_kanorichem_fy25_consolidated.xml").read_bytes()
+    listing = {s: [annual_row(y, "CONSOLIDATED", f"{s}{y}") for y in (2024, 2026, 2025)] for s in symbols}     # NSE's order is not trusted
+    return Site({}, annual=listing, default=(200, ar))
+
+
+def fetched_years(site: Site) -> list[str]:
+    return [u.rsplit("/", 1)[-1].removesuffix(".xml") for u in site.file_requests]
+
+
+def test_annual_files_are_fetched_newest_year_first_for_each_company(monkeypatch):
+    monkeypatch.setenv("FILE_CAP", "2")
+    site = annual_site(["AAA"])
+    sink, out = run(site, companies=[("1", "AAA")], annual=True)
+    assert fetched_years(site) == ["AAA2026", "AAA2025"] and out["capped"] is True
+
+
+def test_a_capped_run_does_every_companys_newest_year_before_any_older_year(monkeypatch):
+    monkeypatch.setenv("FILE_CAP", "4")
+    names = ["AAA", "BBB", "CCC", "DDD", "EEE"]
+    companies = [(str(i), s) for i, s in enumerate(names, 1)]
+    site = annual_site(names)
+    sink, out = run(site, companies=companies, annual=True)
+    assert fetched_years(site) == ["AAA2026", "BBB2026", "CCC2026", "DDD2026"]      # not AAA2026, AAA2025, AAA2024, BBB2026
+    # without a cap the second pass follows: all of FY26, then the older years, company by company
+    files.reset()
+    monkeypatch.delenv("FILE_CAP")
+    site = annual_site(["AAA", "BBB"])
+    sink, out = run(site, companies=companies[:2], annual=True)
+    assert fetched_years(site) == ["AAA2026", "BBB2026", "AAA2025", "AAA2024", "BBB2025", "BBB2024"]
+    assert out["annual_saved"] == 6 and out["annual_lists"] == 2 and out["stopped"] == ""
+
+
+def test_the_annual_path_without_from_nse_is_newest_first_too(monkeypatch):
+    monkeypatch.setenv("FILE_CAP", "2")
+    site = annual_site(["AAA", "BBB"])
+    out = xbrl_facts.run(FakeSink(), [("1", "AAA"), ("2", "BBB")], download=True, client=site.client(), annual=True)
+    assert fetched_years(site) == ["AAA2026", "BBB2026"] and out["capped"] is True

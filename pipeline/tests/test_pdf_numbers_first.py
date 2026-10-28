@@ -1073,3 +1073,27 @@ def test_revenue_parts_that_do_not_add_up_or_a_list_item_other_income_give_no_an
     assert nf._REVENUE_LIST.search("1 Revenue from operations (a) Interest income")
     noted = [(["Revenue from operations (1) refer note 3"], REVENUE)] + rows[1:]
     assert read(statement(noted), "revenue").value == pytest.approx(crore(1000.00))
+
+
+@pytest.mark.parametrize("first", ["(a) Note income", "(a) Referral fees", "a) See above", "I. Interest income", "[a] Sales",
+                                   "(a) 1"])
+def test_a_first_part_of_revenue_is_never_the_revenue_whatever_its_marker_or_word(first):
+    # nineteenth review: "Revenue from operations" over "(a) Note income" and one more part gave part (a) as the revenue
+    rows, want = pl()
+    parts = revenue_in_parts(rows, 2)
+    parts[0] = (["Revenue from operations", first], parts[0][1])
+    got = read(statement(parts), "revenue")
+    assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))
+
+
+def test_list_items_and_statement_numbering_are_told_apart():
+    assert all(nf.list_item(x) for x in ("(c) Other income", "B. Other income", "c. Other income", "(xi) Others", "(c)Other income"))
+    assert not any(nf.list_item(x) for x in ("II. Other income", "2 Other income", "II Other income", "Other income"))
+
+
+def test_a_glued_garbled_title_in_the_layer_names_the_basis():
+    # SUNDARMFIN Q4FY24: the garbled layer runs the title together and OCR cannot read it (big type)
+    assert nf.layer_basis("=E. I En :STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTERANI)YEARENDED31.03.20Z4") == "CONSOLIDATED"
+    assert nf.layer_basis("STATEMENTOFUNAUDITEDSTANDALONEFINANCIALRESULTS") == "STANDALONE"
+    assert nf.layer_basis("STATEMENTOFCONSOLEFINANCIALRESULTS") is None
+    assert nf.layer_basis("STATEMENTOFAUDITEDCONSOLIDATEDFINANCIALRESULTS\nSTATEMENTOFAUDITEDSTANDALONEFINANCIALRESULTS") is None

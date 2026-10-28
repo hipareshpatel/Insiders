@@ -865,9 +865,17 @@ Proof = tuple[int, tuple[tuple[int, int], ...]]        # (row that equals, ((row
 
 # a revenue row that opens a list of its parts: "1 Revenue from operations (a) Interest income", "Revenue from Operations
 # (i) Interest Income", "Revenue from operations: a) Sales"
-_REVENUE_LIST = re.compile(r"revenue\s+from\s+operations?\W{0,3}(?:\(?(?:a|i|1)\)|a\.)\s*(?!refer|note|see\b)[a-z]", re.I)
-# a row that is an item of a list ("(c) Other income", "iv) Others"): after a revenue list it may be one of its parts
-_LIST_ITEM = re.compile(r"^\W*\(?(?:[a-h]|i{1,3}|iv|vi{0,3}|ix|x)\)\s", re.I)
+# (a list's first marker: "(a)", "a)", "[a]", "a.", "(i)", "i.", "(1)" - a numbered one is a note reference when "refer" or
+# "note" follows it; a lettered or roman one never is, whatever word follows: "(a) Note income" is a part, nineteenth review)
+_ITEM_MARK = r"(?:\(?[a-z]\)|\[[a-z]\]|[a-z]\.|\(?[ivx]{1,5}\)|[ivx]{1,5}\.|\(?\d{1,2}\)(?!\s*(?:refer|notes?|see)\b))"
+_REVENUE_LIST = re.compile(r"revenue\s+from\s+operations?(?:\s*\((?:refer\s+)?notes?\s*\d+\))?\W{0,3}" + _ITEM_MARK, re.I)
+# a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
+# its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
+_LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
+
+
+def list_item(label: str) -> bool:
+    return bool(_LIST_ITEM.match(label)) and not re.match(r"^\W*[IVX]{1,4}\.\s", label)
 
 
 class Solver:
@@ -1122,7 +1130,7 @@ class Solver:
             parts = tuple(range(first, t - 1))
             if self.cls[first] != "REV" or not _REVENUE_LIST.search(self.t.rows[first].label):
                 continue
-            if _LIST_ITEM.match(self.t.rows[t - 1].label):
+            if list_item(self.t.rows[t - 1].label):
                 return          # "(d) Other income": a part of the revenue list or not, the labels cannot tell
             if any(self.cls[r] is not None for r in parts[1:]):
                 return
@@ -1142,10 +1150,15 @@ class Solver:
         rows = list(k) if isinstance(k, tuple) else list(range(t - k, t))
         # a revenue row that opens a list of its parts is only the first part: never the revenue (BFINVEST Q2FY25)
         rows_rev_ok = not any(self.cls[r] == "REV" and _REVENUE_LIST.search(self.t.rows[r].label) for r in rows)
+        # nor is one followed by a row that is an item of a list ("I. Interest income", "[a] Sales" after "Revenue from
+        # operations"): the revenue row may be a heading over its parts (nineteenth review)
+        rev_at = [i for i, r in enumerate(rows) if self.cls[r] == "REV"]
+        if rev_at and any(self.cls[r] is None and _LIST_ITEM.match(self.t.rows[r].label) for r in rows[rev_at[0] + 1:]):
+            rows_rev_ok = False
         if len(rows) == 2:
             if self.label_ok(rows[0], {"REV"}) and rows_rev_ok:
                 self.add("revenue", (rows[0],), [proof])
-            if self.label_ok(rows[1], {"OI"}) and (rows_rev_ok or not _LIST_ITEM.match(self.t.rows[rows[1]].label)):
+            if self.label_ok(rows[1], {"OI"}) and (rows_rev_ok or not list_item(self.t.rows[rows[1]].label)):
                 self.add("other_income", (rows[1],), [proof])
         else:
             rev = [r for r in rows if self.cls[r] == "REV"]
@@ -1153,7 +1166,7 @@ class Solver:
             if len(rev) == 1 and rows_rev_ok:
                 self.add("revenue", (rev[0],), [proof])
             # after a revenue list, "(c) Other income" may be one of its parts (eighteenth review)
-            if len(oi) == 1 and (rows_rev_ok or not _LIST_ITEM.match(self.t.rows[oi[0]].label)):
+            if len(oi) == 1 and (rows_rev_ok or not list_item(self.t.rows[oi[0]].label)):
                 self.add("other_income", (oi[0],), [proof])
 
     def chain_from(self, t: int, k, ti_proof: Proof) -> None:
@@ -1367,9 +1380,18 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
 
 def layer_basis(text: str) -> str | None:
     """The one basis the page's title lines name (``pdf_referee._words_basis``), None when none or two."""
+    from .metrics import CONSOLIDATED, STANDALONE
     from .pdf_referee import _TITLE, _words_basis
     found = {b for line in text.splitlines() if _TITLE.search(line) and (b := _words_basis(line))}
+    if not found:
+        # a title printed as one glued word, its letters garbled (SUNDARMFIN Q4FY24's garbled layer:
+        # "STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER..."): the whole "statement of ... financial results"
+        found = {CONSOLIDATED if m[1].lower().startswith("consol") else STANDALONE
+                 for line in text.splitlines() for m in _GLUED_TITLE.finditer(re.sub(r"\s+", "", line))}
     return found.pop() if len(found) == 1 else None
+
+
+_GLUED_TITLE = re.compile(r"statementof(?:un)?(?:audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
 
 
 def Table_solved(table: Table) -> Table:

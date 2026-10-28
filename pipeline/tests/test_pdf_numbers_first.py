@@ -1157,3 +1157,19 @@ def test_a_total_that_leaves_the_revenue_row_above_it_out_names_no_revenue():
                      (["Total income"], total)] + tail)
     r = read(got, "revenue")
     assert r.status != "ok" or r.value == pytest.approx(crore(1000.00))
+
+
+@pytest.mark.parametrize("title", ["Statement of Unaudited Financial Results (Not-Consolidated)",
+                                   "Statement of Unaudited Financial Results (Un consolidated)"])
+def test_not_and_un_consolidated_titles_are_never_consolidated(title):
+    rows, want = pl()
+    assert read(statement(rows, title=title), "pat", basis="CONSOLIDATED").status != "ok"
+
+
+def test_a_revenue_row_above_a_sum_that_leaves_it_out_blocks_a_revenue_row_inside_too():
+    rows, want = pl()
+    part = [round(v * 0.6, 2) for v in REVENUE]
+    got = statement([(["Revenue from operations"], REVENUE), (["Net sales"], part), (["Other income"], OTHER),
+                     (["Total income"], cols_sum(part, OTHER))] + rows[3:])
+    r = read(got, "revenue")
+    assert r.status != "ok" or r.value == pytest.approx(crore(1000.00))

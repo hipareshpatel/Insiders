@@ -1166,7 +1166,7 @@ class Solver:
             # a revenue row right above the sum and outside it: the first row is not the revenue (22nd review: "Revenue from
             # operations" over "Interest income" + "Other income" = a total that leaves the revenue out)
             above = min(rows) - 1
-            if above >= 0 and self.cls[above] == "REV" and self.cls[rows[0]] != "REV":
+            if above >= 0 and self.cls[above] == "REV":
                 rows_rev_ok = False
             rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok
             if rev_named:
@@ -1416,7 +1416,7 @@ def layer_basis(text: str) -> str | None:
 # "STATEMENTOFUNCONSOLIDATED..." is not a consolidated title: "un" only as part of "unaudited" (twentieth review)
 _GLUED_TITLE = re.compile(r"statementof(?:unaudited|audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
 _BASIS_WORD = re.compile(r"\b(?:consolidated|standalone)\b", re.I)
-_NON_CONSOLIDATED = re.compile(r"\bnon\W*consolidated|\bnot\s+consolidated", re.I)
+_NON_CONSOLIDATED = re.compile(r"\b(?:non|not|un)[\W_]+consolidated|\bnonconsolidated", re.I)
 
 
 def Table_solved(table: Table) -> Table:

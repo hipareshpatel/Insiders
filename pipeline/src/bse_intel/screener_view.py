@@ -153,6 +153,26 @@ class _Reader:
         return self.facts.described(parents, rx, joined=True, **self.at)
 
 
+GAP_HINT_MIN = 2.0     # Cr: a smaller gap equals too many filed facts by chance to be a lead
+
+
+def gap_hints(r: _Reader, gap: float, limit: int = 3) -> list[str]:
+    """The filed facts of the column's period whose size equals a row's gap (screener's figure less ours) within ₹1 Cr: an
+    element, or a breakdown row by its own words. A lead to where the item screener adds or leaves out sits (L&T's yearly
+    Interest: its bank charges), for the larger batch's pattern search; never part of a recipe."""
+    if abs(gap) < GAP_HINT_MIN:
+        return []
+    found = getattr(r, "_money", None)
+    if found is None:
+        facts = r.facts
+        found = [(el, v) for el, v in facts.find(".", **r.at)]
+        names = {row[0] for row in facts.rows}
+        found += [(f"{el} [{text.strip()[:60]}]", v) for el, text, v in facts.described(tuple(names), ".", joined=True, **r.at)]
+        r._money = found
+    hits = sorted((abs(abs(v) - abs(gap)), label, v) for label, v in found if v and abs(abs(v) - abs(gap)) <= ABS_TOL)
+    return [f"{label} {_fmt(v)}" for _, label, v in hits[:limit]]
+
+
 def _fmt(v: float) -> str:
     return f"{v:,.2f}"
 
@@ -592,30 +612,34 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
     if k in memo:
         return memo[k]
     result: tuple[dict[str, Row] | None, str]
+    reader = None
     if period.startswith("YE:"):
         result = None, "year end not March: no recipe source yet"
     elif table == "quarters":
         end, f = quarter_end(period), cf.result(period, basis)
-        result = (pl_rows(fam, _Reader(f, end=end, months=3), source=f"results file {period}"), "") if f is not None and end \
-            else (None, f"no results facts for {period}")
+        reader = _Reader(f, end=end, months=3) if f is not None and end else None
+        result = (pl_rows(fam, reader, source=f"results file {period}"), "") if reader else (None, f"no results facts for {period}")
     elif table in ("annual", "cash_flow"):
         f, label, q4 = cf.year(period, basis, fam)
         end = _fy_end(period)
-        if f is None or end is None:
+        reader = _Reader(f, end=end, months=12) if f is not None and end is not None else None
+        if reader is None:
             result = None, f"no annual-report or Q4 results facts for {period}"
         elif table == "annual":
             fallback = _Reader(q4, end=end, months=12) if q4 is not None else None
-            result = pl_rows(fam, _Reader(f, end=end, months=12), fallback, label), ""
+            result = pl_rows(fam, reader, fallback, label), ""
         else:
-            result = cf_rows(_Reader(f, end=end, months=12), label), ""
+            result = cf_rows(reader, label), ""
     else:   # balance
         end = quarter_end(period)
         if period.startswith("Q4"):
             f, label, _ = cf.year(period[2:], basis, fam, instant=True)
         else:
             f, label = cf.result(period, basis), f"results file {period}"
-        result = (bs_rows(fam, _Reader(f, instant=end), label), "") if f is not None and end else (None, f"no facts for {period}")
+        reader = _Reader(f, instant=end) if f is not None and end else None
+        result = (bs_rows(fam, reader, label), "") if reader else (None, f"no facts for {period}")
     memo[k] = result
+    memo[("reader", k)] = reader
     return result
 
 
@@ -630,7 +654,7 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
             for period, theirs in by_period.items():
                 ours_rows, why = _ours(cf, fam, basis, table, period, memo)
                 rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": fam, "period": period, "table": table,
-                       "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": ""}
+                       "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "", "hints": ""}
                 if ours_rows is None:
                     rec.update(status="no_facts", note=why)
                 elif row not in ours_rows:
@@ -642,6 +666,9 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                     else:
                         rec.update(ours=round(got.value, 2), diff=round(got.value - theirs, 2),
                                    status="ok" if exact(got.value, theirs, row) else "apart", note=got.note)
+                        reader = memo.get(("reader", (table, period)))
+                        if rec["status"] == "apart" and row not in PCT_ROWS and reader is not None:
+                            rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
                 out.append(rec)
     return out
 
@@ -739,12 +766,21 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
                           "no_facts": sum(1 for r in c["rows"] if r["status"] == "no_facts"),
                           "no_recipe": sum(1 for r in c["rows"] if r["status"] == "no_recipe"),
                           "rows_apart": sorted({f"{r['table']}: {r['row']}" for r in apart})})
+    # a gap lead seen in two or more companies on one row is a pattern to check before the next recipe
+    by_hint: dict[tuple[str, str], set[str]] = {}
+    for r in rows:
+        for hint in filter(None, (r.get("hints") or "").split("; ")):
+            label = hint.rsplit(" ", 1)[0]
+            label = label[label.index("[") + 1:-1].lower() if label.endswith("]") and "[" in label else label
+            by_hint.setdefault((f"{r['table']}: {r['row']}", label), set()).add(r["company"])
+    hints = sorted(([k[0], k[1], sorted(v)] for k, v in by_hint.items() if len(v) >= 2), key=lambda h: (-len(h[2]), h[0], h[1]))
     total = {s: sum(1 for r in rows if r["status"] == s) for s in STATUSES}
     return {"pages_day": pages_day, "companies": len(results), "pairs": len(rows), "by_status": total, "by_row": by_row,
-            "per_company": companies, "by_sector_row": by_sector_row, "rows": rows}
+            "per_company": companies, "by_sector_row": by_sector_row, "gap_hints": hints, "rows": rows}
 
 
-CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note")
+CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
+              "gap matches")
 
 
 def to_csv(summary: dict) -> str:
@@ -753,7 +789,8 @@ def to_csv(summary: dict) -> str:
     w.writerow(CSV_HEADER)
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
-                    "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"]])
+                    "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
+                    r.get("hints", "")])
     return buf.getvalue()
 
 
@@ -784,6 +821,11 @@ def to_markdown(summary: dict, day: str) -> str:
         share = f"{ok / (ok + bad) * 100:.0f}%" if ok + bad else "-"
         lines.append(f"| {sector} | {members.get(sector, 0)} | {share} | "
                      + ", ".join(f"{k} {v[1]}/{sum(v)}" for k, v in worst) + " |")
+    lines += ["", "## Gap matches in two or more companies", "",
+              "A filed fact equal to a row's gap (within ₹1 Cr) in several companies: a lead to check, never a rule by itself.", "",
+              "| Row | Fact | Companies |", "|---|---|---|"]
+    for row, label, names in summary.get("gap_hints", [])[:40]:
+        lines.append(f"| {row} | {label} | {len(names)}: {', '.join(names[:8])} |")
     lines += ["", "## By company", "", "| Company | Sector | Exact | Apart | No facts | No recipe | Rows apart |",
               "|---|---|---|---|---|---|---|"]
     for c in sorted(summary["per_company"], key=lambda c: (-c["apart"], c["symbol"])):

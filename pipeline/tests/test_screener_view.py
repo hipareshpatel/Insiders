@@ -437,3 +437,18 @@ def test_a_misspelt_lease_liabilities_row_is_still_borrowings():
                ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 5.0)]
         facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + row))
         assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 5
+
+
+def test_a_row_apart_names_the_filed_fact_equal_to_its_gap():
+    """A lead for the larger batch: L&T's yearly Interest is apart by its bank charges, a breakdown row of other expenses."""
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")]
+                         + [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Bank charges"),
+                            ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 7.0)]))
+    r = sv._Reader(facts, instant=END)
+    assert any("[Bank charges] 7.00" in h for h in sv.gap_hints(r, -7.3))
+    assert sv.gap_hints(r, 1.5) == []          # too small a gap to be a lead
+    summary = sv.summarise([{"symbol": s, "scrip": "", "skipped": "", "rows": [
+        {"company": s, "basis": "CONSOLIDATED", "period": "FY26", "table": "annual", "row": "Interest", "screener": 10.0, "ours": 3.0,
+         "diff": -7.0, "status": "apart", "note": "", "hints": "OtherExpensesOthers [Bank charges] 7.00"}]} for s in ("A", "B")])
+    assert summary["gap_hints"] == [["annual: Interest", "bank charges", ["A", "B"]]]
+    assert "| annual: Interest | bank charges | 2: A, B |" in sv.to_markdown(summary, "2026-10-28")

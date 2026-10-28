@@ -16,6 +16,8 @@ from .settings import get_settings
 from .sinks import make_sink
 from .timeutil import now_iso, today_ist, utc_day
 
+log = logging.getLogger(__name__)
+
 # The exit code of a command NSE (or BSE) refused (401/403/429), apart from 2, which argparse and an AI error also
 # give: scripts/retry.sh never retries a refusal and skips the job's later NSE steps (survey review, 24 Oct 2026)
 REFUSED = 75
@@ -1631,6 +1633,60 @@ def cmd_pdf_referee(args, settings, sink) -> int:
     return 124 if outcome["out_of_time"] else 0
 
 
+def cmd_xbrl_key(args, settings, sink) -> int:
+    """Read-only: the exchange's XBRL figures in memory as a free answer key for the PDF reader (xbrl_key.py). Companies in a seeded
+    shuffle; for each its newest results filing(s) with XBRL figures; the filing's PDF the way pdf-referee gets it (``Sources``:
+    the announcement list, ``NseClient.fetch`` on the archive pace); each figure located on the page by word position. The CSV,
+    JSON and markdown are written every 10 filings or 3 minutes and at the end, the decided filings also go to R2
+    (``--progress``), so a run stopped by its time budget, the file cap or a lost runner keeps what it did. No memory write, no
+    card change, no AI. Exit 75 when NSE refused the session, 124 when the time budget ended with filings left."""
+    from . import xbrl_key as xk
+    from .nse import NseClient
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    saved = xk.load_progress(sink, args.progress) if args.progress and not args.restart else None
+    if args.restart and args.progress:
+        print(f"xbrl-key: --restart: the rows saved under '{args.progress}' are ignored and replaced as this run goes")
+    if saved:
+        stale = xk.drop_stale(saved)[1]
+        print(f"xbrl-key: {len(saved)} rows saved by an earlier run of '{args.progress}'; those filings are not read again"
+              + (f" ({stale} rows of another locator version are dropped and their filings read again)" if stale else ""))
+
+    def write(rows: list[dict], summary: dict) -> None:
+        """The CSV, the progress save, the JSON and the report, each on its own: a failure in one (a report that cannot format a
+        row) is logged and never stops the others."""
+        steps = [("CSV", lambda: args.out_csv and Path(args.out_csv).write_text(xk.to_csv(rows), encoding="utf-8")),
+                 ("progress save", lambda: args.progress and xk.save_progress(sink, args.progress, rows)),
+                 ("JSON", lambda: args.json and Path(args.json).write_text(xk.to_json(summary), encoding="utf-8")),
+                 ("markdown", lambda: args.md and Path(args.md).write_text(xk.to_markdown(summary, today_ist().isoformat()), encoding="utf-8"))]
+        for name, step in steps:
+            try:
+                step()
+            except Exception:   # noqa: BLE001
+                logging.getLogger("bse_intel.xbrl_key").exception("xbrl-key: the %s could not be written", name)
+
+    with NseClient() as nse:
+        outcome = xk.run(nse, sink, companies, args.limit, args.per_company, args.seed, args.time_budget, progress=write, saved=saved)
+    rows = outcome.pop("rows")
+    print(f"xbrl-key: {outcome['figures']} figures of {outcome['filings']} filings, {outcome['calls']['lists']} announcement lists, "
+          f"{outcome['calls']['pdfs']} PDFs")
+    for status, n in outcome["statuses"].items():
+        print(f"  {status:24}{n}")
+    if outcome["fetch_failed_filings"]:
+        print(f"  {outcome['fetch_failed_filings']} filings could not be fetched: they are read again on the next run of the same name")
+    for stage, n in outcome["failure_stages"].items():
+        print(f"  not found at {stage:20}{n}")
+    if outcome["file_cap_reached"]:
+        print("file cap reached: the rest waits for the next run")
+    write(rows, outcome)
+    if outcome["blocked"]:
+        return REFUSED
+    return 124 if outcome["out_of_time"] else 0
+
+
 def cmd_screener_explain(args, settings, sink) -> int:
     """Read-only: which of the screener-referee's ours_matches_official pairs come from a bonus, split or consolidation after
     the period (the dossier's recorded actions) or from a later results file restating the figure (memory's stored later-file
@@ -1853,6 +1909,27 @@ def cmd_restore(args, settings, sink) -> int:
     else:
         print("dry run: nothing changed (--apply backs up what it replaces to backup/restore-<time>/, then puts the backup back; "
               "--force also puts back what was changed since the job)")
+    return 0
+
+
+def cmd_memory_drop_known_wrong(args, settings, sink) -> int:
+    """Take the figures on the known-wrong list (known_wrong.py, F223) out of the stored dossiers: a dry run by default,
+    --apply backs each dossier up (backup.RunBackup, before and after) and then writes it. No AI, no exchange."""
+    from . import memory_drop
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+    outcome = memory_drop.run(sink, scrips, args.apply)
+    print(memory_drop.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:   # any failure of the read, the backup or the write: stopped, the report above and in --json is what was done
+        print(f"memory-drop-known-wrong: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if outcome["unknown"]:   # a name that is not on the list is a typo: reported, and the named ones still ran
+        print("memory-drop-known-wrong: not on the list: " + ", ".join(outcome["unknown"]), file=sys.stderr)
+        return 2
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-drop-known-wrong-<time>/, then removes the listed figures)")
     return 0
 
 
@@ -2174,6 +2251,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--force", action="store_true", help="also put back what was changed since the job (and restore a backup with no after-state: a requeue-failed --ids snapshot)")
     p.add_argument("--list", action="store_true", help="list the backups and exit")
     p.set_defaults(func=cmd_restore)
+    p = sub.add_parser("memory-drop-known-wrong", help="take the figures on the known-wrong list (known_wrong.py) out of memory: dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these listed companies (scrip codes, comma separated); default every listed company")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_drop_known_wrong)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")
@@ -2392,6 +2474,19 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--md", help="write the short markdown summary to this file")
     p.add_argument("--progress", metavar="NAME", help="save the decided pairs to R2 (meta/pdf-referee/NAME.csv) every 25 pairs or 3 minutes, and skip the pairs an earlier run of NAME decided (scrip, basis, period, metric)")
     p.set_defaults(func=cmd_pdf_referee)
+
+    p = sub.add_parser("xbrl-key", help="read-only: the exchange's XBRL figures in memory located on their filing's PDF page by word position (a free answer key for the PDF reader)")
+    p.add_argument("--limit", type=int, help="read at most this many filings (the first-test run is on 100 files: set the file cap too)")
+    p.add_argument("--per-company", type=int, default=1, help="the newest N results filings of each company (default 1)")
+    p.add_argument("--seed", type=int, default=28, help="the seed of the company shuffle")
+    p.add_argument("--scrips", help="only these companies (scrip codes or NSE symbols, comma separated)")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if filings are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--out-csv", help="write every figure, with its place on the page, to this file")
+    p.add_argument("--md", help="write the short markdown report to this file")
+    p.add_argument("--progress", metavar="NAME", help="save the rows to R2 (meta/xbrl-key/NAME.csv) as the run goes, and skip the filings an earlier run of NAME did (a filing whose fetch failed is read again)")
+    p.add_argument("--restart", action="store_true", help="with --progress: ignore what an earlier run of NAME saved and start clean")
+    p.set_defaults(func=cmd_xbrl_key)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

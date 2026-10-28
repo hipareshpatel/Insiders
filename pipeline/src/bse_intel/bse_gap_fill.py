@@ -41,7 +41,7 @@ from pathlib import Path
 
 import requests
 
-from . import xbrl_store
+from . import known_wrong, xbrl_store
 from .adapters import bse as ported
 from .bse import AttachmentError, AttachmentTooLarge, SourceBlockedError, parse_results_archive
 from .nse import FileCapReached
@@ -56,7 +56,7 @@ EXCHANGE = "BSE"
 TRIED_KEY = "bsefill:tried"            # kv: companies a real run already handled
 REASONS = ("mcap below cut-off", "mcap unknown", "no symbol", "nse list unavailable", "nse has results",
            "bse lists nothing", "bse lists no needed quarter", "bse fetch failed", "no new quarter", "quarter held", "basis differs", "not a gap quarter",
-           "known wrong on bse")
+           "known wrong on bse", "known wrong figure")
 # (scrip, quarter) whose BSE file is known to be wrong, never filled from it; each with the evidence (owner, 27 Oct 2026: "skip
 # Kovai and start saving")
 KNOWN_WRONG = {
@@ -295,6 +295,10 @@ def new_figures(before: dict | None, after: dict | None, scrip: str, wanted: set
         if basis and got not in (None, basis):
             skipped["basis differs"] = skipped.get("basis differs", 0) + 1
             continue
+        if known_wrong.listed(scrip, entry.get("metric"), period, entry.get("value"), got,
+                              held_bases=lambda: known_wrong.dossier_bases(before)) is not None:
+            skipped["known wrong figure"] = skipped.get("known wrong figure", 0) + 1   # proven wrong in BSE's own file (F223)
+            continue
         out.append(_stamp(entry, urls.get(period)))
     return out, skipped
 
@@ -473,6 +477,9 @@ def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None, back
         key = (_norm(entry["metric"]), entry["period"])
         if key in held:
             continue
+        if known_wrong.listed(scrip, entry["metric"], entry["period"], entry.get("value"), entry.get("basis"),
+                              held_bases=lambda: known_wrong.dossier_bases(merged)) is not None:
+            continue   # proven wrong in the exchange's own file: never written, whoever asks (known_wrong.py, F223)
         held.add(key)
         merged.setdefault("financial_metrics", []).append(json.loads(json.dumps(entry)))
         added += 1

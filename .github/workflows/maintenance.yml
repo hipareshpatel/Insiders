@@ -2,7 +2,7 @@
 # - refresh-card-blocks: every stored card's code blocks rebuilt from memory by today's code (card_refresh.py);
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
 # - restore: puts a backup (R2 backup/<job>-<time>/, saved before every write of refresh-card-blocks, label-memory-apply,
-#   screener-fill-apply, memory-gaps-fill-bse --apply and restated-pdf, and before a named seed-memory or requeue-failed --ids)
+#   screener-fill-apply, memory-gaps-fill-bse --apply, memory-drop-known-wrong --apply and restated-pdf, and before a named seed-memory or requeue-failed --ids)
 #   back for the named companies / cards, keeping what was written since (backup.py, restore.py; a requeue-failed --ids
 #   backup has no after-state and needs apply-force). It writes only when `restore_mode` is apply or apply-force (default
 #   preview); an empty `backup` lists the backups;
@@ -132,6 +132,18 @@
 #   pdf_url, the settle job asks every reader and the settle rule each key row and scores them (artifact `pdf-referee-ensemble`:
 #   hardset-score.json / .md, hardset-readings.json): per reader and for the ensemble right / wrong / abstain, per difficulty
 #   tag, and the ensemble's false settlements one by one. `limit` = the first N PDFs.
+# - xbrl-key: read only (owner 28 Oct 2026). The exchange's XBRL figures that memory holds (revenue, other income, total income,
+#   total expenses, exceptional items, PBT, tax, PAT, EPS, interest earned; both bases; every period of the filing's file) as a free
+#   answer key for the PDF reader: each figure is located on its filing's PDF page by word position (pipeline/src/bse_intel/xbrl_key.py),
+#   with its row label, its full column header path, its box and its failure stage when it is not found. The filing's PDF is
+#   fetched as pdf-referee fetches it (same Sources, same archive pace, no new NSE path); no OCR (a scan is `no_text`). Companies
+#   in a seeded shuffle, `limit` = filings (the first test is on 100 files: `file_cap` = 100), `ids` = only these companies (scrip
+#   codes or symbols). xbrl-key.csv, summary.json and xbrl-key.md go up as the artifact `xbrl-key`, written every 10 filings or 3
+#   minutes, and the rows also go to R2 (`meta/xbrl-key/xbrl-key[-<ids>].csv`: the name does not hold the run id, so a fresh
+#   dispatch with the same `ids` continues the earlier run and skips the filings it finished; `restart` starts clean), so a run
+#   stopped by its time budget, the file cap or a lost runner keeps what it did. A filing whose announcement list or download
+#   failed is `fetch_failed`, never `not_found`, and is read again on the next dispatch. Writes nothing to memory, cards or the
+#   branch. No AI.
 # - screener-explain: read only (owner 26 Oct 2026). Of the `screener-referee` pairs where our figure equals NSE's own file,
 #   which differences a later bonus, split or consolidation (the dossier's corporate actions) or a later results file
 #   (memory's stored later-file source, else NSE's file) explains. The job takes the newest unexplained `screener-referee`
@@ -154,13 +166,19 @@
 #   already holds is never overwritten; each figure written carries exchange BSE and the file's address. A dry run unless the
 #   input `apply` is set (the summary, a CSV of every figure and the log go up as the artifact `memory-gaps-fill-bse`). `restart`
 #   tries the companies an earlier apply run handled. The daily pipeline stays NSE only. Group maint-nse-memory.
+# - memory-drop-known-wrong: takes the figures on the code-held known-wrong list (known_wrong.py, F223: the exchange's own file differs
+#   from the company's own results statement; each with its evidence) out of the stored dossiers, no AI and no exchange. A dry run unless
+#   the input `apply` is set; `ids` names listed companies (scrip codes), empty means every listed one. Each dossier is backed up
+#   (R2 backup/memory-drop-known-wrong-<time>/, before and after) before it is written, so `restore` undoes it. A stored figure goes only
+#   when its metric, period, basis and value are the listed ones. The report goes up as the artifact `memory-drop-known-wrong`. Group
+#   maint-nse-memory (it writes memory, so it never runs beside a seed).
 # None calls an AI model; seed-memory, memory-gaps-fill and fill-memory read NSE. It runs beside the pipeline (its own concurrency group:
 # a shared one would cancel a pending pipeline run); fill-memory pauses the AI pipeline while it writes memory.
 # CONCURRENCY GROUPS (owner, 26 Oct 2026; F164). Jobs wait in the group of their SOURCE and what they WRITE, so jobs on
 # different sources run side by side, and two jobs that write the same store never run together. cancel-in-progress is
 # false and a group keeps one waiting run (a newer one replaces the waiting one): do not queue two commands of one group.
 #   group              commands
-#   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, memory-gaps-fill-bse, fill-memory, fill-trades,
+#   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, fill-memory, fill-trades,
 #                      label-memory-apply, screener-fill-apply, prune-companies-apply (writes memory and companies),
 #                      text-backfill (reads NSE; writes only text/ objects)
 #   maint-cards        writes cards in D1 (or commits to the branch): refresh-card-blocks, refresh-summaries, both,
@@ -171,7 +189,7 @@
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2, and NSE files only with `apply`), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2; a run with `apply` downloads NSE files and is in the NSE memory group), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), xbrl-key (R2, memory and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -192,7 +210,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, xbrl-facts, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
       backup:
         description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -208,7 +226,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: screener-crosscheck and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: screener-crosscheck and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); memory-drop-known-wrong - only these listed companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -216,7 +234,7 @@ on:
         type: string
         default: ''
       restart:
-        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried
+        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried; xbrl-key - ignore the rows an earlier run saved and start clean
         type: boolean
         default: false
       days:
@@ -224,7 +242,7 @@ on:
         type: string
         default: '110'
       limit:
-        description: screener-crosscheck - only the N largest companies by market cap (of `ids`, else of the universe); xbrl-facts - at most N companies; text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies
+        description: screener-crosscheck and xbrl-facts - only the N largest companies by market cap (of `ids`, else of the universe); text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); xbrl-key - at most N filings read (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies
         type: string
         default: ''
       no_ocr:
@@ -240,7 +258,7 @@ on:
         type: string
         default: ''
       apply:
-        description: memory-gaps-fill-bse - write the figures (labelled BSE); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap; the first run is 100)
+        description: memory-gaps-fill-bse and memory-drop-known-wrong only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing
         type: boolean
         default: false
       dry_run:
@@ -263,12 +281,12 @@ permissions:
 concurrency:
   # groups by source and by what a job writes: the table in the header comment
   group: >-
-    ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
+    ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -417,6 +435,30 @@ jobs:
         with:
           name: memory-gaps-fill-bse
           path: ${{ runner.temp }}/gapsbse/
+          if-no-files-found: ignore
+      - name: Drop the known-wrong figures from memory (a dry run unless apply)
+        if: inputs.command == 'memory-drop-known-wrong'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
+          APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script
+          IDS: ${{ inputs.ids }}
+        run: |
+          # a dry run unless `apply`: each changed dossier is backed up to R2 backup/ before it is written (backup.RunBackup)
+          set -o pipefail
+          code=0
+          mkdir -p "$RUNNER_TEMP/knownwrong"
+          args=(--json "$RUNNER_TEMP/knownwrong/memory-drop-known-wrong.json")
+          [ "$APPLY" = "true" ] && args+=(--apply)
+          if [ -n "$IDS" ]; then args+=(--scrips "$IDS"); fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-drop-known-wrong "${args[@]}" | tee "$RUNNER_TEMP/knownwrong/memory-drop-known-wrong.txt" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'memory-drop-known-wrong'
+        with:
+          name: memory-drop-known-wrong
+          path: ${{ runner.temp }}/knownwrong/
           if-no-files-found: ignore
       - name: Memory gaps (reads only)
         if: inputs.command == 'memory-gaps'
@@ -798,6 +840,27 @@ jobs:
         with:
           name: pdf-referee
           path: ${{ runner.temp }}/pdfreferee/
+          if-no-files-found: ignore
+      - name: XBRL key, memory's exchange figures located on their PDF pages (reads only)
+        if: inputs.command == 'xbrl-key'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # as pdf-referee: the archive host only; the API keeps 3-5 s; a refusal from it slows it back
+          LIMIT: ${{ inputs.limit }}
+          IDS: ${{ inputs.ids }}
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/xbrlkey"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-key ${LIMIT:+--limit "$LIMIT"} ${IDS:+--scrips "$IDS"} --progress "xbrl-key${IDS:+-$IDS}" ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/xbrlkey/summary.json" --out-csv "$RUNNER_TEMP/xbrlkey/xbrl-key.csv" --md "$RUNNER_TEMP/xbrlkey/xbrl-key.md" || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::time budget ended with filings left (the rows so far are in the CSV); run again with a limit"; code=0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'xbrl-key'
+        with:
+          name: xbrl-key
+          path: ${{ runner.temp }}/xbrlkey/
           if-no-files-found: ignore
       - name: NSE speed test (reads only)
         if: inputs.command == 'nse-speedtest'

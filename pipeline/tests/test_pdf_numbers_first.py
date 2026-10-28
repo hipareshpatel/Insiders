@@ -870,3 +870,20 @@ def test_a_label_naming_oci_is_a_total_comprehensive_income_not_a_profit():
     assert nf.label_class("Profit after tax and OCI") == "TCI"
     assert nf.label_class("Profit for the period (after OCI)") == "TCI"
     assert nf.label_class("Profit for the period") == "PAT"
+
+
+def test_a_discontinued_block_with_its_own_subtotal_still_gives_the_profit_for_the_period():
+    # ABREL Q2FY27: 9 profit from continuing operations, 11 profit of discontinued operations, 13 its tax, 14 their net,
+    # 15 profit for the period = 9 + 14; asking for 11 and 13 in the sum as well lost the answer
+    rows, want = pl()
+    cont = want["pat"]
+    disc, dtax = [-19.33, 42.59, 86.19, 240.15], [-73.4, -10.22, -30.91, 12.99]
+    net = [round(a + b, 2) for a, b in zip(disc, dtax)]
+    total = [round(a + b, 2) for a, b in zip(cont, net)]
+    rows = rows[:-1] + [(["Net Profit for the period from continuing operations"], cont),
+                        (["Profit/(loss) from discontinued operations"], disc),
+                        (["Tax (expenses)/credit of discontinued operations"], dtax),
+                        (["Net Profit for the period from discontinued operations"], net),
+                        (["Net Profit for the period (9 + 14)"], total)]
+    got = read(statement(rows), "pat")
+    assert got.status == "ok" and got.value == pytest.approx(crore(total[0])), got

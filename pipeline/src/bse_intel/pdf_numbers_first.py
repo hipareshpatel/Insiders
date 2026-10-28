@@ -974,7 +974,7 @@ class Solver:
         """Rows after the profit after tax ``a`` that equal it plus or minus the rows between (discontinued operations, an
         associate's share): the row's label names the profit (not merely does not object), every row between is an associate's
         share, discontinued operations, an exceptional item or a tax line, or nil, and the sum takes in every non-nil
-        associate's share or discontinued line between (eleventh review: a garbled total comprehensive income or an identity
+        associate's share between (eleventh review: a garbled total comprehensive income or an identity
         that skips the share is not the profit)."""
         out = []
         for x in range(a + 2, min(self.n, a + 9)):
@@ -982,7 +982,9 @@ class Solver:
             live = [r for r in between if any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)]
             if self.cls[x] != "PAT" or any(self.cls[r] not in {"DISC", "ASSOC", "EXC", "TAX"} for r in live):
                 continue
-            needed = {r for r in live if self.cls[r] in ("ASSOC", "DISC")}
+            # every associate's share between must be in the sum; a discontinued block has its parts and their subtotal
+            # (ABREL Q2FY27: 15 = 9 + 14, where 14 is the net of 11 and 13), so it is not asked for row by row
+            needed = {r for r in live if self.cls[r] == "ASSOC"}
             for size in (1, 2):
                 hit = None
                 for subset in itertools.combinations(live, size):

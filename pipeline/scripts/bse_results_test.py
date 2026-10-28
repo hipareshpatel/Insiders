@@ -29,6 +29,16 @@ def nse(url):
     return subprocess.run(["curl","-s","-b",CK,"-c",CK,"-A",UA,"-H","Referer: https://www.nseindia.com/","--max-time","60",url],capture_output=True).stdout
 subprocess.run(["curl","-s","-c",CK,"-A",UA,"-o","/dev/null","https://www.nseindia.com/"])
 COS = [("532540","TCS"),("500209","INFY"),("500325","RELIANCE"),("507685","WIPRO"),("500180","HDFCBANK"),("500696","HINDUNILVR"),("532174","ICICIBANK"),("500570","TATAMOTORS")]
+import os
+# BSE_TEST_COS="500547:BPCL,..." (scrip:symbol) tests those companies instead; SAVE_DIR keeps every XBRL file read (owner,
+# 28 Oct 2026: BPCL's files from both exchanges, checked line by line)
+if os.environ.get("BSE_TEST_COS", "").strip():
+    COS = [tuple(x.strip().split(":", 1)) for x in os.environ["BSE_TEST_COS"].split(",") if ":" in x]
+SAVE = os.environ.get("SAVE_DIR", "").strip()
+def keep(name, body):
+    if SAVE and body:
+        os.makedirs(SAVE, exist_ok=True)
+        open(os.path.join(SAVE, name), "wb").write(body)
 KEY = ("revenue","total_income","pbt","pat","eps","interest_earned")
 out = []
 for scrip, sym in COS:
@@ -42,6 +52,7 @@ for scrip, sym in COS:
         if not link: out.append(row); continue
         row.update(period=link.period, basis=link.basis, url=link.url)
         body = c.fetch_url(link.url, {}, "results_xbrl", file=True)
+        keep(f"bse_{sym}_{link.period}_{link.basis}.xml", body)
         res = xbrl.parse(body)
         b = {m.metric: m.value for m in res.metrics if m.period == res.period and m.metric in KEY} if res else {}
         row["bse"] = b; row["bse_period"] = res.period if res else None
@@ -58,8 +69,9 @@ for scrip, sym in COS:
     n = None
     for r in lst:
         if r.get("consolidated") == want and r.get("xbrl"):
-            time.sleep(2); res2 = xbrl.parse(nse(r["xbrl"]))
+            time.sleep(2); nbody = nse(r["xbrl"]); res2 = xbrl.parse(nbody)
             if res2 and res2.period == row.get("bse_period"):
+                keep(f"nse_{sym}_{res2.period}_{row.get('basis')}.xml", nbody)
                 n = {m.metric: m.value for m in res2.metrics if m.period == res2.period and m.metric in KEY}; break
     row["nse"] = n
     row["same"] = None if n is None else all(abs(b[k] - n[k]) < 0.011 for k in b if k in n) and bool(set(b) & set(n))

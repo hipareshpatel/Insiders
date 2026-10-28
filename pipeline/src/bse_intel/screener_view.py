@@ -101,9 +101,11 @@ LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
           "sales tax": (("SalesTax", "ValueAddedTax", "GoodsAndServicesTax", "SalesTaxAndValueAddedTax"),
                         r"^\s*(sales tax|vat\b|value added tax|gst\b|goods (and|&) services tax)"),
           "discounts": (("TradeDiscounts", "SalesDiscounts", "Discounts", "Rebates"), r"^\s*(trade )?(discount|rebate)s?\b")}
-FIN_SERVICES_ROW = r"^\s*finance costs? of (a |the )?financial[- ]services"
+from .screener_parts import FINANCE_MEMBER as FIN_SERVICES_ROW  # noqa: E402 - one pattern for both (L&T's and Grasim's wording)
 LOSS_ON_DISPOSAL = "LossOnDisposalDiscardDemolishmentAndDestructionOfDepreciablePropertyPlantAndEquipment"
 ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+EXPENSE_ROW_PARENTS = ("OtherExpenses",)
+INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
 CORPORATE, BANK, NBFC, INSURER = "corporate", "bank", "nbfc", "insurer"
@@ -221,6 +223,12 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     lev = sum(levies.values())
     fin, fin_note = _fin_services(r, fallback)
     loss = r.cr(LOSS_ON_DISPOSAL) or 0.0
+    # a loss on investments booked as a row of other expenses is an exceptional item for screener, so in Other Income, not
+    # Expenses (docs: profit from the sale of investments / associates is exceptional). M&M Q4FY26 "Loss from investments
+    # related to subsidiaries, associates and joint ventures" 410.2 Cr = the 410.47 Cr Expenses gap (run 40726456306)
+    inv_rows = r.rows(EXPENSE_ROW_PARENTS, INVESTMENT_LOSS)
+    inv_loss = _sum_rows(inv_rows) if inv_rows else 0.0
+    loss += inv_loss
     sales = None if rev is None else rev - lev
     out["Sales"] = Row(sales, ("RevenueFromOperations" + (" less " + ", ".join(levy_notes) if levy_notes else "")
                                if rev is not None else "missing RevenueFromOperations") + src)
@@ -233,7 +241,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     if None not in (exp, fc, dep):
         expenses = exp - fc - dep - lev - fin - loss
         parts = ["FinanceCosts", "depreciation"] + (["levies"] if lev else []) + (["financial-services finance cost"] if fin else []) \
-            + ([f"loss on disposal of PPE {_fmt(loss)}"] if loss else [])
+            + ([f"loss on disposal of PPE {_fmt(loss - inv_loss)}"] if loss - inv_loss else []) \
+            + ([f"loss on investments {_fmt(inv_loss)}"] if inv_loss else [])
         out["Expenses"] = Row(expenses, "Expenses less " + ", ".join(parts) + src)
     else:
         out["Expenses"] = Row(None, "missing " + ", ".join(n for n, v in (("Expenses", exp), ("FinanceCosts", fc),

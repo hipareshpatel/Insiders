@@ -361,3 +361,22 @@ def test_a_file_without_a_balance_sheet_has_no_cwip_or_investments_not_zero():
     got = sv.corporate_bs(sv._Reader(facts, instant=END))
     assert got["CWIP"].value is None and got["Investments"].value is None and got["Borrowings"].value is None
     assert "no balance sheet" in got["CWIP"].note
+
+
+def test_grasims_nbfc_finance_cost_row_moves_to_interest_like_lts():
+    """Grasim Q1FY26 "Finance Cost relating to NBFC/HFC's Business" 2,734.5 Cr: screener's Interest 816.2 + 2,734.5 = 3,550.71,
+    Expenses 31,295.82 (owner's Excel, measured 28 Oct 2026)."""
+    facts = xf.Facts(doc(ANNUAL + [("DescriptionOfOtherExpenses", "D2026_M1", "Finance Cost relating to NBFC/HFC's Business"),
+                                   ("OtherExpenses", "D2026_M1", 25.0)], kind="results", template="INDAS"))
+    rows = sv.corporate_pl(sv._Reader(facts, end=END, months=12))
+    assert rows["Interest"].value == pytest.approx(45.0) and rows["Expenses"].value == pytest.approx(560.0)
+
+
+def test_a_loss_on_investments_row_of_other_expenses_moves_to_other_income():
+    """M&M Q4FY26 "Loss from investments related to subsidiaries, associates and joint ventures" 410.2 Cr = its Expenses gap."""
+    facts = xf.Facts(doc(ANNUAL + [("DescriptionOfOtherExpenses", "D2026_M2",
+                                    "Loss from investments related to subsidiaries, associates and joint ventures"),
+                                   ("OtherExpenses", "D2026_M2", 11.0)], kind="results", template="INDAS"))
+    rows = sv.corporate_pl(sv._Reader(facts, end=END, months=12))
+    assert rows["Expenses"].value == pytest.approx(585.0 - 11.0) and rows["Other Income"].value == pytest.approx(15.0 - 11.0)
+    assert "loss on investments" in rows["Expenses"].note

@@ -55,7 +55,10 @@ FLOW_PARTS = {   # part -> (element name regex, breakdown row description regex)
 FLOW_ORDER = ("excise", "taxes", "discounts")
 # L&T files the finance cost of its financial-services business as a row of Other expenses; screener moves it from Expenses to
 # Interest (docs/audit/screener-five-2026-10-28.md, rule P2, reproduced to the paisa: Q1FY26 781.61 + 1,706.35 = 2,487.96)
-FINANCE_MEMBER = r"^\s*finance costs? of (a |the )?financial[- ]services"
+# Grasim files the same row as "Finance Cost relating to NBFC/HFC's Business" (Q1FY26 2,734.5 Cr; screener's Interest 816.2 + 2,734.5 =
+# 3,550.71 and Expenses 31,295.82, both exact, owner's Excel, measured 28 Oct 2026)
+FINANCE_MEMBER = (r"^\s*finance costs?\b.{0,30}\b(of|relating to|in respect of|for)\b.{0,20}"
+                  r"(financial[- ]services|nbfc|hfc|lending|housing finance|financing business)")
 # the other lines a row of a breakdown can be: right-of-use assets are a row of Other non-current assets (rule B3, ITC 501.00 Cr)
 ASSET_PARENTS = ("OtherNoncurrentAssets",)
 # a lease line is a lease-liability element, or a current maturity OF a lease (a current lease liability, never a maturity of

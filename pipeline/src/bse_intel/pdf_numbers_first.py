@@ -865,7 +865,9 @@ Proof = tuple[int, tuple[tuple[int, int], ...]]        # (row that equals, ((row
 
 # a revenue row that opens a list of its parts: "1 Revenue from operations (a) Interest income", "Revenue from Operations
 # (i) Interest Income", "Revenue from operations: a) Sales"
-_REVENUE_LIST = re.compile(r"revenue\s+from\s+operations?\W{0,3}(?:\(?(?:a|i|1)\)|a\.)\s*[a-z]", re.I)
+_REVENUE_LIST = re.compile(r"revenue\s+from\s+operations?\W{0,3}(?:\(?(?:a|i|1)\)|a\.)\s*(?!refer|note|see\b)[a-z]", re.I)
+# a row that is an item of a list ("(c) Other income", "iv) Others"): after a revenue list it may be one of its parts
+_LIST_ITEM = re.compile(r"^\W*\(?(?:[a-h]|i{1,3}|iv|vi{0,3}|ix|x)\)\s", re.I)
 
 
 class Solver:
@@ -1120,6 +1122,8 @@ class Solver:
             parts = tuple(range(first, t - 1))
             if self.cls[first] != "REV" or not _REVENUE_LIST.search(self.t.rows[first].label):
                 continue
+            if _LIST_ITEM.match(self.t.rows[t - 1].label):
+                return          # "(d) Other income": a part of the revenue list or not, the labels cannot tell
             if any(self.cls[r] is not None for r in parts[1:]):
                 return
             proof: Proof = (t, tuple((r, 1) for r in range(first, t)))
@@ -1141,14 +1145,15 @@ class Solver:
         if len(rows) == 2:
             if self.label_ok(rows[0], {"REV"}) and rows_rev_ok:
                 self.add("revenue", (rows[0],), [proof])
-            if self.label_ok(rows[1], {"OI"}):
+            if self.label_ok(rows[1], {"OI"}) and (rows_rev_ok or not _LIST_ITEM.match(self.t.rows[rows[1]].label)):
                 self.add("other_income", (rows[1],), [proof])
         else:
             rev = [r for r in rows if self.cls[r] == "REV"]
             oi = [r for r in rows if self.cls[r] == "OI"]
             if len(rev) == 1 and rows_rev_ok:
                 self.add("revenue", (rev[0],), [proof])
-            if len(oi) == 1:
+            # after a revenue list, "(c) Other income" may be one of its parts (eighteenth review)
+            if len(oi) == 1 and (rows_rev_ok or not _LIST_ITEM.match(self.t.rows[oi[0]].label)):
                 self.add("other_income", (oi[0],), [proof])
 
     def chain_from(self, t: int, k, ti_proof: Proof) -> None:

@@ -1056,3 +1056,20 @@ def test_revenue_printed_only_as_its_parts_is_their_sum():
         assert read(pdf, "other_income").value == pytest.approx(crore(50.10))
         assert read(pdf, "total_income").value == pytest.approx(crore(want["total_income"][0]))
         assert read(pdf, "pat").value == pytest.approx(crore(want["pat"][0]))
+
+
+def test_revenue_parts_that_do_not_add_up_or_a_list_item_other_income_give_no_answer():
+    rows, want = pl()
+    parts = revenue_in_parts(rows, 3)
+    parts[1] = (parts[1][0], [v + 1 for v in parts[1][1]])                      # one part off by one: nothing proved
+    assert read(statement(parts), "revenue").status != "ok"
+    # "(c) Other income" right after a revenue list may be one of its parts: neither it nor the revenue is named
+    listed = revenue_in_parts(rows, 2)
+    listed[2] = (["(c) Other income"], OTHER)
+    pdf = statement(listed)
+    assert read(pdf, "other_income").status != "ok" and read(pdf, "revenue").status != "ok"
+    # a note reference is not a list: "Revenue from operations (1) refer note 3" is the revenue itself
+    assert not nf._REVENUE_LIST.search("Revenue from operations (1) refer note 3")
+    assert nf._REVENUE_LIST.search("1 Revenue from operations (a) Interest income")
+    noted = [(["Revenue from operations (1) refer note 3"], REVENUE)] + rows[1:]
+    assert read(statement(noted), "revenue").value == pytest.approx(crore(1000.00))

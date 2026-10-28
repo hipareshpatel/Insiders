@@ -583,3 +583,64 @@ def test_a_download_that_failed_but_another_candidate_read_is_a_result():
     nse = Half([filing(bad), filing(good, headline="Results part two")], {good: make_pdf()})
     out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
     assert out["statuses"]["found_unique"] == 8 and out["fetch_failed_filings"] == 0
+
+
+# --- the second re-review (28 Oct 2026) ----------------------------------------------------------------------------
+
+def test_rows_saved_by_another_locator_version_are_dropped_on_resume_and_their_filings_read_again(caplog):
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
+    first = xk.run(FakeNse([filing()], {url: make_pdf()}), sink, [("1", "A"), ("2", "B")], limit=5, seed=1)
+    assert {r["locator_version"] for r in first["rows"]} == {xk.LOCATOR_VERSION}
+    assert xk.load_csv(xk.to_csv(first["rows"]))[0]["locator_version"] == xk.LOCATOR_VERSION
+    saved = xk.load_csv(xk.to_csv(first["rows"]))
+    next(r for r in saved if r["symbol"] == "A" and r["metric"] == "revenue")["locator_version"] = "an older one"
+    nse = FakeNse([filing()], {url: make_pdf()})
+    with caplog.at_level("WARNING", logger="bse_intel.xbrl_key"):
+        second = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=saved)
+    # the whole filing of A goes (8 rows) and is read again; B's stays
+    assert second["stale_rows_dropped"] == 8 and "8 saved rows of another locator version" in caplog.text
+    assert len(nse.fetches) == 1 and len(second["rows"]) == 16 and {r["locator_version"] for r in second["rows"]} == {xk.LOCATOR_VERSION}
+    # a file with no version column at all (written before the stamp) is all stale
+    old = xk.load_csv(xk.to_csv(first["rows"]))
+    for r in old:
+        r.pop("locator_version")
+    nse = FakeNse([filing()], {url: make_pdf()})
+    third = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=old)
+    assert third["stale_rows_dropped"] == 16 and len(nse.fetches) == 2 and len(third["rows"]) == 16
+
+
+def test_an_error_inside_the_locator_is_locate_error_and_settled_not_a_fetch_failure(monkeypatch):
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    sink = FakeSink({"1": full_dossier("1")})
+
+    def boom(*a, **k):
+        raise ValueError("bad table")
+
+    monkeypatch.setattr(xk, "locate", boom)
+    nse = FakeNse([filing()], {url: make_pdf()})
+    out = xk.run(nse, sink, [("1", "A")], limit=1)
+    assert {r["status"] for r in out["rows"]} == {"locate_error"} and out["statuses"]["locate_error"] == 8
+    assert out["statuses"]["fetch_failed"] == 0 and out["statuses"]["not_found"] == 0 and out["fetch_failed_filings"] == 0
+    assert out["rows"][0]["note"].startswith("ValueError: bad table")
+    assert "locate_error" in xk.to_markdown(out, "2026-10-28")
+    # settled: a resume does not download it again
+    assert xk.save_progress(sink, "n", out["rows"])
+    nse2 = FakeNse([filing()], {url: make_pdf()})
+    again = xk.run(nse2, sink, [("1", "A")], limit=1, saved=xk.load_progress(sink, "n"))
+    assert nse2.fetches == [] and len(again["rows"]) == 8
+
+
+def test_only_transport_errors_are_fetch_failed(monkeypatch):
+    import httpx
+
+    sink = FakeSink({"1": full_dossier("1")})
+    for exc, status in ((TimeoutError("t"), "fetch_failed"), (httpx.ConnectError("c"), "fetch_failed"),
+                        (ConnectionResetError("r"), "fetch_failed"), (KeyError("k"), "locate_error"), (ZeroDivisionError(), "locate_error")):
+        def raising(*a, _e=exc, **k):
+            raise _e
+
+        monkeypatch.setattr(xk, "locate_filing", raising)
+        out = xk.run(FakeNse([], {}), sink, [("1", "A")], limit=1)
+        assert {r["status"] for r in out["rows"]} == {status}, (exc, status)
+    assert xk.is_transport_error(OSError()) and not xk.is_transport_error(ValueError())

@@ -1014,3 +1014,34 @@ def test_the_retry_reads_the_models_own_outcomes():
     assert not cm.provider_error(_failed("HTTP 400 bad request"))
     assert not cm.provider_error(_failed("InternalServerError", "model glm-9 not found"))
     assert not cm.provider_error(RuntimeError("model said 512 tokens"))
+
+
+def test_a_failing_queue_save_is_logged_and_the_run_goes_on(monkeypatch, settings, tmp_path, caplog):
+    # cli.py logged these three failures through a `log` it never defined: a NameError instead of a warning
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = _queued_world(settings)
+    call_queue.enqueue(sink, "call-2", "123", "2026-11-10T19:00:00+05:30")
+    gateway = FakeGateway([_raw(_point())])
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: SimpleNamespace(gateway=gateway, prompts=PromptEngine(s)))
+
+    def down(*a, **k):
+        raise RuntimeError("D1 down")
+
+    # start and settle fail: the document is read and its points written anyway
+    monkeypatch.setattr(call_queue, "start", down)
+    monkeypatch.setattr(call_queue, "settle", down)
+    with caplog.at_level("WARNING", logger="bse_intel.cli"):
+        assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == 0
+    assert [e["news_id"] for e in sink.dossier["call_memory"]] == ["call-2"]
+    assert caplog.text.count("queue state not saved: D1 down") == 2
+    # defer fails when every free model is at its day's ceiling: still logged, the run stops with the filing left
+    caplog.clear()
+    monkeypatch.setattr(call_queue, "defer", down)
+
+    def day_quota(*a, **k):
+        raise cm.DayQuotaExhausted("all models at their ceiling")
+
+    monkeypatch.setattr(cli, "_read_call_document", day_quota)
+    with caplog.at_level("WARNING", logger="bse_intel.cli"):
+        assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == cli.MORE_LEFT
+    assert caplog.text.count("queue state not saved: D1 down") == 2     # start's failure again, then defer's

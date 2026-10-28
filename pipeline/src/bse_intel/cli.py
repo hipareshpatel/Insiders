@@ -16,6 +16,8 @@ from .settings import get_settings
 from .sinks import make_sink
 from .timeutil import now_iso, today_ist, utc_day
 
+log = logging.getLogger(__name__)
+
 # The exit code of a command NSE (or BSE) refused (401/403/429), apart from 2, which argparse and an AI error also
 # give: scripts/retry.sh never retries a refusal and skips the job's later NSE steps (survey review, 24 Oct 2026)
 REFUSED = 75
@@ -1590,7 +1592,9 @@ def cmd_xbrl_key(args, settings, sink) -> int:
     if args.restart and args.progress:
         print(f"xbrl-key: --restart: the rows saved under '{args.progress}' are ignored and replaced as this run goes")
     if saved:
-        print(f"xbrl-key: {len(saved)} rows saved by an earlier run of '{args.progress}'; those filings are not read again")
+        stale = xk.drop_stale(saved)[1]
+        print(f"xbrl-key: {len(saved)} rows saved by an earlier run of '{args.progress}'; those filings are not read again"
+              + (f" ({stale} rows of another locator version are dropped and their filings read again)" if stale else ""))
 
     def write(rows: list[dict], summary: dict) -> None:
         """The CSV, the progress save, the JSON and the report, each on its own: a failure in one (a report that cannot format a

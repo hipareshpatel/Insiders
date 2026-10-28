@@ -83,7 +83,12 @@ from .metrics import CONSOLIDATED, STANDALONE
 
 log = logging.getLogger(__name__)
 
-STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text", "fetch_failed")
+# fetch_failed: a list or a download failed on the way (transport; read again next run); locate_error: the locator itself raised on a
+# PDF it had (a bug or a damaged file: settled, so not downloaded again every dispatch; the exception class is in the note)
+STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text", "fetch_failed", "locate_error")
+# Bump whenever placement logic changes (what counts as a column, a row, a basis, a unit, a statement table, a status): saved rows
+# of another version are dropped on resume and their filings are read again.
+LOCATOR_VERSION = "2026-10-28.3"
 METRICS = ("revenue", "other_income", "total_income", "total_expenses", "exceptional_items", "pbt", "tax_expense", "pat", "eps",
            "interest_earned")
 TOL_CR = 0.006              # memory keeps crore to two decimals: half a hundredth, with a little to spare
@@ -1146,7 +1151,7 @@ def expected_from_dossier(dossier: dict | None, symbol: str = "") -> dict[str, l
 # --- the run ---------------------------------------------------------------------------------------------------------
 
 CSV_HEADER = ("news_id,symbol,basis,period,metric,xbrl_value,status,reason,page,printed_value,printed_text,printed_unit,row_label,"
-              "column_header,bbox,other_value,n_strong,placements,arith_income,arith_pbt,arith_note,reading,failure_stage,note,pdf_url,"
+              "column_header,bbox,other_value,n_strong,placements,arith_income,arith_pbt,arith_note,reading,failure_stage,note,locator_version,pdf_url,"
               "pdf_news_id,filing_period").split(",")
 
 
@@ -1162,7 +1167,7 @@ def result_row(r: Result, extra: dict | None = None) -> dict:
            "column_header": r.column_header, "bbox": " ".join(f"{v:g}" for v in r.bbox), "other_value": r.other_value,
            "n_strong": r.n_strong, "placements": json.dumps(r.placements, ensure_ascii=False) if r.placements else "",
            "arith_income": r.arith_income, "arith_pbt": r.arith_pbt, "arith_note": r.arith_note, "reading": r.reading,
-           "failure_stage": r.failure_stage, "note": r.note}
+           "failure_stage": r.failure_stage, "note": r.note, "locator_version": LOCATOR_VERSION}
     row.update(extra or {})
     return row
 
@@ -1256,6 +1261,9 @@ def to_markdown(summary: dict, date_text: str) -> str:
     if summary.get("fetch_failed_filings"):
         out += [f"{summary['fetch_failed_filings']} filings could not be fetched (an announcement list or a download failed): their "
                 "rows are `fetch_failed`, not `not_found`, and a rerun with the same progress name reads them again.", ""]
+    if summary["statuses"].get("locate_error"):
+        out += [f"{summary['statuses']['locate_error']} figures hit an error inside the locator (`locate_error`, the exception class "
+                "is in the note): settled, not downloaded again until the locator changes.", ""]
     out += ["## Status", "", "| status | figures | share |", "|---|---|---|"]
     out += [f"| {k} | {v} | {v / total:.1%} |" for k, v in s.items()]
     out += ["", "## Status per metric", "", "| metric | " + " | ".join(STATUSES) + " |", "|---|" + "---|" * len(STATUSES)]
@@ -1284,6 +1292,22 @@ def to_markdown(summary: dict, date_text: str) -> str:
 BEST = {s: i for i, s in enumerate(STATUSES)}   # a lower index is a better answer
 
 
+def drop_stale(saved: list[dict]) -> tuple[list[dict], int]:
+    """(the saved rows of filings all read by this locator version, how many rows were dropped). A filing with any row of another
+    version (or none: a file written before the stamp) is dropped whole, so it is read again with today's placement logic."""
+    old = {(r.get("symbol"), r.get("filing_period", "")) for r in saved if r.get("locator_version") != LOCATOR_VERSION}
+    kept = [r for r in saved if (r.get("symbol"), r.get("filing_period", "")) not in old]
+    return kept, len(saved) - len(kept)
+
+
+def is_transport_error(exc: BaseException) -> bool:
+    """A network or HTTP error or a timeout (OSError covers timeouts and connection errors; httpx's own errors): the kind a later
+    run may get past. Anything else raised in our own code is a deterministic failure."""
+    import httpx
+
+    return isinstance(exc, (OSError, httpx.HTTPError))
+
+
 _TRANSIENT = re.compile(r"^(?:announcement list unavailable|download failed)")
 
 
@@ -1299,14 +1323,21 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tu
     best: dict[int, tuple[Result, dict]] = {}
     reasons = []
     transient = False
+    error = None
     for f in listed[:MAX_CANDIDATES]:
         data, why = src.payload(f.pdf_url)
         if data is None:
             reasons.append(why)
             transient = transient or bool(_TRANSIENT.match(why))
             continue
-        results = locate(data, expected)
         extra = {"pdf_url": f.pdf_url, "pdf_news_id": f.news_id, "filing_period": period}
+        try:
+            results = locate(data, expected)
+        except Exception as exc:   # noqa: BLE001 - the locator raised on a PDF we have: a bug or a damaged file, not a transport error
+            log.exception("xbrl-key: locating in %s failed", f.pdf_url)
+            error = (exc, extra)
+            reasons.append(f"{type(exc).__name__} while locating")
+            continue
         for k, r in enumerate(results):
             if k not in best or BEST[r.status] < BEST[best[k][0].status]:
                 best[k] = (r, extra)
@@ -1316,6 +1347,9 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tu
     used = any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r, _ in best.values())
     if transient and not used:
         return [], "; ".join(dict.fromkeys(reasons)), True      # a download failed and no other PDF gave a figure: not finished
+    if not best and error is not None:
+        exc, extra = error     # settled: the same PDF would raise again, so it is not read again until the locator changes
+        return [result_row(Result(e, "locate_error", note=f"{type(exc).__name__}: {str(exc)[:100]}"), extra) for e in expected], "", False
     if not best:
         return [], "; ".join(dict.fromkeys(reasons)) or "no results PDF read", False
     return [result_row(r, extra) for r, extra in (best[k] for k in sorted(best))], "", False
@@ -1384,7 +1418,11 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
     from .pdf_referee import Sources
 
     src = src or Sources(nse, ocr=False)
-    rows: list[dict] = [r for r in (saved or []) if r.get("status") != "fetch_failed"]    # a failed filing is read again
+    kept, stale = drop_stale(saved or [])
+    if stale:
+        log.warning("xbrl-key: %d saved rows of another locator version (not %s) dropped; their filings are read again",
+                    stale, LOCATOR_VERSION)
+    rows: list[dict] = [r for r in kept if r.get("status") != "fetch_failed"]
     done = {(r["symbol"], r.get("filing_period", "")) for r in rows}
     started, last_save, since = clock(), clock(), 0
     blocked = out_of_time = capped = False
@@ -1404,8 +1442,14 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
             blocked = True
             log.warning("NSE refused (%s): stopping the XBRL key", exc)
             break
-        except Exception as exc:   # noqa: BLE001 - one filing failing is a reason, not a stop; it is read again next run
-            got, why, transient = [], f"{type(exc).__name__}: {str(exc)[:80]}", True
+        except Exception as exc:   # noqa: BLE001 - one filing failing is a reason, not a stop
+            if is_transport_error(exc):
+                got, why, transient = [], f"{type(exc).__name__}: {str(exc)[:80]}", True      # read again next run
+            else:   # a deterministic failure of ours: settled, with the class in the note, not downloaded again every dispatch
+                log.exception("xbrl-key: %s %s failed", symbol, period)
+                got = [result_row(Result(e, "locate_error", note=f"{type(exc).__name__}: {str(exc)[:100]}"), {"filing_period": period})
+                       for e in expected]
+                why, transient = "", False
         if not got:
             log.info("xbrl-key: %s %s: %s%s", symbol, period, why, " (fetch failed, not finished)" if transient else "")
             status = "fetch_failed" if transient else "not_found"
@@ -1421,4 +1465,4 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
             except Exception:   # noqa: BLE001 - a failed save is never a stop
                 log.exception("xbrl-key: the progress callback failed")
             last_save, since = clock(), 0
-    return {"rows": rows, **summarise(rows, src.calls, len(done), blocked, out_of_time, capped)}
+    return {"rows": rows, "stale_rows_dropped": stale, **summarise(rows, src.calls, len(done), blocked, out_of_time, capped)}

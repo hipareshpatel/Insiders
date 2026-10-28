@@ -74,6 +74,27 @@ def test_score_counts_readers_tags_and_lists_false_settlements():
     assert "false settlements (1)" in pb.to_markdown(s) and "settled 21" in pb.to_markdown(s)
 
 
+def test_first_answer_takes_readers_in_order_and_every_wrong_reading_is_listed():
+    ok = lambda v: {"status": "ok", "value": v, "tol": 0.005, "page": 3}   # noqa: E731
+    none = {"status": "none", "value": None, "tol": 0.005}
+    settled = {"status": "none", "value": None, "tol": 0.005, "agreed": [], "disagreed": [], "reason": ""}
+    records = [
+        rec(10.0, {"native": ok(10.0), "numfirst": ok(11.0)}, settled),   # native first: right, numfirst's 11 not used
+        rec(20.0, {"native": none, "numfirst": ok(20.0)}, settled),       # native none: numfirst's figure
+        rec(30.0, {"native": none, "numfirst": none}, settled),
+        {**rec(40.0, {"native": ok(41.0), "numfirst": none}, settled), "metric": "pat"},
+    ]
+    s = pb.score(records)
+    assert s["first"] == {"right": 2, "wrong": 1, "abstain": 1}
+    assert s["by_metric"]["revenue"][pb.FIRST] == {"right": 2, "wrong": 0, "abstain": 1}
+    assert s["by_metric"]["pat"]["native"] == {"right": 0, "wrong": 1, "abstain": 0}
+    assert [(w["reader"], w["read"], w["expected"]) for w in s["wrong_readings"]] == [("numfirst", 11.0, 10.0), ("native", 41.0, 40.0)]
+    assert s["by_filing"]["S u"]["numfirst"] == {"right": 1, "wrong": 1, "abstain": 2}
+    md = pb.to_markdown(s)
+    assert "| FIRST ANSWER (in reader order) | 2 | 1 | 1 |" in md and "Every wrong reading (2)" in md
+    assert "native: S Q4FY24 STANDALONE pat: read 41, printed 40 (page 3)" in md
+
+
 def test_answer_pair_applies_the_unchanged_settle_rule():
     def reading(name, family, value, verbatim=True):
         return prd.Reading(name, family, "ok", value, verbatim, True, "textlayer", "Revenue", 1)

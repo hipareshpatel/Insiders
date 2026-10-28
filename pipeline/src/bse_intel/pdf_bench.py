@@ -78,24 +78,46 @@ def _count() -> dict:
     return {"right": 0, "wrong": 0, "abstain": 0}
 
 
+FIRST = "FIRST ANSWER"   # the first reader, in PDF_READERS order, that gives a figure (the 28 Oct "combined": native, then numfirst)
+
+
+def first_answer(readers: dict) -> dict:
+    """The reading of the first reader (in the order they were asked) whose status is ``ok``; none when no reader gave one."""
+    return next((rd for rd in readers.values() if rd["status"] == "ok"), {"status": "none", "value": None, "tol": MIN_TOL})
+
+
 def score(records: list[dict]) -> dict:
     """Per reader and for the ensemble: right, wrong, abstain; the same per difficulty tag; the ensemble's false settlements.
-    The ensemble answers only when the verdict is ``settled`` (the rule's own); a ``scanned_lead`` is counted on its own."""
+    The ensemble answers only when the verdict is ``settled`` (the rule's own); a ``scanned_lead`` is counted on its own.
+    Also per metric and per filing, the first answer in reader order (``FIRST``), and every wrong reading of every reader."""
     readers: dict[str, dict] = {}
     ensemble = {**_count(), "lead_right": 0, "lead_wrong": 0}
     by_tag: dict[str, dict[str, dict]] = defaultdict(lambda: defaultdict(_count))
+    by_metric: dict[str, dict[str, dict]] = defaultdict(lambda: defaultdict(_count))
+    by_filing: dict[str, dict[str, dict]] = defaultdict(lambda: defaultdict(_count))
+    first = _count()
+    wrong_readings: list[dict] = []
     false_settlements: list[dict] = []
     verdicts: dict[str, int] = defaultdict(int)
     by_layer: dict[str, dict[str, dict]] = {"text_layer": defaultdict(_count), "scan_only": defaultdict(_count)}
     for rec in records:
         exp = rec["expected"]
         group = by_layer["scan_only" if SCAN_ONLY_TAG in rec["tags"] else "text_layer"]
-        for name, rd in rec["readers"].items():
+        filing = f"{rec['symbol']} {rec['pdf_url'].rsplit('/', 1)[-1]}"
+        for name, rd in list(rec["readers"].items()) + [(FIRST, first_answer(rec["readers"]))]:
             o = outcome(rd["status"], rd["value"], exp, rd["tol"])
-            readers.setdefault(name, _count())[o] += 1
+            (first if name == FIRST else readers.setdefault(name, _count()))[o] += 1
+            by_metric[rec["metric"]][name][o] += 1
+            by_filing[filing][name][o] += 1
+            if name == FIRST:
+                continue
             group[name][o] += 1
             for t in rec["tags"]:
                 by_tag[t][name][o] += 1
+            if o == "wrong":
+                wrong_readings.append({"reader": name, "symbol": rec["symbol"], "period": rec["period"], "metric": rec["metric"],
+                                       "basis": rec["basis"], "read": rd["value"], "expected": exp, "page": rd.get("page"),
+                                       "pdf_url": rec["pdf_url"]})
         v = rec["verdict"]
         verdicts[v["status"]] += 1
         o = outcome("ok" if v["status"] == "settled" else "", v["value"], exp, v["tol"])
@@ -108,10 +130,12 @@ def score(records: list[dict]) -> dict:
             false_settlements.append({"symbol": rec["symbol"], "period": rec["period"], "metric": rec["metric"],
                                       "basis": rec["basis"], "settled": v["value"], "expected": exp,
                                       "agreed": v["agreed"], "tags": rec["tags"], "pdf_url": rec["pdf_url"]})
-    return {"pairs": len(records), "readers": readers, "ensemble": ensemble, "verdicts": dict(verdicts),
+    return {"pairs": len(records), "readers": readers, "ensemble": ensemble, "first": first, "verdicts": dict(verdicts),
             "by_layer": {g: {k: dict(c) for k, c in d.items()} for g, d in by_layer.items()},
             "by_tag": {t: {k: dict(c) for k, c in d.items()} for t, d in sorted(by_tag.items())},
-            "false_settlements": false_settlements}
+            "by_metric": {m: {k: dict(c) for k, c in d.items()} for m, d in sorted(by_metric.items())},
+            "by_filing": {f: {k: dict(c) for k, c in d.items()} for f, d in sorted(by_filing.items())},
+            "wrong_readings": wrong_readings, "false_settlements": false_settlements}
 
 
 def _pct(c: dict) -> str:
@@ -126,7 +150,19 @@ def to_markdown(s: dict) -> str:
            + ", ".join(f"{k} {v}" for k, v in sorted(s["verdicts"].items())) + ".", "",
            "| Reader | right | wrong | abstain | right of answered |", "|---|---|---|---|---|"]
     rows = sorted(s["readers"].items()) + [("ENSEMBLE (settled)", s["ensemble"])]
+    if "first" in s:
+        rows.append((f"{FIRST} (in reader order)", s["first"]))
     out += [f"| {n} | {c['right']} | {c['wrong']} | {c['abstain']} | {_pct(c)} |" for n, c in rows]
+    if s.get("by_metric"):
+        names = list(s["readers"]) + [FIRST]
+        out += ["", "## Per metric (right/wrong/abstain)", "", "| Metric | " + " | ".join(names) + " |", "|---|" + "---|" * len(names)]
+        for metric, d in s["by_metric"].items():
+            out.append(f"| {metric} | " + " | ".join(
+                "{}/{}/{}".format(*(d.get(n, _count())[k] for k in ("right", "wrong", "abstain"))) for n in names) + " |")
+    if "wrong_readings" in s:
+        out += ["", f"## Every wrong reading ({len(s['wrong_readings'])})", ""]
+        out += [f"- {w['reader']}: {w['symbol']} {w['period']} {w['basis']} {w['metric']}: read {w['read']:g}, printed "
+                f"{w['expected']:g} (page {w['page']})" for w in s["wrong_readings"]] or ["None."]
     e = s["ensemble"]
     out += ["", f"Scanned lead (two OCR families agree, not a settlement): {e['lead_right']} right, {e['lead_wrong']} wrong.", "",
             "## Per difficulty tag (right/wrong/abstain)", ""]
@@ -194,12 +230,18 @@ def run(key_csv: str, pdf_dir: str, out_dir: str, limit: int | None = None) -> i
     ensemble = pdf_readers.Ensemble(pdf_readers.configured_readers())
     src = Sources(None, ocr=False)                       # the PDFs are in PDF_CACHE_DIR; no NSE session here
     records = []
+
+    def save() -> None:   # as it goes: a run stopped by its time limit still leaves what it read
+        with open(os.path.join(out_dir, "hardset-readings.json"), "w", encoding="utf-8") as fh:
+            json.dump(records, fh)
+
     for pair in pairs:
         payload, _why = src.payload(pair["pdf_url"])
         records.append(answer_pair(ensemble, payload, pair))
+        if len(records) % 10 == 0:
+            save()
+    save()
     result = score(records)
-    with open(os.path.join(out_dir, "hardset-readings.json"), "w", encoding="utf-8") as fh:
-        json.dump(records, fh)
     with open(os.path.join(out_dir, "hardset-score.json"), "w", encoding="utf-8") as fh:
         json.dump(result, fh, indent=1)
     with open(os.path.join(out_dir, "hardset-score.md"), "w", encoding="utf-8") as fh:

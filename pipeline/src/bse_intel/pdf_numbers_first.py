@@ -1252,13 +1252,16 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     # (seventh review) only with positive evidence, the word standalone somewhere in the filing, and only for the tables OCR
     # read from those pages themselves: a blank page cannot switch it on for the typed pages
     no_layer = [p for p, layer in layers.items() if not layer.has_layer]
-    texts = [layer.text for layer in layers.values()] + list(ocr_texts.values())
     if anywhere and no_layer and all(p in ocr_texts for p in no_layer) \
             and not any(names_consolidated(layer.text) for layer in layers.values()) \
-            and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer) \
-            and any(re.search(r"stand[- ]?alone", t, re.I) for t in texts):
+            and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer):
         from .metrics import STANDALONE
+        alone = re.compile(r"stand[- ]?alone", re.I)
+        typed = any(alone.search(layer.text) for layer in layers.values() if layer.has_layer)
         for p in no_layer:
+            # the word standalone from a typed page (a covering letter) or from OCR of the table's own page, not any scan
+            if not (typed or alone.search(ocr_texts.get(p, ""))):
+                continue
             for t in by_page.get(p, []):
                 if t.basis is None and not t.contested and t.source == "ocr":
                     t.basis = STANDALONE

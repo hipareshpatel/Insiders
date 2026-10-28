@@ -959,3 +959,31 @@ def test_a_statement_on_the_fourteenth_scanned_page_is_reached(monkeypatch):
 
     got = nf.reading_from_tables(nf.analyse(pdf, ocr_boxes=ocr_boxes), "Q2FY27", "pat", "STANDALONE")
     assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))
+
+
+def test_standalone_said_only_on_another_scanned_page_does_not_label_an_untitled_scan(monkeypatch):
+    # the sixteenth review: the evidence must come from a typed page or from OCR of the table's own page
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl()
+    page = statement(rows, title="Statement of Unaudited Financial Results")
+    src = pymupdf.open(stream=page, filetype="pdf")
+    pix = src[0].get_pixmap(dpi=36)
+    doc = pymupdf.open()
+    first = doc.new_page(width=620, height=842)
+    first.insert_text((LEFT, 60), "Please find enclosed the Un-Audited Financial Results for the quarter.", fontsize=FONT)
+    for _ in range(2):
+        p = doc.new_page(width=620, height=842)
+        p.insert_image(p.rect, pixmap=pix)
+    pdf = doc.tobytes()
+    doc.close()
+    src.close()
+    note = as_ocr_boxes(statement([(["Note"], [1.0, 2.0, 3.0, 4.0])], title="Notes to the Standalone Financial Results"))
+    calls = []
+
+    def ocr_boxes(png):
+        calls.append(1)
+        return note if len(calls) == 1 else as_ocr_boxes(page)        # "Standalone" on page 2's OCR, the statement on page 3
+
+    got = nf.reading_from_tables(nf.analyse(pdf, ocr_boxes=ocr_boxes), "Q2FY27", "pat", "STANDALONE")
+    assert got.status == "none"

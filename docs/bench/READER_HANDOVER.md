@@ -203,6 +203,6 @@ Record the owner's answer to this order in `docs/TODO.md` (batch rule).
 
 ## 9. Open questions for the owner
 
-- The order in section 7: Yes / No / Later.
-- The size of the "zero wrong" bar: the lead proposed at least 3,000 figures across companies.
+- The order in section 7: **answered, Yes as proposed** (owner, 28 Oct 2026, ~15:45 IST; `docs/TODO.md` item 114).
+- The size of the "zero wrong" bar: **answered, 1,000 figures** across companies (owner, 28 Oct 2026; the lead had proposed 3,000).
 - Whether `numfirst` (combined with native) goes behind a live switch once it passes on the XBRL key. It is bench only today.

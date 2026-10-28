@@ -1152,8 +1152,10 @@ class Solver:
         rows_rev_ok = not any(self.cls[r] == "REV" and _REVENUE_LIST.search(self.t.rows[r].label) for r in rows)
         # nor is one followed by a row that is an item of a list ("I. Interest income", "[a] Sales" after "Revenue from
         # operations"): the revenue row may be a heading over its parts (nineteenth review)
+        # nor is one followed by a row that says nothing (no landmark): "Revenue from operations" over "(a) Sales" and
+        # "Dividend income" or "- Fees" may be a heading over its parts, whatever marks them or none (twentieth review)
         rev_at = [i for i, r in enumerate(rows) if self.cls[r] == "REV"]
-        if rev_at and any(self.cls[r] is None and _LIST_ITEM.match(self.t.rows[r].label) for r in rows[rev_at[0] + 1:]):
+        if rev_at and any(self.cls[r] is None for r in rows[rev_at[0] + 1:]):
             rows_rev_ok = False
         if len(rows) == 2:
             if self.label_ok(rows[0], {"REV"}) and rows_rev_ok:
@@ -1386,12 +1388,17 @@ def layer_basis(text: str) -> str | None:
     if not found:
         # a title printed as one glued word, its letters garbled (SUNDARMFIN Q4FY24's garbled layer:
         # "STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER..."): the whole "statement of ... financial results"
+        # only on a line that names neither basis as a word: a spaced line naming both ("... read with the Statement of
+        # Consolidated Financial Results") is ambiguous, not glued (twentieth review)
         found = {CONSOLIDATED if m[1].lower().startswith("consol") else STANDALONE
-                 for line in text.splitlines() for m in _GLUED_TITLE.finditer(re.sub(r"\s+", "", line))}
+                 for line in text.splitlines() if not _BASIS_WORD.search(line)
+                 for m in _GLUED_TITLE.finditer(re.sub(r"\s+", "", line))}
     return found.pop() if len(found) == 1 else None
 
 
-_GLUED_TITLE = re.compile(r"statementof(?:un)?(?:audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
+# "STATEMENTOFUNCONSOLIDATED..." is not a consolidated title: "un" only as part of "unaudited" (twentieth review)
+_GLUED_TITLE = re.compile(r"statementof(?:unaudited|audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
+_BASIS_WORD = re.compile(r"\b(?:consolidated|standalone)\b", re.I)
 
 
 def Table_solved(table: Table) -> Table:

@@ -1097,3 +1097,19 @@ def test_a_glued_garbled_title_in_the_layer_names_the_basis():
     assert nf.layer_basis("STATEMENTOFUNAUDITEDSTANDALONEFINANCIALRESULTS") == "STANDALONE"
     assert nf.layer_basis("STATEMENTOFCONSOLEFINANCIALRESULTS") is None
     assert nf.layer_basis("STATEMENTOFAUDITEDCONSOLIDATEDFINANCIALRESULTS\nSTATEMENTOFAUDITEDSTANDALONEFINANCIALRESULTS") is None
+
+
+@pytest.mark.parametrize("second", ["Dividend income", "- Dividend", "1. Dividend", "Add: Dividend"])
+def test_a_revenue_row_followed_by_an_unnamed_row_is_not_named_alone(second):
+    # twentieth review: "Revenue from operations" over parts marked any way, or not at all, gave the first part as revenue
+    rows, want = pl()
+    parts = revenue_in_parts(rows, 2)
+    parts[0] = (["Revenue from operations", "Sale of products"], parts[0][1])
+    parts[1] = ([second], parts[1][1])
+    got = read(statement(parts), "revenue")
+    assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))
+
+
+def test_a_glued_title_never_reads_unconsolidated_or_a_spaced_note_naming_both():
+    assert nf.layer_basis("STATEMENTOFUNCONSOLIDATEDFINANCIALRESULTS") is None
+    assert nf.layer_basis("These standalone results should be read with the Statement of Consolidated Financial Results") is None

@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 08:15 IST.
+Last updated: 28 Oct 2026, 10:15 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -74,6 +74,9 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    column header date, unit), so every PDF reader is scored on thousands of figures instead of a few hundred typed by
    hand, and every filing where the XBRL figure is not on the page is listed. Being built (`xbrl-key`, read only; its
    locator is measured against the hand keys first, and its first run is on 100 files).
+   First run read against its PDFs (28 Oct, F224, `docs/audit/xbrl-key-disagreements-2026-10-28.md`): of the 28 figures
+   with another number printed, 7 are wrong in memory (all IMPAL Q1FY27, a unit slip the guard missed; fixed, and on the
+   known-wrong list), 9 were the locator's misreads (fixed, locator 2026-10-28.4), 12 are another line by definition.
 3. **The PDF reader, one filing at a time**: fix everything on one PDF, then the next, a new layout each time (upright,
    sideways, tilted, scanned, sub-headings, units, notes). Every fix is re-scored on the whole key and kept only if
    nothing gets worse (a fix for one PDF broke the Titan test on 27 Oct). Ideas to use: one layout per company reused
@@ -200,6 +203,16 @@ unexplained rows is not started (owner to say).
   second half) with an `unchecked` mark on each such figure.
 - The company page switches to screener's layout (`VITE_SCREENER_LINES`) only after a check of the 50 largest companies
   against screener with every XBRL line and screener's rules; cards keep the printed figures.
+
+**Measured 28 Oct, 10:10 IST (owner asked: BPCL's files from both exchanges, line by line):** BPCL Q2FY27 consolidated
+XBRL from NSE (`INTEGRATED_FILING_INDAS_1744982_...`) and from BSE (`Integrated_Finance_Ind_As_500547_23102026081027.xml`,
+maintenance run 40633429544, 2 calls, both 200): the same 356 facts, 0 differences, so NSE and BSE agreeing is one source,
+not two. The standalone file matches the owner's PDF on all 21 printed lines. Excise duty IS in the integrated XBRL: a
+breakdown row of `OtherExpenses` (`DetailsOfOtherExpensesAxis`, description "Excise Duty", 8,737.53 Cr of the 18,201.41
+total), which memory never read; screener's sales 1,49,080 = 1,57,817.93 - 8,737.53, and its other income 675 = 349.43 +
+associates 325.24. The file carries only the quarter and the half-year, no earlier columns. Memory matches every line it
+keeps. The four re-read pilots (ALEMBICLTD, AHLUCONT, DOLPHIN, MOLDTECH) fixed their EPS signs, zero EPS and 10x figures;
+13 known-wrong figures were dropped (backup `backup/memory-drop-known-wrong-20261028T024424Z/`).
 
 **Done 28 Oct morning:** the undo (PR #205), the XBRL answer key (PR #206; first live run of 100 files started 07:58 IST),
 a fresh memory backup, a fresh screener cross-check (revenue 92.7%, profit 97.7%, EPS 75.3% the same; 349 of 1,603

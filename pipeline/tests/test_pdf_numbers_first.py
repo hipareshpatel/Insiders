@@ -793,3 +793,20 @@ def test_a_profit_after_tax_carried_on_further_down_is_never_given_as_the_profit
         + [([bottom_label], bottom)]
     got = read(statement(rows), "pat")
     assert got.status == "none" or got.value == pytest.approx(crore(bottom[0])), got
+
+
+@pytest.mark.parametrize("after", [
+    [("Remeasurement of defined benefit plans", "oci"), ("Totl", "pat+oci")],
+    [("Items not reclassified", "oci"), ("xx", "pat+oci")],
+    [("0ther Compr3hensive Inc0me", "oci"), ("Tota1 Compr3hensive Inc0me", "pat+oci")],
+    [("Remeasurement of defined benefit plans", "oci"), ("Net profit after OCI", "pat+oci")],
+])
+def test_other_comprehensive_income_with_garbled_labels_never_makes_the_total_the_profit(after):
+    # the tenth review: total comprehensive income = profit + OCI is the same arithmetic as an associate's share carried on;
+    # with labels that do not tell them apart, the profit is no answer, never the total
+    rows, want = pl()
+    pat, oci = want["pat"], [3.1, -2.0, 4.4, 1.5]
+    values = {"oci": oci, "pat+oci": [round(a + b, 2) for a, b in zip(pat, oci)]}
+    rows = rows[:-1] + [(["Profit after tax"], pat)] + [([label], values[v]) for label, v in after]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(pat[0])), got

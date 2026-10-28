@@ -939,19 +939,21 @@ class Solver:
             out.append((a, block, proof))
         return out
 
-    def carried_on(self, a: int) -> bool:
-        """The profit after tax ``a`` is not the bottom line: the row after it is an associate's share or discontinued operations
-        that is not nil, or a later row is the profit carried on by such rows (EMKAY Q2FY25: "IX Profit after tax" 2,581.77, then "X Share of Profit of Associates" 9.39, then the
-        profit for the period 2,591.16). Only an extension that reaches the bottom line may then be the profit."""
+    def carried_on(self, a: int):
+        """Whether the profit after tax ``a`` is carried on further down: "label" when the row after it is an associate's share
+        or discontinued operations that is not nil (EMKAY Q2FY25: "IX Profit after tax" 2,581.77, "X Share of Profit of
+        Associates" 9.39, the profit for the period 2,591.16), then only an extension that reaches the bottom line may be the
+        profit; or ``(x, proof)`` when only the arithmetic says so: a later row ``x`` equals the profit plus or minus one or two
+        non-nil rows between, whatever their labels (ninth review: a garbled share label, a nil row between, an exceptional
+        item after tax). The arithmetic cannot tell that from a total comprehensive income with a garbled label (= profit +
+        other comprehensive income, tenth review), so then ``a`` and ``x`` are both offered and the reading is a conflict:
+        no answer either way. None when neither."""
         def nonzero(r: int) -> bool:
             return any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)
 
         nxt = a + 1
         if nxt < self.n and self.cls[nxt] in ("ASSOC", "DISC") and nonzero(nxt):
-            return True
-        # by arithmetic, whatever the labels say (ninth review: a garbled share label, a nil row between, an exceptional item
-        # after tax): a later row equals the profit plus or minus one or two non-nil rows between; the other comprehensive
-        # income block (every statement's total comprehensive income = profit + OCI) and the owners' split are not this
+            return "label"
         for x in range(a + 2, min(self.n, a + 9)):
             between = list(range(a + 1, x))
             if any(self.cls[r] in ("TCI", "ATTR", "EPS") for r in between):
@@ -962,9 +964,10 @@ class Solver:
             for size in (1, 2):
                 for subset in itertools.combinations(live, size):
                     for signs in itertools.product((1, -1), repeat=size):
-                        if self.valid((x, ((a, 1),) + tuple(zip(subset, signs)))):
-                            return True
-        return False
+                        proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))
+                        if self.valid(proof):
+                            return (x, proof)
+        return None
 
     def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
         """Rows after the profit after tax ``a`` that equal it plus or minus one or two of the rows between (discontinued
@@ -1060,8 +1063,11 @@ class Solver:
                             pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
                             if block:
                                 pending.append(("tax", block, [pat_proof]))
-                            if self.label_ok(a, {"PAT"}) and not self.carried_on(a):
+                            carried = self.carried_on(a)
+                            if self.label_ok(a, {"PAT"}) and carried != "label":
                                 pending.append(("pat", (a,), [pat_proof]))
+                            if isinstance(carried, tuple):     # the arithmetic alone: both, so a conflict and no answer
+                                pending.append(("pat", (carried[0],), [pat_proof, carried[1]]))
                             # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
                             for x, ext in self.pat_extensions(a):
                                 pending.append(("pat", (x,), [pat_proof] + ext))

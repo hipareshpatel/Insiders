@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 11:45 IST.
+Last updated: 28 Oct 2026, 06:20 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -14,7 +14,7 @@ Freedom inside a fence, with a short daily message to the owner.
   current.
 - **Ask the owner first:** anything that costs money, keys, deleting data, account or repository settings, switching on a
   switch that changes what cards say before it is measured, changing the go-live bar, big design choices.
-- **Data writes the lead may do without asking (owner, 28 Oct 2026, ~11:40 IST), only once the undo is merged**
+- **Data writes the lead may do without asking (owner, 28 Oct 2026, ~06:15 IST), only once the undo is merged**
   (a saved copy of exactly what a job changes, read back before any write, and a `restore` command):
   - A. Fixing a figure proven wrong in memory: fix the class in code with a test, re-read only the affected filings,
     at most 50 filings a run, only when two sources agree on the new figure, the list of changes put on this page.

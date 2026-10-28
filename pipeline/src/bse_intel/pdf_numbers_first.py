@@ -1068,6 +1068,7 @@ class Solver:
                 if k == 3 and self.valid((t, parts[1:])):
                     continue
                 self.chain_from(t, k, ti_proof)
+            self.nested_income(t)
         if "total_income" not in self.explanations:
             # no chain below it: a total income by its label AND the arithmetic (never the label alone)
             for t in range(1, self.n):
@@ -1081,10 +1082,29 @@ class Solver:
                             break
         return self
 
-    def name_income(self, t: int, k: int, proof: Proof) -> None:
+    def nested_income(self, t: int) -> None:
+        """Total income = revenue + an other-income subtotal printed with its parts between them (PRIMESECU Q4FY24: "I Revenue
+        from Operations" 1,136, "II Other Income" i) to iv), "Total Other Income" 146, "III Total income (I+II)" 1,282): the
+        row above the total says other income and is the sum of the two to eight rows between (its own identity), and the row
+        before those does not say anything but revenue."""
+        if t < 1 or self.cls[t - 1] != "OI" or not self.label_ok(t, {"TI"}):
+            return
+        for size in range(2, 9):
+            r = t - 2 - size
+            if r < 0:
+                return
+            sub: Proof = (t - 1, tuple((x, 1) for x in range(r + 1, t - 1)))
+            proof: Proof = (t, ((r, 1), (t - 1, 1)))
+            if self.label_ok(r, {"REV"}) and self.valid(sub) and self.valid(proof):
+                self.chain_from(t, (r, t - 1), proof)
+                return
+
+    def name_income(self, t: int, k, proof: Proof) -> None:
+        """``k``: the number of rows right above the total that add up to it, or the (revenue, other income) rows of a nested
+        total (``nested_income``)."""
         self.add("total_income", (t,), [proof])
-        rows = list(range(t - k, t))
-        if k == 2:
+        rows = list(k) if isinstance(k, tuple) else list(range(t - k, t))
+        if len(rows) == 2:
             if self.label_ok(rows[0], {"REV"}):
                 self.add("revenue", (rows[0],), [proof])
             if self.label_ok(rows[1], {"OI"}):
@@ -1097,7 +1117,7 @@ class Solver:
             if len(oi) == 1:
                 self.add("other_income", (oi[0],), [proof])
 
-    def chain_from(self, t: int, k: int, ti_proof: Proof) -> None:
+    def chain_from(self, t: int, k, ti_proof: Proof) -> None:
         """Total income at row ``t`` (its identity holds): look below it for total expenses, the profit identity, the hops to
         the profit before tax, the tax and the profit after tax. The names are kept only when a label of the chain says what
         the arithmetic says (a total income, total expenses, a profit before tax) or the chain runs through to a profit after

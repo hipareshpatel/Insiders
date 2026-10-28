@@ -1017,3 +1017,23 @@ def test_amount_in_rupees_lakhs_line_names_the_unit_even_with_ocr_spellings():
     assert nf.scan_units(["(Amount in Rupces lakhs)"]) == {100}
     assert nf.scan_units(["{Amount in Runees lnkhs)"]) == set()
     assert nf.scan_units(["Amount in kind lakhs"]) == set()
+
+
+def nested_other_income(rows, others_shift=0.0):
+    # PRIMESECU Q4FY24: other income printed as its parts and their subtotal between revenue and total income
+    interest = [30.00, 25.10, 20.00, 100.00]
+    others = [round(o - i + others_shift, 2) for o, i in zip(OTHER, interest)]
+    return rows[:1] + [(["Other income", "i) Interest income"], interest), (["ii) Others"], others),
+                       (["Total other income"], OTHER)] + rows[2:]
+
+
+def test_total_income_over_an_other_income_subtotal_printed_with_its_parts():
+    rows, want = pl()
+    pdf = statement(nested_other_income(rows))
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+    assert read(pdf, "other_income").value == pytest.approx(crore(50.10))
+    assert read(pdf, "total_income").value == pytest.approx(crore(want["total_income"][0]))
+    assert read(pdf, "pat").value == pytest.approx(crore(want["pat"][0]))
+    # parts that do not add up to the subtotal: the nesting is not proved and nothing is named
+    broken = statement(nested_other_income(rows, others_shift=7.0))
+    assert read(broken, "revenue").status != "ok" and read(broken, "pat").status != "ok"

@@ -575,6 +575,19 @@ def test_utf16_and_comment_first_files_are_xml_kept_and_never_a_block_page(encod
     assert out["facts_saved"] == 5
 
 
+@pytest.mark.parametrize("fixture", ["nse_hdfcbank_q2fy27_cons.xml", "nse_hdfclife_q2fy27_cons.xml", "nse_iciciamc_q1fy27_nbfc.xml",
+                                     "nse_irfc_q4fy26_nbfc.xml", "nse_old_titan_q2fy24.xml"])
+def test_a_utf16_results_file_reads_exactly_as_its_utf8_copy_template_included(fixture):
+    """The review of the UTF-16 fix: the template test reads raw bytes, so a UTF-16 bank or NBFC file came back on no template
+    ("" for BANKING / NBFC / LI) and kept an EBITDA line a lender does not have. xbrl.as_utf8 runs first in every parser."""
+    from bse_intel import xbrl
+
+    body = (Path(__file__).parent / "fixtures" / fixture).read_bytes()
+    assert xbrl.parse(utf16(body)) == xbrl.parse(body) and xbrl.parse(body).template == xbrl.taxonomy(body)
+    assert xbrl_facts.parse_facts(utf16(body)) == xbrl_facts.parse_facts(body)
+    assert xbrl.as_utf8(utf16(body)).startswith(b'<?xml version="1.0" encoding="UTF-8"') and xbrl.as_utf8(body) is body
+
+
 def test_a_block_page_is_still_no_xml_after_the_wider_test():
     from bse_intel.nse import looks_like_xml
 

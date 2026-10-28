@@ -95,6 +95,7 @@ def parse_facts(data: bytes, scrip: str = "", url: str = "") -> dict | None:
     """One results file's facts as the stored document (see the module's header); None when the file is no XBRL instance or
     xbrl.py finds no results in it (a shareholding file, a file with nothing we read). Dimensions are kept as xbrl._contexts reads them (the axis with its
     prefix, the member without)."""
+    data = xbrl.as_utf8(data)
     result = xbrl.parse(data)
     if result is not None and result.kind != "RESULTS":
         return None
@@ -179,6 +180,7 @@ def parse_annual_facts(data: bytes, scrip: str = "", url: str = "") -> dict | No
     the file's own NatureOfReportStandaloneConsolidated; ``fy`` names the year (``fy_of``) and ``year_end`` its last day. Text blocks
     are cut at TEXT_MAX characters (the board's report and the notes run to many pages). L&T's standalone annual file has no
     ``DescriptionOfOtherExpenses`` row, so its finance-services finance cost cannot be applied from the annual report."""
+    data = xbrl.as_utf8(data)
     try:
         root = ET.fromstring(data)
     except ET.ParseError:

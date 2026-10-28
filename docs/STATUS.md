@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 06:55 IST.
+Last updated: 28 Oct 2026, 08:15 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -136,8 +136,12 @@ judge until the reader measures better.
    and 29 of 50 filings give no answer. Re-scored alone, twice, on the code with #199 (28 Oct, 02:40 IST): 45 / 0 / 292 both
    times, identical on all 337 figures, so the score is repeatable; #199 added 5 right (SRF, VISL, HUHTAMAKI revenue; TBZ
    revenue and profit) and no wrong. The earlier 40-then-45 was the #199 code arriving between two runs.
-6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Today `bse_gap_fill.KNOWN_WRONG` only
-   stops a future fill, and nothing removes a wrong figure already written.
+6. **A way to take a proven-wrong figure out of memory in code** (not by hand). Built 28 Oct, not merged or run (F223):
+   `known_wrong.py` (the list, with evidence; every memory writer skips a listed figure) and the Maintenance command
+   `memory-drop-known-wrong` (dry run by default; a backup first; `restore` undoes it). The plan for the 35 proven-wrong
+   figures and its exact runs is `docs/audit/known-wrong-2026-10-28.md`: 4 are the exchange's own file (list and drop), 31
+   are expected to be put right by re-reading the company (`seed-memory --scrips`, one company a run, 50 files at most),
+   to be confirmed by the re-read itself. Before the first run: merge, then the dry run.
 7. **The docs clean-up the owner planned for later** (one doc per purpose, the one-off tools out of the live code); not
    started.
 
@@ -182,6 +186,27 @@ unexplained rows is not started (owner to say).
   and no NSE list call has been refused in three days of side-by-side runs (27 Oct). Look again on the first refusal.
 
 ## 5. Waiting for the owner
+
+**Decided 28 Oct 2026, ~08:10 IST (owner):**
+- A company with a discontinued business: cards show the **continuing** business's profit only (as today). Lead's note:
+  label it "continuing operations" on the card, since the company's headline profit can differ (ADANIENT Q4FY25 1,382
+  continuing against 4,015 whole).
+- The answer key follows the **printed page** when the XBRL differs by a rounding step. Applied: SPANDANA consolidated
+  Q2FY24 revenue is 610.27 in `docs/bench/hardpdf/key.csv` (was the XBRL's 610.26).
+- A BSE figure that fills a quarter memory lacks is checked against the filing's **PDF**, NSE's and BSE's alike: that is
+  what the PDF work (section 3, steps 2-3) is for. Decided too (owner, ~08:25 IST): when the PDF reader places a
+  different figure for certain, the BSE figure is held back; when it cannot read the page, the BSE figure is written,
+  marked unchecked, and checked again once the reader improves. To build: the fill's compare step (section 3 item 3,
+  second half) with an `unchecked` mark on each such figure.
+- The company page switches to screener's layout (`VITE_SCREENER_LINES`) only after a check of the 50 largest companies
+  against screener with every XBRL line and screener's rules; cards keep the printed figures.
+
+**Done 28 Oct morning:** the undo (PR #205), the XBRL answer key (PR #206; first live run of 100 files started 07:58 IST),
+a fresh memory backup, a fresh screener cross-check (revenue 92.7%, profit 97.7%, EPS 75.3% the same; 349 of 1,603
+companies with a revenue or profit gap; BPCL, IOC and United Spirits are screener's excise netting, which our check
+missed because memory holds no excise line). Built and in review or CI: the known-wrong list and drop (PR #207), every
+XBRL line kept plus screener's full rules and the balance-sheet / cash-flow comparison, the numbers-first reader
+experiment.
 
 - Turn the daily card audit routine back on (it would need re-binding to the current session), or keep audits by hand.
 - The go-live bar against long cards: measured 25 Oct, 2.7% of lines wrong; at about 13 lines a card, 5% WRONG needs

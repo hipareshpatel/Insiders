@@ -26,7 +26,7 @@ from typing import Any
 from .scoring import calibration
 from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
-from . import footer_plausible
+from . import footer_plausible, known_wrong
 from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -777,6 +777,8 @@ def put_standalone(dossier: dict, metrics, balance, as_of: str, source: str) -> 
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
+        if known_wrong.listed(dossier.get("scrip_code"), key[0], key[1], m.value, "STANDALONE") is not None:
+            continue   # proven wrong in the exchange's own file (known_wrong.py, F223)
         old = entries.get(key)
         if old and str(old.get("as_of", "")) > as_of:
             continue
@@ -1146,6 +1148,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         key = (_norm(m.metric), _period(m.period))
         if not march_year(d) and not _CALENDAR_QUARTER.fullmatch(key[1]):
             continue   # a half year or year of a company whose year does not end in March: wrongly named here
+        wrong = known_wrong.listed(filing.scrip_code or d.get("scrip_code"), key[0], key[1], m.value,
+                                   getattr(m, "file_basis", None) or basis, held_bases=lambda: known_wrong.dossier_bases(d))
+        if wrong is not None:
+            # proven wrong in the exchange's own file (known_wrong.py, F223): never written, by any writer, so a drop is not undone
+            log.info("memory: %s %s %s from %s refused: on the known-wrong list (statement: %s)", key[0], key[1], m.value, news_id, wrong.right)
+            continue
         ends = due_date(key[1]) if key[1].startswith("Q") else None
         if ends is not None and (as_of or "")[:10] <= ends.isoformat():
             # a quarter no results can describe yet: CIE India's July presentation called its April-June quarter "Q2" and

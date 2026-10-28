@@ -71,6 +71,11 @@ def stored_keys(sink) -> set[str]:
         return set()
 
 
+def is_full() -> bool:
+    """Whether this process found the store at its cap and so kept a file out (the facts of that file are saved all the same)."""
+    return bool(_state["warned"])
+
+
 def put(sink, url: str, data: bytes) -> bool:
     """Keep a downloaded file, unless the store is full (the total is read once a process). True when it was kept."""
     if not enabled(sink) or not data:

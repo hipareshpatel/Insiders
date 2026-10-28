@@ -810,3 +810,30 @@ def test_other_comprehensive_income_with_garbled_labels_never_makes_the_total_th
     rows = rows[:-1] + [(["Profit after tax"], pat)] + [([label], values[v]) for label, v in after]
     got = read(statement(rows), "pat")
     assert got.status == "none" or got.value == pytest.approx(crore(pat[0])), got
+
+
+def eleventh_review_rows(case: str):
+    rows, want = pl()
+    pat, sh, oci = want["pat"], [9.4, 5.1, 3.3, 12.2], [3.1, -2.0, 4.4, 1.5]
+    add = lambda *xs: [round(sum(v), 2) for v in zip(*xs)]       # noqa: E731
+    x = add(pat, sh)
+    bad = [round(x[0] + 1.0, 2)] + x[1:]                         # a digit error in the period's own column
+    extra = {"garbled share, bottom with a bad cell": [(["Shr of prfit"], sh), (["Net prfit"], bad)],
+             "share, bad profit row, garbled total": [(["Share of profit of associates"], sh), (["Prfit"], bad),
+                                                      (["Remeasurement x"], oci), (["Totl"], add(x, oci))],
+             "clean control": [(["Share of profit of associates"], sh), (["Profit for the period"], x),
+                               (["Other comprehensive income"], oci), (["Total comprehensive income"], add(x, oci))]}[case]
+    return rows[:-1] + [(["Profit after tax"], pat)] + extra, crore(x[0])
+
+
+@pytest.mark.parametrize("case", ["garbled share, bottom with a bad cell", "share, bad profit row, garbled total"])
+def test_a_damaged_cell_in_a_carried_on_profit_never_gives_a_wrong_profit(case):
+    # the eleventh review: these gave the profit before the share (2.142) and the total comprehensive income (2.267)
+    rows, truth = eleventh_review_rows(case)
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(truth), got
+
+
+def test_a_clean_associates_layout_still_gives_the_profit_for_the_period():
+    rows, truth = eleventh_review_rows("clean control")
+    assert read(statement(rows), "pat").value == pytest.approx(truth)

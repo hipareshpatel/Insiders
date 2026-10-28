@@ -833,6 +833,7 @@ class Solver:
         self.m = len(table.columns)
         self.cls = [label_class(r.label) for r in table.rows]
         self.explanations: dict[str, list[tuple[tuple[int, ...], list[Proof]]]] = {}
+        self.pat_unsure = False          # a profit carried on by arithmetic alone (``carried_on``): no profit from the table
         self.chains = 0
 
     # --- identities
@@ -970,16 +971,23 @@ class Solver:
         return None
 
     def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
-        """Rows after the profit after tax ``a`` that equal it plus or minus one or two of the rows between (discontinued
-        operations, an associate's share), and whose label does not name another line."""
+        """Rows after the profit after tax ``a`` that equal it plus or minus the rows between (discontinued operations, an
+        associate's share): the row's label names the profit (not merely does not object), every row between is an associate's
+        share, discontinued operations, an exceptional item or a tax line, or nil, and the sum takes in every non-nil
+        associate's share or discontinued line between (eleventh review: a garbled total comprehensive income or an identity
+        that skips the share is not the profit)."""
         out = []
         for x in range(a + 2, min(self.n, a + 9)):
             between = list(range(a + 1, x))
-            if not self.label_ok(x, {"PAT"}) or any(self.cls[r] not in {None, "DISC", "ASSOC", "EXC", "TAX"} for r in between):
+            live = [r for r in between if any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)]
+            if self.cls[x] != "PAT" or any(self.cls[r] not in {"DISC", "ASSOC", "EXC", "TAX"} for r in live):
                 continue
+            needed = {r for r in live if self.cls[r] in ("ASSOC", "DISC")}
             for size in (1, 2):
                 hit = None
-                for subset in itertools.combinations(between, size):
+                for subset in itertools.combinations(live, size):
+                    if not needed <= set(subset):
+                        continue
                     for signs in itertools.product((1, -1), repeat=size):
                         proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))
                         if hit is None and self.valid(proof):
@@ -1064,10 +1072,12 @@ class Solver:
                             if block:
                                 pending.append(("tax", block, [pat_proof]))
                             carried = self.carried_on(a)
-                            if self.label_ok(a, {"PAT"}) and carried != "label":
+                            if isinstance(carried, tuple):
+                                # the arithmetic alone says the profit is carried on, and the labels cannot tell an associate's
+                                # share from a total comprehensive income (eleventh review): no profit from this table at all
+                                self.pat_unsure = True
+                            elif self.label_ok(a, {"PAT"}) and carried != "label":
                                 pending.append(("pat", (a,), [pat_proof]))
-                            if isinstance(carried, tuple):     # the arithmetic alone: both, so a conflict and no answer
-                                pending.append(("pat", (carried[0],), [pat_proof, carried[1]]))
                             # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
                             for x, ext in self.pat_extensions(a):
                                 pending.append(("pat", (x,), [pat_proof] + ext))
@@ -1328,6 +1338,8 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     """(value in crore, tolerance in crore, label, why) of ``metric`` in the period's column of one table. ``value`` is None with
     the reason in ``why`` when the table gives no answer."""
     solver: Solver = getattr(table, "solver", None) or Solver(table).solve()
+    if metric == "pat" and solver.pat_unsure:
+        return None, 0.0, "", "the profit after tax is carried on further down and the labels do not tell by what"
     if table.unit is None:
         return None, 0.0, "", "no unit declared above the table"
     cols = target_columns(table, kind, when)

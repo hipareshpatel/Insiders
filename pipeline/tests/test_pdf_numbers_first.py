@@ -1037,3 +1037,22 @@ def test_total_income_over_an_other_income_subtotal_printed_with_its_parts():
     # parts that do not add up to the subtotal: the nesting is not proved and nothing is named
     broken = statement(nested_other_income(rows, others_shift=7.0))
     assert read(broken, "revenue").status != "ok" and read(broken, "pat").status != "ok"
+
+
+def revenue_in_parts(rows, n_parts=3):
+    # BFINVEST Q2FY25: "1 Revenue from operations (a) Interest income", "(b) Dividend income", ... and no line for the revenue
+    shares = [0.5, 0.3, 0.2] if n_parts == 3 else [0.6, 0.4]
+    parts = [[round(v * s, 2) for v in REVENUE] for s in shares[:-1]]
+    parts.append([round(v - sum(p[j] for p in parts), 2) for j, v in enumerate(REVENUE)])
+    names = [["1 Revenue from operations", "(a) Interest income"], ["(b) Dividend income"], ["(c) Net gain on fair value changes"]]
+    return [(names[i] if i < n_parts - 1 else names[2], parts[i]) for i in range(n_parts)] + rows[1:]
+
+
+def test_revenue_printed_only_as_its_parts_is_their_sum():
+    rows, want = pl()
+    for n in (3, 2):
+        pdf = statement(revenue_in_parts(rows, n))
+        assert read(pdf, "revenue").value == pytest.approx(crore(1000.00)), n     # never the first part alone
+        assert read(pdf, "other_income").value == pytest.approx(crore(50.10))
+        assert read(pdf, "total_income").value == pytest.approx(crore(want["total_income"][0]))
+        assert read(pdf, "pat").value == pytest.approx(crore(want["pat"][0]))

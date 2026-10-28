@@ -863,6 +863,11 @@ def label_class(label: str) -> str | None:
 Proof = tuple[int, tuple[tuple[int, int], ...]]        # (row that equals, ((row, sign), ...) its parts)
 
 
+# a revenue row that opens a list of its parts: "1 Revenue from operations (a) Interest income", "Revenue from Operations
+# (i) Interest Income", "Revenue from operations: a) Sales"
+_REVENUE_LIST = re.compile(r"revenue\s+from\s+operations?\W{0,3}(?:\(?(?:a|i|1)\)|a\.)\s*[a-z]", re.I)
+
+
 class Solver:
     """Names the rows of one table by the identities that hold down its columns. ``explanations`` maps a metric to its readings
     of the table: a list of (rows, proofs); a proof is an identity checked again in the period's own column when a figure is
@@ -1069,6 +1074,7 @@ class Solver:
                     continue
                 self.chain_from(t, k, ti_proof)
             self.nested_income(t)
+            self.parts_income(t)
         if "total_income" not in self.explanations:
             # no chain below it: a total income by its label AND the arithmetic (never the label alone)
             for t in range(1, self.n):
@@ -1099,20 +1105,48 @@ class Solver:
                 self.chain_from(t, (r, t - 1), proof)
                 return
 
+    def parts_income(self, t: int) -> None:
+        """Total income = revenue printed only as its parts + other income, with no line for the revenue itself (BFINVEST
+        Q2FY25: "1 Revenue from operations (a) Interest income" 57.46, "(b) Dividend income" 655.73, "(c) Net gain on fair
+        value changes" 24.86, "2 Other income" 7.02, "3 Total income (1+2)" 745.07): the first row says revenue from
+        operations and opens a list ("(a)", "(i)", "a)"), the rows after it say nothing (no landmark), the row above the total
+        says other income, and all of them add up to the total. The revenue is the sum of the parts."""
+        if not self.label_ok(t, {"TI"}) or t < 1 or self.cls[t - 1] != "OI":
+            return
+        for k in range(3, 9):
+            first = t - k
+            if first < 0:
+                return
+            parts = tuple(range(first, t - 1))
+            if self.cls[first] != "REV" or not _REVENUE_LIST.search(self.t.rows[first].label):
+                continue
+            if any(self.cls[r] is not None for r in parts[1:]):
+                return
+            proof: Proof = (t, tuple((r, 1) for r in range(first, t)))
+            if self.valid(proof):
+                self.chain_from(t, (parts, t - 1), proof)
+            return
+
     def name_income(self, t: int, k, proof: Proof) -> None:
         """``k``: the number of rows right above the total that add up to it, or the (revenue, other income) rows of a nested
-        total (``nested_income``)."""
+        total (``nested_income``: one revenue row) or of revenue printed as its parts (``parts_income``: a tuple of rows)."""
         self.add("total_income", (t,), [proof])
+        if isinstance(k, tuple) and isinstance(k[0], tuple):
+            self.add("revenue", k[0], [proof])
+            self.add("other_income", (k[1],), [proof])
+            return
         rows = list(k) if isinstance(k, tuple) else list(range(t - k, t))
+        # a revenue row that opens a list of its parts is only the first part: never the revenue (BFINVEST Q2FY25)
+        rows_rev_ok = not any(self.cls[r] == "REV" and _REVENUE_LIST.search(self.t.rows[r].label) for r in rows)
         if len(rows) == 2:
-            if self.label_ok(rows[0], {"REV"}):
+            if self.label_ok(rows[0], {"REV"}) and rows_rev_ok:
                 self.add("revenue", (rows[0],), [proof])
             if self.label_ok(rows[1], {"OI"}):
                 self.add("other_income", (rows[1],), [proof])
         else:
             rev = [r for r in rows if self.cls[r] == "REV"]
             oi = [r for r in rows if self.cls[r] == "OI"]
-            if len(rev) == 1:
+            if len(rev) == 1 and rows_rev_ok:
                 self.add("revenue", (rev[0],), [proof])
             if len(oi) == 1:
                 self.add("other_income", (oi[0],), [proof])

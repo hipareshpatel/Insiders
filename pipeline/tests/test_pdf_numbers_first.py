@@ -571,3 +571,60 @@ def test_a_unit_line_that_names_no_currency_or_names_it_after_the_unit_is_read()
     assert nf.scan_units(["(Amounts in Lakhs)"]) == {100}
     assert nf.scan_units(["Figures in million tonnes"]) == set()           # a quantity, not money
     assert nf.scan_units(["The figures in millions are"]) == set()
+
+
+# --- fix set 3 (SONACOMS, ATUL, TBZ) -------------------------------------------------------------------------------------
+
+def test_one_wider_garbled_figure_does_not_move_a_columns_edge_off_the_others():
+    # ATUL Q2FY27: garbled wider figures ("1,958.111") in the half-year column put its right edge 9 pt right of the other
+    # figures, which were then not assigned to the column; the edge is now the figures' median right edge
+    h = 8.0
+    figs = [nf.Word(x1 - 30, x1, 100.0 + 10 * i, h, text) for i, (x1, text) in
+            enumerate([(300, "1,623.46"), (300, "1,588.60"), (300, "1,409.52"), (300, "3,212.06"), (300, "2,714.08"),
+                       (304, "1,958.111"), (309, "2,958.1111")])]
+    cols, align = nf.find_columns([(w, nf.parse_figure(w.text)) for w in figs], h)
+    assert align == "right" and len(cols) == 1 and cols[0].x1 == 300
+    assigned = nf.assign_cells(figs, cols, align, h)
+    assert {w.text for _, w, _ in assigned} >= {"1,623.46", "1,588.60", "1,409.52", "3,212.06", "2,714.08"}
+
+
+def test_a_border_drawn_as_a_letter_inside_a_header_date_is_ignored():
+    # ATUL Q2FY27: "September 30," / "I" (a table rule) / "2026" over the quarter column
+    doc = pymupdf.open(stream=statement(pl()[0], dates=["September 30,", "30.06.2026", "30.09.2025", "31.03.2026"]), filetype="pdf")
+    page = doc[0]
+    right(page, COL_RIGHT[0], 100, "2026")
+    page.insert_text((COL_RIGHT[0] - 48, 96), "I", fontsize=FONT)
+    pdf = doc.tobytes()
+    doc.close()
+    from datetime import date
+    assert nf.analyse(pdf)[0].columns[0].date == date(2026, 9, 30)
+
+
+def with_image(pdf: bytes) -> bytes:
+    """The page with a small picture on it, as a scan with a text layer has."""
+    import io
+    doc = pymupdf.open(stream=pdf, filetype="pdf")
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 4, 4), False)
+    doc[0].insert_image(pymupdf.Rect(560, 20, 580, 40), pixmap=pix)
+    out = doc.tobytes()
+    doc.close()
+    return out
+
+
+def test_a_scan_whose_layer_garbled_the_dates_is_read_with_ocr(monkeypatch):
+    # TBZ Q2FY27: the layer prints "30-Seo-26" for every September date; OCR reads them (two-digit years: the maintenance flag)
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    monkeypatch.setenv("PDF_DATES_2DIGIT", "1")
+    rows, want = pl()
+    garbled = with_image(statement(rows, dates=["30-Seo-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    clean = as_ocr_boxes(statement(rows, dates=["30-Sep-26", "30-Jun-26", "30-Sep-25", "31-Mar-26"]))
+    assert nf.reading_from_tables(nf.analyse(garbled, ocr_boxes=lambda png: []), "Q2FY27", "pat", "STANDALONE").status == "none"
+    got = nf.reading_from_tables(nf.analyse(garbled, ocr_boxes=lambda png: clean, ocr_garbled=True), "Q2FY27", "pat", "STANDALONE")
+    assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0])) and got.source == "ocr"
+    # OCR that reads no more dates than the layer does not replace the layer's tables: here the layer misses one date only
+    # and answers itself; OCR seeing the same page answers nothing new and the answer stays the layer's
+    partly = with_image(statement(rows, dates=["30-Sep-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    same = as_ocr_boxes(statement(rows, dates=["30-Sep-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    kept = nf.reading_from_tables(nf.analyse(partly, ocr_boxes=lambda png: same, ocr_garbled=True), "Q2FY27", "pat", "STANDALONE")
+    assert kept.status == "ok" and kept.source == "textlayer"

@@ -1096,8 +1096,10 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 except Exception as exc:    # noqa: BLE001
                     log.warning("numbers-first: OCR failed on page %d (%s)", p, type(exc).__name__)
                     continue
-                if any(t.named for t in found) and dated(found) > dated(by_page.get(p, [])):
-                    by_page[p] = found          # OCR's tables only when they read more column dates than the layer's
+                if any(t.named for t in found):
+                    # OCR's tables beside the layer's, never instead of them (third review): where both answer they must
+                    # agree or the reading is a conflict, so OCR only adds an answer the layer could not give
+                    by_page[p] = by_page.get(p, []) + found
     return [t for p in sorted(by_page) for t in by_page[p] if t.named or keep_unnamed]
 
 

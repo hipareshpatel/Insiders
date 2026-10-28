@@ -324,7 +324,7 @@ def test_workflow_refuses_an_xbrl_facts_download_without_a_file_cap_before_insta
 def test_workflow_a_downloading_xbrl_facts_run_shares_the_nse_memory_group_and_a_read_only_run_does_not():
     text, doc = workflow()
     group = doc["concurrency"]["group"]
-    nse_memory, rest = group.split("|| (inputs.command == 'xbrl-facts' && inputs.apply) && 'maint-nse-memory'")
+    nse_memory, rest = group.split("|| (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'")
     assert "seed-memory" in nse_memory and "maint-nse-memory" in nse_memory and "xbrl-facts" not in nse_memory   # the list itself is unchanged
     assert "maint-cards" in rest and "maint-ro-" in rest
     assert '"xbrl-facts"' in rest.split("maint-ro-")[0]              # a read-only run keeps its own group

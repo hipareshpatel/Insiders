@@ -131,7 +131,7 @@ GAP_CLASSES = ("screener_only", "memory_only")
 WORKERS = 8
 
 CSV_HEADER = ("scrip,symbol,sector,basis,period,metric,class,memory_value,screener_value,memory_source_id,"
-              "memory_filed,note,table,adjustment").split(",")
+              "memory_filed,note,table,adjustment,source").split(",")
 
 # our metric names for each compared line; a lender's revenue line is its revenue from operations, a bank's interest earned
 _OURS = {k: line_map.crosscheck_ours(k) for k in ("revenue", "pat", "eps")}
@@ -424,7 +424,7 @@ def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_lay
                     continue
                 ours = entry["value"]
             cls, note = classify_six(metric, ours, theirs, figures, period, screener_views(dossier, figures, period), row)
-            adjustment = ""
+            adjustment = source = ""
             if cls == "mismatch" and metric in ("ebitda", "finance_cost") and get_facts is not None:
                 extra = facts_extra(get_facts, figures, period)
                 if ("finance_services_cost", period) in extra:
@@ -434,13 +434,72 @@ def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_lay
                         fin = extra[("finance_services_cost", period)]
                         note += f"; finance_services_cost {fin['value']:g} ({fin['note']})"
                         adjustment = cls[len(VIEW):] + " (xbrl facts)"
+                        source = fin.get("source", "")
             pair = {"period": period, "metric": metric, "memory_value": ours, "screener_value": theirs, "class": cls,
                     "shifted": [], "memory_source_id": _value_source(entry), "memory_filed": entry.get("as_of") or "",
-                    "note": note, "adjustment": adjustment}
+                    "note": note, "adjustment": adjustment, "source": source}
             if metric in ("other_income", "pbt"):
                 pair["associates"] = _associates_way(metric, ours, theirs, figures, period)
             out.append(pair)
     return out
+
+
+# --- the annual columns against the annual report's XBRL --------------------------------------------------------------
+
+# screener's annual lines -> the key of ``screener_parts.year_figures``; a lender's page has other Sales, Operating Profit, Interest
+# and Other Income rows
+ANNUAL_LINES = ("revenue", "ebitda", "other_income", "finance_cost", "depreciation", "pbt", "pat", "eps")
+ANNUAL_LENDER_SKIP = ("revenue", "ebitda", "other_income", "finance_cost")
+ANNUAL_CLASSES = ("match", VIEW + "associates_in_other_income", VIEW + "associates_in_pbt", "naming", "scale", "mismatch")
+TABLE_ANNUAL = "annual_xbrl"
+
+
+def annual_pairs(annual: dict[str, dict], annual_six: dict[str, dict], get_facts, lender: bool, have_facts: bool) -> tuple[list[dict], list[str]]:
+    """Screener's annual profit and loss columns (March years) against the year's facts worked out by screener's own formulas
+    (``screener_parts.year_figures``): the annual report's XBRL where stored, else the Q4 integrated file's 12-month figures
+    (``get_facts("FY26")`` resolves which); every pair records its ``source``. Counted apart (``annual_pairs``), never in ``pairs``.
+    Other Income and PBT are compared without the associates' share and, when that fails, with it (a named alternative, class
+    ``matches_screener_view:associates_in_...``; ``associates`` says which way a pair matched: a report, not a fit); Net Profit is
+    the whole profit, the owners' share a ``naming``. Returns (pairs, the years with no facts to compare)."""
+    out: list[dict] = []
+    missing: list[str] = []
+    if not have_facts:
+        return out, missing
+    for fy in sorted({*annual, *annual_six}):
+        facts = get_facts(fy)
+        end = quarter_end(f"Q4{fy}")
+        if facts is None or end is None:
+            missing.append(fy)
+            continue
+        figures = screener_parts.year_figures(facts, end)
+        row = {**annual.get(fy, {}), **annual_six.get(fy, {})}
+        for line in ANNUAL_LINES:
+            theirs = row.get(line)
+            if theirs is None or line not in figures or (lender and line in ANNUAL_LENDER_SKIP):
+                continue
+            ours, how = figures[line]
+            close = (lambda value: _close(value, theirs, "eps")) if line == "eps" else (lambda value: view_close(value, theirs))
+            cls, note, way, adjustment = "match", "", "", ""
+            if not close(ours):
+                with_ = figures.get(line + "_with_associates")
+                if with_ is not None and close(with_[0]):
+                    cls, adjustment = VIEW + "associates_in_" + line, f"associates_in_{line} (xbrl facts)"
+                    note = f"with the associates' share: {ours:g} -> {with_[0]:g} ({with_[1]})"
+                elif line == "pat" and "pat_owners" in figures and close(figures["pat_owners"][0]):
+                    cls, note = "naming", f"screener's Net Profit = the owners' share {figures['pat_owners'][0]:g} (ProfitOrLossAttributableToOwnersOfParent)"
+                elif line != "eps" and _is_scale(ours, theirs):
+                    cls = "scale"
+                else:
+                    cls = "mismatch"
+                    note = how + (f"; with the associates' share {with_[0]:g}" if with_ else "")
+            if line in ("other_income", "pbt") and figures.get(line + "_with_associates"):
+                with_ = figures[line + "_with_associates"][0]
+                if abs(with_ - ours) > 2 * max(VIEW_ABS, VIEW_REL * abs(theirs)):
+                    way = "with" if close(with_) and not close(ours) else "without" if close(ours) and not close(with_) else "neither"
+            out.append({"table": TABLE_ANNUAL, "period": fy, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls,
+                        "shifted": [], "memory_source_id": f"{facts.source}:{fy}", "memory_filed": "", "note": note,
+                        "adjustment": adjustment, "source": facts.source, "associates": way})
+    return out, missing
 
 
 # --- balance sheet and cash flow ---------------------------------------------------------------------------------------
@@ -684,6 +743,7 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
                     "shifted": shifted}
             if cls.startswith(VIEW) and cls[len(VIEW):] not in MEMORY_VIEWS and parts() is not None:
                 pair["note"] += "; parts read from " + _parts_read(line, parts())
+                pair["source"] = parts()["_source"][1]
             if cls.startswith(VIEW):
                 pair["adjustment"] = cls[len(VIEW):] + (" (memory)" if cls[len(VIEW):] in MEMORY_VIEWS else " (xbrl facts)")
             out.append(pair)
@@ -698,6 +758,10 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
             out.append({**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls,
                         "note": PLUG_NOTE + note if note else PLUG_NOTE.rstrip(": ")})
     return out
+
+
+def _source_of(facts) -> str:
+    return facts.source if facts is not None else ""
 
 
 def _exchange_view(facts_for, label: str, end: date | None, months: int, ours: float):
@@ -734,16 +798,28 @@ def cash_flow_pairs(figures: dict, table: dict[str, dict], facts_for=None, skipp
             for line, name in CASH_LINES.items():
                 theirs = row.get(line)
                 entry = figures.get((_norm(name), period))
-                if theirs is None or not entry or entry.get("value") is None:
+                if theirs is None:
                     continue
-                ours = entry["value"]
+                facts = None
+                if entry and entry.get("value") is not None:
+                    ours, source_id, filed, how = entry["value"], _value_source(entry), entry.get("as_of") or "", ""
+                else:
+                    # memory has no such figure: the year's facts (the annual report's XBRL, else the Q4 file's), read only now
+                    facts = facts_for(period) if facts_for else None
+                    value = facts.cr(CASH_ELEMENTS[name], end=quarter_end(f"Q4{period}"), months=12) \
+                        if facts is not None and quarter_end(f"Q4{period}") is not None else None
+                    if value is None:
+                        continue
+                    ours, source_id, filed = value, f"{facts.source}:{period}", ""
+                    how = f"; read from the {facts.source} (memory keeps no such figure)"
                 shifted = _shifted_columns(table, period, line, ours, theirs)
-                views = _exchange_view(facts_for, f"Q4{period}", quarter_end(f"Q4{period}"), 12, ours) if line == "investing" else None
+                views = _exchange_view(facts_for, period, quarter_end(f"Q4{period}"), 12, ours) if line == "investing" else None
                 cls, note = classify_cash(ours, theirs, shifted, period, views)
                 out.append({"table": TABLE_CASH, "period": period, "metric": line, "memory_value": ours, "screener_value": theirs,
-                            "class": cls, "shifted": shifted, "memory_source_id": _value_source(entry),
-                            "memory_filed": entry.get("as_of") or "", "note": note,
-                            "adjustment": "investing_plus_exchange_effect (xbrl facts)" if cls.startswith(VIEW) else ""})
+                            "class": cls, "shifted": shifted, "memory_source_id": source_id, "memory_filed": filed,
+                            "note": note + how,
+                            "adjustment": "investing_plus_exchange_effect (xbrl facts)" if cls.startswith(VIEW) else "",
+                            "source": _source_of(facts or (facts_for(period) if facts_for and cls.startswith(VIEW) else None))})
             continue
         end = _year_end(period)
         label = canonical_period(f"quarter ended {end:%d.%m.%Y}")
@@ -764,7 +840,7 @@ def cash_flow_pairs(figures: dict, table: dict[str, dict], facts_for=None, skipp
                         "class": cls, "shifted": shifted, "memory_source_id": f"facts:{label}", "memory_filed": "",
                         "note": (note + "; " if note else "") + f"from the file's own 12-month cash flow to {end:%d %b %Y} (memory keeps none)",
                         "adjustment": "investing_plus_exchange_effect (xbrl facts)" if cls.startswith(VIEW)
-                        else "own_year_end (xbrl facts)"})
+                        else "own_year_end (xbrl facts)", "source": facts.source})
         if not paired and skipped is not None:
             skipped.append({"period": period, "reason": reason or f"the {label} file holds no 12-month cash flow to {end:%d %b %Y}"})
     return out
@@ -920,7 +996,7 @@ def facts_extra(get_facts, figures: dict, period: str) -> dict:
     ``indirect_taxes`` (sales tax, VAT, GST), ``discounts`` (each only where memory holds none: memory's own is never
     doubled), ``treasury_shares`` and the two EPS bases ``eps_total`` / ``eps_continuing``. ``{}`` when no facts are stored.
     Each entry carries ``note`` (where the facts had it) and ``from_facts``."""
-    facts = get_facts(_file_period(period)) if get_facts else None
+    facts = get_facts(period) if get_facts else None     # a quarter's own file; a year (FY26): the annual report, else the Q4 file
     end, months = _flow_window(period)
     if facts is None or end is None:
         return {}
@@ -928,16 +1004,16 @@ def facts_extra(get_facts, figures: dict, period: str) -> dict:
     for part, (value, where) in screener_parts.flow_parts(facts, end, months).items():
         name = FACT_FIGURES[part]
         if _value(figures, name, period) is None:
-            out[(_norm(name), period)] = {"value": value, "note": where, "from_facts": True}
+            out[(_norm(name), period)] = {"value": value, "note": where, "from_facts": True, "source": facts.source}
     fin = screener_parts.finance_services_cost(facts, end, months)
     if fin and _value(figures, "finance_services_cost", period) is None:
-        out[("finance_services_cost", period)] = {"value": fin[0], "note": fin[1], "from_facts": True}
+        out[("finance_services_cost", period)] = {"value": fin[0], "note": fin[1], "from_facts": True, "source": facts.source}
     treasury = screener_parts.treasury_shares(facts, end, months)
     if treasury:
-        out[("treasury_shares", period)] = {"value": treasury[0], "note": treasury[1], "from_facts": True}
+        out[("treasury_shares", period)] = {"value": treasury[0], "note": treasury[1], "from_facts": True, "source": facts.source}
     for label, value in screener_parts.eps_variants(facts, end, months).items():
         if _value(figures, label, period) is None:
-            out[(label, period)] = {"value": value, "note": "XBRL facts", "from_facts": True}
+            out[(label, period)] = {"value": value, "note": "XBRL facts", "from_facts": True, "source": facts.source}
     return out
 
 
@@ -969,21 +1045,28 @@ def page_sections(pages: dict[str, dict]) -> dict:
             "cash_flow": sum(1 for p in pages.values() if (p.get("sections") or {}).get("cash_flow"))}
 
 
-def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symbol: str = "", facts=None) -> dict:
+def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symbol: str = "", facts=None, annual=None) -> dict:
     """Pairs and gaps for one company. ``pages`` maps a basis to parse_full's result. ``facts(period, basis)`` gives a file's
     stored XBRL facts (xbrl_facts.Facts) or None; it is called only for a pair that a part or a year end the facts hold could
-    settle, once a period. Pure otherwise."""
+    settle, once a period. ``annual(fy, basis)`` gives the stored facts of the annual report's own XBRL for a March year (or None):
+    a year is read from it where it exists and from the Q4 integrated file's 12-month figures where it does not, and each pair
+    records which (``source``). Pure otherwise."""
     basis = main_basis(dossier) if dossier else None
     out = {"scrip": scrip, "symbol": symbol, "basis": basis, "sector": (dossier or {}).get("sector")
            or (dossier or {}).get("industry") or "unknown", "pairs": [], "six_pairs": [], "bs_pairs": [], "cf_pairs": [], "gaps": [], "suspects": [],
-           "skipped": None, "sections": page_sections(pages), "page_used": None, "cf_skipped": []}
+           "skipped": None, "sections": page_sections(pages), "page_used": None, "cf_skipped": [], "annual_pairs": [],
+           "annual_no_facts": []}
     cache: dict[str, object] = {}
+    march = int((dossier or {}).get("fy_end_month") or 3) == 3
 
     def get_facts(period: str):
-        if facts is None:
-            return None
+        """A quarter's integrated results file, or a year ("FY26": the annual report's XBRL where stored, else the Q4 file)."""
         if period not in cache:
-            cache[period] = facts(period, basis)
+            if period.startswith("FY"):
+                found = annual(period, basis) if annual is not None and march else None
+                cache[period] = found if found is not None else get_facts(f"Q4{period}")
+            else:
+                cache[period] = facts(period, basis) if facts is not None else None
         return cache[period]
 
     if not basis:
@@ -1022,7 +1105,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                     if len(shifted) > 1:
                         note += f" (chance risk: {len(shifted)} columns match)"
                 cls = classify(entry["value"], theirs, metric, shifted_to, lender, named)
-                adjustment = ""
+                adjustment = source = ""
                 if cls == "mismatch" and metric in ("revenue", "eps"):   # the existing "naming" (revenue less excise) keeps its place
                     extra = facts_extra(get_facts, figures, period)      # the stored XBRL facts: only now, for a gap to settle
                     withfacts = {**figures, **extra} if extra else figures
@@ -1040,6 +1123,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                                 from_facts = _view_from_facts(rule, extra, period)
                                 adjustment = rule + (" (xbrl facts)" if from_facts else " (memory)")
                                 if from_facts:
+                                    source = next((e["source"] for e in extra.values() if e.get("source")), "")
                                     note += "; parts read from " + "; ".join(
                                         f"{FACT_FIGURES[t]} {extra[(_norm(FACT_FIGURES[t]), period)]['value']:g} "
                                         f"({extra[(_norm(FACT_FIGURES[t]), period)]['note']})"
@@ -1052,7 +1136,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                     note = f"screener {_SCREENER_LINE[metric]} = our {named}"
                 pairs.append({"period": period, "metric": metric, "memory_value": entry["value"], "screener_value": theirs,
                               "class": cls, "shifted": shifted, "memory_source_id": _value_source(entry),
-                              "memory_filed": entry.get("as_of") or "", "note": note, "adjustment": adjustment})
+                              "memory_filed": entry.get("as_of") or "", "note": note, "adjustment": adjustment, "source": source})
     unmatched = [p for p in pairs if p["metric"] == "revenue" and p["class"] == "mismatch"]
     if _steady(unmatched):
         for p in unmatched:
@@ -1065,14 +1149,21 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
     steady_older(pairs, out["six_pairs"])
     # the balance sheet and the cash flow (28 Oct 2026): counted apart, read only, never in "pairs"
     def parts_for(period: str):
-        facts_of = get_facts(period)
+        # a March year-end balance sheet is also in the annual report's XBRL (an instant at the year end), read first
+        facts_of = get_facts(period[2:]) if march and period.startswith("Q4FY") else get_facts(period)
         end = quarter_end(period)
-        return screener_parts.balance_parts(facts_of, end) if facts_of is not None and end else None
+        if facts_of is None or not end:
+            return None
+        return {**screener_parts.balance_parts(facts_of, end), "_source": (0.0, facts_of.source)}
 
     out["bs_pairs"] = balance_pairs(_snapshots(dossier, basis), page.get("balance") or {}, lender, parts_for,
                                     int(dossier.get("fy_end_month") or 3))
-    out["cf_pairs"] = cash_flow_pairs(figures, page.get("cash_flow") or {}, get_facts if facts is not None else None,
-                                      out["cf_skipped"])
+    have_facts = facts is not None or annual is not None
+    out["cf_pairs"] = cash_flow_pairs(figures, page.get("cash_flow") or {}, get_facts if have_facts else None, out["cf_skipped"])
+    out["annual_pairs"], out["annual_no_facts"] = annual_pairs(page.get("annual") or {}, page.get("annual_six") or {}, get_facts,
+                                                               lender or bool(page.get("lender_layout")), have_facts)
+    for way in out["associates"]:
+        out["associates"][way] += sum(1 for p in out["annual_pairs"] if p.get("associates") == way)
     # gaps: a quarter of the span screener shows, one side has and the other lacks
     ours_quarters = {p for (m, p) in figures if m in ("revenue", "interest_earned", "pat") and quarter_index(p)}
     theirs_quarters = {p for p, row in page["quarters"].items() if row.get("revenue") is not None or row.get("pat") is not None}
@@ -1163,7 +1254,10 @@ def run(sink, companies: list[tuple[str, str]], day: str | None = None, workers:
         def facts(period: str, basis: str | None):    # a company's stored XBRL facts, read only for a pair that needs them
             return xbrl_facts.load(sink, scrip, period, basis)
 
-        result = compare_company(dossier or {}, pages, scrip, symbol, facts)
+        def annual(fy: str, basis: str | None):       # the annual report's own XBRL, kept by ``xbrl-facts --annual``
+            return xbrl_facts.load_annual(sink, scrip, fy, basis)
+
+        result = compare_company(dossier or {}, pages, scrip, symbol, facts, annual)
         result["pages_unparsed"] = unparsed
         if not pages_by_symbol.get(symbol):
             result["skipped"] = "no stored page"
@@ -1196,6 +1290,9 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     cf_by_line: dict[str, dict[str, int]] = {}
     table_rows = []     # balance-sheet and cash-flow rows: the CSV carries them, summary["rows"] (the referees' input) does not
     sections = {k: 0 for k in SECTION_KEYS}
+    annual_by_line: dict[str, dict[str, int]] = {}
+    annual_by_source: dict[str, dict[str, int]] = {}
+    annual_no_facts = annual_no_facts_companies = 0
     associates: list[dict] = []     # per company: the quarters screener counted the associates' share in, and those it did not
     cf_skipped: dict[str, int] = {}
     cf_skipped_companies = 0
@@ -1217,6 +1314,16 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
         sections["compared_with_cash_flow"] += used.get("cash_flow", 0)
         sections["companies_with_balance_sheet_pairs"] += bool(r.get("bs_pairs"))
         sections["companies_with_cash_flow_pairs"] += bool(r.get("cf_pairs"))
+        for p in r.get("annual_pairs", []):
+            counts = annual_by_line.setdefault(p["metric"], {c: 0 for c in ANNUAL_CLASSES})
+            counts[p["class"]] = counts.get(p["class"], 0) + 1
+            src = annual_by_source.setdefault(p["source"], {"pairs": 0, "match": 0})
+            src["pairs"] += 1
+            src["match"] += p["class"] == "match"
+            if p["class"] != "match":
+                table_rows.append({"scrip": r["scrip"], "symbol": r["symbol"], "sector": r["sector"], "basis": r["basis"], **adjusted(p)})
+        annual_no_facts += len(r.get("annual_no_facts", []))
+        annual_no_facts_companies += bool(r.get("annual_no_facts"))
         way = r.get("associates") or {}
         if sum(way.values()):
             associates.append({"scrip": r["scrip"], "symbol": r["symbol"], **way, "treatment": associates_treatment(way)})
@@ -1267,6 +1374,9 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             "six_pairs": sum(sum(row.values()) for row in six_by_class.values()), "six_by_class": six_by_class,
             "bs_pairs": sum(sum(row.values()) for row in bs_by_line.values()), "bs_by_line": _in_order(bs_by_line, BS_LINES),
             "cf_pairs": sum(sum(row.values()) for row in cf_by_line.values()), "cf_by_line": _in_order(cf_by_line, CF_LINES),
+            "annual_pairs": sum(sum(row.values()) for row in annual_by_line.values()),
+            "annual_by_line": {k: annual_by_line[k] for k in ANNUAL_LINES if k in annual_by_line}, "annual_by_source": annual_by_source,
+            "annual_columns_without_facts": {"columns": annual_no_facts, "companies": annual_no_facts_companies},
             "associates": {"companies": associates,
                            **{k: [a["symbol"] for a in associates if a["treatment"] == k] for k in ASSOCIATES_TREATMENTS}},
             "sections": sections, "cf_skipped": {"columns": sum(cf_skipped.values()), "companies": cf_skipped_companies,
@@ -1318,6 +1428,18 @@ def associates_treatment(way: dict) -> str:
     that could tell), ``not counted``, ``mixed`` or ``unclear`` (only quarters where neither way fits)."""
     with_, without = way.get("with", 0), way.get("without", 0)
     return "mixed" if with_ and without else "counted" if with_ else "not counted" if without else "unclear"
+
+
+def annual_lines(summary: dict) -> list[str]:
+    """Screener's annual columns against the annual-report XBRL (Q4 integrated file where there is none), by source and by line."""
+    none = summary.get("annual_columns_without_facts") or {"columns": 0, "companies": 0}
+    lines = [f"annual columns against XBRL facts, pairs  {summary.get('annual_pairs', 0)} (columns with no facts: {none['columns']} in "
+             f"{none['companies']} companies)"]
+    for source, row in sorted((summary.get("annual_by_source") or {}).items()):
+        lines.append(f"  from {source or 'no source':22}{row['pairs']} pairs, {row['match']} match")
+    for line, row in (summary.get("annual_by_line") or {}).items():
+        lines.append(f"  {line:16}" + "  ".join(f"{k} {n}" for k, n in row.items() if n))
+    return lines
 
 
 def associates_lines(summary: dict) -> list[str]:
@@ -1382,6 +1504,7 @@ def render(summary: dict) -> str:
     lines += [f"  {name:26}{n}" for name, n in sorted(c.items()) if name not in CLASSES and n]
     lines += sections_lines(summary)
     lines += associates_lines(summary)
+    lines += annual_lines(summary)
     if summary.get("six_by_class"):
         lines += [f"six other lines, pairs       {summary['six_pairs']}"]
         for metric, row in sorted(summary["six_by_class"].items()):
@@ -1442,6 +1565,12 @@ def to_markdown(summary: dict, date: str) -> str:
     out += ["## Sections found on the stored pages", "",
             "The balance sheet and the cash flow are read from the page sections `id=\"balance-sheet\"` and `id=\"cash-flow\"`. "
             "A missing section is not a clean result: no pair was made.", "", "```", *sections_lines(summary), "```", ""]
+    out += ["## The annual columns against the annual-report XBRL", "",
+            "Screener's annual profit and loss (Sales, Operating Profit, Other Income, Interest, Depreciation, PBT, Net Profit, EPS) worked "
+            "out from the year's facts by screener's own formulas (docs/audit/screener-five-2026-10-28.md, 11.2): the annual report's "
+            "own XBRL (`xbrl-facts --annual`, Ind AS only) where it is stored, else the Q4 integrated file's 12-month figures. Every "
+            "pair says which (`source` in the CSV); the balance sheet at March and the cash flow read their parts from the same "
+            "source first.", "", "```", *annual_lines(summary), "```", ""]
     out += ["## The associates' share (Other Income and PBT)", "",
             "Screener counts the share of associates and joint ventures in Other Income and PBT for some companies and not for others, the "
             "same way in every quarter of a company (docs/audit/screener-five-2026-10-28.md, rule P4; the cause is not settled). It is "

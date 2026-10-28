@@ -44,6 +44,17 @@ def key(scrip: str, period: str, basis: str | None) -> str:
     return f"{PREFIX}{scrip}/{period}-{(basis or 'unknown').lower()}.json.gz"
 
 
+def annual_key(scrip: str, fy: str, basis: str | None) -> str:
+    """``raw/xbrl-facts/<scrip>/annual-<FY>-<basis>.json.gz``: an annual report's own XBRL (the MCA Ind AS taxonomy)."""
+    return f"{PREFIX}{scrip}/annual-{fy}-{(basis or 'unknown').lower()}.json.gz"
+
+
+def fy_of(end: date) -> str:
+    """The label of the year ending ``end``: FY26 for March 2026; another year end keeps its month ("FY26-09" for September 2025)
+    so two companies' years never read alike."""
+    return f"FY{end.year % 100:02d}" if end.month == 3 else f"FY{(end.year + 1) % 100:02d}-{end.month:02d}"
+
+
 # --- parse ------------------------------------------------------------------------------------------------------
 
 def _unit_kind(unit_id: str, kinds: dict[str, str]) -> str:
@@ -99,6 +110,16 @@ def parse_facts(data: bytes, scrip: str = "", url: str = "") -> dict | None:
         if not {xbrl._local(el.tag) for el in elements} & set(xbrl.RESULT_TAGS):
             return None
         result = _bare_result(contexts, text_facts, year_end)
+    used_contexts, used_units, facts = _collect(contexts, kinds, elements, year_end)
+    return {"v": VERSION, "scrip": scrip, "period": result.period, "basis": result.basis, "template": result.template,
+            "fy_end_month": result.fy_end_month, "url": url, "file_period": result.period, "n_facts": len(facts),
+            "contexts": used_contexts, "units": used_units, "facts": facts}
+
+
+def _collect(contexts: dict, kinds: dict, elements: list, year_end: int | None, labels: bool = True):
+    """(contexts, units, facts) of the stored document from xbrl.py's contexts, unit kinds and fact elements. ``labels`` adds the
+    period label xbrl.period_label gives a context (the integrated results files' April-March labels; an annual report's
+    contexts get none)."""
     used_contexts: dict[str, dict] = {}
     used_units: dict[str, str] = {}
     facts: list[list] = []
@@ -118,7 +139,7 @@ def parse_facts(data: bytes, scrip: str = "", url: str = "") -> dict | None:
             months = xbrl._months(info)
             if months is not None:
                 entry["m"] = months
-            label = xbrl.period_label(info, year_end) if "endDate" in info else None
+            label = xbrl.period_label(info, year_end) if labels and "endDate" in info else None
             if label:
                 entry["l"] = label
             if info["dims"]:
@@ -131,9 +152,7 @@ def parse_facts(data: bytes, scrip: str = "", url: str = "") -> dict | None:
         if value is None:
             value = text[:TEXT_MAX]
         facts.append([xbrl._local(el.tag), ctx, unit, value, _decimals(el.get("decimals"))])
-    return {"v": VERSION, "scrip": scrip, "period": result.period, "basis": result.basis, "template": result.template,
-            "fy_end_month": result.fy_end_month, "url": url, "file_period": result.period, "n_facts": len(facts),
-            "contexts": used_contexts, "units": used_units, "facts": facts}
+    return used_contexts, used_units, facts
 
 
 def _bare_result(contexts: dict, text_facts: dict, year_end: int | None) -> xbrl.XbrlResult:
@@ -143,6 +162,45 @@ def _bare_result(contexts: dict, text_facts: dict, year_end: int | None) -> xbrl
     ends = [c["endDate"] for c in contexts.values() if not c["dims"] and c.get("endDate")]
     period = xbrl.canonical_period(f"quarter ended {max(ends):%d.%m.%Y}") if ends else None
     return xbrl.XbrlResult("RESULTS", basis, period, fy_end_month=year_end)
+
+
+def parse_annual_facts(data: bytes, scrip: str = "", url: str = "") -> dict | None:
+    """An annual report's own XBRL (the MCA Ind AS taxonomy, ``annual_xbrl.py``) as the stored document, ``kind`` "annual": every
+    fact with its context. Its contexts differ from the integrated results filing's: the year is a 12-month duration (current and
+    prior year, 365 or 366 days) and the balance sheet an instant at the year end; there are no quarters, so no period labels,
+    and the facts are found by end date and months as for any file. None when the file is no XBRL instance, has no 12-month period,
+    or holds none of revenue, profit or assets (a sustainability report, BRSR, is not an annual report's statements). The basis is
+    the file's own NatureOfReportStandaloneConsolidated; ``fy`` names the year (``fy_of``) and ``year_end`` its last day. Text blocks
+    are cut at TEXT_MAX characters (the board's report and the notes run to many pages)."""
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError:
+        return None
+    contexts = xbrl._contexts(root)
+    elements = list(xbrl._fact_elements(root))
+    if not contexts or not elements:
+        return None
+    names = {xbrl._local(el.tag) for el in elements}
+    if not names & {"RevenueFromOperations", "ProfitLossForPeriod", "Assets"}:
+        return None
+    years = [c["endDate"] for c in contexts.values() if not c["dims"] and c.get("startDate") and c.get("endDate")
+             and 11 <= (xbrl._months(c) or 0) <= 13]
+    if not years:
+        return None
+    end = max(years)
+    text_facts = {xbrl._local(el.tag): el.text.strip() for el in elements if el.get("unitRef") is None and not contexts.get(el.get("contextRef"), {}).get("dims")}
+    nature = text_facts.get("NatureOfReportStandaloneConsolidated", "").lower()
+    basis = "CONSOLIDATED" if "consolidated" in nature else "STANDALONE" if "standalone" in nature else None
+    used_contexts, used_units, facts = _collect(contexts, xbrl._units(root), elements, None, labels=False)
+    return {"v": VERSION, "kind": "annual", "scrip": scrip, "fy": fy_of(end), "year_end": end.isoformat(), "period": fy_of(end),
+            "basis": basis, "template": "MCA-INDAS", "fy_end_month": end.month, "url": url, "n_facts": len(facts),
+            "contexts": used_contexts, "units": used_units, "facts": facts}
+
+
+def save_annual(sink, scrip: str, fy: str, basis: str | None, doc: dict) -> int:
+    body = dumps(doc)
+    sink.put_object(annual_key(scrip, fy, basis), body, content_type="application/gzip")
+    return len(body)
 
 
 def dumps(doc: dict) -> bytes:
@@ -171,6 +229,12 @@ class Facts:
         self.rows: list[list] = doc.get("facts") or []
         self.basis = doc.get("basis")
         self.fy_end_month = doc.get("fy_end_month")
+        self.kind = doc.get("kind") or "results"          # "results" (an integrated results file) or "annual" (an annual report's XBRL)
+
+    @property
+    def source(self) -> str:
+        """Where the facts come from, for a pair's record: the annual report's own XBRL, or the integrated results file."""
+        return "annual_report_xbrl" if self.kind == "annual" else "q4_integrated_file"
 
     def __len__(self) -> int:
         return len(self.rows)
@@ -264,6 +328,15 @@ def load(sink, scrip: str, period: str, basis: str | None) -> Facts | None:
         return None
 
 
+def load_annual(sink, scrip: str, fy: str, basis: str | None) -> Facts | None:
+    """The stored facts of one company's annual-report XBRL for a financial year and basis, or None."""
+    try:
+        body = sink.get_object(annual_key(scrip, fy, basis))
+        return Facts(loads(body)) if body else None
+    except Exception:   # noqa: BLE001 - a damaged object is no facts
+        return None
+
+
 def save(sink, scrip: str, period: str, basis: str | None, doc: dict) -> int:
     """Keep one document; the stored (gzipped) size in bytes."""
     body = dumps(doc)
@@ -350,21 +423,52 @@ def interesting(facts: Facts) -> set[str]:
 MISSING_HEADER = "scrip,symbol,period,basis,url,reason".split(",")
 
 
+ANNUAL_YEARS = 3     # the latest years of annual reports kept a basis: a file is about 7 MB and screener's columns are read against few
+
+
+def is_ind_as(report_type: str) -> bool:
+    """An Ind AS statements file; a BRSR (sustainability) file, or a type nobody named, is not."""
+    kind = (report_type or "").upper()
+    return "IND" in kind and "BRSR" not in kind
+
+
+def fetch_annual(sink, client, url: str) -> bytes | None:
+    """One annual-report XBRL file the way the pipeline reads it (``Pipeline._xbrl_file`` on the annual-report path): our copy in
+    R2 first, else ``client.download`` with the annual-report size limit (``nse.ANNUAL_REPORT_MAX_BYTES``), at the client's own
+    pace, one file for FILE_CAP; R2 keeps what comes (xbrl_store)."""
+    from .nse import ANNUAL_REPORT_MAX_BYTES
+
+    data = xbrl_store.get(sink, url)
+    if data:
+        return data
+    data = client.download(url, max_bytes=ANNUAL_REPORT_MAX_BYTES)
+    if data:
+        xbrl_store.put(sink, url, data)
+    return data
+
+
 def run(sink, companies: list[tuple[str, str]], *, download: bool = False, client=None, force: bool = False,
-        dry_run: bool = False, limit: int | None = None) -> dict:
+        dry_run: bool = False, limit: int | None = None, annual: bool = False, annual_years: int = ANNUAL_YEARS) -> dict:
     """Facts of every stored results file of ``companies`` ((scrip, symbol) pairs); the filings whose file is not stored are
     listed. Reads R2 and memory only: no request goes to NSE unless ``download`` is set and a ``client`` is given, and then
     only for the files not stored, through seed._fetch (the cache, then R2, then ``client.download`` with its pacing, and R2
     keeps what comes) - every such file counts toward FILE_CAP (file_cap.py), and the run stops where the cap or a refusal
     does. ``dry_run`` parses and counts but writes no facts and, with ``download``, lists the files it would fetch and fetches
-    none (``would_download`` counts them). ``force`` reads again the files whose facts are stored."""
+    none (``would_download`` counts them). ``force`` reads again the files whose facts are stored.
+
+    ``annual`` also keeps the facts of each company's annual-report XBRL (Ind AS only, never a BRSR file) for its latest
+    ``annual_years`` years and each basis, as ``annual-<FY>-<basis>``. NSE's annual-report list is one request a company (a list, not
+    a file: it does not count toward FILE_CAP), so it needs the ``client``; a file is read from R2 when stored, and fetched
+    (``fetch_annual``: NSE's pace, FILE_CAP) only with ``download`` and never in a dry run."""
     from . import seed
     from .nse import FileCapReached, SourceBlockedError, stop_reason
 
     summary: dict = {"companies": 0, "files_listed": 0, "facts_stored_before": 0, "facts_saved": 0, "not_results": 0,
                      "missing": 0, "no_url": 0, "downloaded": 0, "would_download": 0, "download_failed": 0, "bytes": 0, "facts": 0, "stopped": "",
                      "store_available": xbrl_store.enabled(sink), "dry_run": dry_run, "download": download, "interesting": {},
-                     "missing_rows": [], "failed": [], "no_url_companies": 0, "capped": False}
+                     "missing_rows": [], "failed": [], "no_url_companies": 0, "capped": False,
+                     "annual": annual, "annual_lists": 0, "annual_have": 0, "annual_saved": 0, "annual_missing": 0,
+                     "annual_downloaded": 0, "annual_bytes": 0, "annual_not_ind_as": 0, "annual_skipped": ""}
     stored_files = xbrl_store.stored_keys(sink)
     stored_facts = set(sink.list_objects(PREFIX))
 
@@ -383,8 +487,68 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         for name in interesting(Facts(doc)):
             summary["interesting"][name] = summary["interesting"].get(name, 0) + 1
 
+    def keep_annual(scrip: str, fy: str, basis: str, url: str, data: bytes) -> None:
+        doc = parse_annual_facts(data, scrip, url)
+        if doc is None:
+            summary["not_results"] += 1
+            return
+        size = len(dumps(doc))
+        if not dry_run:
+            save_annual(sink, scrip, fy, basis, doc)       # NSE's own year and basis name the file, as the "have" check looks it up
+        summary["annual_saved"] += 1
+        summary["annual_bytes"] += size
+        summary["facts"] += doc["n_facts"]
+
+    def annual_company(scrip: str, symbol: str) -> None:
+        if client is None:
+            summary["annual_skipped"] = "no NSE client: the annual-report list is one request a company"
+            return
+        try:
+            listing = client.annual_reports(symbol)
+            summary["annual_lists"] += 1
+        except SourceBlockedError:
+            raise
+        except Exception as exc:   # noqa: BLE001 - one company's list failing is a reason, not a stop
+            summary["failed"].append(f"{scrip} annual list: {type(exc).__name__}")
+            return
+        rows = [r for r in listing if is_ind_as(r.report_type)]
+        summary["annual_not_ind_as"] += len(listing) - len(rows)
+        keep_years = set(sorted({r.to_year for r in rows}, reverse=True)[:annual_years])
+        for row in (r for r in rows if r.to_year in keep_years):
+            fy = f"FY{row.to_year % 100:02d}"
+            if annual_key(scrip, fy, row.basis) in stored_facts and not force:
+                summary["annual_have"] += 1
+                continue
+            data = None
+            if xbrl_store.key(row.xbrl_url) in stored_files:
+                data = xbrl_store.get(sink, row.xbrl_url)
+            else:
+                summary["annual_missing"] += 1
+                summary["missing_rows"].append({"scrip": scrip, "symbol": symbol, "period": f"annual-{fy}", "basis": row.basis,
+                                                "url": row.xbrl_url, "reason": "file not stored"})
+                if download and dry_run:
+                    summary["would_download"] += 1
+                    summary["missing_rows"][-1]["reason"] = "file not stored (dry run: not downloaded)"
+                elif download:
+                    try:
+                        data = fetch_annual(sink, client, row.xbrl_url)
+                    except SourceBlockedError:
+                        raise
+                    except Exception as exc:   # noqa: BLE001
+                        summary["download_failed"] += 1
+                        summary["failed"].append(f"{scrip} annual {fy}: {type(exc).__name__}")
+                    else:
+                        summary["annual_downloaded"] += bool(data)
+                        if data is None:
+                            summary["download_failed"] += 1
+                            summary["failed"].append(f"{scrip} annual {fy}: no file served")
+            if data:
+                keep_annual(scrip, fy, row.basis, row.xbrl_url, data)
+
     try:
         for scrip, symbol in (companies[:limit] if limit else companies):
+            if annual:
+                annual_company(scrip, symbol)
             summary["companies"] += 1
             where = plan(sink.get_dossier(scrip), scrip, stored_files, stored_facts)
             summary["files_listed"] += sum(len(where[k]) for k in ("have", "todo", "missing"))
@@ -459,6 +623,12 @@ def render(summary: dict) -> str:
              f"downloaded this run            {summary['downloaded']}" + ("" if summary["download"] else " (download not asked for)")
              + (f" (dry run: {summary['would_download']} files would be downloaded, none was)" if summary["dry_run"] and summary["download"] else ""),
              f"not a results file             {summary['not_results']}"]
+    if summary.get("annual"):
+        lines += [f"annual reports (Ind AS only): list calls {summary['annual_lists']}, facts already stored {summary['annual_have']}, "
+                  f"written {summary['annual_saved']} ({summary['annual_bytes'] / 1000:.0f} KB gzipped), files not stored "
+                  f"{summary['annual_missing']}, downloaded {summary['annual_downloaded']}, not Ind AS (left out) {summary['annual_not_ind_as']}"]
+        if summary["annual_skipped"]:
+            lines.append("annual reports skipped: " + summary["annual_skipped"])
     if not summary["store_available"]:
         lines.append("this sink has no R2 XBRL store: no stored file can be read")
     if summary["download_failed"]:

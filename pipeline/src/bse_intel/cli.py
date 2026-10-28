@@ -1572,11 +1572,14 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     companies = _selected_companies(args, sink)
     if companies is None:
         return 2
-    if args.download and not args.dry_run:      # a dry run lists the files and makes no client, so no request at all
+    if (args.download and not args.dry_run) or args.annual:
+        # a dry run without --annual lists the files and makes no client, so no request at all; the annual-report list is a request
+        # a company (a list, not a file), so --annual builds one even for a dry run, which still fetches no file
         from .nse import NseClient
 
         with NseClient() as nse:
-            summary = xf.run(sink, companies, download=True, client=nse, force=args.force, dry_run=args.dry_run, limit=args.limit)
+            summary = xf.run(sink, companies, download=args.download, client=nse, force=args.force, dry_run=args.dry_run,
+                             limit=args.limit, annual=args.annual, annual_years=args.annual_years)
     else:
         summary = xf.run(sink, companies, download=args.download, force=args.force, dry_run=args.dry_run, limit=args.limit)
     print(xf.render(summary))
@@ -2422,6 +2425,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (of --scrips, else of the universe)")
     p.add_argument("--limit", type=int, help="at most N companies (the first N of the selection)")
     p.add_argument("--download", action="store_true", help="also download the files that are not stored (NSE, the seed's fetch and pace; counts toward FILE_CAP)")
+    p.add_argument("--annual", action="store_true", help="also keep the facts of the annual-report XBRL (Ind AS only, never BRSR): one NSE list request a company; a file is fetched only with --download")
+    p.add_argument("--annual-years", type=int, default=3, help="the latest N years of annual reports a basis (default 3; a file is about 7 MB)")
     p.add_argument("--force", action="store_true", help="read again the files whose facts are stored")
     p.add_argument("--dry-run", action="store_true", help="parse and count, write no facts")
     p.add_argument("--json", help="write the summary to this file")

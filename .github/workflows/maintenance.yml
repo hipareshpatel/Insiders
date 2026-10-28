@@ -95,7 +95,8 @@
 #   cross-check's complete screener view; no NSE request. It lists the filings whose file is not stored (not-stored.csv, with
 #   the url memory recorded) and, with `apply`, downloads those files through the seed's own fetch and pace, under `file_cap`
 #   (the first run: 100; the cap is a planned stop, not a failure; a run with `apply` is refused without `file_cap`, and it shares the
-#   NSE memory group `maint-nse-memory`, so it never runs beside a seed job's NSE traffic). `ids` = companies, `limit` = the N largest
+#   NSE memory group `maint-nse-memory`, so it never runs beside a seed job's NSE traffic; `annual` also keeps each company's
+#   annual-report XBRL, Ind AS only, as annual-<FY>-<basis>: one NSE list request a company, so it joins that group too, and a file is fetched only with `apply`). `ids` = companies, `limit` = the N largest
 #   by market cap (as for screener-crosscheck), `dry_run` = parse and count, write nothing (with `apply`: list the files, download none). summary.json (what is stored, bytes a file, which levy, lease or treasury lines the files
 #   carry) and not-stored.csv go up as the artifact `xbrl-facts`. Group maint-ro-xbrl-facts (`apply`: maint-nse-memory); writes nothing but raw/xbrl-facts/
 #   (and raw/xbrl/ for a downloaded file); no memory, card or branch change. screener-crosscheck takes `ids` (companies) and
@@ -270,6 +271,10 @@ on:
         description: memory-gaps-fill-bse only - fill only companies with at least this market cap (Rs Cr); empty means the universe's 500
         type: string
         default: ''
+      annual:
+        description: xbrl-facts only - also keep the annual-report XBRL (Ind AS only, never BRSR, the latest 3 years a basis), one NSE list request a company, so the run joins the NSE memory group; a file not stored is fetched only with apply
+        type: boolean
+        default: false
       file_cap:
         description: a test run's cap on NSE/BSE files (owner, 27 Oct 2026, the first test of a fetch is 100 files); empty means no cap
         type: string
@@ -283,7 +288,7 @@ concurrency:
   # groups by source and by what a job writes: the table in the header comment (a downloading xbrl-facts run is NSE traffic: the NSE memory group)
   group: >-
     ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
-    || (inputs.command == 'xbrl-facts' && inputs.apply) && 'maint-nse-memory'
+    || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
@@ -724,11 +729,13 @@ jobs:
           IDS: ${{ inputs.ids }}       # through the environment, never pasted into the script
           LIMIT: ${{ inputs.limit }}
           APPLY: ${{ inputs.apply }}
+          ANNUAL: ${{ inputs.annual }}
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/xbrl-facts"
           download=; if [ "$APPLY" = "true" ]; then download=--download; fi   # the files not stored: NSE, under FILE_CAP
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} $download ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/not-stored.csv" || code=$?
+          annual=; if [ "$ANNUAL" = "true" ]; then annual=--annual; fi        # the annual-report XBRL: a list request a company
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} $download $annual ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/not-stored.csv" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'xbrl-facts'

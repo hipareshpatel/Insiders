@@ -184,6 +184,7 @@ def parse_full(body: str) -> dict | None:
             for key, row in six.items():
                 page["quarters"][period][key] = row[i] if i < len(row) else None
     annual: dict[str, dict] = {}
+    annual_six: dict[str, dict] = {}
     pl = _section_table(body, "profit-loss")
     if pl:
         columns, rows, _ = pl
@@ -196,7 +197,16 @@ def parse_full(body: str) -> dict | None:
                 annual[year] = {"revenue": sales[i] if i < len(sales) else None,
                                 "pat": profit[i] if i < len(profit) else None,
                                 "eps": eps[i] if i < len(eps) else None}
+        # the same six lines as the quarters (Operating Profit, Other Income, Interest, Depreciation, PBT, Tax %), kept apart so
+        # ``annual`` keeps its three keys; read against the annual-report XBRL by the cross-check
+        six_year = {key: _row_of(rows, key) for key in SIX_LINES}
+        six_year["tax_pct"] = rows.get(TAX_ROW) or []
+        for i, column in enumerate(columns):
+            year = year_of(column)
+            if year:
+                annual_six[year] = {key: (row[i] if i < len(row) else None) for key, row in six_year.items()}
     page["annual"] = annual
+    page["annual_six"] = annual_six
     page["balance"], page["cash_flow"] = parse_balance_and_cash(body)
     # the sections as the page carries them (the ids), so a run says loudly when a stored page has none (28 Oct 2026)
     page["sections"] = {"balance_sheet": 'id="balance-sheet"' in body, "cash_flow": 'id="cash-flow"' in body}

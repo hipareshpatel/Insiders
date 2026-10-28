@@ -165,7 +165,7 @@ def test_memorys_own_excise_is_never_doubled_by_the_facts():
 def test_a_year_is_read_from_its_march_file_and_the_facts_are_fetched_only_for_a_gap():
     facts = loader({"Q4FY26": facts_doc(money("ExciseDuty", "Y", 12.0), money("ExciseDuty", "Q", 99.0))})
     figures = sc._figures(memory(), "CONSOLIDATED")[0]
-    got = sc.facts_extra(one_arg(facts), figures, "FY26")
+    got = sc.facts_extra(lambda p: facts(f"Q4{p}" if p.startswith("FY") else p, "CONSOLIDATED"), figures, "FY26")   # compare_company resolves a year
     assert got[("excise_duty", "FY26")]["value"] == 12.0 and facts.calls == ["Q4FY26"]     # the 12-month context, the Q4 file
     # a pair that matches never reads a facts file
     never = loader({})

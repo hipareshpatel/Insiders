@@ -202,6 +202,67 @@ def eps_variants(facts: Facts, end: date, months: int) -> dict[str, float]:
     return out
 
 
+# --- the annual columns -----------------------------------------------------------------------------------------------
+
+ANNUAL_EPS = ("BasicEarningsLossPerShareFromContinuingAndDiscontinuedOperations", "BasicEarningsLossPerShare")
+ASSOCIATES_ELEMENT = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+
+
+def year_figures(facts: Facts, end: date, months: int = 12) -> dict[str, tuple[float, str]]:
+    """Screener's annual profit and loss lines from one year's facts by the formulas reproduced to the paisa (docs/audit/
+    screener-five-2026-10-28.md, 11.2; ITC FY26: Sales 89,913.33 - 11,044.93 = 78,868.40), in crore, each with the elements it was
+    worked out from; a line whose elements the file lacks is absent. The facts are an annual report's own XBRL (an Ind AS file, with
+    its 12-month contexts) or the Q4 integrated results file's 12-month figures:
+
+    - ``revenue`` (Sales) = RevenueFromOperations - the Excise Duty (element or row; any other levy and discount the same way);
+    - ``finance_cost`` (Interest) = FinanceCosts + the finance-cost row of a financial-services business;
+    - ``ebitda`` (Operating Profit) = Sales - Expenses, Expenses = Expenses - FinanceCosts - depreciation - excise - that row;
+    - ``other_income`` = OtherIncome + ExceptionalItemsBeforeTax, ``other_income_with_associates`` the same plus the associates'
+      share (a named alternative, never a fit); ``depreciation``; ``pbt`` = ProfitBeforeTax, ``pbt_with_associates`` plus the share;
+    - ``pat`` = ProfitLossForPeriod (the whole profit, the web page's), ``pat_owners`` the owners' share (the Excel's), ``eps``."""
+    def cr(name: str) -> float | None:
+        return facts.cr(name, end=end, months=months)
+
+    out: dict[str, tuple[float, str]] = {}
+    revenue, expenses = cr("RevenueFromOperations"), cr("Expenses")
+    levies = usable({p: v for p, (v, _) in flow_parts(facts, end, months).items()}, revenue) if revenue is not None else {}
+    excise = levies.get("excise", 0.0)
+    fin = finance_services_cost(facts, end, months)
+    fin_cost, depreciation = cr("FinanceCosts"), cr("DepreciationDepletionAndAmortisationExpense")
+    if revenue is not None:
+        used = [p for p in FLOW_ORDER if p in levies]
+        out["revenue"] = (revenue - sum(levies.values()), "RevenueFromOperations" + "".join(f" - {p}" for p in used))
+    if fin_cost is not None:
+        out["finance_cost"] = (fin_cost + (fin[0] if fin else 0.0), "FinanceCosts" + (" + finance-cost row" if fin else ""))
+    if depreciation is not None:
+        out["depreciation"] = (depreciation, "DepreciationDepletionAndAmortisationExpense")
+    if None not in (revenue, expenses, fin_cost, depreciation):
+        sales = out["revenue"][0]
+        screener_expenses = expenses - fin_cost - depreciation - excise - (fin[0] if fin else 0.0)
+        out["ebitda"] = (sales - screener_expenses, "Sales - (Expenses - FinanceCosts - depreciation - excise - finance-cost row)")
+    other, exceptional = cr("OtherIncome"), cr("ExceptionalItemsBeforeTax")
+    share = cr(ASSOCIATES_ELEMENT)
+    if other is not None:
+        base = other + (exceptional or 0.0)
+        out["other_income"] = (base, "OtherIncome" + (" + ExceptionalItemsBeforeTax" if exceptional else ""))
+        if share:
+            out["other_income_with_associates"] = (base + share, out["other_income"][1] + " + associates' share")
+    pbt = cr("ProfitBeforeTax")
+    if pbt is not None:
+        out["pbt"] = (pbt, "ProfitBeforeTax")
+        if share:
+            out["pbt_with_associates"] = (pbt + share, "ProfitBeforeTax + associates' share")
+    for key, name in (("pat", "ProfitLossForPeriod"), ("pat_owners", "ProfitOrLossAttributableToOwnersOfParent")):
+        if cr(name) is not None:
+            out[key] = (cr(name), name)
+    for name in ANNUAL_EPS:
+        value = facts.get(name, end=end, months=months)
+        if value is not None:
+            out["eps"] = (float(value), name)
+            break
+    return out
+
+
 # --- views ------------------------------------------------------------------------------------------------------
 
 def subsets(parts: list[str]) -> list[tuple[str, ...]]:

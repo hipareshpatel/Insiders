@@ -1,6 +1,7 @@
 """The experimental numbers-first reader (pdf_numbers_first.py): small statements drawn with PyMuPDF, no OCR, no network."""
 
 from __future__ import annotations
+from datetime import date
 
 import pymupdf
 import pytest
@@ -998,3 +999,19 @@ def test_a_disputed_header_date_does_not_count_as_a_usable_date():
     for c in table.columns[3:5]:
         c.read_date, c.date = c.date or date(2026, 9, 30), None          # as column_kinds leaves a disputed column
     assert nf.usable_dates([table]) == 4
+
+
+def test_ocr_spellings_of_month_names_in_a_header_still_give_dates():
+    # NEWGEN Q2FY27: OCR read "30 Septemher 2026" and "30 Seplember 2025"; a word near no single month stays as it is
+    assert nf.header_dates("Quarter ended 30 Septemher 2026 30 Seplember 2025") == [date(2026, 9, 30), date(2025, 9, 30)]
+    assert nf.header_dates("30June 2026") == [date(2026, 6, 30)]
+    assert nf.header_dates("Number of shares 2026") == []
+    assert nf.mend_months("remember member employee") == "remember member employee"
+
+
+def test_amount_in_rupees_lakhs_line_names_the_unit_even_with_ocr_spellings():
+    # NEWGEN Q2FY27: "(Amunt in Rupees lakhs)" and "(Amount in Rupces lakhs)"; the unit word itself must be clear
+    assert nf.scan_units(["(Amunt in Rupees lakhs)"]) == {100}
+    assert nf.scan_units(["(Amount in Rupces lakhs)"]) == {100}
+    assert nf.scan_units(["{Amount in Runees lnkhs)"]) == set()
+    assert nf.scan_units(["Amount in kind lakhs"]) == set()

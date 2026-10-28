@@ -533,12 +533,35 @@ def _dates_in_text(text: str) -> list[date]:
 
 
 
+_MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november",
+                "december"]
+
+
+def mend_months(text: str) -> str:
+    """OCR's spelling of month names in a header ("Septemher", "Seplember", "Septfmher", NEWGEN Q2FY27): a word of five
+    letters or more that is close to one month's full name only (difflib ratio 0.8 or more, and nearer to it than to any
+    other month) is that month; a day glued to a month ("30June") is set apart."""
+    import difflib
+    text = re.sub(r"\b(\d{1,2})([A-Za-z]{3,9})\b", r"\1 \2", text)
+
+    def one(m: re.Match) -> str:
+        word = m.group(0)
+        scores = sorted(((difflib.SequenceMatcher(None, word.lower(), name).ratio(), name) for name in _MONTH_NAMES),
+                        reverse=True)
+        best, second = scores[0], scores[1]
+        if best[0] >= 0.8 and best[0] - second[0] >= 0.15:
+            return best[1].capitalize()
+        return word
+    return re.sub(r"\b[A-Za-z]{5,10}\b", one, text)
+
+
 def header_dates(text: str) -> list[date]:
     """The dates of a column's header text; when none parses, a year read a touch above its day ("September 2026 30," in
     PNGSREVA Q2FY27's OCR) is put after it, for a day that ends a period only and never "12 months" (fifteenth review:
     "March 2026 12 months" is not 12 March)."""
-    return _dates_in_text(text) or _dates_in_text(
+    found = _dates_in_text(text) or _dates_in_text(
         re.sub(r"\b([A-Za-z]{3,9}\.?)\s+(20\d\d)\s+(2[89]|3[01])\b(?!\s*months?),?", r"\1 \3, \2", text, flags=re.I))
+    return found or (_dates_in_text(mend_months(text)) if mend_months(text) != text else [])
 
 def typical_gap(words: list[Word], height: float) -> float:
     """The usual space between two words of a line on this page."""
@@ -669,6 +692,11 @@ _GLUED_UNIT = re.compile(r"^[(\[{]?\s*(?:[t₹{~`]|rs\.?|inr)\s*(crores?|lakhs?|
 _FIGURES_IN_UNIT = re.compile(r"^[(\[]?\s*(?:all\s+)?(?:figures|amounts?)\s+(?:are\s+)?in\s+(crores?|lakhs?|lacs?|millions?|mn|thousands?)"
                               r"(?:\s*(?:₹|rs\.?|inr))?\s*(?:$|[,)\]]|except\b|unless\b)", re.I)
 
+# "(Amount in Rupees lakhs)" with OCR's spellings of the words around the unit ("Amunt in Rupees lakhs", "Amount in Rupces
+# lakhs", NEWGEN Q2FY27): the whole short line; the unit word itself must be clear
+_AMOUNT_IN_RUPEES = re.compile(r"^[(\[{]?\s*am[a-z]{1,5}\s+in\s+r[a-z]{3,6}\s+(crores?|lakhs?|lacs?|millions?)\s*[)\]}]?$", re.I)
+
+
 def scan_units(lines: list[str]) -> set:
     """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
     data)"), as ``pdf_referee`` reads them; a unit it does not know is None."""
@@ -685,6 +713,8 @@ def scan_units(lines: list[str]) -> set:
         elif len(probe) <= 16 and (m := _GLUED_UNIT.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
         elif len(probe) <= 100 and (m := _FIGURES_IN_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
+        elif len(probe) <= 40 and (m := _AMOUNT_IN_RUPEES.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
     return found
 

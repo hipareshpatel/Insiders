@@ -912,3 +912,25 @@ def test_a_header_date_whose_year_ocr_read_before_the_day_is_read():
     head[1].y, head[2].y = 99.0, 100.5
     col = [nf.Column(300, 352, 326, 0), nf.Column(400, 452, 426, 1)]
     assert nf.column_dates(head, col, h, 2.0)[0] == date(2026, 9, 30)
+
+
+def test_a_gross_discontinued_row_above_its_net_is_not_a_subtotal():
+    # the fifteenth review: d (pre-tax), dt (tax), n = d - dt; "Profit for the period" = a + d leaves out dt and n, and d = dt + n
+    # made the gross row look like their subtotal
+    rows, want = pl()
+    a = want["pat"]
+    d, dt = [4.0, 3.0, 2.0, 9.0], [1.2, 0.9, 0.6, 2.7]
+    n = [round(x - y, 2) for x, y in zip(d, dt)]
+    rows = rows[:-1] + [(["Profit after tax from continuing operations"], a), (["Profit from discontinued operations"], d),
+                        (["Tax expense of discontinued operations"], dt), (["Profit from discontinued operations (net)"], n),
+                        (["Profit for the period"], [round(x + y, 2) for x, y in zip(a, d)])]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(round(a[0] + n[0], 2))), got
+
+
+def test_the_header_year_reorder_takes_only_a_day_that_ends_a_period():
+    from datetime import date
+    assert nf.header_dates("September 2026 30,") == [date(2026, 9, 30)]
+    for trap in ("Year ended March 2026 12 months", "Quarter ended September 2026 3 months ended", "Dec 2026 9 months",
+                 "September 2026 3"):
+        assert nf.header_dates(trap) == []

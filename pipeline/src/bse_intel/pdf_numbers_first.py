@@ -532,6 +532,14 @@ def _dates_in_text(text: str) -> list[date]:
     return _dates_in(re.sub(r"(?<=\d),(?=\d{4}\b(?!,\d))", ", ", text))   # not "30,2025,2026": two dates run together
 
 
+
+def header_dates(text: str) -> list[date]:
+    """The dates of a column's header text; when none parses, a year read a touch above its day ("September 2026 30," in
+    PNGSREVA Q2FY27's OCR) is put after it, for a day that ends a period only and never "12 months" (fifteenth review:
+    "March 2026 12 months" is not 12 March)."""
+    return _dates_in_text(text) or _dates_in_text(
+        re.sub(r"\b([A-Za-z]{3,9}\.?)\s+(20\d\d)\s+(2[89]|3[01])\b(?!\s*months?),?", r"\1 \3, \2", text, flags=re.I))
+
 def typical_gap(words: list[Word], height: float) -> float:
     """The usual space between two words of a line on this page."""
     gaps = []
@@ -591,10 +599,7 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     out: list[date | None] = []
     for items in mine:
         text = " ".join(t for _, _, t in sorted(items)).replace("_", " ").replace("|", " ")
-        found = _dates_in_text(text)
-        if not found:
-            # a year read a touch above its day ("September 2026 30," in PNGSREVA Q2FY27's OCR): month, day, then year
-            found = _dates_in_text(re.sub(r"\b([A-Za-z]{3,9}\.?)\s+(20\d\d)\s+(\d{1,2})\b,?", r"\1 \3, \2", text))
+        found = header_dates(text)
         out.append(found[-1] if found else None)
     return out
 
@@ -982,6 +987,8 @@ class Solver:
         if len(skipped) > 3:
             return False
         for s_row in subset:
+            if s_row < max(skipped):     # a subtotal stands below its parts (fifteenth review: a gross row is not one)
+                continue
             for signs in itertools.product((1, -1), repeat=len(skipped)):
                 if self.valid((s_row, tuple(zip(skipped, signs)))):
                     return True

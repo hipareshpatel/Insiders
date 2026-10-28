@@ -876,6 +876,16 @@ _REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:
 # a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
 # its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
 _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
+def not_revenue_line(label: str) -> bool:
+    """A line that cannot be a part of revenue: a gain or loss ("Foreign exchange gain (net)", SONACOMS Q2FY27) or OCR's
+    spelling of "Other income" ("Other incume", NEWGEN Q2FY27). "Dividend income", "Sale of services" may be parts (24th review)."""
+    import difflib
+    if re.search(r"\b(?:gains?|loss(?:es)?)\b", label, re.I) and not re.search(r"\b(?:sales?|services?|fees?|interest|dividend)\b", label, re.I):
+        return True
+    m = re.match(r"^\W*other\s+([a-z]{4,8})\W*$", label, re.I)
+    return bool(m) and difflib.SequenceMatcher(None, m[1].lower(), "income").ratio() >= 0.66
+
+
 # a whole revenue line: the label ends with the revenue's own name (a note or "(net)" in brackets may follow)
 _WHOLE_REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations?\W*(?:\((?:net|gross|refer[^)]*|notes?[^)]*)\)\W*)?$", re.I)
 
@@ -1169,7 +1179,8 @@ class Solver:
             first = rev_at[0]
             if any(self.cls[r] is None for r in rows[:first]):
                 rows_rev_ok = False
-            elif any(self.cls[r] is None for r in rows[first + 1:]) and not _WHOLE_REVENUE.search(self.t.rows[rows[first]].label):
+            elif any(self.cls[r] is None and not not_revenue_line(self.t.rows[r].label) for r in rows[first + 1:]) \
+                    or not _WHOLE_REVENUE.search(self.t.rows[rows[first]].label) and any(self.cls[r] is None for r in rows[first + 1:]):
                 rows_rev_ok = False
         if len(rows) == 2:
             # a revenue row right above the sum and outside it: the first row is not the revenue (22nd review: "Revenue from

@@ -1182,3 +1182,15 @@ def test_an_unnamed_line_below_a_whole_revenue_line_does_not_stop_the_revenue():
     oi = [round(o - f, 2) for o, f in zip(OTHER, fx)]
     pdf = statement(rows[:1] + [(["Foreign exchange gain (net)"], fx), (["Other income"], oi)] + rows[2:])
     assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+
+
+@pytest.mark.parametrize("second", ["Dividend income", "Sale of services", "Fees and commission", "Other operating income"])
+def test_a_whole_revenue_line_over_a_line_that_may_be_a_part_names_no_revenue(second):
+    # twenty-fourth review: "Revenue from operations" 70% over "Dividend income" 30% + "Other income" = "Total income"
+    rows, want = pl()
+    a = [round(v * 0.7, 2) for v in REVENUE]
+    b = [round(v - x, 2) for v, x in zip(REVENUE, a)]
+    got = read(statement([(["Revenue from operations"], a), ([second], b)] + rows[1:]), "revenue")
+    assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))
+    assert nf.not_revenue_line("Foreign exchange gain (net)") and nf.not_revenue_line("Other incume")
+    assert not nf.not_revenue_line(second)

@@ -161,15 +161,15 @@ def view_close(value: float, theirs: float, metric: str = "money") -> bool:
     return abs(value - theirs) <= max(VIEW_ABS, VIEW_REL * abs(theirs)) + 1e-9
 
 
-def _view_apart(ours: float, theirs: float, metric: str = "money", plain: tuple[float, float] = (MONEY_ABS, MONEY_REL)) -> bool:
-    """A view is tried only for a gap of more than twice the SMALLER of the plain-match tolerance (``plain``: 1 Cr or 0.5%) and the
-    view tolerance (``view_close``: 1.5 Cr or 0.05%). On a small line that is the plain one as before; on a large line the view's:
-    the older ``_apart`` (twice the plain tolerance, 1% of a line) shut views out of the gaps of 0.5% to 1% of a large line, TCS's
-    netted deferred tax among them (1,205 on 1,82,372 Cr), though the closing test is tight."""
+def _view_apart(ours: float, theirs: float, metric: str = "money") -> bool:
+    """A view is tried only for a gap of more than twice the view's OWN closing tolerance (``view_close``: 1.5 Cr or 0.05%): a part
+    that closes a gap within 1.5 Cr is no evidence when the gap is itself within 3 Cr. Any looser guard lets a small part "explain" a
+    small gap by chance (review, 28 Oct 2026: a 1.0 Cr part explained a 2.1 Cr gap on a 100 Cr line, and on the six quarterly lines
+    a 1.2 Cr gap was explained by any part from 0 to 2.7 Cr). On a large line the guard is still far tighter than the older
+    ``_apart`` (twice the plain tolerance, 1% of a line), so TCS's netted deferred tax (1,205 on 1,82,372 Cr) is tried."""
     if metric == "eps":
         return _apart(ours, theirs, "eps")
-    tol = min(max(plain[0], plain[1] * abs(theirs)), max(VIEW_ABS, VIEW_REL * abs(theirs)))
-    return abs(ours - theirs) > 2 * tol + 1e-9
+    return abs(ours - theirs) > 2 * max(VIEW_ABS, VIEW_REL * abs(theirs)) + 1e-9
 
 
 def _apart(ours: float, theirs: float, metric: str) -> bool:
@@ -330,7 +330,7 @@ def _six_apart(ours: float, theirs: float, metric: str) -> bool:
     """An explanation counts only for a gap of more than twice the tolerance (screener_explain.apart's rule): within it, a
     second line can match by chance."""
     if metric != "tax_pct":
-        return _view_apart(ours, theirs, "money", (SIX_ABS, SIX_REL))      # a money line's views close within ``view_close``
+        return _view_apart(ours, theirs)      # a money line's views close within ``view_close``
     return abs(ours - theirs) > 2 * TAX_PCT_ABS + 1e-9
 
 

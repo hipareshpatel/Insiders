@@ -33,6 +33,7 @@ from datetime import date
 
 from . import xbrl, xbrl_store
 from .periods import quarter_index
+from .timeutil import today_ist
 
 PREFIX = "raw/xbrl-facts/"
 VERSION = 1
@@ -171,7 +172,8 @@ def parse_annual_facts(data: bytes, scrip: str = "", url: str = "") -> dict | No
     and the facts are found by end date and months as for any file. None when the file is no XBRL instance, has no 12-month period,
     or holds none of revenue, profit or assets (a sustainability report, BRSR, is not an annual report's statements). The basis is
     the file's own NatureOfReportStandaloneConsolidated; ``fy`` names the year (``fy_of``) and ``year_end`` its last day. Text blocks
-    are cut at TEXT_MAX characters (the board's report and the notes run to many pages)."""
+    are cut at TEXT_MAX characters (the board's report and the notes run to many pages). L&T's standalone annual file has no
+    ``DescriptionOfOtherExpenses`` row, so its finance-services finance cost cannot be applied from the annual report."""
     try:
         root = ET.fromstring(data)
     except ET.ParseError:
@@ -426,6 +428,24 @@ MISSING_HEADER = "scrip,symbol,period,basis,url,reason".split(",")
 ANNUAL_YEARS = 3     # the latest years of annual reports kept a basis: a file is about 7 MB and screener's columns are read against few
 
 
+ANNUAL_FILING_DAYS = 60    # the earliest an annual report's XBRL can be listed after its March year end (the report itself comes in June)
+_ANNUAL_KEY = re.compile(r"annual-FY(\d{2})-(?:consolidated|standalone|unknown)\.json\.gz$")
+
+
+def newest_filed_year(today: date) -> int:
+    """The latest year NSE could have an annual report for: the last March year end at least ANNUAL_FILING_DAYS before ``today``
+    (28 Oct 2026: FY26, the year to 31 March 2026), as the two-digit year."""
+    year = today.year if date(today.year, 3, 31).toordinal() + ANNUAL_FILING_DAYS <= today.toordinal() else today.year - 1
+    return year % 100
+
+
+def annual_covered(scrip: str, stored_facts: set[str], today: date) -> bool:
+    """Whether the annual facts stored for the company already reach the newest year NSE could have filed, so the list need not
+    be asked for again (a rerun then makes no NSE request for it)."""
+    years = [int(m[1]) for k in stored_facts if k.startswith(f"{PREFIX}{scrip}/") and (m := _ANNUAL_KEY.search(k))]
+    return bool(years) and max(years) >= newest_filed_year(today)
+
+
 def is_ind_as(report_type: str) -> bool:
     """An Ind AS statements file; a BRSR (sustainability) file, or a type nobody named, is not."""
     kind = (report_type or "").upper()
@@ -448,7 +468,8 @@ def fetch_annual(sink, client, url: str) -> bytes | None:
 
 
 def run(sink, companies: list[tuple[str, str]], *, download: bool = False, client=None, force: bool = False,
-        dry_run: bool = False, limit: int | None = None, annual: bool = False, annual_years: int = ANNUAL_YEARS) -> dict:
+        dry_run: bool = False, limit: int | None = None, annual: bool = False, annual_years: int = ANNUAL_YEARS,
+        today: date | None = None) -> dict:
     """Facts of every stored results file of ``companies`` ((scrip, symbol) pairs); the filings whose file is not stored are
     listed. Reads R2 and memory only: no request goes to NSE unless ``download`` is set and a ``client`` is given, and then
     only for the files not stored, through seed._fetch (the cache, then R2, then ``client.download`` with its pacing, and R2
@@ -459,7 +480,9 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
     ``annual`` also keeps the facts of each company's annual-report XBRL (Ind AS only, never a BRSR file) for its latest
     ``annual_years`` years and each basis, as ``annual-<FY>-<basis>``. NSE's annual-report list is one request a company (a list, not
     a file: it does not count toward FILE_CAP), so it needs the ``client``; a file is read from R2 when stored, and fetched
-    (``fetch_annual``: NSE's pace, FILE_CAP) only with ``download`` and never in a dry run."""
+    (``fetch_annual``: NSE's pace, FILE_CAP) only with ``download`` and never in a dry run. The list is not asked for again for a
+    company whose stored annual facts already reach the newest year NSE could have filed (``annual_covered``), nor in a dry run
+    without ``download``, unless ``force``: ``annual_list_skipped`` counts both, ``annual_lists`` the requests made."""
     from . import seed
     from .nse import FileCapReached, SourceBlockedError, stop_reason
 
@@ -468,7 +491,8 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                      "store_available": xbrl_store.enabled(sink), "dry_run": dry_run, "download": download, "interesting": {},
                      "missing_rows": [], "failed": [], "no_url_companies": 0, "capped": False,
                      "annual": annual, "annual_lists": 0, "annual_have": 0, "annual_saved": 0, "annual_missing": 0,
-                     "annual_downloaded": 0, "annual_bytes": 0, "annual_not_ind_as": 0, "annual_skipped": ""}
+                     "annual_downloaded": 0, "annual_bytes": 0, "annual_not_ind_as": 0, "annual_skipped": "",
+                     "annual_list_skipped": {"covered": 0, "dry_run": 0}}
     stored_files = xbrl_store.stored_keys(sink)
     stored_facts = set(sink.list_objects(PREFIX))
 
@@ -500,6 +524,12 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         summary["facts"] += doc["n_facts"]
 
     def annual_company(scrip: str, symbol: str) -> None:
+        if not force and dry_run and not download:
+            summary["annual_list_skipped"]["dry_run"] += 1     # nothing would be fetched: no request for a list
+            return
+        if not force and annual_covered(scrip, stored_facts, today or today_ist()):
+            summary["annual_list_skipped"]["covered"] += 1     # the newest year is stored already
+            return
         if client is None:
             summary["annual_skipped"] = "no NSE client: the annual-report list is one request a company"
             return
@@ -624,7 +654,10 @@ def render(summary: dict) -> str:
              + (f" (dry run: {summary['would_download']} files would be downloaded, none was)" if summary["dry_run"] and summary["download"] else ""),
              f"not a results file             {summary['not_results']}"]
     if summary.get("annual"):
-        lines += [f"annual reports (Ind AS only): list calls {summary['annual_lists']}, facts already stored {summary['annual_have']}, "
+        skipped = summary["annual_list_skipped"]
+        lines += [f"annual-report list requests made {summary['annual_lists']}, skipped {skipped['covered']} (newest year already stored) "
+                  f"and {skipped['dry_run']} (dry run without download)"]
+        lines += [f"annual reports (Ind AS only): facts already stored {summary['annual_have']}, "
                   f"written {summary['annual_saved']} ({summary['annual_bytes'] / 1000:.0f} KB gzipped), files not stored "
                   f"{summary['annual_missing']}, downloaded {summary['annual_downloaded']}, not Ind AS (left out) {summary['annual_not_ind_as']}"]
         if summary["annual_skipped"]:

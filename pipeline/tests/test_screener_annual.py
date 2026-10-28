@@ -170,9 +170,47 @@ def test_annual_reports_list_one_request_a_company_and_download_only_with_the_fl
     assert "raw/xbrl-facts/1/annual-FY26-consolidated.json.gz" in sink.objects and "raw/xbrl-facts/1/annual-FY26-standalone.json.gz" in sink.objects
     assert xbrl_store.key(row(2026).xbrl_url) in sink.objects                                   # the raw file kept too (F191)
     assert "annual reports (Ind AS only)" in xbrl_facts.render(out)
-    # run again: the facts are stored, nothing is read or fetched
-    again = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, download=True)
-    assert again["annual_have"] == 4 and len(hits) == 4
+    # run again: the newest year is stored, so the list is not asked for again and nothing is read or fetched
+    lists = len(nse.lists)
+    again = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, download=True, today=date(2026, 10, 28))
+    assert len(nse.lists) == lists and again["annual_lists"] == 0 and again["annual_list_skipped"] == {"covered": 1, "dry_run": 0}
+    assert len(hits) == 4 and again["annual_saved"] == 0
+    # --force asks again, and finds every file's facts stored
+    forced = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, download=True, force=True, today=date(2026, 10, 28))
+    assert len(nse.lists) == lists + 1 and forced["annual_lists"] == 1 and len(hits) == 4
+
+
+def test_the_list_is_asked_for_only_when_a_newer_year_could_exist_and_a_rerun_makes_no_request(monkeypatch):
+    assert xbrl_facts.newest_filed_year(date(2026, 10, 28)) == 26 and xbrl_facts.newest_filed_year(date(2026, 5, 20)) == 25
+    assert xbrl_facts.newest_filed_year(date(2026, 5, 31)) == 26 and xbrl_facts.newest_filed_year(date(2027, 1, 5)) == 26
+    stored = {"raw/xbrl-facts/1/annual-FY26-consolidated.json.gz", "raw/xbrl-facts/1/annual-FY25-standalone.json.gz",
+              "raw/xbrl-facts/2/annual-FY25-consolidated.json.gz", "raw/xbrl-facts/3/Q2FY27-consolidated.json.gz"}
+    today = date(2026, 10, 28)
+    assert xbrl_facts.annual_covered("1", stored, today)                      # FY26 is the newest year there could be
+    assert not xbrl_facts.annual_covered("2", stored, today)                  # only FY25: a newer one may have been filed since
+    assert not xbrl_facts.annual_covered("3", stored, today)                  # quarterly facts only
+    assert xbrl_facts.annual_covered("2", stored, date(2026, 5, 20))          # in May FY25 is the newest possible
+    # three companies, one covered: a rerun asks for two lists
+    sink, hits = sink_for(), []
+    for scrip in ("2", "3"):
+        sink.objects[f"memory/{scrip}.json"] = json.dumps({"financial_metrics": []}).encode()
+    sink.objects["raw/xbrl-facts/1/annual-FY26-consolidated.json.gz"] = b"x"
+    sink.objects["raw/xbrl-facts/2/annual-FY25-consolidated.json.gz"] = b"x"
+    nse = AnnualNse([], hits)
+    out = xbrl_facts.run(sink, [("1", "A"), ("2", "B"), ("3", "C")], client=nse, annual=True, today=today)
+    assert nse.lists == ["B", "C"] and out["annual_lists"] == 2 and out["annual_list_skipped"] == {"covered": 1, "dry_run": 0}
+    assert "list requests made 2, skipped 1 (newest year already stored)" in xbrl_facts.render(out)
+
+
+def test_a_dry_run_without_download_asks_for_no_list_unless_forced():
+    sink, hits = sink_for(), []
+    nse = AnnualNse([row(2026)], hits)
+    dry = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, dry_run=True, today=date(2026, 10, 28))
+    assert nse.lists == [] and dry["annual_lists"] == 0 and dry["annual_list_skipped"] == {"covered": 0, "dry_run": 1}
+    forced = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, dry_run=True, force=True, today=date(2026, 10, 28))
+    assert nse.lists == ["ITC"] and forced["annual_lists"] == 1 and forced["annual_missing"] == 1 and hits == []
+    listed = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, dry_run=True, download=True, today=date(2026, 10, 28))
+    assert nse.lists == ["ITC", "ITC"] and listed["would_download"] == 1 and hits == []          # with --download the list shows what would be fetched
 
 
 def test_annual_download_stops_at_the_file_cap_and_a_dry_run_fetches_nothing(monkeypatch):
@@ -197,9 +235,12 @@ def test_the_cli_annual_flag_builds_a_client_even_for_a_dry_run_and_a_plain_run_
     built = []
     monkeypatch.setattr("bse_intel.nse.NseClient", lambda *a, **k: built.append(1) or AnnualNse([row(2026)], hits))
     assert cli.main(["xbrl-facts", "--annual", "--dry-run", "--json", str(tmp_path / "s.json")]) == 0
-    assert built == [1] and hits == []
-    assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["annual_lists"] == 1
-    assert cli.main(["xbrl-facts", "--json", str(tmp_path / "t.json")]) == 0 and built == [1]
+    assert built == [] and hits == []                                        # a dry run without --download asks for no list
+    assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["annual_list_skipped"]["dry_run"] == 1
+    assert cli.main(["xbrl-facts", "--annual", "--dry-run", "--force", "--json", str(tmp_path / "u.json")]) == 0
+    assert built == [1] and hits == [] and json.loads((tmp_path / "u.json").read_text(encoding="utf-8"))["annual_lists"] == 1
+    assert cli.main(["xbrl-facts", "--annual", "--dry-run", "--download", "--json", str(tmp_path / "v.json")]) == 0 and built == [1, 1]
+    assert cli.main(["xbrl-facts", "--json", str(tmp_path / "t.json")]) == 0 and built == [1, 1]
 
 
 # --- the cross-check: screener's annual columns --------------------------------------------------------------------------------------

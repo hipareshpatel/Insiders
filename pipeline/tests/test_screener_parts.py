@@ -179,3 +179,40 @@ def test_right_of_use_assets_are_a_row_of_other_non_current_assets_or_a_separate
     with_rou = {**base, "right_of_use": (30.0, "e")}
     assert sc._bs_views({}, "fixed_assets", 700.0, with_rou)[0][0] == pytest.approx(790.0)
     assert sc._bs_views({}, "fixed_assets", 700.0, base)[0][0] == pytest.approx(760.0)
+
+
+def test_a_view_is_tried_only_past_twice_its_own_tolerance_on_a_small_line():
+    assert sc._view_apart(100.0, 103.2) and not sc._view_apart(100.0, 102.1) and not sc._view_apart(100.0, 103.0)
+    # a 1.0 Cr part would "explain" a 2.1 Cr gap on a 100 Cr line (it closes within 1.5): it is not tried
+    cls, _ = sc.classify_balance("borrowings", 100.0, 102.1, [], lambda: [(101.0, "borrowings_plus_lease_liabilities")], False)
+    assert not cls.startswith(sc.VIEW)
+    cls, _ = sc.classify_balance("borrowings", 100.0, 103.2, [], lambda: [(101.9, "borrowings_plus_lease_liabilities")], False)
+    assert cls == "matches_screener_view:borrowings_plus_lease_liabilities"          # a 3.2 Cr gap is past the guard
+    # the six quarterly lines: a 1.2 Cr gap was explained by any part from 0 to 2.7 Cr
+    views = {"other_income": [(11.6, "exceptional_in_other_income")]}                 # ours 10 + a 1.6 Cr part, screener 11.2
+    cls, _ = sc.classify_six("other_income", 10.0, 11.2, {}, "Q4FY26", views)
+    assert not cls.startswith(sc.VIEW)
+    cls, _ = sc.classify_six("other_income", 10.0, 13.5, {}, "Q4FY26", {"other_income": [(13.4, "exceptional_in_other_income")]})
+    assert cls == "matches_screener_view:exceptional_in_other_income"                 # a 3.5 Cr gap is past it
+
+
+def test_shuffled_parts_on_small_lines_explain_far_fewer_gaps_than_the_looser_guard_did():
+    """Lines of 50 to 150 Cr, two parts of 0.3 to 2 Cr: another company's parts set against each gap. The guard used to be twice the
+    smaller of the plain and the view tolerance (2 Cr here): it let the shuffled parts explain 371 of 600 gaps (62%); past twice the
+    view's own tolerance (3 Cr) they explain 83 (14%), and every one of those gaps is a real gap of more than 3 Cr."""
+    rnd = random.Random(28)
+    n = 600
+    cos = [(rnd.uniform(50, 150), rnd.uniform(0.3, 2.0), rnd.uniform(0.3, 2.0)) for _ in range(n)]
+
+    def loose(ours, theirs):
+        tol = min(max(1.0, 0.005 * abs(theirs)), max(1.5, 0.0005 * abs(theirs)))
+        return abs(ours - theirs) > 2 * tol + 1e-9
+
+    new = old = 0
+    for i, (ours, a, b) in enumerate(cos):
+        theirs = round(ours + a + b, 1)
+        _, other_a, other_b = cos[(i + 101) % n]
+        closes = sc.view_close(ours + other_a + other_b, theirs) and not sc._close(ours, theirs, "money")
+        new += closes and sc._view_apart(ours, theirs)
+        old += closes and loose(ours, theirs)
+    assert new / n < 0.20 and new < old / 3

@@ -159,8 +159,9 @@ def test_an_associates_share_under_5_cr_does_not_explain_other_income():
     # shuffle test, run 40505771830: a 1 Cr floor let another company's share close 6.6% as many gaps as the real ones
     small = run_one({"other_income": 10.0, "share_associates": 3.0}, [("Other Income", [13])])
     assert klass(small, "other_income") != "matches_screener_view:associates_in_other_income"
-    pbt = run_one({"pbt": 100.0, "share_associates": 3.0}, [("Profit before tax", [103])])
-    assert klass(pbt, "pbt") == "matches_screener_view:associates_in_pbt"   # the PBT rule keeps its 1 Cr floor (4.3%)
+    # the PBT rule keeps its 1 Cr floor; a view is tried only for a gap past twice its own tolerance (3 Cr), so the share is 4 Cr here
+    pbt = run_one({"pbt": 100.0, "share_associates": 4.0}, [("Profit before tax", [104])])
+    assert klass(pbt, "pbt") == "matches_screener_view:associates_in_pbt"
 
 
 def test_a_small_associates_share_with_no_exceptional_items_leaves_no_empty_view():

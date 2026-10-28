@@ -232,11 +232,7 @@ def test_real_run_writes_changed_dossiers_resumes_and_a_second_run_writes_nothin
     assert part["skipped_resumed"] == 1 and part["companies"] == 2 and sink.puts == ["3"]
 
 
-def test_a_backup_that_does_not_read_back_stops_the_run_with_nothing_written():
-    import pytest
-
-    from bse_intel.backup import BackupError
-
+def test_a_backup_that_does_not_read_back_stops_the_run_but_still_returns_its_report():
     class Garbles(Sink):
         def get_object(self, key):
             return b"garbled" if key.endswith(".json") and not key.endswith("meta.json") and key in self.objects else super().get_object(key)
@@ -244,9 +240,9 @@ def test_a_backup_that_does_not_read_back_stops_the_run_with_nothing_written():
     base = sink_of()
     sink = Garbles(base.dossiers, base.rows)
     before = json.dumps(sink.dossiers, sort_keys=True)
-    with pytest.raises(BackupError):
-        ml.label_all(sink, sink.list_dossiers(), False, ml.load_cards(sink))
-    assert sink.puts == [] and json.dumps(sink.dossiers, sort_keys=True) == before and sink.kv == {}
+    report = ml.label_all(sink, sink.list_dossiers(), False, ml.load_cards(sink))
+    assert report["error"].startswith("BackupError") and report["failed"] and report["companies"] == 1   # stopped at the first company
+    assert sink.puts == [] and json.dumps(sink.dossiers, sort_keys=True) == before and sink.kv == {}   # no write, no resume point
 
 
 def test_a_real_run_saves_each_dossier_before_it_is_written():

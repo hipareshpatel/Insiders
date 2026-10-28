@@ -307,10 +307,13 @@ def label_all(sink, scrips: list[str], dry_run: bool, cards: dict[str, dict], re
                     if not dry_run:
                         try:
                             keep_concurrent_writes(merged, dossier, sink.get_dossier(scrip))
-                            backup.dossier(scrip)
+                            backup.dossier(scrip, merged)
                             sink.put_dossier(scrip, merged)
-                        except BackupError:
-                            raise   # a backup that does not read back stops the run: nothing more is written
+                        except BackupError as exc:   # nothing more is written; the report so far is returned (and saved by the command)
+                            report["failed"].append(f"{scrip}: {exc}"[:200])
+                            report["error"] = f"{type(exc).__name__}: {exc}"[:300]
+                            log.error("label-memory stopped: %s", exc)
+                            break
                         except Exception as exc:   # noqa: BLE001 - one company's failed write must not stop the run
                             report["failed"].append(f"{scrip}: write {type(exc).__name__}: {exc}"[:200])
                             log.warning("label-memory %s write failed: %s", scrip, exc)
@@ -318,6 +321,8 @@ def label_all(sink, scrips: list[str], dry_run: bool, cards: dict[str, dict], re
                 report["last"] = scrip
                 if not dry_run and not report["failed"]:
                     sink.kv_set(RESUME_KEY, scrip, now_iso())   # only while nothing failed, so a failure is retried
+            if report.get("error"):
+                break
     return report
 
 

@@ -87,6 +87,15 @@ def test_a_class_b_company_above_the_cut_off_is_filled_and_labelled_bse():
     assert "Q1FY27" not in mg.check(sink.dossiers["1"], TODAY)["missing"]
 
 
+def test_a_backup_that_does_not_read_back_stops_the_fill_but_returns_the_outcome_and_marks_nothing_handled():
+    sink, report, symbols, nse, bse = setup({"1": company("NIRLON", 900.0), "2": company("OTHER", 900.0)})
+    real = sink.get_object
+    sink.get_object = lambda key: b"garbled" if key.startswith("backup/") and not key.endswith("meta.json") and real(key) else real(key)
+    out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
+    assert out["error"].startswith("BackupError") and out["figures_written"] == 0 and sink.writes == 0 and out["failed"]
+    assert "1" not in json.loads(sink.kv.get(bf.TRIED_KEY) or "[]") and bse.listed == ["1"]   # stopped at the first company
+
+
 def test_market_cap_filter_skips_small_and_unknown_without_asking_anyone():
     companies = {"1": company("SMALL", 120.0), "2": company("UNKNOWN", None), "3": company("EDGE", 500.0)}
     sink, report, symbols, nse, bse = setup(companies)

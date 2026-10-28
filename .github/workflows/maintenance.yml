@@ -2,8 +2,9 @@
 # - refresh-card-blocks: every stored card's code blocks rebuilt from memory by today's code (card_refresh.py);
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
 # - restore: puts a backup (R2 backup/<job>-<time>/, saved before every write of refresh-card-blocks, label-memory-apply,
-#   screener-fill-apply, memory-gaps-fill-bse --apply and restated-pdf) back for the named companies / cards (backup.py,
-#   restore.py); with the `dry_run` input on it only lists what differs; an empty `backup` lists the backups;
+#   screener-fill-apply, memory-gaps-fill-bse --apply and restated-pdf, and before a named seed-memory or requeue-failed --ids)
+#   back for the named companies / cards, keeping what was written since (backup.py, restore.py). It writes only when
+#   `restore_mode` is apply or apply-force (default preview); an empty `backup` lists the backups;
 # - export-held: every held card into docs/audit/live/ on the working branch, for the live reviews (the public site
 #   does not serve them);
 # - export-critic: the shadow critic's verdicts of the last two days (R2 evidence/critic/) into docs/audit/live/, so the
@@ -191,6 +192,11 @@ on:
         description: restore only - put back these companies' memory and cards (scrip codes, comma separated)
         type: string
         default: ''
+      restore_mode:
+        description: restore only - preview (default; writes nothing), apply (puts back what the job changed and nobody has changed since), apply-force (also what was changed since; and a backup with no after-state), seal (saves the current state as the after-state of a requeue-failed backup, once the live run has read the filings)
+        type: choice
+        options: [preview, apply, apply-force, seal]
+        default: preview
       ids:
         description: restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
@@ -228,7 +234,7 @@ on:
         type: boolean
         default: false
       dry_run:
-        description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned, restore)
+        description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned)
         type: boolean
         default: false
       min_mcap_cr:
@@ -309,12 +315,16 @@ jobs:
           BACKUP: ${{ inputs.backup }}   # through the environment, never pasted into the script
           SCRIPS: ${{ inputs.scrips }}
           IDS: ${{ inputs.ids }}
-          MODE: ${{ inputs.dry_run && 'dry' || 'apply' }}   # dry run only while the dry_run input is on ('' would be falsy here)
+          MODE: ${{ inputs.restore_mode }}   # a restore writes only on an explicit apply, apply-force or seal; the default is a preview
         run: |
           if [ -z "$BACKUP" ]; then "$RUNNER_TEMP/venv/bin/python" -m bse_intel restore --list; exit 0; fi
           args=(--backup "$BACKUP")
-          if [ "$MODE" = apply ]; then args+=(--apply); fi
-          if [ "$IDS" = all ]; then args+=(--all); elif [ -n "$IDS" ]; then args+=(--news-ids "$IDS"); fi
+          case "$MODE" in
+            apply) args+=(--apply) ;;
+            apply-force) args+=(--apply --force) ;;
+            seal) exec "$RUNNER_TEMP/venv/bin/python" -m bse_intel restore --seal --backup "$BACKUP" ;;
+          esac
+          if [ "${IDS,,}" = all ]; then args+=(--all); elif [ -n "$IDS" ]; then args+=(--news-ids "$IDS"); fi
           if [ -n "$SCRIPS" ]; then args+=(--scrips "$SCRIPS"); fi
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel restore "${args[@]}"
       - name: Refresh company summaries

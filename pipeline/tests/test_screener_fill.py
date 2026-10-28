@@ -246,6 +246,16 @@ def test_apply_writes_labelled_figures_and_a_second_run_skips_the_company():
         assert sf.run(sink, report, symbols, client, restart=True)["requests_made"] == 2   # a dry run keeps its own list
 
 
+def test_a_backup_that_does_not_read_back_stops_the_fill_but_returns_what_it_did_and_marks_nothing_tried():
+    sink, report, symbols, pages = setup_run()
+    real = sink.get_object
+    sink.get_object = lambda key: b"garbled" if key.startswith("backup/") and not key.endswith("meta.json") and real(key) else real(key)
+    with sf.ScreenerClient(transport=transport(pages, []), sleep=lambda s: None) as client:
+        out = sf.run(sink, report, symbols, client, apply=True)
+    assert out["error"].startswith("BackupError") and out["written"] == 0 and sink.puts == 0 and out["failed"]
+    assert json.loads(sink.kv_get(sf.TRIED_KEY) or "[]") == []             # the company is tried again next run
+
+
 def test_shards_split_the_gap_companies_and_the_time_budget_stops_the_run():
     sink, report, symbols, pages = setup_run()
     with sf.ScreenerClient(transport=transport(pages, []), sleep=lambda s: None) as client:

@@ -19,7 +19,7 @@ import logging
 
 from pydantic import ValidationError
 
-from .backup import RunBackup
+from .backup import RunBackup, card_after_row
 from .call_summary import card_takeaways, remember_call_points
 from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
@@ -284,7 +284,7 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
             batch.append({**out, "impact_level": impact, "card": new})
             stored_rows.append(row)
         if batch and not dry_run:
-            backup.cards(stored_rows)   # raises when it does not read back: nothing is written
+            backup.cards(stored_rows, [card_after_row(b) for b in batch])   # raises when it does not read back: nothing is written
             written += sink.execute("cards_upsert", batch) or 0
         elif batch:
             written += len(batch)
@@ -292,7 +292,7 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
             break
     if not dry_run:
         for scrip in dirty:
-            backup.dossier(scrip)
+            backup.dossier(scrip, dossiers[scrip])
         for scrip in dirty:
             sink.put_dossier(scrip, dossiers[scrip])
     return {"cards": seen, "changed": written, "failed": failed, "by_block": changed_keys, "dry_run": dry_run,

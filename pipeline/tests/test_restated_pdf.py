@@ -172,6 +172,20 @@ def test_the_maintenance_pass_reads_the_text_layer_and_stores_what_it_proves():
     assert rp.run(nse, sink, {"1": "X"}, quarters=1)["stored"] == 0   # nothing new: no write
 
 
+def test_a_backup_that_does_not_read_back_stops_the_pass_but_returns_the_stats_so_far():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    nse = FakeNse([filing(url=url)], {url: make_pdf(CONSOLIDATED_Q4)})
+
+    class Garbles(Sink):
+        def get_object(self, key):
+            return b"garbled" if key.endswith(".json") and not key.endswith("meta.json") and key in self.objects else super().get_object(key)
+
+    sink = Garbles(dossier())
+    stats = rp.run(nse, sink, {"1": "X", "2": "Y"}, quarters=1)
+    assert stats["error"].startswith("BackupError") and stats["stored"] == 0 and sink.puts == 0
+    assert stats["companies"] == 1 and stats["restated"] == 1 and stats["last_done"] is None   # company 2 was never started
+
+
 def test_a_comparative_memory_holds_no_original_for_never_clears_a_restatement():
     """Review of #168: only a figure compared with memory's original and found the same clears an older restatement."""
     d = stored(dossier())

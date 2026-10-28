@@ -2,14 +2,20 @@
 
 Memory had only the weekly export to the `backups` git branch and stored cards had no backup at all (owner, 28 Oct 2026:
 "an undo for data writes"). A job that rewrites stored data makes a ``RunBackup`` and saves, before each write, the exact
-rows it is about to change, to R2 ``backup/<job>-<UTC time>/``:
+rows it is about to change, to R2 ``backup/<job>-<UTC time>/``, with the state it is about to write beside them:
 
-* ``memory/<scrip>.json``: the company's dossier as stored (JSON ``null`` when it had none, which a restore deletes);
-* ``cards/<part>.json``: ``{"rows": [...]}``, card rows as ``export_cards`` returns them (``card_json`` still a string).
+* ``memory/<scrip>.json``: the company's dossier as stored (JSON ``null`` when it had none);
+* ``cards/<part>.json``: ``{"rows": [...]}``, card rows as ``export_cards`` returns them (``card_json`` still a string);
+* ``after/memory/<scrip>.json`` and ``after/cards/<part>.json``: the same, as the job wrote them.
 
-Each object is read back and compared before the write goes ahead; a mismatch raises ``BackupError`` and the job writes
-nothing more (the pattern of prune_companies.apply). Only what the run changes is saved, a dossier once per run (its first
-backup is the state before the run). ``python -m bse_intel restore`` puts a backup back (restore.py)."""
+A restore (restore.py) puts the "before" back only where the stored value is still the "after": what any other writer
+stored since is left alone. Each object is read back and compared before the write goes ahead; a mismatch raises
+``BackupError`` and the job writes nothing more (the pattern of prune_companies.apply). Only what the run changes is saved,
+a dossier's "before" once per run (its first backup is the state before the run), its "after" at each write.
+
+Runs whose work is done elsewhere (seed-memory for named companies; requeue-failed, whose filings the live run re-reads
+later) take a snapshot of the named companies' dossiers and their cards first (``start_scope``) and the "after" at the end
+(``save_after``, also ``restore --seal`` once the live run has re-read the filings)."""
 
 from __future__ import annotations
 
@@ -18,6 +24,10 @@ from datetime import datetime, timezone
 
 PREFIX = "backup/"
 META = "meta.json"
+AFTER = "after/"
+PAGE = 50
+SCAN = 100
+NO_AFTER = object()   # dossier(): no after-state given (None is one: the job deleted the dossier)
 
 
 class BackupError(RuntimeError):
@@ -44,6 +54,13 @@ class RunBackup:
         self._parts = 0
         self._started = False
 
+    @classmethod
+    def attach(cls, sink, prefix: str) -> "RunBackup":
+        """The folder of an earlier run, to add its after-state to."""
+        backup = cls(sink, prefix.strip("/").split("/", 1)[-1])
+        backup.prefix, backup._started = prefix.rstrip("/") + "/", True
+        return backup
+
     def save(self, name: str, body: bytes) -> str:
         """Write one object under the run's prefix, read it back, and raise when it differs."""
         if not self._started:
@@ -64,20 +81,86 @@ class RunBackup:
             raise BackupError(f"backup {key} did not read back as written: nothing more is written")
         return key
 
-    def cards(self, rows: list[dict]) -> None:
-        """Save the stored card rows a page is about to change (as read, not as they will be written)."""
+    def cards(self, rows: list[dict], after: list[dict] | None = None) -> None:
+        """Save the stored card rows a page is about to change (as read, not as they will be written), and ``after``: the
+        rows as they will be written, in the same shape (``card_json`` a string)."""
         if not rows:
             return
         self._parts += 1
         self.save(f"cards/{self._parts:05d}.json", encode({"rows": rows}))
+        if after is not None:
+            self.save(f"{AFTER}cards/{self._parts:05d}.json", encode({"rows": after}))
         self.card_rows += len(rows)
 
-    def dossier(self, scrip: str) -> None:
-        """Save the company's dossier as stored now, once per run: call it right before the job's put_dossier."""
-        if scrip in self.dossiers:
-            return
-        self.save(f"memory/{scrip}.json", encode(self.sink.get_dossier(scrip)))
-        self.dossiers.add(scrip)
+    def dossier(self, scrip: str, after=NO_AFTER) -> None:
+        """Save the company's dossier as stored now (once per run) and, with ``after``, the dossier about to be written
+        (every time, the last is kept). Call it right before the job's put_dossier."""
+        if scrip not in self.dossiers:
+            self.save(f"memory/{scrip}.json", encode(self.sink.get_dossier(scrip)))
+            self.dossiers.add(scrip)
+        if after is not NO_AFTER:
+            self.save(f"{AFTER}memory/{scrip}.json", encode(after))
 
     def summary(self) -> dict | None:
         return {"prefix": self.prefix, "dossiers": len(self.dossiers), "cards": self.card_rows} if self._started else None
+
+
+def card_after_row(batch_row: dict) -> dict:
+    """A ``cards_upsert`` row (``card`` an object) as an ``export_cards`` row (``card_json`` a string)."""
+    row = {k: v for k, v in batch_row.items() if k != "card"}
+    row["card_json"] = json.dumps(batch_row["card"], ensure_ascii=False)
+    return row
+
+
+def scan_cards(sink, scrips=(), news_ids=()) -> list[dict]:
+    """Stored card rows of the named companies or news ids (export_cards, keyset-paged over every card)."""
+    scrips, news_ids = set(scrips), set(news_ids)
+    found: list[dict] = []
+    if not (scrips or news_ids):
+        return found
+    after = ["", ""]
+    while True:
+        rows = sink.query("export_cards", [after[0], after[1], SCAN])
+        found += [r for r in rows if r["scrip_code"] in scrips or r["news_id"] in news_ids]
+        if len(rows) < SCAN:
+            return found
+        after = [rows[-1]["filed_at"], rows[-1]["news_id"]]
+
+
+def start_scope(sink, job: str, scrips=(), news_ids=(), cards_of_scrips: bool = False) -> RunBackup:
+    """A run that cannot back up row by row (it changes what it does not know in advance): save, before it starts, the
+    dossiers of the named companies and the cards of the named news ids (and of the companies, with ``cards_of_scrips``).
+    The companies of named cards are included. Raises BackupError before anything has run if a copy does not read back."""
+    backup = RunBackup(sink, job)
+    scrips = set(scrips)
+    backup.missing_ids = []
+    rows = scan_cards(sink, scrips if cards_of_scrips else (), news_ids)
+    scrips |= {r["scrip_code"] for r in rows if r["news_id"] in set(news_ids)}
+    backup.missing_ids = sorted(set(news_ids) - {r["news_id"] for r in rows})   # no stored card: its company is not known
+    for scrip in sorted(scrips):
+        backup.dossier(scrip)
+    for at in range(0, len(rows), PAGE):
+        backup.cards(rows[at:at + PAGE])
+    return backup
+
+
+def save_after(sink, prefix: str) -> dict:
+    """The after-state of a backup made by ``start_scope``: the current dossiers and card rows of what it holds. Refuses a
+    backup that has an after-state already (a job's own, more exact one is never replaced)."""
+    prefix = prefix.rstrip("/") + "/"
+    keys = sink.list_objects(prefix)
+    if any(k.startswith(prefix + AFTER) for k in keys):
+        raise BackupError(f"{prefix} has an after-state already")
+    scrips = sorted(k[len(prefix + "memory/"):-len(".json")] for k in keys if k.startswith(prefix + "memory/"))
+    ids: list[str] = []
+    for k in keys:
+        if k.startswith(prefix + "cards/"):
+            ids += [r["news_id"] for r in json.loads(sink.get_object(k))["rows"]]
+    backup = RunBackup.attach(sink, prefix)
+    for scrip in scrips:
+        backup.save(f"{AFTER}memory/{scrip}.json", encode(sink.get_dossier(scrip)))
+    rows = scan_cards(sink, news_ids=ids)
+    for n, at in enumerate(range(0, len(rows), PAGE), 1):
+        backup.save(f"{AFTER}cards/{n:05d}.json", encode({"rows": rows[at:at + PAGE]}))
+    backup.save(f"{AFTER}sealed.json", encode({"at": datetime.now(timezone.utc).isoformat(timespec="seconds")}))
+    return {"prefix": prefix, "dossiers": len(scrips), "cards": len(rows)}

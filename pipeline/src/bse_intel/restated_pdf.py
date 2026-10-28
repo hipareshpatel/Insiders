@@ -17,7 +17,7 @@ import re
 from datetime import datetime, timezone
 
 from . import pdf_referee as pr
-from .backup import RunBackup
+from .backup import BackupError, RunBackup
 from .dossier import keep_concurrent_writes
 from .periods import prior_quarter_period, prior_year_period
 
@@ -274,7 +274,12 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         if merge(dossier, records, cleared):
             dossier["restated_checked_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
             keep_concurrent_writes(dossier, read, sink.get_dossier(scrip))
-            backup.dossier(scrip)
+            try:
+                backup.dossier(scrip, dossier)
+            except BackupError as exc:   # nothing more is written; the stats so far are returned, this company is not done
+                stats["error"] = f"{type(exc).__name__}: {exc}"[:300]
+                log.error("restated-pdf stopped: %s", exc)
+                break
             sink.put_dossier(scrip, dossier)
             stats["stored"] += 1
         stats["last_done"] = scrip

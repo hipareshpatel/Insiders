@@ -77,10 +77,19 @@ _GROUP_WORDS = re.compile(r"subsidiar|\bgroup\b|results|financial|statements?\b|
                           r"|\bbasis\b|holding\s+company", re.I)
 
 
+_NO_SUBSIDIARY = re.compile(r"(?:does\s+not\s+have|has\s+no|have\s+no|not\s+having)\s+(?:any\s+)?subsidiar", re.I)
+_NOT_APPLICABLE = re.compile(r"[^.]{0,120}?\bnot\s+applicable", re.I | re.S)
+
+
 def names_consolidated(text: str) -> bool:
     """Whether ``text`` says "consolidated" of the accounts: every use counts but a verb in prose with no group word within about
-    eight words either side."""
+    eight words either side, and, on a page that says the company has no subsidiary, a use that the same sentence calls not
+    applicable ("...does not have any subsidiary ... Accordingly, preparation of consolidated financial results is not
+    applicable", ORIENTCEM Q2FY27)."""
+    no_subsidiary = bool(_NO_SUBSIDIARY.search(text))
     for m in _CONS_WORD.finditer(text):
+        if no_subsidiary and _NOT_APPLICABLE.match(text, m.end()):
+            continue
         verb = _CONS_VERB.search(text, max(0, m.start() - 12), m.end())
         if not verb or verb.end() != m.end():
             return True

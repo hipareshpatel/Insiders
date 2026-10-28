@@ -283,6 +283,7 @@ class Column:
     date: date | None = None
     kind: str | None = None        # quarter, half, nine, year (None: not told)
     kind_confident: bool = False
+    whole: bool = False            # a column of small whole figures found by ``whole_number_columns``
     read_date: date | None = None  # the header's date as read, kept when the kinds disagree (only the half-year sum uses it)
 
 
@@ -347,6 +348,47 @@ def find_columns(cells: list[tuple[Word, Cell]], height: float) -> tuple[list[Co
     return columns, best[1]
 
 
+def whole_number_columns(cells: list[tuple[Word, Cell]], columns: list[Column], align: str, words: list[Word],
+                         height: float) -> list[Column]:
+    """Columns of small whole figures with no comma or decimals ("565 604 643" in crore, ORIENTCEM Q2FY27), which the strict
+    figures alone do not make: a group of such figures that lines up as a column does, is about as long as the strict
+    columns (six in ten of their median length) and stands on their grid (the strict columns' spacing, within a quarter of
+    it). It needs two strict columns to set the grid, and most of its figures must have a word of letters to their left on
+    their line (the row's label): a serial-number column ("1", "2", ... left of the labels) stands on the grid too but has
+    nothing to its left. A note column stands off the grid as a rule, and a column with no date or whose arithmetic fails
+    gives no answer anyway."""
+    if len(columns) < 2:
+        return []
+    tol = 0.8 * height
+    strict_sizes = [sum(1 for w, c in cells if c.strict and col.x0 - tol <= w.xc <= col.x1 + tol) for col in columns]
+    key = {"right": lambda w: w.x1, "centre": lambda w: w.xc, "left": lambda w: w.x0}[align]
+    ref = {"right": lambda c: c.x1, "centre": lambda c: c.xc, "left": lambda c: c.x0}[align]
+    edges = sorted(ref(c) for c in columns)
+    step = statistics.median([b - a for a, b in zip(edges, edges[1:])])
+    loose = [w for w, c in cells if not c.strict and not c.nil and re.fullmatch(r"\(?-?\d{1,3}\)?", w.text.strip())
+             and all(abs(key(w) - e) > tol for e in edges)]
+    groups = [g for g in _cluster([key(w) for w in loose], tol)
+              if len(g) >= max(MIN_COLUMN_FIGURES, 0.6 * statistics.median(strict_sizes))]
+    out = []
+    for g in groups:
+        ws = [loose[i] for i in g]
+        edge = statistics.median(key(w) for w in ws)
+        k = round((edge - edges[0]) / step)
+        if abs(edge - (edges[0] + k * step)) > 0.25 * step or any(abs(edge - e) < 0.5 * step for e in edges):
+            continue
+        labelled = sum(any(abs(v.y - w.y) <= 0.5 * height and v.x1 < w.x0 and re.search(r"[A-Za-z]{3}", v.text) for v in words)
+                       for w in ws)
+        if labelled < 0.6 * len(ws):
+            continue
+        x0, x1 = min(w.x0 for w in ws), max(w.x1 for w in ws)
+        if align == "right":
+            x1 = edge
+        elif align == "left":
+            x0 = edge
+        out.append(Column(x0, x1, (x0 + x1) / 2, whole=True))
+    return out
+
+
 def assign_cells(words: list[Word], columns: list[Column], align: str, height: float) -> list[tuple[int, Word, Cell]]:
     """Every number-like word that sits in a column: (column, word, cell). Nil dashes by centre inside the column's extent, loose
     integers by the column's alignment, strict figures by alignment too."""
@@ -363,6 +405,8 @@ def assign_cells(words: list[Word], columns: list[Column], align: str, height: f
         strict = [c for w in words if (c := parse_figure(w.text)) is not None and c.strict
                   and abs(ref(columns[j]) - key(w)) <= 0.8 * height]
         decimal_column[j] = sum(c.decimals >= 1 for c in strict) >= 0.75 * max(len(strict), 1)
+        if columns[j].whole and len(strict) < MIN_COLUMN_FIGURES:
+            decimal_column[j] = False    # a whole-figure column holds an EPS with decimals or two ("1.56", ORIENTCEM Q2FY27)
     out = []
     for w in words:
         cell = parse_figure(w.text)
@@ -484,7 +528,7 @@ def line_text(line: list[Word]) -> str:
 def _dates_in_text(text: str) -> list[date]:
     from .pdf_referee import _dates_in
     # a comma glued to the year, "Sep 30,2026" (LOTUSDEV Q2FY27, OCR and layer alike): the year is read as after a spaced comma
-    return _dates_in(re.sub(r"(?<=\d),(?=\d{4}\b)", ", ", text))
+    return _dates_in(re.sub(r"(?<=\d),(?=\d{4}\b(?!,\d))", ", ", text))   # not "30,2025,2026": two dates run together
 
 
 def typical_gap(words: list[Word], height: float) -> float:
@@ -683,6 +727,11 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
     columns, align = find_columns(figs, height)
     if len(columns) < 2:
         return []
+    extra = whole_number_columns(figs, columns, align, cellable, height)
+    if extra:
+        columns = sorted(columns + extra, key=lambda c: c.xc)
+        for i, c in enumerate(columns):
+            c.index = i
     assigned = decimals_filter(assign_cells(cellable, columns, align, height), len(columns))
     rows = build_rows(assigned, words, columns, height)
     if len(rows) < 3:
@@ -715,7 +764,7 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         if sum(d is not None for d in dates) < 2:
             continue
         gap_lines = lines_of(gap, height)
-        cols = [Column(c.x0, c.x1, c.xc, c.index) for c in columns]
+        cols = [Column(c.x0, c.x1, c.xc, c.index, whole=c.whole) for c in columns]
         column_kinds(cols, dates, group_phrases(gap, cols, height), march)
         basis, contested = _basis_above_boxed(texts, len(texts))
         if basis is None and not anywhere and not contested:

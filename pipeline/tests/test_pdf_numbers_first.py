@@ -649,3 +649,58 @@ def test_day_numbers_of_stacked_header_dates_are_not_a_row_of_figures():
     parts = sorted((w.x0, w.text) for w in line if id(w) in nf.date_parts(line, 8.0))
     assert parts == [(321, "30"), (378, "30,"), (641, "12")]   # "30" alone (x 500) is a figure; "15" stands apart from "May"
     # "Margin 12" is taken out too (the month pattern matches "mar..."): that only ever removes a cell, never adds a figure
+
+
+# --- fix set 6 (ORIENTCEM) -----------------------------------------------------------------------------------------------
+
+def test_consolidated_called_not_applicable_by_a_company_without_subsidiaries_is_no_consolidated_statement():
+    page = ("the Company does not have any subsidiary including an associate and joint venture. Accordingly, preparation \n"
+            "of consolidated financial results is not applicable.")
+    assert not prd.names_consolidated(page)
+    # "not applicable" said of an earlier period by a company that has subsidiaries: a consolidated statement exists
+    assert prd.names_consolidated("Consolidated figures for the corresponding quarter are not applicable as the subsidiary was "
+                                  "acquired in July.")
+    assert prd.names_consolidated("The Company has no subsidiary. Statement of Consolidated Financial Results")
+
+
+def whole_statement(serial: bool = False, eps: bool = True):
+    """ORIENTCEM's layout: crore in small whole figures, three quarter columns of whole numbers below a thousand (no comma, no
+    decimals) and three half-year / year columns of larger figures; optionally a serial-number column left of the labels."""
+    q = {"rev": [565, 604, 643], "oth": [13, 5, 12], "emp": [35, 34, 33], "oex": [440, 480, 500], "tax": [12, 25, 30]}
+    big = {"rev": [1169, 1510, 2793], "oth": [18, 14, 23], "emp": [69, 65, 130], "oex": [920, 1100, 2100], "tax": [37, 60, 110]}
+    cols = {k: q[k] + big[k] for k in q}
+    ti = [a + b for a, b in zip(cols["rev"], cols["oth"])]
+    te = [a + b for a, b in zip(cols["emp"], cols["oex"])]
+    pbt = [a - b for a, b in zip(ti, te)]
+    pat = [a - b for a, b in zip(pbt, cols["tax"])]
+    lines = [("Revenue from operations", cols["rev"]), ("Other income", cols["oth"]), ("Total income", ti),
+             ("Employee benefits expense", cols["emp"]), ("Other expenses", cols["oex"]), ("Total expenses", te),
+             ("Profit before tax", pbt), ("Tax expense", cols["tax"]), ("Profit for the period", pat)]
+    rows = [([label], [f"{v:,}" for v in cells]) for label, cells in lines]
+    if eps:
+        rows.append((["Basic EPS"], ["1.56", "1.61", "1.70", "3.17", "3.30", "6.40"]))
+    pdf = statement(rows, unit="(Rs. in Crore)", cols=SIX, groups=["Quarter ended"] * 3 + ["Six months ended"] * 2 + ["Year ended"],
+                    dates=["30.09.2026", "30.06.2026", "30.09.2025", "30.09.2026", "30.09.2025", "31.03.2026"])
+    if serial:
+        doc = pymupdf.open(stream=pdf, filetype="pdf")
+        for i in range(len(rows)):
+            right(doc[0], LEFT - 6, 130 + 19 * i, str(i + 1))
+        pdf = doc.tobytes()
+        doc.close()
+    return pdf, dict(rev=cols["rev"][0], ti=ti[0], pbt=pbt[0], pat=pat[0])
+
+
+def test_columns_of_small_whole_figures_are_read_on_the_grid_of_the_larger_ones(monkeypatch):
+    pdf, want = whole_statement()
+    table = nf.analyse(pdf)[0]
+    assert len(table.columns) == 6 and [c.whole for c in table.columns] == [True, True, True, False, False, False]
+    assert read(pdf, "revenue").value == pytest.approx(want["rev"]) and read(pdf, "pat").value == pytest.approx(want["pat"])
+    assert read(pdf, "pbt").value == pytest.approx(want["pbt"])
+    monkeypatch.setattr(nf, "whole_number_columns", lambda *a, **k: [])
+    assert read(pdf, "pat").status == "none"                                   # the strict figures alone make no quarter columns
+
+
+def test_a_serial_number_column_left_of_the_labels_is_not_a_column_of_figures():
+    pdf, want = whole_statement(serial=True)
+    assert all(not (c.whole and c.x1 < LEFT) for c in nf.analyse(pdf, keep_unnamed=True)[0].columns)
+    assert read(pdf, "pat").value == pytest.approx(want["pat"])

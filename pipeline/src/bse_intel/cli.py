@@ -1586,19 +1586,24 @@ def cmd_xbrl_key(args, settings, sink) -> int:
     if companies is None:
         print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
         return 2
-    saved = xk.load_progress(sink, args.progress) if args.progress else None
+    saved = xk.load_progress(sink, args.progress) if args.progress and not args.restart else None
+    if args.restart and args.progress:
+        print(f"xbrl-key: --restart: the rows saved under '{args.progress}' are ignored and replaced as this run goes")
     if saved:
         print(f"xbrl-key: {len(saved)} rows saved by an earlier run of '{args.progress}'; those filings are not read again")
 
     def write(rows: list[dict], summary: dict) -> None:
-        if args.json:
-            Path(args.json).write_text(xk.to_json(summary), encoding="utf-8")
-        if args.out_csv:
-            Path(args.out_csv).write_text(xk.to_csv(rows), encoding="utf-8")
-        if args.md:
-            Path(args.md).write_text(xk.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
-        if args.progress:
-            xk.save_progress(sink, args.progress, rows)
+        """The CSV, the progress save, the JSON and the report, each on its own: a failure in one (a report that cannot format a
+        row) is logged and never stops the others."""
+        steps = [("CSV", lambda: args.out_csv and Path(args.out_csv).write_text(xk.to_csv(rows), encoding="utf-8")),
+                 ("progress save", lambda: args.progress and xk.save_progress(sink, args.progress, rows)),
+                 ("JSON", lambda: args.json and Path(args.json).write_text(xk.to_json(summary), encoding="utf-8")),
+                 ("markdown", lambda: args.md and Path(args.md).write_text(xk.to_markdown(summary, today_ist().isoformat()), encoding="utf-8"))]
+        for name, step in steps:
+            try:
+                step()
+            except Exception:   # noqa: BLE001
+                logging.getLogger("bse_intel.xbrl_key").exception("xbrl-key: the %s could not be written", name)
 
     with NseClient() as nse:
         outcome = xk.run(nse, sink, companies, args.limit, args.per_company, args.seed, args.time_budget, progress=write, saved=saved)
@@ -1607,6 +1612,8 @@ def cmd_xbrl_key(args, settings, sink) -> int:
           f"{outcome['calls']['pdfs']} PDFs")
     for status, n in outcome["statuses"].items():
         print(f"  {status:24}{n}")
+    if outcome["fetch_failed_filings"]:
+        print(f"  {outcome['fetch_failed_filings']} filings could not be fetched: they are read again on the next run of the same name")
     for stage, n in outcome["failure_stages"].items():
         print(f"  not found at {stage:20}{n}")
     if outcome["file_cap_reached"]:
@@ -2376,7 +2383,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--out-csv", help="write every figure, with its place on the page, to this file")
     p.add_argument("--md", help="write the short markdown report to this file")
-    p.add_argument("--progress", metavar="NAME", help="save the rows to R2 (meta/xbrl-key/NAME.csv) as the run goes, and skip the filings an earlier run of NAME did")
+    p.add_argument("--progress", metavar="NAME", help="save the rows to R2 (meta/xbrl-key/NAME.csv) as the run goes, and skip the filings an earlier run of NAME did (a filing whose fetch failed is read again)")
+    p.add_argument("--restart", action="store_true", help="with --progress: ignore what an earlier run of NAME saved and start clean")
     p.set_defaults(func=cmd_xbrl_key)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")

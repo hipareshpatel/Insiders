@@ -83,7 +83,7 @@ from .metrics import CONSOLIDATED, STANDALONE
 
 log = logging.getLogger(__name__)
 
-STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text")
+STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text", "fetch_failed")
 METRICS = ("revenue", "other_income", "total_income", "total_expenses", "exceptional_items", "pbt", "tax_expense", "pat", "eps",
            "interest_earned")
 TOL_CR = 0.006              # memory keeps crore to two decimals: half a hundredth, with a little to spare
@@ -852,6 +852,7 @@ class Result:
     arith_note: str = ""
     reading: str = ""
     failure_stage: str = ""
+    reason: str = ""               # found_ambiguous only: segment_only, unit_not_declared, multiple_strong, or what failed (not_row ...)
     cell_key: tuple = ()
     printed_cr: float | None = None
     half_unit_cr: float = 0.0
@@ -956,22 +957,38 @@ def locate_in(model: DocModel, expected: list[Expected]) -> list[Result]:
         # the same row in a results statement and in a segment table (or a summary) is one figure printed twice: the placement in
         # the table that names several metrics is the statement's, when it is the only such
         statement = [x for x in strong if x[1].table.n_metrics >= STATEMENT_METRICS and not x[1].table.segment]
+        chosen, how = None, ""
         if len(strong) > 1 and len(statement) == 1:
-            others = sorted({x[0].page for x in strong if x is not statement[0]})
-            fill(res, statement[0][0], statement[0][1], "found_unique")
-            res.note = f"also printed in another table on page {', '.join(map(str, others))}"
+            chosen = statement[0]
+            how = f"also printed in another table on page {', '.join(str(g) for g in sorted({x[0].page for x in strong if x is not chosen}))}"
         elif len(strong) == 1:
-            fill(res, strong[0][0], strong[0][1], "found_unique")
+            chosen = strong[0]
         elif len(strong) > 1 and len({x[1].table.number for x in strong}) == 1 and len({x[1].col_index for x in strong}) == 1 \
                 and len({x[0].per_crore for x in strong}) == 1 and len({x[0].value for x in strong}) == 1:
             # two lines of one table name the metric ("Profit after tax", "Profit for the period") and print the same figure in
             # the period's column: one figure, listed twice; the lower line (the bottom line) is the placement
-            last = max(strong, key=lambda x: x[1].row.yc)
-            fill(res, last[0], last[1], "found_unique")
-            res.note = "also on the line " + " / ".join(f"'{x[1].label[:40]}'" for x in strong if x is not last) + " of the same table"
+            chosen = max(strong, key=lambda x: x[1].row.yc)
+            how = "also on the line " + " / ".join(f"'{x[1].label[:40]}'" for x in strong if x is not chosen) + " of the same table"
+        if chosen is not None:
+            p, cell, _ = chosen
+            if cell.table.n_metrics < STATEMENT_METRICS or cell.table.segment:
+                # the only proven placement is in a segment or summary table, not the results statement
+                fill(res, p, cell, "found_ambiguous")
+                res.reason = "segment_only"
+                res.note = (f"segment_only: the table {'has a segment heading' if cell.table.segment else ''}"
+                            f"{' and ' if cell.table.segment and cell.table.n_metrics < STATEMENT_METRICS else ''}"
+                            f"{f'names only {cell.table.n_metrics} metric(s)' if cell.table.n_metrics < STATEMENT_METRICS else ''}")
+            elif p.unit.startswith("?") and e.metric != "eps":
+                fill(res, p, cell, "found_ambiguous")
+                res.reason = "unit_not_declared"
+                res.note = "unit_not_declared: no unit line was read, every unit was tried"
+            else:
+                fill(res, p, cell, "found_unique")
+                res.note = (res.note + "; " if res.note else "") + how
         elif found:
             best = strong[0] if strong else found[0]
             fill(res, best[0], best[1], "found_ambiguous")
+            res.reason = "multiple_strong" if strong else found[0][0].fit.replace(" ", "_")
             res.note = (f"{len(strong)} strong placements" if strong else
                         f"value printed, but {found[0][0].fit}" + (f" ({len(found)} places)" if len(found) > 1 else ""))
         elif rows_seen:
@@ -1055,9 +1072,6 @@ def fill(res: Result, p: Placement, cell: Cell, status: str) -> None:
         res.printed_cr = p.value / p.per_crore
         res.half_unit_cr = 0.5 * 10 ** -cell.fig.num.decimals / p.per_crore
     res.reading = "repaired" if p.repaired else ""
-    if status == "found_unique" and (cell.table.n_metrics < STATEMENT_METRICS or cell.table.segment):
-        res.note = (res.note + "; " if res.note else "") + (
-            f"the table names only {cell.table.n_metrics} metric(s): a segment or summary table, not the statement")
     if cell.basis_how and cell.basis_how not in ("title", "columns"):
         res.note = (res.note + "; " if res.note else "") + f"basis from {cell.basis_how}"
     if cell.unit_how != "page" and res.expected.metric != "eps":
@@ -1131,7 +1145,7 @@ def expected_from_dossier(dossier: dict | None, symbol: str = "") -> dict[str, l
 
 # --- the run ---------------------------------------------------------------------------------------------------------
 
-CSV_HEADER = ("news_id,symbol,basis,period,metric,xbrl_value,status,page,printed_value,printed_text,printed_unit,row_label,"
+CSV_HEADER = ("news_id,symbol,basis,period,metric,xbrl_value,status,reason,page,printed_value,printed_text,printed_unit,row_label,"
               "column_header,bbox,other_value,n_strong,placements,arith_income,arith_pbt,arith_note,reading,failure_stage,note,pdf_url,"
               "pdf_news_id,filing_period").split(",")
 
@@ -1143,7 +1157,7 @@ def _cell(v) -> str:
 def result_row(r: Result, extra: dict | None = None) -> dict:
     e = r.expected
     row = {"news_id": e.news_id, "symbol": e.symbol, "basis": e.basis, "period": e.period, "metric": e.metric,
-           "xbrl_value": e.value, "status": r.status, "page": r.page, "printed_value": r.printed_value,
+           "xbrl_value": e.value, "status": r.status, "reason": r.reason, "page": r.page, "printed_value": r.printed_value,
            "printed_text": r.printed_text, "printed_unit": r.printed_unit, "row_label": r.row_label[:120],
            "column_header": r.column_header, "bbox": " ".join(f"{v:g}" for v in r.bbox), "other_value": r.other_value,
            "n_strong": r.n_strong, "placements": json.dumps(r.placements, ensure_ascii=False) if r.placements else "",
@@ -1162,8 +1176,28 @@ def to_csv(rows: list[dict]) -> str:
     return buffer.getvalue()
 
 
+_NUMERIC = {"xbrl_value": float, "printed_value": float, "page": int, "n_strong": int}
+
+
 def load_csv(text: str) -> list[dict]:
-    return list(csv.DictReader(io.StringIO(text)))
+    """The rows of a CSV this module wrote, the numeric fields as numbers again (a row read back is formatted and counted like a
+    fresh one; an empty or unreadable cell is None)."""
+    rows = list(csv.DictReader(io.StringIO(text)))
+    for r in rows:
+        for key, kind in _NUMERIC.items():
+            try:
+                r[key] = kind(float(r[key])) if r.get(key) not in (None, "") else None
+            except (TypeError, ValueError):
+                r[key] = None
+    return rows
+
+
+def _g(v) -> str:
+    """A number for the report whatever it came as (a float, a string read from a CSV, nothing)."""
+    try:
+        return f"{float(v):g}"
+    except (TypeError, ValueError):
+        return "" if v is None else str(v)
 
 
 def summarise(rows: list[dict], calls: dict, filings: int, blocked: bool = False, out_of_time: bool = False,
@@ -1184,10 +1218,13 @@ def summarise(rows: list[dict], calls: dict, filings: int, blocked: bool = False
     for r in rows:
         if r.get("failure_stage"):
             stages_by_metric.setdefault(r["metric"], Counter())[r["failure_stage"]] += 1
+    reasons = Counter(r["reason"] for r in rows if r.get("reason"))
+    failed = {(r["symbol"], r.get("filing_period", "")) for r in rows if r["status"] == "fetch_failed"}
     others = [r for r in rows if r["status"] == "row_found_other_value"]
     notes = Counter(re.sub(r"[\d.,]+", "<n>", r.get("note") or "") for r in rows if r["status"] in ("not_found", "no_text", "found_ambiguous"))
     return {"figures": len(rows), "filings": filings, "calls": calls, "blocked": blocked, "out_of_time": out_of_time,
-            "file_cap_reached": capped, "statuses": {s: by_status.get(s, 0) for s in STATUSES},
+            "file_cap_reached": capped, "fetch_failed_filings": len(failed),
+            "statuses": {s: by_status.get(s, 0) for s in STATUSES}, "ambiguous_reasons": dict(reasons.most_common()),
             "failure_stages": {k: stages.get(k, 0) for k in FAILURE_STAGES},
             "failure_stages_by_metric": {k: dict(v) for k, v in sorted(stages_by_metric.items())},
             "by_metric": {k: dict(v) for k, v in sorted(by_metric.items())},
@@ -1216,10 +1253,15 @@ def to_markdown(summary: dict, date_text: str) -> str:
     if summary["blocked"] or summary["out_of_time"] or summary["file_cap_reached"]:
         why = "NSE refused the session" if summary["blocked"] else "time budget" if summary["out_of_time"] else "file cap reached"
         out += [f"The run stopped early ({why}); what it read is here and the rest waits for the next run.", ""]
+    if summary.get("fetch_failed_filings"):
+        out += [f"{summary['fetch_failed_filings']} filings could not be fetched (an announcement list or a download failed): their "
+                "rows are `fetch_failed`, not `not_found`, and a rerun with the same progress name reads them again.", ""]
     out += ["## Status", "", "| status | figures | share |", "|---|---|---|"]
     out += [f"| {k} | {v} | {v / total:.1%} |" for k, v in s.items()]
     out += ["", "## Status per metric", "", "| metric | " + " | ".join(STATUSES) + " |", "|---|" + "---|" * len(STATUSES)]
     out += [f"| {k} | " + " | ".join(str(v.get(x, 0)) for x in STATUSES) + " |" for k, v in summary["by_metric"].items()]
+    if summary.get("ambiguous_reasons"):
+        out += ["", "## Why found_ambiguous", ""] + [f"- {k}: {n}" for k, n in summary["ambiguous_reasons"].items()]
     if any(summary["failure_stages"].values()):
         out += ["", "## Which stage lost the figures not found", "",
                 "`not_in_text_layer`: the number is nowhere in the page words (text layer or OCR); `no_statement_page`: no table "
@@ -1231,7 +1273,7 @@ def to_markdown(summary: dict, date_text: str) -> str:
     if summary["other_value_examples"]:
         out += ["", "## Row found, another value printed (first 25)", "",
                 "| symbol | basis | period | metric | XBRL | printed | row | column |", "|---|---|---|---|---|---|---|---|"]
-        out += [f"| {x['symbol']} | {x['basis']} | {x['period']} | {x['metric']} | {x['xbrl_value']:g} | {x['other_value']} | "
+        out += [f"| {x['symbol']} | {x['basis']} | {x['period']} | {x['metric']} | {_g(x['xbrl_value'])} | {x['other_value']} | "
                 f"{(x['row_label'] or '')[:40]} | {x['column_header']} |" for x in summary["other_value_examples"]]
     if summary["why_not_unique"]:
         out += ["", "## Why not found, ambiguous or no text", ""] + [f"- {k or 'unspecified'}: {n}" for k, n in summary["why_not_unique"].items()]
@@ -1242,19 +1284,26 @@ def to_markdown(summary: dict, date_text: str) -> str:
 BEST = {s: i for i, s in enumerate(STATUSES)}   # a lower index is a better answer
 
 
-def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tuple[list[dict], str]:
+_TRANSIENT = re.compile(r"^(?:announcement list unavailable|download failed)")
+
+
+def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most
     ``MAX_CANDIDATES``); the first PDF that gives any figure a row or a placement is the filing's, the best answer of each
-    figure across the PDFs tried is kept. Returns (rows, why none)."""
+    figure across the PDFs tried is kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
+    because a list or a download failed on the way (a timeout, a refused call), which a later run may get; a filing NSE has no
+    results PDF for, or a PDF it serves empty or too large, is a settled answer, not a failure."""
     listed = src.filings(symbol, period)
     if isinstance(listed, str):
-        return [], listed
+        return [], listed, bool(_TRANSIENT.match(listed))
     best: dict[int, tuple[Result, dict]] = {}
     reasons = []
+    transient = False
     for f in listed[:MAX_CANDIDATES]:
         data, why = src.payload(f.pdf_url)
         if data is None:
             reasons.append(why)
+            transient = transient or bool(_TRANSIENT.match(why))
             continue
         results = locate(data, expected)
         extra = {"pdf_url": f.pdf_url, "pdf_news_id": f.news_id, "filing_period": period}
@@ -1264,9 +1313,12 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tu
         if any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r in results):
             break
         reasons.append("no figure placed in " + f.pdf_url.rsplit("/", 1)[-1][:40])
+    used = any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r, _ in best.values())
+    if transient and not used:
+        return [], "; ".join(dict.fromkeys(reasons)), True      # a download failed and no other PDF gave a figure: not finished
     if not best:
-        return [], "; ".join(dict.fromkeys(reasons)) or "no results PDF read"
-    return [result_row(r, extra) for r, extra in (best[k] for k in sorted(best))], ""
+        return [], "; ".join(dict.fromkeys(reasons)) or "no results PDF read", False
+    return [result_row(r, extra) for r, extra in (best[k] for k in sorted(best))], "", False
 
 
 PROGRESS_PREFIX = "meta/xbrl-key/"   # R2: outlives a lost runner, unlike the job's artifact (as pdf-referee's progress)
@@ -1332,7 +1384,7 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
     from .pdf_referee import Sources
 
     src = src or Sources(nse, ocr=False)
-    rows: list[dict] = list(saved or [])
+    rows: list[dict] = [r for r in (saved or []) if r.get("status") != "fetch_failed"]    # a failed filing is read again
     done = {(r["symbol"], r.get("filing_period", "")) for r in rows}
     started, last_save, since = clock(), clock(), 0
     blocked = out_of_time = capped = False
@@ -1343,7 +1395,7 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
             out_of_time = True
             break
         try:
-            got, why = locate_filing(src, symbol, period, expected)
+            got, why, transient = locate_filing(src, symbol, period, expected)
         except FileCapReached as exc:
             capped = True
             log.warning("file cap reached (%s): stopping the XBRL key; the rest waits for the next run", exc)
@@ -1352,16 +1404,21 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
             blocked = True
             log.warning("NSE refused (%s): stopping the XBRL key", exc)
             break
-        except Exception as exc:   # noqa: BLE001 - one filing failing is a reason, not a stop
-            got, why = [], f"{type(exc).__name__}: {str(exc)[:80]}"
+        except Exception as exc:   # noqa: BLE001 - one filing failing is a reason, not a stop; it is read again next run
+            got, why, transient = [], f"{type(exc).__name__}: {str(exc)[:80]}", True
         if not got:
-            log.info("xbrl-key: %s %s: %s", symbol, period, why)
-            got = [result_row(Result(e, "not_found", note=f"no PDF read: {why}"), {"filing_period": period}) for e in expected]
+            log.info("xbrl-key: %s %s: %s%s", symbol, period, why, " (fetch failed, not finished)" if transient else "")
+            status = "fetch_failed" if transient else "not_found"
+            got = [result_row(Result(e, status, note=f"no PDF read: {why}"), {"filing_period": period}) for e in expected]
         rows += got
-        done.add((symbol, period))
+        if not transient:
+            done.add((symbol, period))        # a fetch failure is not a finished filing: a resume reads it again
         since += 1
         src.release()
         if progress and (since >= every or clock() - last_save >= every_seconds):
-            progress(rows, summarise(rows, src.calls, len(done), blocked, out_of_time, capped))
+            try:
+                progress(rows, summarise(rows, src.calls, len(done), blocked, out_of_time, capped))
+            except Exception:   # noqa: BLE001 - a failed save is never a stop
+                log.exception("xbrl-key: the progress callback failed")
             last_save, since = clock(), 0
     return {"rows": rows, **summarise(rows, src.calls, len(done), blocked, out_of_time, capped)}

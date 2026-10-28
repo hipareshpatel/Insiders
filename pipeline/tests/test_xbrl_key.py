@@ -27,6 +27,13 @@ ROWS = [                                           # label, four figures (quarte
 ]
 
 
+FILLER = [                                          # lines that make a table a results statement (three metrics) without touching a test's figures
+    ("Other income", ["7.11", "7.12", "7.13", "7.14"]),
+    ("Total income", ["8.22", "8.23", "8.24", "8.25"]),
+    ("Profit before tax", ["9.33", "9.34", "9.35", "9.36"]),
+]
+
+
 class Canvas:
     """Texts at reading-frame positions (x right, y down), drawn upright, on a page with a /Rotate flag, or with the text itself
     set running up the page (the way a landscape table sits on a portrait page)."""
@@ -47,7 +54,8 @@ class Canvas:
 
 
 def draw_table(canvas: Canvas, title="Statement of Standalone Unaudited Financial Results for the quarter ended 30 September 2026",
-               unit="(Rs. in crore)", headings=True, dates=DATES, rows=ROWS, y0=40.0, cols=COLS) -> float:
+               unit="(Rs. in crore)", headings=True, dates=DATES, rows=ROWS, y0=40.0, cols=COLS, pad=True) -> float:
+    rows = [*rows, *FILLER] if pad else rows
     canvas.text(20, y0, title)
     canvas.text(20, y0 + 16, unit)
     if headings:
@@ -471,3 +479,107 @@ def test_the_summary_counts_the_failure_stages_and_lists_the_other_values():
     assert summary["statuses"]["found_unique"] == 1 and summary["statuses"]["row_found_other_value"] == 1
     assert summary["failure_stages"]["in_text_wrong_place"] == 1 and summary["failure_stages"]["not_in_text_layer"] == 1
     assert summary["other_value_examples"][0]["other_value"] == "100.00"
+
+
+# --- review fixes (28 Oct 2026) ------------------------------------------------------------------------------------
+
+def test_the_only_placement_in_a_segment_or_summary_table_is_not_found_unique():
+    # a table of one line, and a table under a segment heading with three metrics: neither is the results statement
+    one_line = [("Revenue from operations", ["100.00", "95.00", "80.00", "380.00"])]
+    r = one(make_pdf(rows=one_line, pad=False, title="Segment results"), exp("revenue", 100.0))
+    assert r.status == "found_ambiguous" and r.reason == "segment_only" and r.n_strong == 1 and "only 1 metric" in r.note
+    doc = pymupdf.open()
+    c = Canvas(doc)
+    c.text(20, 30, "Segment wise revenue and results")
+    draw_table(c, title="", y0=36.0)
+    r = one(doc.tobytes(), exp("revenue", 100.0))
+    assert r.status == "found_ambiguous" and r.reason == "segment_only" and "segment heading" in r.note
+
+
+def test_a_placement_made_with_no_declared_unit_is_not_found_unique():
+    r = one(make_pdf(unit="(figures)"), exp("revenue", 100.0))
+    assert r.status == "found_ambiguous" and r.reason == "unit_not_declared" and r.printed_unit == "?crore"
+    assert one(make_pdf(unit="(figures)"), exp("eps", 1.5)).status == "found_unique"      # EPS needs no unit
+    assert one(make_pdf(), exp("revenue", 100.0)).reason == ""
+
+
+def test_the_reason_of_an_ambiguous_figure_is_in_the_csv_and_the_summary():
+    rows = [xk.result_row(r) for r in xk.locate(make_pdf(unit="(figures)"), [exp("revenue", 100.0), exp("pat", 380.0)])]
+    assert {r["reason"] for r in rows} == {"unit_not_declared", "not_row+column"}
+    summary = xk.summarise(rows, {"lists": 0, "pdfs": 1}, 1)
+    assert summary["ambiguous_reasons"] == {"unit_not_declared": 1, "not_row+column": 1}
+    assert "## Why found_ambiguous" in xk.to_markdown(summary, "2026-10-28")
+
+
+def test_a_resumed_run_reads_its_saved_rows_back_as_numbers_and_the_report_still_writes():
+    import csv
+    import io
+
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    wrong = full_dossier("1")
+    wrong["financial_metrics"][0]["value"] = 123.45                          # revenue: the page prints 100.00, an other-value row
+    sink = FakeSink({"1": wrong})
+    first = xk.run(FakeNse([filing()], {url: make_pdf()}), sink, [("1", "X")], limit=1)
+    assert first["statuses"]["row_found_other_value"] == 1
+    assert xk.save_progress(sink, "n", first["rows"])
+    saved = xk.load_progress(sink, "n")
+    other = next(r for r in saved if r["status"] == "row_found_other_value")
+    assert other["xbrl_value"] == 123.45 and other["printed_value"] == 100.0 and other["page"] == 1 and other["n_strong"] == 0
+    second = xk.run(FakeNse([filing()], {url: make_pdf()}), sink, [("1", "X")], limit=1, saved=saved)
+    assert len(second["rows"]) == 8 and "| X | STANDALONE | Q2FY27 | revenue | 123.45 | 100.00 |" in xk.to_markdown(second, "2026-10-28")
+    # even rows still holding strings (a CSV not read through load_csv) do not stop the report
+    raw = list(csv.DictReader(io.StringIO(xk.to_csv(first["rows"]))))
+    assert "123.45" in xk.to_markdown(xk.summarise(raw, {"lists": 0, "pdfs": 1}, 1), "2026-10-28")
+
+
+def test_a_failing_progress_callback_never_stops_the_run():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+
+    def boom(rows, summary):
+        raise RuntimeError("no disk")
+
+    out = xk.run(FakeNse([filing()], {url: make_pdf()}), FakeSink({"1": full_dossier()}), [("1", "X")], limit=1, progress=boom, every=1)
+    assert len(out["rows"]) == 8
+
+
+def test_a_failed_fetch_is_its_own_status_and_is_read_again_by_a_resume():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
+
+    class ListFails(FakeNse):
+        def announcements(self, *a, **k):
+            raise TimeoutError("timed out")
+
+    first = xk.run(ListFails([], {}), sink, [("1", "A"), ("2", "B")], limit=5, seed=1)
+    assert {r["status"] for r in first["rows"]} == {"fetch_failed"} and len(first["rows"]) == 16
+    assert first["statuses"]["fetch_failed"] == 16 and first["statuses"]["not_found"] == 0 and first["fetch_failed_filings"] == 2
+    assert "2 filings could not be fetched" in xk.to_markdown(first, "2026-10-28")
+    # a download that fails is the same
+    down = xk.run(FakeNse([filing()], {url: make_pdf()}, AttachmentError("reset")), sink, [("1", "A")], limit=1)
+    assert {r["status"] for r in down["rows"]} == {"fetch_failed"}
+    # a resume does not take them as finished: it reads both filings again
+    assert xk.save_progress(sink, "n", first["rows"])
+    nse = FakeNse([filing()], {url: make_pdf()})
+    second = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=xk.load_progress(sink, "n"))
+    assert len(nse.fetches) == 2 and second["statuses"]["fetch_failed"] == 0 and second["statuses"]["found_unique"] == 16
+    # a settled answer is not a failure: NSE serves no file, or lists no results filing
+    gone = xk.run(FakeNse([filing()], {}), FakeSink({"1": full_dossier()}), [("1", "A")], limit=1)
+    assert {r["status"] for r in gone["rows"]} == {"not_found"} and gone["fetch_failed_filings"] == 0
+    none = xk.run(FakeNse([], {}), FakeSink({"1": full_dossier()}), [("1", "A")], limit=1)
+    assert {r["status"] for r in none["rows"]} == {"not_found"}
+
+
+def test_a_download_that_failed_but_another_candidate_read_is_a_result():
+    good = "https://nsearchives.nseindia.com/corporate/GOOD.pdf"
+    bad = "https://nsearchives.nseindia.com/corporate/BAD.pdf"
+
+    class Half(FakeNse):
+        def fetch(self, url, max_bytes=0):
+            self.fetches.append(url)
+            if url == bad:
+                raise AttachmentError("reset")
+            return self.pdfs.get(url)
+
+    nse = Half([filing(bad), filing(good, headline="Results part two")], {good: make_pdf()})
+    out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert out["statuses"]["found_unique"] == 8 and out["fetch_failed_filings"] == 0

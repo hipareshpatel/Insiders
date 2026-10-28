@@ -17,23 +17,27 @@ For the hard key there is no page, so a `found_unique` there is checked only by 
 
 | | normal key (337) | hard key (340) |
 |---|---|---|
-| `found_unique` | 93 (27.6%) | 134 (39.4%) |
-| `found_ambiguous` | 79 | 95 |
+| `found_unique` | 82 (24.3%) | 130 (38.2%) |
+| `found_ambiguous` | 90 | 99 |
 | `row_found_other_value` | 0 | 3 |
 | `not_found` | 125 | 60 |
 | `no_text` | 40 | 48 |
 
-Normal key, the 93 `found_unique`: 87 on the key's page; 5 on another page that also holds the value on the key's page (the
-statement printed twice, or its segment table); **1 on another page that does not** (Gael consolidated revenue 1,450.73: its segment
-table, page 13, while the statement page 9 has no readable figure; the note says "the table names only 1 metric"). No unique
-placement had a wrong value, by construction.
+Rules added after the first review (`found_unique` only on the results statement, and only with a declared unit): the only strong
+placement in a segment or summary table (a heading naming segments, or fewer than 3 metrics in the table) is `found_ambiguous` with
+reason `segment_only` (3 figures of the normal key, 4 of the hard key); a placement made with no unit line read (every unit tried) is
+`found_ambiguous` with reason `unit_not_declared` (8 figures of the normal key, all Nestle India, whose text layer has no unit line). Before
+them the normal key gave 93 unique and the hard key 134.
 
-Precision of `found_unique` where it can be checked (normal key): 92 of 93 are the key's figure on the key's page or on a page that
-also prints it. The hard key's 134 cannot be checked for place.
+Normal key, the 82 `found_unique`: 79 on the key's page; 3 on another page that also holds the value on the key's page (the statement
+printed twice); none on a page that does not. No unique placement had a wrong value, by construction.
+
+Precision of `found_unique` where it can be checked (normal key): 82 of 82 are the key's figure on the key's page or on a page that
+also prints it. The hard key's 130 cannot be checked for place.
 
 Recall ceiling without OCR, normal key: the text layer holds the value (in some unit, on the key's page) for 263 of 337 figures
 (78%); for 74 (22%) the value is not in the words at all (garbled or missing text layer) and no word-position locator can find it.
-The locator proves its place for 93 of those 263 (35%); the other 79 ambiguous ones are placed but not proven.
+The locator proves its place for 82 of those 263 (31%); the other 90 ambiguous ones are placed but not proven.
 
 Failure stage of every figure not found or only weakly placed (`failure_stage`):
 
@@ -44,8 +48,9 @@ Failure stage of every figure not found or only weakly placed (`failure_stage`):
 | `unit_unknown` | 10 | 0 |
 | `in_text_wrong_place` | 128 | 151 |
 
-By text layer (normal key): born-digital PDFs 28 of 32 unique (the other 4: Tata Elxsi, whose dates wrap over three lines); OCR text layers 42 of 143; garbled text layers 23 of 122; no text layer 0 of 40
-(`no_text`). By unit: crore 53 of 155, lakh 20 of 115, million 20 of 67.
+By text layer (normal key): born-digital PDFs 20 of 32 unique (8 are Nestle's, unit line missing; 4 are Tata Elxsi, whose dates wrap over
+three lines); OCR text layers 41 of 143; garbled text layers 21 of 122; no text layer 0 of 40 (`no_text`). By unit: crore 51 of 155,
+lakh 19 of 115, million 12 of 67.
 
 ## Where it misses (examples, all in the CSVs)
 
@@ -69,7 +74,7 @@ By text layer (normal key): born-digital PDFs 28 of 32 unique (the other 4: Tata
    103 unique and the hard key 141, but with columns guessed from the nearest date; the strict rule drops about 10 and 7 figures of those and
    the heading-less layouts, which is what the lead asked for.
 2. No OCR: a scan is `no_text`. 40 + 48 of the key figures are in that class.
-3. Born-digital PDFs are 28 of 32 here, which is the most useful number for the live key; the OCR-layer and garbled-layer numbers are low
+3. Born-digital PDFs are 20 of 32 here (28 before the unit rule), which is the most useful number for the live key; the OCR-layer and garbled-layer numbers are low
    and will pull the whole key's share down. The share of born-digital filings among the live ones is not measured here.
 4. Unit: the last declaration above the row on the page, else the previous page's, else the document's first; with none, every unit is tried
    and the printed unit is marked `?`. A page that declares two units for two tables is read per table (nearest above); a figure that

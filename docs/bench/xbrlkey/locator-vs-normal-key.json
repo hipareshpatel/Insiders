@@ -4,19 +4,18 @@
   "not_printed (blank in the key)": 11
  },
  "status": {
-  "found_unique": 93,
+  "found_unique": 82,
   "not_found": 125,
-  "found_ambiguous": 79,
+  "found_ambiguous": 90,
   "no_text": 40
  },
  "verdict": {
-  "right place": 87,
+  "right place": 79,
   "value not in the text layer of the page": 74,
   "value in the text layer of the page": 91,
-  "ambiguous, key page among them": 69,
-  "ambiguous": 10,
-  "another page; the value is also on the key's page": 5,
-  "wrong page": 1
+  "ambiguous, key page among them": 78,
+  "ambiguous": 12,
+  "another page; the value is also on the key's page": 3
  },
  "failure_stage": {
   "not_in_text_layer": 62,
@@ -26,22 +25,22 @@
  },
  "by_unit": {
   "crore": {
-   "found_unique": 53,
-   "found_ambiguous": 37,
+   "found_unique": 51,
+   "found_ambiguous": 39,
    "no_text": 12,
    "not_found": 53
   },
   "lakh": {
    "not_found": 46,
-   "found_unique": 20,
-   "found_ambiguous": 37,
+   "found_unique": 19,
+   "found_ambiguous": 38,
    "no_text": 12
   },
   "million": {
    "no_text": 16,
    "not_found": 26,
-   "found_ambiguous": 5,
-   "found_unique": 20
+   "found_ambiguous": 13,
+   "found_unique": 12
   }
  },
  "by_tag": {
@@ -72,8 +71,8 @@
    "found_unique": 4
   },
   "born_digital": {
-   "found_unique": 28,
-   "found_ambiguous": 3,
+   "found_unique": 20,
+   "found_ambiguous": 11,
    "not_found": 1
   },
   "bracket_zero": {
@@ -108,8 +107,8 @@
   },
   "lakh": {
    "not_found": 46,
-   "found_unique": 20,
-   "found_ambiguous": 37,
+   "found_unique": 19,
+   "found_ambiguous": 38,
    "no_text": 12
   },
   "landscape": {
@@ -124,9 +123,9 @@
    "found_ambiguous": 3
   },
   "long_pdf": {
-   "found_unique": 13,
-   "not_found": 2,
-   "found_ambiguous": 3
+   "found_unique": 11,
+   "found_ambiguous": 5,
+   "not_found": 2
   },
   "loss_making": {
    "found_ambiguous": 13,
@@ -136,8 +135,8 @@
   "million": {
    "no_text": 16,
    "not_found": 26,
-   "found_ambiguous": 5,
-   "found_unique": 20
+   "found_ambiguous": 13,
+   "found_unique": 12
   },
   "minority_lines": {
    "found_unique": 2,
@@ -146,9 +145,9 @@
   },
   "mixed_document": {
    "no_text": 16,
-   "found_unique": 6,
-   "not_found": 10,
-   "found_ambiguous": 8
+   "found_unique": 4,
+   "found_ambiguous": 10,
+   "not_found": 10
   },
   "nil_as_dash": {
    "not_found": 8
@@ -190,23 +189,23 @@
   },
   "revenue_sub_lines": {
    "not_found": 15,
-   "found_unique": 22,
-   "found_ambiguous": 3
+   "found_unique": 14,
+   "found_ambiguous": 11
   },
   "rotated_page": {
    "found_unique": 8
   },
   "scanned_garbled_text_layer": {
-   "found_unique": 23,
+   "found_unique": 21,
    "not_found": 56,
-   "found_ambiguous": 43
+   "found_ambiguous": 45
   },
   "scanned_no_text_layer": {
    "no_text": 40
   },
   "scanned_ocr_text_layer": {
-   "found_ambiguous": 33,
-   "found_unique": 42,
+   "found_ambiguous": 34,
+   "found_unique": 41,
    "not_found": 68
   },
   "side_by_side_bases": {
@@ -220,9 +219,9 @@
    "not_found": 8
   },
   "text_layer_issue": {
-   "found_unique": 16,
-   "not_found": 5,
-   "found_ambiguous": 3
+   "found_unique": 8,
+   "found_ambiguous": 11,
+   "not_found": 5
   },
   "title_mismatch": {
    "no_text": 8
@@ -232,14 +231,14 @@
    "found_ambiguous": 1
   },
   "two_bases_separate_pages": {
-   "found_unique": 85,
+   "found_unique": 74,
    "not_found": 100,
-   "found_ambiguous": 64,
+   "found_ambiguous": 75,
    "no_text": 32
   },
   "unusual_column_layout": {
-   "found_unique": 12,
-   "found_ambiguous": 10,
+   "found_unique": 4,
+   "found_ambiguous": 18,
    "not_found": 4
   },
   "unusual_statement_layout": {

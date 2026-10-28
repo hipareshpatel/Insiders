@@ -130,8 +130,11 @@
 #   fetched as pdf-referee fetches it (same Sources, same archive pace, no new NSE path); no OCR (a scan is `no_text`). Companies
 #   in a seeded shuffle, `limit` = filings (the first test is on 100 files: `file_cap` = 100), `ids` = only these companies (scrip
 #   codes or symbols). xbrl-key.csv, summary.json and xbrl-key.md go up as the artifact `xbrl-key`, written every 10 filings or 3
-#   minutes, and the rows also go to R2 (`meta/xbrl-key/xbrl-key-<ids>-<run id>.csv`), so a run stopped by its time budget, the file
-#   cap or a lost runner keeps what it did. Writes nothing to memory, cards or the branch. No AI.
+#   minutes, and the rows also go to R2 (`meta/xbrl-key/xbrl-key[-<ids>].csv`: the name does not hold the run id, so a fresh
+#   dispatch with the same `ids` continues the earlier run and skips the filings it finished; `restart` starts clean), so a run
+#   stopped by its time budget, the file cap or a lost runner keeps what it did. A filing whose announcement list or download
+#   failed is `fetch_failed`, never `not_found`, and is read again on the next dispatch. Writes nothing to memory, cards or the
+#   branch. No AI.
 # - screener-explain: read only (owner 26 Oct 2026). Of the `screener-referee` pairs where our figure equals NSE's own file,
 #   which differences a later bonus, split or consolidation (the dossier's corporate actions) or a later results file
 #   (memory's stored later-file source, else NSE's file) explains. The job takes the newest unexplained `screener-referee`
@@ -216,7 +219,7 @@ on:
         type: string
         default: ''
       restart:
-        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried
+        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried; xbrl-key - ignore the rows an earlier run saved and start clean
         type: boolean
         default: false
       days:
@@ -788,7 +791,7 @@ jobs:
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/xbrlkey"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-key ${LIMIT:+--limit "$LIMIT"} ${IDS:+--scrips "$IDS"} --progress "xbrl-key${IDS:+-$IDS}-${{ github.run_id }}" --json "$RUNNER_TEMP/xbrlkey/summary.json" --out-csv "$RUNNER_TEMP/xbrlkey/xbrl-key.csv" --md "$RUNNER_TEMP/xbrlkey/xbrl-key.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-key ${LIMIT:+--limit "$LIMIT"} ${IDS:+--scrips "$IDS"} --progress "xbrl-key${IDS:+-$IDS}" ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/xbrlkey/summary.json" --out-csv "$RUNNER_TEMP/xbrlkey/xbrl-key.csv" --md "$RUNNER_TEMP/xbrlkey/xbrl-key.md" || code=$?
           if [ "$code" = 124 ]; then echo "::warning::time budget ended with filings left (the rows so far are in the CSV); run again with a limit"; code=0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

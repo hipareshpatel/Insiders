@@ -5,16 +5,16 @@
  },
  "status": {
   "no_text": 48,
-  "found_ambiguous": 95,
+  "found_ambiguous": 99,
   "not_found": 60,
-  "found_unique": 134,
+  "found_unique": 130,
   "row_found_other_value": 3
  },
  "verdict": {
   "value in the text layer of the page": 61,
   "value not in the text layer of the page": 47,
-  "ambiguous": 95,
-  "right place": 134,
+  "ambiguous": 99,
+  "right place": 130,
   "other value at the key's row and column (the locator's miss, the key being the printed truth)": 3
  },
  "failure_stage": {
@@ -24,14 +24,14 @@
  "by_unit": {
   "crore": {
    "no_text": 24,
-   "found_ambiguous": 62,
+   "found_ambiguous": 65,
    "not_found": 18,
-   "found_unique": 51,
+   "found_unique": 48,
    "row_found_other_value": 3
   },
   "lakh": {
-   "found_unique": 83,
-   "found_ambiguous": 33,
+   "found_unique": 82,
+   "found_ambiguous": 34,
    "not_found": 26,
    "no_text": 24
   },
@@ -41,15 +41,15 @@
  },
  "by_tag": {
   "bank": {
-   "found_ambiguous": 17,
+   "found_ambiguous": 20,
    "not_found": 6,
-   "found_unique": 19,
+   "found_unique": 16,
    "no_text": 16
   },
   "column_by_column_text": {
-   "found_ambiguous": 21,
+   "found_ambiguous": 24,
    "not_found": 4,
-   "found_unique": 11
+   "found_unique": 8
   },
   "consolidated_only": {
    "no_text": 10
@@ -66,8 +66,8 @@
    "found_ambiguous": 6
   },
   "lakh": {
-   "found_unique": 83,
-   "found_ambiguous": 33,
+   "found_unique": 82,
+   "found_ambiguous": 34,
    "not_found": 26,
    "no_text": 24
   },
@@ -78,9 +78,9 @@
   },
   "lender": {
    "no_text": 32,
-   "found_ambiguous": 62,
+   "found_ambiguous": 63,
    "not_found": 24,
-   "found_unique": 77,
+   "found_unique": 76,
    "row_found_other_value": 3
   },
   "low_quality_scan": {
@@ -93,9 +93,8 @@
    "not_found": 16
   },
   "nine_month_columns": {
-   "found_ambiguous": 25,
+   "found_ambiguous": 28,
    "not_found": 4,
-   "found_unique": 3,
    "no_text": 16
   },
   "revenue_label_definition": {
@@ -136,15 +135,14 @@
    "found_unique": 1
   },
   "stamps_over_table": {
-   "found_ambiguous": 11,
-   "not_found": 2,
-   "found_unique": 3
+   "found_ambiguous": 14,
+   "not_found": 2
   },
   "standalone_and_consolidated": {
    "no_text": 30,
-   "found_ambiguous": 75,
+   "found_ambiguous": 79,
    "not_found": 46,
-   "found_unique": 134,
+   "found_unique": 130,
    "row_found_other_value": 3
   },
   "standalone_only": {

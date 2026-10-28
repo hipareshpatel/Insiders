@@ -2,13 +2,15 @@
 
 ``memory-drop-known-wrong`` is a dry run unless ``--apply``. It removes exactly the listed figures: a source of a stored figure
 goes only when its metric, period, basis and VALUE are the listed ones, so a later correct figure for the same key stays, and
-a figure of another basis stays. A stored figure with several sources keeps the others and is rebuilt from them as
+a figure of another basis stays (a stored source with no stated basis counts as the listed basis only when the dossier holds that
+single basis, known_wrong.basis_fits). A stored figure with several sources keeps the others and is rebuilt from them as
 ``dossier._forget`` rebuilds one (the value of the latest machine-tagged source that remains). The company's standalone block
 is read for a STANDALONE entry.
 
 Before any write each company's dossier is saved through ``backup.RunBackup`` (the dossier as stored, and the one about to be
-written, read back before the write goes ahead): ``restore`` puts it back, keeping what any later writer stored. A backup that
-does not read back stops the run before that company is written.
+written, read back before the write goes ahead): ``restore`` puts it back, keeping what any later writer stored. Any failure of
+the read, the backup (it did not read back, or the store was down) or the write stops the run: nothing more is written, the report of
+what was done so far is still printed and saved, and the command exits 1.
 
 What it does not do: write the right figure (the list keeps it as evidence; a right figure comes from a re-read of a corrected
 file or from the owner's two-source rule, never from here), or recompute the changes (yoy, qoq) other stored figures carry
@@ -17,22 +19,27 @@ against the dropped one; a re-read of the company does that."""
 from __future__ import annotations
 
 import json
+import logging
 
 from . import known_wrong as kw
 from .dossier import STANDALONE_KEY, _metric_entry, _sources, keep_concurrent_writes
+
+log = logging.getLogger(__name__)
 
 
 def _source_basis(entry: dict, source: dict) -> str | None:
     return source.get("basis") or entry.get("basis") or (source.get("lab") or {}).get("basis")
 
 
-def _hit(wrong: kw.KnownWrong, entry: dict, source: dict) -> bool:
-    return kw.same_value(source.get("value"), wrong.wrong) and kw.basis_fits(wrong, _source_basis(entry, source))
+def _hit(wrong: kw.KnownWrong, entry: dict, source: dict, held: set[str]) -> bool:
+    return kw.same_value(source.get("value"), wrong.wrong) and kw.basis_fits(wrong, _source_basis(entry, source), held)
 
 
-def drop_figure(dossier: dict, wrong: kw.KnownWrong) -> dict:
+def drop_figure(dossier: dict, wrong: kw.KnownWrong, held: set[str] | None = None) -> dict:
     """Take one listed figure out of ``dossier`` (in place). Returns {"found", "dropped", "kept"}: the stored sources whose
-    key matched (value or not), the ones removed, and the values of those that did not match the listed value."""
+    key matched (value or not), the ones removed, and the values of those that did not match the listed value. ``held`` is the
+    bases the dossier holds (known_wrong.dossier_bases of it before any drop), for a source whose basis is not stated."""
+    held = kw.dossier_bases(dossier) if held is None else held
     report = {"found": 0, "dropped": 0, "kept": []}
     rows = []
     for entry in dossier.get("financial_metrics", []):
@@ -40,10 +47,10 @@ def drop_figure(dossier: dict, wrong: kw.KnownWrong) -> dict:
             rows.append(entry)
             continue
         sources = _sources(entry)
-        keep = [s for s in sources if not _hit(wrong, entry, s)]
+        keep = [s for s in sources if not _hit(wrong, entry, s, held)]
         report["found"] += len(sources)
         report["dropped"] += len(sources) - len(keep)
-        report["kept"] += [s.get("value") for s in keep if s.get("value") is not None and kw.basis_fits(wrong, _source_basis(entry, s))]
+        report["kept"] += [s.get("value") for s in keep if s.get("value") is not None]
         if len(keep) == len(sources):
             rows.append(entry)
         elif keep:
@@ -75,8 +82,10 @@ def _row(wrong: kw.KnownWrong, report: dict | None, apply: bool) -> dict:
 
 def run(sink, scrips=None, apply: bool = False, entries: dict | None = None) -> dict:
     """The drop over the listed companies (or the named ones among them). A dry run reads and reports; with ``apply`` each
-    changed dossier is backed up, then written through the three-way merge."""
-    from .backup import BackupError, RunBackup
+    changed dossier is backed up, then written through the three-way merge. Any failure of the read, the backup or the write
+    (a Worker outage as much as a backup that did not read back) stops the run at once: nothing more is written, the companies
+    not reached are listed as such, and ``error`` says what failed, so the caller still has the report of what was done."""
+    from .backup import RunBackup
 
     table = kw.BY_SCRIP if entries is None else entries
     names = sorted(table)
@@ -85,24 +94,33 @@ def run(sink, scrips=None, apply: bool = False, entries: dict | None = None) -> 
         names = [s for s in names if s in set(scrips)]
     backup = RunBackup(sink, "memory-drop-known-wrong") if apply else None
     out = {"apply": apply, "rows": [], "dossiers_written": 0, "unknown": unknown, "backup": None, "error": None}
-    for scrip in names:
-        read = sink.get_dossier(scrip)
-        if read is None:
-            out["rows"] += [_row(w, None, apply) for w in kw.for_scrip(scrip, table)]
-            continue
-        merged = json.loads(json.dumps(read))
-        reports = [(w, drop_figure(merged, w)) for w in kw.for_scrip(scrip, table)]
-        changed = merged != read
-        if apply and changed:
-            try:
+    for at, scrip in enumerate(names):
+        stage = "reading the dossier"
+        try:
+            read = sink.get_dossier(scrip)
+            if read is None:
+                out["rows"] += [_row(w, None, apply) for w in kw.for_scrip(scrip, table)]
+                continue
+            merged = json.loads(json.dumps(read))
+            held = kw.dossier_bases(read)
+            reports = [(w, drop_figure(merged, w, held)) for w in kw.for_scrip(scrip, table)]
+            changed = merged != read
+            if apply and changed:
+                stage = "saving the backup"
                 keep_concurrent_writes(merged, read, sink.get_dossier(scrip))
                 backup.dossier(scrip, merged)   # the dossier as stored (once) and the one about to be written, read back
-            except BackupError as exc:   # nothing more is written
-                out["error"] = f"{type(exc).__name__}: {exc}"[:300]
-                out["rows"] += [{**_row(w, r, False), "status": "not written (backup failed)"} for w, r in reports]
-                break
-            sink.put_dossier(scrip, merged)
-            out["dossiers_written"] += 1
+                stage = "writing the dossier"
+                sink.put_dossier(scrip, merged)
+                out["dossiers_written"] += 1
+        except Exception as exc:   # noqa: BLE001 - BackupError or an outage of the store: nothing more is written either way
+            out["error"] = f"{scrip}, {stage}: {type(exc).__name__}: {exc}"[:300]
+            log.error("memory-drop-known-wrong stopped at %s while %s: %s", scrip, stage, exc)
+            failed = "not written (the write may have failed after the backup: check the dossier)" if stage == "writing the dossier" \
+                else "not written (stopped)"
+            out["rows"] += [{**_row(w, None, False), "status": failed} for w in kw.for_scrip(scrip, table)]
+            for rest in names[at + 1:]:
+                out["rows"] += [{**_row(w, None, False), "status": "not reached"} for w in kw.for_scrip(rest, table)]
+            break
         out["rows"] += [_row(w, r, apply and changed) for w, r in reports]
     if backup is not None:
         out["backup"] = backup.summary()

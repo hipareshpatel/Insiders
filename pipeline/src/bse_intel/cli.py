@@ -1807,11 +1807,12 @@ def cmd_memory_drop_known_wrong(args, settings, sink) -> int:
     print(memory_drop.render(outcome))
     if args.json:
         Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:   # any failure of the read, the backup or the write: stopped, the report above and in --json is what was done
+        print(f"memory-drop-known-wrong: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
     if outcome["unknown"]:   # a name that is not on the list is a typo: reported, and the named ones still ran
         print("memory-drop-known-wrong: not on the list: " + ", ".join(outcome["unknown"]), file=sys.stderr)
         return 2
-    if outcome["error"]:
-        return 1
     if not args.apply:
         print("dry run: nothing changed (--apply backs each dossier up to backup/memory-drop-known-wrong-<time>/, then removes the listed figures)")
     return 0

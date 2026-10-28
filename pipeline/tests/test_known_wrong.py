@@ -96,9 +96,19 @@ def test_the_list_carries_each_figure_with_its_evidence():
     assert by[(VADILAL, "Q3FY25", "pat_discontinued")] == (-24.63, None)
 
 
+def test_the_sibling_lines_of_the_same_files_are_listed():
+    """Found in live memory on 28 Oct 2026 (the public API): the wrong value under the continuing and whole-company names too."""
+    have = {(e.scrip, e.period, e.metric): e.wrong for e in kw.KNOWN_WRONG_FIGURES}
+    assert have[(ECO, "Q4FY25", "pat_continuing")] == 3.42
+    assert have[(PRADEEP, "Q4FY26", "pat_continuing")] == 15.83 and have[(PRADEEP, "Q4FY26", "current_tax")] == -2.58
+    assert have[(PRADEEP, "Q4FY26", "deferred_tax")] == -0.17
+    assert have[(VELJAN, "Q3FY26", "eps_continuing")] == 10.31 and have[(VELJAN, "Q3FY26", "eps_total")] == 10.31
+
+
 def test_a_figure_matches_only_on_company_metric_period_basis_and_value():
     assert kw.listed(ECO, "pat", "Q4FY25", 3.42, "CONSOLIDATED")
-    assert kw.listed(ECO, "PAT", "Q4FY25", 3.4200001, None), "a basis the writer does not state could be either"
+    assert kw.listed(ECO, "PAT", "Q4FY25", 3.4200001, None, held_bases={"CONSOLIDATED"})
+    assert not kw.listed(ECO, "PAT", "Q4FY25", 3.4200001, None), "a basis the writer does not state, in a dossier nothing is known of"
     assert not kw.listed(ECO, "pat", "Q4FY25", 2.20, "CONSOLIDATED"), "the right figure for the same key is never held back"
     assert not kw.listed(ECO, "pat", "Q4FY25", 3.42, "STANDALONE"), "the other basis is another figure"
     assert not kw.listed(ECO, "pat", "Q3FY25", 3.42, "CONSOLIDATED") and not kw.listed(ECO, "revenue", "Q4FY25", 3.42)
@@ -346,3 +356,105 @@ def test_the_maintenance_job_is_in_the_memory_group_a_dry_run_unless_apply():
     assert "if: inputs.command == 'memory-drop-known-wrong'" in step
     assert '[ "$APPLY" = "true" ] && args+=(--apply)' in step and "APPLY: ${{ inputs.apply }}" in step
     assert "--apply" not in step.replace('args+=(--apply)', "")
+
+
+# --- the basis of a figure that states none ----------------------------------------------------------------------------------
+
+def test_a_figure_with_no_stated_basis_fits_only_a_dossier_that_holds_that_single_basis():
+    eco = kw.listed(ECO, "pat", "Q4FY25", 3.42)   # basis not stated, nothing known of the dossier
+    assert eco is None
+    assert kw.listed(ECO, "pat", "Q4FY25", 3.42, None, held_bases={"CONSOLIDATED"})
+    assert kw.listed(ECO, "pat", "Q4FY25", 3.42, None, held_bases=lambda: {"CONSOLIDATED"})
+    assert not kw.listed(ECO, "pat", "Q4FY25", 3.42, None, held_bases={"CONSOLIDATED", "STANDALONE"}), "two bases: could be the other"
+    assert not kw.listed(ECO, "pat", "Q4FY25", 3.42, None, held_bases={"STANDALONE"}), "the one basis it holds is the other"
+    assert not kw.listed(ECO, "pat", "Q4FY25", 3.42, None, held_bases=set()), "no figure held yet: nothing says which basis"
+    assert kw.listed(KOVAI, "pat", "Q4FY26", 59.69), "an entry with no basis fits any figure"
+    assert kw.dossier_bases(_dossier(ECO, _entry(ECO, "pat", "Q1FY26", 1.0))) == {"CONSOLIDATED"}
+    both = _dossier(ECO, _entry(ECO, "pat", "Q1FY26", 1.0), standalone={"metrics": [{"metric": "pat", "period": "Q1FY26", "value": 1.0}]})
+    assert kw.dossier_bases(both) == {"CONSOLIDATED", "STANDALONE"}
+
+
+def test_the_drop_takes_a_source_with_no_stated_basis_only_from_a_single_basis_dossier(settings):
+    def bare(scrip, others=()):
+        source = {"news_id": f"xbrl:res:{scrip}:Q4FY25", "as_of": "2025-05-20T18:00:00+05:30", "value": 3.42, "unit": "INR_CR"}
+        return _dossier(scrip, _metric_entry("pat", "Q4FY25", [source]), *others)
+
+    single = _sink(settings, {ECO: bare(ECO, [_entry(ECO, "revenue", "Q4FY25", 41.5)])})   # the only basis held is consolidated
+    memory_drop.run(single, apply=True, scrips=[ECO])
+    assert _stored(single, ECO, "pat", "Q4FY25") == [], "one basis held, and it is the listed one: the bare figure is the listed figure"
+
+    mixed = _sink(settings, {ECO: bare(ECO, [_entry(ECO, "revenue", "Q4FY25", 41.5, basis="STANDALONE")])})   # two bases held
+    out = memory_drop.run(mixed, apply=True, scrips=[ECO])
+    assert _stored(mixed, ECO, "pat", "Q4FY25")[0]["value"] == 3.42 and out["dossiers_written"] == 0, "could be the other basis: kept"
+    assert {r["status"] for r in out["rows"] if r["metric"] == "pat"} == {"other value kept"}
+
+
+# --- a failure of the backup or the store other than BackupError ----------------------------------------------------------------
+
+class _Down(LocalSink):
+    """A store that fails the named call, as a Worker outage does."""
+
+    fail = None   # "put_object", "put_dossier" or "get_dossier"
+    after = 0     # let this many of those calls through first
+
+    def _maybe(self, name):
+        if self.fail == name:
+            if self.after <= 0:
+                raise ConnectionError(f"{name}: the Worker did not answer")
+            self.after -= 1
+
+    def put_object(self, key, body, content_type="application/json"):
+        if not key.endswith("meta.json"):
+            self._maybe("put_object")
+        return super().put_object(key, body, content_type)
+
+    def put_dossier(self, scrip, dossier):
+        self._maybe("put_dossier")
+        return super().put_dossier(scrip, dossier)
+
+    def get_dossier(self, scrip):
+        self._maybe("get_dossier")
+        return super().get_dossier(scrip)
+
+
+def _down(settings, fail, after=0):
+    sink = _Down(settings)
+    memory = _memory(settings)
+    for scrip, dossier in memory.items():
+        sink.put_dossier(scrip, dossier)
+    sink.fail, sink.after = fail, after
+    return sink, memory
+
+
+def test_any_failure_of_the_backup_or_the_write_stops_the_run_and_keeps_the_report(settings, capsys, tmp_path):
+    # an outage while saving the first backup: nothing is written
+    sink, memory = _down(settings, "put_object")
+    out = memory_drop.run(sink, apply=True)
+    assert "ConnectionError" in out["error"] and out["dossiers_written"] == 0
+    sink.fail = None
+    assert {s: sink.get_dossier(s) for s in memory} == memory
+    assert "dropped" not in {r["status"] for r in out["rows"]} and "not written (stopped)" in {r["status"] for r in out["rows"]}
+    assert "not reached" in {r["status"] for r in out["rows"]}
+
+    # an outage on the write of the second company: the first stays written (its backup exists), the rest are not reached
+    sink, memory = _down(settings, "put_dossier", after=1)
+    out = memory_drop.run(sink, apply=True)
+    assert out["dossiers_written"] == 1 and "writing the dossier" in out["error"] and out["backup"]["dossiers"] == 2
+    statuses = [r["status"] for r in out["rows"]]
+    assert "dropped" in statuses and any(s.startswith("not written (the write may have failed") for s in statuses) \
+        and "not reached" in statuses
+    sink.fail = None
+    assert sink.get_dossier(PRADEEP) != memory[PRADEEP], "the company written before the outage keeps its drop"
+    assert sink.get_dossier(VADILAL) == memory[VADILAL]
+
+    # the command: exit 1, the report printed and saved
+    sink, memory = _down(settings, "put_dossier")
+    report = tmp_path / "report.json"
+    assert cmd_memory_drop_known_wrong(SimpleNamespace(scrips=None, apply=True, json=str(report)), settings, sink) == 1
+    captured = capsys.readouterr()
+    assert "stopped" in captured.err and "ConnectionError" in captured.err and "not written" in captured.out
+    saved = json.loads(report.read_text(encoding="utf-8"))
+    assert saved["error"] and saved["dossiers_written"] == 0 and saved["rows"]
+    # a read that fails stops the run too
+    sink, memory = _down(settings, "get_dossier")
+    assert "reading the dossier" in memory_drop.run(sink)["error"]

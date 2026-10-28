@@ -16,6 +16,15 @@ or the printed statement, with a second source agreeing: docs/DATA_QUALITY.md, t
 beside it as evidence, never written by code. Everything a re-read of the file does fix (a flipped sign, a filler zero, a unit
 slip) is fixed in the reader and does not belong here.
 
+``listed()`` ignores the ``exchange`` field on purpose: it is evidence, not part of the key. The fault is in the company's own
+results file, and the company files the same XBRL with both exchanges, so NSE's copy of the same results (what the seed and the
+live run read) carries the same wrong figure as BSE's. Matching on the exchange would let that copy write it back; the value
+match is what keeps a correct figure safe, whichever exchange it comes from.
+
+A list entry with a stated basis matches a figure of that basis. A figure whose basis is not stated matches only when the
+company's dossier holds that one basis and nothing else (``dossier_bases``: the main block's bases, and STANDALONE when a standalone
+block is kept); a company holding two bases, or none, gets no match, since the figure could be the other basis's.
+
 Nothing in this module imports the rest of the package, so every writer can use it."""
 
 from __future__ import annotations
@@ -68,6 +77,36 @@ KNOWN_WRONG_FIGURES: tuple[KnownWrong, ...] = (
         "consolidated filing. Screener 11.24 and tijori 11.2378 agree; profit 5.06 and revenue 36.92 are right. "
         "docs/bench/bse-fill-batches-1-2-check.md",
         "2026-10-27", "BSE"),
+    # Sibling lines of the same figures, found in live memory on 28 Oct 2026 (the public site's /api/companies/<symbol>): the same wrong
+    # value stored under another name, from the same file.
+    KnownWrong(
+        "530643", "CONSOLIDATED", "Q4FY25", "pat_continuing", 3.42, 2.20,
+        "Eco Recycling, same file as its profit (no discontinued operation: continuing profit is the profit): 3.42 in live memory, "
+        "the statement's profit after tax is 220 lakh.",
+        "2026-10-28", "BSE"),
+    KnownWrong(
+        "513532", "CONSOLIDATED", "Q4FY26", "pat_continuing", 15.83, 10.32,
+        "Pradeep Metals, same file as its profit: continuing profit 15.83 in live memory, the statement's is 1,031.92 lakh.",
+        "2026-10-28", "BSE"),
+    KnownWrong(
+        "513532", "CONSOLIDATED", "Q4FY26", "current_tax", -2.58, None,
+        "Pradeep Metals, same file: the file tags the tax lines with the sign of a credit (TaxExpense -2.76, current -2.58, deferred "
+        "-0.17); the statement prints a tax expense of (275.52) lakh. The statement's split between current and deferred was not read.",
+        "2026-10-28", "BSE"),
+    KnownWrong(
+        "513532", "CONSOLIDATED", "Q4FY26", "deferred_tax", -0.17, None,
+        "Pradeep Metals, same file: see current_tax; the sign is the fault, the statement's split was not read.",
+        "2026-10-28", "BSE"),
+    KnownWrong(
+        "505232", "CONSOLIDATED", "Q3FY26", "eps_continuing", 10.31, 11.24,
+        "Veljan Denison, same file as its EPS: the standalone EPS stored under the continuing-operations variant too; the consolidated "
+        "EPS is 11.24.",
+        "2026-10-28", "BSE"),
+    KnownWrong(
+        "505232", "CONSOLIDATED", "Q3FY26", "eps_total", 10.31, 11.24,
+        "Veljan Denison, same file as its EPS: the standalone EPS stored under the whole-company variant too; the consolidated EPS "
+        "is 11.24.",
+        "2026-10-28", "BSE"),
     # The lines of the same files that carry the same fault (the tax of the wrong profit, the discontinued line that was added),
     # proven by the same statements: left in, memory would show a profit that does not equal its own PBT less tax.
     KnownWrong(
@@ -121,17 +160,39 @@ def same_value(a, b) -> bool:
         return False
 
 
-def basis_fits(entry: KnownWrong, basis: str | None) -> bool:
-    """A figure of the other basis is another figure; one whose basis is not stated could be either, and is held."""
-    return not entry.basis or not basis or str(basis).upper() == entry.basis
+def dossier_bases(dossier: dict | None) -> set[str]:
+    """The bases a dossier holds figures on: its main block's, and STANDALONE when it keeps a standalone block."""
+    found: set[str] = set()
+    for entry in (dossier or {}).get("financial_metrics", []):
+        if not isinstance(entry, dict):
+            continue
+        for row in [entry, *(entry.get("sources") or [])]:
+            found.add(str(row.get("basis") or (row.get("lab") or {}).get("basis") or "").upper())
+    if ((dossier or {}).get("standalone") or {}).get("metrics"):
+        found.add("STANDALONE")
+    return found - {""}
+
+
+def basis_fits(entry: KnownWrong, basis: str | None, held_bases=None) -> bool:
+    """A figure of the other basis is another figure. A figure with no stated basis fits an entry with one only when the
+    company's dossier holds that single basis (``held_bases``: a set, or a function returning it, read only when needed);
+    with no dossier to say, it does not fit. An entry with no basis fits every figure."""
+    if not entry.basis:
+        return True
+    if basis:
+        return str(basis).upper() == entry.basis
+    held = held_bases() if callable(held_bases) else held_bases
+    return held is not None and set(held) == {entry.basis}
 
 
 def listed(scrip: str | None, metric: str | None, period: str | None, value, basis: str | None = None,
-           entries: dict[str, list[KnownWrong]] | None = None) -> KnownWrong | None:
-    """The list entry a figure matches (same company, metric, period, a basis that fits, and the same value), else None."""
+           entries: dict[str, list[KnownWrong]] | None = None, held_bases=None) -> KnownWrong | None:
+    """The list entry a figure matches (same company, metric, period, a basis that fits, and the same value), else None.
+    ``exchange`` is not matched (module docstring)."""
     table = BY_SCRIP if entries is None else entries
     for e in table.get(str(scrip or ""), ()):
-        if norm_metric(metric) == e.metric and period == e.period and basis_fits(e, basis) and same_value(value, e.wrong):
+        if norm_metric(metric) == e.metric and period == e.period and same_value(value, e.wrong) \
+                and basis_fits(e, basis, held_bases):
             return e
     return None
 

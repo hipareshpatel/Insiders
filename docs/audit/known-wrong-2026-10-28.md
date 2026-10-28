@@ -48,17 +48,19 @@ PR #199 (assumption, to be confirmed by the check in section 4).
   [--scrips X] --apply` undoes it, keeping what was written since.
 * Maintenance: `command=memory-drop-known-wrong`, input `apply` (default off = dry run), input `ids` = scrip codes (empty = every listed
   company). Group `maint-nse-memory`. Artifact `memory-drop-known-wrong` (the report as text and JSON).
-* Tests: `tests/test_known_wrong.py`, 16 tests on `LocalSink` (listed entry removed and a different value kept; a figure of another
+* Tests: `tests/test_known_wrong.py`, 20 tests on `LocalSink` (listed entry removed and a different value kept; a figure of another
   basis or period kept; a two-source figure rebuilt; dry run writes nothing; restore undoes it and keeps a later write; a backup that does
   not read back stops the run; the seed, the standalone block and the BSE fill skip a listed figure; a drop is not undone by a re-read;
-  the workflow wiring).
+  the workflow wiring; the siblings; a figure with no stated basis; any failure of the backup, the read or the write, not only `BackupError`, stops the run, keeps the report and exits 1).
+* `listed()` ignores the `exchange` field: the company files the same XBRL with both exchanges, so NSE's copy (what the seed and the live run read) carries the same wrong figure; matching on the exchange would let it write it back. The value match is the protection.
+* A figure with no stated basis matches an entry with a stated basis only when the company's dossier holds that single basis (`known_wrong.dossier_bases`); two bases, none, or the other one: not a match, and the drop leaves it.
 
 ## 3. The 35 items
 
 Memory is stored by scrip code; `seed-memory --scrips` takes NSE symbols or scrip codes. The symbols below are as in STATUS. A value in
 brackets is read from the repo; "(unread)" means the stored value is not in any file in the repo and is read from the dossier at run time.
 
-### 3a. The exchange's own file is wrong: 4 items, plus 3 companion lines, plus Kovai (listed, not among the 35)
+### 3a. The exchange's own file is wrong: 4 items, plus 9 sibling lines of the same files, plus Kovai (listed, not among the 35)
 
 | # | Company (scrip) | Basis | Period | Metric | In memory | Statement | Proof | Action |
 |---|---|---|---|---|---|---|---|---|
@@ -69,24 +71,30 @@ brackets is read from the repo; "(unread)" means the stored value is not in any 
 | 3 | Pradeep Metals, PRADPME (513532) | consolidated | Q4FY26 | pat | 15.83 | 10.32 | PDF e40783f6: PBT 1,307.44 lakh, tax (275.52), PAT 1,031.92; file tags tax -2.76 (sign); screener 10.32, tijori 10.319 | list + drop |
 | 3b | same | consolidated | Q4FY26 | tax_expense | -2.76 | 2.76 | same (companion line) | list + drop |
 | 4 | Veljan Denison, VELJAN (505232) | consolidated | Q3FY26 | eps | 10.31 | 11.24 | PDF 75b5e969 (own filing, 11 Feb 2026): consolidated EPS 11.24; 10.31 is the standalone EPS; screener 11.24, tijori 11.2378 | list + drop |
+| 4b | same | consolidated | Q3FY26 | eps_continuing, eps_total | 10.31, 10.31 | 11.24 | the same standalone EPS under the two variant names (public API, 28 Oct) | list + drop |
+| 1c | ECORECO | consolidated | Q4FY25 | pat_continuing | 3.42 | 2.20 | the same profit under the continuing name (public API, 28 Oct) | list + drop |
+| 3c | PRADPME | consolidated | Q4FY26 | pat_continuing | 15.83 | 10.32 | the same profit under the continuing name (public API, 28 Oct) | list + drop |
+| 3d | PRADPME | consolidated | Q4FY26 | current_tax, deferred_tax | -2.58, -0.17 | sign wrong; split not read | the tax lines tagged with the sign of a credit, as the total (public API, 28 Oct) | list + drop |
 
 Proof is from `docs/bench/bse-fill-batches-1-2-check.md` (measured 27 Oct 2026). Two-source rule (DATA_QUALITY): the PDF and screener agree
 in all four, but Eco's PDF was read by OCR, and OCR "can list or hold a figure, never correct one": so none of the four is corrected, all are
 taken out. The quarter is then empty on that line until the owner's rules fill it (`screener-fill` fills an empty quarter from screener.in with
-the right figure, labelled screener; not part of this plan). The three companion lines (tax, discontinued) are the same files and the same
-statements: leaving them in would show a profit that does not equal its own PBT less tax. **Added beyond the four named, for the lead to keep or strike.**
+the right figure, labelled screener; not part of this plan). The sibling lines (tax, discontinued, continuing profit, the two EPS variants) are the same files and the same
+statements: leaving them in would show a profit that does not equal its own PBT less tax, or the same wrong value under another name. **Added beyond the four named, for the lead to keep or strike.**
 Kovai Medical Q4FY26 pat 59.69 (63.35) and eps 54.55 (57.90) are also on the list (read from the existing `KNOWN_WRONG` note), so that
 no writer from the same file can store them; memory is not known to hold them.
 
+**Sibling lines read from live memory** (28 Oct 2026, `curl https://insiders.reply-bd3.workers.dev/api/companies/<SYMBOL>`, the `dossier` block, every line of the quarter, both blocks): ECORECO Q4FY25, PRADPME Q4FY26, VELJAN Q3FY26 and VADILENT Q3FY25 each hold the wrong figure under the names above and under no other: no `pat_owners` or `pat_minority` is stored for any of the four, and the wrong value (3.42, 15.83, 10.31, -42.94) is stored for no other period or metric. Lines of the same files that are right and stay: ECORECO `current_tax` 2.88, `deferred_tax` -0.03 and `eps` 1.19; VELJAN `pat` 5.06, `tax_expense` 2.37 and `revenue` 36.92; VADILENT `pat_continuing` -18.31, `tax_expense` -6.12 and `eps` -212.25 (the statement's EPS); PRADPME `eps` 5.98. `ebitda` is built from `pbt` and does not use the profit or the tax, so it stays.
+
 **Maintenance runs (2):**
 1. `command=memory-drop-known-wrong`, `apply` off, `ids` empty. Dry run: per listed figure "would drop" / "other value kept" / "not in memory" / "no dossier".
-   Expect 7 "would drop" if memory is as STATUS says and Kovai "no dossier" or "not in memory".
+   Expect 13 "would drop" (the 4 named, 3 companions, 6 siblings; Pradeep's `current_tax` and `deferred_tax` are two of them) if memory is as the public API showed on 28 Oct, and Kovai "no dossier" or "not in memory".
 2. If the dry run shows what is expected: `command=memory-drop-known-wrong`, `apply` on, `ids=530643,519152,513532,505232`. Reads no filing (0 of the 50);
    writes at most 4 dossiers, each backed up first. Note the backup prefix from the log.
 
 Not put through `seed-memory`: these four have no NSE results list (the BSE fill wrote them), so a seed would read nothing for them.
-Not recomputed: the yoy/qoq the next quarter's figures carry against the dropped one (a re-read of the company does that). **Unsure:** whether
-Eco's `pat_owners`, Pradeep's `ebitda` or any other figure derived from the wrong profit or tax is also stored and wrong; the evidence names none.
+Not recomputed: the yoy/qoq the next quarter's figures carry against the dropped one (a re-read of the company does that). **Checked:** the stored lines of the four
+quarters were read on 28 Oct (see above) and the ones that carry a wrong value are all on the list; nothing else derived from the wrong profit or tax is stored (no `pat_owners`; `ebitda` does not use them).
 
 ### 3b. 12 EPS with a flipped sign: re-read fixes it (expected), not yet proven for each
 
@@ -95,14 +103,24 @@ so memory was written before the 26 Oct fix (PR #154, F187, whose own entry says
 
 | # | Company | Period | In memory (sign flipped) | Action |
 |---|---|---|---|---|
-| 5 | ALEMBICLTD | Q4FY26 | -2.61 (file and screener 2.61) | re-read |
+| 5 | ALEMBICLTD | Q4FY26 | -2.61 (file and screener 2.61); `pat_owners` -33.87 also suspect | re-read, and check `pat_owners` |
 | 6 | APOLLOPIPE | Q2FY26 | unread | re-read |
 | 7 | PRIVISCL | Q1FY25 | unread | re-read |
 | 8 | RPOWER | Q2FY25 | unread | re-read |
 | 9 | SILVERTUC | Q1FY27 | unread | re-read |
-| 10-14 | MOLDTECH | five periods (unread) | unread | re-read |
+| 10-14 | MOLDTECH | five periods, among Q2FY24, Q4FY24, FY24, Q2FY25, H1FY25, Q4FY26 (public API 28 Oct: see the pilot note) | `eps` negative where `pat` is positive | re-read, and check `pat_owners` |
 | 15 | NITCO | Q4FY24 | unread | re-read |
 | 16 | MAXESTATES | Q2FY24 | unread | re-read |
+
+**What the independent review found for the pilots (live memory, 28 Oct 2026, public API):**
+* ALEMBICLTD (506235) Q4FY26: `eps` -2.61 is the sign-flipped one. Total `pat` 67.13 over about 25.68 Cr shares (the share count its other quarters give) is 2.61, and FY26 12.36 less 9M 9.75 is +2.61.
+  `pat_owners` -33.87 is stored too and is also suspect: the other quarters hold `pat_owners` equal to `pat`, and FY26 holds 229.83 against `pat` 317.38.
+* MOLDTECH (526263): `eps` is minus `pat` over the share count in Q2FY25 (-2.80 on `pat` 8.00), H1FY25 and Q4FY26 (-0.80 on `pat` 2.28); the same shows in Q2FY24, Q4FY24 and FY24. In every one of those periods the stored
+  `pat_owners` has the opposite sign to `pat` (Q2FY25 -0.94, Q4FY26 -2.70, H1FY25 -0.77, Q2FY24 -1.64, Q4FY24 -2.59, FY24 -2.56): the periods where `pat_owners` disagrees with `pat` are the periods where `eps` is negative.
+  Where no `pat_owners` is stored (Q1FY26, Q2FY26, Q3FY26) `eps` is positive.
+* So the pilot has two things to check after its re-read, not one: `eps` **and `pat_owners`**. F187 drops an owners' profit of the opposite sign only when the filed EPS does not back it, and gives EPS the sign of the
+  profit it is on; if either is still wrong after the re-read, it is a code class in the XBRL owners'-profit reading (`xbrl.owners_share`, `eps_signs`, `filer_profit`), to be fixed with a test built on the file, and the company
+  re-read again. MOLDTECH joins ALEMBICLTD as a pilot and goes in the run list right after the three pilots, before the other flipped-EPS companies.
 
 **Unsure, and the fallback:** five periods of one company (MOLDTECH) is a pattern, not five accidents. If a re-read leaves any of the 12 flipped, it is
 a code class today's reader still has, and the file is its fixture (`docs/DATA_QUALITY.md` steps 3-4): fix in `xbrl.eps_signs` with a test, re-read again. If the
@@ -172,14 +190,14 @@ the same command is run again.
 
 | Run | `ids` | Items |
 |---|---|---|
-| 1 | `ALEMBICLTD` | 5 (pilot: check it before going on) |
+| 1 | `ALEMBICLTD` | 5 (pilot: check `eps` and `pat_owners` before going on) |
 | 2 | `AHLUCONT` | 17 (pilot) |
 | 3 | `DOLPHIN` | 26-28 |
-| 4 | `APOLLOPIPE` | 6 |
+| 4 | `MOLDTECH` | 10-14 (pilot: check `eps` and `pat_owners`) |
+| 4b | `APOLLOPIPE` | 6 |
 | 5 | `PRIVISCL` | 7 |
 | 6 | `RPOWER` | 8 |
 | 7 | `SILVERTUC` | 9 |
-| 8 | `MOLDTECH` | 10-14 |
 | 9 | `NITCO` | 15 |
 | 10 | `MAXESTATES` | 16 |
 | 11 | `ARVIND` | EPS zero |
@@ -197,7 +215,7 @@ the same command is run again.
 Each run backs up its company's dossier first (`seed-memory --scrips` takes the dossiers before it starts and the after-state when it ends); `restore` with `backup=<prefix from the log>`,
 `scrips=<scrip>`, `restore_mode=preview` then `apply` undoes it. The after-state includes any live write made to that company while the seed ran, so undo soon after.
 
-**Check after each pilot (runs 1-3), then once at the end.** The figure must be the right one, and the rule of STATUS section 0 A needs two sources agreeing on it: the second source is
+**Check after each pilot (runs 1-4), then once at the end.** The figure must be the right one, and the rule of STATUS section 0 A needs two sources agreeing on it: the second source is
 screener.in (the referee's pairs already hold its figures). Read the company's page, or run `screener-crosscheck` and `screener-referee` again after the last run: the 21 pairs of
 "screener matches the official figure" and the Dolphin pairs must be gone. Any item still wrong goes back to section 3 as "needs a code fix" (or the list, with proof) and its company
 is re-read again after the fix. A re-read can also change figures beyond the 35 of that company (older figures written by older code, and quarters now held out for an unconfirmed unit

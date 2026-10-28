@@ -1149,7 +1149,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if not march_year(d) and not _CALENDAR_QUARTER.fullmatch(key[1]):
             continue   # a half year or year of a company whose year does not end in March: wrongly named here
         wrong = known_wrong.listed(filing.scrip_code or d.get("scrip_code"), key[0], key[1], m.value,
-                                   getattr(m, "file_basis", None) or basis)
+                                   getattr(m, "file_basis", None) or basis, held_bases=lambda: known_wrong.dossier_bases(d))
         if wrong is not None:
             # proven wrong in the exchange's own file (known_wrong.py, F223): never written, by any writer, so a drop is not undone
             log.info("memory: %s %s %s from %s refused: on the known-wrong list (statement: %s)", key[0], key[1], m.value, news_id, wrong.right)

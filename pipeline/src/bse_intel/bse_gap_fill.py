@@ -295,7 +295,8 @@ def new_figures(before: dict | None, after: dict | None, scrip: str, wanted: set
         if basis and got not in (None, basis):
             skipped["basis differs"] = skipped.get("basis differs", 0) + 1
             continue
-        if known_wrong.listed(scrip, entry.get("metric"), period, entry.get("value"), got) is not None:
+        if known_wrong.listed(scrip, entry.get("metric"), period, entry.get("value"), got,
+                              held_bases=lambda: known_wrong.dossier_bases(before)) is not None:
             skipped["known wrong figure"] = skipped.get("known wrong figure", 0) + 1   # proven wrong in BSE's own file (F223)
             continue
         out.append(_stamp(entry, urls.get(period)))
@@ -476,7 +477,8 @@ def _write(sink, scrip: str, fresh: list[dict], seeded: dict | None = None, back
         key = (_norm(entry["metric"]), entry["period"])
         if key in held:
             continue
-        if known_wrong.listed(scrip, entry["metric"], entry["period"], entry.get("value"), entry.get("basis")) is not None:
+        if known_wrong.listed(scrip, entry["metric"], entry["period"], entry.get("value"), entry.get("basis"),
+                              held_bases=lambda: known_wrong.dossier_bases(merged)) is not None:
             continue   # proven wrong in the exchange's own file: never written, whoever asks (known_wrong.py, F223)
         held.add(key)
         merged.setdefault("financial_metrics", []).append(json.loads(json.dumps(entry)))

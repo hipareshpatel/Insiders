@@ -1571,7 +1571,7 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
 
     ``--from-nse`` (owner, 28 Oct 2026: every results file of the universe now) lists each company's results from NSE's own list,
     the seed's latest quarters in both bases, and fetches every file not stored, keeping its facts the moment it is fetched; no memory
-    or dossier write. ``--shard I/N`` (N at most 8) takes every N-th company from the I-th; ``--time-budget SECONDS`` ends the run
+    or dossier write. ``--shard I/N`` (N at most 16) takes every N-th company from the I-th; ``--time-budget SECONDS`` ends the run
     cleanly between two files (exit 124); ``--json`` and ``--csv`` are written as the run goes (the CSV is one line a listed file with
     its status and every timestamp of NSE's row). A refusal stops the shard at once (exit 75, with the status and the body's first
     300 bytes in the log); a file that is not served for another reason is counted by reason and the run goes on."""
@@ -2477,7 +2477,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--force", action="store_true", help="read again the files whose facts are stored")
     p.add_argument("--dry-run", action="store_true", help="parse and count, write no facts")
     p.add_argument("--from-nse", action="store_true", help="list each company's results files from NSE's own list (the seed's latest 12 quarters, both bases) and fetch every file not stored; needs --download; writes no memory (one list request a company, not counted toward FILE_CAP; files are)")
-    p.add_argument("--shard", help="I/N: only every N-th company from the I-th (N at most 8), e.g. 0/8")
+    p.add_argument("--shard", help="I/N: only every N-th company from the I-th (N at most 16), e.g. 0/8")
     p.add_argument("--time-budget", type=float, help="seconds: stop cleanly between two files after this long (exit 124); default none")
     p.add_argument("--json", help="write the summary to this file (with --from-nse also as the run goes)")
     p.add_argument("--csv", help="write the filings whose file is not stored to this file (with --from-nse: one line a listed file, with its status and NSE's timestamps)")

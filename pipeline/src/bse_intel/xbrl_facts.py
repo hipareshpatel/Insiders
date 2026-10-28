@@ -426,7 +426,7 @@ def interesting(facts: Facts) -> set[str]:
 
 # --- every results file NSE lists (``--from-nse``, owner 28 Oct 2026: "download now every results XBRL and annual-report XBRL") ----
 
-MAX_SHARDS = 8            # owner, 28 Oct 2026: 8 parallel downloads, no more
+MAX_SHARDS = 16           # owner, 28 Oct 2026: 8 parallel downloads, then "Can we take it to 16" (the same day)
 SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason

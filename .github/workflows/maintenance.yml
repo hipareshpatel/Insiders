@@ -107,7 +107,7 @@
 #   every file not stored is fetched through the seed's fetch (our copy in R2, else NSE at the client's pace, the annual-report size
 #   limit) and its facts are saved at once; no memory or dossier is written. `annual` adds the annual-report XBRL. A rerun skips
 #   stored files and, for a company whose files are all stored (marker raw/xbrl-facts/<scrip>/_listed.json, under 7 days old), the
-#   list. `shards` (1 to 8, the owner allows 8 parallel downloads and no more) runs the job as a matrix, one NseClient and one
+#   list. `shards` (1 to 16, the owner allows 16 parallel downloads, 28 Oct 2026) runs the job as a matrix, one NseClient and one
 #   artifact (`xbrl-facts-<shard>`: summary.json and listing.csv, the CSV one line a listed file with its status and every timestamp
 #   NSE's row carries, for measuring how long after the results PDF the XBRL appears) each; `file_cap` is split over the shards (`file_cap // shards` each, at least 1: a `file_cap` below `shards` gives every shard 1 file); `archive_pause` (empty by default) sets NSE_ARCHIVE_PAUSE_SECONDS for the shards as the seed job does. Each
 #   shard saves as it goes, stops on its time budget of 5 h 20 min (exit 124: a marker, not a failure; dispatch again), stops at once on a
@@ -298,7 +298,7 @@ on:
         type: boolean
         default: false
       shards:
-        description: xbrl-facts only - run as this many parallel runners, 1 to 8 (owner, 28 Oct 2026, 8 at most), each its own NSE client; file_cap is split over them (file_cap // shards each, at least 1 each, so a file_cap below shards gives every shard 1 file)
+        description: xbrl-facts only - run as this many parallel runners, 1 to 16 (owner, 28 Oct 2026, 8 then 16), each its own NSE client; file_cap is split over them (file_cap // shards each, at least 1 each, so a file_cap below shards gives every shard 1 file)
         type: string
         default: '1'
       file_cap:
@@ -1632,7 +1632,7 @@ jobs:
           path: ${{ runner.temp }}/pdfreferee/
           if-no-files-found: ignore
 
-  # xbrl-facts (owner, 28 Oct 2026): one job, `shards` runners (1 to 8, the owner allows 8 parallel downloads and no more), each its own
+  # xbrl-facts (owner, 28 Oct 2026): one job, `shards` runners (1 to 16, the owner allows 16 parallel downloads, 28 Oct 2026), each its own
   # NseClient and so its own address and pace, each taking every N-th company (`--shard I/N`). The plan job checks the number and
   # gives the matrix. Each shard saves a file and its facts to R2 the moment it has them, stops cleanly after `--time-budget` 19200 s
   # (5 h 20 min; GitHub's own limit is 6 h) with exit 124 (a `more` marker, not a failure: dispatch again for the rest), stops at once
@@ -1654,8 +1654,8 @@ jobs:
         run: |
           n="${SHARDS:-1}"
           case "$n" in
-            [1-8]) ;;
-            *) echo "::error::shards must be a whole number from 1 to 8 (owner, 28 Oct 2026: 8 parallel downloads, no more)"; exit 1 ;;
+            [1-9]|1[0-6]) ;;
+            *) echo "::error::shards must be a whole number from 1 to 16 (owner, 28 Oct 2026: 8 parallel downloads, then 16)"; exit 1 ;;
           esac
           echo "shards=[$(seq -s, 0 $((n - 1)))]" >> "$GITHUB_OUTPUT"
 

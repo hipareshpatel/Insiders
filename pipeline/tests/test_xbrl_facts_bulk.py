@@ -117,12 +117,12 @@ def run(site: Site, sink=None, companies=COMPANIES, retries: int = 1, warmed: bo
 
 def test_shard_slice_is_deterministic_and_covers_everyone_once():
     companies = [(str(i), f"S{i}") for i in range(1, 30)]
-    slices = [xbrl_facts.shard_slice(companies, i, 8) for i in range(8)]
+    slices = [xbrl_facts.shard_slice(companies, i, 16) for i in range(16)]
     assert sorted(sum(slices, [])) == sorted(companies)                       # everyone, once
     assert sum(len(s) for s in slices) == len(companies)
-    assert slices == [xbrl_facts.shard_slice(list(reversed(companies)), i, 8) for i in range(8)]   # whatever the input order
+    assert slices == [xbrl_facts.shard_slice(list(reversed(companies)), i, 16) for i in range(16)]   # whatever the input order
     assert xbrl_facts.shard_slice(companies, 0, 1) == sorted(companies)
-    for bad in ((0, 9), (8, 8), (-1, 4), (0, 0)):
+    for bad in ((0, 17), (16, 16), (-1, 4), (0, 0)):
         with pytest.raises(ValueError):
             xbrl_facts.shard_slice(companies, *bad)
 
@@ -454,7 +454,7 @@ def test_the_cli_refuses_from_nse_without_download_and_a_bad_shard(monkeypatch, 
     monkeypatch.setattr(cli, "_universe_companies", lambda s, scrips: COMPANIES)
     monkeypatch.setattr("bse_intel.nse.NseClient", lambda *a, **k: pytest.fail("no client for these"))
     assert cli.main(["xbrl-facts", "--from-nse"]) == 2
-    for bad in ("0/9", "8/8", "x", "1"):
+    for bad in ("0/17", "16/16", "x", "1"):
         assert cli.main(["xbrl-facts", "--from-nse", "--dry-run", "--shard", bad]) == 2
     assert "--shard takes I/N" in capsys.readouterr().out
 
@@ -489,13 +489,13 @@ def workflow():
     return text, yaml.safe_load(text)
 
 
-def test_workflow_runs_xbrl_facts_as_a_matrix_of_at_most_eight_shards_and_always_uploads():
+def test_workflow_runs_xbrl_facts_as_a_matrix_of_at_most_sixteen_shards_and_always_uploads():
     text, doc = workflow()
     inputs = (doc.get("on") or doc.get(True))["workflow_dispatch"]["inputs"]
     assert inputs["shards"]["default"] == "1" and inputs["from_nse"]["default"] is False and len(inputs) <= 25
     plan, job = doc["jobs"]["xbrl-facts-plan"], doc["jobs"]["xbrl-facts"]
     plan_step = next(st for st in plan["steps"] if st.get("id") == "plan")
-    assert "[1-8])" in plan_step["run"] and "exit 1" in plan_step["run"]      # 9 or 0 or text: the run is refused
+    assert "[1-9]|1[0-6])" in plan_step["run"] and "exit 1" in plan_step["run"]      # 17 or 0 or text: the run is refused
     assert job["needs"] == "xbrl-facts-plan" and job["strategy"]["fail-fast"] is False
     assert job["strategy"]["matrix"]["shard"] == "${{ fromJSON(needs.xbrl-facts-plan.outputs.shards) }}"
     assert job["env"]["FILE_CAP_SHARDS"] == "${{ inputs.shards || '1' }}"

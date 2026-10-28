@@ -640,14 +640,22 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
     return out
 
 
-def _sector(sink, scrip: str) -> str:
-    """The company's sector (memory's dossier, as screener-crosscheck reads it), so a rule that is a sector's practice shows as one
-    sector's rows apart in a larger batch (owner, 28 Oct 2026: "find the pattern: sector or industry practice, or companies")."""
+def _sector(sink, scrip: str) -> tuple[str, str]:
+    """(sector, industry) as the site shows them ("Chemicals > Dyes And Pigments": the companies table, company_master.py),
+    memory's dossier when the company row has none, so a rule that is a sector's or an industry's practice shows as one
+    group's rows apart in a larger batch (owner, 28 Oct 2026: "find the pattern: sector or industry practice")."""
+    row, dossier = None, None
     try:
-        dossier = sink.get_dossier(scrip) if hasattr(sink, "get_dossier") else None
-    except Exception:  # noqa: BLE001 - no dossier is no sector, never the company's skip
-        dossier = None
-    return (dossier or {}).get("sector") or (dossier or {}).get("industry") or "unknown"
+        row = sink.company(scrip) if hasattr(sink, "company") else None
+    except Exception:  # noqa: BLE001 - no company row is no sector, never the company's skip
+        row = None
+    if not (row or {}).get("sector"):
+        try:
+            dossier = sink.get_dossier(scrip) if hasattr(sink, "get_dossier") else None
+        except Exception:  # noqa: BLE001
+            dossier = None
+    src = row if (row or {}).get("sector") else (dossier or {})
+    return (src.get("sector") or "unknown"), (src.get("industry") or "")
 
 
 def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | None = None) -> dict:
@@ -666,7 +674,8 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
 
     def company(item: tuple[str, str]) -> dict:
         scrip, symbol = item
-        entry = {"scrip": scrip, "symbol": symbol, "rows": [], "skipped": None, "sector": _sector(sink, scrip)}
+        entry = {"scrip": scrip, "symbol": symbol, "rows": [], "skipped": None}
+        entry["sector"], entry["industry"] = _sector(sink, scrip)
         stored = pages_by_symbol.get(symbol) or {}
         if not stored:
             entry["skipped"] = "no stored page"
@@ -691,6 +700,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     for c in results:
         for r in c["rows"]:
             r.setdefault("sector", c.get("sector") or "unknown")
+            r.setdefault("industry", c.get("industry") or "")
     rows = [r for c in results for r in c["rows"]]
     # sector x row: a rule that is a sector's practice shows as one sector's rows apart
     by_sector_row: dict[str, dict[str, list[int]]] = {}
@@ -718,6 +728,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     for c in results:
         apart = [r for r in c["rows"] if r["status"] == "apart"]
         companies.append({"symbol": c["symbol"], "scrip": c["scrip"], "skipped": c["skipped"], "sector": c.get("sector") or "unknown",
+                          "industry": c.get("industry") or "",
                           "ok": sum(1 for r in c["rows"] if r["status"] == "ok"), "apart": len(apart),
                           "no_facts": sum(1 for r in c["rows"] if r["status"] == "no_facts"),
                           "no_recipe": sum(1 for r in c["rows"] if r["status"] == "no_recipe"),
@@ -727,7 +738,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             "per_company": companies, "by_sector_row": by_sector_row, "rows": rows}
 
 
-CSV_HEADER = ("company", "sector", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note")
+CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note")
 
 
 def to_csv(summary: dict) -> str:
@@ -735,7 +746,7 @@ def to_csv(summary: dict) -> str:
     w = csv.writer(buf, lineterminator="\n")
     w.writerow(CSV_HEADER)
     for r in summary["rows"]:
-        w.writerow([r["company"], r.get("sector", "unknown"), r["basis"], r["period"], r["table"], r["row"], r["screener"],
+        w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"]])
     return buf.getvalue()
 
@@ -771,7 +782,8 @@ def to_markdown(summary: dict, day: str) -> str:
               "|---|---|---|---|---|---|---|"]
     for c in sorted(summary["per_company"], key=lambda c: (-c["apart"], c["symbol"])):
         apart = ", ".join(c["rows_apart"]) or ("(" + c["skipped"] + ")" if c["skipped"] else "")
-        lines.append(f"| {c['symbol']} | {c['sector']} | {c['ok']} | {c['apart']} | {c['no_facts']} | {c['no_recipe']} | {apart} |")
+        group = c["sector"] + (f" > {c['industry']}" if c.get("industry") else "")
+        lines.append(f"| {c['symbol']} | {group} | {c['ok']} | {c['apart']} | {c['no_facts']} | {c['no_recipe']} | {apart} |")
     return "\n".join(lines) + "\n"
 
 

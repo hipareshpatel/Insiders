@@ -297,7 +297,7 @@ def test_the_cli_takes_the_fifty_largest_by_default(monkeypatch, tmp_path):
     monkeypatch.setattr(sv, "run", lambda sink, companies, workers, day: sv.summarise([], None))
     assert cli.main(["screener-rows", "--json", str(tmp_path / "s.json"), "--csv", str(tmp_path / "r.csv"),
                      "--md", str(tmp_path / "r.md")]) == 0
-    assert seen["n"] == 50 and (tmp_path / "r.csv").read_text(encoding="utf-8").startswith("company,sector,basis,period")
+    assert seen["n"] == 50 and (tmp_path / "r.csv").read_text(encoding="utf-8").startswith("company,sector,industry,basis,period")
 
 
 def test_workflow_runs_screener_rows_read_only_and_always_uploads():
@@ -401,3 +401,15 @@ def test_the_report_groups_rows_by_sector_so_a_sector_practice_shows():
     assert summary["by_sector_row"]["it"]["annual: Profit before tax"] == [1, 0]
     md = sv.to_markdown(summary, "2026-10-28")
     assert "| power | 2 | 0% | annual: Profit before tax 2/2 |" in md and "company,sector" in sv.to_csv(summary)
+
+
+def test_sector_and_industry_come_from_the_companies_table_as_the_site_shows_them():
+    class S:
+        def company(self, scrip):
+            return {"sector": "Chemicals", "industry": "Dyes And Pigments"} if scrip == "1" else None
+
+        def get_dossier(self, scrip):
+            return {"sector": "power"} if scrip == "2" else None
+
+    assert sv._sector(S(), "1") == ("Chemicals", "Dyes And Pigments")
+    assert sv._sector(S(), "2") == ("power", "") and sv._sector(S(), "3") == ("unknown", "")

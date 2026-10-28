@@ -560,3 +560,14 @@ def test_the_half_year_sum_needs_the_september_column_before_june():
         if c.index in (1, 3, 4):
             c.date, c.kind = None, None
     assert nf.reading_from_tables(tables, "Q2FY27", "pat", "STANDALONE").status == "none"
+
+
+def test_a_unit_line_that_names_no_currency_or_names_it_after_the_unit_is_read():
+    # SONACOMS Q2FY27 (OCR of a scan): "(Figures in Million , except per share data, unless stated otherwise)" and, on the
+    # consolidated page, "(Figures in Million ₹, except ...)"
+    assert nf.scan_units(["(Figures in Million , except per share data, unless stated otherwise)"]) == {10}
+    assert nf.scan_units(["(Figures in Million ₹, except per share data, unless stated otherwise)"]) == {10}
+    assert nf.scan_units(["(All amounts in Crores, unless otherwise stated)"]) == {1}
+    assert nf.scan_units(["(Amounts in Lakhs)"]) == {100}
+    assert nf.scan_units(["Figures in million tonnes"]) == set()           # a quantity, not money
+    assert nf.scan_units(["The figures in millions are"]) == set()

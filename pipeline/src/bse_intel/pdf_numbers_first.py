@@ -47,6 +47,7 @@ log = logging.getLogger(__name__)
 NAME = "numfirst"
 MAX_STATEMENT_PAGES = 6
 MAX_OCR_PAGES = 8
+MAX_FILL_OCR_PAGES = 4         # pages with a text layer OCR'd only for a missing unit or row labels (fill_from_ocr)
 MAX_TEXT_PAGES = 60            # pages with a text layer read from their words
 SCAN_PAGE_LIMIT = 30           # a scan with no text layer is searched in a PDF of up to this many pages
 MIN_COLUMN_FIGURES = 3         # figures that line up to make a column
@@ -333,6 +334,12 @@ def find_columns(cells: list[tuple[Word, Cell]], height: float) -> tuple[list[Co
     for g in best[2]:
         ws = [strict[i][0] for i in g]
         x0, x1 = min(w.x0 for w in ws), max(w.x1 for w in ws)
+        # the aligned edge is the group's median, not its extreme: one garbled wider figure ("1,958.111" in ATUL's half-year
+        # column) would move the edge off the other figures, and they would not be assigned to the column
+        if best[1] == "right":
+            x1 = statistics.median(w.x1 for w in ws)
+        elif best[1] == "left":
+            x0 = statistics.median(w.x0 for w in ws)
         columns.append(Column(x0, x1, (x0 + x1) / 2))
     columns.sort(key=lambda c: c.xc)
     for i, c in enumerate(columns):
@@ -515,6 +522,8 @@ def phrases_of(line: list[Word], gap: float) -> list[list[Word]]:
     return split
 
 
+_BORDER_MARKS = {"I", "l", "|", "!", "¦"}
+
 def column_dates(gap_words: list[Word], columns: list[Column], height: float, sep: float) -> list[date | None]:
     """The date above each column. The header's phrases are given to the column nearest their centre (a phrase wider than a
     column is a title, not a date); the phrases over a column are read top to bottom, so a date broken over two lines is
@@ -524,6 +533,8 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     xs = [c.xc for c in columns]
     spacing = min((b - a for a, b in zip(xs, xs[1:])), default=8 * height)
     mine: list[list[tuple[float, float, str]]] = [[] for _ in columns]
+    # a table's border drawn as a letter ("I" between "September 30," and "2026" in ATUL Q2FY27) is never part of a date
+    gap_words = [w for w in gap_words if w.text.strip() not in _BORDER_MARKS]
     for line in lines_of(gap_words, height):
         for ph in phrases_of(line, sep):
             width = ph[-1].x1 - ph[0].x0
@@ -598,6 +609,11 @@ def column_kinds(columns: list[Column], dates: list[date | None], phrases: list[
 # "₹ lakhs" (TATAELXSI Q2FY27), "(₹crore)", "Rs.lakhs". The whole short line, nothing else.
 _GLUED_UNIT = re.compile(r"^[(\[{]?\s*(?:[t₹{~`]|rs\.?|inr)\s*(crores?|lakhs?|lacs?|millions?)\s*[)\]}]?$", re.I)
 
+# A unit line that names no currency, or names it after the unit: "(Figures in Million , except per share data, unless stated
+# otherwise)", "(Figures in Million ₹, except ...)" (SONACOMS Q2FY27, standalone and consolidated).
+# The unit word may be followed only by a comma, a bracket, "except" or "unless", so "figures in million tonnes" is not money.
+_FIGURES_IN_UNIT = re.compile(r"^[(\[]?\s*(?:all\s+)?(?:figures|amounts?)\s+(?:are\s+)?in\s+(crores?|lakhs?|lacs?|millions?|mn|thousands?)"
+                              r"(?:\s*(?:₹|rs\.?|inr))?\s*(?:$|[,)\]]|except\b|unless\b)", re.I)
 
 def scan_units(lines: list[str]) -> set:
     """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
@@ -613,6 +629,8 @@ def scan_units(lines: list[str]) -> set:
         if len(clean) <= 40 and (m := _BARE_UNIT.match(clean)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
         elif len(probe) <= 16 and (m := _GLUED_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
+        elif len(probe) <= 100 and (m := _FIGURES_IN_UNIT.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
     return found
 
@@ -980,6 +998,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     by_page: dict[int, list[Table]] = {}
     unnamed: list[int] = []
     ocr_used = 0
+    fill_used = 0
 
     def read_ocr(page, p: int) -> list[Table]:
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
@@ -990,6 +1009,10 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
             for t in found:
                 t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
         return found
+
+    def dated(tables: list[Table]) -> int:
+        """The most column dates any named table of a page read (-1 when none is named)."""
+        return max((sum((c.date or c.read_date) is not None for c in t.columns) for t in tables if t.named), default=-1)
 
     def fill_from_ocr(page, tables: list[Table], layer_text: str) -> None:
         """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"
@@ -1043,13 +1066,16 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
             if layers[p].has_layer:
                 by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(upright_words(page)), anywhere)]
                 wanting = [t for t in by_page[p] if t.named and (t.unit is None or sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows))]
-                if wanting and ocr_used < MAX_OCR_PAGES and ocr.available():
-                    ocr_used += 1
+                if wanting and fill_used < MAX_FILL_OCR_PAGES and ocr.available():
+                    fill_used += 1          # its own budget: the scanned statement pages keep all of MAX_OCR_PAGES (TBZ)
                     try:
                         fill_from_ocr(page, by_page[p], layers[p].text)
                     except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
                         log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
-                if not any(t.named for t in by_page[p]) and page.get_images(full=False):
+                if page.get_images(full=False) and (not any(t.named for t in by_page[p])
+                                                     or dated(by_page[p]) < max(len(t.columns) for t in by_page[p] if t.named)):
+                    # a scan's layer gave no named table, or named tables whose column dates it garbled ("30-Seo-26", TBZ
+                    # Q2FY27): the page is read with OCR as well
                     unnamed.append(p)
             elif p in scans and ocr_used < MAX_OCR_PAGES:
                 ocr_used += 1
@@ -1070,8 +1096,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 except Exception as exc:    # noqa: BLE001
                     log.warning("numbers-first: OCR failed on page %d (%s)", p, type(exc).__name__)
                     continue
-                if any(t.named for t in found):
-                    by_page[p] = found
+                if any(t.named for t in found) and dated(found) > dated(by_page.get(p, [])):
+                    by_page[p] = found          # OCR's tables only when they read more column dates than the layer's
     return [t for p in sorted(by_page) for t in by_page[p] if t.named or keep_unnamed]
 
 

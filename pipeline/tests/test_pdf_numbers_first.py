@@ -1113,3 +1113,19 @@ def test_a_revenue_row_followed_by_an_unnamed_row_is_not_named_alone(second):
 def test_a_glued_title_never_reads_unconsolidated_or_a_spaced_note_naming_both():
     assert nf.layer_basis("STATEMENTOFUNCONSOLIDATEDFINANCIALRESULTS") is None
     assert nf.layer_basis("These standalone results should be read with the Statement of Consolidated Financial Results") is None
+
+
+def test_an_unnamed_row_above_the_revenue_row_keeps_it_from_being_the_revenue():
+    # twenty-first review: "Interest income" (no landmark) over "Net sales" gave the net sales alone as the revenue
+    rows, want = pl()
+    a = [round(v * 0.6, 2) for v in REVENUE]
+    b = [round(v - x, 2) for v, x in zip(REVENUE, a)]
+    got = read(statement([(["Interest income"], a), (["Net sales"], b)] + rows[1:]), "revenue")
+    assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))
+
+
+def test_a_title_naming_the_basis_and_a_line_naming_the_other_give_none():
+    assert nf.layer_basis("STATEMENTOFSTANDALONEFINANCIALRESULTS\nConsolidated results are separately filed") is None
+    assert nf.layer_basis("STATEMENTOFAUDITEDCONSOLIDATEDFINANCIALRESULTS\nStandalone figures are given in a separate statement") is None
+    assert nf.layer_basis("STATEMENT OF NON CONSOLIDATED FINANCIAL RESULTS") is None
+    assert nf.layer_basis("STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER") == "CONSOLIDATED"

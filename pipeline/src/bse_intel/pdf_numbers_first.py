@@ -1154,8 +1154,9 @@ class Solver:
         # operations"): the revenue row may be a heading over its parts (nineteenth review)
         # nor is one followed by a row that says nothing (no landmark): "Revenue from operations" over "(a) Sales" and
         # "Dividend income" or "- Fees" may be a heading over its parts, whatever marks them or none (twentieth review)
+        # nor one with a row that says nothing above it ("Interest income" over "Net sales": the revenue is both, twenty-first)
         rev_at = [i for i, r in enumerate(rows) if self.cls[r] == "REV"]
-        if rev_at and any(self.cls[r] is None for r in rows[rev_at[0] + 1:]):
+        if rev_at and any(self.cls[r] is None for r in rows):
             rows_rev_ok = False
         if len(rows) == 2:
             if self.label_ok(rows[0], {"REV"}) and rows_rev_ok:
@@ -1384,21 +1385,25 @@ def layer_basis(text: str) -> str | None:
     """The one basis the page's title lines name (``pdf_referee._words_basis``), None when none or two."""
     from .metrics import CONSOLIDATED, STANDALONE
     from .pdf_referee import _TITLE, _words_basis
-    found = {b for line in text.splitlines() if _TITLE.search(line) and (b := _words_basis(line))}
-    if not found:
-        # a title printed as one glued word, its letters garbled (SUNDARMFIN Q4FY24's garbled layer:
-        # "STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER..."): the whole "statement of ... financial results"
-        # only on a line that names neither basis as a word: a spaced line naming both ("... read with the Statement of
-        # Consolidated Financial Results") is ambiguous, not glued (twentieth review)
-        found = {CONSOLIDATED if m[1].lower().startswith("consol") else STANDALONE
-                 for line in text.splitlines() if not _BASIS_WORD.search(line)
-                 for m in _GLUED_TITLE.finditer(re.sub(r"\s+", "", line))}
+    lines = text.splitlines()
+    if any(_NON_CONSOLIDATED.search(line) for line in lines):
+        return None             # "Statement of Non Consolidated Financial Results": the words say both (twenty-first review)
+    found = {b for line in lines if _TITLE.search(line) and (b := _words_basis(line))}
+    # a title printed as one glued word, its letters garbled (SUNDARMFIN Q4FY24's garbled layer:
+    # "STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER..."): the whole "statement of ... financial results"
+    # only on a line that names neither basis as a word: a spaced line naming both ("... read with the Statement of
+    # Consolidated Financial Results") is ambiguous, not glued (twentieth review)
+    # taken with the spaced lines' bases, so a glued title and a note naming the other basis are two: none (twenty-first)
+    found |= {CONSOLIDATED if m[1].lower().startswith("consol") else STANDALONE
+             for line in lines if not _BASIS_WORD.search(line)
+             for m in _GLUED_TITLE.finditer(re.sub(r"\s+", "", line))}
     return found.pop() if len(found) == 1 else None
 
 
 # "STATEMENTOFUNCONSOLIDATED..." is not a consolidated title: "un" only as part of "unaudited" (twentieth review)
 _GLUED_TITLE = re.compile(r"statementof(?:unaudited|audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
 _BASIS_WORD = re.compile(r"\b(?:consolidated|standalone)\b", re.I)
+_NON_CONSOLIDATED = re.compile(r"\bnon\W*consolidated", re.I)
 
 
 def Table_solved(table: Table) -> Table:

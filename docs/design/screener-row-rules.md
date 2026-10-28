@@ -83,7 +83,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 
 | Company | Row | What | Why it stays apart |
 |---|---|---|---|
-| Reliance | PBT, Other Income | screener follows Reliance's own layout: associates after tax, not in PBT | the one company of 13 checked this way |
+| Reliance, Sun Pharma | PBT, Other Income | screener keeps the filed PBT, associates left out (Reliance prints them after tax; Sun Pharma Q1FY26 3,172.77 = filed, ours with associates 3,163.02) | 2 of the 13 companies with Excel files; the XBRL cannot show the print layout. If the larger batch shows more, read the P&L layout from the PDF |
 | Reliance | Sales, Expenses | sales tax / VAT 1,439 (FY26), 1,873 (FY25) is a line of the PDF's other-expenses note only | not in either XBRL file |
 | L&T | Interest; Power and fuel | bank charges 211.78 and the split of power and fuel by note are PDF-only | |
 | Airtel | Expenses | FY26 regulatory levy 3,160.7 put into Expenses, the labour-code charge into Other Income (note 32) | screener splits one-offs by nature; PDF note only |

@@ -25,6 +25,7 @@ marker surya              Marker 2 ``TableConverter``, html output, no LLM, OCR 
 surya  surya              Surya layout then Surya table recognition (full HTML path), no LLM service
 rapidtable paddle         rapid-table (SLANet-plus ONNX); cell text from the text layer's words, else RapidOCR
 tatr   tatr               Table Transformer detection + structure v1.1, cell text from the text layer, else Tesseract
+numfirst numbers-first     EXPERIMENT, bench only (pdf_numbers_first): numeric rows and columns first, rows named by vertical arithmetic
 ====== ================= ==========================================================================================
 
 The settlement rule (``settle``) is the owner's: a PDF figure counts only from the text layer. A figure is *settled* when
@@ -722,6 +723,7 @@ class Reader:
     ocr_engine = ""
     modules: tuple[str, ...] = ()
     worker = True           # runs in its own environment when PDF_READER_PYTHON_<NAME> is set
+    direct = False          # True: gives a Reading from the PDF itself (``direct_reading``), not tables for ``parse_page``
 
     def available(self) -> bool:
         if self.worker and os.environ.get(f"PDF_READER_PYTHON_{self.name.upper()}"):
@@ -765,6 +767,37 @@ class NativeReader(Reader):
                 lines = [ln for ln in doc[p - 1].get_text().splitlines() if ln.strip()]
                 tables.append(Table(self.name, p, [[ln] for ln in lines]))
         return tables
+
+
+class NumbersFirstReader(Reader):
+    """The experimental numbers-first reader (``pdf_numbers_first``, 28 Oct 2026): bench only, chosen by ``PDF_READERS`` and by
+    nothing else. It names rows by the arithmetic of the numeric columns and gives its Reading directly."""
+    name, family, ocr_family, ocr_engine = "numfirst", "numbers-first", "paddle", "rapidocr"
+    worker = False
+    direct = True
+
+    def __init__(self):
+        self._cache: dict[str, list] = {}
+        self.ocr_garbled = True          # a scan's garbled text layer is read with OCR too (the scored setting)
+        self.ocr_boxes = None            # a cache of RapidOCR's boxes for the bench, else ``pdf_numbers_first.ocr_page_boxes``
+
+    def available(self) -> bool:
+        return True
+
+    def tables(self, payload: bytes) -> list:
+        import hashlib
+
+        from . import pdf_numbers_first as nf
+        key = hashlib.sha1(payload).hexdigest()
+        if key not in self._cache:
+            self._cache[key] = nf.analyse(payload, self.ocr_boxes, ocr_garbled=self.ocr_garbled)
+            while len(self._cache) > 3:
+                self._cache.pop(next(iter(self._cache)))
+        return self._cache[key]
+
+    def direct_reading(self, payload: bytes, period: str, metric: str, basis: str | None) -> "Reading":
+        from . import pdf_numbers_first as nf
+        return nf.reading_from_tables(self.tables(payload), period, metric, basis, self.name)
 
 
 def _write_temp(data: bytes, suffix: str = ".pdf") -> str:
@@ -1250,7 +1283,7 @@ def ocr_cell(image, box: tuple, numeric: bool = False) -> str:
 
 READERS: dict[str, Reader] = {r.name: r for r in (
     NativeReader(), CamelotReader(), PdfplumberReader(), TabulaReader(), DoclingReader(), MineruReader(), PaddleReader(),
-    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader())}
+    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader())}
 
 DEFAULT_READERS = "native"
 
@@ -1338,6 +1371,9 @@ class Ensemble:
             pages = []
         for name in self.names:
             reader = READERS[name]
+            if reader.direct:
+                entry["rows"][name] = ("direct", None)
+                continue
             if self.tables_dir and not isinstance(reader, NativeReader):
                 status, tables = self._stored(name, key)
                 entry["rows"][name] = (status, tables_to_rows(tables, entry["layers"], entry["anywhere"]) if status == "ok" else tables)
@@ -1369,7 +1405,13 @@ class Ensemble:
         for name in self.names:
             status, rows = entry["rows"][name]
             reader = READERS[name]
-            if status in ("unavailable", "error"):
+            if status == "direct":
+                try:
+                    out.append(reader.direct_reading(payload, period, metric, basis))
+                except Exception as exc:   # noqa: BLE001 - one reader failing leaves the others
+                    log.warning("pdf reader %s failed: %s", name, exc)
+                    out.append(Reading(name, reader.family, "error", note=type(exc).__name__))
+            elif status in ("unavailable", "error"):
                 out.append(Reading(name, reader.family, status, note=str(rows or "")))
             elif not rows:
                 out.append(Reading(name, reader.family, "none", note="no results row"))
@@ -1502,6 +1544,9 @@ def read_all(name: str, pdf_dir: str, out_path: str, budget_s: float | None = No
     PDFs not yet read are marked "not read: time budget" (settled as unavailable) so the job still uploads what it has."""
     import time
     reader = READERS[name]
+    if reader.direct:
+        print(f"{name}: reads the PDF itself in the ensemble, it has no tables file")
+        return 0
     with open(os.path.join(pdf_dir, "manifest.json"), encoding="utf-8") as fh:
         manifest = json.load(fh)
     result: dict[str, dict] = {}

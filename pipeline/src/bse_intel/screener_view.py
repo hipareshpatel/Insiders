@@ -264,6 +264,11 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # bank charges are a finance cost for screener: HAL, IndiGo and IOC, every year FY24-FY26 and both bases, the yearly
     # Interest gap = the annual report's BankCharges (run 40735344929); the quarters' files carry no such element
     bank = r.cr("BankCharges") or 0.0
+    share = r.cr(ASSOCIATES)
+    # a loss from associates is an expense for screener, a profit other income: 43 of 43 quarters where Expenses and Other
+    # Income were both apart by the share, PBT exact, had a loss (JSW Steel 8, Power Grid 7, Nestle 7, TVS 7, Adani Ports 5,
+    # Bajaj Auto 3: Q2FY25 580 Cr, KTM; run 40735344929)
+    assoc_loss = -share if share is not None and share < 0 else 0.0
     sales = None if rev is None else rev - lev
     out["Sales"] = Row(sales, ("RevenueFromOperations" + (" less " + ", ".join(levy_notes) if levy_notes else "")
                                if rev is not None else "missing RevenueFromOperations") + src)
@@ -275,19 +280,20 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
                                     else "missing DepreciationDepletionAndAmortisationExpense") + src)
     expenses = None
     if None not in (exp, fc, dep):
-        expenses = exp - fc - dep - lev - fin - loss - bank
+        expenses = exp - fc - dep - lev - fin - loss - bank + assoc_loss
         parts = ["FinanceCosts", "depreciation"] + (["levies"] if lev else []) + (["financial-services finance cost"] if fin else []) \
             + (["bank charges"] if bank else []) \
             + ([f"loss on disposal of PPE {_fmt(loss - inv_loss)}"] if loss - inv_loss else []) \
             + ([f"loss on investments {_fmt(inv_loss)}"] if inv_loss else [])
-        out["Expenses"] = Row(expenses, "Expenses less " + ", ".join(parts) + src)
+        out["Expenses"] = Row(expenses, "Expenses less " + ", ".join(parts)
+                              + (f", plus the associates' loss {_fmt(assoc_loss)}" if assoc_loss else "") + src)
     else:
         out["Expenses"] = Row(None, "missing " + ", ".join(n for n, v in (("Expenses", exp), ("FinanceCosts", fc),
                                                                             ("DepreciationDepletionAndAmortisationExpense", dep)) if v is None) + src)
     op = None if sales is None or expenses is None else sales - expenses
     out["Operating Profit"] = Row(op, "Sales - Expenses" + src)
     out["OPM %"] = Row(_pct(op, sales), "Operating Profit / Sales" + src)
-    oi_parts, exc, share = r.cr("OtherIncome"), r.cr("ExceptionalItemsBeforeTax"), r.cr(ASSOCIATES)
+    oi_parts, exc = r.cr("OtherIncome"), r.cr("ExceptionalItemsBeforeTax")
     regulatory = r.cr(REGULATORY_DEFERRAL)
     # screener has no line for discontinued operations: their profit after tax is in its PBT (Hindustan Unilever FY26 13,812 +
     # 4,407 = 18,219, the ice-cream demerger; Q3FY26 2,919 + 4,485 = 7,404; ITC Q3FY25 + 203.44, the hotels; run 40735344929)
@@ -300,7 +306,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     filed_pbt = pbt
     if pbt is not None:
         pbt = pbt + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0)
-    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0) - loss
+    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + assoc_loss + (regulatory or 0.0) \
+        + (discontinued or 0.0) - loss
     if None not in (pbt, dep, interest, op):
         oi = pbt + dep + interest - op
         note = "PBT + Depreciation + Interest - Operating Profit"
@@ -417,7 +424,8 @@ def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str =
 def corporate_bs(r: _Reader, source: str = "", half_year: bool = False) -> dict[str, Row]:
     """``half_year``: a September balance sheet, read from its results file, where screener puts intangibles under development in
     Fixed Assets (HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27: the CWIP and Fixed Assets gaps both =
-    IntangibleAssetsUnderDevelopment, run 40735344929); in a year's column they are CWIP (Reliance FY26 237,686)."""
+    IntangibleAssetsUnderDevelopment, run 40735344929); in a year's column they are CWIP (Reliance FY26 237,686). Its total is the
+    filed Assets, no deferred tax offset."""
     src = f" [{source}]" if source else ""
     out: dict[str, Row] = {}
 
@@ -468,7 +476,9 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False) -> dict[
     out["Investments"] = Row(inv if inv_names or has_sheet else None,
                              (" + ".join(inv_names) or ("no investments element: 0" if has_sheet else "no balance sheet in the file")) + src)
     assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
-    offset = min(dta, dtl) if dta is not None and dtl is not None else 0.0
+    # the half-year column is the filed total: HCL Tech, Adani Power, Adani Green, Wipro, Torrent Pharma Q2FY27 apart by exactly
+    # min(DTA, DTL), while HCL Tech's year columns FY23-FY26 are exact with it (run 40735344929)
+    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year else 0.0
     tot = None if assets is None else assets - offset
     tot_note = ("Assets" + (f" - min(DTA, DTL) {_fmt(offset)}" if offset else "") if assets is not None else "missing Assets") + src
     out["Total Liabilities"] = Row(tot, tot_note)

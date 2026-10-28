@@ -473,7 +473,8 @@ def test_a_half_year_balance_sheet_puts_intangibles_under_development_in_fixed_a
     year = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))
     half = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END), half_year=True))
     assert (year["CWIP"], half["CWIP"]) == (20.0, 15.0)
-    assert half["Fixed Assets"] == year["Fixed Assets"] + 5 and half["Other Assets"] == year["Other Assets"]
+    assert half["Fixed Assets"] == year["Fixed Assets"] + 5
+    assert (year["Total Assets"], half["Total Assets"]) == (997.0, 1000.0)   # the half year: no min(DTA, DTL) offset
 
 
 def test_a_banks_net_profit_holds_the_minority_share():
@@ -483,3 +484,13 @@ def test_a_banks_net_profit_holds_the_minority_share():
                          kind="results", template="BANKING"))
     got = values(sv.bank_pl(sv._Reader(facts, end=END, months=3)))
     assert got["Net Profit"] == 32.0 and got["Net Profit (owners)"] == 30.0
+
+
+def test_a_loss_from_associates_is_an_expense_and_a_profit_is_other_income():
+    """43 of 43 quarters with Expenses and Other Income both apart by the share (PBT exact) had a loss (Bajaj Auto Q2FY25, KTM)."""
+    base = values(sv.corporate_pl(sv._Reader(annual_facts(), end=END, months=12)))
+    loss = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES, "D2026", -8.0)]), end=END, months=12)))
+    gain = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES, "D2026", 8.0)]), end=END, months=12)))
+    assert loss["Expenses"] == base["Expenses"] + 8 and loss["Other Income"] == base["Other Income"]
+    assert loss["Profit before tax"] == base["Profit before tax"] - 8
+    assert gain["Expenses"] == base["Expenses"] and gain["Other Income"] == base["Other Income"] + 8

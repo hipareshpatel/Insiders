@@ -28,7 +28,7 @@ annual-report XBRL for banks, NBFCs or insurers). Consolidated by default; stand
 | Row | Recipe | Scope | Evidence (exact unless noted) |
 |---|---|---|---|
 | Sales | RevenueFromOperations − excise (element, or the OtherExpenses row "Excise duty") − sales tax / VAT / GST / discount rows | Policy | ITC FY26 89,913.33 − 11,044.93 = 78,868.40; Reliance FY26 1,075,675 − 18,456 − 1,439 (sales tax, PDF note only) = 1,055,780 |
-| Expenses | Expenses − FinanceCosts − depreciation − the Sales deductions − financing-arm finance cost − loss on disposal of PPE − loss on investments | Policy + Wording | Reliance FY26 876,715 (with the PDF sales-tax line); Grasim Q1FY26 31,295.82 |
+| Expenses | Expenses − FinanceCosts − depreciation − the Sales deductions − financing-arm finance cost − bank charges − loss on disposal of PPE − loss on investments + a loss from associates | Policy + Wording | loss on disposal: 29 rows agree, 8 not (IndiGo 6, below); a loss from associates: 43 of 43 quarters with Expenses and Other Income both apart by the share had a loss (JSW Steel, Power Grid, Nestle, TVS, Adani Ports, Bajaj Auto Q2FY25 580 Cr from KTM), a profit stays in Other Income; HAL FY26 Expenses 23,301.28 and IOC 707,307.56 after the bank charges; Reliance FY26 876,715 (with the PDF sales-tax line); Grasim Q1FY26 31,295.82 |
 | Operating Profit | Sales − Expenses | Policy | |
 | Other Income | PBT (as below) + Depreciation + Interest − Operating Profit; equals OtherIncome + exceptional + associates + regulatory deferral − loss on disposal − loss on investments | Policy | Airtel FY26 2,817.3 + 364.5 − 256.8 (labour-code charge) = 2,925.0 |
 | Interest | FinanceCosts + the financing arm's finance-cost row of OtherExpenses + BankCharges (out of Expenses) | Sector (conglomerates with a lending arm) + Wording; bank charges: Policy (any company that tags them) | HAL, IndiGo, IOC FY24–FY26, both bases: the yearly gap = BankCharges to within 0.5 Cr (e.g. IOC FY26 cons 8,307.88 + 46.22 = 8,354); L&T FY26 2,848.82 + 6,995.34 (+ bank charges 211.78, PDF note only) = 10,055.94; Grasim Q1FY26 816.2 + 2,734.5 = 3,550.71 |
@@ -69,7 +69,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Fixed Assets | PPE + Goodwill + OtherIntangibleAssets + InvestmentProperty + right-of-use assets (element, else the described row of OtherNoncurrentAssets) | Policy | TCS FY26 + 11,027 right-of-use; L&T 3,774 |
 | CWIP | a year's column: CapitalWorkInProgress + IntangibleAssetsUnderDevelopment; the half-year column (September, from the results file): CapitalWorkInProgress only, intangibles under development in Fixed Assets | Policy (measured, by source) | Reliance FY26 237,686; HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27: CWIP and Fixed Assets both apart by IntangibleAssetsUnderDevelopment |
 | Investments | NoncurrentInvestments + CurrentInvestments + InvestmentsAccountedForUsingEquityMethod | Policy | 98 % |
-| Total | Assets − min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet) | Policy (deferred tax shown net) | Reliance 594, Infosys 1,679 |
+| Total | a year's column: Assets − min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet); the half-year column: Assets as filed | Policy (deferred tax shown net) | Reliance 594, Infosys 1,679; HCL Tech, Adani Power, Adani Green, Wipro, Torrent Pharma Q2FY27 apart by exactly the offset, HCL Tech's year columns FY23–FY26 exact with it |
 | Other Liabilities / Other Assets | the balancing lines | | |
 | (no balance sheet in the file) | no value, never 0 | | the Q4 files of FY21–FY23 |
 
@@ -92,6 +92,9 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Hindustan Unilever | Quarters before Q3FY26 (Sales, Expenses) | restated after the ice-cream demerger (Q1FY26 Sales 16,514 filed, 15,757 restated) | NSE's quarterly XBRL holds the current period only (no comparative column, checked on HUL Q1FY27: one duration context), so a restated quarter is PDF-only |
 | Grasim | Quarters Q1–Q3 FY25 (Sales, Expenses) | about 585–770 Cr more in screener's Sales and Expenses, Operating Profit within 25 Cr: a restatement (assumption) | as above |
 | Hindalco | Borrowings FY24 | the FY25 annual report's comparative column has "Supplier's credit" 4,475 Cr (cons) for FY24; screener's FY24 (56,356 cons, 8,376 standalone) leaves it out, while its FY25 includes the 1,713 Cr. Adani Green and Hindalco FY25 taken from a later report's comparative both match with it | assumption: a reclassification into the row in the FY25 report that screener's FY24 (from the FY24 report) never had; no FY24 annual-report XBRL is stored to check. If more companies show a comparative-column row the year's own report lacked, the year source rule changes |
+| IndiGo | Expenses, Other Income (years) | screener keeps its loss on disposal (48.2 Cr FY25, 51.7 Cr FY26) in Expenses, both bases; 29 other rows of 13 companies take it out | assumption: aircraft sale-and-leaseback disposals are a normal operating item for an airline. Watch other airlines in the larger batch |
+| Reliance, Sun Pharma, L&T | quarterly PBT, Other Income | the associates' share left out of PBT (37 quarters with a profit, 22 with a loss) | to test: whether these files' own layout puts the share after the filed PBT differently |
+| M&M, JSW Steel, Asian Paints, Eicher, TVS, Solar | standalone FY23 Total Assets | the filed Assets, no deferred tax offset (FY23 from the Q4 results file) | lead only |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
 
 ## Open sector patterns (measured, not yet a rule)
@@ -107,9 +110,9 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 The `screener-rows` report names, for every row apart by 2 Cr or more, the filed facts of that column equal to the gap within
 ₹1 Cr (an element, or a breakdown row by its words), and lists the leads seen in two or more companies on one row. A lead
 becomes a rule only when it closes the gap in every company it names and breaks no row that was exact (the next run's
-before/after). Leads seen on 28 Oct 2026 and not yet rules: the deferred tax asset on Total Assets (12 companies), the
-associates' share on quarterly Other Income / Expenses (14–21 companies), other comprehensive income items on quarterly PBT
-(7, probably chance).
+before/after). Leads of 28 Oct 2026 made rules the same day: bank charges, discontinued operations, a bank's minority share, the half-year
+balance sheet (intangibles under development, the deferred tax offset), a loss from associates. Still a lead: other
+comprehensive income items on quarterly PBT (7 companies, probably chance).
 
 ## Patterns to watch in a larger batch
 

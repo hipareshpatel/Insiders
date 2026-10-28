@@ -34,6 +34,7 @@ import xml.etree.ElementTree as ET
 from datetime import date, datetime
 
 from . import xbrl, xbrl_store
+from .nse import looks_like_xml
 from .periods import canonical_period, quarter_index
 from .timeutil import today_ist
 
@@ -495,10 +496,6 @@ def file_name_stamp(url: str) -> tuple[str, str]:
         return m[1], datetime.strptime(m[1], "%d%m%Y%H%M%S").isoformat()
     except ValueError:
         return m[1], ""
-
-
-def looks_like_xml(head: bytes) -> bool:
-    return head.lstrip()[:200].lower().lstrip(b"\xef\xbb\xbf").startswith((b"<?xml", b"<xbrl"))
 
 
 def _is_refusal(info: dict) -> bool:

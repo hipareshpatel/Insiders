@@ -546,6 +546,43 @@ def test_three_block_like_pages_in_a_row_across_companies_stop_the_shard_but_one
     assert out["stopped"] == "" and out["failed_reasons"] == {"not_xml": 3} and out["downloaded"] == 2
 
 
+def utf16(body: bytes) -> bytes:
+    """A fixture re-encoded the way some of NSE's files come (UTF-16 with its byte-order mark, CIPLA's FY26 annual report)."""
+    return body.decode("utf-8").replace('encoding="UTF-8"', 'encoding="utf-16"').replace("encoding='UTF-8'", "encoding='utf-16'").encode("utf-16")
+
+
+def commented(body: bytes) -> bytes:
+    """A fixture with a generator's comment and no XML declaration first (NETWORK18's annual report, BeyondWallsXBRL)."""
+    text = body.decode("utf-8")
+    if text.startswith("<?xml"):
+        text = text.split("?>", 1)[1]
+    return b"<!-- XML Generated using BeyondWallsXBRL Solution - Copyright of BeyondSquare Solutions Private Limited -->\n" + text.lstrip().encode("utf-8")
+
+
+@pytest.mark.parametrize("encode", [utf16, commented])
+def test_utf16_and_comment_first_files_are_xml_kept_and_never_a_block_page(encode):
+    """Measured 28 Oct 2026, maintenance run 40679795489: six of sixteen shards stopped on three such files in a row ("3 block-like
+    file pages"), and about 160 more were counted not_xml; both are real XBRL instances that parse."""
+    from bse_intel.nse import looks_like_xml
+
+    body = encode(TITAN)
+    assert looks_like_xml(body) and looks_like_xml(body[:2000]) and xbrl_facts.parse_facts(body) is not None
+    companies = [(str(i), f"S{i}") for i in range(1, 6)]
+    rows = {f"S{i}": [irow(f"s{i}", Q2, True)] for i in range(1, 6)}
+    site = Site(rows, served={furl(f"s{i}"): (200, body) for i in range(1, 6)})
+    sink, out = run(site, companies=companies)
+    assert out["stopped"] == "" and out["refusal"] is None and out["failed_reasons"] == {} and out["downloaded"] == 5
+    assert out["facts_saved"] == 5
+
+
+def test_a_block_page_is_still_no_xml_after_the_wider_test():
+    from bse_intel.nse import looks_like_xml
+
+    for page in (b"<html><body>Please wait</body></html>", b"<!DOCTYPE html><html>", b"<!-- a comment --><html>", b"Access Denied",
+                 b"", b"<!-- a comment that never closes", "<html>blocked</html>".encode("utf-16")):
+        assert not looks_like_xml(page), page
+
+
 def test_html_for_both_lists_of_three_companies_in_a_row_stops_the_shard():
     class Html(Site):
         def handler(self, request):

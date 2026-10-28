@@ -129,6 +129,13 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 
 - From GitHub, the hard key is also scored by Maintenance `pdf-referee-ensemble` with `ids` = `hardset`.
 - Cache OCR boxes by the page image's sha1 while iterating. A full OCR pass over both keys is slow.
+- **Held-out companies** (`docs/bench/heldout.csv`, drawn 28 Oct 2026 ~16:20 IST before any reproduced score was seen: seed 114,
+  a fifth of each page type, 10 of the normal key's 50 companies and 3 of the hard key's 21). They are scored on every run, but no
+  fix is ever designed, debugged or tuned on their PDFs: never open them to find a bug. Report the held-out figures as their own
+  line; a change that helps the rest but not them is suspected of being tuned to the rest.
+- Maintenance `pdf-bench` (read only) downloads both keys' PDFs on a runner, keeps them as the artifact `pdf-bench-pdfs` (90 days)
+  and scores `native,numfirst` on both keys; the scorer also gives the first answer in reader order (the "combined"), per metric,
+  per filing and every wrong reading.
 - Report each change as a right / wrong / no answer table per metric for both keys, plus which filings moved. The one rule: a change that
   adds any wrong answer, or loses right ones on the other key, is not kept as it is.
 

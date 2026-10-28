@@ -78,7 +78,8 @@ _GROUP_WORDS = re.compile(r"subsidiar|\bgroup\b|results|financial|statements?\b|
 
 
 _NO_SUBSIDIARY = re.compile(r"(?:does\s+not\s+have|has\s+no|have\s+no|not\s+having)\s+(?:any\s+)?subsidiar", re.I)
-_NOT_APPLICABLE = re.compile(r"[^.]{0,120}?\bnot\s+applicable", re.I | re.S)
+# said of the consolidated results themselves: "consolidated financial results is not applicable" (at most three words between)
+_NOT_APPLICABLE = re.compile(r"[ \t]+(?:[\w-]+[ \t]+){0,3}?(?:is|are)[ \t]+not[ \t]+applicable", re.I)
 
 
 def names_consolidated(text: str) -> bool:

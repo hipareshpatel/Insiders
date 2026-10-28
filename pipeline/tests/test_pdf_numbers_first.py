@@ -704,3 +704,43 @@ def test_a_serial_number_column_left_of_the_labels_is_not_a_column_of_figures():
     pdf, want = whole_statement(serial=True)
     assert all(not (c.whole and c.x1 < LEFT) for c in nf.analyse(pdf, keep_unnamed=True)[0].columns)
     assert read(pdf, "pat").value == pytest.approx(want["pat"])
+
+
+def test_a_consolidated_title_is_never_hidden_by_a_not_applicable_cell_below_it():
+    # the sixth review's case: a no-subsidiary sentence, then a real consolidated title and a "Not applicable" cell
+    assert prd.names_consolidated("The Company does not have any subsidiary. Statement of Consolidated Financial Results\n"
+                                  "Sr No Particulars\n1 Segment Note: Not applicable")
+    assert prd.names_consolidated("The Company has no subsidiary in India.\nStatement of Consolidated Financial Results (segment "
+                                  "reporting is not applicable)")
+
+
+def scanned(pdf: bytes, letter: str) -> bytes:
+    """A two-page filing: a typed covering letter, then the statement as a picture with no text layer (CMPDI, RIR)."""
+    src = pymupdf.open(stream=pdf, filetype="pdf")
+    pix = src[0].get_pixmap(dpi=72)
+    out = pymupdf.open()
+    first = out.new_page(width=620, height=842)
+    first.insert_text((LEFT, 60), letter, fontsize=FONT)
+    second = out.new_page(width=620, height=842)
+    second.insert_image(second.rect, pixmap=pix)
+    data = out.tobytes()
+    out.close()
+    src.close()
+    return data
+
+
+def test_an_untitled_scanned_statement_is_standalone_once_ocr_finds_no_consolidated_page(monkeypatch):
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl()
+    page = statement(rows, title="Statement of Unaudited Financial Results")
+    pdf = scanned(page, "Please find enclosed the Standalone Un-Audited Financial Results for the quarter.")
+    boxes = as_ocr_boxes(page)
+
+    def got(ocr_boxes):
+        return nf.reading_from_tables(nf.analyse(pdf, ocr_boxes=ocr_boxes), "Q2FY27", "pat", "STANDALONE")
+
+    assert got(lambda png: boxes).value == pytest.approx(crore(want["pat"][0]))
+    # OCR of the scanned page names a consolidated statement: the untitled table's basis stays unproven
+    noted = as_ocr_boxes(untitled(rows, "Statement of Consolidated Financial Results is on the next page."))
+    assert got(lambda png: noted).status == "none"

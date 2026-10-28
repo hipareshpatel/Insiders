@@ -298,6 +298,7 @@ class Table:
     note: str = ""
     named: dict = field(default_factory=dict)   # metric -> list of (rows, proofs)
     header_lines: list = field(default_factory=list)   # the text lines above the table (title, unit, header), for diagnosis
+    contested: bool = False        # the lines above the table name both bases: its basis is never guessed
 
 
 def _cluster(values: list[float], tol: float) -> list[list[int]]:
@@ -773,7 +774,7 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         header_bottom = max((w.y for w in gap if any(abs(w.xc - c.xc) < 0.5 * (c.x1 - c.x0 + 4 * height) for c in cols)), default=None)
         stitch_labels(rows_t, free, cols, set(), height, header_bottom)
         unit = unit_of(texts, page_texts)
-        tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts))
+        tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts, contested=contested))
     return tables
 
 
@@ -1054,7 +1055,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     ``statement_pages`` ranks first, then those with most figures, while the page budget lasts. Only tables with a named row
     are kept (``keep_unnamed`` keeps all, for diagnosis)."""
     from . import ocr
-    from .pdf_readers import _pymupdf, consolidated_anywhere, page_layers, statement_pages
+    from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
     ocr_boxes = ocr_boxes or ocr_page_boxes
     layers = page_layers(pdf_bytes, max_pages)
     anywhere = consolidated_anywhere(layers)
@@ -1064,10 +1065,13 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     unnamed: list[int] = []
     ocr_used = 0
     fill_used = 0
+    ocr_texts: dict[int, str] = {}     # the OCR text of the pages with no text layer
 
     def read_ocr(page, p: int) -> list[Table]:
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         raw = words_from_boxes(ocr_boxes(png))
+        if not layers[p].has_layer:
+            ocr_texts[p] = " ".join(w[4] for w in raw)
         found = [Table_solved(t) for t in tables_of_page(p, straighten(raw, True), anywhere, "ocr")]
         if layers[p].has_layer:
             title = layer_basis(layers[p].text)
@@ -1165,6 +1169,18 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                     # OCR's tables beside the layer's, never instead of them (third review): where both answer they must
                     # agree or the reading is a conflict, so OCR only adds an answer the layer could not give
                     by_page[p] = by_page.get(p, []) + found
+    # a filing where only pages with no text layer left the basis of untitled tables unproven: once OCR has read every one of
+    # them and none, like no layer, names a consolidated statement, such a table is standalone (CMPDI and RIR Q2FY27, whose
+    # statements are scans and whose covering letters say "Standalone")
+    no_layer = [p for p, layer in layers.items() if not layer.has_layer]
+    if anywhere and no_layer and all(p in ocr_texts for p in no_layer) \
+            and not any(names_consolidated(layer.text) for layer in layers.values()) \
+            and not any(names_consolidated(ocr_texts[p]) for p in no_layer):
+        from .metrics import STANDALONE
+        for p in by_page:
+            for t in by_page[p]:
+                if t.basis is None and not t.contested:
+                    t.basis = STANDALONE
     return [t for p in sorted(by_page) for t in by_page[p] if t.named or keep_unnamed]
 
 

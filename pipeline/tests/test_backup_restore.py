@@ -427,6 +427,67 @@ def test_a_snapshot_taken_before_a_rerun_has_no_after_state_and_restores_only_wi
     assert sink.get_dossier("500001")["deals"] == []                                     # the later deal is gone too: that is what --force means
 
 
+def test_an_after_state_that_stopped_midway_counts_as_no_after_state(settings):
+    sink = _store(settings)
+    snapshot = bk.start_scope(sink, "seed-memory", scrips={"500001", "500002"})
+    real = sink.put_object
+
+    def failing(key, body, content_type="application/json"):
+        if "after/memory/500002" in key:
+            raise OSError("boom")
+        real(key, body, content_type)
+    sink.put_object = failing
+    with pytest.raises(OSError):
+        bk.save_after(sink, snapshot.prefix)                                             # 500001's after-file is saved, 500002's is not
+    sink.put_object = real
+    assert sink.get_object(f"{snapshot.prefix}after/memory/500001.json") and not sink.get_object(f"{snapshot.prefix}after/sealed.json")
+    _later_write(sink, "500002", lambda d: d.__setitem__("deals", [{"id": "d1"}]))
+    report = restore.plan(sink, snapshot.prefix, everything=True)
+    assert not report["has_after"] and report["_held"]["after_incomplete"]
+    assert all(m["needs_force"] for m in report["memory"] if m["differs"])
+    text = restore.render(report)
+    assert "after-state incomplete: --force needed" in text and "the after-state of this backup is incomplete" in text
+    assert "deals (job added 1" in text                                                  # 500002 is not read as "the seed left it alone"
+    assert restore.apply(sink, report)["memory"] == 0 and sink.get_dossier("500002")["deals"] == [{"id": "d1"}]
+    with pytest.raises(BackupError):
+        bk.save_after(sink, snapshot.prefix)                                             # it cannot be completed later either
+
+
+def test_a_named_seed_exits_non_zero_when_its_after_state_cannot_be_saved(settings, monkeypatch, capsys):
+    from bse_intel import seed, universe
+    from bse_intel.cli import cmd_seed_memory
+
+    sink = _store(settings)
+    sink.put_object(universe.UNIVERSE_KEY, json.dumps({"source": "nse", "included": ["500001"], "symbols": {"DEMO": "500001"},
+                                                       "isins": {}}).encode())
+    monkeypatch.setattr(seed, "seed_results", lambda *a, **k: None)
+
+    def boom(*a, **k):
+        raise OSError("r2 is down")
+    monkeypatch.setattr(bk, "save_after", boom)
+    args = SimpleNamespace(universe=False, scrips="DEMO", restart=False, shard=None, source="nse", since="2026-01-01",
+                           shareholding_only=False, results_only=True)
+    assert cmd_seed_memory(args, settings, sink) == 1
+    assert "after-state of the backup was not saved" in capsys.readouterr().err
+
+
+def test_a_dossier_absent_before_after_and_now_is_already_as_before(settings):
+    sink = LocalSink(settings)
+    sealed = RunBackup(sink, "job-with-after")
+    sealed.dossier("777", None)                                                          # absent before, absent after (nothing was written)
+    plain = RunBackup(sink, "job-without-after")
+    plain.dossier("777")                                                                 # absent before, no after-state at all
+    folders = sorted({k.split("/")[1] for k in sink.list_objects("backup/")})
+    for prefix in (sealed.prefix, plain.prefix):
+        report = restore.plan(sink, prefix, scrips={"777"})
+        (item,) = report["memory"]
+        assert not item["changed"] and not item["needs_force"] and not item["conflicts"] and not item["restored"]
+        assert "already as before" in restore.render(report)
+        done = restore.apply(sink, report)
+        assert done["memory"] == 0 and done["undo_backup"] is None
+    assert sorted({k.split("/")[1] for k in sink.list_objects("backup/")}) == folders and sink.get_dossier("777") is None
+
+
 def test_every_restore_entry_refuses_a_prefix_that_is_not_an_existing_backup(settings):
     sink, prefix, _, _ = _refreshed(settings)
     for bad in ("memory/", "backup/", "backup", "backup/nothing-here/", f"{prefix}after/", "backup/../memory/", ""):

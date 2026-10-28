@@ -643,13 +643,16 @@ def cmd_seed_memory(args, settings, sink) -> int:
         if scope.summary():
             print(f"seed-memory: backup of {scope.summary()['dossiers']} dossiers: {scope.prefix}")
 
+    seal_failed: list[str] = []
+
     def seal_backup() -> None:
         from .backup import save_after
 
         try:
             if scope is not None and scope.summary():
                 save_after(sink, scope.prefix)
-        except Exception as exc:   # noqa: BLE001 - the seed's own result stands; without the after-state a restore needs --force
+        except Exception as exc:   # noqa: BLE001 - the seed's own result stands, but the run exits non-zero: without the after-state a restore needs --force
+            seal_failed.append(str(exc))
             print(f"seed-memory: the after-state of the backup was not saved ({exc}); restore needs --force", file=sys.stderr)
     cache_root = settings.text_cache_dir
     # the resume point is saved every SEED_SAVE_EVERY companies and when the loop ends however it ends (one kv write
@@ -721,7 +724,7 @@ def cmd_seed_memory(args, settings, sink) -> int:
                       "failures": stats.failures[:20], "refused": refused, "file_cap_reached": capped}, ensure_ascii=False))
     # REFUSED when NSE refused, as the other NSE syncs: it returned 0, the shard wrote no "more" marker and the job
     # record said ok, so the seed chain stopped with nothing to show for it (survey, 24 Oct 2026)
-    return REFUSED if refused else 0
+    return REFUSED if refused else 1 if seal_failed else 0
 
 
 def cmd_prune_companies(args, settings, sink) -> int:

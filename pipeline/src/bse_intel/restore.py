@@ -19,7 +19,12 @@ column); a column it cannot set back (a price reaction that was NULL) is listed 
 
 A backup with no after-state (``after/``: a ``requeue-failed --ids`` snapshot, the first version of the backups) has no way to
 tell later writes from the job's. It restores only with ``--force``, and the dry run lists every difference now, which includes
-whatever the live pipeline wrote since. ``--scrips`` names companies (their dossiers and their cards in the backup);
+whatever the live pipeline wrote since. The same holds for an after-state that is incomplete (``save_after`` writes
+``after/pending.json`` first and ``after/sealed.json`` last; a run that stopped between them leaves the first only). The
+after-state a ``seed-memory --scrips`` run takes at its end includes whatever the live pipeline wrote to those companies while
+the seed ran, and a restore would treat it as the seed's own: restore soon after such a run, or with care. A dict section is
+restored one key at a time (each key a whole value), so a section changed in one key since the job still gets its other keys
+back. ``--scrips`` names companies (their dossiers and their cards in the backup);
 ``--news-ids`` names cards; a name the backup does not hold is an error and nothing is written. With neither, ``--all`` is
 required. ``--apply`` first saves the state of each item it is about to replace, with the state it writes, to
 backup/restore-<time>/ (page by page, read back), so a restore can itself be undone the same way. Cards go back through
@@ -165,6 +170,8 @@ def _a(x):
 def _differs(before, current) -> list[str]:
     """Every section that differs between the backup and what is stored now (for a backup with no after-state)."""
     b, c = _strip(_a(before)), _strip(_a(current))
+    if b == c:   # also both absent: nothing to put back
+        return []
     if not (isinstance(b, dict) and isinstance(c, dict)):
         return ["(dossier absent in the backup)" if b is ABSENT else "(dossier not stored now)" if c is ABSENT else "(whole)"]
     return [_counts(k, b.get(k, ABSENT), c.get(k, ABSENT)) for k in [*b, *(k for k in c if k not in b)]
@@ -286,13 +293,16 @@ def _current_cards(sink, wanted: dict[str, dict]) -> dict[str, dict]:
 
 def _load(sink, prefix: str) -> dict:
     """Everything the backup holds: before and after dossiers (scrip -> dossier or None) and card rows (news_id -> row)."""
-    held = {"dossiers": {}, "cards": {}, "after_dossiers": {}, "after_cards": {}, "has_after": False}
+    held = {"dossiers": {}, "cards": {}, "after_dossiers": {}, "after_cards": {}, "has_after": False, "after_incomplete": False}
+    markers = set()
     for key in sink.list_objects(prefix):
         rest = key[len(prefix):]
         after = rest.startswith(AFTER)
         if after:
             held["has_after"] = True
             rest = rest[len(AFTER):]
+            if rest in ("pending.json", "sealed.json"):
+                markers.add(rest)
         body = sink.get_object(key)
         if body is None:
             raise RuntimeError(f"{key} is listed but cannot be read")
@@ -301,6 +311,9 @@ def _load(sink, prefix: str) -> dict:
         elif rest.startswith("cards/"):
             for row in json.loads(body)["rows"]:
                 held["after_cards" if after else "cards"].setdefault(row["news_id"], row)
+    if "pending.json" in markers and "sealed.json" not in markers:
+        # save_after began and did not finish: some items have no after-file, which must not read as "the job left it alone"
+        held["has_after"], held["after_incomplete"] = False, True
     return held
 
 
@@ -320,13 +333,14 @@ def plan(sink, prefix: str, scrips: set[str] | None = None, news_ids: set[str] |
     for scrip in dossiers:
         d = decide_dossier(held["dossiers"][scrip], held["after_dossiers"].get(scrip, held["dossiers"][scrip]),
                            sink.get_dossier(scrip), held["has_after"], force)
-        memory.append({"scrip_code": scrip, **{k: d[k] for k in ("restored", "conflicts", "differs", "changed", "needs_force")}})
+        memory.append({"scrip_code": scrip, "after_incomplete": held["after_incomplete"],
+                       **{k: d[k] for k in ("restored", "conflicts", "differs", "changed", "needs_force")}})
     current = _current_cards(sink, cards)
     rows = []
     for news_id in sorted(cards, key=lambda n: (cards[n]["filed_at"], n)):
         d = decide_card(cards[news_id], held["after_cards"].get(news_id, cards[news_id]) if held["has_after"] else None,
                         current.get(news_id), force)
-        rows.append({"news_id": news_id, "scrip_code": cards[news_id]["scrip_code"],
+        rows.append({"news_id": news_id, "scrip_code": cards[news_id]["scrip_code"], "after_incomplete": held["after_incomplete"],
                      **{k: d[k] for k in ("restored", "conflicts", "differs", "not_restorable", "blocks", "changed", "needs_force",
                                           "gone")}})
     return {"backup": prefix, "force": force, "has_after": held["has_after"], "memory": memory, "cards": rows,
@@ -339,8 +353,9 @@ def _say(item: dict) -> str:
         return "not stored now (not restored)"
     parts = []
     if item["needs_force"]:
-        parts.append("no after-state in this backup, so a restore needs --force; differences now (these include anything written "
-                     "since the job): " + ", ".join(item["differs"]))
+        parts.append(("the after-state of this backup is incomplete (the run that saved it stopped)" if item.get("after_incomplete")
+                      else "no after-state in this backup") + ", so a restore needs --force; differences now (these include "
+                     "anything written since the job): " + ", ".join(item["differs"]))
     if item["changed"]:
         parts.append("will restore: " + ", ".join(item["restored"]) +
                      (f" (card blocks now different: {', '.join(item['blocks'])})" if item.get("blocks") else ""))
@@ -356,7 +371,8 @@ def render(report: dict) -> str:
     t = report["to_restore"]
     lines = [f"backup {report['backup']}: {len(report['memory'])} dossiers and {len(report['cards'])} cards selected; "
              f"{t['memory']} dossiers and {t['cards']} cards would be put back"
-             + ("" if report["has_after"] else " (no after-state: --force needed)") + (" (--force)" if report["force"] else "")]
+             + ("" if report["has_after"] else " (after-state incomplete: --force needed)" if report["_held"]["after_incomplete"]
+                else " (no after-state: --force needed)") + (" (--force)" if report["force"] else "")]
     for m in report["memory"]:
         lines.append(f"  memory {m['scrip_code']}: {_say(m)}")
     for c in report["cards"]:

@@ -172,6 +172,8 @@ def save_after(sink, prefix: str) -> dict:
         if k.startswith(prefix + "cards/"):
             ids += [r["news_id"] for r in json.loads(sink.get_object(k))["rows"]]
     backup = RunBackup.attach(sink, prefix)
+    # pending first, sealed last: a run that stops in between leaves an after-state restore.py knows is incomplete
+    backup.save(f"{AFTER}pending.json", encode({"at": datetime.now(timezone.utc).isoformat(timespec="seconds")}))
     for scrip in scrips:
         backup.save(f"{AFTER}memory/{scrip}.json", encode(sink.get_dossier(scrip)))
     rows = scan_cards(sink, news_ids=ids)

@@ -70,6 +70,25 @@ HEADER_LINES = 25           # lines at the top of a page kept as the table's tit
 _UNIT_WORD = re.compile(r"\b(crores?|lakhs?|lacs?|millions?|thousands?|mn|cr)\b", re.I)
 _CONS_WORD = re.compile(r"\bconsolidated\b", re.I)
 _ALONE_WORD = re.compile(r"\bstand[- ]?alone\b", re.I)
+# "consolidated" as a verb in prose ("the Government has consolidated 29 labour laws into 4 Labour Codes", TATAELXSI Q2FY27): not a
+# sign of a consolidated statement, unless a group word stands near it ("the subsidiaries have been consolidated")
+_CONS_VERB = re.compile(r"\b(?:has|have|had|been|being|is|are|was|were|be|will|shall)\s+consolidated\b", re.I)
+_GROUP_WORDS = re.compile(r"subsidiar|\bgroup\b|results|financial|statements?\b|accounts|entit|joint\s+ventures?|associates?\b"
+                          r"|\bbasis\b|holding\s+company", re.I)
+
+
+def names_consolidated(text: str) -> bool:
+    """Whether ``text`` says "consolidated" of the accounts: every use counts but a verb in prose with no group word within about
+    eight words either side."""
+    for m in _CONS_WORD.finditer(text):
+        verb = _CONS_VERB.search(text, max(0, m.start() - 12), m.end())
+        if not verb or verb.end() != m.end():
+            return True
+        before = " ".join(text[:m.start()].split()[-8:])
+        after = " ".join(text[m.end():].split()[:8])
+        if _GROUP_WORDS.search(before) or _GROUP_WORDS.search(after):
+            return True
+    return False
 _RESULTS_HEAD = re.compile(r"statement\s+of\s+(?:\w+\s+){0,6}results|financial\s+results", re.I)
 _PERIOD_WORDS = re.compile(r"months?\s+ended|quarter|year\s+ended", re.I)
 _TOKEN = re.compile(r"\d[\d,]*(?:\.\d+)?")
@@ -398,9 +417,9 @@ def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | No
     leaves such a table's basis unproven."""
     if any(not layer.has_layer for layer in layers.values()) or not layers:
         return True
-    if any(_CONS_WORD.search(layer.text) for layer in layers.values()):
+    if any(names_consolidated(layer.text) for layer in layers.values()):
         return True
-    return any(_CONS_WORD.search(table_text(t.cells)) for t in tables or [])
+    return any(names_consolidated(table_text(t.cells)) for t in tables or [])
 
 
 def _cons_or_alone(text: str) -> bool:

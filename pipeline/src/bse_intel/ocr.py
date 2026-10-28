@@ -19,8 +19,10 @@ Benefits Expense Finance Costs 31.7 1.2 48.1 3.6 ...", a wrong column on every f
 from __future__ import annotations
 
 import difflib
+import json
 import logging
 import math
+import os
 import re
 import statistics
 import threading
@@ -53,9 +55,53 @@ def available() -> bool:
 
 
 def _new_engine():
-    from rapidocr import ModelType, RapidOCR
+    def real():
+        from rapidocr import ModelType, RapidOCR
+        return RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
 
-    return RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
+    cache_dir = os.environ.get("PDF_OCR_CACHE_DIR", "")
+    return CachedEngine(real, cache_dir) if cache_dir else real()
+
+
+class CachedEngine:
+    """Bench only (env ``PDF_OCR_CACHE_DIR``): the engine's boxes for an image are kept on disk under the sha1 of the image's
+    pixels (and the settings), so a re-score of the answer keys reads each page once. The boxes come back as plain lists in
+    the ``_boxes`` form, which every caller reads point by point, so a cached reading equals a fresh one. The engine itself is
+    loaded on the first page not in the cache."""
+
+    def __init__(self, factory, cache_dir: str):
+        self._factory, self._real, self.dir = factory, None, cache_dir
+        os.makedirs(cache_dir, exist_ok=True)
+        self.hits = self.misses = 0
+
+    def _key(self, image) -> str:
+        import hashlib
+        h = hashlib.sha1(json.dumps(SETTINGS, sort_keys=True).encode())
+        if isinstance(image, (bytes, bytearray)):
+            h.update(b"bytes:" + bytes(image))
+        else:
+            h.update(f"array:{image.shape}:{image.dtype}:".encode() + image.tobytes())
+        return h.hexdigest()
+
+    def __call__(self, image):
+        path = os.path.join(self.dir, self._key(image) + ".json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                boxes = json.load(fh)
+            self.hits += 1
+            return [(box, text, score) for box, text, score in boxes]
+        except (OSError, ValueError):
+            pass
+        if self._real is None:
+            self._real = self._factory()
+        boxes = [([[float(p[0]), float(p[1])] for p in box], str(text), float(score))
+                 for box, text, score in _boxes(self._real(image))]
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(boxes, fh)
+        os.replace(tmp, path)
+        self.misses += 1
+        return boxes
 
 
 def _boxes(output) -> list[tuple]:

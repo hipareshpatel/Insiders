@@ -119,6 +119,48 @@ def merge_brackets(words: list[Word], height: float) -> list[Word]:
     return out
 
 
+
+_GROUP_HEAD = re.compile(r"^[(\[]?\d{1,3}$")
+_GROUP_MID = re.compile(r"^\d{2,3}$")
+_GROUP_TAIL = re.compile(r"^\d{3}(?:\.\d+)?[)\]]?$")
+
+
+def merge_space_groups(words: list[Word], height: float) -> list[Word]:
+    """A figure whose thousands are set apart by a space instead of a comma, as a scanner's text layer often writes them:
+    "23 909.66" for 23,909.66, "3 02 060.27" for 3,02,060.27 (TATAELXSI Q2FY27). The pieces are joined when they touch (a gap
+    under half the text height; columns stand ten times further apart), the first has one to three digits, the middle
+    pieces are all of two digits (Indian) or all of three (western), and the last has exactly three digits before its
+    decimals. A piece with a comma is never joined: "24 1,245.60" stays a note number and a figure."""
+    out: list[Word] = []
+    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    i = 0
+    while i < len(ordered):
+        w = ordered[i]
+        chain = [w]
+        if _GROUP_HEAD.match(w.text):
+            j = i + 1
+            while j < len(ordered):
+                prev, nxt = chain[-1], ordered[j]
+                if abs(nxt.y - prev.y) > 0.5 * height or not 0 <= nxt.x0 - prev.x1 <= 0.5 * height:
+                    break
+                if _GROUP_TAIL.match(nxt.text):
+                    chain.append(nxt)
+                    break
+                if not _GROUP_MID.match(nxt.text):
+                    break
+                chain.append(nxt)
+                j += 1
+            mids = {len(c.text) for c in chain[1:-1]}
+            if len(chain) < 2 or not _GROUP_TAIL.match(chain[-1].text) or len(mids) > 1:
+                chain = [w]
+        if len(chain) > 1:
+            out.append(Word(chain[0].x0, chain[-1].x1, chain[0].y, chain[0].h, "".join(c.text for c in chain), chain[0].ocr))
+            i += len(chain)
+        else:
+            out.append(w)
+            i += 1
+    return out
+
 def ocr_page_boxes(png: bytes):
     """RapidOCR's boxes of a page image (``ocr._boxes`` form), with the sideways turn ``ocr.recognise`` makes; [] when OCR is not
     installed. Kept apart so the bench can cache it."""
@@ -536,6 +578,11 @@ def column_kinds(columns: list[Column], dates: list[date | None], phrases: list[
             c.kind, c.kind_confident = None, False
 
 
+# A unit line that is only the unit word with the rupee sign glued to it, often garbled by the scanner's text layer: "tlakhs" for
+# "₹ lakhs" (TATAELXSI Q2FY27), "(₹crore)", "Rs.lakhs". The whole short line, nothing else.
+_GLUED_UNIT = re.compile(r"^[(\[{]?\s*(?:[t₹{~`]|rs\.?|inr)\s*(crores?|lakhs?|lacs?|millions?)\s*[)\]}]?$", re.I)
+
+
 def scan_units(lines: list[str]) -> set:
     """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
     data)"), as ``pdf_referee`` reads them; a unit it does not know is None."""
@@ -549,6 +596,8 @@ def scan_units(lines: list[str]) -> set:
         clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)
         if len(clean) <= 40 and (m := _BARE_UNIT.match(clean)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
+        elif len(probe) <= 16 and (m := _GLUED_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
     return found
 
 
@@ -579,7 +628,7 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
     if len(words) < 12:
         return []
     height = text_height(words)
-    words = merge_brackets(words, height)
+    words = merge_space_groups(merge_brackets(words, height), height)
     figs = [(w, c) for w in words if (c := parse_figure(w.text)) is not None and not c.nil]
     columns, align = find_columns(figs, height)
     if len(columns) < 2:
@@ -996,6 +1045,55 @@ def target_columns(table: Table, kind: str, when: date) -> list[Column]:
     return []
 
 
+
+HALF_SUM_METRICS = ("revenue", "other_income", "total_income", "expenses", "pbt_pre", "pbt", "tax", "pat")
+HALF_SUM_MIN_ROWS = 4
+
+
+def previous_quarter_end(d: date) -> date:
+    import calendar
+    y, m = (d.year, d.month - 3) if d.month > 3 else (d.year - 1, d.month + 9)
+    return date(y, m, calendar.monthrange(y, m)[1])
+
+
+def quarter_by_half_sum(table: Table, solver: "Solver", when: date) -> list[Column]:
+    """The September quarter's column when the header's kinds do not fit (a garbled "Year to date for the period from April 01,
+    2026 to ..." read as a year): the column dated ``when`` and the one dated the quarter before are two quarters when a third
+    column is their sum, the half year, on every line the arithmetic named (revenue, other income, total income, expenses,
+    profit before tax, tax, profit), at least four lines and none against (TATAELXSI Q2FY27: 105,565.73 + 102,110.75 =
+    2,07,676.48 and so on down the table). Both dates must be read; the half year's need not. Empty otherwise."""
+    if when.month != 9:
+        return []
+    prev = previous_quarter_end(when)
+    cur = [c for c in table.columns if c.date == when]
+    prv = [c for c in table.columns if c.date == prev]
+    if not cur or len(prv) != 1:
+        return []
+    lines = list(dict.fromkeys(rows for metric in HALF_SUM_METRICS for rows, _ in solver.explanations.get(metric, [])))
+
+    def total(rows: tuple[int, ...], j: int):
+        cells = [solver.cell(r, j) for r in rows]
+        return None if any(c is None for c in cells) else (sum(c.value for c in cells), sum(c.tol for c in cells))
+
+    found = []
+    for i in cur:
+        k = prv[0]
+        for h in table.columns:
+            if h.index in (i.index, k.index):
+                continue
+            holds = fails = 0
+            for rows in lines:
+                a, b, c = total(rows, i.index), total(rows, k.index), total(rows, h.index)
+                if a is None or b is None or c is None or (a[0] == 0 and b[0] == 0 and c[0] == 0):
+                    continue
+                if abs(c[0] - (a[0] + b[0])) <= a[1] + b[1] + c[1] + 1e-9:
+                    holds += 1
+                else:
+                    fails += 1
+            if holds >= HALF_SUM_MIN_ROWS and fails == 0:
+                found.append((i, h))
+    return [found[0][0]] if len(found) == 1 else []
+
 def table_figure(table: Table, metric: str, kind: str, when: date):
     """(value in crore, tolerance in crore, label, why) of ``metric`` in the period's column of one table. ``value`` is None with
     the reason in ``why`` when the table gives no answer."""
@@ -1003,6 +1101,8 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     if table.unit is None:
         return None, 0.0, "", "no unit declared above the table"
     cols = target_columns(table, kind, when)
+    if not cols and kind == "quarter":
+        cols = quarter_by_half_sum(table, solver, when)
     if len(cols) != 1:
         return None, 0.0, "", f"{len(cols)} columns for {kind} ended {when}"
     j = cols[0].index

@@ -272,3 +272,37 @@ def test_a_half_lost_bracket_is_put_back_and_close_rows_stay_apart():
         "(d) Finance Costs  1.2  3.6\n"
         "Impairment loss  (2.0)"
     )
+
+
+def test_the_bench_cache_gives_the_fresh_reading_back_and_loads_no_engine_on_a_hit(tmp_path):
+    import numpy as np
+
+    calls = []
+
+    class Fake:
+        def __call__(self, image):
+            calls.append(image.shape)
+            return ([(np.array([[1.5, 2.0], [9.0, 2.0], [9.0, 4.0], [1.5, 4.0]], dtype=np.float32), "Revenue 1,245.60", np.float32(0.97))], 0.1)
+
+    built = []
+
+    def factory():
+        built.append(1)
+        return Fake()
+
+    page = np.zeros((4, 5, 3), np.uint8)
+    first = ocr.CachedEngine(factory, str(tmp_path))
+    fresh = first(page)
+    again = ocr.CachedEngine(factory, str(tmp_path))      # a new run: same folder
+    cached = again(page)
+    assert cached == fresh and ocr._boxes(cached) == ocr._boxes(fresh)
+    assert ocr.positioned_lines(cached) == ocr.positioned_lines(fresh)
+    assert (first.misses, again.hits, again.misses, len(built), len(calls)) == (1, 1, 0, 1, 1)
+    other = page.copy(); other[0, 0, 0] = 1                # one pixel differs: another page
+    again(other)
+    assert again.misses == 1 and len(built) == 2
+
+
+def test_the_engine_is_cached_only_when_the_bench_names_a_folder(monkeypatch, tmp_path):
+    monkeypatch.setenv("PDF_OCR_CACHE_DIR", str(tmp_path))
+    assert isinstance(ocr._new_engine(), ocr.CachedEngine)

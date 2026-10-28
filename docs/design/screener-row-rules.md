@@ -92,6 +92,14 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Grasim | Quarters Q1–Q3 FY25 (Sales, Expenses) | about 585–770 Cr more in screener's Sales and Expenses, Operating Profit within 25 Cr: a restatement (assumption) | as above |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
 
+## Open sector patterns (measured, not yet a rule)
+
+| Sector | What the sector view shows | Lead | Why not coded yet |
+|---|---|---|---|
+| Oil and gas | Total Assets apart in 22 of 32 pairs; screener's total is ABOVE the filed Assets (ONGC 731–1,201 Cr, IOC 310–397 Cr) | ONGC consolidated tags an inventory impairment allowance as a negative Inventories member, 1,010.5 / 1,200.89 Cr = the gap within 1 Cr: screener may show inventory gross and the allowance as a liability | one company, one basis: ONGC standalone and IOC have no such fact for their gaps |
+| Power | yearly Other Income / Expenses / Operating Profit apart in 25–26 of 32 pairs; NTPC Q4FY26 Operating Profit 6,815 apart ≈ that quarter's regulatory deferral movement −6,813.5 | the regulatory deferral movement may sit in screener's Sales or Expenses in a year-end quarter | Q1 (movement 2,007, gap 578) does not fit |
+| Capital goods, NBFC | yearly Interest apart in 16 of 16 / 20 of 24 pairs | an item screener adds to Interest every year (L&T's bank charges are one such, PDF-only) | to measure |
+
 ## Patterns to watch in a larger batch
 
 The report of `screener-rows` will be grouped by sector as well as by row, so a rule that is really a sector practice shows up

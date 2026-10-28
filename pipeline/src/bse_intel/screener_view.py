@@ -105,6 +105,9 @@ from .screener_parts import FINANCE_MEMBER as FIN_SERVICES_ROW  # noqa: E402 - o
 LOSS_ON_DISPOSAL = "LossOnDisposalDiscardDemolishmentAndDestructionOfDepreciablePropertyPlantAndEquipment"
 ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
 EXPENSE_ROW_PARENTS = ("OtherExpenses",)
+# a row of other financial liabilities that is bank debt by its own words: Titan standalone "Secured and Unsecured Payable to Banks"
+# 7,043 Cr FY25 and 14,314 Cr FY26 = screener's Borrowings less ours, exactly (its gold on loan; measured 28 Oct 2026)
+BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?"
 INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
@@ -381,10 +384,10 @@ def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     debt, debt_names = total("BorrowingsNoncurrent", "BorrowingsCurrent")
     lease, lease_names = total(*LEASE_ELEMENTS)
     if lease_names:
-        rows = [x for x in r.rows(LIABILITY_PARENTS, r"current maturit") if not re.search("lease", x[1], re.I)]
+        rows = [x for x in r.rows(LIABILITY_PARENTS, rf"current maturit|{BANK_DEBT_ROW}") if not re.search("lease", x[1], re.I)]
         lease_note = f"lease {_fmt(lease)} ({', '.join(lease_names)})"
     else:
-        rows = r.rows(LIABILITY_PARENTS, r"lease|current maturit")
+        rows = r.rows(LIABILITY_PARENTS, rf"lease|current maturit|{BANK_DEBT_ROW}")
         lease_note = ""
     extra = _sum_rows(rows)
     row_note = ("rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in rows)) if rows else ""

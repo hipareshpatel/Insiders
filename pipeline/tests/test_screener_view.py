@@ -380,3 +380,12 @@ def test_a_loss_on_investments_row_of_other_expenses_moves_to_other_income():
     rows = sv.corporate_pl(sv._Reader(facts, end=END, months=12))
     assert rows["Expenses"].value == pytest.approx(585.0 - 11.0) and rows["Other Income"].value == pytest.approx(15.0 - 11.0)
     assert "loss on investments" in rows["Expenses"].note
+
+
+def test_a_bank_debt_row_of_other_financial_liabilities_is_in_borrowings():
+    """Titan standalone "Secured and Unsecured Payable to Banks" 7,043 Cr FY25 / 14,314 Cr FY26 = screener's Borrowings gap."""
+    extra = [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Secured and Unsecured Payable to Banks"),
+             ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 9.0)]
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + extra))
+    got = values(sv.corporate_bs(sv._Reader(facts, instant=END)))
+    assert got["Borrowings"] == 100 + 50 + 30 + 12 + 9

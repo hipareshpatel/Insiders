@@ -1123,6 +1123,13 @@ class Solver:
 _LOOSE_CONSOLIDATED = re.compile(r"c\W{0,2}[o0]\W{0,2}n\W{0,2}[s5]\W{0,2}[o0]\W{0,2}[l1i|!]"
                                  r"|[s5]\W{0,2}[o0]\W{0,2}[l1i|]\W{0,2}[i1l|]\W{0,2}d\W{0,2}a\W{0,2}t|group\s+financial", re.I)
 
+
+def usable_dates(tables: list[Table]) -> int:
+    """The most usable column dates any named table of a page has (-1 when none is named): a date the header's words dispute
+    does not count (RADICO Q2FY27: its half-year columns' dates were read and disputed, so the page looked dated and its
+    garbled layer was never read with OCR)."""
+    return max((sum(c.date is not None for c in t.columns) for t in tables if t.named), default=-1)
+
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
             keep_unnamed: bool = False) -> list[Table]:
     """The solved tables of a results PDF. Every page with a text layer (the first ``max_pages``) is read from its words. A page
@@ -1156,9 +1163,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
         return found
 
-    def dated(tables: list[Table]) -> int:
-        """The most column dates any named table of a page read (-1 when none is named)."""
-        return max((sum((c.date or c.read_date) is not None for c in t.columns) for t in tables if t.named), default=-1)
+    dated = usable_dates
 
     def fill_from_ocr(page, tables: list[Table], layer_text: str) -> None:
         """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"

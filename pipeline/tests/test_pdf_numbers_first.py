@@ -987,3 +987,14 @@ def test_standalone_said_only_on_another_scanned_page_does_not_label_an_untitled
 
     got = nf.reading_from_tables(nf.analyse(pdf, ocr_boxes=ocr_boxes), "Q2FY27", "pat", "STANDALONE")
     assert got.status == "none"
+
+
+def test_a_disputed_header_date_does_not_count_as_a_usable_date():
+    # RADICO Q2FY27: the layer read every date but the header words disputed two; counting those made the page look dated,
+    # so its garbled layer was never read with OCR (end to end: RADICO in the normal key, standalone 4 of 4)
+    from datetime import date
+    rows, _ = q2_rows()
+    table = nf.analyse(q2_statement(rows))[0]
+    for c in table.columns[3:5]:
+        c.read_date, c.date = c.date or date(2026, 9, 30), None          # as column_kinds leaves a disputed column
+    assert nf.usable_dates([table]) == 4

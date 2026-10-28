@@ -1562,6 +1562,29 @@ def cmd_screener_crosscheck(args, settings, sink) -> int:
     return 0
 
 
+def cmd_screener_rows(args, settings, sink) -> int:
+    """Read only: every screener website row of the stored screener pages against one fixed recipe a row worked out from the stored
+    XBRL facts in R2 (screener_view.py; owner, 28 Oct 2026: "make our statements like screener, all line items row by row"). No
+    request to NSE, BSE or screener, no write, no AI. ``--top-mcap N`` (default 50) takes the N largest by market cap (of
+    ``--scrips``, else of the universe). Writes summary.json, rows.csv and the markdown report."""
+    from . import screener_view as sv
+
+    if args.top_mcap is None:
+        args.top_mcap = 50
+    companies = _selected_companies(args, sink)
+    if companies is None:
+        return 2
+    summary = sv.run(sink, companies, args.workers, args.day)
+    print(sv.render(summary))
+    if args.json:
+        Path(args.json).write_text(sv.to_json(summary), encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sv.to_csv(summary), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(sv.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
+    return 0
+
+
 def cmd_xbrl_facts(args, settings, sink) -> int:
     """Every fact of the results XBRL files already stored in R2 (raw/xbrl/), into raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz
     (xbrl_facts.py; owner, 28 Oct 2026). Reads R2 and memory only: no request to NSE. Lists the filings whose file is not stored
@@ -2466,6 +2489,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--referee-csv", help="write the refereed pairs, with the official line and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown report to this file")
     p.set_defaults(func=cmd_screener_crosscheck)
+
+    p = sub.add_parser("screener-rows", help="read-only: every screener website row against one fixed recipe a row from the stored XBRL facts")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (default 50)")
+    p.add_argument("--day", help="use the pages stored on or before this day (default the newest)")
+    p.add_argument("--workers", type=int, default=8, help="companies read at a time")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every pair (company, basis, period, table, row, screener, ours, diff, status, recipe note)")
+    p.add_argument("--md", help="write the markdown report to this file")
+    p.set_defaults(func=cmd_screener_rows)
 
     p = sub.add_parser("xbrl-facts", help="keep every fact of the stored results XBRL files in R2 (raw/xbrl-facts/); lists the filings whose file is not stored; no NSE request unless --download")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

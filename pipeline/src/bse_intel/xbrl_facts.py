@@ -294,26 +294,44 @@ class Facts:
         return out
 
     def described(self, value_names: tuple[str, ...], description: str, *, end: date | None = None, months: int | None = None,
-                  instant: date | None = None) -> list[tuple[str, str, float]]:
+                  instant: date | None = None, joined: bool = False) -> list[tuple[str, str, float]]:
         """(element, description, value in crore) of every dimensional money fact named in ``value_names`` at the period whose
         context carries a ``DescriptionOf...`` text matching the regex ``description`` (a filer's own line inside a breakdown,
-        e.g. "Excise duty" inside other expenses)."""
+        e.g. "Excise duty" inside other expenses).
+
+        ``joined`` (the screener rows, screener_view.py; the reader fix of branch ``screener-rules`` 7e30240): an annual report tags a
+        row's description on the year's DURATION and its amount on the INSTANT at the year end, both with the same dimension member
+        (Infosys FY26: "Lease liabilities" 6,016 Cr and "Current lease liabilities" 3,160 Cr, whose sum is screener's 9,176 of
+        Borrowings), and names the non-current text ``DescriptionOther...`` (no "Of"): every ``Description...`` text is read, and an
+        amount with no description of its own context takes the description of the duration that ends on its date with the same
+        dimensions. Off by default, so the cross-check's classes do not move until its on/off comparison is made."""
         rx = re.compile(description, re.I)
+        prefix = "Description" if joined else "DescriptionOf"
         texts: dict[str, list[str]] = {}
         for el, ctx_id, unit, value, _ in self.rows:
-            if el.startswith("DescriptionOf") and isinstance(value, str):
+            if el.startswith(prefix) and isinstance(value, str):
                 texts.setdefault(ctx_id, []).append(value)
+        by_dims: dict[tuple, list[str]] = {}
+        if joined:
+            for ctx_id, found in texts.items():
+                c = self.contexts.get(ctx_id) or {}
+                if c.get("d") and c.get("e"):
+                    by_dims.setdefault((frozenset(c["d"].items()), c["e"]), []).extend(found)
         out, seen = [], set()
         for el, ctx_id, unit, value, _ in self.rows:
-            if el in value_names and self._is_money(unit) and not isinstance(value, str) and ctx_id in texts \
-                    and self._at(ctx_id, end, months, instant):
-                for text in texts[ctx_id]:
-                    # a row once: the older files tag a row's year to date with the quarter's own dates (Titan Q2FY24: Advertising
-                    # 268 Cr for the quarter and 542 Cr to date, both Jul-Sep), and the quarter's comes first in the file
-                    if rx.search(text) and (el, text) not in seen:
-                        seen.add((el, text))
-                        out.append((el, text, value / CRORE))
-                        break
+            if el not in value_names or not self._is_money(unit) or isinstance(value, str) or not self._at(ctx_id, end, months, instant):
+                continue
+            own = texts.get(ctx_id)
+            if own is None and joined:
+                c = self.contexts.get(ctx_id) or {}
+                own = by_dims.get((frozenset(c["d"].items()), c["i"])) if c.get("d") and c.get("i") else None
+            for text in own or ():
+                # a row once: the older files tag a row's year to date with the quarter's own dates (Titan Q2FY24: Advertising
+                # 268 Cr for the quarter and 542 Cr to date, both Jul-Sep), and the quarter's comes first in the file
+                if rx.search(text) and (el, text) not in seen:
+                    seen.add((el, text))
+                    out.append((el, text, value / CRORE))
+                    break
         return out
 
     def durations(self) -> list[tuple[date, int]]:

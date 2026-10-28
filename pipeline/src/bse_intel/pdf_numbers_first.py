@@ -46,7 +46,7 @@ log = logging.getLogger(__name__)
 
 NAME = "numfirst"
 MAX_STATEMENT_PAGES = 6
-MAX_OCR_PAGES = 8
+MAX_OCR_PAGES = 16            # scanned pages read with OCR in a PDF (ATGL Q2FY27: 13 scanned pages, standalone on p14)
 MAX_FILL_OCR_PAGES = 4         # pages with a text layer OCR'd only for a missing unit or row labels (fill_from_ocr)
 MAX_TEXT_PAGES = 60            # pages with a text layer read from their words
 SCAN_PAGE_LIMIT = 30           # a scan with no text layer is searched in a PDF of up to this many pages

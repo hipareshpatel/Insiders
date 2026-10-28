@@ -934,3 +934,28 @@ def test_the_header_year_reorder_takes_only_a_day_that_ends_a_period():
     for trap in ("Year ended March 2026 12 months", "Quarter ended September 2026 3 months ended", "Dec 2026 9 months",
                  "September 2026 3"):
         assert nf.header_dates(trap) == []
+
+
+def test_a_statement_on_the_fourteenth_scanned_page_is_reached(monkeypatch):
+    # ATGL Q2FY27: thirteen scanned pages; the standalone statement on page 14 was past the old OCR budget of 8 pages
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl()
+    page = statement(rows)
+    src = pymupdf.open(stream=page, filetype="pdf")
+    pix = src[0].get_pixmap(dpi=36)
+    doc = pymupdf.open()
+    for i in range(14):
+        p = doc.new_page(width=620, height=842)
+        p.insert_image(p.rect, pixmap=pix)
+    pdf = doc.tobytes()
+    doc.close()
+    src.close()
+    boxes, calls = as_ocr_boxes(page), []
+
+    def ocr_boxes(png):
+        calls.append(1)
+        return boxes if len(calls) == 14 else []
+
+    got = nf.reading_from_tables(nf.analyse(pdf, ocr_boxes=ocr_boxes), "Q2FY27", "pat", "STANDALONE")
+    assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))

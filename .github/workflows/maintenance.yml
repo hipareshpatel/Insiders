@@ -378,7 +378,17 @@ jobs:
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         run: |
           "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"
-          "$RUNNER_TEMP/venv/bin/python" scripts/bse_results_test.py /tmp/bse_results.json
+          mkdir -p "$RUNNER_TEMP/bsetest"
+          "$RUNNER_TEMP/venv/bin/python" scripts/bse_results_test.py "$RUNNER_TEMP/bsetest/bse_results.json"
+        env:
+          BSE_TEST_COS: ${{ inputs.ids }}   # scrip:symbol pairs, comma separated; empty = the 8 companies of 25 Oct
+          SAVE_DIR: ${{ runner.temp }}/bsetest
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'bse-results-test'
+        with:
+          name: bse-results-test
+          path: ${{ runner.temp }}/bsetest/
+          if-no-files-found: ignore
       - name: BSE check of the kept BSE-only companies (reads only)
         if: inputs.command == 'bse-verify-kept'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs

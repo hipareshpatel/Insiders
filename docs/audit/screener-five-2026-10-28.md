@@ -12,6 +12,8 @@ Companies: TCS (IT), SUNPHARMA (pharma), LT (engineering and finance), TATASTEEL
 - **One rule is company-specific and we do not yet know why:** screener adds the associates' and joint ventures' profit share to Other Income and to PBT for ITC and Tata Steel, but not for L&T and Sun Pharma. Within each company the choice never changes over six quarters. The pipeline's `screener_crosscheck` already handles it by trying both. Section 4, rule P4.
 - Our memory differs from screener by definition on several lines (section 3): revenue before excise (ITC), expenses including interest and depreciation, borrowings without leases, fixed assets without goodwill and intangibles, total assets without deferred-tax netting.
 
+- **Screener's Excel (section 11) settles the formulas to the paisa:** 371 of 378 figures with an XBRL counterpart are reproduced exactly, the 7 exceptions are all in the FY26 annual column (annual-report classification). Screener's Data Sheet Net profit is the owners' share, while its web page shows the whole profit; no other row differs between the two. The associates' share (rule P4) is counted for ITC and Tata Steel (profit years) and not for L&T and Sun (loss for FY26), but the exact decision rule is still open.
+
 ## 2. Where our memory differs from the XBRL files (our own errors, listed first)
 
 Figures: **none.** 2,376 profit-and-loss checks (25 metrics x periods x two bases) and 404 balance-sheet checks, 0 differ. Checked for all 5 companies, consolidated and standalone, every file downloaded.
@@ -66,7 +68,7 @@ All amounts in crore (XBRL rupees / 10^7). Period = the 3-month context ending o
 | P2 | **Interest = FinanceCosts + the OtherExpenses member described as "Finance cost of financial services business ..."**, which is taken out of Expenses. | L&T (6 of 6 quarters: 1,706 to 2,033 Cr a quarter). No other company has such a member. |
 | | **Operating Profit = Sales - Expenses; OPM % = Operating Profit / Sales.** | All 5. |
 | P3 | **Other Income = OtherIncome + ExceptionalItemsBeforeTax** (a loss lowers it; TCS Q3FY26: 1,118 - 3,391 = -2,273, screener -2,273). | All 5 (zero exceptional items are neutral). |
-| P4 | **+ ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod** added to Other Income, and so to PBT. | **Added: ITC, Tata Steel (and BPCL, lead's earlier check). Not added: L&T, Sun Pharma.** TCS has no share. Constant within a company over all quarters: ITC 5 of 5 quarters (share 66 to 140 Cr), Tata Steel 5 of 5 (50 to 134 Cr), L&T 6 of 6 not added (-184 to +34 Cr), Sun 5 of 5 not added (-20 to -10 Cr). Cause not found: not the sign, not the size against PBT (L&T Q4FY26 -184 is 2.2% of PBT and not added; ITC's 1% is added). Under one uniform "add" rule 22 pairs (Other Income and PBT of the L&T and Sun quarters) would fail; under a uniform "do not add" rule 20 pairs (ITC and Tata Steel) would. |
+| P4 | **+ ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod** added to Other Income, and so to PBT. | **Added: ITC, Tata Steel (and BPCL, lead's earlier check). Not added: L&T, Sun Pharma.** TCS has no share. Constant within a company over all quarters: ITC 5 of 5 quarters (share 66 to 140 Cr), Tata Steel 5 of 5 (50 to 134 Cr), L&T 6 of 6 not added (-184 to +34 Cr), Sun 5 of 5 not added (-20 to -10 Cr). Cause not settled: not the size against PBT (L&T Q4FY26 -184 is 2.2% of PBT and not added; ITC's 1% is added), and not the sign of each quarter alone; the Excel Data Sheet (section 11.3) shows the companies that count it are the profit-making ones for FY26 and the ones that leave it out have a loss for FY26, but L&T's two profit quarters of FY27 are still left out. Under one uniform "add" rule 22 pairs (Other Income and PBT of the L&T and Sun quarters) would fail; under a uniform "do not add" rule 20 pairs (ITC and Tata Steel) would. |
 | | **Profit before tax = Sales - Expenses + Other Income - Interest - Depreciation.** In the XBRL this is `ProfitBeforeTax` (no associates; P4 off) or `ProfitBeforeTax` + the share (P4 on). | All 5. |
 | P8 | **Tax % = TaxExpense / screener's PBT.** | All 5. |
 | P6 | **Net Profit = ProfitLossForPeriod, the whole profit including the minority share** (not the owners' share). | All 5, 32 of 32 periods. (Screener's own help page says owners; measurement says whole profit: same finding as `screener-rules.md` row 5.) |
@@ -711,3 +713,103 @@ Columns: Screener = the figure on screener's page; XBRL = our rebuild from the N
 | FY26 | Cash from Investing Activity | -2,321.0 | -2,320.7 | -2,320.7 | exact |  |
 | FY26 | Cash from Financing Activity | -16,147.0 | -16,147.1 | -16,147.1 | exact |  |
 | FY26 | Net Cash Flow | -4.0 | -3.5 | -3.5 | exact |  |
+
+## 11. Screener's Excel, to the paisa
+
+The owner's five workbooks (`scrxl/itc.xlsx`, `lt.xlsx`, `tcs.xlsx`, `sunpharma.xlsx`, `tatasteel.xlsx`; the Data Sheet read straight from the zip XML, which also reads the three files `openpyxl` cannot open). The Data Sheet holds 10 quarters (up to Jun 2026 for Sun Pharma, Tata Steel and ITC; up to Sep 2026 for TCS and L&T), 10 years and the balance sheet and cash flow by year, to 2 decimals (TCS: whole crore, as TCS files). Sheets: Profit & Loss, Quarters (hidden), Balance Sheet, Cash Flow, Customization, Data Sheet; I read only the Data Sheet. "Exact" here means within ₹0.01 Cr (0.02 for lines screener derives: Total, Other Assets, Other Liabilities, Profit before tax, Operating Profit). Same XBRL files as before, consolidated; no new downloads.
+
+### 11.1 Result
+
+**371 of the 378 figures that have an XBRL counterpart are reproduced to the paisa by one formula per row, tested on all 5 companies** (6 quarters for TCS and L&T, 5 for the others; FY26; Mar 2026 balance sheet; FY26 cash flow). The 7 that are not are all in the FY26 annual column (section 11.4). On top of those, 30 Data Sheet figures have no XBRL element at all (section 11.4).
+
+| Block | Rows | Figures | Reproduced to the paisa |
+|---|---:|---:|---:|
+| Quarters (Sales, Expenses, Other Income, Depreciation, Interest, Profit before tax, Tax, Net profit, Operating Profit) | 9 | 243 | **243** |
+| FY26 annual (Sales, Raw Material Cost, Change in Inventory, Employee Cost, Other Income, Depreciation, Interest, Profit before tax, Tax, Net profit) | 10 | 50 | 43 |
+| Mar 2026 balance sheet (10 rows + Receivables, Inventory, Cash & Bank) | 13 | 65 | **65** |
+| FY26 cash flow | 4 | 20 | **20** |
+
+### 11.2 The exact formulas (units: crore; XBRL rupees / 10^7; same elements as section 4)
+
+| Data Sheet row | Formula | Pass |
+|---|---|---|
+| **Sales** (quarter, year) | `RevenueFromOperations` - excise (`OtherExpenses` member "Excise Duty"). ITC Q1FY27: 29,523.30 - 10,408.93 = 19,114.37 (Data Sheet 19,114.37). | 27/27, 5/5 |
+| **Expenses** (quarter) | `Expenses` - `FinanceCosts` - `DepreciationDepletionAndAmortisationExpense` - excise - finance-cost member of `OtherExpenses`. | 27/27 |
+| **Interest** (quarter) | `FinanceCosts` + `OtherExpenses` member "Finance cost of financial services business ..." (L&T only). L&T Q1FY26: 781.61 + 1,706.35 = 2,487.96 (Data Sheet 2,487.96). | 27/27 quarters; year 4/5 (not L&T) |
+| **Depreciation** | `DepreciationDepletionAndAmortisationExpense`. | 27/27, 5/5 |
+| **Other Income** (quarter) | `OtherIncome` + `ExceptionalItemsBeforeTax` (+ associates' share for ITC and Tata Steel only, 11.3). TCS Q3FY26: 1,118 - 3,391 = -2,273. | 27/27 quarters; year 2/5 (TCS, Tata Steel) |
+| **Profit before tax** | Sales - Expenses + Other Income - Interest - Depreciation (= `ProfitBeforeTax` + the share where the share is counted). | 27/27, 5/5 |
+| **Tax** | `TaxExpense`. | 27/27, 5/5 |
+| **Net profit** | **`ProfitOrLossAttributableToOwnersOfParent`, the owners' share.** The whole-profit variant (`ProfitLossForPeriod`) fails 27/27. | 27/27, 5/5 |
+| **Operating Profit** (quarter) | Sales - Expenses (as above). | 27/27 |
+| Raw Material Cost (year) | `CostOfMaterialsConsumed` + `PurchasesOfStockInTrade` (Sun 11,200.55, Tata 92,628.07, ITC 35,098.34). | 3/5 |
+| Change in Inventory (year) | **minus** `ChangesInInventoriesOfFinishedGoodsWorkInProgressAndStockInTrade` (the Data Sheet's sign is the opposite of the file's; ITC +2,550.46 against the file's -2,550.46); the sheet subtracts it in its expense total. | 5/5 |
+| Employee Cost (year) | `EmployeeBenefitExpense`. | 4/5 |
+| Equity Share Capital, Reserves | `EquityShareCapital`, `OtherEquity`. | 5/5 each |
+| Borrowings | `BorrowingsNoncurrent` + `BorrowingsCurrent` + "Lease liabilities" members of `OtherNoncurrentFinancialLiabilities` and `OtherCurrentFinancialLiabilities`. | 5/5 |
+| Total Liabilities, Total Assets | `Assets` - min(`DeferredTaxAssetsNet`, `DeferredTaxLiabilitiesNet`) (March column). | 5/5 |
+| Net Block | `PropertyPlantAndEquipment` + `InvestmentProperty` + `Goodwill` + `OtherIntangibleAssets` + right-of-use assets (member of `OtherNoncurrentAssets`; ITC 501.00). | 5/5 |
+| Capital Work in Progress | `CapitalWorkInProgress` + `IntangibleAssetsUnderDevelopment`. | 5/5 |
+| Investments | `InvestmentsAccountedForUsingEquityMethod` + `NoncurrentInvestments` + `CurrentInvestments`. | 5/5 |
+| Other Assets; Other Liabilities | Total - Net Block - CWIP - Investments; Total - Equity Share Capital - Reserves - Borrowings. | 5/5 each |
+| Receivables | `TradeReceivablesCurrent` only (TCS: 67,714; the non-current 213 is left out). | 5/5 |
+| Inventory | `Inventories`. | 5/5 |
+| Cash & Bank | `CashAndCashEquivalents` + `BankBalanceOtherThanCashAndCashEquivalents` (ITC 643.46 + 2,365.33 = 3,008.79). | 5/5 |
+| Cash from Operating / Financing / Net Cash Flow | `CashFlowsFromUsedIn...OperatingActivities`, `...FinancingActivities`, `IncreaseDecreaseInCashAndCashEquivalents` (after the exchange effect). | 5/5 each |
+| Cash from Investing | `CashFlowsFromUsedInInvestingActivities` + `EffectOfExchangeRateChangesOnCashAndCashEquivalents`. TCS: -12,845 + 959 = -11,886. | 5/5 |
+
+The paisa-level result confirms every rule of section 4 and removes the "within 1 Cr" slack: no row needed a tolerance.
+
+### 11.3 The associates' share (open rule P4), from the Data Sheet's Other Income and Profit before tax
+
+Test: for each company and quarter, the Data Sheet's Other Income and Profit before tax were compared with the XBRL value without the share and with it. Each fits exactly one way, to the paisa, and the way never changes inside a company.
+
+| Company | Share of associates and JVs, FY26 | Quarterly shares (Cr) | Data Sheet counts it in Other Income and PBT |
+|---|---:|---|---|
+| ITC | +377.08 | 68.76, 66.36, 102.39, 139.57, 85.91 | **yes**, 5 of 5 quarters and the year |
+| Tata Steel | +368.50 | 79.72, 50.75, 103.96, 134.07, 96.15 | **yes**, 5 of 5 and the year |
+| L&T | -205.52 | -7.40, -9.08, -4.58, -184.47, +5.18, +34.00 | **no**, 6 of 6 and the year |
+| Sun Pharma | -55.87 | -9.75, -12.14, -19.92, -14.06, -9.57 | **no**, 5 of 5 and the year |
+| TCS | 0 | none | not applicable |
+
+- **In every company the Net profit row does include the share** (owners' share of the whole profit). So where the share is not counted, the Data Sheet does not foot: Sun Q1FY26 PBT 3,172.77 - Tax 870.15 - minority 14.24 = 2,288.38, but Net profit is 2,278.63, short by exactly the share (-9.75). The share is in the profit and outside Other Income and PBT.
+- **Pattern:** the companies that count it are the two whose share is a profit in every quarter and the year; the two that do not have a loss for FY26 (Sun in all five quarters; L&T in four of six and -205.5 for the year). That fits "counted when the associates earn a profit, left out when they make a loss". It is **not** a per-quarter sign test: L&T's two latest quarters are profits (+5.18, +34.00) and are still left out, so the choice is fixed for the company for a longer span (a year, or a flag per company). Size does not explain it (L&T's -184.47 is 2.2% of that quarter's PBT and is left out; ITC's 1% is counted). BPCL (lead's check) counts it and has a profit share.
+- **Not settled** from the files in hand. The one test that separates "decided by the previous year's sign" from "a fixed flag per company": L&T's Dec 2026 quarter and FY27 year, or any company whose share changes sign between years (the XBRL files of FY24 and FY25 for L&T, Sun, ITC and Tata Steel plus their Data Sheet quarters back to Mar 2024 would show it; the Data Sheets hold those quarters, the XBRL files for them were not downloaded).
+
+### 11.4 Figures no formula reproduces to the paisa
+
+**Seven, all in the FY26 annual column**, with the closest formula and the residual (Data Sheet minus formula):
+
+| Company | Row | Data Sheet | Closest formula | Residual | What it is |
+|---|---|---:|---|---:|---|
+| Sun Pharma | Other Income | 1,894.81 | `OtherIncome` + `ExceptionalItemsBeforeTax` = 664.24 | **+1,230.57** | the same amount shows in the sheet's expense lines (their sum is 41,961.21 against the file-based 40,730.64, +1,230.57). Of the year's exceptional items (-1,307.48), 1,230.57 sit in expenses and 76.91 stay in Other Income. |
+| L&T | Other Income | 4,051.72 | 4,038.24 | +13.48 | annual-report classification |
+| L&T | Interest | 10,055.94 | `FinanceCosts` + finance-cost member = 9,844.16 | +211.78 | annual-report classification |
+| L&T | Raw Material Cost | 97,682.71 | `CostOfMaterialsConsumed` + purchases = 101,854.69 | -4,171.98 | annual-report classification |
+| L&T | Employee Cost | 52,191.85 | `EmployeeBenefitExpense` = 52,187.22 | +4.63 | annual-report classification |
+| ITC | Other Income | 2,523.09 | 2,511.18 (= the sum of the four Data Sheet quarters) | +11.91 | annual-report reclassification; the sheet's expense lines exceed the file's by the same 11.91 |
+| TCS | Raw Material Cost | 43.00 | `CostOfMaterialsConsumed` = 0 | +43.00 | taken out of other expenses: the four annual-report lines below sum to 39,586, which is the file's other expenses 39,629 less 43 |
+
+The reclassifications balance exactly, so profit is untouched: for L&T, Expenses -198.30 = Other Income +13.48 - Interest +211.78; for Sun and ITC the Other Income gap equals the Expenses gap. PBT and Net profit (owners) of FY26 are reproduced for all 5.
+
+**Data Sheet figures with no XBRL element (30 figures):**
+- Annual **Power and Fuel, Other Mfr. Exp, Selling and admin, Other Expenses** (20 figures; these come from the annual report, as the lead found). Only their **sum** can be tested: it equals the file's `OtherExpenses` less excise for Tata Steel exactly (78,170.83); equals it plus the Other Income gap for Sun (18,998.67 = 17,768.10 + 1,230.57) and ITC (12,233.02 = 12,221.11 + 11.91); less 43.00 for TCS (39,586 = 39,629 - 43); L&T 101,618.14 against 97,649.09 (file's 104,644.43 less the finance-cost member 6,995.34), +3,969.05, which with the raw-material (-4,171.98), employee (+4.63) differences adds to -198.30.
+- **Dividend Amount** (5 figures; declared dividend). Nearest file figure: dividends paid in the cash flow. Data Sheet minus that: TCS 39,820 vs 39,571 (+249.00), Sun 3,838.88 vs 3,937.80 (-98.92), L&T 5,227.47 vs 4,676.22 (+551.25), Tata Steel 4,989.76 vs 4,489.87 (+499.89), ITC 18,167.78 vs 18,272.02 (-104.24). Not reproducible: declared against paid.
+- **No. of Equity Shares** (5 figures): not in the results file. Share capital / face value is within the file's rounding for TCS, Sun, L&T and ITC, and 0.33 Cr (3.3 crore shares) short for Tata Steel (Data Sheet 12,477,659,071 shares against the file's 1,247.44 Cr of share capital).
+- Price, market capitalisation, number of shares in the meta rows: market data.
+
+### 11.5 Where the Data Sheet differs from the web page
+
+565 figures that appear on both were compared (all quarters in the sheet, FY26 annual, Mar 2026 balance sheet, FY26 cash flow; "Fixed Assets" on the page is "Net Block" in the sheet; Tax % computed from the sheet's Tax and PBT; the page's annual Expenses against the sheet's expense lines summed with the inventory change subtracted). **510 are equal to the page's rounding. The 55 that differ are all one row, Net profit, in every company and every period** (all 55 of the 55 Net profit pairs): the page shows the whole profit (our `ProfitLossForPeriod`), the sheet shows the owners' share.
+
+| Net profit, FY26 | Data Sheet (owners) | Web page (whole) | Gap (minority) |
+|---|---:|---:|---:|
+| TCS | 49,210 | 49,454 | 244 |
+| Sun Pharma | 11,479.42 | 11,509 | 29.58 |
+| L&T | 16,083.99 | 18,954 | 2,870.01 |
+| Tata Steel | 10,793.87 | 10,886 | 92.13 |
+| ITC | 20,689.47 | 21,018 | 328.53 |
+
+I found no other row that differs. Other differences are structure, not figures: the sheet carries no EPS, Tax % or OPM % row (the page computes them), and the page's EPS follows the owners' share (ITC Q1FY27: 4,394.13 / 1,252.95 = 3.51). Our memory's `pat` is the whole profit and `pat_owners` the owners' share, so both screener views can be matched from memory.
+
+Scripts: `scratchpad/five/scripts/xlsx.py` (zip reader), `ds.py`, `dsq.py`, `dsa.py`, `dsb.py`, `dscf.py`, `dscount.py` (counts, `dscount.json`), `dsweb.py` (Data Sheet against web page, `dsweb.json`).

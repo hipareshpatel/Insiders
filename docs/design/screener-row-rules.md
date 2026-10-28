@@ -15,6 +15,10 @@ or individual companies and their events"). A rule is added here in the same com
   wherever the words are used, and a new wording needs the pattern widened (never a company name in code).
 - **Event**: one company's one-off (a merger restatement, a levy, its own layout). Recorded, not coded; the row stays apart.
 
+Source of a quarter: its own results file. NSE's results XBRL has no comparative column (measured 28 Oct 2026, Hindustan
+Unilever Q1FY27: only the quarter's own contexts), so screener's restated quarters (a merger, a demerger) cannot be read from
+XBRL; they are Event exceptions below.
+
 Source of a year (policy, docs "annual-quarterly-filings"): the newest stored annual report that holds the year (a later report's
 comparative column counts: restated years), else the Q4 results file's 12-month context. Lenders always the Q4 file (NSE has no
 annual-report XBRL for banks, NBFCs or insurers). Consolidated by default; standalone pages are compared on their own basis.
@@ -84,6 +88,8 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | L&T | Interest; Power and fuel | bank charges 211.78 and the split of power and fuel by note are PDF-only | |
 | Airtel | Expenses | FY26 regulatory levy 3,160.7 put into Expenses, the labour-code charge into Other Income (note 32) | screener splits one-offs by nature; PDF note only |
 | Maruti | FY23 (all rows) | restated after the Suzuki Motor Gujarat merger; NSE lists no FY24 annual-report XBRL | PDF only |
+| Hindustan Unilever | Quarters before Q3FY26 (Sales, Expenses) | restated after the ice-cream demerger (Q1FY26 Sales 16,514 filed, 15,757 restated) | NSE's quarterly XBRL holds the current period only (no comparative column, checked on HUL Q1FY27: one duration context), so a restated quarter is PDF-only |
+| Grasim | Quarters Q1–Q3 FY25 (Sales, Expenses) | about 585–770 Cr more in screener's Sales and Expenses, Operating Profit within 25 Cr: a restatement (assumption) | as above |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
 
 ## Patterns to watch in a larger batch

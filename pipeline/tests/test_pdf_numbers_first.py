@@ -761,3 +761,16 @@ def test_the_scanned_standalone_rule_needs_the_word_standalone_and_reaches_only_
     silent = scanned(page, "Please find enclosed the Un-Audited Financial Results for the quarter.")     # no "standalone"
     assert nf.reading_from_tables(nf.analyse(silent, ocr_boxes=lambda png: as_ocr_boxes(page)), "Q2FY27", "pat",
                                   "STANDALONE").status == "none"
+
+
+def test_a_profit_after_tax_carried_on_by_an_associates_share_is_not_the_profit_for_the_period():
+    # EMKAY Q2FY25 consolidated: "IX Profit after tax" 2,581.77, "X Share of Profit of Associates" 9.39, "XI Profit for the
+    # period from continuing operations" 2,591.16; the reader gave IX (a wrong profit). It may give XI or nothing, never IX
+    rows, want = pl()
+    share = [9.39, -7.95, -35.5, 25.78]
+    bottom = [round(a + b, 2) for a, b in zip(want["pat"], share)]
+    rows = rows[:-1] + [(["Profit after tax"], want["pat"]), (["Share of Profit/(Loss) of Associates"], share),
+                        (["Profit for the period from continuing operations"], bottom)]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(bottom[0]))
+    assert got.value != pytest.approx(crore(want["pat"][0]))

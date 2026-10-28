@@ -937,6 +937,14 @@ class Solver:
             out.append((a, block, proof))
         return out
 
+    def carried_on(self, a: int) -> bool:
+        """The profit after tax ``a`` is not the bottom line: the row after it is an associate's share or discontinued operations
+        that is not nil (EMKAY Q2FY25: "IX Profit after tax" 2,581.77, then "X Share of Profit of Associates" 9.39, then the
+        profit for the period 2,591.16). Only an extension that reaches the bottom line may then be the profit."""
+        nxt = a + 1
+        return nxt < self.n and self.cls[nxt] in ("ASSOC", "DISC") \
+            and any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[nxt].cells)
+
     def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
         """Rows after the profit after tax ``a`` that equal it plus or minus one or two of the rows between (discontinued
         operations, an associate's share), and whose label does not name another line."""
@@ -1031,7 +1039,7 @@ class Solver:
                             pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
                             if block:
                                 pending.append(("tax", block, [pat_proof]))
-                            if self.label_ok(a, {"PAT"}):
+                            if self.label_ok(a, {"PAT"}) and not self.carried_on(a):
                                 pending.append(("pat", (a,), [pat_proof]))
                             # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
                             for x, ext in self.pat_extensions(a):

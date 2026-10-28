@@ -1206,3 +1206,13 @@ def test_a_gain_that_is_a_revenue_part_is_a_part(second):
     b = [round(v - x, 2) for v, x in zip(REVENUE, a)]
     got = read(statement([(["Revenue from operations"], a), ([second], b)] + rows[1:]), "revenue")
     assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))
+
+
+def test_a_total_revenue_line_over_its_parts_is_the_revenue():
+    # SRF Q2FY27: "Revenue from operations a. Sale of products", "b. Other operating revenues", "Total Revenue from operations"
+    rows, want = pl()
+    a = [round(v * 0.9, 2) for v in REVENUE]
+    b = [round(v - x, 2) for v, x in zip(REVENUE, a)]
+    pdf = statement([(["1 Revenue from operations", "a. Sale of products"], a), (["b. Other operating revenues"], b),
+                     (["Total Revenue from operations"], REVENUE)] + rows[1:])
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))

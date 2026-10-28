@@ -1187,7 +1187,11 @@ class Solver:
             # a revenue row right above the sum and outside it: the first row is not the revenue (22nd review: "Revenue from
             # operations" over "Interest income" + "Other income" = a total that leaves the revenue out)
             above = min(rows) - 1
-            if above >= 0 and self.cls[above] == "REV":
+            # unless the first row is the subtotal of the rows right above it ("a. Sale of products", "b. Other operating
+            # revenues", "Total Revenue from operations", SRF Q2FY27): then the revenue row above is one of its parts
+            subtotal = any(self.valid((rows[0], tuple((r, 1) for r in range(above - size + 1, above + 1)))) for size in range(1, 7)
+                           if above - size + 1 >= 0)
+            if above >= 0 and self.cls[above] == "REV" and not subtotal:
                 rows_rev_ok = False
             rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok
             if rev_named:

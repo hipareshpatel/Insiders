@@ -1,0 +1,1068 @@
+"""An experimental "numbers-first" reader of a results statement (28 Oct 2026). BENCH ONLY: it is not in the live path and has no
+switch. It is a ``pdf_readers`` reader (name ``numfirst``, selected only by ``PDF_READERS=native,numfirst``), scored by the same
+scorer as the native reader (``pdf_bench``).
+
+Why. The native reader (``pdf_referee.parse_page``) works from lines of text and finds a row by its label. It almost never gives a
+wrong answer but finds no row for most figures (normal-results key: 45 of 337 right, 292 no answer): labels wrap over two or three
+lines with the numbers on one of them, a total is printed as just "Total" or "(I+II)", and a text layer stores labels and number
+columns apart. This reader starts from the numbers instead.
+
+1. Words with coordinates (PyMuPDF ``get_text("words")``; a page printed sideways is turned upright as ``extract.upright_text``
+   does; a tilted page is straightened with ``ocr._skew``). A page with no text layer is read with the pipeline's own RapidOCR
+   (``ocr``): its boxes become words (a box of several tokens is cut in proportion to its characters).
+2. Numbers first. A number token is Indian or western grouping, brackets or a leading minus for a negative, a lone "-" / "–" / "Nil"
+   for nil. Tokens that line up (right edge, centre or left edge) form columns; tokens at one height form rows; a numeric row has
+   cells in at least two columns. Numbers do not wrap.
+3. Label stitching. A row's label is every word left of the first column whose height lies after the previous numeric row and up
+   to this row's own band (a wrapped label is joined again).
+4. Columns by header date. The header words above a column (stacked "30 September" / "2026" lines joined) give its date; the
+   group words ("Quarter ended", "Six months ended", "Year ended") give its kind by the nearest group word, or by the standard
+   layout of Indian results (``pdf_referee._pattern_kinds``). A column is the period's when its date and kind are.
+5. A vertical arithmetic solver names the rows, over all columns at once, and a row is named only when its identity holds in at
+   least three columns (all of them when fewer are printed; one garbled column is tolerated) and in the period's own column:
+   total income = the rows directly above it (revenue + other income); total expenses = a block of rows above it; profit before
+   exceptional items and tax = total income - total expenses; profit before tax = that +/- exceptional items and share of
+   associates (hops over the rows in between); tax = a row, or the sum of rows; profit after tax = profit before tax - tax.
+   The stitched label is a second signal (Schedule III landmarks) and never alone for a total: where the label says another
+   line than the arithmetic does, there is no answer. Where two readings of the table give two values, there is no answer.
+6. Units come from the unit line above the table (``grounding.unit_before``), else the page's one unit; the basis from the title
+   text above the table, as the native reader tells it (``pdf_referee._basis_above_boxed``).
+
+Never a guess: no answer is better than a wrong one. Not done in this first version: EPS, banks whose layout is not Schedule III
+(only what the chain finds), two bases side by side on one page (the columns repeat their dates, so no column is unique), a table
+that runs over two pages, a scan that is also tilted by more than a few degrees, a scan turned sideways.
+"""
+
+from __future__ import annotations
+
+import itertools
+import logging
+import re
+import statistics
+from dataclasses import dataclass, field
+from datetime import date
+
+log = logging.getLogger(__name__)
+
+NAME = "numfirst"
+MAX_STATEMENT_PAGES = 6
+MAX_OCR_PAGES = 8
+MAX_TEXT_PAGES = 60            # pages with a text layer read from their words
+SCAN_PAGE_LIMIT = 30           # a scan with no text layer is searched in a PDF of up to this many pages
+MIN_COLUMN_FIGURES = 3         # figures that line up to make a column
+IDENT_MIN_COLUMNS = 3
+LABEL_WORDS_LINES = 14         # text lines above a table searched for its title and header
+
+
+# --- words ----------------------------------------------------------------------------------------------------------------
+
+@dataclass
+class Word:
+    x0: float
+    x1: float
+    y: float            # centre height, straightened
+    h: float
+    text: str
+    ocr: bool = False
+
+    @property
+    def xc(self) -> float:
+        return (self.x0 + self.x1) / 2
+
+
+def upright_words(page) -> list[tuple[float, float, float, float, str]]:
+    """The page's words as (x0, y0, x1, y1, text) with the text running left to right: a page printed sideways is turned a
+    quarter, as ``extract.upright_text`` turns it."""
+    lines = [line for block in page.get_text("dict", flags=0)["blocks"] for line in block.get("lines", [])]
+    vertical = [line for line in lines if abs(line["dir"][1]) > 0.9]
+    sideways = bool(lines) and len(vertical) >= 0.6 * len(lines)
+    up = sideways and sum(line["dir"][1] for line in vertical) < 0
+    out = []
+    for x0, y0, x1, y1, text, *_ in page.get_text("words"):
+        if not str(text).strip():
+            continue
+        if sideways:
+            x0, x1, y0, y1 = (-y1, -y0, x0, x1) if up else (y0, y1, -x1, -x0)
+        out.append((x0, y0, x1, y1, str(text)))
+    return out
+
+
+def straighten(raw: list[tuple[float, float, float, float, str]], ocr_source: bool = False) -> list[Word]:
+    """Words with the page's tilt taken out of their heights (``ocr._skew``: the angle whose row histogram is sharpest)."""
+    from . import ocr
+    items = [((y0 + y1) / 2, max(y1 - y0, 1.0), x0, text, x1) for x0, y0, x1, y1, text in raw]
+    theta = ocr._skew(items) if len(items) >= 30 else 0.0
+    import math
+    t = math.tan(theta)
+    return [Word(x0, x1, ((y0 + y1) / 2) - (x0 + x1) / 2 * t, max(y1 - y0, 1.0), text, ocr_source) for x0, y0, x1, y1, text in raw]
+
+
+_BRACKET_OPEN = "([{"
+_BRACKET_CLOSE = ")]}"
+
+
+def merge_brackets(words: list[Word], height: float) -> list[Word]:
+    """A bracket printed apart from its figure ("(" "12.5" ")") is joined to it, when it touches it."""
+    out: list[Word] = []
+    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    for w in ordered:
+        prev = out[-1] if out else None
+        same_line = prev is not None and abs(prev.y - w.y) <= 0.5 * height
+        if same_line and w.text in _BRACKET_CLOSE and w.x0 - prev.x1 <= 0.9 * height and prev.text[:1] in _BRACKET_OPEN \
+                and prev.text[-1:] not in _BRACKET_CLOSE and re.search(r"\d", prev.text):
+            out[-1] = Word(prev.x0, w.x1, prev.y, prev.h, prev.text + w.text, prev.ocr)
+            continue
+        if same_line and prev.text in _BRACKET_OPEN and w.x0 - prev.x1 <= 0.9 * height and re.match(r"-?\d", w.text):
+            out[-1] = Word(prev.x0, w.x1, w.y, w.h, prev.text + w.text, w.ocr)
+            continue
+        out.append(w)
+    return out
+
+
+def ocr_page_boxes(png: bytes):
+    """RapidOCR's boxes of a page image (``ocr._boxes`` form), with the sideways turn ``ocr.recognise`` makes; [] when OCR is not
+    installed. Kept apart so the bench can cache it."""
+    from . import ocr
+    if not ocr.available():
+        return []
+    import cv2
+    import numpy as np
+    image = cv2.imdecode(np.frombuffer(png, np.uint8), cv2.IMREAD_COLOR)
+    with ocr._lock:
+        if ocr._engine is None:
+            ocr._engine = ocr._new_engine()
+        result = ocr._boxes(ocr._engine(image if image is not None else png))
+        if len(result) >= 8 and ocr.lying_flat(result) < 0.5 and image is not None:
+            best = None
+            for turn in (cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_90_COUNTERCLOCKWISE):
+                turned = ocr._boxes(ocr._engine(cv2.rotate(image, turn)))
+                if turned and ocr.lying_flat(turned) >= 0.5 and (best is None or ocr._mean_score(turned) > ocr._mean_score(best)):
+                    best = turned
+            if best is not None:
+                result = best
+    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in result]
+
+
+def words_from_boxes(boxes) -> list[tuple[float, float, float, float, str]]:
+    """OCR boxes as words: a box of several tokens is cut in proportion to its characters."""
+    from . import ocr
+    out = []
+    for box, text, _score in ocr._boxes(boxes):
+        xs, ys = [p[0] for p in box], [p[1] for p in box]
+        x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+        text = str(text).strip()
+        if not text:
+            continue
+        tokens = [m for m in re.finditer(r"\S+", text)]
+        width = (x1 - x0) / max(len(text), 1)
+        for m in tokens:
+            tok = ocr._repair(m.group())
+            out.append((x0 + m.start() * width, y0, x0 + m.end() * width, y1, tok))
+    return out
+
+
+# --- numbers --------------------------------------------------------------------------------------------------------------
+
+_NUM = r"(?:\d{1,3}(?:,\d{2,3})+|\d+)(?:\.\d+)?"
+_FIG = re.compile(rf"^(?P<open>[\(\[\{{])?(?P<minus>[-−–])?(?P<num>{_NUM})(?P<close>[\)\]\}}])?$")
+_NIL = re.compile(r"^[-–—−]$|^nil$", re.I)
+_YEAR_ONLY = re.compile(r"^(?:19|20)\d\d$")
+
+
+@dataclass
+class Cell:
+    value: float
+    decimals: int
+    nil: bool
+    strict: bool
+    word: Word
+    text: str = ""
+
+    @property
+    def tol(self) -> float:
+        return 0.0 if self.nil else 0.5 * 10 ** -self.decimals
+
+
+def parse_figure(text: str) -> Cell | None:
+    """A number token as a ``Cell`` (value, printed decimals), or None. ``strict``: it has a decimal point, a comma group or at
+    least four digits (a note number, a serial number or a year does not); a nil dash is a cell of value 0."""
+    t = text.strip().strip("*")
+    if _NIL.match(t):
+        return Cell(0.0, 0, True, False, None, t)       # type: ignore[arg-type]
+    m = _FIG.match(t)
+    if not m:
+        return None
+    num = m["num"]
+    digits = num.replace(",", "")
+    if _YEAR_ONLY.match(digits) and "," not in num and "." not in num:
+        return None
+    decimals = len(num.split(".")[1]) if "." in num else 0
+    value = float(digits)
+    negative = bool(m["open"] or m["close"] or m["minus"])
+    if m["open"] and m["close"] is None and not m["minus"]:
+        negative = True            # a half-lost bracket: still a negative (ocr._repair does the same)
+    strict = "." in num or "," in num or len(digits) >= 4
+    return Cell(-value if negative else value, decimals, False, strict, None, t)    # type: ignore[arg-type]
+
+
+# --- a page into rows and columns -----------------------------------------------------------------------------------------
+
+@dataclass
+class NRow:
+    y: float
+    top: float
+    bottom: float
+    label: str
+    cells: list[Cell | None]
+    words_left: list[Word] = field(default_factory=list)
+
+
+@dataclass
+class Column:
+    x0: float
+    x1: float
+    xc: float
+    index: int = 0
+    date: date | None = None
+    kind: str | None = None        # quarter, half, nine, year (None: not told)
+    kind_confident: bool = False
+
+
+@dataclass
+class Table:
+    page: int
+    basis: str | None
+    unit: float | None             # figures per crore
+    columns: list[Column]
+    rows: list[NRow]
+    source: str = "textlayer"
+    note: str = ""
+    named: dict = field(default_factory=dict)   # metric -> list of (rows, proofs)
+    header_lines: list = field(default_factory=list)   # the text lines above the table (title, unit, header), for diagnosis
+
+
+def _cluster(values: list[float], tol: float) -> list[list[int]]:
+    order = sorted(range(len(values)), key=lambda i: values[i])
+    groups: list[list[int]] = []
+    for i in order:
+        if groups and values[i] - values[groups[-1][-1]] <= tol:
+            groups[-1].append(i)
+        else:
+            groups.append([i])
+    return groups
+
+
+def text_height(words: list[Word]) -> float:
+    hs = [w.h for w in words if re.search(r"[A-Za-z0-9]", w.text)]
+    return statistics.median(hs) if hs else 8.0
+
+
+def find_columns(cells: list[tuple[Word, Cell]], height: float) -> tuple[list[Column], str]:
+    """Columns of the page: the figures (strict ones) that line up by right edge, centre or left edge, whichever lines up best."""
+    strict = [(w, c) for w, c in cells if c.strict]
+    if len(strict) < MIN_COLUMN_FIGURES:
+        return [], ""
+    tol = 0.8 * height
+    best: tuple[float, str, list[list[int]]] | None = None
+    for name, key in (("right", lambda w: w.x1), ("centre", lambda w: w.xc), ("left", lambda w: w.x0)):
+        groups = _cluster([key(w) for w, _ in strict], tol)
+        groups = [g for g in groups if len(g) >= MIN_COLUMN_FIGURES]
+        score = sum(len(g) ** 2 for g in groups)
+        if best is None or score > best[0]:
+            best = (score, name, groups)
+    if not best or not best[2]:
+        return [], ""
+    columns = []
+    for g in best[2]:
+        ws = [strict[i][0] for i in g]
+        x0, x1 = min(w.x0 for w in ws), max(w.x1 for w in ws)
+        columns.append(Column(x0, x1, (x0 + x1) / 2))
+    columns.sort(key=lambda c: c.xc)
+    for i, c in enumerate(columns):
+        c.index = i
+    return columns, best[1]
+
+
+def assign_cells(words: list[Word], columns: list[Column], align: str, height: float) -> list[tuple[int, Word, Cell]]:
+    """Every number-like word that sits in a column: (column, word, cell). Nil dashes by centre inside the column's extent, loose
+    integers by the column's alignment, strict figures by alignment too."""
+    if not columns:
+        return []
+    key = {"right": lambda w: w.x1, "centre": lambda w: w.xc, "left": lambda w: w.x0}[align]
+    ref = {"right": lambda c: c.x1, "centre": lambda c: c.xc, "left": lambda c: c.x0}[align]
+    gaps = [b.xc - a.xc for a, b in zip(columns, columns[1:])]
+    spacing = min(gaps) if gaps else 8 * height
+    # a column that prints decimals ("1,245.60") has no small whole number in it: a "24" that lines up with it is a note number or
+    # a serial number, label text, never a figure (a "Note" column of annual reports sits left of the periods, 1 to 60)
+    decimal_column = [False] * len(columns)
+    for j in range(len(columns)):
+        strict = [c for w in words if (c := parse_figure(w.text)) is not None and c.strict
+                  and abs(ref(columns[j]) - key(w)) <= 0.8 * height]
+        decimal_column[j] = sum(c.decimals >= 1 for c in strict) >= 0.75 * max(len(strict), 1)
+    out = []
+    for w in words:
+        cell = parse_figure(w.text)
+        if cell is None:
+            continue
+        if cell.nil:
+            j = min(range(len(columns)), key=lambda k: abs(columns[k].xc - w.xc))
+            c = columns[j]
+            if c.x0 - 0.3 * height <= w.xc <= c.x1 + 0.3 * height:
+                cell.word = w
+                out.append((j, w, cell))
+            continue
+        j = min(range(len(columns)), key=lambda k: abs(ref(columns[k]) - key(w)))
+        if not cell.strict and decimal_column[j] and cell.value != 0:       # a bare 0 is a zero, never a note number
+            continue
+        if abs(ref(columns[j]) - key(w)) <= (0.8 if cell.strict else 0.8) * height and abs(w.xc - columns[j].xc) <= 0.5 * spacing:
+            cell.word = w
+            out.append((j, w, cell))
+    return out
+
+
+def decimals_filter(assigned: list[tuple[int, Word, Cell]], count: int) -> list[tuple[int, Word, Cell]]:
+    """A column's figures print one number of decimals; a figure with another is a garbled one (a lost point or comma, "1,958.111",
+    "558776" in a column of "5,58,271.23") and is not a cell. A nil dash is always one."""
+    out = list(assigned)
+    page = [c.decimals for _, _, c in assigned if not c.nil]
+    if len(page) >= 12:
+        mode = max(set(page), key=page.count)
+        if mode >= 1 and page.count(mode) >= 0.7 * len(page):
+            out = [t for t in out if t[2].nil or t[2].decimals == mode]
+            assigned = out
+    for j in range(count):
+        mine = [c for jj, _, c in assigned if jj == j and not c.nil]
+        if len(mine) < 4:
+            continue
+        counts: dict[int, int] = {}
+        for c in mine:
+            counts[c.decimals] = counts.get(c.decimals, 0) + 1
+        mode, n = max(counts.items(), key=lambda kv: kv[1])
+        if mode >= 1 and n >= 0.6 * len(mine):
+            out = [t for t in out if t[0] != j or t[2].nil or t[2].decimals == mode]
+    return out
+
+
+def build_rows(assigned: list[tuple[int, Word, Cell]], words: list[Word], columns: list[Column], height: float) -> list[NRow]:
+    """Numeric rows: cells at one height in at least two columns, each with its stitched label."""
+    if not assigned:
+        return []
+    order = sorted(assigned, key=lambda t: (t[1].y, t[1].x0))
+    groups: list[list[tuple[int, Word, Cell]]] = []
+    ys: list[float] = []
+    for item in order:
+        y = item[1].y
+        if groups and abs(y - ys[-1]) <= 0.5 * height:
+            groups[-1].append(item)
+            ys[-1] = sum(i[1].y for i in groups[-1]) / len(groups[-1])
+        else:
+            groups.append([item])
+            ys.append(y)
+    rows: list[NRow] = []
+    for g, y in zip(groups, ys):
+        if len({j for j, _, _ in g}) < 2:
+            continue
+        cells: list[Cell | None] = [None] * len(columns)
+        for j, _, cell in g:
+            cells[j] = cell if cells[j] is None else _CONFLICT
+        cells = [None if c is _CONFLICT else c for c in cells]
+        decs = [c.decimals for c in cells if c is not None and not c.nil]
+        if len(decs) >= 4:
+            mode = max(set(decs), key=decs.count)
+            if mode >= 1 and decs.count(mode) >= 3 and decs.count(mode) >= 0.5 * len(decs):
+                # a row prints one number of decimals: a figure with fewer or more has lost or gained a digit (the point of
+                # "1,505.28" lost reads 150528, and every sum over such a column still adds up)
+                cells = [c if c is None or c.nil or c.decimals == mode else None for c in cells]
+        rows.append(NRow(y, min(w.y - w.h / 2 for _, w, _ in g), max(w.y + w.h / 2 for _, w, _ in g), "", cells))
+    return rows
+
+
+_CONFLICT = Cell(0.0, 0, False, False, None, "conflict")        # type: ignore[arg-type]
+
+
+def stitch_labels(rows: list[NRow], words: list[Word], columns: list[Column], used: set[int], height: float,
+                  header_bottom: float | None) -> None:
+    """Each row's label: the words left of the first column whose height is after the previous numeric row and up to this row's
+    own band, in reading order."""
+    left = min(c.x0 for c in columns)
+    label_words = [w for w in words if id(w) not in used and w.x1 <= left + 0.5 * height]
+    for i, r in enumerate(rows):
+        lower = rows[i - 1].bottom if i else (header_bottom if header_bottom is not None else r.top - 3 * height)
+        picked = [w for w in label_words if lower < w.y <= r.bottom + 0.0]
+        picked.sort(key=lambda w: (round(w.y / (0.6 * height)), w.x0))
+        r.words_left = picked
+        r.label = " ".join(w.text for w in picked).strip()
+
+
+# --- header: dates, kinds, title, unit ------------------------------------------------------------------------------------
+
+_MONTH_WORD = re.compile(r"^(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?$", re.I)
+
+
+def lines_of(words: list[Word], height: float) -> list[list[Word]]:
+    """Words in lines (by height, on a running centre), each line left to right."""
+    out: list[list[Word]] = []
+    ys: list[float] = []
+    for w in sorted(words, key=lambda w: (w.y, w.x0)):
+        if out and abs(w.y - ys[-1]) <= 0.55 * height:
+            out[-1].append(w)
+            ys[-1] = sum(x.y for x in out[-1]) / len(out[-1])
+        else:
+            out.append([w])
+            ys.append(w.y)
+    return [sorted(line, key=lambda w: w.x0) for line in out]
+
+
+def line_text(line: list[Word]) -> str:
+    return " ".join(w.text for w in line)
+
+
+def _dates_in_text(text: str) -> list[date]:
+    from .pdf_referee import _dates_in
+    return _dates_in(text)
+
+
+def typical_gap(words: list[Word], height: float) -> float:
+    """The usual space between two words of a line on this page."""
+    gaps = []
+    for line in lines_of(words, height):
+        gaps += [b.x0 - a.x1 for a, b in zip(line, line[1:]) if 0 < b.x0 - a.x1 < 3 * height]
+    return statistics.median(gaps) if gaps else 0.5 * height
+
+
+def phrases_of(line: list[Word], gap: float) -> list[list[Word]]:
+    """A line cut into phrases where the space between two words is more than twice the page's usual one; a phrase that holds
+    two dates ("Sep 30, 2026 Jun 30, 2026" with no wider space between) is cut between them."""
+    out: list[list[Word]] = []
+    for w in line:
+        if out and w.x0 - out[-1][-1].x1 <= 2.0 * gap + 0.5:
+            out[-1].append(w)
+        else:
+            out.append([w])
+    split: list[list[Word]] = []
+    for ph in out:
+        text, spans = "", []
+        for w in ph:
+            spans.append((len(text), len(text) + len(w.text), w))
+            text += w.text + " "
+        from .pdf_referee import _DATE_LOOSE_2, _DATE_LOOSE, _two_digit
+        found = list((_DATE_LOOSE_2 if _two_digit() else _DATE_LOOSE).finditer(text))
+        if len(found) >= 2:
+            cut, start = [], 0
+            for m in found:
+                hit = [w for a, b, w in spans if a < m.end() and b > m.start()]
+                cut.append(hit)
+            split += cut
+        else:
+            split.append(ph)
+    return split
+
+
+def column_dates(gap_words: list[Word], columns: list[Column], height: float, sep: float) -> list[date | None]:
+    """The date above each column. The header's phrases are given to the column nearest their centre (a phrase wider than a
+    column is a title, not a date); the phrases over a column are read top to bottom, so a date broken over two lines is
+    joined, and the last date found is the one nearest the table."""
+    if not columns:
+        return []
+    xs = [c.xc for c in columns]
+    spacing = min((b - a for a, b in zip(xs, xs[1:])), default=8 * height)
+    mine: list[list[tuple[float, float, str]]] = [[] for _ in columns]
+    for line in lines_of(gap_words, height):
+        for ph in phrases_of(line, sep):
+            width = ph[-1].x1 - ph[0].x0
+            centre = (ph[0].x0 + ph[-1].x1) / 2
+            j = min(range(len(columns)), key=lambda k: abs(xs[k] - centre))
+            if width <= 1.3 * spacing and abs(xs[j] - centre) <= 0.75 * spacing:
+                mine[j].append((sum(w.y for w in ph) / len(ph), ph[0].x0, " ".join(w.text for w in ph)))
+    out: list[date | None] = []
+    for items in mine:
+        text = " ".join(t for _, _, t in sorted(items)).replace("_", " ").replace("|", " ")
+        found = _dates_in_text(text)
+        out.append(found[-1] if found else None)
+    return out
+
+
+def group_phrases(gap: list[Word], columns: list[Column], height: float) -> list[tuple[float, str]]:
+    """(centre, kind) of each "Quarter ended" / "Six months ended" / "Year ended" phrase of the header, as the native reader's
+    group words read them (``pdf_referee._GROUP``), kept to the lines near the header's dates."""
+    from .pdf_referee import _GROUP
+    lines = lines_of(gap, height)
+    in_bands = [w for w in gap if _MONTH_WORD.match(w.text) or _dates_in_text(w.text)]
+    top = min((w.y for w in in_bands), default=None)
+    found: list[tuple[float, str]] = []
+    for line in lines:
+        if top is not None and line[0].y < top - 3.4 * height * 1.6:
+            continue
+        text, spans = "", []
+        for w in line:
+            spans.append((len(text), len(text) + len(w.text), w))
+            text += w.text + " "
+        for m in _GROUP.finditer(text):
+            hit = [w for a, b, w in spans if a < m.end() and b > m.start()]
+            if hit:
+                found.append((sum(w.xc for w in hit) / len(hit), m.lastgroup))
+    return found
+
+
+def column_kinds(columns: list[Column], dates: list[date | None], phrases: list[tuple[float, str]], march: bool) -> None:
+    """Set each column's date and kind. A kind comes from the nearest group phrase when it is clearly nearest, else from the
+    standard layout of the page's dates; a column whose two sources disagree has no kind."""
+    from .pdf_referee import _pattern_kinds
+    kinds_seen = {k for _, k in phrases}
+    pattern = None
+    if dates and all(d is not None for d in dates):
+        pattern = _pattern_kinds(list(dates), march)
+    for j, c in enumerate(columns):
+        c.date = dates[j] if j < len(dates) else None
+        near: str | None = None
+        confident = False
+        if phrases:
+            ranked = sorted(phrases, key=lambda p: abs(p[0] - c.xc))
+            best = ranked[0]
+            others = [p for p in ranked[1:] if p[1] != best[1]]
+            if len(kinds_seen) == 1:
+                near, confident = best[1], True
+            elif not others or abs(best[0] - c.xc) <= 0.6 * abs(others[0][0] - c.xc):
+                near, confident = best[1], True
+        patt = pattern[j] if pattern else None
+        if near and patt and near != patt:
+            c.kind, c.kind_confident = None, False
+            c.date = None          # the sources disagree about this column: it is not used
+        elif near:
+            c.kind, c.kind_confident = near, True
+        elif patt:
+            c.kind, c.kind_confident = patt, True
+        else:
+            c.kind, c.kind_confident = None, False
+
+
+def scan_units(lines: list[str]) -> set:
+    """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
+    data)"), as ``pdf_referee`` reads them; a unit it does not know is None."""
+    from .pdf_referee import _BARE_UNIT, _GARBLED_UNIT
+    from .grounding import _PER_CRORE
+    found = set()
+    for line in lines:
+        probe = line.strip()
+        if len(probe) <= 70 and (m := _GARBLED_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
+        clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)
+        if len(clean) <= 40 and (m := _BARE_UNIT.match(clean)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
+    return found
+
+
+def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
+    """Figures per crore: the unit declared above the table (``grounding.unit_before``, then the short unit lines a lost rupee
+    sign or a garbled word leave), else the one unit the page names anywhere; None when none, or two."""
+    from .grounding import _DECLARED_UNIT, _PER_CRORE, unit_before
+    text = "\n".join(lines)
+    u = unit_before(text, len(text))
+    if u is not None:
+        return u
+    units = scan_units(lines)
+    if len(units) == 1 and None not in units:
+        return units.pop()
+    page_text = "\n".join(page_lines)
+    found = {_PER_CRORE.get(next(g for g in m.groups() if g).lower().rstrip("s")) for m in _DECLARED_UNIT.finditer(page_text)}
+    found |= scan_units(page_lines)
+    return found.pop() if len(found) == 1 and None not in found else None
+
+
+# --- a page into tables ---------------------------------------------------------------------------------------------------
+
+def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str = "textlayer") -> list[Table]:
+    """The tables of one page: numeric rows, split where a header with dates stands between two rows, each with its columns'
+    dates and kinds, its basis, its unit and its stitched labels."""
+    from .pdf_referee import _MARCH_YEAR, _basis_above_boxed
+    from .metrics import STANDALONE
+    if len(words) < 12:
+        return []
+    height = text_height(words)
+    words = merge_brackets(words, height)
+    figs = [(w, c) for w in words if (c := parse_figure(w.text)) is not None and not c.nil]
+    columns, align = find_columns(figs, height)
+    if len(columns) < 2:
+        return []
+    assigned = decimals_filter(assign_cells(words, columns, align, height), len(columns))
+    rows = build_rows(assigned, words, columns, height)
+    if len(rows) < 3:
+        return []
+    used = {id(w) for _, w, _ in assigned}
+    free = [w for w in words if id(w) not in used]
+    page_texts = [line_text(line) for line in lines_of(words, height)]
+    pitch = statistics.median([b.y - a.y for a, b in zip(rows, rows[1:]) if b.y > a.y] or [2 * height])
+    sep = typical_gap(words, height)
+    # where a header stands: a gap between two numeric rows with dates over at least two columns
+    starts = [0]
+    gaps: dict[int, list[Word]] = {}
+    wide: dict[int, list[Word]] = {}
+    for i, r in enumerate(rows):
+        lower = rows[i - 1].bottom if i else r.top - LABEL_WORDS_LINES * pitch
+        gap = [w for w in free if lower < w.y < r.top]
+        gaps[i] = gap
+        wide[i] = [w for w in free if (rows[i - 1].bottom if i else -1e9) < w.y < r.top]
+        if i:
+            dated = sum(d is not None for d in column_dates(gap, columns, height, sep))
+            if dated >= 2:
+                starts.append(i)
+    tables: list[Table] = []
+    for n, a in enumerate(starts):
+        b = starts[n + 1] if n + 1 < len(starts) else len(rows)
+        gap = gaps[a]
+        dates = column_dates(gap, columns, height, sep)
+        if sum(d is not None for d in dates) < 2:
+            continue
+        gap_lines = lines_of(gap, height)
+        texts = [line_text(line) for line in lines_of(wide[a], height)]
+        cols = [Column(c.x0, c.x1, c.xc, c.index) for c in columns]
+        column_kinds(cols, dates, group_phrases(gap, cols, height), bool(_MARCH_YEAR.search("\n".join(texts[-14:]))))
+        basis, contested = _basis_above_boxed(texts, len(texts))
+        if basis is None and not anywhere and not contested:
+            basis = STANDALONE
+        rows_t = [NRow(r.y, r.top, r.bottom, "", list(r.cells)) for r in rows[a:b]]
+        header_bottom = max((w.y for w in gap if any(abs(w.xc - c.xc) < 0.5 * (c.x1 - c.x0 + 4 * height) for c in cols)), default=None)
+        stitch_labels(rows_t, free, cols, set(), height, header_bottom)
+        unit = unit_of(texts, page_texts)
+        tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts))
+    return tables
+
+
+# --- the stitched label's landmark (the second signal) --------------------------------------------------------------------
+
+_CLASS_RULES: list[tuple[str, re.Pattern]] = [
+    ("EPS", re.compile(r"earnings?\s+per|\beps\b|per\s+(?:equity\s+)?share", re.I)),
+    ("TCI", re.compile(r"comprehensive", re.I)),
+    ("PAT", re.compile(r"(?:profit|loss)\b.*\bfor\s+the\s+(?:period|year|quarter)\b.*continuing\s+and\s+discontinu", re.I)),
+    ("ATTR", re.compile(r"attributable|owners\s+of|non[- ]?controlling|minority|equity\s+holders", re.I)),
+    ("DISC", re.compile(r"discontinu", re.I)),
+    ("PBEI", re.compile(r"before\b.*\b(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?)", re.I)),
+    ("PBT", re.compile(r"before\s+(?:\w+\s+){0,3}tax|\bpbt\b", re.I)),
+    ("TAX", re.compile(r"^(?!.*\b(?:profit|loss|surplus)\b).*\btax", re.I)),      # a tax line: no profit or loss in its words
+    ("CONT", re.compile(r"continuing", re.I)),
+    ("PAT", re.compile(r"(?:profit|loss|surplus)\b.*\b(?:for\s+the\s+(?:period|year|quarter)|after\s+tax)|\bpat\b|net\s+profit", re.I)),
+    ("TE", re.compile(r"total\s+(?:expenses|expenditure)", re.I)),
+    ("TI", re.compile(r"total\s+income|total\s+revenue\b(?!\s+from\s+operations)", re.I)),
+    ("OI", re.compile(r"other\s+income", re.I)),
+    ("EXC", re.compile(r"exceptional|extraordinary", re.I)),
+    ("ASSOC", re.compile(r"associate|joint\s+venture", re.I)),
+    ("TAX", re.compile(r"\btax\b|taxation", re.I)),
+    ("REV", re.compile(r"revenue|net\s+sales|\bsales\b|turnover|interest\s+earned|income\s+from\s+operations", re.I)),
+]
+
+
+def label_class(label: str) -> str | None:
+    """The landmark a stitched label names: TI total income, TE total expenses, REV revenue, OI other income, PBEI profit before
+    exceptional items (or associates) and tax, PBT profit before tax, EXC exceptional items, ASSOC share of associates, TAX a tax
+    line, PAT profit for the period, TCI comprehensive income, ATTR a split between owners and minority, DISC / CONT
+    discontinued / continuing operations, EPS; None when the label names none (a bare "Total", "(I+II)", a garbled word)."""
+    text = re.sub(r"\s+", " ", label or "").strip()
+    if not re.search(r"[A-Za-z]{3,}", text):
+        return None
+    for name, rule in _CLASS_RULES:
+        if rule.search(text):
+            return name
+    return None
+
+
+# --- the vertical arithmetic solver -----------------------------------------------------------------------------------------
+
+Proof = tuple[int, tuple[tuple[int, int], ...]]        # (row that equals, ((row, sign), ...) its parts)
+
+
+class Solver:
+    """Names the rows of one table by the identities that hold down its columns. ``explanations`` maps a metric to its readings
+    of the table: a list of (rows, proofs); a proof is an identity checked again in the period's own column when a figure is
+    asked, so a row is never named on other columns' proof alone."""
+
+    def __init__(self, table: Table):
+        self.t = table
+        self.n = len(table.rows)
+        self.m = len(table.columns)
+        self.cls = [label_class(r.label) for r in table.rows]
+        self.explanations: dict[str, list[tuple[tuple[int, ...], list[Proof]]]] = {}
+        self.chains = 0
+
+    # --- identities
+    def cell(self, i: int, j: int) -> Cell | None:
+        return self.t.rows[i].cells[j]
+
+    def mask(self, proof: Proof) -> list[bool | None]:
+        target, parts = proof
+        out: list[bool | None] = []
+        for j in range(self.m):
+            a = self.cell(target, j)
+            cs = [(self.cell(r, j), s) for r, s in parts]
+            if a is None or any(c is None for c, _ in cs):
+                out.append(None)
+                continue
+            total = sum(s * c.value for c, s in cs)
+            tol = a.tol + sum(c.tol for c, _ in cs) + 1e-9
+            out.append(abs(a.value - total) <= tol)
+        return out
+
+    def valid(self, proof: Proof) -> bool:
+        """The identity holds in at least three columns (all of them when fewer can be checked), is broken in at most one, and is
+        not made of zeros."""
+        mask = self.mask(proof)
+        checked = sum(v is not None for v in mask)
+        holds = sum(v is True for v in mask)
+        fails = sum(v is False for v in mask)
+        if checked < 2 or holds < min(IDENT_MIN_COLUMNS, checked) or fails > (1 if holds >= 3 else 0):
+            return False
+        target, _ = proof
+        return sum(1 for j, v in enumerate(mask) if v is True and (c := self.cell(target, j)) is not None and abs(c.value) > 1e-9) >= 2
+
+    def label_ok(self, i: int, allowed: set) -> bool:
+        """The label does not name another landmark than the arithmetic does (a label naming none is no objection)."""
+        return self.cls[i] in allowed or self.cls[i] is None
+
+    # --- the chain
+    def add(self, metric: str, rows: tuple[int, ...], proofs: list[Proof]) -> None:
+        entry = (rows, proofs)
+        if entry not in self.explanations.setdefault(metric, []):
+            self.explanations[metric].append(entry)
+
+    HOP_OK = {None, "EXC", "ASSOC", "TAX"}
+
+    def hops(self, start: int, depth: int = 3) -> list[tuple[int, list[Proof]]]:
+        """Rows reached from ``start`` by hops over one to three rows between (each counted + or -): the row equals the row
+        before it plus or minus the rows in between. ``start`` itself is reached with no hop."""
+        found: list[tuple[int, list[Proof]]] = [(start, [])]
+        frontier = [(start, [])]
+        for _ in range(depth):
+            nxt = []
+            for pos, proofs in frontier:
+                # a profit before tax printed as the same figure as the line above it: an exceptional item or an associate's
+                # share that is nil in most columns is a row of one cell, which is not a numeric row; the label must say so
+                x = pos + 1
+                if x < self.n and self.cls[x] == "PBT" and all(x != f[0] for f in found):
+                    proof: Proof = (x, ((pos, 1),))
+                    if self.valid(proof):
+                        item = (x, proofs + [proof])
+                        found.append(item)
+                        nxt.append(item)
+                for x in range(pos + 2, min(self.n, pos + 5)):
+                    between = list(range(pos + 1, x))
+                    if any(self.cls[r] not in self.HOP_OK for r in between):
+                        continue
+                    for signs in itertools.product((1, -1), repeat=len(between)):
+                        proof: Proof = (x, ((pos, 1),) + tuple(zip(between, signs)))
+                        if self.valid(proof):
+                            if all(x != f[0] for f in found):
+                                item = (x, proofs + [proof])
+                                found.append(item)
+                                nxt.append(item)
+                            break
+            frontier = nxt
+        return found
+
+    def tax_and_pat(self, b: int) -> list[tuple[int, tuple[int, ...], Proof]]:
+        """(PAT row, tax rows, proof) after the profit before tax row ``b``: PAT = PBT - the sum of a block of the rows between."""
+        out = []
+        a = b + 1
+        if a < self.n and self.cls[a] in ("PAT", "CONT"):
+            equal: Proof = (a, ((b, 1),))
+            if self.valid(equal):         # no tax at all (its rows are nil in all but one column): the profit after tax is the same figure
+                out.append((a, (), equal))
+        for a in range(b + 1, min(self.n, b + 8)):
+            between = list(range(b + 1, a))
+            if not between or any(self.cls[r] not in {None, "TAX"} for r in between) or not self.label_ok(a, {"PAT", "CONT"}):
+                continue
+            best = None
+            for size in range(1, len(between) + 1):
+                for s in range(0, len(between) - size + 1):
+                    block = tuple(between[s:s + size])
+                    proof: Proof = (a, ((b, 1),) + tuple((r, -1) for r in block))
+                    if best is None and self.valid(proof):
+                        best = (block, proof)
+                if best:
+                    break
+            if best is None:
+                continue
+            block, proof = best
+            moved = any(self.cell(r, j) is not None and abs(self.cell(r, j).value) > 1e-9 for r in block for j in range(self.m))
+            if not moved and not any(self.cls[r] == "TAX" for r in block):
+                continue            # no tax and no row that says tax: this "profit after tax" would be a repeat of the profit before
+            out.append((a, block, proof))
+        return out
+
+    def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
+        """Rows after the profit after tax ``a`` that equal it plus or minus one or two of the rows between (discontinued
+        operations, an associate's share), and whose label does not name another line."""
+        out = []
+        for x in range(a + 2, min(self.n, a + 9)):
+            between = list(range(a + 1, x))
+            if not self.label_ok(x, {"PAT"}) or any(self.cls[r] not in {None, "DISC", "ASSOC", "EXC", "TAX"} for r in between):
+                continue
+            for size in (1, 2):
+                hit = None
+                for subset in itertools.combinations(between, size):
+                    for signs in itertools.product((1, -1), repeat=size):
+                        proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))
+                        if hit is None and self.valid(proof):
+                            hit = proof
+                if hit:
+                    out.append((x, [hit]))
+                    break
+        return out
+
+    def solve(self) -> "Solver":
+        for t in range(1, self.n):
+            for k in (2, 3):
+                if t - k < 0:
+                    continue
+                parts = tuple((r, 1) for r in range(t - k, t))
+                ti_proof: Proof = (t, parts)
+                if not self.label_ok(t, {"TI"}) or not self.valid(ti_proof):
+                    continue
+                if k == 3 and self.valid((t, parts[1:])):
+                    continue
+                self.chain_from(t, k, ti_proof)
+        if "total_income" not in self.explanations:
+            # no chain below it: a total income by its label AND the arithmetic (never the label alone)
+            for t in range(1, self.n):
+                if self.cls[t] != "TI":
+                    continue
+                for k in (2, 3):
+                    if t - k >= 0:
+                        proof: Proof = (t, tuple((r, 1) for r in range(t - k, t)))
+                        if self.valid(proof):
+                            self.name_income(t, k, proof)
+                            break
+        return self
+
+    def name_income(self, t: int, k: int, proof: Proof) -> None:
+        self.add("total_income", (t,), [proof])
+        rows = list(range(t - k, t))
+        if k == 2:
+            if self.label_ok(rows[0], {"REV"}):
+                self.add("revenue", (rows[0],), [proof])
+            if self.label_ok(rows[1], {"OI"}):
+                self.add("other_income", (rows[1],), [proof])
+        else:
+            rev = [r for r in rows if self.cls[r] == "REV"]
+            oi = [r for r in rows if self.cls[r] == "OI"]
+            if len(rev) == 1:
+                self.add("revenue", (rev[0],), [proof])
+            if len(oi) == 1:
+                self.add("other_income", (oi[0],), [proof])
+
+    def chain_from(self, t: int, k: int, ti_proof: Proof) -> None:
+        """Total income at row ``t`` (its identity holds): look below it for total expenses, the profit identity, the hops to
+        the profit before tax, the tax and the profit after tax. The names are kept only when a label of the chain says what
+        the arithmetic says (a total income, total expenses, a profit before tax) or the chain runs through to a profit after
+        tax: a table of segment assets and liabilities adds up the same way (assets - liabilities = capital employed) and has
+        neither."""
+        for s in (t + 1, t + 2):
+            for e in range(s + 2, min(self.n, s + 40)):
+                te_proof: Proof = (e, tuple((r, 1) for r in range(s, e)))
+                if not self.label_ok(e, {"TE"}) or not self.valid(te_proof):
+                    continue
+                for p in range(e + 1, min(self.n, e + 4)):
+                    p_proof: Proof = (p, ((t, 1), (e, -1)))
+                    if not self.label_ok(p, {"PBEI", "PBT"}) or not self.valid(p_proof):
+                        continue
+                    self.chains += 1
+                    pending: list[tuple[str, tuple[int, ...], list[Proof]]] = [
+                        ("expenses", (e,), [te_proof]), ("pbt_pre", (p,), [p_proof]),
+                        # the profit identity ties total income, total expenses and the profit before exceptional items together
+                        # in the period's column: where a part of a sum is not legible there, it proves each of the three alone
+                        ("total_income", (t,), [p_proof]), ("expenses", (e,), [p_proof])]
+                    completed = False
+                    for b, hop_proofs in self.hops(p):
+                        if not self.label_ok(b, {"PBT"}):
+                            continue
+                        if self.cls[b] == "PBT":          # the label says profit before tax and the arithmetic reaches it
+                            pending.append(("pbt", (b,), [p_proof] + hop_proofs))
+                        for a, block, pat_proof in self.tax_and_pat(b):
+                            completed = True
+                            pending.append(("pbt", (b,), [p_proof] + hop_proofs))
+                            pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
+                            if block:
+                                pending.append(("tax", block, [pat_proof]))
+                            if self.label_ok(a, {"PAT"}):
+                                pending.append(("pat", (a,), [pat_proof]))
+                            # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
+                            for x, ext in self.pat_extensions(a):
+                                pending.append(("pat", (x,), [pat_proof] + ext))
+                    said = self.cls[t] == "TI" or self.cls[e] == "TE" or self.cls[p] in ("PBEI", "PBT")
+                    if not (said or completed):
+                        continue
+                    self.name_income(t, k, ti_proof)
+                    for metric, rows, proofs in pending:
+                        self.add(metric, rows, proofs)
+
+
+# --- a PDF into tables ----------------------------------------------------------------------------------------------------
+
+def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
+            keep_unnamed: bool = False) -> list[Table]:
+    """The solved tables of a results PDF. Every page with a text layer (the first ``max_pages``) is read from its words. A page
+    with no text layer is read with OCR (``ocr_boxes(png)`` returns RapidOCR's boxes; default ``ocr_page_boxes``), in a PDF of up
+    to ``SCAN_PAGE_LIMIT`` pages, at most ``MAX_OCR_PAGES`` pages in all. With ``ocr_garbled``, the scanned pages whose own text
+    layer gave no named row (the layer of a scan is OCR output and often garbled) are read with OCR as well, the pages that
+    ``statement_pages`` ranks first, then those with most figures, while the page budget lasts. Only tables with a named row
+    are kept (``keep_unnamed`` keeps all, for diagnosis)."""
+    from . import ocr
+    from .pdf_readers import _pymupdf, consolidated_anywhere, page_layers, statement_pages
+    ocr_boxes = ocr_boxes or ocr_page_boxes
+    layers = page_layers(pdf_bytes, max_pages)
+    anywhere = consolidated_anywhere(layers)
+    ranked = statement_pages(layers, MAX_STATEMENT_PAGES)
+    scans = [p for p, layer in layers.items() if not layer.has_layer] if len(layers) <= SCAN_PAGE_LIMIT else []
+    by_page: dict[int, list[Table]] = {}
+    unnamed: list[int] = []
+    ocr_used = 0
+
+    def read_ocr(page, p: int) -> list[Table]:
+        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
+        raw = words_from_boxes(ocr_boxes(png))
+        found = [Table_solved(t) for t in tables_of_page(p, straighten(raw, True), anywhere, "ocr")]
+        if layers[p].has_layer:
+            title = layer_basis(layers[p].text)
+            for t in found:
+                t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
+        return found
+
+    with _pymupdf().open(stream=pdf_bytes, filetype="pdf") as doc:
+        for p in layers:
+            page = doc[p - 1]
+            if layers[p].has_layer:
+                by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(upright_words(page)), anywhere)]
+                if not any(t.named for t in by_page[p]) and page.get_images(full=False):
+                    unnamed.append(p)
+            elif p in scans and ocr_used < MAX_OCR_PAGES:
+                ocr_used += 1
+                try:
+                    by_page[p] = read_ocr(page, p)
+                except Exception as exc:    # noqa: BLE001 - one page failing leaves the rest
+                    log.warning("numbers-first: OCR failed on page %d (%s)", p, type(exc).__name__)
+        if ocr_garbled:
+            def figures(p: int) -> int:
+                return sum(bool(re.search(r"\d", w[4])) for w in layers[p].words)
+            order = sorted(unnamed, key=lambda p: (p not in ranked, -figures(p)))
+            for p in order:
+                if ocr_used >= MAX_OCR_PAGES:
+                    break
+                ocr_used += 1
+                try:
+                    found = read_ocr(doc[p - 1], p)
+                except Exception as exc:    # noqa: BLE001
+                    log.warning("numbers-first: OCR failed on page %d (%s)", p, type(exc).__name__)
+                    continue
+                if any(t.named for t in found):
+                    by_page[p] = found
+    return [t for p in sorted(by_page) for t in by_page[p] if t.named or keep_unnamed]
+
+
+def layer_basis(text: str) -> str | None:
+    """The one basis the page's title lines name (``pdf_referee._words_basis``), None when none or two."""
+    from .pdf_referee import _TITLE, _words_basis
+    found = {b for line in text.splitlines() if _TITLE.search(line) and (b := _words_basis(line))}
+    return found.pop() if len(found) == 1 else None
+
+
+def Table_solved(table: Table) -> Table:
+    """The table with its rows named by the solver (``named``: metric -> explanations)."""
+    solver = Solver(table).solve()
+    table.named = solver.explanations
+    table.solver = solver          # type: ignore[attr-defined]
+    return table
+
+
+# --- one figure ----------------------------------------------------------------------------------------------------------
+
+def layout_ok(columns: list[Column]) -> bool:
+    """The kinds told fit a layout Indian results print: at most three quarter columns, two half-year (or nine-month) columns and
+    two year columns. A header whose group words were given to the wrong columns (a third "year" column in a March table, where
+    the prior-year quarter sits) does not."""
+    kinds = [c.kind for c in columns]
+    return kinds.count("quarter") <= 3 and kinds.count("year") <= 2 and (kinds.count("half") + kinds.count("nine")) <= 2
+
+
+def target_columns(table: Table, kind: str, when: date) -> list[Column]:
+    """The columns of the table that are the period's: its date and its kind. A table whose kinds do not fit a standard layout
+    gives none. A column whose kind the header does not tell counts only when every column's date was read and it is the one
+    column of its date (a quarter and a year of one date sit side by side in a March table)."""
+    if not layout_ok(table.columns):
+        return []
+    same = [c for c in table.columns if c.date == when]
+    told = [c for c in same if c.kind == kind]
+    if told:
+        return told
+    if all(c.date is not None for c in table.columns) and len(same) == 1 and same[0].kind is None:
+        return same
+    return []
+
+
+def table_figure(table: Table, metric: str, kind: str, when: date):
+    """(value in crore, tolerance in crore, label, why) of ``metric`` in the period's column of one table. ``value`` is None with
+    the reason in ``why`` when the table gives no answer."""
+    solver: Solver = getattr(table, "solver", None) or Solver(table).solve()
+    if table.unit is None:
+        return None, 0.0, "", "no unit declared above the table"
+    cols = target_columns(table, kind, when)
+    if len(cols) != 1:
+        return None, 0.0, "", f"{len(cols)} columns for {kind} ended {when}"
+    j = cols[0].index
+    found: list[tuple[float, float, str]] = []
+    for rows, proofs in solver.explanations.get(metric, []):
+        cells = [solver.cell(r, j) for r in rows]
+        if any(c is None for c in cells):
+            continue
+        if not all(solver.mask(pf)[j] is True for pf in proofs):
+            continue
+        value = sum(c.value for c in cells)
+        tol = sum(c.tol for c in cells)
+        found.append((value, tol, table.rows[rows[0]].label))
+    if not found:
+        return None, 0.0, "", "no row of the table is named by arithmetic for this metric in the period's column"
+    first = found[0]
+    if any(abs(v - first[0]) > max(tol, first[1]) + 1e-9 for v, tol, _ in found[1:]):
+        return None, 0.0, "", "the table's arithmetic names two different rows (" + ", ".join(f"{v:g}" for v, _, _ in found[:4]) + ")"
+    return first[0] / table.unit, first[1] / table.unit, first[2], ""
+
+
+def reading_from_tables(tables: list[Table], period: str, metric: str, basis: str | None, reader: str = NAME):
+    """A ``pdf_readers.Reading`` from the solved tables: the figure when every table of the basis that names it agrees."""
+    from .metrics import CONSOLIDATED, STANDALONE
+    from .pdf_readers import Reading, same_value
+    from .pdf_referee import target_column
+    family = "numbers-first"
+    target = target_column(period)
+    if target is None or metric not in ("revenue", "other_income", "total_income", "expenses", "pbt", "tax", "pat"):
+        return Reading(reader, family, "none", note=f"no {metric} for {period}")
+    kind, when = target
+    other = {CONSOLIDATED: STANDALONE, STANDALONE: CONSOLIDATED}.get(basis or "")
+    mine: list[tuple[float, float, str, int, str]] = []
+    theirs = False
+    notes: list[str] = []
+    for t in tables:
+        if t.basis is None:
+            notes.append(f"p{t.page}: the table's basis is not told")
+            continue
+        value, tol, label, why = table_figure(t, metric, kind, when)
+        if value is None:
+            if t.basis == basis or not basis:
+                notes.append(f"p{t.page}: {why}")
+            continue
+        if t.basis == basis or not basis:
+            mine.append((value, tol, label, t.page, t.source))
+        elif t.basis == other:
+            theirs = True
+    if not mine:
+        if theirs:
+            return Reading(reader, family, "otherbasis", note=f"the figure is printed on the {other} basis only")
+        return Reading(reader, family, "none", note="; ".join(dict.fromkeys(notes))[:300] or "no table")
+    first = mine[0]
+    if any(not same_value(first[0], v, max(first[1], tol)) for v, tol, *_ in mine[1:]):
+        return Reading(reader, family, "conflict", note="tables differ: " + ", ".join(f"{v:g}" for v, *_ in mine[:4]))
+    value, tol, label, page, source = first
+    return Reading(reader, family, "ok", value, source == "textlayer", source == "textlayer", source, label, page,
+                   tol=tol)
+
+
+def combine_readings(first, second):
+    """The native reader first, the numbers-first reader only where the native one gives no answer."""
+    return first if first.status == "ok" and first.value is not None else second

@@ -472,6 +472,20 @@ def _annualise_roa(values: dict, ends: dict) -> dict[tuple[str, str], list[str]]
     return {}
 
 
+_DECLARED = re.compile(r"""^(\s*<\?xml[^>]*?encoding\s*=\s*)(["'])[^"']*\2""")
+
+
+def as_utf8(data: bytes) -> bytes:
+    """A UTF-16 instance (its byte-order mark first) as UTF-8 with its declaration saying so; any other bytes unchanged.
+    NSE serves some XBRL in UTF-16 (measured 28 Oct 2026: CIPLA and PRIMESECU annual reports), and the template test
+    (``taxonomy``, xbrl_sums.template_key) reads the raw bytes: on UTF-16 it found no template, so a bank's file would
+    have been read on the plain Ind AS template. Every parser that reads stored bytes calls this first."""
+    if data[:2] not in (b"\xff\xfe", b"\xfe\xff"):
+        return data
+    text = data[: len(data) // 2 * 2].decode("utf-16", "replace")
+    return _DECLARED.sub(lambda m: f"{m[1]}{m[2]}UTF-8{m[2]}", text, count=1).encode("utf-8")
+
+
 def taxonomy(data: bytes) -> str:
     """Which SEBI template this instance was filed on: INDAS, NBFC, BANKING, GI or LI ("" if it says)."""
     m = _TAXONOMY.search(data[:8000])
@@ -506,6 +520,7 @@ def untrusted_lines(data: bytes, contexts: dict, year_end: int | None, tags: dic
 def parse(data: bytes, news_id: str = "") -> XbrlResult | None:
     """Parse an XBRL instance; None when it is not one or holds nothing we use. Figures in a sum that fails SEBI's own
     rules are left off (untrusted_lines), here at the one place every card, fact and table reads them from."""
+    data = as_utf8(data)
     try:
         root = ET.fromstring(data)
     except ET.ParseError:

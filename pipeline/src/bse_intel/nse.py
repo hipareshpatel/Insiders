@@ -682,7 +682,27 @@ class NseClient:
             # skipped as the PDF downloads are
             log.warning("XBRL file over %d bytes, skipped: %s", max_bytes, url)
             return None
-        return body if body.lstrip()[:200].lower().lstrip(b"\xef\xbb\xbf").startswith((b"<?xml", b"<xbrl")) else None
+        return body if looks_like_xml(body) else None
+
+
+_XML_COMMENT = re.compile(rb"\s*<!--.*?-->", re.S)
+
+
+def looks_like_xml(head: bytes) -> bool:
+    """Whether a body (or its first bytes) is an XML document: an XML declaration or the xbrl root first, after a byte-order mark
+    and any comments. Measured 28 Oct 2026 (maintenance run 40679795489): NSE serves annual-report XBRL in UTF-16 (CIPLA,
+    PRIMESECU, BOM \\xff\\xfe) and files that open with a generator's comment and no declaration (NETWORK18, BeyondWallsXBRL);
+    the old test (the first bytes start "<?xml" or "<xbrl") took both for block pages."""
+    head = head[:2000]
+    if head[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        head = head[: len(head) // 2 * 2].decode("utf-16", "ignore").encode("utf-8", "ignore")
+    head = head.lstrip(b"\xef\xbb\xbf").lstrip()
+    while head.startswith(b"<!--"):
+        m = _XML_COMMENT.match(head)
+        if not m:
+            return False    # a comment longer than the bytes we hold: not enough to tell
+        head = head[m.end():].lstrip()
+    return head[:5].lower() in (b"<?xml", b"<xbrl")
 
 
 _SHP_NAME = re.compile(r"SHP_\d+_(\d{14})_", re.I)

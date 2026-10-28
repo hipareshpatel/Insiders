@@ -68,6 +68,25 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Owner, 28 Oct, ~15:40 IST: "No blind audit of cards today", "Let's settle financial first".** The card audit and the
+card-wording experiment wait. The financial-data order, until the owner says otherwise:
+1. The bulk XBRL download (below): the 100-file test, then all 1,778 companies.
+2. The 50-company screener check run inside the pipeline (`xbrl-facts`, then `screener-crosscheck --top-mcap 50`), on the
+   downloaded files.
+3. Close the gaps toward 99%, one named rule at a time, each tested on all 50:
+   - screener's annual columns from the annual report;
+   - quarters screener restated for a demerger;
+   - lender balance sheets;
+   - screener's own share count for EPS;
+   - the associates switch per company.
+4. Memory's own errors from the fifty study, each fixed in code under the owner's A:
+   - Maruti and Bajaj Auto Q2FY27 profit before tax with the associates' share;
+   - Vedanta FY26 on another basis;
+   - SBI Life H1FY27 profit;
+   - HUL and Vedanta EPS;
+   - the missing quarters of 21 of 42 companies, re-seeded from the downloaded files.
+5. The XBRL-against-PDF timing, from the download's timestamps.
+
 **Afternoon of 28 Oct (15:17 IST):**
 - **The bulk NSE download (owner, 28 Oct, ~15:00 IST: "start downloading all the files from NSE... Don't miss annual
   reports").**

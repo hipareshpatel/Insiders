@@ -297,7 +297,7 @@ def test_the_cli_takes_the_fifty_largest_by_default(monkeypatch, tmp_path):
     monkeypatch.setattr(sv, "run", lambda sink, companies, workers, day: sv.summarise([], None))
     assert cli.main(["screener-rows", "--json", str(tmp_path / "s.json"), "--csv", str(tmp_path / "r.csv"),
                      "--md", str(tmp_path / "r.md")]) == 0
-    assert seen["n"] == 50 and (tmp_path / "r.csv").read_text(encoding="utf-8").startswith("company,basis,period")
+    assert seen["n"] == 50 and (tmp_path / "r.csv").read_text(encoding="utf-8").startswith("company,sector,basis,period")
 
 
 def test_workflow_runs_screener_rows_read_only_and_always_uploads():
@@ -389,3 +389,15 @@ def test_a_bank_debt_row_of_other_financial_liabilities_is_in_borrowings():
     facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + extra))
     got = values(sv.corporate_bs(sv._Reader(facts, instant=END)))
     assert got["Borrowings"] == 100 + 50 + 30 + 12 + 9
+
+
+def test_the_report_groups_rows_by_sector_so_a_sector_practice_shows():
+    rows = [{"company": c, "basis": "CONSOLIDATED", "period": "FY26", "table": "annual", "row": "Profit before tax", "screener": 1,
+             "ours": 1, "diff": 0, "status": st, "note": ""} for c, st in (("A", "apart"), ("B", "apart"), ("C", "ok"))]
+    results = [{"scrip": c, "symbol": c, "skipped": None, "sector": sec, "rows": [r for r in rows if r["company"] == c]}
+               for c, sec in (("A", "power"), ("B", "power"), ("C", "it"))]
+    summary = sv.summarise(results)
+    assert summary["by_sector_row"]["power"]["annual: Profit before tax"] == [0, 2]
+    assert summary["by_sector_row"]["it"]["annual: Profit before tax"] == [1, 0]
+    md = sv.to_markdown(summary, "2026-10-28")
+    assert "| power | 2 | 0% | annual: Profit before tax 2/2 |" in md and "company,sector" in sv.to_csv(summary)

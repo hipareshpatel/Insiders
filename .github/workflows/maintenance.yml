@@ -1,6 +1,11 @@
 # No-AI maintenance on the live database, started by hand (Actions > Maintenance > Run workflow):
 # - refresh-card-blocks: every stored card's code blocks rebuilt from memory by today's code (card_refresh.py);
 # - refresh-summaries: every company's stored summary (open promises, radar, credibility) rebuilt from its memory;
+# - restore: puts a backup (R2 backup/<job>-<time>/, saved before every write of refresh-card-blocks, label-memory-apply,
+#   screener-fill-apply, memory-gaps-fill-bse --apply and restated-pdf, and before a named seed-memory or requeue-failed --ids)
+#   back for the named companies / cards, keeping what was written since (backup.py, restore.py; a requeue-failed --ids
+#   backup has no after-state and needs apply-force). It writes only when `restore_mode` is apply or apply-force (default
+#   preview); an empty `backup` lists the backups;
 # - export-held: every held card into docs/audit/live/ on the working branch, for the live reviews (the public site
 #   does not serve them);
 # - export-critic: the shadow critic's verdicts of the last two days (R2 evidence/critic/) into docs/audit/live/, so the
@@ -150,7 +155,8 @@
 #                      label-memory-apply, screener-fill-apply, prune-companies-apply (writes memory and companies),
 #                      text-backfill (reads NSE; writes only text/ objects)
 #   maint-cards        writes cards in D1 (or commits to the branch): refresh-card-blocks, refresh-summaries, both,
-#                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic
+#                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic, restore (puts a backup of
+#                      cards and memory back; it can overlap a memory job, so do not run it beside one)
 #   maint-bse          probe-bse, bse-results-test, bse-verify-kept, text-backfill-bse (reads BSE; writes only text/ objects)
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
@@ -177,10 +183,23 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
+      backup:
+        description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
+        type: string
+        default: ''
+      scrips:
+        description: restore only - put back these companies' memory and cards (scrip codes, comma separated)
+        type: string
+        default: ''
+      restore_mode:
+        description: restore only - preview (default; writes nothing), apply (puts back what the job changed and nobody has changed since), apply-force (also what was changed since; and a backup with no after-state, which is every requeue-failed --ids backup)
+        type: choice
+        options: [preview, apply, apply-force]
+        default: preview
       ids:
-        description: requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -236,7 +255,7 @@ concurrency:
   # groups by source and by what a job writes: the table in the header comment
   group: >-
     ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
-    || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic"]'), inputs.command) && 'maint-cards'
+    || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
@@ -290,6 +309,24 @@ jobs:
           name: refresh-diff
           path: ${{ runner.temp }}/refresh-diff/
           if-no-files-found: ignore
+      - name: Restore from a backup
+        if: inputs.command == 'restore'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          BACKUP: ${{ inputs.backup }}   # through the environment, never pasted into the script
+          SCRIPS: ${{ inputs.scrips }}
+          IDS: ${{ inputs.ids }}
+          MODE: ${{ inputs.restore_mode }}   # a restore writes only on an explicit apply or apply-force; the default is a preview
+        run: |
+          if [ -z "$BACKUP" ]; then "$RUNNER_TEMP/venv/bin/python" -m bse_intel restore --list; exit 0; fi
+          args=(--backup "$BACKUP")
+          case "$MODE" in
+            apply) args+=(--apply) ;;
+            apply-force) args+=(--apply --force) ;;
+          esac
+          if [ "${IDS,,}" = all ]; then args+=(--all); elif [ -n "$IDS" ]; then args+=(--news-ids "$IDS"); fi
+          if [ -n "$SCRIPS" ]; then args+=(--scrips "$SCRIPS"); fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel restore "${args[@]}"
       - name: Refresh company summaries
         if: (inputs.command == 'refresh-summaries' || inputs.command == 'both') && !inputs.dry_run
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs

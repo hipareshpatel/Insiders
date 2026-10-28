@@ -72,6 +72,7 @@ from datetime import date
 
 from . import xbrl_facts
 from .memory_gaps import quarter_end
+from .periods import quarter_index
 from .metrics import CONSOLIDATED
 from .screener_fill import _section_table, _basis_of, cash_year_of, period_of
 
@@ -365,9 +366,12 @@ def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     extra = _sum_rows(rows)
     row_note = ("rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in rows)) if rows else ""
     borrowings = debt + lease + extra
-    out["Borrowings"] = Row(borrowings if debt_names or lease_names or rows else None,
+    # a balance sheet with no debt line, no lease and no maturity row is a company with no borrowings (0), not missing facts
+    has_sheet = r.cr("Assets") is not None
+    out["Borrowings"] = Row(borrowings if debt_names or lease_names or rows or has_sheet else None,
                             " + ".join(x for x in (" + ".join(debt_names), lease_note, row_note) if x) + src
-                            if debt_names or lease_names or rows else "missing BorrowingsNoncurrent and BorrowingsCurrent" + src)
+                            if debt_names or lease_names or rows else ("no borrowings, lease or maturity line: 0" if has_sheet
+                                                                         else "missing BorrowingsNoncurrent and BorrowingsCurrent") + src)
     fixed, fixed_names = total("PropertyPlantAndEquipment", "Goodwill", "OtherIntangibleAssets", "InvestmentProperty")
     rou = r.cr("RightOfUseAssets")
     rou_note = "RightOfUseAssets" if rou is not None else ""
@@ -478,7 +482,7 @@ class CompanyFacts:
         return self._load(self.results.get((period, basis)))
 
     def family(self, basis: str) -> str:
-        for (period, b), key in sorted(self.results.items(), key=lambda kv: kv[0][0], reverse=True):
+        for (period, b), key in sorted(self.results.items(), key=lambda kv: quarter_index(kv[0][0]) or 0, reverse=True):
             if b == basis and (f := self._load(key)) is not None:
                 return family(f.doc.get("template"))
         return CORPORATE
@@ -615,6 +619,12 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
     pages_by_symbol, newest = stored_pages(sink, day)
 
     def one(item: tuple[str, str]) -> dict:
+        try:
+            return company(item)
+        except Exception as exc:  # noqa: BLE001 - one company's bad page or listing is that company's skip, not the run's end
+            return {"scrip": item[0], "symbol": item[1], "rows": [], "skipped": f"error: {type(exc).__name__}: {exc}"[:200]}
+
+    def company(item: tuple[str, str]) -> dict:
         scrip, symbol = item
         entry = {"scrip": scrip, "symbol": symbol, "rows": [], "skipped": None}
         stored = pages_by_symbol.get(symbol) or {}

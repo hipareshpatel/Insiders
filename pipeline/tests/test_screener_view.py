@@ -302,3 +302,42 @@ def test_workflow_runs_screener_rows_read_only_and_always_uploads():
     assert 'screener-rows ${IDS:+--scrips "$IDS"} --top-mcap "${LIMIT:-50}"' in run["run"] and "--apply" not in run["run"]
     upload = next(s for s in steps if s.get("if") == "always() && inputs.command == 'screener-rows'")
     assert upload["with"]["name"] == "screener-rows"
+
+
+# --- the review's findings (28 Oct 2026) -----------------------------------------------------------------------------------
+
+def test_two_rows_with_the_same_text_both_count_in_the_joined_reader():
+    extra = [("DescriptionOtherNoncurrentFinancialLiabilitiesOthers", "D2026_M3", "Lease liabilities"),
+             ("OtherNoncurrentFinancialLiabilitiesOthers", "I2026_M3", 4.0)]
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + extra))
+    got = facts.described(("OtherNoncurrentFinancialLiabilitiesOthers",), "lease", instant=END, joined=True)
+    assert sorted(v for _, _, v in got) == [4.0, 30.0]
+
+
+def test_a_balance_sheet_with_no_debt_line_has_borrowings_of_zero():
+    facts = xf.Facts(doc([r for r in ANNUAL if not r[0].startswith(("Borrowings", "OtherCurrentFinancial", "OtherNoncurrentFinancial",
+                                                                      "DescriptionOfOtherCurrentFinancial",
+                                                                      "DescriptionOtherNoncurrentFinancial"))]))
+    row = sv.corporate_bs(sv._Reader(facts, instant=END))["Borrowings"]
+    assert row.value == 0.0 and "no borrowings" in row.note
+
+
+def test_one_company_failing_is_that_company_skipped_not_the_run_lost():
+    class Broken:
+        def list_objects(self, prefix):
+            raise RuntimeError("listing failed")
+
+        def get_object(self, key):
+            return None
+
+    from bse_intel import screener_download as sd
+
+    sink = Sink({f"{sd.PREFIX}2026-10-27/DEMO_c.html.gz": __import__("gzip").compress(PAGE.encode())})
+    sink.list_objects_ok = sink.list_objects
+    sink.list_objects = lambda prefix: Broken().list_objects(prefix) if prefix.startswith(xf.PREFIX) else sink.list_objects_ok(prefix)
+    summary = sv.run(sink, [("1", "DEMO")], workers=1)
+    assert summary["per_company"][0]["skipped"].startswith("error: RuntimeError")
+
+
+def test_the_newest_results_file_decides_the_family_by_quarter_order_not_text():
+    assert sorted(["Q4FY26", "Q1FY27"], key=lambda p: sv.quarter_index(p), reverse=True)[0] == "Q1FY27"

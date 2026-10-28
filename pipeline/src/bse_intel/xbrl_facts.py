@@ -328,8 +328,10 @@ class Facts:
             for text in own or ():
                 # a row once: the older files tag a row's year to date with the quarter's own dates (Titan Q2FY24: Advertising
                 # 268 Cr for the quarter and 542 Cr to date, both Jul-Sep), and the quarter's comes first in the file
-                if rx.search(text) and (el, text) not in seen:
-                    seen.add((el, text))
+                # joined: two members with the same text are two rows (two "Lease liabilities" lines of one table both count)
+                mark = (el, text, frozenset(((self.contexts.get(ctx_id) or {}).get("d") or {}).items())) if joined else (el, text)
+                if rx.search(text) and mark not in seen:
+                    seen.add(mark)
                     out.append((el, text, value / CRORE))
                     break
         return out

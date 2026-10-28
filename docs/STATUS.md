@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 03:15 IST.
+Last updated: 28 Oct 2026, 06:20 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -14,6 +14,15 @@ Freedom inside a fence, with a short daily message to the owner.
   current.
 - **Ask the owner first:** anything that costs money, keys, deleting data, account or repository settings, switching on a
   switch that changes what cards say before it is measured, changing the go-live bar, big design choices.
+- **Data writes the lead may do without asking (owner, 28 Oct 2026, ~06:15 IST), only once the undo is merged**
+  (a saved copy of exactly what a job changes, read back before any write, and a `restore` command):
+  - A. Fixing a figure proven wrong in memory: fix the class in code with a test, re-read only the affected filings,
+    at most 50 filings a run, only when two sources agree on the new figure, the list of changes put on this page.
+  - B. Refreshing the stored cards: only after 30 changed cards pass an independent blind check with no rise in WRONG.
+  - C. Switching on a switch that changes what cards say: only after the on/off check over stored cards and a blind
+    sample show no rise in WRONG; otherwise ask. (Repository variables are the owner's; the lead can only change
+    `pipeline/config/switches.toml` in a PR, and a repository variable of the same name still wins over it.)
+  - Silence is never a yes for a data write that falls outside A-C.
 - **Stop at once and tell the owner:** any NSE or BSE refusal; a measured rise in WRONG; anything shipped that breaks a
   run.
 - **Never:** get around a site's blocks, ignore robots.txt (never screener `/company/source/` pages), hand-edit stored

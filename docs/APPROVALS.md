@@ -86,3 +86,9 @@ right. Everything the 2026-10-20 approval leaves to the owner still goes to the 
   - Turning a switch on is approved in principle, but each one still waits for its release check and blind sample (owner's own bar).
   - Switches are repository variables, which this session cannot set, so the owner flips each one when it passes.
 - 26 Oct 13:55 UTC: PR #154 merged into `main` (0400011) with CI green, on the owner's "Merge" of 26 Oct. F187 (EPS fillers, signs) is live for new reads; F185/F186 and the pdf-referee changes are read-only; call memory stays behind MEMORY_CALL_V2 (off).
+- 28 Oct 2026, ~06:15 IST, owner ("A yes, B after check, C yes"): three kinds of data write no longer need a separate OK,
+  each only after the undo (backup before every write, `restore`) is merged. A: re-reading filings whose memory figure is
+  proven wrong (50 a run, two sources agree). B: the stored-card refresh, after a 30-card independent blind check with no
+  rise in WRONG. C: switching on a card-changing switch, after the on/off check over stored cards and a blind sample
+  with no rise in WRONG. Still the owner's: money, keys, deleting data, the go-live bar, repository settings, big design
+  choices. Details in `docs/STATUS.md` section 0.

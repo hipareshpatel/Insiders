@@ -110,6 +110,9 @@ EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # a supplier's or buyer's credit too (Hindalco FY25 "Supplier's credit" 1,713 Cr = the gap, cons and standalone; a temporary
 # overdraft of 13 Cr in the same table is not in screener's figure); a "lease" that is not a lease liability is not debt (JSW
 # Steel "Payable for sale and lease back of an under construction asset" 1,286 Cr, which screener leaves out)
+# filers misspell the words (Hindustan Unilever "Lease Liablities" 365-404 Cr, Coal India "Lease Liabiiities" 3.30 Cr, both in
+# screener's figure), so the pattern is "lease" followed by "lia", not the whole word
+LEASE_ROW = r"\blease\s+lia"
 BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(supplier|buyer)'?s'? credit"
 INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
@@ -390,7 +393,7 @@ def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
         rows = [x for x in r.rows(LIABILITY_PARENTS, rf"current maturit|{BANK_DEBT_ROW}") if not re.search("lease", x[1], re.I)]
         lease_note = f"lease {_fmt(lease)} ({', '.join(lease_names)})"
     else:
-        rows = r.rows(LIABILITY_PARENTS, rf"lease liabilit|current maturit|{BANK_DEBT_ROW}")
+        rows = r.rows(LIABILITY_PARENTS, rf"{LEASE_ROW}|current maturit|{BANK_DEBT_ROW}")
         lease_note = ""
     extra = _sum_rows(rows)
     row_note = ("rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in rows)) if rows else ""

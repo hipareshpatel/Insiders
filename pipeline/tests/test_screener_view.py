@@ -427,3 +427,13 @@ def test_a_suppliers_credit_row_is_borrowings_but_a_sale_and_lease_back_payable_
             ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 5.0)]
     facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + sale))
     assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12
+
+
+def test_a_misspelt_lease_liabilities_row_is_still_borrowings():
+    """Hindustan Unilever FY24-FY26 "Lease Liablities" 365-404 Cr and Coal India FY26 "Lease Liabiiities" 3.30 Cr are in screener's
+    Borrowings (exact before the pattern was narrowed to the whole word, 28 Oct 2026)."""
+    for words in ("Lease Liablities", "Lease Liabiiities"):
+        row = [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", words),
+               ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 5.0)]
+        facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + row))
+        assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 5

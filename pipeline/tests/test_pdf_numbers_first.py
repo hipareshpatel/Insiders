@@ -837,3 +837,36 @@ def test_a_damaged_cell_in_a_carried_on_profit_never_gives_a_wrong_profit(case):
 def test_a_clean_associates_layout_still_gives_the_profit_for_the_period():
     rows, truth = eleventh_review_rows("clean control")
     assert read(statement(rows), "pat").value == pytest.approx(truth)
+
+
+def test_an_unsure_profit_on_one_table_vetoes_a_short_table_of_the_same_basis():
+    # the twelfth review: a second standalone table that stops at "Profit after tax" gave the profit before the share
+    rows, want = pl()
+    pat, sh = want["pat"], [9.4, 5.1, 3.3, 12.2]
+    unsure = rows[:-1] + [(["Profit after tax"], pat), (["Shr of prfit"], sh),
+                          (["Net prfit"], [round(a + b, 2) for a, b in zip(pat, sh)])]
+    short = rows[:-1] + [(["Profit after tax"], pat)]
+    doc = pymupdf.open()
+    for part in (unsure, short):
+        with pymupdf.open(stream=statement(part), filetype="pdf") as one:
+            doc.insert_pdf(one)
+    pdf = doc.tobytes()
+    doc.close()
+    assert read(pdf, "pat").status == "none"
+    assert read(pdf, "pbt").value == pytest.approx(crore(want["pbt"][0]))       # only the profit is held back
+
+
+def test_three_garbled_rows_between_still_mark_the_profit_as_carried_on():
+    rows, want = pl()
+    pat, parts = want["pat"], [[9.4, 5.1, 3.3, 12.2], [1.1, 0.4, 0.2, 2.5], [2.0, 1.5, 0.7, 3.3]]
+    bottom = [round(a + b + c + d, 2) for a, b, c, d in zip(pat, *parts)]
+    rows = rows[:-1] + [(["Profit after tax"], pat), (["Shr of prfit"], parts[0]), (["Prft frm disc ops"], parts[1]),
+                        (["Other adjstmnt"], parts[2]), (["Net prfit"], bottom)]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(bottom[0])), got
+
+
+def test_a_label_naming_oci_is_a_total_comprehensive_income_not_a_profit():
+    assert nf.label_class("Profit after tax and OCI") == "TCI"
+    assert nf.label_class("Profit for the period (after OCI)") == "TCI"
+    assert nf.label_class("Profit for the period") == "PAT"

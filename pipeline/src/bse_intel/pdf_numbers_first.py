@@ -784,7 +784,7 @@ _CLASS_RULES: list[tuple[str, re.Pattern]] = [
     # before the PAT rule: "Share of profit of associates after tax" is an associate's share, not a profit (ninth review)
     ("ASSOC", re.compile(r"^\W*(?:[a-z]{1,4}\W+)?(?:add:?\s*|less:?\s*)?share\s+(?:of|in)\b.*\b(?:associates?|joint\s+ventures?)", re.I)),
     ("EPS", re.compile(r"earnings?\s+per|\beps\b|per\s+(?:equity\s+)?share", re.I)),
-    ("TCI", re.compile(r"comprehensive", re.I)),
+    ("TCI", re.compile(r"comprehensive|\boci\b", re.I)),          # "Profit after tax and OCI" is a total comprehensive income
     ("PAT", re.compile(r"(?:profit|loss)\b.*\bfor\s+the\s+(?:period|year|quarter)\b.*continuing\s+and\s+discontinu", re.I)),
     ("ATTR", re.compile(r"attributable|owners\s+of|non[- ]?controlling|minority|equity\s+holders", re.I)),
     ("DISC", re.compile(r"discontinu", re.I)),
@@ -955,14 +955,14 @@ class Solver:
         nxt = a + 1
         if nxt < self.n and self.cls[nxt] in ("ASSOC", "DISC") and nonzero(nxt):
             return "label"
-        for x in range(a + 2, min(self.n, a + 9)):
+        for x in range(a + 2, min(self.n, a + 13)):
             between = list(range(a + 1, x))
             if any(self.cls[r] in ("TCI", "ATTR", "EPS") for r in between):
                 break
             if self.cls[x] in ("TCI", "ATTR", "EPS", "TE", "TI"):
                 continue
             live = [r for r in between if nonzero(r)]
-            for size in (1, 2):
+            for size in (1, 2, 3):
                 for subset in itertools.combinations(live, size):
                     for signs in itertools.product((1, -1), repeat=size):
                         proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))
@@ -1385,6 +1385,10 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
             notes.append(f"p{t.page}: the table's basis is not told")
             continue
         value, tol, label, why = table_figure(t, metric, kind, when)
+        if metric == "pat" and (t.basis == basis or not basis) and getattr(getattr(t, "solver", None), "pat_unsure", False):
+            # one table of the basis whose profit is carried on by arithmetic alone vetoes the others (twelfth review: a
+            # second table of the basis that stops at the profit after tax would give the profit before the share)
+            return Reading(reader, family, "none", note=f"p{t.page}: {why}"[:300])
         if value is None:
             if t.basis == basis or not basis:
                 notes.append(f"p{t.page}: {why}")

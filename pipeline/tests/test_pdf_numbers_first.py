@@ -309,3 +309,177 @@ def test_a_small_whole_number_lined_up_with_a_column_of_decimals_is_not_a_figure
     cols2, _ = nf.find_columns([(w, nf.parse_figure(w.text)) for w in whole], 8.0)
     got = nf.assign_cells(whole + [stray], cols2, "right", 8.0)
     assert "24" in [w.text for _, w, _ in got]
+
+
+# --- fix set 1 (TATAELXSI Q2FY27, 28 Oct 2026) -------------------------------------------------------------------------
+
+def test_consolidated_as_a_verb_in_prose_is_not_a_consolidated_statement():
+    assert not prd.names_consolidated("The Government of India has consolidated 29 labour laws into 4 Labour Codes")
+    assert prd.names_consolidated("Statement of Consolidated Financial Results")
+    assert prd.names_consolidated("Consolidated")
+    assert prd.names_consolidated("The accounts of the subsidiaries have been consolidated")    # a group word near it
+    assert prd.names_consolidated("the results of the Company and its subsidiaries are consolidated")
+    assert not prd.names_consolidated("nothing about the basis here")
+
+
+def untitled(rows, note: str):
+    """A statement whose title names no basis, with a note line under the table."""
+    pdf = statement(rows, title="Statement of Unaudited Financial Results")
+    doc = pymupdf.open(stream=pdf, filetype="pdf")
+    doc[0].insert_text((LEFT, 800), note, fontsize=FONT)
+    out = doc.tobytes()
+    doc.close()
+    return out
+
+
+def test_an_untitled_table_is_standalone_when_consolidated_is_only_a_verb_in_a_note():
+    rows, want = pl()
+    prose = untitled(rows, "The Government of India has consolidated 29 labour laws into 4 Labour Codes.")
+    assert read(prose, "pat").status == "ok" and read(prose, "pat").value == pytest.approx(crore(want["pat"][0]))
+    group = untitled(rows, "The Consolidated Financial Results of the Group are given separately.")
+    assert read(group, "pat").status == "none"      # a consolidated statement exists somewhere: the untitled basis is unproven
+
+
+def test_a_unit_line_with_the_rupee_sign_glued_and_garbled_is_read():
+    assert nf.scan_units(["tlakhs"]) == {100} and nf.scan_units(["(tlakhs)"]) == {100} and nf.scan_units(["₹crore"]) == {1}
+    assert nf.scan_units(["tlakhsx"]) == set() and nf.scan_units(["Total lakhs of"]) == set()
+    rows, want = pl()
+    pdf = statement(rows, unit="tlakhs")
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+
+
+def words(*items):
+    """Words on one line at a text height of 8: (x0, x1, text)."""
+    return [nf.Word(x0, x1, 100.0, 8.0, text) for x0, x1, text in items]
+
+
+def test_figures_with_space_separated_thousands_are_joined_only_when_they_touch():
+    join = lambda *items: [w.text for w in nf.merge_space_groups(words(*items), 8.0)]     # noqa: E731
+    assert join((278, 284, "23"), (286, 303, "909.66")) == ["23909.66"]
+    assert join((557, 560, "3"), (562, 568, "02"), (570, 588, "060.27")) == ["302060.27"]              # Indian grouping
+    assert join((100, 106, "(23"), (108, 125, "909.66)")) == ["(23909.66)"]
+    assert join((200, 206, "24"), (208, 230, "1,245.60")) == ["24", "1,245.60"]     # a note number before a comma figure
+    assert join((200, 206, "4"), (240, 257, "909.66")) == ["4", "909.66"]           # a column apart, not a group
+    assert join((200, 206, "12"), (208, 214, "34")) == ["12", "34"]                 # no three-digit tail
+    assert join((200, 206, "3"), (208, 214, "02"), (216, 225, "1060.27")) == ["3", "02", "1060.27"]   # tail of four digits
+    assert join((200, 206, "3"), (208, 214, "02"), (216, 224, "060"), (226, 240, "060.27")) == \
+        ["3", "02", "060", "060.27"]                                                 # mixed group widths: not joined
+
+
+def test_a_statement_printed_with_space_separated_thousands_is_read():
+    rows, want = pl(revenue=[1000.00, 900.50, 800.25, 3600.75])
+    spaced = [(label, [f"{int(v) // 1000} {int(v) % 1000:03d}.{round(v * 100) % 100:02d}" if isinstance(v, float) and v >= 1000
+                       else v for v in cells]) for label, cells in rows]
+    pdf = statement(spaced)
+    got = read(pdf, "pat")
+    assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+
+
+SIX = [255, 315, 375, 435, 495, 555]
+
+
+def q2_rows(break_half: bool = False):
+    """A September-quarter statement of six columns (Q2, Q1, Q2 last year, H1, H1 last year, the year) that adds up down
+    every column and across: H1 = Q2 + Q1 on every line (unless ``break_half``)."""
+    base = {"rev": [1000.00, 900.50, 800.25], "oth": [50.10, 40.20, 30.30], "emp": [200.00, 190.00, 180.00],
+            "oex": [500.25, 480.15, 470.95], "cur": [60.00, 55.00, 50.00]}
+    for k, (q2, q1, py) in base.items():
+        base[k] = [q2, q1, py, round(q2 + q1, 2), round(py * 2.1, 2), round((q2 + q1) * 1.9, 2)]
+    if break_half:
+        base["oex"][3] = round(base["oex"][3] + 7.0, 2)
+    ti = cols_sum(base["rev"], base["oth"])
+    te = cols_sum(base["emp"], base["oex"])
+    pbt = [round(a - b, 2) for a, b in zip(ti, te)]
+    pat = [round(a - b, 2) for a, b in zip(pbt, base["cur"])]
+    rows = [(["Revenue from operations"], base["rev"]), (["Other income"], base["oth"]), (["Total income"], ti),
+            (["Employee benefits expense"], base["emp"]), (["Other expenses"], base["oex"]), (["Total expenses"], te),
+            (["Profit before tax"], pbt), (["Tax expense"], base["cur"]), (["Profit for the period"], pat)]
+    return rows, pat
+
+
+def q2_statement(rows):
+    # the half years' header garbled as a scanner's layer has it: only "from April 01" is read, and as a year
+    return statement(rows, cols=SIX, groups=["Quarter ended"] * 3 + ["Year to date from"] * 2 + ["Year ended"],
+                     dates=["30.09.2026", "30.06.2026", "30.09.2025", "01.04.2026", "01.04.2025", "31.03.2026"])
+
+
+def test_a_garbled_half_year_header_is_overruled_by_half_year_equals_two_quarters():
+    rows, pat = q2_rows()
+    pdf = q2_statement(rows)
+    tables = nf.analyse(pdf)
+    assert tables and not nf.layout_ok(tables[0].columns)      # the header alone does not fit a standard layout
+    got = read(pdf, "pat")
+    assert got.status == "ok" and got.value == pytest.approx(crore(pat[0]))
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+
+
+def test_no_answer_when_the_half_year_is_not_the_sum_of_the_two_quarters():
+    rows, _ = q2_rows(break_half=True)
+    assert read(q2_statement(rows), "pat").status == "none"
+
+
+def test_previous_quarter_end():
+    from datetime import date
+    assert nf.previous_quarter_end(date(2026, 9, 30)) == date(2026, 6, 30)
+    assert nf.previous_quarter_end(date(2026, 3, 31)) == date(2025, 12, 31)
+    assert nf.previous_quarter_end(date(2026, 6, 30)) == date(2026, 3, 31)
+
+
+def test_a_note_number_close_to_a_three_digit_figure_is_not_glued_to_it():
+    join = lambda *items: [w.text for w in nf.merge_space_groups(words(*items), 8.0)]     # noqa: E731
+    assert join((200, 204, "5"), (207, 225, "123.45")) == ["5", "123.45"]           # 3 pt apart at a height of 8
+    assert join((200, 204, "5"), (206, 224, "123.45")) == ["5123.45"]               # 2 pt: a space inside one figure
+
+
+def test_dates_the_header_words_dispute_are_still_used_by_the_half_year_sum():
+    # BRIGHOTEL Q2FY27: every date is printed, but the title's "six months" and a "Year to date" read as a year disagree with
+    # them, so the columns are dropped (date and kind None); the sum H1 = Q2 + Q1 on every line still tells the quarter
+    def disputed(rows):
+        tables = nf.analyse(statement(rows, cols=SIX, groups=["Quarter ended"] * 3 + ["Year to date"] * 2 + ["Year ended"],
+                                      dates=["30.09.2026", "30.06.2026", "30.09.2025", "30.09.2026", "30.09.2025", "31.03.2026"]))
+        for c in tables[0].columns:
+            if c.index in (0, 3, 4):
+                c.date, c.kind = None, None          # as column_kinds leaves a column whose sources disagree
+        return nf.reading_from_tables(tables, "Q2FY27", "pat", "STANDALONE")
+    rows, pat = q2_rows()
+    got = disputed(rows)
+    assert got.status == "ok" and got.value == pytest.approx(crore(pat[0]))
+    broken, _ = q2_rows(break_half=True)
+    assert disputed(broken).status == "none"
+
+
+def as_ocr_boxes(pdf: bytes):
+    """The words of a drawn page as OCR's boxes would give them: pixels at ``ocr.DPI``, one box a word."""
+    from bse_intel import ocr
+    k = ocr.DPI / 72
+    with pymupdf.open(stream=pdf, filetype="pdf") as doc:
+        return [([[x0 * k, y0 * k], [x1 * k, y0 * k], [x1 * k, y1 * k], [x0 * k, y1 * k]], text, 0.99)
+                for x0, y0, x1, y1, text, *_ in doc[0].get_text("words")]
+
+
+def test_a_unit_and_row_labels_the_text_layer_leaves_out_are_read_from_ocr(monkeypatch):
+    # NESTLEIND Q2FY27: the figures are in the text layer, the title's unit and every row label are not
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl(exceptional=[5.0, 4.0, 3.0, 10.0])
+    full = statement(rows)
+    bare = statement([([""] * len(label), cells) for label, cells in rows], unit="")
+    seen = as_ocr_boxes(full)
+    got = {m: nf.reading_from_tables(nf.analyse(bare, ocr_boxes=lambda png: seen), "Q2FY27", m, "STANDALONE")
+           for m in ("revenue", "pbt", "pat")}
+    assert got["revenue"].value == pytest.approx(crore(1000.00))
+    assert got["pbt"].value == pytest.approx(crore(want["pbt"][0]))          # not the line before the exceptional items
+    assert got["pat"].value == pytest.approx(crore(want["pat"][0]))
+    # without OCR the same page gives no answer (no unit)
+    assert nf.reading_from_tables(nf.analyse(bare, ocr_boxes=lambda png: []), "Q2FY27", "pat", "STANDALONE").status == "none"
+
+
+def test_ocr_never_changes_a_unit_the_text_layer_gives(monkeypatch):
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl()
+    crore_page = statement(rows, unit="(Rs. in Crore)")
+    lakh_ocr = as_ocr_boxes(statement(rows, unit="(Rs. in Lakhs)"))
+    got = nf.reading_from_tables(nf.analyse(crore_page, ocr_boxes=lambda png: lakh_ocr), "Q2FY27", "pat", "STANDALONE")
+    assert got.value == pytest.approx(want["pat"][0])                         # crore as printed, not divided by 100

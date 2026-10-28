@@ -120,6 +120,7 @@ def merge_brackets(words: list[Word], height: float) -> list[Word]:
 
 
 
+SPACE_GROUP_GAP = 1 / 3       # of the text height: TATAELXSI's split figures are 1-2 pt apart at 7.9 pt (at most 0.25)
 _GROUP_HEAD = re.compile(r"^[(\[]?\d{1,3}$")
 _GROUP_MID = re.compile(r"^\d{2,3}$")
 _GROUP_TAIL = re.compile(r"^\d{3}(?:\.\d+)?[)\]]?$")
@@ -127,39 +128,32 @@ _GROUP_TAIL = re.compile(r"^\d{3}(?:\.\d+)?[)\]]?$")
 
 def merge_space_groups(words: list[Word], height: float) -> list[Word]:
     """A figure whose thousands are set apart by a space instead of a comma, as a scanner's text layer often writes them:
-    "23 909.66" for 23,909.66, "3 02 060.27" for 3,02,060.27 (TATAELXSI Q2FY27). The pieces are joined when they touch (a gap
-    under half the text height; columns stand ten times further apart), the first has one to three digits, the middle
-    pieces are all of two digits (Indian) or all of three (western), and the last has exactly three digits before its
-    decimals. A piece with a comma is never joined: "24 1,245.60" stays a note number and a figure."""
+    "23 909.66" for 23,909.66, "3 02 060.27" for 3,02,060.27 (TATAELXSI Q2FY27). A run of pieces that touch (a gap under half
+    a third of the text height; columns stand ten times further apart) is joined only as a whole and only when the whole run is one
+    figure: the first piece has one to three digits, the middle pieces are all of two digits (Indian) or all of three
+    (western), and the last has exactly three digits before its decimals. Any other run is left as it is, every piece. A
+    piece with a comma is never joined: "24 1,245.60" stays a note number and a figure."""
     out: list[Word] = []
     ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+
+    def touches(a: Word, b: Word) -> bool:
+        return abs(b.y - a.y) <= 0.5 * height and 0 <= b.x0 - a.x1 <= SPACE_GROUP_GAP * height
+
     i = 0
     while i < len(ordered):
-        w = ordered[i]
-        chain = [w]
-        if _GROUP_HEAD.match(w.text):
-            j = i + 1
-            while j < len(ordered):
-                prev, nxt = chain[-1], ordered[j]
-                if abs(nxt.y - prev.y) > 0.5 * height or not 0 <= nxt.x0 - prev.x1 <= 0.5 * height:
-                    break
-                if _GROUP_TAIL.match(nxt.text):
-                    chain.append(nxt)
-                    break
-                if not _GROUP_MID.match(nxt.text):
-                    break
-                chain.append(nxt)
-                j += 1
-            mids = {len(c.text) for c in chain[1:-1]}
-            if len(chain) < 2 or not _GROUP_TAIL.match(chain[-1].text) or len(mids) > 1:
-                chain = [w]
-        if len(chain) > 1:
-            out.append(Word(chain[0].x0, chain[-1].x1, chain[0].y, chain[0].h, "".join(c.text for c in chain), chain[0].ocr))
-            i += len(chain)
+        run = [ordered[i]]
+        while i + len(run) < len(ordered) and re.match(r"[(\[]?\d", run[-1].text) \
+                and re.match(r"\d", ordered[i + len(run)].text) and touches(run[-1], ordered[i + len(run)]):
+            run.append(ordered[i + len(run)])
+        mids = {len(c.text) for c in run[1:-1]}
+        if len(run) >= 2 and _GROUP_HEAD.match(run[0].text) and all(_GROUP_MID.match(c.text) for c in run[1:-1]) \
+                and len(mids) <= 1 and _GROUP_TAIL.match(run[-1].text):
+            out.append(Word(run[0].x0, run[-1].x1, run[0].y, run[0].h, "".join(c.text for c in run), run[0].ocr))
         else:
-            out.append(w)
-            i += 1
+            out.extend(run)
+        i += len(run)
     return out
+
 
 def ocr_page_boxes(png: bytes):
     """RapidOCR's boxes of a page image (``ocr._boxes`` form), with the sideways turn ``ocr.recognise`` makes; [] when OCR is not
@@ -268,6 +262,7 @@ class Column:
     date: date | None = None
     kind: str | None = None        # quarter, half, nine, year (None: not told)
     kind_confident: bool = False
+    read_date: date | None = None  # the header's date as read, kept when the kinds disagree (only the half-year sum uses it)
 
 
 @dataclass
@@ -556,6 +551,7 @@ def column_kinds(columns: list[Column], dates: list[date | None], phrases: list[
         pattern = _pattern_kinds(list(dates), march)
     for j, c in enumerate(columns):
         c.date = dates[j] if j < len(dates) else None
+        c.read_date = c.date
         near: str | None = None
         confident = False
         if phrases:
@@ -660,12 +656,13 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         b = starts[n + 1] if n + 1 < len(starts) else len(rows)
         gap = gaps[a]
         dates = column_dates(gap, columns, height, sep)
+        texts = [line_text(line) for line in lines_of(wide[a], height)]
+        march = bool(_MARCH_YEAR.search("\n".join(texts[-14:])))
         if sum(d is not None for d in dates) < 2:
             continue
         gap_lines = lines_of(gap, height)
-        texts = [line_text(line) for line in lines_of(wide[a], height)]
         cols = [Column(c.x0, c.x1, c.xc, c.index) for c in columns]
-        column_kinds(cols, dates, group_phrases(gap, cols, height), bool(_MARCH_YEAR.search("\n".join(texts[-14:]))))
+        column_kinds(cols, dates, group_phrases(gap, cols, height), march)
         basis, contested = _basis_above_boxed(texts, len(texts))
         if basis is None and not anywhere and not contested:
             basis = STANDALONE
@@ -974,11 +971,51 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
         return found
 
+    def fill_from_ocr(page, tables: list[Table]) -> None:
+        """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"
+        and every row label are drawn without text). A table with no unit gets the unit of the OCR lines between the table above
+        it (or the page top) and its first row, as ``unit_of`` reads a text layer's. A table whose rows mostly have no label
+        gets, for each row without one, the OCR words from below the row before down to the row's own line that are not figures and stand outside the
+        number columns (NESTLEIND prints its labels between the quarter and the half-year columns); the table is solved
+        again, so the labels can object to a row the arithmetic alone could not tell apart (profit before exceptional items
+        against profit before tax). A unit or label the layer gives is never changed."""
+        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
+        k = 72.0 / ocr.DPI
+        words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(ocr_boxes(png))], True)
+        if not words:
+            return
+        height = text_height(words)
+        lines = [(line[0].y, line_text(line)) for line in lines_of(words, height)]
+        page_lines = [t for _, t in lines]
+        above = 0.0
+        for n, t in sorted(enumerate(tables), key=lambda e: e[1].rows[0].top):
+            if t.named and t.unit is None:
+                t.unit = unit_of([text for y, text in lines if above < y < t.rows[0].top], page_lines)
+            above = max(above, t.rows[-1].bottom)
+            if t.named and sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows):
+                def in_column(w: Word) -> bool:
+                    return any(w.x1 > c.x0 - 0.5 * height and w.x0 < c.x1 + 0.5 * height for c in t.columns)
+                for i, r in enumerate(t.rows):
+                    if not r.label.strip():
+                        # the row's own line and, for a wrapped label, the lines above it down from the row before
+                        top = t.rows[i - 1].y + 0.5 * height if i else r.y - 0.5 * height
+                        own = sorted((w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
+                                      and parse_figure(w.text) is None), key=lambda w: (round(w.y / height), w.x0))
+                        r.label = " ".join(w.text for w in own)
+                tables[n] = Table_solved(t)
+
     with _pymupdf().open(stream=pdf_bytes, filetype="pdf") as doc:
         for p in layers:
             page = doc[p - 1]
             if layers[p].has_layer:
                 by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(upright_words(page)), anywhere)]
+                wanting = [t for t in by_page[p] if t.named and (t.unit is None or sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows))]
+                if wanting and ocr_used < MAX_OCR_PAGES and ocr.available():
+                    ocr_used += 1
+                    try:
+                        fill_from_ocr(page, by_page[p])
+                    except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
+                        log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
                 if not any(t.named for t in by_page[p]) and page.get_images(full=False):
                     unnamed.append(p)
             elif p in scans and ocr_used < MAX_OCR_PAGES:
@@ -1065,8 +1102,10 @@ def quarter_by_half_sum(table: Table, solver: "Solver", when: date) -> list[Colu
     if when.month != 9:
         return []
     prev = previous_quarter_end(when)
-    cur = [c for c in table.columns if c.date == when]
-    prv = [c for c in table.columns if c.date == prev]
+    # the dates as the header prints them, also where the header's group words disagree with them (BRIGHOTEL Q2FY27: the title's
+    # "six months" and a "Year to date" read as a year): the sum, not the words, tells the quarters here
+    cur = [c for c in table.columns if (c.date or c.read_date) == when]
+    prv = [c for c in table.columns if (c.date or c.read_date) == prev]
     if not cur or len(prv) != 1:
         return []
     lines = list(dict.fromkeys(rows for metric in HALF_SUM_METRICS for rows, _ in solver.explanations.get(metric, [])))

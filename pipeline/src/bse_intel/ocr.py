@@ -90,7 +90,7 @@ class CachedEngine:
                 boxes = json.load(fh)
             self.hits += 1
             return [(box, text, score) for box, text, score in boxes]
-        except (OSError, ValueError):
+        except (OSError, ValueError, TypeError):    # no file, or a damaged one: read the page again
             pass
         if self._real is None:
             self._real = self._factory()

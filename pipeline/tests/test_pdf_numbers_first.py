@@ -1137,3 +1137,23 @@ def test_a_total_revenue_line_with_a_line_reference_is_the_revenue():
     rows, want = pl()
     rows[0] = (["Total Revenue from Operations (1)"], REVENUE)
     assert read(statement(rows), "revenue").value == pytest.approx(crore(1000.00))
+
+
+def test_a_non_consolidated_title_is_never_consolidated():
+    # twenty-second review: the text layer's own title path read "Non-Consolidated" as consolidated
+    rows, want = pl()
+    pdf = statement(rows, title="Statement of Unaudited Non-Consolidated Financial Results")
+    assert read(pdf, "pat", basis="CONSOLIDATED").status != "ok"
+    assert nf.layer_basis("Statement of Unaudited Non-\nConsolidated Financial Results") is None
+
+
+def test_a_total_that_leaves_the_revenue_row_above_it_out_names_no_revenue():
+    # twenty-second review: "Revenue from operations" over "Interest income" + "Other income" = a total of the two
+    rows, want = pl()
+    interest = [round(v * 0.6, 2) for v in REVENUE]
+    total = cols_sum(interest, OTHER)
+    tail = rows[3:]
+    got = statement([(["Revenue from operations"], REVENUE), (["Interest income"], interest), (["Other income"], OTHER),
+                     (["Total income"], total)] + tail)
+    r = read(got, "revenue")
+    assert r.status != "ok" or r.value == pytest.approx(crore(1000.00))

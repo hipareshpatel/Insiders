@@ -809,6 +809,8 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         cols = [Column(c.x0, c.x1, c.xc, c.index, whole=c.whole) for c in columns]
         column_kinds(cols, dates, group_phrases(gap, cols, height), march)
         basis, contested = _basis_above_boxed(texts, len(texts))
+        if basis and any(_NON_CONSOLIDATED.search(x) for x in [" ".join(texts)] + texts):
+            basis, contested = None, True     # "Non-Consolidated Financial Results" names neither as a word (22nd review)
         if basis is None and not anywhere and not contested:
             basis = STANDALONE
         rows_t = [NRow(r.y, r.top, r.bottom, "", list(r.cells)) for r in rows[a:b]]
@@ -1161,9 +1163,17 @@ class Solver:
         if rev_at and any(self.cls[r] is None for r in rows):
             rows_rev_ok = False
         if len(rows) == 2:
-            if self.label_ok(rows[0], {"REV"}) and rows_rev_ok:
+            # a revenue row right above the sum and outside it: the first row is not the revenue (22nd review: "Revenue from
+            # operations" over "Interest income" + "Other income" = a total that leaves the revenue out)
+            above = min(rows) - 1
+            if above >= 0 and self.cls[above] == "REV" and self.cls[rows[0]] != "REV":
+                rows_rev_ok = False
+            rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok
+            if rev_named:
                 self.add("revenue", (rows[0],), [proof])
-            if self.label_ok(rows[1], {"OI"}) and (rows_rev_ok or not list_item(self.t.rows[rows[1]].label)):
+            # a row that says nothing is the other income only beside a named revenue (22nd review)
+            oi_ok = self.cls[rows[1]] == "OI" or (self.cls[rows[1]] is None and rev_named and self.cls[rows[0]] == "REV")
+            if oi_ok and (rows_rev_ok or not list_item(self.t.rows[rows[1]].label)):
                 self.add("other_income", (rows[1],), [proof])
         else:
             rev = [r for r in rows if self.cls[r] == "REV"]
@@ -1270,7 +1280,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         if layers[p].has_layer:
             title = layer_basis(layers[p].text)
             for t in found:
-                t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
+                if not t.contested:            # a basis left disputed above the table stays so (22nd review)
+                    t.basis = t.basis or title  # a title OCR cannot read (big type) is still in the garbled text layer
         return found
 
     dated = usable_dates
@@ -1388,7 +1399,7 @@ def layer_basis(text: str) -> str | None:
     from .metrics import CONSOLIDATED, STANDALONE
     from .pdf_referee import _TITLE, _words_basis
     lines = text.splitlines()
-    if any(_NON_CONSOLIDATED.search(line) for line in lines):
+    if _NON_CONSOLIDATED.search(text):          # also over a line break ("Non-\nConsolidated")
         return None             # "Statement of Non Consolidated Financial Results": the words say both (twenty-first review)
     found = {b for line in lines if _TITLE.search(line) and (b := _words_basis(line))}
     # a title printed as one glued word, its letters garbled (SUNDARMFIN Q4FY24's garbled layer:
@@ -1405,7 +1416,7 @@ def layer_basis(text: str) -> str | None:
 # "STATEMENTOFUNCONSOLIDATED..." is not a consolidated title: "un" only as part of "unaudited" (twentieth review)
 _GLUED_TITLE = re.compile(r"statementof(?:unaudited|audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
 _BASIS_WORD = re.compile(r"\b(?:consolidated|standalone)\b", re.I)
-_NON_CONSOLIDATED = re.compile(r"\bnon\W*consolidated", re.I)
+_NON_CONSOLIDATED = re.compile(r"\bnon\W*consolidated|\bnot\s+consolidated", re.I)
 
 
 def Table_solved(table: Table) -> Table:

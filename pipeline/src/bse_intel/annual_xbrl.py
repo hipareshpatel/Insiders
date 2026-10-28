@@ -37,7 +37,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from datetime import date
 
-from .xbrl import _change, _local, _num, _units, appears_in
+from .xbrl import _change, _local, _num, _units, appears_in, as_utf8
 
 # (metric, wording, element names in order of preference): non-dimensional facts, in ₹ crore unless per share
 FLOWS = (
@@ -202,6 +202,7 @@ def _contexts(root) -> dict[str, dict]:
 
 def parse(data: bytes) -> AnnualReport | None:
     """One annual-report instance; None when it is not one (no year's revenue, profit or assets in it)."""
+    data = as_utf8(data)
     try:
         root = ET.fromstring(data)
     except ET.ParseError:

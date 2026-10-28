@@ -1,5 +1,7 @@
 # Read-only: lists the R2 bucket's lifecycle (auto-delete) rules, to check which folders they cover (owner, 25 Oct
-# 2026). Changes nothing. Run by hand: Actions > R2 rules > Run workflow.
+# 2026), and (owner, 28 Oct 2026: "check R2 ... unwanted files or folders") the bucket's size and an inventory of every
+# folder two levels deep: objects, bytes, oldest and newest write (artifact `r2-inventory`). Changes nothing.
+# Run by hand: Actions > R2 rules > Run workflow.
 name: R2 rules
 
 on:
@@ -27,3 +29,62 @@ jobs:
       - run: npm ci
       - name: Lifecycle rules of bucket bse-intelligence
         run: npx wrangler r2 bucket lifecycle list bse-intelligence
+      - name: Bucket size
+        continue-on-error: true
+        run: npx wrangler r2 bucket info bse-intelligence
+      - name: Inventory by folder (Cloudflare API, list only)
+        continue-on-error: true
+        working-directory: .
+        run: |
+          mkdir -p "$RUNNER_TEMP/r2-inventory"
+          python3 - "$RUNNER_TEMP/r2-inventory" <<'PY'
+          import json, os, sys, time, urllib.parse, urllib.request
+          from collections import defaultdict
+          out = sys.argv[1]
+          base = (f"https://api.cloudflare.com/client/v4/accounts/{os.environ['CLOUDFLARE_ACCOUNT_ID']}"
+                  "/r2/buckets/bse-intelligence/objects")
+          head = {"Authorization": f"Bearer {os.environ['CLOUDFLARE_API_TOKEN']}"}
+          agg = defaultdict(lambda: {"objects": 0, "bytes": 0, "oldest": "9", "newest": ""})
+          cursor, pages, total = None, 0, 0
+          while True:
+              q = {"per_page": 1000}
+              if cursor:
+                  q["cursor"] = cursor
+              req = urllib.request.Request(base + "?" + urllib.parse.urlencode(q), headers=head)
+              for attempt in range(4):
+                  try:
+                      body = json.load(urllib.request.urlopen(req, timeout=60))
+                      break
+                  except Exception as exc:   # noqa: BLE001
+                      print("retry", attempt, type(exc).__name__, str(exc)[:200]); time.sleep(2 ** attempt)
+              else:
+                  sys.exit("listing failed")
+              if not body.get("success"):
+                  sys.exit("listing refused: " + json.dumps(body.get("errors"))[:300])
+              for o in body.get("result") or []:
+                  parts = o["key"].split("/")
+                  for depth in (1, 2):
+                      name = "/".join(parts[:depth]) + ("/" if len(parts) > depth else "")
+                      a = agg[name]
+                      a["objects"] += 1; a["bytes"] += int(o.get("size") or 0)
+                      mod = o.get("last_modified") or ""
+                      a["oldest"] = min(a["oldest"], mod); a["newest"] = max(a["newest"], mod)
+                  total += 1
+              pages += 1
+              info = body.get("result_info") or {}
+              cursor = info.get("cursor")
+              if not info.get("is_truncated") or not cursor:
+                  break
+          rows = sorted(agg.items())
+          json.dump(dict(rows), open(os.path.join(out, "inventory.json"), "w"), indent=1)
+          lines = [f"{total} objects, {pages} pages listed", "", "| folder | objects | MB | oldest | newest |", "|---|---:|---:|---|---|"]
+          lines += [f"| {k} | {v['objects']} | {v['bytes'] / 1e6:.1f} | {v['oldest'][:10]} | {v['newest'][:10]} |" for k, v in rows]
+          open(os.path.join(out, "inventory.md"), "w").write("\n".join(lines) + "\n")
+          print("\n".join(lines))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r2-inventory
+          path: ${{ runner.temp }}/r2-inventory/
+          if-no-files-found: ignore

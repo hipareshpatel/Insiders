@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 # The exit code of a command NSE (or BSE) refused (401/403/429), apart from 2, which argparse and an AI error also
 # give: scripts/retry.sh never retries a refusal and skips the job's later NSE steps (survey review, 24 Oct 2026)
 REFUSED = 75
+INFRA_STOP = 70   # xbrl-facts: five companies in a row failed for a reason of our own (R2, the Worker); not an NSE refusal
 
 
 def _pipeline(settings, sink):
@@ -1566,28 +1567,73 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     (xbrl_facts.py; owner, 28 Oct 2026). Reads R2 and memory only: no request to NSE. Lists the filings whose file is not stored
     (``--csv``); ``--download`` also fetches those files, through the seed's own fetch (cache, R2, then NSE with its pacing) and
     under FILE_CAP (the first run: 100). ``--dry-run`` writes nothing. Exit 75 when NSE refused the session; the file cap is a
-    planned stop (0)."""
+    planned stop (0).
+
+    ``--from-nse`` (owner, 28 Oct 2026: every results file of the universe now) lists each company's results from NSE's own list,
+    the seed's latest quarters in both bases, and fetches every file not stored, keeping its facts the moment it is fetched; no memory
+    or dossier write. ``--shard I/N`` (N at most 16) takes every N-th company from the I-th; ``--time-budget SECONDS`` ends the run
+    cleanly between two files (exit 124); ``--json`` and ``--csv`` are written as the run goes (the CSV is one line a listed file with
+    its status and every timestamp of NSE's row). A refusal stops the shard at once (exit 75, with the status and the body's first
+    300 bytes in the log); a file that is not served for another reason is counted by reason and the run goes on."""
     from . import xbrl_facts as xf
 
     companies = _selected_companies(args, sink)
     if companies is None:
         return 2
-    if (args.download and not args.dry_run) or (args.annual and (args.download or not args.dry_run)):
-        # a dry run lists the files and makes no client, so no request at all; the annual-report list is a request a company (a
-        # list, not a file): --annual builds a client except in a dry run without --download (--force or not), which asks for no list
-        from .nse import NseClient
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            companies = xf.shard_slice(companies, index, count)
+        except ValueError:
+            print(f"--shard takes I/N with 0 <= I < N <= {xf.MAX_SHARDS}, e.g. 0/8")
+            return 2
+        shard = f"{index}/{count}"
+        print(f"shard {shard}: {len(companies)} companies")
+        if not os.environ.get("FILE_CAP_SHARDS"):
+            os.environ["FILE_CAP_SHARDS"] = str(count)    # a local --shard run shares FILE_CAP as the workflow's matrix does: FILE_CAP // N each
+    if args.from_nse and not (args.download or args.dry_run):
+        print("--from-nse lists and downloads: give --download (with --dry-run it only lists), or --dry-run alone to ask NSE nothing")
+        return 2
+    summary_path = Path(args.json) if args.json else None
 
-        with NseClient() as nse:
-            summary = xf.run(sink, companies, download=args.download, client=nse, force=args.force, dry_run=args.dry_run,
-                             limit=args.limit, annual=args.annual, annual_years=args.annual_years)
-    else:
-        summary = xf.run(sink, companies, download=args.download, force=args.force, dry_run=args.dry_run, limit=args.limit,
-                         annual=args.annual, annual_years=args.annual_years)
+    def progress(current: dict) -> None:
+        """The summary so far, replaced whole: what a run stopped from outside (a lost runner, GitHub's limit) leaves behind."""
+        if summary_path is not None:
+            current["shard"] = shard
+            tmp = summary_path.with_name(summary_path.name + ".tmp")
+            tmp.write_text(xf.to_json(current), encoding="utf-8")
+            os.replace(tmp, summary_path)
+
+    listing = xf.ListingCsv(args.csv) if (args.from_nse and args.csv) else None
+    extra = {"from_nse": args.from_nse, "time_budget": args.time_budget, "row_sink": listing, "progress": progress}
+    try:
+        if (args.download and not args.dry_run) or (args.annual and (args.download or not args.dry_run)) \
+                or (args.from_nse and args.download):
+            # a dry run lists the files from memory and makes no client, so no request at all; --from-nse needs NSE's list, a
+            # request a company; the annual-report list is a request a company too: --annual builds a client except in a dry
+            # run without --download (--force or not), which asks for no list
+            from .nse import NseClient
+
+            with NseClient() as nse:
+                summary = xf.run(sink, companies, download=args.download, client=nse, force=args.force, dry_run=args.dry_run,
+                                 limit=args.limit, annual=args.annual, annual_years=args.annual_years, **extra)
+        else:
+            summary = xf.run(sink, companies, download=args.download, force=args.force, dry_run=args.dry_run, limit=args.limit,
+                             annual=args.annual, annual_years=args.annual_years, **extra)
+    finally:
+        if listing is not None:
+            listing.close()
+    summary["shard"] = shard
     print(xf.render(summary))
     if args.json:
-        Path(args.json).write_text(xf.to_json(summary), encoding="utf-8")
-    if args.csv:
+        progress(summary)
+    if args.csv and not args.from_nse:
         Path(args.csv).write_text(xf.to_csv(summary), encoding="utf-8")
+    if summary["out_of_time"]:
+        return 124
+    if summary.get("infra_stop"):
+        return INFRA_STOP         # R2 or the Worker failing, not NSE: its own code, so nobody reads it as a refusal
     return REFUSED if summary["stopped"] and not summary["capped"] else 0
 
 
@@ -2430,8 +2476,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--annual-years", type=int, default=3, help="the latest N years of annual reports a basis (default 3; a file is about 7 MB)")
     p.add_argument("--force", action="store_true", help="read again the files whose facts are stored")
     p.add_argument("--dry-run", action="store_true", help="parse and count, write no facts")
-    p.add_argument("--json", help="write the summary to this file")
-    p.add_argument("--csv", help="write the filings whose file is not stored to this file")
+    p.add_argument("--from-nse", action="store_true", help="list each company's results files from NSE's own list (the seed's latest 12 quarters, both bases) and fetch every file not stored; needs --download; writes no memory (one list request a company, not counted toward FILE_CAP; files are)")
+    p.add_argument("--shard", help="I/N: only every N-th company from the I-th (N at most 16), e.g. 0/8")
+    p.add_argument("--time-budget", type=float, help="seconds: stop cleanly between two files after this long (exit 124); default none")
+    p.add_argument("--json", help="write the summary to this file (with --from-nse also as the run goes)")
+    p.add_argument("--csv", help="write the filings whose file is not stored to this file (with --from-nse: one line a listed file, with its status and NSE's timestamps)")
     p.set_defaults(func=cmd_xbrl_facts)
 
     p = sub.add_parser("screener-referee", help="read-only: NSE's results XBRL as the referee of the screener cross-check's disagreeing pairs")

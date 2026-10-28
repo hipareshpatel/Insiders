@@ -12,8 +12,11 @@ Screener's rules (docs/bench/screener-rules.md rows 1, 2, 10, 11; docs/design/sc
 An adjustment is offered only for a part the facts show, never for a gap alone. Which element carries a part is not the same for
 every filer, and the integrated taxonomy (config/xbrl_sums, read 28 Oct 2026: INDAS, NBFC, BANKING) has NO element for excise
 duty, sales tax, VAT, GST, discounts, lease liabilities, right-of-use assets, current maturities or treasury shares. A filer
-can still show such a line in two ways, and both are read here (assumption: not yet seen on a real file, the first run of
-``xbrl-facts`` tells; ``xbrl_facts.interesting`` lists what a file has):
+can still show such a line in two ways, and both are read here. Measured by the lead on BPCL Q2FY27 (the NSE and the BSE file
+are identical, 28 Oct 2026): excise duty IS in the integrated file, as a breakdown row of ``OtherExpenses`` (axis
+``in-capmkt:DetailsOfOtherExpensesAxis``, member ``OtherExpenses1Member``, ``DescriptionOfOtherExpenses`` "Excise Duty", 8,737.53 Cr;
+the 18,201.41 Cr total of ``OtherExpenses`` includes it), and screener's Sales 1,49,080 = 1,57,817.93 - 8,737.53. The other levies, leases
+and treasury shares are still an assumption (not yet seen on a real file; ``xbrl_facts.interesting`` lists what a file has):
 
 1. an element of its own name (a filer's extension, or the older taxonomies' ``ExciseDuty``);
 2. a line of a breakdown: the taxonomy lets a filer split Other expenses (and the other-liabilities lines) into rows, each a
@@ -43,8 +46,21 @@ FLOW_PARTS = {   # part -> (element name regex, breakdown row description regex)
     "discounts": (r"^(TradeDiscounts?|SalesDiscounts?|Discounts?|Rebates?)(?![a-z])", r"^\s*(trade )?(discount|rebate)s?\b"),
 }
 FLOW_ORDER = ("excise", "taxes", "discounts")
-LEASE_NAME = r"LeaseLiabilit"
-LEASE_NOT = r"Payments|Interest|Expense|Proceeds|Adjustments|Maturity|Maturities"
+# a lease line is a lease-liability element, or a current maturity OF a lease (a current lease liability, never a maturity of
+# borrowings); a payment, interest, expense or undiscounted amount is no balance
+LEASE_ELEMENT = r"LeaseLiabilit|Maturit\w*Lease|Lease\w*Maturit"
+LEASE_NOT = r"Payments|Interest|Expense|Proceeds|Adjustments|Undiscounted"
+# a part counts only above a floor: a sliver of a line is how a chance match is made (independent review, 28 Oct 2026)
+PART_FLOOR_ABS, PART_FLOOR_REL = 1.0, 0.002     # 1 Cr and 0.2% of the line it would be added to
+
+
+def floor(base: float) -> float:
+    return max(PART_FLOOR_ABS, PART_FLOOR_REL * abs(base))
+
+
+def usable(parts: dict[str, float], base: float) -> dict[str, float]:
+    """The parts at or above the floor of the line they would be added to."""
+    return {name: value for name, value in parts.items() if value and abs(value) >= floor(base)}
 
 
 # --- reading ----------------------------------------------------------------------------------------------------
@@ -58,7 +74,8 @@ def _sum(found: list[tuple], where: str) -> tuple[float, str] | None:
 
 def flow_parts(facts: Facts, end: date, months: int) -> dict[str, tuple[float, str]]:
     """The levies and discounts of one results period (a 3-, 6-, 9- or 12-month context ending ``end``), in crore, each with
-    where it was read: ``excise``, ``taxes`` (sales tax, VAT, GST) and ``discounts``. A part the facts do not show is absent."""
+    where it was read: ``excise``, ``taxes`` (sales tax, VAT, GST) and ``discounts``. A part the facts do not show is absent.
+    A part is its tagged element, else the rows of a breakdown of other expenses, never both for the same item."""
     out: dict[str, tuple[float, str]] = {}
     for part, (name_rx, desc_rx) in FLOW_PARTS.items():
         got = _sum(facts.find(name_rx, end=end, months=months), "element")
@@ -68,10 +85,46 @@ def flow_parts(facts: Facts, end: date, months: int) -> dict[str, tuple[float, s
     return out
 
 
+def _side(name: str) -> str:
+    """Which side of the balance sheet an element name is on: noncurrent, current, or total (neither word)."""
+    lower = name.lower()
+    return "noncurrent" if "noncurrent" in lower or "non-current" in lower else "current" if "current" in lower else "total"
+
+
+def lease_liabilities(facts: Facts, instant: date) -> tuple[float, str] | None:
+    """Lease liabilities at a date, each item once: one total element if the file has one; else the current plus the
+    non-current element (the first of each: a current maturity of a lease is a current lease liability, and with a total it is
+    inside it); else, only when no element at all, the rows of a breakdown described "lease liabilities". Never a total plus its
+    parts, never an element plus rows for the same item."""
+    cands = [(n, v) for n, v in facts.find(LEASE_ELEMENT, instant=instant) if not re.search(LEASE_NOT, n, re.I)]
+    if cands:
+        by_side: dict[str, tuple[str, float]] = {}
+        for name, value in cands:
+            by_side.setdefault(_side(name), (name, value))
+        if "total" in by_side:
+            name, value = by_side["total"]
+            return value, f"element: {name}"
+        chosen = [by_side[k] for k in ("noncurrent", "current") if k in by_side]
+        return sum(v for _, v in chosen), "element: " + ", ".join(n for n, _ in chosen)
+    return _sum(facts.described(LIABILITY_PARENTS, r"lease liabilit", instant=instant), "breakdown row")
+
+
+def current_maturities(facts: Facts, instant: date) -> tuple[float, str] | None:
+    """Current maturities of long-term borrowings at a date, never of a lease (those are in ``lease_liabilities``): the first
+    element named so, else (only with no element) the rows of a breakdown described "current maturities"."""
+    cands = [(n, v) for n, v in facts.find(r"CurrentMaturit", instant=instant) if not re.search(r"lease", n, re.I)]
+    if cands:
+        return cands[0][1], f"element: {cands[0][0]}"
+    rows = [r for r in facts.described(LIABILITY_PARENTS, r"current maturit", instant=instant) if not re.search(r"lease", r[1], re.I)]
+    return _sum(rows, "breakdown row")
+
+
 def balance_parts(facts: Facts, instant: date) -> dict[str, tuple[float, str]]:
     """The balance-sheet parts screener adds at one date (crore, each with where it was read): ``lease_liabilities``,
     ``current_maturities``, ``intangibles``, ``right_of_use``, ``intangibles_under_development``, ``equity_method``,
-    ``investment_property``, ``other_financial_assets``, and the two deferred-tax lines (``dta``, ``dtl``)."""
+    ``investment_property``, ``other_financial_assets``, and the two deferred-tax lines (``dta``, ``dtl``). Each item is read
+    once (see ``lease_liabilities``). Right-of-use assets are offered only when a separate right-of-use element is there with
+    property, plant and equipment tagged apart: only then does memory's fixed assets (that element) demonstrably leave them out."""
     at = {"instant": instant}
     out: dict[str, tuple[float, str]] = {}
 
@@ -80,19 +133,13 @@ def balance_parts(facts: Facts, instant: date) -> dict[str, tuple[float, str]]:
         if found:
             out[part] = (sum(v for _, v in found), "element: " + ", ".join(n for n, _ in found))
 
-    # a lease or a maturity can be a line in two places at once in part (the non-current lease liability an element, the current
-    # one a row of a breakdown), so both sources are added here; a levy of a period (``flow_parts``) is one or the other
-    lease = [(n, v) for n, v in facts.find(LEASE_NAME, **at) if not re.search(LEASE_NOT, n, re.I)]
-    for part, tagged, rows in (("lease_liabilities", lease, facts.described(LIABILITY_PARENTS, r"lease liabilit", **at)),
-                               ("current_maturities", facts.find(r"CurrentMaturit", **at),
-                                facts.described(LIABILITY_PARENTS, r"current maturit", **at))):
-        got = [g for g in (_sum(tagged, "element"), _sum(rows, "breakdown row")) if g]
+    for part, got in (("lease_liabilities", lease_liabilities(facts, instant)), ("current_maturities", current_maturities(facts, instant))):
         if got:
-            out[part] = (sum(v for v, _ in got), "; ".join(w for _, w in got))
+            out[part] = got
     one("intangibles", "OtherIntangibleAssets")
     one("goodwill", "Goodwill")
     rou = _sum(facts.find(r"RightOfUse", **at), "element")
-    if rou:
+    if rou and facts.cr("PropertyPlantAndEquipment", **at) is not None:
         out["right_of_use"] = rou
     one("intangibles_under_development", "IntangibleAssetsUnderDevelopment")
     one("equity_method", "InvestmentsAccountedForUsingEquityMethod")
@@ -132,16 +179,19 @@ def eps_variants(facts: Facts, end: date, months: int) -> dict[str, float]:
 # --- views ------------------------------------------------------------------------------------------------------
 
 def subsets(parts: list[str]) -> list[tuple[str, ...]]:
-    """Every non-empty subset of the parts in their given order, smaller first (a single part is the plainest explanation)."""
+    """Every non-empty subset of the parts in their given order, smaller first. Used only to list the possible class names
+    (REVENUE_RULES): a view never searches the subsets for the best fit."""
     return [c for size in range(1, len(parts) + 1) for c in itertools.combinations(parts, size)]
 
 
 def additive_views(line: str, ours: float, parts: dict[str, float], order: tuple[str, ...]) -> list[tuple[float, str]]:
-    """``(ours + a subset of the found parts, rule)`` for each subset. The rule names the line and the parts:
-    ``borrowings_plus_lease_liabilities``; goodwill alone in the fixed assets keeps its older name ``goodwill_in_fixed_assets``."""
-    found = [p for p in order if parts.get(p)]
-    out = []
-    for combo in subsets(found):
-        rule = "goodwill_in_fixed_assets" if line == "fixed_assets" and combo == ("goodwill",) else f"{line}_plus_{'_'.join(combo)}"
-        out.append((ours + sum(parts[p] for p in combo), rule))
-    return out
+    """One view: our figure plus ALL the tagged parts at or above the floor, the way screener's formula adds them (never the
+    subset that fits best: that would find a match by chance). ``[]`` when no part is usable. The rule names the line and the
+    parts: ``borrowings_plus_lease_liabilities``; goodwill alone in the fixed assets keeps its older name
+    ``goodwill_in_fixed_assets``."""
+    used = usable({p: parts[p] for p in order if parts.get(p)}, ours)
+    if not used:
+        return []
+    names = tuple(used)
+    rule = "goodwill_in_fixed_assets" if line == "fixed_assets" and names == ("goodwill",) else f"{line}_plus_{'_'.join(names)}"
+    return [(ours + sum(used.values()), rule)]

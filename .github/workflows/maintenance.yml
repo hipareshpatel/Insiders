@@ -94,9 +94,10 @@
 #   (raw/xbrl/, F191) is kept as raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz, outside the dossier, for the screener
 #   cross-check's complete screener view; no NSE request. It lists the filings whose file is not stored (not-stored.csv, with
 #   the url memory recorded) and, with `apply`, downloads those files through the seed's own fetch and pace, under `file_cap`
-#   (the first run: 100; the cap is a planned stop, not a failure). `ids` = companies, `limit` = at most N companies, `dry_run`
-#   = parse and count, write nothing. summary.json (what is stored, bytes a file, which levy, lease or treasury lines the files
-#   carry) and not-stored.csv go up as the artifact `xbrl-facts`. Group maint-ro-xbrl-facts; writes nothing but raw/xbrl-facts/
+#   (the first run: 100; the cap is a planned stop, not a failure; a run with `apply` is refused without `file_cap`, and it shares the
+#   NSE memory group `maint-nse-memory`, so it never runs beside a seed job's NSE traffic). `ids` = companies, `limit` = the N largest
+#   by market cap (as for screener-crosscheck), `dry_run` = parse and count, write nothing (with `apply`: list the files, download none). summary.json (what is stored, bytes a file, which levy, lease or treasury lines the files
+#   carry) and not-stored.csv go up as the artifact `xbrl-facts`. Group maint-ro-xbrl-facts (`apply`: maint-nse-memory); writes nothing but raw/xbrl-facts/
 #   (and raw/xbrl/ for a downloaded file); no memory, card or branch change. screener-crosscheck takes `ids` (companies) and
 #   `limit` (the N largest by market cap) too.
 # - tijori-referee: read only (owner 26 Oct 2026). The Tijori cross-check's revenue and profit leads (screener agrees with
@@ -258,7 +259,7 @@ on:
         type: string
         default: ''
       apply:
-        description: memory-gaps-fill-bse and memory-drop-known-wrong only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing
+        description: memory-gaps-fill-bse and memory-drop-known-wrong only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
         type: boolean
         default: false
       dry_run:
@@ -279,14 +280,15 @@ permissions:
   actions: write    # seed-memory starts its next pass (workflow_dispatch) while companies are left
 
 concurrency:
-  # groups by source and by what a job writes: the table in the header comment
+  # groups by source and by what a job writes: the table in the header comment (a downloading xbrl-facts run is NSE traffic: the NSE memory group)
   group: >-
     ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
+    || (inputs.command == 'xbrl-facts' && inputs.apply) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -316,6 +318,11 @@ jobs:
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       DISCOVERY_SOURCE: nse
     steps:
+      - name: Refuse an xbrl-facts download without a file cap
+        if: inputs.command == 'xbrl-facts' && inputs.apply && (inputs.file_cap == '' || inputs.file_cap == '0')
+        run: |
+          echo "::error::xbrl-facts with apply downloads NSE files: give file_cap (the first test of a fetch is 100 files, owner 27 Oct 2026)"
+          exit 1
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
@@ -711,7 +718,7 @@ jobs:
           code=0
           mkdir -p "$RUNNER_TEMP/xbrl-facts"
           download=; if [ "$APPLY" = "true" ]; then download=--download; fi   # the files not stored: NSE, under FILE_CAP
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--limit "$LIMIT"} $download ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/not-stored.csv" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} $download ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/not-stored.csv" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'xbrl-facts'

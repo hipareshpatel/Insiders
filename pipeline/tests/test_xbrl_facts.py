@@ -264,3 +264,67 @@ def test_the_cli_command_is_wired_and_reads_only_without_download(monkeypatch, c
     assert summary["facts_saved"] == 1 and "missing_rows" not in summary and summary["download"] is False and hits == []
     assert (tmp_path / "m.csv").read_text(encoding="utf-8").startswith("scrip,symbol,period,basis,url,reason")
     assert "facts written this run" in capsys.readouterr().out
+
+
+# --- --dry-run with --download, and the workflow ----------------------------------------------------------------------------
+
+def test_dry_run_with_download_lists_the_files_and_downloads_nothing():
+    sink = sink_with({"Q2FY24": URL, "Q1FY24": URL2}, stored={URL: TITAN})
+    before = dict(sink.objects)
+    hits: list[str] = []
+    out = xbrl_facts.run(sink, [("1", "TITAN")], download=True, client=CountingNse(hits=hits), dry_run=True)
+    assert hits == [] and files.used == 0 and out["downloaded"] == 0 and out["would_download"] == 1
+    assert sink.objects == before                                     # no raw file, no facts written
+    assert out["missing_rows"][0]["url"] == URL2 and "dry run" in out["missing_rows"][0]["reason"]
+    assert "1 files would be downloaded, none was" in xbrl_facts.render(out)
+    # even with no client at all the count is there
+    again = xbrl_facts.run(sink, [("1", "TITAN")], download=True, dry_run=True)
+    assert again["would_download"] == 1
+
+
+def test_the_cli_dry_run_with_download_makes_no_nse_client(monkeypatch, tmp_path):
+    sink = sink_with({"Q2FY24": URL, "Q1FY24": URL2}, stored={URL: TITAN})
+    monkeypatch.setattr(cli, "make_sink", lambda settings: sink, raising=False)
+    monkeypatch.setattr(cli, "_universe_companies", lambda s, scrips: [("1", "TITAN")])
+    monkeypatch.setattr("bse_intel.nse.NseClient", lambda *a, **k: pytest.fail("a dry run must not build an NSE client"))
+    assert cli.main(["xbrl-facts", "--download", "--dry-run", "--json", str(tmp_path / "s.json")]) == 0
+    summary = json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))
+    assert summary["would_download"] == 1 and summary["downloaded"] == 0 and xbrl_store.key(URL2) not in sink.objects
+
+
+def workflow():
+    import yaml
+
+    text = (Path(__file__).parents[2] / ".github" / "workflows" / "maintenance.yml").read_text(encoding="utf-8")
+    return text, yaml.safe_load(text)
+
+
+def test_workflow_limit_means_the_n_largest_for_both_commands():
+    text, doc = workflow()
+    assert 'xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"}' in text
+    assert 'screener-crosscheck ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"}' in text
+    assert 'xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--limit' not in text
+    inputs = (doc.get("on") or doc.get(True))["workflow_dispatch"]["inputs"]
+    assert "screener-crosscheck and xbrl-facts - only the N largest companies by market cap" in inputs["limit"]["description"]
+    assert len(inputs) <= 25
+
+
+def test_workflow_refuses_an_xbrl_facts_download_without_a_file_cap_before_installing():
+    text, doc = workflow()
+    steps = doc["jobs"]["run"]["steps"]
+    refuse = next(i for i, st in enumerate(steps) if "Refuse an xbrl-facts download" in st.get("name", ""))
+    install = next(i for i, st in enumerate(steps) if st.get("name") == "Install")
+    assert refuse < install
+    cond = steps[refuse]["if"]
+    assert "inputs.command == 'xbrl-facts'" in cond and "inputs.apply" in cond and "inputs.file_cap == ''" in cond and "'0'" in cond
+    assert "exit 1" in steps[refuse]["run"]
+    assert "FILE_CAP: ${{ inputs.file_cap || '0' }}" in text            # the cap the run then holds
+
+
+def test_workflow_a_downloading_xbrl_facts_run_shares_the_nse_memory_group_and_a_read_only_run_does_not():
+    text, doc = workflow()
+    group = doc["concurrency"]["group"]
+    nse_memory, rest = group.split("|| (inputs.command == 'xbrl-facts' && inputs.apply) && 'maint-nse-memory'")
+    assert "seed-memory" in nse_memory and "maint-nse-memory" in nse_memory and "xbrl-facts" not in nse_memory   # the list itself is unchanged
+    assert "maint-cards" in rest and "maint-ro-" in rest
+    assert '"xbrl-facts"' in rest.split("maint-ro-")[0]              # a read-only run keeps its own group

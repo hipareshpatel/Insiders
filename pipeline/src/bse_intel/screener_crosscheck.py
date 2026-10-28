@@ -231,13 +231,15 @@ def screener_views(dossier: dict | None, figures: dict, period: str, today: str 
 
     out: dict[str, list[tuple[float, str]]] = {}
     exceptional = v("exceptional_items")
-    # Sales is revenue less excise duty, sales tax / VAT / GST and discounts (rules rows 1 and 2): every mix of the parts found,
-    # singles first. Memory's excise (``excise_duty``) and the facts' (``excise_duty``, ``indirect_taxes``, ``discounts``, put in
-    # by the caller from the stored XBRL facts where memory has none) are read alike.
-    levies = {"excise": v("excise_duty"), "taxes": v("indirect_taxes"), "discounts": v("discounts")}
-    found = [p for p in screener_parts.FLOW_ORDER if levies[p]]
-    if found and v("revenue") is not None:   # not Operating Profit: ours (PBT + interest + depreciation - other income) never held it
-        out["revenue"] = [(v("revenue") - sum(levies[p] for p in combo), "_".join(combo)) for combo in screener_parts.subsets(found)]
+    # Sales is revenue less excise duty, sales tax / VAT / GST and discounts (rules rows 1 and 2): ALL the parts found at or above
+    # the floor together, the way screener's formula nets them, never the mix that fits best (a chance match). Memory's excise
+    # (``excise_duty``) and the facts' (``excise_duty``, ``indirect_taxes``, ``discounts``, put in by the caller from the stored
+    # XBRL facts where memory has none) are read alike.
+    if v("revenue") is not None:   # not Operating Profit: ours (PBT + interest + depreciation - other income) never held it
+        levies = screener_parts.usable({p: v(n) for p, n in FACT_FIGURES.items() if v(n)}, v("revenue"))
+        used = [p for p in screener_parts.FLOW_ORDER if p in levies]
+        if used:
+            out["revenue"] = [(v("revenue") - sum(levies.values()), "_".join(used))]
     # a small exceptional item beside a few crore of gap would "explain" it by chance (blind review, 27 Oct 2026: other income
     # 10 against 7.2 with exceptional -3): the item must be at least 5 Cr and a quarter of our other income
     other = v("other_income")
@@ -441,17 +443,18 @@ def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], 
         return "wrong_period", _shift_note(period, shifted)
     if _is_scale(ours, theirs):
         return "scale", ""
+    why = ""
     if _apart(ours, theirs, "money"):
         for value, rule in (views() if callable(views) else views):
             if _close(value, theirs, "money"):
                 return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
+        why = state() if callable(state) else ""
         if line in BS_PARTS and theirs > ours and not (lender and line in BS_PARTS_NOT_LENDER):
-            why = state() if callable(state) else ""
             return "unexplained_larger", (f"screener {theirs:g} against ours {ours:g}: {theirs - ours:g} more on screener, "
                                           "no part found that closes it" + (f"; {why}" if why else ""))
     if _small(ours, theirs):
         return "small_gap", f"{ours:g} against {theirs:g}: gap {abs(ours - theirs):.2f}"
-    return "mismatch", ""
+    return "mismatch", (why if _apart(ours, theirs, "money") else "")
 
 
 def classify_cash(ours: float, theirs: float, shifted: list[str], period: str = "") -> tuple[str, str]:
@@ -509,12 +512,12 @@ def _bs_views(snap: dict, line: str, ours: float | None = None, parts: dict | No
         out += screener_parts.additive_views(line, ours, found, order)
     if line in BS_TOTALS and parts and parts.get("dta") and parts.get("dtl"):
         net = min(parts["dta"][0], parts["dtl"][0])
-        if net > 0:
+        if net >= screener_parts.floor(ours):
             out.append((ours - net, "deferred_tax_net"))
     return out
 
 
-def _facts_state(line: str, parts: dict | None) -> str:
+def _facts_state(line: str, parts: dict | None, half_year: bool = False) -> str:
     """What the facts hold for a line's parts, for the note of an unexplained gap."""
     order = BS_PARTS.get(line) or (("dta", "dtl") if line in BS_TOTALS else ())
     if not order:
@@ -522,8 +525,12 @@ def _facts_state(line: str, parts: dict | None) -> str:
     if parts is None:
         return "no XBRL facts stored for this date"
     found = [p for p in order if p in parts]
-    return f"XBRL facts stored: no {'/'.join(order)} tagged" if not found else \
-        f"XBRL facts stored: {', '.join(found)} found, they do not close the gap"
+    if not found:
+        return f"XBRL facts stored: no {'/'.join(order)} tagged"
+    listed = ", ".join(f"{p} {parts[p][0]:g} ({parts[p][1]})" for p in found)
+    skipped = "; current_maturities not applied: a half-year balance sheet has none" if half_year and "current_maturities" in found else ""
+    return (f"XBRL facts stored: parts found {listed}; all applied together (those under the floor left out), "
+            f"they do not close the gap{skipped}")
 
 
 def _plug_parts(snap: dict, line: str) -> dict[str, float] | None:
@@ -594,7 +601,7 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
             shifted = _shifted_columns(table, period, line, ours, theirs)
             cls, note = classify_balance(line, ours, theirs, shifted,
                                          lambda snap=snap, line=line, ours=ours: _bs_views(snap, line, ours, parts, lender, half),
-                                         lender, period, lambda line=line: _facts_state(line, parts()))
+                                         lender, period, lambda line=line: _facts_state(line, parts(), half))
             pair = {**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls, "note": note,
                     "shifted": shifted}
             if cls.startswith(VIEW):
@@ -837,6 +844,19 @@ def facts_extra(get_facts, figures: dict, period: str) -> dict:
     return out
 
 
+def _parts_note(extra: dict, period: str, revenue: float | None) -> str:
+    """The facts' parts of a period for a note: name, value, where read, and a levy under the floor marked as left out."""
+    out = []
+    for (name, _), entry in sorted(extra.items(), key=lambda kv: kv[0][0]):
+        if (name in FACT_FIGURES.values()) != (revenue is not None):   # levies for a revenue pair, the share parts for an EPS pair
+            continue
+        text = f"{name} {entry['value']:g} ({entry['note']})"
+        if revenue is not None and name in FACT_FIGURES.values() and entry["value"] < screener_parts.floor(revenue):
+            text += " under the floor, left out"
+        out.append(text)
+    return "; ".join(out)
+
+
 def _view_from_facts(rule: str, extra: dict, period: str) -> bool:
     """Whether a view's parts came from the facts (any part of it is in ``extra``)."""
     tokens = ["treasury_shares"] if rule == "treasury_shares" else [FACT_FIGURES[t] for t in rule.split("_") if t in FACT_FIGURES]
@@ -925,6 +945,9 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                                         f"({extra[(_norm(FACT_FIGURES[t]), period)]['note']})"
                                         for t in rule.split("_") if t in FACT_FIGURES and (_norm(FACT_FIGURES[t]), period) in extra)
                                 break
+                    if cls == "mismatch" and extra:
+                        note = "XBRL facts held " + _parts_note(extra, period, entry["value"] if metric == "revenue" else None) + \
+                            "; all applied together, they do not close the gap"
                 if cls == "naming":
                     note = f"screener {_SCREENER_LINE[metric]} = our {named}"
                 pairs.append({"period": period, "metric": metric, "memory_value": entry["value"], "screener_value": theirs,

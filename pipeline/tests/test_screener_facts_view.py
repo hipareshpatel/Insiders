@@ -138,11 +138,13 @@ def test_sales_less_excise_and_vat_from_the_facts_where_memory_has_no_excise():
     assert p["class"] == "matches_screener_view:excise_taxes" and p["adjustment"] == "excise_taxes (xbrl facts)"
     assert "excise_duty 15.6" in p["note"] and "indirect_taxes 5" in p["note"] and "breakdown row" in p["note"]
     assert "matches_screener_view:excise_taxes" in sc.CLASSES
-    # one part alone closes nothing here; the advertising row is not a levy
-    only_vat = pair(compare(d, page_html(sales=195), loader(excise_and_vat_facts())), "revenue")
-    assert only_vat["class"] == "matches_screener_view:taxes"
-    nothing = pair(compare(d, page_html(sales=150), loader(excise_and_vat_facts())), "revenue")
-    assert nothing["class"] == "mismatch" and nothing["adjustment"] == ""
+    # ALL the tagged parts together, never the part that fits: screener at 195 = 200 - 5 would fit the VAT alone, and does not count
+    best_fit = pair(compare(d, page_html(sales=195), loader(excise_and_vat_facts())), "revenue")
+    assert best_fit["class"] == "mismatch" and best_fit["adjustment"] == ""
+    assert "excise_duty 15.6" in best_fit["note"] and "indirect_taxes 5" in best_fit["note"] and "all applied together" in best_fit["note"]
+    # the VAT alone, when it is all the facts hold, is the view
+    vat_only = {"Q4FY26": facts_doc(money("ValueAddedTax", "Q", 5.0))}
+    assert pair(compare(d, page_html(sales=195), loader(vat_only)), "revenue")["class"] == "matches_screener_view:taxes"
 
 
 def test_sales_less_discounts_and_a_tagged_excise_element():
@@ -231,9 +233,7 @@ def bs(result, line, period):
 
 
 def test_borrowings_plus_lease_liabilities_from_the_facts_closes_the_gap_and_is_named():
-    facts = loader({"Q4FY26": facts_doc(money("LeaseLiabilitiesNoncurrent", "I", 40.0),
-                                        text("DescriptionOfOtherCurrentFinancialLiabilities", "L1", "Lease liabilities - current"),
-                                        money("OtherCurrentFinancialLiabilities", "L1", 10.0))})
+    facts = loader({"Q4FY26": facts_doc(money("LeaseLiabilitiesNoncurrent", "I", 40.0), money("LeaseLiabilitiesCurrent", "I", 10.0))})
     got = bs_compare({"Borrowings&nbsp;+": [300, 380, 350]}, facts)       # 330 + 40 + 10 = 380
     p = bs(got, "borrowings", "Q4FY26")
     assert p["class"] == "matches_screener_view:borrowings_plus_lease_liabilities"
@@ -244,7 +244,8 @@ def test_a_part_that_does_not_close_the_gap_names_nothing_and_the_note_says_what
     facts = loader({"Q4FY26": facts_doc(money("LeaseLiabilitiesNoncurrent", "I", 5.0))})
     p = bs(bs_compare({"Borrowings&nbsp;+": [300, 380, 350]}, facts), "borrowings", "Q4FY26")
     assert p["class"] == "unexplained_larger"
-    assert "XBRL facts stored: lease_liabilities found, they do not close the gap" in p["note"]
+    assert "XBRL facts stored: parts found lease_liabilities 5 (element: LeaseLiabilitiesNoncurrent)" in p["note"]
+    assert "all applied together" in p["note"] and "do not close the gap" in p["note"]
     none_tagged = loader({"Q4FY26": facts_doc(money("OtherIncome", "Q", 1.0))})
     q = bs(bs_compare({"Borrowings&nbsp;+": [300, 380, 350]}, none_tagged), "borrowings", "Q4FY26")
     assert q["class"] == "unexplained_larger" and "no lease_liabilities/current_maturities tagged" in q["note"]
@@ -263,18 +264,24 @@ def test_current_maturities_count_at_a_year_end_but_never_in_a_half_year():
     year = bs(got, "borrowings", "Q4FY26")
     assert year["class"] == "matches_screener_view:borrowings_plus_current_maturities"
     half = bs(got, "borrowings", "Q2FY27")
-    assert half["class"] == "unexplained_larger" and "current_maturities found, they do not close" in half["note"]
+    assert half["class"] == "unexplained_larger" and "parts found current_maturities 20" in half["note"]
+    assert "current_maturities not applied: a half-year balance sheet has none" in half["note"]
     # a December year end: Sep is a half year, Dec the year end
     assert sc._half_year("Q2FY27", 3) is True and sc._half_year("Q4FY26", 3) is False and sc._half_year("Q3FY26", 12) is False
 
 
 def test_fixed_assets_plus_goodwill_intangibles_and_right_of_use_assets_cwip_apart():
-    facts = loader({"Q4FY26": facts_doc(money("OtherIntangibleAssets", "I", 60.0), money("RightOfUseAssets", "I", 30.0),
-                                        money("Goodwill", "I", 10.0), money("IntangibleAssetsUnderDevelopment", "I", 15.0))})
+    ppe = money("PropertyPlantAndEquipment", "I", 700.0)          # tagged apart: the right-of-use element is not inside it
+    facts = loader({"Q4FY26": facts_doc(ppe, money("OtherIntangibleAssets", "I", 60.0), money("RightOfUseAssets", "I", 30.0),
+                                        money("IntangibleAssetsUnderDevelopment", "I", 15.0))})
     got = bs_compare({"Fixed Assets&nbsp;+": [600, 790, 760], "CWIP": [50, 75, 70]}, facts)     # 700 + 60 + 30 = 790; 60 + 15 = 75
     assert bs(got, "fixed_assets", "Q4FY26")["class"] == "matches_screener_view:fixed_assets_plus_intangibles_right_of_use"
     assert bs(got, "cwip", "Q4FY26")["class"] == "matches_screener_view:cwip_plus_intangibles_under_development"
-    with_goodwill = bs_compare({"Fixed Assets&nbsp;+": [600, 800, 760]}, facts)                  # 700 + 10 + 60 + 30
+    with_gw = loader({"Q4FY26": facts_doc(ppe, money("OtherIntangibleAssets", "I", 60.0), money("RightOfUseAssets", "I", 30.0),
+                                          money("Goodwill", "I", 10.0))})
+    with_goodwill = bs_compare({"Fixed Assets&nbsp;+": [600, 800, 760]}, with_gw)               # 700 + 10 + 60 + 30
+    assert bs_compare({"Fixed Assets&nbsp;+": [600, 790, 760]}, with_gw) is not None and \
+        bs(bs_compare({"Fixed Assets&nbsp;+": [600, 790, 760]}, with_gw), "fixed_assets", "Q4FY26")["class"] == "unexplained_larger"
     assert bs(with_goodwill, "fixed_assets", "Q4FY26")["class"] == \
         "matches_screener_view:fixed_assets_plus_goodwill_intangibles_right_of_use"
     # no right-of-use line and no intangibles: not named
@@ -488,3 +495,66 @@ def test_top_mcap_and_scrips_are_options_of_the_command(monkeypatch, capsys, tmp
     assert seen == [[("2", "B"), ("3", "C")]] and "top 2 by market cap: B, C" in capsys.readouterr().out
     assert cli.main(["screener-crosscheck", "--top-mcap", "0"]) == 2
     assert cli.main(["screener-crosscheck", "--scrips", "A,B"]) == 0 and seen[-1] == [("1", "A"), ("2", "B"), ("3", "C")]
+
+
+# --- BPCL Q2FY27: the excise duty as the integrated filing carries it (measured by the lead, 28 Oct 2026) ---------------------------
+
+BPCL_CONTEXTS = {
+    "Q": {"s": "2026-07-01", "e": "2026-09-30", "m": 3, "l": "Q2FY27"},
+    "H": {"s": "2026-04-01", "e": "2026-09-30", "m": 6},
+    # a breakdown row of Other expenses: the axis and its member as the file spells them (the member's number varies by company)
+    "R1": {"s": "2026-07-01", "e": "2026-09-30", "m": 3, "d": {"in-capmkt:DetailsOfOtherExpensesAxis": "OtherExpenses1Member"}},
+    "R2": {"s": "2026-07-01", "e": "2026-09-30", "m": 3, "d": {"in-capmkt:DetailsOfOtherExpensesAxis": "OtherExpenses2Member"}},
+    "R1H": {"s": "2026-04-01", "e": "2026-09-30", "m": 6, "d": {"in-capmkt:DetailsOfOtherExpensesAxis": "OtherExpenses1Member"}},
+}
+
+
+def bpcl_facts(description="Excise Duty"):
+    return facts_doc(
+        money("RevenueFromOperations", "Q", 157817.93), money("OtherExpenses", "Q", 18201.41),     # the total includes the excise row
+        text("DescriptionOfOtherExpenses", "R1", description), money("OtherExpenses", "R1", 8737.53),
+        text("DescriptionOfOtherExpenses", "R2", "Other expenses"), money("OtherExpenses", "R2", 9463.88),
+        text("DescriptionOfOtherExpenses", "R1H", description), money("OtherExpenses", "R1H", 17000.0),   # six months: not this quarter
+        contexts=BPCL_CONTEXTS)
+
+
+def bpcl_memory():
+    metrics = [{"metric": m, "period": "Q2FY27", "value": v, "unit": "INR_CR", "basis": "CONSOLIDATED", "as_of": "2026-11-01",
+                "source_news_id": "xbrl:res:1:Q2FY27"} for m, v in (("revenue", 157817.93), ("pat", 5000.0))]
+    return {"financial_metrics": metrics, "balance_sheet": [], "sector": "Oil"}
+
+
+def bpcl_page():
+    return section("quarters", {"Sales&nbsp;+": ["1,49,080"], "Net Profit&nbsp;+": ["5,000"]}, ["Sep 2026"])
+
+
+def test_bpcl_excise_is_read_from_the_other_expenses_breakdown_row_and_closes_screeners_sales():
+    # the part: the row, not the 18,201.41 Cr total, not the six-month row
+    from bse_intel import screener_parts
+    got = screener_parts.flow_parts(xbrl_facts.Facts(bpcl_facts()), date(2026, 9, 30), 3)
+    assert got["excise"][0] == pytest.approx(8737.53) and got["excise"][1].startswith("breakdown row: OtherExpenses Excise Duty")
+    assert "taxes" not in got and "discounts" not in got
+    # the pair: 157,817.93 - 8,737.53 = 149,080.40 against screener's 1,49,080
+    result = compare(bpcl_memory(), bpcl_page(), loader({"Q2FY27": bpcl_facts()}))
+    p = pair(result, "revenue", "Q2FY27")
+    assert p["screener_value"] == 149080.0
+    assert p["class"] == "matches_screener_view:excise" and p["adjustment"] == "excise (xbrl facts)"
+    assert "excise_duty 8737.53" in p["note"] and "breakdown row" in p["note"]
+    # without the facts the gap is unexplained
+    assert pair(compare(bpcl_memory(), bpcl_page()), "revenue", "Q2FY27")["class"] == "mismatch"
+
+
+@pytest.mark.parametrize("description", ["Excise Duty", "EXCISE DUTY", "excise duty", "  Excise duty on sales"])
+def test_the_excise_description_is_matched_case_insensitively(description):
+    from bse_intel import screener_parts
+    got = screener_parts.flow_parts(xbrl_facts.Facts(bpcl_facts(description)), date(2026, 9, 30), 3)
+    assert got["excise"][0] == pytest.approx(8737.53)
+
+
+def test_the_member_number_and_the_axis_prefix_do_not_matter():
+    from bse_intel import screener_parts
+    contexts = {**BPCL_CONTEXTS, "R1": {"s": "2026-07-01", "e": "2026-09-30", "m": 3,
+                                        "d": {"in-bse-fin:DetailsOfOtherExpensesAxis": "OtherExpenses17Member"}}}
+    doc = bpcl_facts()
+    doc["contexts"] = contexts
+    assert screener_parts.flow_parts(xbrl_facts.Facts(doc), date(2026, 9, 30), 3)["excise"][0] == pytest.approx(8737.53)

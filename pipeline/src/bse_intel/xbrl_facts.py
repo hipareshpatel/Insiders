@@ -356,12 +356,13 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
     listed. Reads R2 and memory only: no request goes to NSE unless ``download`` is set and a ``client`` is given, and then
     only for the files not stored, through seed._fetch (the cache, then R2, then ``client.download`` with its pacing, and R2
     keeps what comes) - every such file counts toward FILE_CAP (file_cap.py), and the run stops where the cap or a refusal
-    does. ``dry_run`` parses and counts but writes no facts. ``force`` reads again the files whose facts are stored."""
+    does. ``dry_run`` parses and counts but writes no facts and, with ``download``, lists the files it would fetch and fetches
+    none (``would_download`` counts them). ``force`` reads again the files whose facts are stored."""
     from . import seed
     from .nse import FileCapReached, SourceBlockedError, stop_reason
 
     summary: dict = {"companies": 0, "files_listed": 0, "facts_stored_before": 0, "facts_saved": 0, "not_results": 0,
-                     "missing": 0, "no_url": 0, "downloaded": 0, "download_failed": 0, "bytes": 0, "facts": 0, "stopped": "",
+                     "missing": 0, "no_url": 0, "downloaded": 0, "would_download": 0, "download_failed": 0, "bytes": 0, "facts": 0, "stopped": "",
                      "store_available": xbrl_store.enabled(sink), "dry_run": dry_run, "download": download, "interesting": {},
                      "missing_rows": [], "failed": [], "no_url_companies": 0, "capped": False}
     stored_files = xbrl_store.stored_keys(sink)
@@ -398,7 +399,13 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                 summary["missing"] += 1
                 summary["missing_rows"].append({"scrip": scrip, "symbol": symbol, "period": period, "basis": basis, "url": url,
                                                 "reason": "file not stored"})
-                if not (download and client is not None):
+                if not (download and url):
+                    continue
+                if dry_run:      # a dry run downloads nothing: the files are listed, with the count it would fetch
+                    summary["would_download"] += 1
+                    summary["missing_rows"][-1]["reason"] = "file not stored (dry run: not downloaded)"
+                    continue
+                if client is None:
                     continue
                 try:
                     data = seed._fetch(client, url, None, sink)
@@ -449,7 +456,8 @@ def render(summary: dict) -> str:
                                                       f"{summary['bytes'] / n / 1000:.1f} KB a file)" if n else ""),
              f"files not stored (to download) {summary['missing']}",
              f"periods with no file url       {summary['no_url']} ({summary['no_url_companies']} companies)",
-             f"downloaded this run            {summary['downloaded']}" + ("" if summary["download"] else " (download not asked for)"),
+             f"downloaded this run            {summary['downloaded']}" + ("" if summary["download"] else " (download not asked for)")
+             + (f" (dry run: {summary['would_download']} files would be downloaded, none was)" if summary["dry_run"] and summary["download"] else ""),
              f"not a results file             {summary['not_results']}"]
     if not summary["store_available"]:
         lines.append("this sink has no R2 XBRL store: no stored file can be read")

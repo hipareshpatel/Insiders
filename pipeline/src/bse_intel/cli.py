@@ -1572,13 +1572,13 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     companies = _selected_companies(args, sink)
     if companies is None:
         return 2
-    if args.download:
+    if args.download and not args.dry_run:      # a dry run lists the files and makes no client, so no request at all
         from .nse import NseClient
 
         with NseClient() as nse:
             summary = xf.run(sink, companies, download=True, client=nse, force=args.force, dry_run=args.dry_run, limit=args.limit)
     else:
-        summary = xf.run(sink, companies, force=args.force, dry_run=args.dry_run, limit=args.limit)
+        summary = xf.run(sink, companies, download=args.download, force=args.force, dry_run=args.dry_run, limit=args.limit)
     print(xf.render(summary))
     if args.json:
         Path(args.json).write_text(xf.to_json(summary), encoding="utf-8")

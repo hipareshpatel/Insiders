@@ -887,3 +887,28 @@ def test_a_discontinued_block_with_its_own_subtotal_still_gives_the_profit_for_t
                         (["Net Profit for the period (9 + 14)"], total)]
     got = read(statement(rows), "pat")
     assert got.status == "ok" and got.value == pytest.approx(crore(total[0])), got
+
+
+def test_a_discontinued_row_no_subtotal_accounts_for_is_never_skipped():
+    # the fourteenth review: discontinued profit d and its tax dt, "Profit for the period" = a + d (skipping dt), then the
+    # true "Net profit for the period" = a + d - dt; the reader gave a + d
+    rows, want = pl()
+    a = want["pat"]
+    d, dt = [4.0, 3.0, 2.0, 9.0], [1.2, 0.9, 0.6, 2.7]
+    first = [round(x + y, 2) for x, y in zip(a, d)]
+    true = [round(x + y - z, 2) for x, y, z in zip(a, d, dt)]
+    rows = rows[:-1] + [(["Profit after tax from continuing operations"], a), (["Profit from discontinued operations"], d),
+                        (["Tax expense of discontinued operations"], dt), (["Profit for the period"], first),
+                        (["Net profit for the period"], true)]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(true[0])), got
+
+
+def test_a_header_date_whose_year_ocr_read_before_the_day_is_read():
+    # PNGSREVA Q2FY27 (OCR): "September" / "2026" / "30," over the quarter column
+    from datetime import date
+    h = 8.0
+    head = words((300, 340, "September"), (310, 330, "2026"), (342, 352, "30,"))
+    head[1].y, head[2].y = 99.0, 100.5
+    col = [nf.Column(300, 352, 326, 0), nf.Column(400, 452, 426, 1)]
+    assert nf.column_dates(head, col, h, 2.0)[0] == date(2026, 9, 30)

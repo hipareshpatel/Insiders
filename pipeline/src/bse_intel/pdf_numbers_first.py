@@ -592,6 +592,9 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     for items in mine:
         text = " ".join(t for _, _, t in sorted(items)).replace("_", " ").replace("|", " ")
         found = _dates_in_text(text)
+        if not found:
+            # a year read a touch above its day ("September 2026 30," in PNGSREVA Q2FY27's OCR): month, day, then year
+            found = _dates_in_text(re.sub(r"\b([A-Za-z]{3,9}\.?)\s+(20\d\d)\s+(\d{1,2})\b,?", r"\1 \3, \2", text))
         out.append(found[-1] if found else None)
     return out
 
@@ -970,6 +973,20 @@ class Solver:
                             return (x, proof)
         return None
 
+    def covered(self, skipped: list[int], subset: tuple[int, ...]) -> bool:
+        """Every non-nil row the sum leaves out is a part of a subtotal it takes in: some row of ``subset`` equals the left-out
+        rows plus or minus each other (ABREL: 14 = 11 + 13, so 15 = 9 + 14 may leave 11 and 13 out). A left-out row no subtotal
+        accounts for is a profit or a tax the sum skipped (fourteenth review), and the row is not the profit for the period."""
+        if not skipped:
+            return True
+        if len(skipped) > 3:
+            return False
+        for s_row in subset:
+            for signs in itertools.product((1, -1), repeat=len(skipped)):
+                if self.valid((s_row, tuple(zip(skipped, signs)))):
+                    return True
+        return False
+
     def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
         """Rows after the profit after tax ``a`` that equal it plus or minus the rows between (discontinued operations, an
         associate's share): the row's label names the profit (not merely does not object), every row between is an associate's
@@ -988,7 +1005,7 @@ class Solver:
             for size in (1, 2):
                 hit = None
                 for subset in itertools.combinations(live, size):
-                    if not needed <= set(subset):
+                    if not needed <= set(subset) or not self.covered([r for r in live if r not in subset], subset):
                         continue
                     for signs in itertools.product((1, -1), repeat=size):
                         proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))

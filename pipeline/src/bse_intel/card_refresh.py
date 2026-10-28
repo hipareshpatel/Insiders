@@ -19,6 +19,7 @@ import logging
 
 from pydantic import ValidationError
 
+from .backup import RunBackup
 from .call_summary import card_takeaways, remember_call_points
 from .corporate_actions import card_block as corporate_action_block
 from .card_context import case_stage, guidance_recall, memory_context, rating_change
@@ -190,8 +191,10 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
         diffs: list | None = None) -> dict:
     """Every stored card (or the given companies'), in date order, written back when a block changed. With ``diffs``,
     each changed card's changed blocks, before and after, are added to it (28 Oct 2026: a dry run that would change
-    3,214 of 7,895 cards gave only counts, nothing the owner could read)."""
+    3,214 of 7,895 cards gave only counts, nothing the owner could read). A real run saves each page's stored rows, and the
+    memories it rewrites, to R2 backup/card-refresh-<time>/ before writing them (backup.py; restore puts them back)."""
     sink = pipeline.sink
+    backup = None if dry_run else RunBackup(sink, "card-refresh")
     after, seen, written, failed = ["", ""], 0, 0, 0
     changed_keys: dict[str, int] = {}
     dossiers: dict[str, dict | None] = {}
@@ -204,7 +207,7 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
         if not rows:
             break
         after = [rows[-1]["filed_at"], rows[-1]["news_id"]]
-        batch = []
+        batch, stored_rows = [], []
         for row in rows:
             scrip = row["scrip_code"]
             if scrips and scrip not in scrips:
@@ -279,7 +282,9 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
             out = dict(row)
             out.pop("card_json")
             batch.append({**out, "impact_level": impact, "card": new})
+            stored_rows.append(row)
         if batch and not dry_run:
+            backup.cards(stored_rows)   # raises when it does not read back: nothing is written
             written += sink.execute("cards_upsert", batch) or 0
         elif batch:
             written += len(batch)
@@ -287,6 +292,9 @@ def run(pipeline, scrips: set[str] | None = None, dry_run: bool = False, page: i
             break
     if not dry_run:
         for scrip in dirty:
+            backup.dossier(scrip)
+        for scrip in dirty:
             sink.put_dossier(scrip, dossiers[scrip])
     return {"cards": seen, "changed": written, "failed": failed, "by_block": changed_keys, "dry_run": dry_run,
-            "memories_with_call_points": len(dirty), "call_cards_rechecked": rechecks, "file_cap_reached": capped}
+            "memories_with_call_points": len(dirty), "call_cards_rechecked": rechecks, "file_cap_reached": capped,
+            "backup": backup.summary() if backup else None}

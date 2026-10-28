@@ -17,6 +17,7 @@ import re
 from datetime import datetime, timezone
 
 from . import pdf_referee as pr
+from .backup import RunBackup
 from .dossier import keep_concurrent_writes
 from .periods import prior_quarter_period, prior_year_period
 
@@ -235,6 +236,7 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
     counted) and ``last_done`` is the last company finished, where the next run resumes (``resume_after``)."""
     from .nse import FileCapReached, SourceBlockedError
     src = pr.Sources(nse, ocr=False)
+    backup = None if dry_run else RunBackup(sink, "restated-pdf")   # each dossier is saved to R2 backup/ before its write
     stats = {"companies": 0, "restated": 0, "stored": 0, "reasons": {}, "found": [], "rejected": [], "capped": False,
              "stopped_at": None, "last_done": None}
     items = list(symbols.items())
@@ -272,6 +274,7 @@ def run(nse, sink, symbols: dict[str, str], quarters: int = 6, limit: int | None
         if merge(dossier, records, cleared):
             dossier["restated_checked_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
             keep_concurrent_writes(dossier, read, sink.get_dossier(scrip))
+            backup.dossier(scrip)
             sink.put_dossier(scrip, dossier)
             stats["stored"] += 1
         stats["last_done"] = scrip

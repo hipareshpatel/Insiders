@@ -7,6 +7,7 @@ import datetime
 import json
 from types import SimpleNamespace
 
+from backup_objects import BackupObjects
 from bse_intel import cli, memory_labels as ml, xbrl
 from bse_intel.dossier import view_as_of
 from test_xbrl import results_xml
@@ -165,7 +166,7 @@ def test_readers_see_the_same_memory_with_and_without_labels():
         assert view_as_of(d, cutoff) == view_as_of(copy.deepcopy(old), cutoff)
 
 
-class Sink:
+class Sink(BackupObjects):
     def __init__(self, dossiers, rows=()):
         self.dossiers, self.rows, self.kv, self.puts = dossiers, list(rows), {}, []
         self.reads: dict[str, int] = {}
@@ -229,6 +230,33 @@ def test_real_run_writes_changed_dossiers_resumes_and_a_second_run_writes_nothin
     sink.dossiers["3"] = old_memory() | {"scrip_code": "3"}
     part = ml.label_all(sink, sink.list_dossiers(), False, ml.load_cards(sink))
     assert part["skipped_resumed"] == 1 and part["companies"] == 2 and sink.puts == ["3"]
+
+
+def test_a_backup_that_does_not_read_back_stops_the_run_with_nothing_written():
+    import pytest
+
+    from bse_intel.backup import BackupError
+
+    class Garbles(Sink):
+        def get_object(self, key):
+            return b"garbled" if key.endswith(".json") and not key.endswith("meta.json") and key in self.objects else super().get_object(key)
+
+    base = sink_of()
+    sink = Garbles(base.dossiers, base.rows)
+    before = json.dumps(sink.dossiers, sort_keys=True)
+    with pytest.raises(BackupError):
+        ml.label_all(sink, sink.list_dossiers(), False, ml.load_cards(sink))
+    assert sink.puts == [] and json.dumps(sink.dossiers, sort_keys=True) == before and sink.kv == {}
+
+
+def test_a_real_run_saves_each_dossier_before_it_is_written():
+    sink = sink_of()
+    before = {s: json.dumps(d, sort_keys=True) for s, d in sink.dossiers.items()}
+    ml.label_all(sink, sink.list_dossiers(), False, ml.load_cards(sink))
+    (folder,) = {k.split("/")[1] for k in sink.objects if k.startswith("backup/")}
+    assert folder.startswith("label-memory-")
+    for scrip in sink.puts:
+        assert json.dumps(json.loads(sink.objects[f"backup/{folder}/memory/{scrip}.json"]), sort_keys=True) == before[scrip]
 
 
 def test_a_write_by_another_job_between_the_read_and_the_write_is_kept():

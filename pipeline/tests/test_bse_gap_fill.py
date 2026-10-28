@@ -4,6 +4,7 @@ import json
 from datetime import date
 from types import SimpleNamespace
 
+from backup_objects import BackupObjects
 from bse_intel import bse_gap_fill as bf
 from bse_intel import memory_gaps as mg
 from bse_intel.bse import XbrlLink
@@ -17,7 +18,7 @@ URL = "https://www.bseindia.com/xml-data/corpfiling/AttachLive/q1fy27.xml"
 SETTINGS = SimpleNamespace(universe_min_mcap_cr=500.0, text_cache_dir=None)
 
 
-class Sink:
+class Sink(BackupObjects):
     def __init__(self, companies, dossiers=None):
         self.companies, self.dossiers, self.kv, self.writes = companies, dict(dossiers or {}), {}, 0
 

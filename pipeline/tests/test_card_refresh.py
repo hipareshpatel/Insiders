@@ -4,6 +4,7 @@
 import json
 from types import SimpleNamespace
 
+from backup_objects import BackupObjects
 from bse_intel import card_refresh
 from bse_intel.dossier import new_dossier
 from bse_intel.models import Filing
@@ -44,7 +45,7 @@ def test_run_writes_back_only_cards_that_changed():
     stored = [{"news_id": "n1", "scrip_code": "500001", "symbol": "DEMO", "company_name": "Demo Rail Ltd",
                "filing_date": FILED[:10], "filed_at": FILED, "headline": "h", "card_json": json.dumps(_card()), "held": 0}]
 
-    class Sink:
+    class Sink(BackupObjects):
         written: list = []
 
         def query(self, name, params):
@@ -78,7 +79,7 @@ def test_a_dry_run_can_list_each_changed_cards_blocks_before_and_after():
     stored = [{"news_id": "n1", "scrip_code": "500001", "symbol": "DEMO", "company_name": "Demo Rail Ltd",
                "filing_date": FILED[:10], "filed_at": FILED, "headline": "h", "card_json": json.dumps(_card()), "held": 0}]
 
-    class Sink:
+    class Sink(BackupObjects):
         def query(self, name, params):
             return [r for r in stored if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
 
@@ -108,7 +109,7 @@ def test_a_refreshed_card_with_a_clear_event_becomes_high():
     stored = [{"news_id": "r1", "scrip_code": "500001", "symbol": "DEMO", "company_name": "Demo Rail Ltd", "impact_level": "MODERATE",
                "filing_date": FILED[:10], "filed_at": FILED, "headline": "h", "card_json": json.dumps(card), "held": 0}]
 
-    class Sink:
+    class Sink(BackupObjects):
         written: list = []
 
         def query(self, name, params):
@@ -140,7 +141,7 @@ def test_export_held_writes_only_held_cards(tmp_path):
     rows = [{"news_id": "a", "scrip_code": "1", "filed_at": FILED, "held": 1, "card_json": json.dumps({"headline": "A"})},
             {"news_id": "b", "scrip_code": "1", "filed_at": FILED, "held": 0, "card_json": json.dumps({"headline": "B"})}]
 
-    class Sink:
+    class Sink(BackupObjects):
         def query(self, name, params):
             return [r for r in rows if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
 
@@ -194,7 +195,7 @@ def test_a_stored_call_card_gives_memory_its_checked_takeaways():
     memory = _dossier()
     saved: dict = {}
 
-    class Sink:
+    class Sink(BackupObjects):
         def query(self, name, params):
             return [r for r in stored if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
 
@@ -265,7 +266,7 @@ def test_a_dry_runs_list_shows_a_call_cards_takeaways_as_stored_before_the_reche
     monkeypatch.setattr(card_refresh, "recheck_calls", recheck)
     monkeypatch.setattr(card_refresh, "_call_text", lambda pipeline, row: "the call's text")
 
-    class Sink:
+    class Sink(BackupObjects):
         def query(self, name, params):
             return [r for r in stored if (r["filed_at"], r["news_id"]) > (params[0], params[1])]
 

@@ -5,6 +5,7 @@ in the next one); the PDFs themselves are rebuilt here, because the real ones' t
 from __future__ import annotations
 
 import pytest
+from backup_objects import BackupObjects
 from test_pdf_referee import FakeNse, filing, make_pdf
 
 from bse_intel import pdf_referee as pr
@@ -149,7 +150,7 @@ def test_the_switch_is_off_by_default(monkeypatch):
     assert card_yoy_restated() is True
 
 
-class Sink:
+class Sink(BackupObjects):
     def __init__(self, d):
         self.d, self.puts = d, 0
 

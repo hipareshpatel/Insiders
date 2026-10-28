@@ -1702,6 +1702,32 @@ def cmd_backup(args, settings, sink) -> int:
     return 0
 
 
+def cmd_restore(args, settings, sink) -> int:
+    """Put a backup from R2 backup/ back (restore.py): a dry run by default; --apply first backs up what it replaces."""
+    from . import restore
+
+    if args.list:
+        for entry in restore.list_backups(sink):
+            print(json.dumps(entry))
+        return 0
+    scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()}
+    news_ids = {s.strip() for s in (args.news_ids or "").split(",") if s.strip()}
+    if not args.backup or bool(scrips or news_ids) == bool(args.all):
+        print("restore: give --backup and either --scrips / --news-ids or --all (not both); --list shows the backups", file=sys.stderr)
+        return 2
+    try:
+        report = restore.plan(sink, args.backup, scrips, news_ids, args.all)
+    except ValueError as exc:
+        print(f"restore: {exc}", file=sys.stderr)
+        return 2
+    print(restore.render(report))
+    if args.apply:
+        print(json.dumps(restore.apply(sink, report)))
+    else:
+        print("dry run: nothing changed (--apply backs up what it replaces to backup/restore-<time>/, then puts the backup back)")
+    return 0
+
+
 def cmd_missed_jobs(args, settings, sink) -> int:
     """Print the daily workflows GitHub did not start (watchdog.py), one per line, for pipeline.yml to start; with
     --started W, record that W was dispatched (after `gh workflow run` succeeded)."""
@@ -2011,6 +2037,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--dry-run", action="store_true", help="count what would change, write nothing")
     p.add_argument("--diff-out", help="write each changed card's changed blocks, before and after, to this JSON file")
     p.set_defaults(func=cmd_refresh_card_blocks)
+    p = sub.add_parser("restore", help="put a backup from R2 backup/ back: dry run (default) or --apply (backs up what it replaces first)")
+    p.add_argument("--backup", help="the backup's R2 prefix, backup/<job>-<time>/")
+    p.add_argument("--scrips", help="only these companies' dossiers and cards (comma separated)")
+    p.add_argument("--news-ids", help="only these cards (comma separated)")
+    p.add_argument("--all", action="store_true", help="everything in the backup (required when no filter is given)")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--list", action="store_true", help="list the backups and exit")
+    p.set_defaults(func=cmd_restore)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")

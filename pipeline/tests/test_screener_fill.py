@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import httpx
 import pytest
 
+from backup_objects import BackupObjects
 from bse_intel import memory_gaps as mg
 from bse_intel import screener_fill as sf
 from bse_intel.dossier import (SCREENER_KEY, dossier_as_of, put_screener, results_snapshot, view_as_of, with_screener)
@@ -163,7 +164,7 @@ def test_a_half_year_total_checks_two_filled_quarters_together():
 
 # --- the run --------------------------------------------------------------------------------------------------------
 
-class Sink:
+class Sink(BackupObjects):
     def __init__(self, dossiers, companies=None):
         self.dossiers, self.kv, self.companies = dossiers, {}, companies or {}
         self.puts = 0

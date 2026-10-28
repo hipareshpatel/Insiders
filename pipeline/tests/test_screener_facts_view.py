@@ -248,26 +248,31 @@ def test_a_part_that_does_not_close_the_gap_names_nothing_and_the_note_says_what
     assert "all applied together" in p["note"] and "do not close the gap" in p["note"]
     none_tagged = loader({"Q4FY26": facts_doc(money("OtherIncome", "Q", 1.0))})
     q = bs(bs_compare({"Borrowings&nbsp;+": [300, 380, 350]}, none_tagged), "borrowings", "Q4FY26")
-    assert q["class"] == "unexplained_larger" and "no lease_liabilities/current_maturities tagged" in q["note"]
+    assert q["class"] == "unexplained_larger" and "no lease_liabilities tagged" in q["note"]
     absent = bs(bs_compare({"Borrowings&nbsp;+": [300, 380, 350]}, loader({})), "borrowings", "Q4FY26")
     assert absent["class"] == "unexplained_larger" and "no XBRL facts stored for this date" in absent["note"]
     # screener's figure below ours is a plain mismatch whatever the facts hold
     assert bs(bs_compare({"Borrowings&nbsp;+": [300, 250, 350]}, facts), "borrowings", "Q4FY26")["class"] == "mismatch"
 
 
-def test_current_maturities_count_at_a_year_end_but_never_in_a_half_year():
-    facts = loader({"Q4FY26": facts_doc(money("CurrentMaturitiesOfLongtermBorrowings", "I", 20.0)),
-                    "Q2FY27": facts_doc(money("CurrentMaturitiesOfLongtermBorrowings", "I2", 20.0))})
-    snaps = [dict(s) for s in SNAPS]
-    snaps[2]["gross_debt_cr"] = 360.0
-    got = bs_compare({"Borrowings&nbsp;+": [300, 350, 380]}, facts, snaps=snaps)   # year end 330 + 20 = 350; Sep 360 + 20 = 380 (not added)
+def test_current_maturities_are_not_in_screeners_borrowings_formula():
+    """Rule B1 (docs/audit/screener-five-2026-10-28.md, 5 of 5 to the paisa): Borrowings = non-current + current borrowings + the
+    "Lease liabilities" rows. A current-maturity line the file tags is not added (memory's debt lines already hold it)."""
+    facts = loader({"Q4FY26": facts_doc(money("CurrentMaturitiesOfLongtermBorrowings", "I", 20.0))})
+    got = bs_compare({"Borrowings&nbsp;+": [300, 350, 350]}, facts)
     year = bs(got, "borrowings", "Q4FY26")
-    assert year["class"] == "matches_screener_view:borrowings_plus_current_maturities"
-    half = bs(got, "borrowings", "Q2FY27")
-    assert half["class"] == "unexplained_larger" and "parts found current_maturities 20" in half["note"]
-    assert "current_maturities not applied: a half-year balance sheet has none" in half["note"]
-    # a December year end: Sep is a half year, Dec the year end
-    assert sc._half_year("Q2FY27", 3) is True and sc._half_year("Q4FY26", 3) is False and sc._half_year("Q3FY26", 12) is False
+    assert year["class"] == "unexplained_larger" and "no lease_liabilities tagged" in year["note"]
+    assert sc.BS_PARTS["borrowings"] == ("lease_liabilities",)
+
+
+def test_the_deferred_tax_is_netted_in_a_year_end_column_and_not_in_a_half_year_column():
+    facts = loader({"Q4FY26": facts_doc(money("DeferredTaxAssetsNet", "I", 30.0), money("DeferredTaxLiabilitiesNet", "I", 45.0)),
+                    "Q2FY27": facts_doc(money("DeferredTaxAssetsNet", "I2", 30.0), money("DeferredTaxLiabilitiesNet", "I2", 45.0))})
+    got = bs_compare({"Total Assets": [1400, 1550, 1720], "Total Liabilities": [1400, 1550, 1720]}, facts)   # 1,580 - 30; 1,750 - 30
+    assert bs(got, "total_assets", "Q4FY26")["class"] == "matches_screener_view:deferred_tax_net"
+    assert bs(got, "total_assets", "Q2FY27")["class"] != "matches_screener_view:deferred_tax_net"          # Sep: not netted
+    equal = bs_compare({"Total Assets": [1400, 1580, 1750]}, facts)
+    assert bs(equal, "total_assets", "Q2FY27")["class"] == "match"
 
 
 def test_fixed_assets_plus_goodwill_intangibles_and_right_of_use_assets_cwip_apart():

@@ -51,49 +51,46 @@ def test_a_part_is_used_only_at_or_above_its_floor():
     assert sp.additive_views("borrowings", 330.0, {"lease_liabilities": 0.4}, ("lease_liabilities", "current_maturities")) == []
 
 
+def fa_views(ours, **found):
+    """The fixed-assets views of our figure with parts given as {name: crore} (value and a source label as the facts give them)."""
+    return lambda: sc._bs_views({}, "fixed_assets", ours, {k: (v, "e") for k, v in found.items()}, False)
+
+
 def test_all_the_tagged_parts_are_applied_together_never_the_subset_that_fits():
-    order = ("lease_liabilities", "current_maturities")
-    assert sp.additive_views("borrowings", 330.0, {"lease_liabilities": 40.0, "current_maturities": 10.0}, order) == \
-        [(380.0, "borrowings_plus_lease_liabilities_current_maturities")]          # one view: screener's own sum
-    cls, note = sc.classify_balance("borrowings", 330.0, 370.0, [],
-                                    lambda: sc._bs_views({}, "borrowings", 330.0, {"lease_liabilities": (40.0, "e"), "current_maturities": (10.0, "e")}),
-                                    False)
-    assert cls == "unexplained_larger"       # 370 = 330 + the lease alone: not a match, the maturities were tagged too
-    cls, _ = sc.classify_balance("borrowings", 330.0, 380.0, [],
-                                 lambda: sc._bs_views({}, "borrowings", 330.0, {"lease_liabilities": (40.0, "e"), "current_maturities": (10.0, "e")}),
-                                 False)
-    assert cls == "matches_screener_view:borrowings_plus_lease_liabilities_current_maturities"
+    order = ("intangibles", "right_of_use")
+    assert sp.additive_views("fixed_assets", 700.0, {"intangibles": 60.0, "right_of_use": 30.0}, order) == \
+        [(790.0, "fixed_assets_plus_intangibles_right_of_use")]                     # one view: screener's own sum
+    cls, _ = sc.classify_balance("fixed_assets", 700.0, 760.0, [], fa_views(700.0, intangibles=60.0, right_of_use=30.0), False)
+    assert cls == "unexplained_larger"       # 760 = 700 + the intangibles alone: not a match, the right-of-use asset was tagged too
+    cls, _ = sc.classify_balance("fixed_assets", 700.0, 790.0, [], fa_views(700.0, intangibles=60.0, right_of_use=30.0), False)
+    assert cls == "matches_screener_view:fixed_assets_plus_intangibles_right_of_use"
     # a part under the floor is left out of the sum, not a reason to refuse the others
-    cls, _ = sc.classify_balance("borrowings", 330.0, 370.0, [],
-                                 lambda: sc._bs_views({}, "borrowings", 330.0, {"lease_liabilities": (40.0, "e"), "current_maturities": (0.5, "e")}),
-                                 False)
-    assert cls == "matches_screener_view:borrowings_plus_lease_liabilities"
+    cls, _ = sc.classify_balance("fixed_assets", 700.0, 760.0, [], fa_views(700.0, intangibles=60.0, right_of_use=0.5), False)
+    assert cls == "matches_screener_view:fixed_assets_plus_intangibles"
 
 
 def test_other_companies_parts_do_not_close_gaps_beyond_chance():
-    """Shuffle test: each company's gap (screener = ours + its own lease and maturities) set against ANOTHER company's parts. The
-    real parts close every gap; the shuffled ones close only what the tolerance lets by chance, and about a third of what
-    searching the mixes for a fit would (the old way: lease alone, maturities alone, both)."""
+    """Shuffle test: each company's gap (screener = ours + its own intangibles and right-of-use assets) set against ANOTHER
+    company's parts. The real parts close the gaps; the shuffled ones close only what the tolerance lets by chance, and a fraction
+    of what searching the mixes for a fit would (the old way: each alone, and both)."""
     rnd = random.Random(28)
     n = 600
     cos = [(rnd.uniform(500, 5000), rnd.uniform(12, 120), rnd.uniform(12, 120)) for _ in range(n)]
     real = shuffled = searched = 0
-    for i, (ours, lease, maturities) in enumerate(cos):
-        theirs = float(round(ours + lease + maturities))
-        own = {"lease_liabilities": (lease, "e"), "current_maturities": (maturities, "e")}
-        real += sc.classify_balance("borrowings", ours, theirs, [], lambda: sc._bs_views({}, "borrowings", ours, own, False), False)[0] \
-            .startswith(sc.VIEW)
-        _, other_lease, other_maturities = cos[(i + 101) % n]
-        other = {"lease_liabilities": (other_lease, "e"), "current_maturities": (other_maturities, "e")}
-        cls, _ = sc.classify_balance("borrowings", ours, theirs, [], lambda: sc._bs_views({}, "borrowings", ours, other, False), False)
+    for i, (ours, intangibles, rou) in enumerate(cos):
+        theirs = float(round(ours + intangibles + rou))
+        real += sc.classify_balance("fixed_assets", ours, theirs, [], fa_views(ours, intangibles=intangibles, right_of_use=rou),
+                                    False)[0].startswith(sc.VIEW)
+        _, other_intangibles, other_rou = cos[(i + 101) % n]
+        cls, _ = sc.classify_balance("fixed_assets", ours, theirs, [], fa_views(ours, intangibles=other_intangibles, right_of_use=other_rou),
+                                     False)
         shuffled += cls.startswith(sc.VIEW)
         if cls != "match" and sc._apart(ours, theirs, "money"):
             searched += any(sc.view_close(ours + sum(c), theirs)
-                            for size in (1, 2) for c in itertools.combinations((other_lease, other_maturities), size))
+                            for size in (1, 2) for c in itertools.combinations((other_intangibles, other_rou), size))
         elif cls.startswith(sc.VIEW) or cls == "match":
             searched += 1
-    # the view tolerance (1.5 Cr or 0.05% of screener's figure) leaves little room for chance: measured on this seed, the real parts
-    # close 596 of 600 gaps, the shuffled parts 10 (1.7%), and searching the mixes for a fit would have closed 29 (4.8%)
+    assert real >= 0.98 * n                                        # screener's own sums are explained (the rest are gaps inside 2 tolerances)
     assert shuffled / n < 0.03
     assert shuffled < searched * 0.6 and searched / n > shuffled / n * 1.5
 
@@ -163,13 +160,21 @@ def test_a_current_maturity_of_a_lease_is_a_lease_and_never_also_a_maturity_of_b
     assert got["lease_liabilities"] == pytest.approx(8.0) and "current_maturities" not in got
 
 
-def test_right_of_use_assets_only_when_a_separate_element_stands_beside_ppe_tagged_apart():
+def test_right_of_use_assets_are_a_row_of_other_non_current_assets_or_a_separate_element_beside_ppe():
     ppe, rou = money("PropertyPlantAndEquipment", "I", 700.0), money("RightOfUseAssets", "I", 30.0)
     assert parts(ppe, rou)["right_of_use"] == pytest.approx(30.0)
     assert "right_of_use" not in parts(rou)                                           # no PPE element: it may sit inside the fixed assets
-    rows = (text("DescriptionOfOtherNoncurrentAssets", "L2", "Right-of-use assets"), money("OtherNoncurrentAssets", "L2", 30.0))
-    assert "right_of_use" not in parts(ppe, *rows)                                    # a row of a breakdown is never added
-    # and the view adds it only then
+    # screener's rule B3 (ITC 501.00 Cr): the row "Right-of-use assets" of Other non-current assets, outside PPE by construction
+    rows = (text("DescriptionOfOtherNoncurrentAssets", "L2", "Right-of-use assets"), money("OtherNoncurrentAssets", "L2", 501.0))
+    assert parts(*rows)["right_of_use"] == pytest.approx(501.0)
+    got = sp.balance_parts(facts(*rows), YEAR_END)["right_of_use"]
+    assert got[1].startswith("breakdown row")
+    # a row of any other line (a breakdown of PPE) may be inside PPE: never added
+    inside = (text("DescriptionOfOtherCurrentFinancialLiabilities", "L1", "Right-of-use assets"), money("OtherCurrentFinancialLiabilities", "L1", 30.0))
+    assert "right_of_use" not in parts(ppe, *inside)
+    # the element form is not added twice beside the row
+    assert parts(ppe, rou, *rows)["right_of_use"] == pytest.approx(30.0)
+    # and the view adds it
     base = {"intangibles": (60.0, "e")}
     with_rou = {**base, "right_of_use": (30.0, "e")}
     assert sc._bs_views({}, "fixed_assets", 700.0, with_rou)[0][0] == pytest.approx(790.0)

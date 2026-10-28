@@ -121,7 +121,8 @@ ASSOCIATES_OTHER_INCOME_MIN = 5.0   # crore: below it a chance match is too like
 ASSOCIATES_MIN = 1.0                               # a share of associates' profit under 1 Cr is not a rule's gap
 STEADY_OLDER_MIN, STEADY_OLDER_SPREAD, STEADY_OLDER_OFF = 3, 0.03, 0.03
 STEADY_OLDER_LINES = ("revenue", *SMALL_GAP_LINES)
-SIX_EXPLAINED = (VIEW + "exceptional_in_other_income", VIEW + "associates_in_pbt", VIEW + "associates_in_other_income")
+SIX_EXPLAINED = (VIEW + "exceptional_in_other_income", VIEW + "associates_in_pbt", VIEW + "associates_in_other_income",
+                 VIEW + "financial_services_finance_cost")
 SECTION_KEYS = ("pages_read", "pages_unparsed", "pages_with_balance_sheet", "pages_with_cash_flow", "compared_pages",
                 "compared_with_balance_sheet", "compared_with_cash_flow", "companies_with_balance_sheet_pairs",
                 "companies_with_cash_flow_pairs")
@@ -158,6 +159,17 @@ def view_close(value: float, theirs: float, metric: str = "money") -> bool:
     if metric == "eps":
         return _close(value, theirs, "eps")
     return abs(value - theirs) <= max(VIEW_ABS, VIEW_REL * abs(theirs)) + 1e-9
+
+
+def _view_apart(ours: float, theirs: float, metric: str = "money", plain: tuple[float, float] = (MONEY_ABS, MONEY_REL)) -> bool:
+    """A view is tried only for a gap of more than twice the SMALLER of the plain-match tolerance (``plain``: 1 Cr or 0.5%) and the
+    view tolerance (``view_close``: 1.5 Cr or 0.05%). On a small line that is the plain one as before; on a large line the view's:
+    the older ``_apart`` (twice the plain tolerance, 1% of a line) shut views out of the gaps of 0.5% to 1% of a large line, TCS's
+    netted deferred tax among them (1,205 on 1,82,372 Cr), though the closing test is tight."""
+    if metric == "eps":
+        return _apart(ours, theirs, "eps")
+    tol = min(max(plain[0], plain[1] * abs(theirs)), max(VIEW_ABS, VIEW_REL * abs(theirs)))
+    return abs(ours - theirs) > 2 * tol + 1e-9
 
 
 def _apart(ours: float, theirs: float, metric: str) -> bool:
@@ -286,6 +298,14 @@ def screener_views(dossier: dict | None, figures: dict, period: str, today: str 
         factor, actions = share_factor(dossier, period, today or today_ist().isoformat())
         if actions and abs(factor - 1) > 1e-9:
             out["eps"] = [(v("eps") / factor, "share_adjust")]
+    # rule P2 (docs/audit/screener-five-2026-10-28.md, reproduced to the paisa): Interest = FinanceCosts + the finance-cost row of
+    # Other expenses (L&T), taken out of Expenses; so Operating Profit (Sales - Expenses, the excise cancels out) is ours plus it
+    fin = v("finance_services_cost")
+    if fin:
+        for metric in ("finance_cost", "ebitda"):
+            base = v(metric)
+            if base is not None and abs(fin) >= screener_parts.floor(base):
+                out[metric] = [(base + fin, "financial_services_finance_cost")]
     # EPS on total shares (rules row 13: screener divides its own profit by its own share count): the file's basic EPS is on
     # the shares outstanding without the treasury (own) shares a filer tags; with them the count is larger. Only where a count
     # is tagged (``treasury_shares``, from the facts); the share count behind the EPS is profit / EPS.
@@ -309,8 +329,9 @@ def _six_close(ours: float, theirs: float, metric: str) -> bool:
 def _six_apart(ours: float, theirs: float, metric: str) -> bool:
     """An explanation counts only for a gap of more than twice the tolerance (screener_explain.apart's rule): within it, a
     second line can match by chance."""
-    tol = TAX_PCT_ABS if metric == "tax_pct" else max(SIX_ABS, SIX_REL * abs(theirs))
-    return abs(ours - theirs) > 2 * tol + 1e-9
+    if metric != "tax_pct":
+        return _view_apart(ours, theirs, "money", (SIX_ABS, SIX_REL))      # a money line's views close within ``view_close``
+    return abs(ours - theirs) > 2 * TAX_PCT_ABS + 1e-9
 
 
 def classify_six(metric: str, ours: float, theirs: float, figures: dict, period: str,
@@ -368,9 +389,24 @@ def _our_tax_pct(figures: dict, period: str) -> tuple[float, dict] | None:
     return tax / pbt["value"] * 100, pbt
 
 
+def _associates_way(metric: str, ours: float, theirs: float, figures: dict, period: str) -> str:
+    """Which way screener treated the associates' and joint ventures' share in Other Income or PBT of one quarter: ``with`` (it
+    counts the share), ``without``, ``neither`` (neither fits) or "" (no share, or one too small to tell the two ways apart: within
+    twice the view tolerance). A report, not a fit: the share is counted for ITC and Tata Steel and not for L&T and Sun Pharma, the
+    same way for every quarter of a company (screener-five report, rule P4); the cause is not settled."""
+    share = _value(figures, "share_associates", period)
+    if share is None or abs(share) <= 2 * max(VIEW_ABS, VIEW_REL * abs(theirs)):
+        return ""
+    base = ours + ((_value(figures, "exceptional_items", period) or 0.0) if metric == "other_income" else 0.0)
+    with_, without = view_close(base + share, theirs), view_close(base, theirs)
+    return "with" if with_ and not without else "without" if without and not with_ else "neither"
+
+
 def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_layout: bool,
-              dossier: dict | None = None) -> list[dict]:
-    """The pairs of the six other lines, quarters only."""
+              dossier: dict | None = None, get_facts=None) -> list[dict]:
+    """The pairs of the six other lines, quarters only. ``get_facts(period)`` gives a file's stored XBRL facts: read only for an
+    Operating Profit or Interest pair that memory alone does not settle (the finance-cost row of a financial-services business).
+    Other Income and PBT pairs carry ``associates`` (``_associates_way``)."""
     out: list[dict] = []
     for period, row in quarters.items():
         for metric in SIX_METRICS:
@@ -388,9 +424,22 @@ def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_lay
                     continue
                 ours = entry["value"]
             cls, note = classify_six(metric, ours, theirs, figures, period, screener_views(dossier, figures, period), row)
-            out.append({"period": period, "metric": metric, "memory_value": ours, "screener_value": theirs, "class": cls,
-                        "shifted": [], "memory_source_id": _value_source(entry), "memory_filed": entry.get("as_of") or "",
-                        "note": note})
+            adjustment = ""
+            if cls == "mismatch" and metric in ("ebitda", "finance_cost") and get_facts is not None:
+                extra = facts_extra(get_facts, figures, period)
+                if ("finance_services_cost", period) in extra:
+                    withfacts = {**figures, **extra}
+                    cls, note = classify_six(metric, ours, theirs, withfacts, period, screener_views(dossier, withfacts, period), row)
+                    if cls.startswith(VIEW):
+                        fin = extra[("finance_services_cost", period)]
+                        note += f"; finance_services_cost {fin['value']:g} ({fin['note']})"
+                        adjustment = cls[len(VIEW):] + " (xbrl facts)"
+            pair = {"period": period, "metric": metric, "memory_value": ours, "screener_value": theirs, "class": cls,
+                    "shifted": [], "memory_source_id": _value_source(entry), "memory_filed": entry.get("as_of") or "",
+                    "note": note, "adjustment": adjustment}
+            if metric in ("other_income", "pbt"):
+                pair["associates"] = _associates_way(metric, ours, theirs, figures, period)
+            out.append(pair)
     return out
 
 
@@ -408,13 +457,17 @@ BS_FIELD = {"equity_capital": "equity_capital_cr", "reserves": "reserves_cr", "b
 # no found part closes is NEVER given a definition (independent review, 28 Oct 2026: a "definition" class with no cap hid a
 # missing current-borrowings block): it is ``unexplained_larger`` when screener's figure is the larger of these four lines (the
 # rule's direction), else ``mismatch``, with the state of the facts in the note.
-BS_PARTS = {"borrowings": ("lease_liabilities", "current_maturities"), "fixed_assets": ("goodwill", "intangibles", "right_of_use"),
-            "cwip": ("intangibles_under_development",), "investments": ("equity_method", "investment_property", "other_financial_assets")}
+# The formulas below are screener's own, reproduced to the paisa from the XBRL elements for five companies (docs/audit/
+# screener-five-2026-10-28.md section 11.2): Borrowings = borrowings + the "Lease liabilities" rows; Net Block = PPE + investment
+# property + goodwill + intangibles + right-of-use assets; CWIP + intangibles under development; Investments + equity-method
+# investments. Current maturities are not in them (a row of them is not added; memory's debt lines already hold them).
+BS_PARTS = {"borrowings": ("lease_liabilities",), "fixed_assets": ("investment_property", "goodwill", "intangibles", "right_of_use"),
+            "cwip": ("intangibles_under_development",), "investments": ("equity_method",)}
 BS_PARTS_NOT_LENDER = ("investments",)     # a lender's investments equal screener's (mapping study: 25 of 25)
 BS_TOTALS = ("total_assets", "total_liabilities")   # deferred tax net: the totals lose the part of the two lines that is offset
 BS_CLASSES = ("match", "wrong_period", "scale", VIEW + "net_worth_less_capital", VIEW + "goodwill_in_fixed_assets",
               VIEW + "deferred_tax_net", "derived:part_differs", "small_gap", "unexplained_larger", "mismatch")
-CF_CLASSES = ("match", "sign", "wrong_period", "scale", "small_gap", "mismatch")
+CF_CLASSES = ("match", VIEW + "investing_plus_exchange_effect", "sign", "wrong_period", "scale", "small_gap", "mismatch")
 PLUG_ABS = 3.0       # a plug is worked out from up to five rounded figures: its gap is explained within 3 Cr (or 0.5%)
 BS_PLUGS = ("other_liabilities", "other_assets")     # screener's remainders: reported as information, never as an error count
 PLUG_NOTE = "informational (plug): "
@@ -456,11 +509,12 @@ def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], 
         return "wrong_period", _shift_note(period, shifted)
     if _is_scale(ours, theirs):
         return "scale", ""
-    why = ""
-    if _apart(ours, theirs, "money"):
+    if _view_apart(ours, theirs):
         for value, rule in (views() if callable(views) else views):
             if view_close(value, theirs):
                 return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
+    why = ""
+    if _apart(ours, theirs, "money"):
         why = state() if callable(state) else ""
         if line in BS_PARTS and theirs > ours and not (lender and line in BS_PARTS_NOT_LENDER):
             return "unexplained_larger", (f"screener {theirs:g} against ours {ours:g}: {theirs - ours:g} more on screener, "
@@ -470,11 +524,17 @@ def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], 
     return "mismatch", (why if _apart(ours, theirs, "money") else "")
 
 
-def classify_cash(ours: float, theirs: float, shifted: list[str], period: str = "") -> tuple[str, str]:
-    """(class, note) of one cash-flow pair: ``match``; ``sign`` (ours is the opposite sign); ``wrong_period``; ``scale``;
-    ``small_gap``; else ``mismatch``."""
+def classify_cash(ours: float, theirs: float, shifted: list[str], period: str = "", views=None) -> tuple[str, str]:
+    """(class, note) of one cash-flow pair: ``match``; a view of our figure that closes a gap of more than twice the tolerance
+    (``views``: a list or a function giving (value, rule); rule C1: screener has no foreign-exchange line and adds the exchange-rate
+    effect on cash to Cash from Investing); ``sign`` (ours is the opposite sign); ``wrong_period``; ``scale``; ``small_gap``; else
+    ``mismatch``."""
     if _close(ours, theirs, "money"):
         return "match", ""
+    if _view_apart(ours, theirs):
+        for value, rule in (views() if callable(views) else views or []):
+            if view_close(value, theirs):
+                return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
     if abs(theirs) >= MIN_SHIFT_VALUE and _close(ours, -theirs, "money"):
         return "sign", "ours has the opposite sign"
     if shifted:
@@ -520,14 +580,20 @@ def _bs_views(snap: dict, line: str, ours: float | None = None, parts: dict | No
         found = {name: value for name, (value, _) in (parts or {}).items() if name in order}
         if line == "fixed_assets" and snap.get("goodwill_cr"):
             found["goodwill"] = snap["goodwill_cr"]
-        if line == "borrowings" and half_year:
-            found.pop("current_maturities", None)
         out += screener_parts.additive_views(line, ours, found, order)
-    if line in BS_TOTALS and parts and parts.get("dta") and parts.get("dtl"):
+    # rule B2: the total is Assets less the smaller of the two deferred-tax lines in a year-end column; a half-year column is not netted
+    # (TCS Sep 2026 190,782 and L&T 484,727 equal Assets)
+    if line in BS_TOTALS and not half_year and parts and parts.get("dta") and parts.get("dtl"):
         net = min(parts["dta"][0], parts["dtl"][0])
         if net >= screener_parts.floor(ours):
             out.append((ours - net, "deferred_tax_net"))
     return out
+
+
+def _parts_read(line: str, parts: dict) -> str:
+    """The parts of a line the facts hold, with where each was read (the note of a balance-sheet view)."""
+    order = BS_PARTS.get(line) or (("dta", "dtl") if line in BS_TOTALS else ())
+    return "; ".join(f"{p} {parts[p][0]:g} ({parts[p][1]})" for p in order if p in parts)
 
 
 def _facts_state(line: str, parts: dict | None, half_year: bool = False) -> str:
@@ -541,9 +607,8 @@ def _facts_state(line: str, parts: dict | None, half_year: bool = False) -> str:
     if not found:
         return f"XBRL facts stored: no {'/'.join(order)} tagged"
     listed = ", ".join(f"{p} {parts[p][0]:g} ({parts[p][1]})" for p in found)
-    skipped = "; current_maturities not applied: a half-year balance sheet has none" if half_year and "current_maturities" in found else ""
     return (f"XBRL facts stored: parts found {listed}; all applied together (those under the floor left out), "
-            f"they do not close the gap{skipped}")
+            "they do not close the gap" + ("; a half-year column is not netted for deferred tax" if half_year and line in BS_TOTALS else ""))
 
 
 def _plug_parts(snap: dict, line: str) -> dict[str, float] | None:
@@ -617,6 +682,8 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
                                          lender, period, lambda line=line: _facts_state(line, parts(), half))
             pair = {**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls, "note": note,
                     "shifted": shifted}
+            if cls.startswith(VIEW) and cls[len(VIEW):] not in MEMORY_VIEWS and parts() is not None:
+                pair["note"] += "; parts read from " + _parts_read(line, parts())
             if cls.startswith(VIEW):
                 pair["adjustment"] = cls[len(VIEW):] + (" (memory)" if cls[len(VIEW):] in MEMORY_VIEWS else " (xbrl facts)")
             out.append(pair)
@@ -631,6 +698,16 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
             out.append({**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls,
                         "note": PLUG_NOTE + note if note else PLUG_NOTE.rstrip(": ")})
     return out
+
+
+def _exchange_view(facts_for, label: str, end: date | None, months: int, ours: float):
+    """A function giving the views of Cash from Investing (rule C1): ours plus the exchange-rate effect on cash and cash equivalents
+    of the same 12-month context, read from the stored facts only when the gap needs it. [] without facts or without the element."""
+    def views():
+        facts = facts_for(label) if facts_for and end is not None else None
+        effect = facts.cr("EffectOfExchangeRateChangesOnCashAndCashEquivalents", end=end, months=months) if facts is not None else None
+        return [(ours + effect, "investing_plus_exchange_effect")] if effect else []
+    return views
 
 
 CASH_ELEMENTS = {"operating_cash_flow": "CashFlowsFromUsedInOperatingActivities",
@@ -661,10 +738,12 @@ def cash_flow_pairs(figures: dict, table: dict[str, dict], facts_for=None, skipp
                     continue
                 ours = entry["value"]
                 shifted = _shifted_columns(table, period, line, ours, theirs)
-                cls, note = classify_cash(ours, theirs, shifted, period)
+                views = _exchange_view(facts_for, f"Q4{period}", quarter_end(f"Q4{period}"), 12, ours) if line == "investing" else None
+                cls, note = classify_cash(ours, theirs, shifted, period, views)
                 out.append({"table": TABLE_CASH, "period": period, "metric": line, "memory_value": ours, "screener_value": theirs,
                             "class": cls, "shifted": shifted, "memory_source_id": _value_source(entry),
-                            "memory_filed": entry.get("as_of") or "", "note": note})
+                            "memory_filed": entry.get("as_of") or "", "note": note,
+                            "adjustment": "investing_plus_exchange_effect (xbrl facts)" if cls.startswith(VIEW) else ""})
             continue
         end = _year_end(period)
         label = canonical_period(f"quarter ended {end:%d.%m.%Y}")
@@ -679,11 +758,13 @@ def cash_flow_pairs(figures: dict, table: dict[str, dict], facts_for=None, skipp
                 continue
             paired += 1
             shifted = _shifted_columns(table, period, line, ours, theirs)
-            cls, note = classify_cash(ours, theirs, shifted, period)
+            cls, note = classify_cash(ours, theirs, shifted, period,
+                                      (lambda ours=ours: _exchange_view(lambda _: facts, label, end, 12, ours)()) if line == "investing" else None)
             out.append({"table": TABLE_CASH, "period": period, "metric": line, "memory_value": ours, "screener_value": theirs,
                         "class": cls, "shifted": shifted, "memory_source_id": f"facts:{label}", "memory_filed": "",
                         "note": (note + "; " if note else "") + f"from the file's own 12-month cash flow to {end:%d %b %Y} (memory keeps none)",
-                        "adjustment": "own_year_end (xbrl facts)"})
+                        "adjustment": "investing_plus_exchange_effect (xbrl facts)" if cls.startswith(VIEW)
+                        else "own_year_end (xbrl facts)"})
         if not paired and skipped is not None:
             skipped.append({"period": period, "reason": reason or f"the {label} file holds no 12-month cash flow to {end:%d %b %Y}"})
     return out
@@ -848,6 +929,9 @@ def facts_extra(get_facts, figures: dict, period: str) -> dict:
         name = FACT_FIGURES[part]
         if _value(figures, name, period) is None:
             out[(_norm(name), period)] = {"value": value, "note": where, "from_facts": True}
+    fin = screener_parts.finance_services_cost(facts, end, months)
+    if fin and _value(figures, "finance_services_cost", period) is None:
+        out[("finance_services_cost", period)] = {"value": fin[0], "note": fin[1], "from_facts": True}
     treasury = screener_parts.treasury_shares(facts, end, months)
     if treasury:
         out[("treasury_shares", period)] = {"value": treasury[0], "note": treasury[1], "from_facts": True}
@@ -872,7 +956,10 @@ def _parts_note(extra: dict, period: str, revenue: float | None) -> str:
 
 def _view_from_facts(rule: str, extra: dict, period: str) -> bool:
     """Whether a view's parts came from the facts (any part of it is in ``extra``)."""
-    tokens = ["treasury_shares"] if rule == "treasury_shares" else [FACT_FIGURES[t] for t in rule.split("_") if t in FACT_FIGURES]
+    if rule in ("treasury_shares", "financial_services_finance_cost"):
+        tokens = ["treasury_shares" if rule == "treasury_shares" else "finance_services_cost"]
+    else:
+        tokens = [FACT_FIGURES[t] for t in rule.split("_") if t in FACT_FIGURES]
     return any((_norm(t), period) in extra for t in tokens)
 
 
@@ -948,7 +1035,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                                 "eps_on_continuing_profit" if named.startswith("eps_continuing") else ""
                     if cls == "mismatch":
                         for value, rule in screener_views(dossier, withfacts, period).get(metric, []):
-                            if view_close(value, theirs, metric) and _apart(entry["value"], theirs, metric):
+                            if view_close(value, theirs, metric) and _view_apart(entry["value"], theirs, metric):
                                 cls, note = VIEW + rule, f"screener's view of our figure: {entry['value']:g} -> {value:g} ({rule})"
                                 from_facts = _view_from_facts(rule, extra, period)
                                 adjustment = rule + (" (xbrl facts)" if from_facts else " (memory)")
@@ -972,7 +1059,9 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
             p["class"] = "steady_line_difference"
             p["note"] = "near-constant difference or ratio across quarters"
     out["pairs"] = pairs
-    out["six_pairs"] = six_pairs(figures, page["quarters"], lender, bool(page.get("lender_layout")), dossier)
+    out["six_pairs"] = six_pairs(figures, page["quarters"], lender, bool(page.get("lender_layout")), dossier,
+                                 get_facts if facts is not None else None)
+    out["associates"] = {w: sum(1 for p in out["six_pairs"] if p.get("associates") == w) for w in ("with", "without", "neither")}
     steady_older(pairs, out["six_pairs"])
     # the balance sheet and the cash flow (28 Oct 2026): counted apart, read only, never in "pairs"
     def parts_for(period: str):
@@ -1107,6 +1196,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     cf_by_line: dict[str, dict[str, int]] = {}
     table_rows = []     # balance-sheet and cash-flow rows: the CSV carries them, summary["rows"] (the referees' input) does not
     sections = {k: 0 for k in SECTION_KEYS}
+    associates: list[dict] = []     # per company: the quarters screener counted the associates' share in, and those it did not
     cf_skipped: dict[str, int] = {}
     cf_skipped_companies = 0
 
@@ -1127,6 +1217,9 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
         sections["compared_with_cash_flow"] += used.get("cash_flow", 0)
         sections["companies_with_balance_sheet_pairs"] += bool(r.get("bs_pairs"))
         sections["companies_with_cash_flow_pairs"] += bool(r.get("cf_pairs"))
+        way = r.get("associates") or {}
+        if sum(way.values()):
+            associates.append({"scrip": r["scrip"], "symbol": r["symbol"], **way, "treatment": associates_treatment(way)})
         for skip in r.get("cf_skipped", []):
             cf_skipped[skip["reason"]] = cf_skipped.get(skip["reason"], 0) + 1
         cf_skipped_companies += bool(r.get("cf_skipped"))
@@ -1174,6 +1267,8 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             "six_pairs": sum(sum(row.values()) for row in six_by_class.values()), "six_by_class": six_by_class,
             "bs_pairs": sum(sum(row.values()) for row in bs_by_line.values()), "bs_by_line": _in_order(bs_by_line, BS_LINES),
             "cf_pairs": sum(sum(row.values()) for row in cf_by_line.values()), "cf_by_line": _in_order(cf_by_line, CF_LINES),
+            "associates": {"companies": associates,
+                           **{k: [a["symbol"] for a in associates if a["treatment"] == k] for k in ASSOCIATES_TREATMENTS}},
             "sections": sections, "cf_skipped": {"columns": sum(cf_skipped.values()), "companies": cf_skipped_companies,
                                                   "by_reason": cf_skipped},
             "gaps": gaps, "memory_period_suspect": suspects, "verdicts": verdicts, "naming": naming,
@@ -1213,6 +1308,29 @@ def to_referee_csv(summary: dict) -> str:
 
 def to_json(summary: dict) -> str:
     return json.dumps({k: v for k, v in summary.items() if k not in ("rows", "table_rows")}, ensure_ascii=False, indent=1) + "\n"
+
+
+ASSOCIATES_TREATMENTS = ("counted", "not counted", "mixed", "unclear")
+
+
+def associates_treatment(way: dict) -> str:
+    """How screener treated the associates' share over a company's quarters: ``counted`` (in Other Income and PBT, in every quarter
+    that could tell), ``not counted``, ``mixed`` or ``unclear`` (only quarters where neither way fits)."""
+    with_, without = way.get("with", 0), way.get("without", 0)
+    return "mixed" if with_ and without else "counted" if with_ else "not counted" if without else "unclear"
+
+
+def associates_lines(summary: dict) -> list[str]:
+    """The associates' share as a named alternative, reported and not fitted: which way each company matches, quarter by quarter."""
+    a = summary.get("associates") or {"companies": [], **{k: [] for k in ASSOCIATES_TREATMENTS}}
+    lines = ["associates' share in Other Income and PBT (a named alternative, reported, never fitted; quarters whose share is within "
+             f"twice the tolerance are left out): {len(a['companies'])} companies"]
+    for k in ASSOCIATES_TREATMENTS:
+        if a.get(k):
+            lines.append(f"  {k:12}{len(a[k])}: " + ", ".join(a[k][:40]) + (" ..." if len(a[k]) > 40 else ""))
+    for c in a["companies"][:40]:
+        lines.append(f"    {c['symbol']:14}counted in {c['with']} quarters, not counted in {c['without']}, neither fits in {c['neither']}")
+    return lines
 
 
 def _line_label(line: str) -> str:
@@ -1263,6 +1381,7 @@ def render(summary: dict) -> str:
     lines += [f"  {name:26}{c[name]}" for name in CLASSES]
     lines += [f"  {name:26}{n}" for name, n in sorted(c.items()) if name not in CLASSES and n]
     lines += sections_lines(summary)
+    lines += associates_lines(summary)
     if summary.get("six_by_class"):
         lines += [f"six other lines, pairs       {summary['six_pairs']}"]
         for metric, row in sorted(summary["six_by_class"].items()):
@@ -1323,6 +1442,10 @@ def to_markdown(summary: dict, date: str) -> str:
     out += ["## Sections found on the stored pages", "",
             "The balance sheet and the cash flow are read from the page sections `id=\"balance-sheet\"` and `id=\"cash-flow\"`. "
             "A missing section is not a clean result: no pair was made.", "", "```", *sections_lines(summary), "```", ""]
+    out += ["## The associates' share (Other Income and PBT)", "",
+            "Screener counts the share of associates and joint ventures in Other Income and PBT for some companies and not for others, the "
+            "same way in every quarter of a company (docs/audit/screener-five-2026-10-28.md, rule P4; the cause is not settled). It is "
+            "reported here as a named alternative, never used to make a gap fit.", "", "```", *associates_lines(summary), "```", ""]
     out += ["## Not settled", "", f"- both_match (two different lines): {v.get('both_match', 0)}",
             f"- neither: {v.get('neither', 0)}",
             f"- no_official_text: {v.get('no_official_text', 0)} (listed in referee.csv, for a later step to fetch)", "",

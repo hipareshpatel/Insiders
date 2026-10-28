@@ -9,6 +9,13 @@ Screener's rules (docs/bench/screener-rules.md rows 1, 2, 10, 11; docs/design/sc
 - deferred tax is shown net (assets and liabilities offset, so both totals are smaller by the amount offset);
 - EPS on total shares (treasury shares counted) and on total profit against continuing profit.
 
+The formulas below are the ones docs/audit/screener-five-2026-10-28.md (sections 4 and 11.2) reproduces to the paisa for TCS, Sun
+Pharma, L&T, Tata Steel and ITC; in crore. Sales = revenue - the Excise Duty row. Interest = FinanceCosts + the finance-cost row of a
+financial-services business (L&T); Expenses and Operating Profit leave it out. Borrowings = borrowings + the "Lease liabilities" rows.
+Total = Assets - min(DTA, DTL) in a year-end column (not in a half-year one). Net Block = PPE + investment property + goodwill +
+intangibles + right-of-use assets. CWIP + intangibles under development. Investments + equity-method investments. Cash from Investing
++ the exchange-rate effect on cash.
+
 An adjustment is offered only for a part the facts show, never for a gap alone. Which element carries a part is not the same for
 every filer, and the integrated taxonomy (config/xbrl_sums, read 28 Oct 2026: INDAS, NBFC, BANKING) has NO element for excise
 duty, sales tax, VAT, GST, discounts, lease liabilities, right-of-use assets, current maturities or treasury shares. A filer
@@ -46,6 +53,11 @@ FLOW_PARTS = {   # part -> (element name regex, breakdown row description regex)
     "discounts": (r"^(TradeDiscounts?|SalesDiscounts?|Discounts?|Rebates?)(?![a-z])", r"^\s*(trade )?(discount|rebate)s?\b"),
 }
 FLOW_ORDER = ("excise", "taxes", "discounts")
+# L&T files the finance cost of its financial-services business as a row of Other expenses; screener moves it from Expenses to
+# Interest (docs/audit/screener-five-2026-10-28.md, rule P2, reproduced to the paisa: Q1FY26 781.61 + 1,706.35 = 2,487.96)
+FINANCE_MEMBER = r"^\s*finance costs? of (a |the )?financial[- ]services"
+# the other lines a row of a breakdown can be: right-of-use assets are a row of Other non-current assets (rule B3, ITC 501.00 Cr)
+ASSET_PARENTS = ("OtherNoncurrentAssets",)
 # a lease line is a lease-liability element, or a current maturity OF a lease (a current lease liability, never a maturity of
 # borrowings); a payment, interest, expense or undiscounted amount is no balance
 LEASE_ELEMENT = r"LeaseLiabilit|Maturit\w*Lease"
@@ -87,6 +99,13 @@ def flow_parts(facts: Facts, end: date, months: int) -> dict[str, tuple[float, s
     return out
 
 
+def finance_services_cost(facts: Facts, end: date, months: int) -> tuple[float, str] | None:
+    """The finance cost of a financial-services business a company files as a row of Other expenses (L&T), in crore: screener's
+    Interest holds it (``FinanceCosts`` + this) and its Expenses and Operating Profit leave it out. None when the file has no
+    such row."""
+    return _sum(facts.described(EXPENSE_PARENTS, FINANCE_MEMBER, end=end, months=months), "breakdown row")
+
+
 def _side(name: str) -> str:
     """Which side of the balance sheet an element name is on: noncurrent, current, or total (neither word)."""
     lower = name.lower()
@@ -125,8 +144,9 @@ def balance_parts(facts: Facts, instant: date) -> dict[str, tuple[float, str]]:
     """The balance-sheet parts screener adds at one date (crore, each with where it was read): ``lease_liabilities``,
     ``current_maturities``, ``intangibles``, ``right_of_use``, ``intangibles_under_development``, ``equity_method``,
     ``investment_property``, ``other_financial_assets``, and the two deferred-tax lines (``dta``, ``dtl``). Each item is read
-    once (see ``lease_liabilities``). Right-of-use assets are offered only when a separate right-of-use element is there with
-    property, plant and equipment tagged apart: only then does memory's fixed assets (that element) demonstrably leave them out."""
+    once (see ``lease_liabilities``). Right-of-use assets: a row "Right-of-use assets" of Other non-current assets (rule B3: a row
+    of that line is outside property, plant and equipment by construction), else a separate right-of-use element with property,
+    plant and equipment tagged apart; never a row of any other line (it could sit inside PPE)."""
     at = {"instant": instant}
     out: dict[str, tuple[float, str]] = {}
 
@@ -143,6 +163,10 @@ def balance_parts(facts: Facts, instant: date) -> dict[str, tuple[float, str]]:
     rou = _sum(facts.find(r"RightOfUse", **at), "element")
     if rou and facts.cr("PropertyPlantAndEquipment", **at) is not None:
         out["right_of_use"] = rou
+    elif not rou:
+        rows = _sum(facts.described(ASSET_PARENTS, r"^\s*right.of.use", **at), "breakdown row")
+        if rows:
+            out["right_of_use"] = rows
     one("intangibles_under_development", "IntangibleAssetsUnderDevelopment")
     one("equity_method", "InvestmentsAccountedForUsingEquityMethod")
     one("investment_property", "InvestmentProperty")

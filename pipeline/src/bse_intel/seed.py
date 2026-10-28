@@ -69,9 +69,10 @@ def _cache(root: Path | None, url: str) -> Path | None:
     return root / "xbrl" / (hashlib.sha1(url.encode()).hexdigest()[:20] + ".xml.gz")
 
 
-def _fetch(client, url: str, root: Path | None, sink=None) -> bytes | None:
+def _fetch(client, url: str, root: Path | None, sink=None, max_bytes: int = 8_000_000) -> bytes | None:
     """One XBRL file, kept by checksum so a parser fix is a re-parse and not another download: the local cache first,
-    then our copy in R2 (xbrl_store, F191), then the exchange (and R2 gets the file)."""
+    then our copy in R2 (xbrl_store, F191), then the exchange (and R2 gets the file). ``max_bytes`` is the client's size limit
+    for the download (8 MB, the seed's own; xbrl-facts passes the annual-report limit for a results file over it)."""
     path = _cache(root, url)
     if path and path.exists():
         try:
@@ -82,7 +83,7 @@ def _fetch(client, url: str, root: Path | None, sink=None) -> bytes | None:
     fresh = not data
     if fresh:
         try:
-            data = client.download(url, max_bytes=8_000_000)
+            data = client.download(url, max_bytes=max_bytes)
         except Exception as exc:   # one dead file is that quarter's gap, not the company's: only 404/410 (a refusal still raises)
             if getattr(getattr(exc, "response", None), "status_code", None) not in (404, 410):
                 raise

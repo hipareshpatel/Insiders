@@ -98,9 +98,23 @@
 #   NSE memory group `maint-nse-memory`, so it never runs beside a seed job's NSE traffic; `annual` also keeps each company's
 #   annual-report XBRL, Ind AS only, as annual-<FY>-<basis>: one NSE list request a company, so it joins that group too, and a file is fetched only with `apply`). `ids` = companies, `limit` = the N largest
 #   by market cap (as for screener-crosscheck), `dry_run` = parse and count, write nothing (with `apply`: list the files, download none). summary.json (what is stored, bytes a file, which levy, lease or treasury lines the files
-#   carry) and not-stored.csv go up as the artifact `xbrl-facts`. Group maint-ro-xbrl-facts (`apply`: maint-nse-memory); writes nothing but raw/xbrl-facts/
+#   carry) and not-stored.csv go up as the artifact `xbrl-facts-<shard>`. Group maint-ro-xbrl-facts (`apply`: maint-nse-memory); writes nothing but raw/xbrl-facts/
 #   (and raw/xbrl/ for a downloaded file); no memory, card or branch change. screener-crosscheck takes `ids` (companies) and
 #   `limit` (the N largest by market cap) too.
+#   `from_nse` (owner, 28 Oct 2026: "download now every results XBRL and annual-report XBRL for the whole universe"; XBRL only, the
+#   PDFs are fetched on demand later): with `apply`, each company's results files are listed from NSE's own list (the seed's call and
+#   its latest-12-quarters selection, both bases; one list request a company, which does not count toward `file_cap`; each file does),
+#   every file not stored is fetched through the seed's fetch (our copy in R2, else NSE at the client's pace, the annual-report size
+#   limit) and its facts are saved at once; no memory or dossier is written. `annual` adds the annual-report XBRL. A rerun skips
+#   stored files and, for a company whose files are all stored (marker raw/xbrl-facts/<scrip>/_listed.json, under 7 days old), the
+#   list. `shards` (1 to 8, the owner allows 8 parallel downloads and no more) runs the job as a matrix, one NseClient and one
+#   artifact (`xbrl-facts-<shard>`: summary.json and listing.csv, the CSV one line a listed file with its status and every timestamp
+#   NSE's row carries, for measuring how long after the results PDF the XBRL appears) each; `file_cap` is split over the shards. Each
+#   shard saves as it goes, stops on its time budget of 5 h 20 min (exit 124: a marker, not a failure; dispatch again), stops at once on a
+#   403, 429, 503 or a challenge page (exit 75, status and the body's first 300 bytes in the log), and counts any other empty
+#   download by reason (HTTP status, size limit, not XML) in summary.json while it goes on. The raw files in R2 (raw/xbrl/) keep to
+#   the 180-day rule and the 2 GB cap; the facts (raw/xbrl-facts/) are kept. A run with `apply` is refused without `file_cap`
+#   (a full run: a number above the files left, such as 1000000).
 # - tijori-referee: read only (owner 26 Oct 2026). The Tijori cross-check's revenue and profit leads (screener agrees with
 #   Tijori against memory) and its sign differences, each looked up in NSE's results XBRL as screener-referee does; the CSV's
 #   screener_value is Tijori's where screener has none. Artifact `tijori-referee`. Writes nothing.
@@ -275,6 +289,14 @@ on:
         description: xbrl-facts only - also keep the annual-report XBRL (Ind AS only, never BRSR, the latest 3 years a basis), one NSE list request a company, so the run joins the NSE memory group; a file not stored is fetched only with apply
         type: boolean
         default: false
+      from_nse:
+        description: xbrl-facts only - with apply, list each company's results files from NSE's own list (the seed's latest 12 quarters, both bases) and download every file not stored, keeping its facts as it goes; no memory write (one list request a company, not counted toward file_cap; each file is)
+        type: boolean
+        default: false
+      shards:
+        description: xbrl-facts only - run as this many parallel runners, 1 to 8 (owner, 28 Oct 2026, 8 at most), each its own NSE client; file_cap is split over them (file_cap // shards each)
+        type: string
+        default: '1'
       file_cap:
         description: a test run's cap on NSE/BSE files (owner, 27 Oct 2026, the first test of a fetch is 100 files); empty means no cap
         type: string
@@ -308,7 +330,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -323,11 +345,6 @@ jobs:
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       DISCOVERY_SOURCE: nse
     steps:
-      - name: Refuse an xbrl-facts download without a file cap
-        if: inputs.command == 'xbrl-facts' && inputs.apply && (inputs.file_cap == '' || inputs.file_cap == '0')
-        run: |
-          echo "::error::xbrl-facts with apply downloads NSE files: give file_cap (the first test of a fetch is 100 files, owner 27 Oct 2026)"
-          exit 1
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
@@ -719,29 +736,6 @@ jobs:
         with:
           name: screener-crosscheck
           path: ${{ runner.temp }}/crosscheck/
-          if-no-files-found: ignore
-      - name: Keep every fact of the stored results XBRL files (R2 and memory; NSE only with apply)
-        if: inputs.command == 'xbrl-facts'
-        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
-        env:
-          PLATFORM_TIMEOUT_S: "30"   # F216
-          PLATFORM_ATTEMPTS: "3"
-          IDS: ${{ inputs.ids }}       # through the environment, never pasted into the script
-          LIMIT: ${{ inputs.limit }}
-          APPLY: ${{ inputs.apply }}
-          ANNUAL: ${{ inputs.annual }}
-        run: |
-          code=0
-          mkdir -p "$RUNNER_TEMP/xbrl-facts"
-          download=; if [ "$APPLY" = "true" ]; then download=--download; fi   # the files not stored: NSE, under FILE_CAP
-          annual=; if [ "$ANNUAL" = "true" ]; then annual=--annual; fi        # the annual-report XBRL: a list request a company
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} $download $annual ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/not-stored.csv" || code=$?
-          exit "$code"
-      - uses: actions/upload-artifact@v4
-        if: always() && inputs.command == 'xbrl-facts'
-        with:
-          name: xbrl-facts
-          path: ${{ runner.temp }}/xbrl-facts/
           if-no-files-found: ignore
       - name: Cross-check memory against the stored Tijori pages (reads only)
         if: inputs.command == 'tijori-crosscheck'
@@ -1634,9 +1628,108 @@ jobs:
           path: ${{ runner.temp }}/pdfreferee/
           if-no-files-found: ignore
 
+  # xbrl-facts (owner, 28 Oct 2026): one job, `shards` runners (1 to 8, the owner allows 8 parallel downloads and no more), each its own
+  # NseClient and so its own address and pace, each taking every N-th company (`--shard I/N`). The plan job checks the number and
+  # gives the matrix. Each shard saves a file and its facts to R2 the moment it has them, stops cleanly after `--time-budget` 19200 s
+  # (5 h 20 min; GitHub's own limit is 6 h) with exit 124 (a `more` marker, not a failure: dispatch again for the rest), stops at once
+  # on a refusal (exit 75, the shard fails, the others go on) and always uploads its summary and CSV (artifact xbrl-facts-<shard>).
+  xbrl-facts-plan:
+    if: inputs.command == 'xbrl-facts'
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+    steps:
+      - id: plan
+        env:
+          SHARDS: ${{ inputs.shards }}   # through the environment, never pasted into the script
+        run: |
+          n="${SHARDS:-1}"
+          case "$n" in
+            [1-8]) ;;
+            *) echo "::error::shards must be a whole number from 1 to 8 (owner, 28 Oct 2026: 8 parallel downloads, no more)"; exit 1 ;;
+          esac
+          echo "shards=[$(seq -s, 0 $((n - 1)))]" >> "$GITHUB_OUTPUT"
+
+  xbrl-facts:
+    needs: xbrl-facts-plan
+    if: inputs.command == 'xbrl-facts'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 350   # the run's step ends at 335 and the budget at 320, so the upload steps below still run
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.xbrl-facts-plan.outputs.shards) }}
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213: a run that reached the file cap leaves a marker here
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
+      FILE_CAP_SHARDS: ${{ inputs.shards || '1' }}   # F213: the run's cap is split over the shards (FILE_CAP // shards each)
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - name: Refuse an xbrl-facts download without a file cap
+        if: inputs.apply && (inputs.file_cap == '' || inputs.file_cap == '0')
+        run: |
+          echo "::error::xbrl-facts with apply downloads NSE files: give file_cap (the first test of a fetch is 100 files, owner 27 Oct 2026; a full run, a number above the files left, such as 1000000)"
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Keep every fact of the results XBRL files (R2 and memory; NSE only with apply)
+        timeout-minutes: 335   # F216: a step that overruns ends here, so the upload steps below still run
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
+          IDS: ${{ inputs.ids }}       # through the environment, never pasted into the script
+          LIMIT: ${{ inputs.limit }}
+          APPLY: ${{ inputs.apply }}
+          ANNUAL: ${{ inputs.annual }}
+          FROM_NSE: ${{ inputs.from_nse }}
+          SHARDS: ${{ inputs.shards || '1' }}
+          SHARD: ${{ matrix.shard }}
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/xbrl-facts" "$RUNNER_TEMP/more"
+          download=; if [ "$APPLY" = "true" ]; then download=--download; fi   # the files not stored: NSE, under FILE_CAP
+          annual=; if [ "$ANNUAL" = "true" ]; then annual=--annual; fi        # the annual-report XBRL: a list request a company
+          from_nse=; csv=not-stored.csv
+          if [ "$FROM_NSE" = "true" ]; then from_nse=--from-nse; csv=listing.csv; fi   # NSE's own list of each company's results files
+          shard=; if [ "$SHARDS" != "1" ]; then shard="--shard $SHARD/$SHARDS"; fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} $shard $from_nse $download $annual --time-budget 19200 ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/$csv" || code=$?
+          if [ "$code" -eq 124 ]; then echo more > "$RUNNER_TEMP/more/$SHARD"; echo "::notice::shard $SHARD stopped on its time budget: everything fetched is saved; dispatch again for the rest"; code=0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xbrl-facts-${{ matrix.shard }}
+          path: ${{ runner.temp }}/xbrl-facts/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: xbrl-facts-more-${{ matrix.shard }}
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+      - name: Leave a marker when the file cap was reached (the chain then does not move on)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xbrl-facts-capped-${{ matrix.shard }}
+          path: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

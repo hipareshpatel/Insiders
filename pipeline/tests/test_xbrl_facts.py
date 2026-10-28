@@ -311,12 +311,12 @@ def test_workflow_limit_means_the_n_largest_for_both_commands():
 
 def test_workflow_refuses_an_xbrl_facts_download_without_a_file_cap_before_installing():
     text, doc = workflow()
-    steps = doc["jobs"]["run"]["steps"]
+    steps = doc["jobs"]["xbrl-facts"]["steps"]
     refuse = next(i for i, st in enumerate(steps) if "Refuse an xbrl-facts download" in st.get("name", ""))
     install = next(i for i, st in enumerate(steps) if st.get("name") == "Install")
     assert refuse < install
     cond = steps[refuse]["if"]
-    assert "inputs.command == 'xbrl-facts'" in cond and "inputs.apply" in cond and "inputs.file_cap == ''" in cond and "'0'" in cond
+    assert "inputs.apply" in cond and "inputs.file_cap == ''" in cond and "'0'" in cond
     assert "exit 1" in steps[refuse]["run"]
     assert "FILE_CAP: ${{ inputs.file_cap || '0' }}" in text            # the cap the run then holds
 

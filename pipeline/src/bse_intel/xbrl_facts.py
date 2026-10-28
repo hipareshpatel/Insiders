@@ -27,13 +27,17 @@ from __future__ import annotations
 
 import gzip
 import json
+import logging
 import re
+import time
 import xml.etree.ElementTree as ET
-from datetime import date
+from datetime import date, datetime
 
 from . import xbrl, xbrl_store
-from .periods import quarter_index
+from .periods import canonical_period, quarter_index
 from .timeutil import today_ist
+
+log = logging.getLogger(__name__)
 
 PREFIX = "raw/xbrl-facts/"
 VERSION = 1
@@ -420,6 +424,240 @@ def interesting(facts: Facts) -> set[str]:
     return out
 
 
+# --- every results file NSE lists (``--from-nse``, owner 28 Oct 2026: "download now every results XBRL and annual-report XBRL") ----
+
+MAX_SHARDS = 8            # owner, 28 Oct 2026: 8 parallel downloads, no more
+SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
+LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
+FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
+GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS
+REFUSAL_STATUSES = (401, 403, 429, 503)      # the client's own BLOCKING_STATUS and the archive host's 503: the shard stops
+HEAD_BYTES = 2000         # of a response body kept to tell a challenge page from a file (300 bytes are logged)
+CHALLENGE = re.compile(rb"cloudflare|akamai|just a moment|attention required|access denied|incapsula|captcha|cf-chl|cf-ray|"
+                       rb"edgesuite|reference #\d", re.I)
+TIME_VALUE = re.compile(r"\d{1,2}-[A-Za-z]{3}-\d{4}|\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{4}|\d{1,2}:\d{2}")
+# the timestamp fields NSE's two lists are known to carry (nse.py: broadcast_Date, revised_Date, creation_Date, qe_Date in the integrated
+# list; filingDate, broadCastDate, exchdisstime, fromDate, toDate in the older one), a column each; every other field of the raw row
+# whose value looks like a date or a time goes into ``times``, and ``raw_keys`` names every field the row has
+TIME_FIELDS = ("broadcast_Date", "revised_Date", "creation_Date", "qe_Date", "filingDate", "broadCastDate", "exchdisstime",
+               "fromDate", "toDate")
+LISTING_HEADER = (["scrip", "symbol", "period", "basis", "status", "list", "url", "filed_at", "period_end", "taxonomy", "revised",
+                   "name_stamp_raw", "name_stamp_iso"] + list(TIME_FIELDS) + ["times", "raw_keys"])
+
+
+def shard_slice(companies: list[tuple[str, str]], index: int, count: int) -> list[tuple[str, str]]:
+    """The ``index``-th of ``count`` slices of the company list: sorted by scrip, then every ``count``-th company from the
+    ``index``-th, so each shard gets a like mix of sizes and the slices are the same on every run and cover everyone once."""
+    if not 0 <= index < count <= MAX_SHARDS:
+        raise ValueError(f"shard {index}/{count}: need 0 <= I < N <= {MAX_SHARDS}")
+    return sorted(companies)[index::count]
+
+
+def listed_key(scrip: str) -> str:
+    """``raw/xbrl-facts/<scrip>/_listed.json``: what NSE's list gave for the company on the day it was last asked (the periods
+    and bases chosen, and the files NSE listed but did not serve), so a rerun can skip the list while every period is stored."""
+    return f"{PREFIX}{scrip}/_listed.json"
+
+
+def select_files(rows) -> list[tuple[str, str, object]]:
+    """(period, basis, row) of the files to keep from NSE's results list: the seed's own selection (``seed._nse_quarters``: consolidated
+    over standalone, the integrated filing over the older list's row, then the later filing, from SINCE; ``seed._recent_and_years``:
+    the latest SEED_QUARTERS quarters and the March quarters before them), with BOTH bases of each chosen quarter (the seed
+    keeps one, and the standalone files of a consolidated filer apart). Newest first."""
+    from . import seed
+
+    by_basis: dict[bool, dict] = {True: {}, False: {}}
+    for row in sorted(rows, key=lambda r: (not getattr(r, "legacy", False), r.filed_at)):
+        if not row.period_end or row.period_end < SINCE:
+            continue
+        label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
+        if label:
+            by_basis[bool(row.consolidated)][label] = row
+    chosen = seed._recent_and_years({**by_basis[False], **by_basis[True]})
+    out = [(label, "CONSOLIDATED" if consolidated else "STANDALONE", row)
+           for consolidated in (True, False) for label, row in by_basis[consolidated].items() if label in chosen]
+    return sorted(out, key=lambda t: (t[2].period_end, t[1] == "CONSOLIDATED"), reverse=True)
+
+
+_NAME_STAMP = re.compile(r"(?<!\d)(\d{14})(?!\d)")
+
+
+def file_name_stamp(url: str) -> tuple[str, str]:
+    """(the 14 digits in the file name, as an ISO time) - "INTEGRATED_FILING_INDAS_1664294_06052026105412_WEB.xml" holds
+    06052026105412, read as DDMMYYYYHHMMSS like the shareholding names (nse.shareholding_filed_at); ("", "") when the name has none;
+    the digits alone when they are no valid time. The clock NSE stamps it with is for the later timing measurement to settle."""
+    m = _NAME_STAMP.search(url.rsplit("/", 1)[-1])
+    if not m:
+        return "", ""
+    try:
+        return m[1], datetime.strptime(m[1], "%d%m%Y%H%M%S").isoformat()
+    except ValueError:
+        return m[1], ""
+
+
+def looks_like_xml(head: bytes) -> bool:
+    return head.lstrip()[:200].lower().lstrip(b"\xef\xbb\xbf").startswith((b"<?xml", b"<xbrl"))
+
+
+def _is_refusal(info: dict) -> bool:
+    """A refusal by its status, or a Cloudflare / Akamai challenge page served with a good status (anything that is neither
+    JSON nor XML and carries the challenge's own words)."""
+    if info["status"] in REFUSAL_STATUSES:
+        return True
+    head = info["head"]
+    return (200 <= info["status"] < 300 and not info["xml"] and head.lstrip()[:1] not in (b"{", b"[")
+            and bool(CHALLENGE.search(head)))
+
+
+class Tap:
+    """What the NSE client does not tell: the last answer's status, size, first bytes (the client raises a refusal without its
+    body and returns None for a file it will not use without saying why), and NSE's raw list rows (the client's parsed rows keep one
+    date, the raw row has every timestamp). Attached from outside, with no change to the client: an httpx response hook on its own
+    ``httpx.Client`` and the ``raw`` store hook it already has for every JSON answer."""
+
+    def __init__(self) -> None:
+        self.last: dict | None = None
+        self.refusal: dict | None = None
+        self.rows: dict[str, tuple[str, dict]] = {}
+
+    def reset(self) -> None:
+        self.last = None
+        self.refusal = None
+
+    def hook(self, response) -> None:
+        try:
+            body = response.read()
+        except Exception:   # noqa: BLE001 - a body that cannot be read is no body
+            body = b""
+        head = body[:HEAD_BYTES]
+        info = {"status": response.status_code, "url": str(response.request.url), "size": len(body), "head": head,
+                "xml": looks_like_xml(head), "type": response.headers.get("content-type", "")}
+        self.last = info
+        if self.refusal is None and _is_refusal(info):
+            self.refusal = info
+
+    def save(self, url: str, params, status: int, body: bytes) -> None:      # the client's raw-store call, for every JSON answer
+        try:
+            data = json.loads(body)
+        except ValueError:
+            return
+        rows = data.get("data") if isinstance(data, dict) else data
+        if not isinstance(rows, list):
+            return
+        kind = "integrated" if "integrated" in url else "older"
+        for row in rows:
+            link = str(row.get("xbrl") or "").strip() if isinstance(row, dict) else ""
+            if link:
+                self.rows[link if link.startswith("http") else f"https://nsearchives.nseindia.com/{link.lstrip('/')}"] = (kind, row)
+
+
+class _Both:
+    def __init__(self, *stores) -> None:
+        self.stores = stores
+
+    def save(self, *args) -> None:
+        for store in self.stores:
+            store.save(*args)
+
+
+def attach(client) -> Tap:
+    """A Tap on the client: a client with neither hook (a test double) gives a Tap that stays empty."""
+    tap = Tap()
+    inner = getattr(client, "_client", None)
+    hooks = getattr(inner, "event_hooks", None)
+    if isinstance(hooks, dict):
+        inner.event_hooks = {**hooks, "response": [*hooks.get("response", []), tap.hook]}
+    if hasattr(client, "raw"):
+        client.raw = tap if client.raw is None else _Both(client.raw, tap)
+    return tap
+
+
+def failure_reason(exc: Exception | None, info: dict | None, limit: int) -> str:
+    """Why a call gave no file, as one short key for the summary's count."""
+    if info:
+        if 200 <= info["status"] < 300:
+            return "too_large" if info["size"] > limit else "not_xml"
+        return f"http_{info['status']}"
+    if exc is not None:
+        status = getattr(getattr(exc, "response", None), "status_code", None)
+        if status:
+            return f"http_{status}"
+        return "request_failed" if isinstance(exc, RuntimeError) else type(exc).__name__
+    return "no_response"
+
+
+class Guard:
+    """Every call to NSE of a shard goes through ``call``: a refusal (a 401, 403, 429 or 503, or a challenge page, seen in any answer of
+    the call, retries included) stops the shard at once, logged with its status and the first 300 bytes of its body; any other
+    failure comes back as a reason and the run goes on. The file cap still stops the run as the planned stop it is."""
+
+    def __init__(self, client) -> None:
+        self.tap = attach(client)
+        self.refusal: dict | None = None
+        self.last: dict | None = None      # the last answer of the last call: status, size, head, xml
+
+    def _stop(self, exc: Exception | None, note: str = ""):
+        from .nse import SourceBlockedError
+
+        info = self.tap.refusal or self.tap.last
+        if info and self.refusal is None:
+            self.refusal = {"status": info["status"], "url": info["url"], "size": info["size"],
+                            "body_head": info["head"][:300].decode("utf-8", "replace")}
+            log.error("NSE refused the shard: HTTP %s for %s; first 300 bytes of the body: %r", info["status"], info["url"],
+                      info["head"][:300])
+        if isinstance(exc, SourceBlockedError):
+            raise exc
+        status = info["status"] if info else "?"
+        raise SourceBlockedError(f"NSE refused the request (HTTP {status}){note}: " + (info["url"] if info else ""))
+
+    def call(self, fn, *args, limit: int = 1 << 62, **kwargs):
+        """(result, reason): ``reason`` is None when the call gave something; SourceBlockedError on a refusal."""
+        from .nse import FileCapReached, SourceBlockedError
+
+        self.tap.reset()
+        try:
+            result = fn(*args, **kwargs)
+        except FileCapReached:
+            raise
+        except SourceBlockedError as exc:
+            self._stop(exc)
+        except Exception as exc:   # noqa: BLE001 - one dead file or list is that company's gap, not the shard's
+            self.last = self.tap.last
+            if self.tap.refusal:      # a 503 the client retried and gave up on (it raises RuntimeError for those)
+                self._stop(exc)
+            return None, failure_reason(exc, self.tap.last, limit)
+        self.last = self.tap.last
+        if self.tap.refusal:          # a challenge page served with a good status, or a refusal met on the way
+            self._stop(None, " [challenge page or refusal in the answer]")
+        if result is None or result == b"":
+            return None, failure_reason(None, self.tap.last, limit)
+        return result, None
+
+
+class ListingCsv:
+    """The listing rows as they are decided, one line each, flushed at once: a run that is stopped, killed or timed out leaves the
+    rows it had reached (the CSV of ``--from-nse``: status and every timestamp NSE's row carries, for the timing measurement)."""
+
+    def __init__(self, path) -> None:
+        import csv
+
+        self._fh = open(path, "w", newline="", encoding="utf-8")
+        self._writer = csv.DictWriter(self._fh, LISTING_HEADER, lineterminator="\n", extrasaction="ignore")
+        self._writer.writeheader()
+        self._fh.flush()
+
+    def __call__(self, row: dict) -> None:
+        self._writer.writerow(row)
+        self._fh.flush()
+
+    def close(self) -> None:
+        self._fh.close()
+
+
+class _OutOfTime(Exception):
+    """The run's time budget is spent: stop between two files, with everything so far saved."""
+
+
 # --- the command ------------------------------------------------------------------------------------------------------
 
 MISSING_HEADER = "scrip,symbol,period,basis,url,reason".split(",")
@@ -472,7 +710,8 @@ def fetch_annual(sink, client, url: str) -> bytes | None:
 
 def run(sink, companies: list[tuple[str, str]], *, download: bool = False, client=None, force: bool = False,
         dry_run: bool = False, limit: int | None = None, annual: bool = False, annual_years: int = ANNUAL_YEARS,
-        today: date | None = None) -> dict:
+        today: date | None = None, from_nse: bool = False, time_budget: float | None = None, row_sink=None, progress=None,
+        clock=time.monotonic) -> dict:
     """Facts of every stored results file of ``companies`` ((scrip, symbol) pairs); the filings whose file is not stored are
     listed. Reads R2 and memory only: no request goes to NSE unless ``download`` is set and a ``client`` is given, and then
     only for the files not stored, through seed._fetch (the cache, then R2, then ``client.download`` with its pacing, and R2
@@ -485,9 +724,26 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
     a file: it does not count toward FILE_CAP), so it needs the ``client``; a file is read from R2 when stored, and fetched
     (``fetch_annual``: NSE's pace, FILE_CAP) only with ``download`` and never in a dry run. The list is not asked for again for a
     company whose stored annual facts cover every year kept (``annual_covered``) unless ``force``, nor in a dry run without
-    ``download`` (``force`` or not: nothing would be fetched): ``annual_list_skipped`` counts both, ``annual_lists`` the requests made."""
+    ``download`` (``force`` or not: nothing would be fetched): ``annual_list_skipped`` counts both, ``annual_lists`` the requests made.
+
+    ``from_nse`` (``--from-nse``, owner 28 Oct 2026) does not ask memory which files exist: each company's results are listed from NSE's
+    own list (``seed._rows_or_partial``, the call the seed makes; one company's list is not a file and does not count toward FILE_CAP),
+    ``select_files`` picks the seed's latest quarters in both bases, and each file whose facts are not stored goes through
+    ``seed._fetch`` (the cache, then R2, then ``client.download`` at the client's own pace, with the annual-report size limit; R2
+    keeps the file) and its facts are saved at once. It writes NO memory and NO dossier. A company whose marker (``listed_key``) is
+    under LIST_REFRESH_DAYS old and whose every period is stored (or was NSE's 404) is not listed again. ``dry_run`` without
+    ``download`` asks NSE for nothing; with it the lists are asked for and no file is fetched. Any 401, 403, 429, 503 or challenge
+    page stops the run at once (``refusal`` in the summary: status and the first 300 bytes of the body); a file that comes back empty
+    for another reason (HTTP status, size limit, not XML) is counted in ``failed_reasons`` and the run goes on. ``row_sink`` gets one
+    dict per listed row (LISTING_HEADER) as its status is known; ``progress`` is called with the summary about once a minute;
+    ``time_budget`` (seconds on ``clock``) ends the run cleanly between two files (``out_of_time``)."""
     from . import seed
-    from .nse import FileCapReached, SourceBlockedError, stop_reason
+    from .nse import ANNUAL_REPORT_MAX_BYTES, FileCapReached, SourceBlockedError, stop_reason
+
+    if from_nse and not dry_run and (not download or client is None):
+        raise ValueError("from_nse downloads: it needs download=True and a client (or dry_run=True)")
+    deadline = clock() + time_budget if time_budget else None
+    guard = Guard(client) if (from_nse and client is not None and not (dry_run and not download)) else None
 
     summary: dict = {"companies": 0, "files_listed": 0, "facts_stored_before": 0, "facts_saved": 0, "not_results": 0,
                      "missing": 0, "no_url": 0, "downloaded": 0, "would_download": 0, "download_failed": 0, "bytes": 0, "facts": 0, "stopped": "",
@@ -495,15 +751,19 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                      "missing_rows": [], "failed": [], "no_url_companies": 0, "capped": False,
                      "annual": annual, "annual_lists": 0, "annual_have": 0, "annual_saved": 0, "annual_missing": 0,
                      "annual_downloaded": 0, "annual_bytes": 0, "annual_not_ind_as": 0, "annual_skipped": "",
-                     "annual_list_skipped": {"covered": 0, "dry_run": 0}}
+                     "annual_list_skipped": {"covered": 0, "dry_run": 0},
+                     "from_nse": from_nse, "lists": 0, "lists_skipped": {"stored": 0, "dry_run": 0}, "partial_lists": 0,
+                     "list_failed": 0, "listed_files": 0, "skipped_stored": 0, "from_store": 0, "not_reached": 0,
+                     "failed_reasons": {}, "refusal": None, "out_of_time": False, "store_full": False, "company_errors": 0}
     stored_files = xbrl_store.stored_keys(sink)
     stored_facts = set(sink.list_objects(PREFIX))
 
-    def keep(scrip: str, period: str, basis: str, url: str, data: bytes) -> None:
+    def keep(scrip: str, period: str, basis: str, url: str, data: bytes) -> bool:
+        """The file's facts saved (counted only, in a dry run); False when the file holds no results."""
         doc = parse_facts(data, scrip, url)
         if doc is None:
             summary["not_results"] += 1
-            return
+            return False
         doc["period"] = period      # memory's label of the file: what the cross-check looks it up by
         size = len(dumps(doc))
         if not dry_run:
@@ -513,6 +773,7 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         summary["facts"] += doc["n_facts"]
         for name in interesting(Facts(doc)):
             summary["interesting"][name] = summary["interesting"].get(name, 0) + 1
+        return True
 
     def keep_annual(scrip: str, fy: str, basis: str, url: str, data: bytes) -> None:
         doc = parse_annual_facts(data, scrip, url)
@@ -536,14 +797,21 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         if client is None:
             summary["annual_skipped"] = "no NSE client: the annual-report list is one request a company"
             return
-        try:
-            listing = client.annual_reports(symbol)
+        if guard is not None:
+            listing, why = guard.call(client.annual_reports, symbol)
             summary["annual_lists"] += 1
-        except SourceBlockedError:
-            raise
-        except Exception as exc:   # noqa: BLE001 - one company's list failing is a reason, not a stop
-            summary["failed"].append(f"{scrip} annual list: {type(exc).__name__}")
-            return
+            if why:
+                note_failure(why, f"{scrip} annual list", guard.last, "")
+                return
+        else:
+            try:
+                listing = client.annual_reports(symbol)
+                summary["annual_lists"] += 1
+            except SourceBlockedError:
+                raise
+            except Exception as exc:   # noqa: BLE001 - one company's list failing is a reason, not a stop
+                summary["failed"].append(f"{scrip} annual list: {type(exc).__name__}")
+                return
         rows = [r for r in listing if is_ind_as(r.report_type)]
         summary["annual_not_ind_as"] += len(listing) - len(rows)
         keep_years = set(sorted({r.to_year for r in rows}, reverse=True)[:annual_years])
@@ -562,6 +830,13 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                 if download and dry_run:
                     summary["would_download"] += 1
                     summary["missing_rows"][-1]["reason"] = "file not stored (dry run: not downloaded)"
+                elif download and guard is not None:
+                    check_time()
+                    data, why = guard.call(fetch_annual, sink, client, row.xbrl_url, limit=ANNUAL_REPORT_MAX_BYTES)
+                    if why:
+                        note_failure(why, f"{scrip} annual {fy}", guard.last, row.xbrl_url)
+                    else:
+                        summary["annual_downloaded"] += 1
                 elif download:
                     try:
                         data = fetch_annual(sink, client, row.xbrl_url)
@@ -578,11 +853,141 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             if data:
                 keep_annual(scrip, fy, row.basis, row.xbrl_url, data)
 
+    def check_time() -> None:
+        if deadline is not None and clock() >= deadline:
+            raise _OutOfTime
+
+    def note_failure(reason: str, what: str, info: dict | None, url: str, counter: str = "download_failed") -> None:
+        """A call that gave no file or list for a reason that does not stop the run: counted by reason, named (the first
+        FAILED_SAMPLES), and logged with the answer's status, size and whether the body looked like XML where it is known."""
+        summary[counter] += 1
+        label = reason if counter != "list_failed" else f"list:{reason}"
+        summary["failed_reasons"][label] = summary["failed_reasons"].get(label, 0) + 1
+        if len(summary["failed"]) < FAILED_SAMPLES:
+            summary["failed"].append(f"{what}: {label}")
+        log.warning("xbrl-facts %s: nothing kept (%s): HTTP %s, %s bytes, body looked like XML: %s %s", what, label,
+                    info["status"] if info else "unknown", info["size"] if info else "unknown",
+                    info["xml"] if info else "unknown", url)
+
+    def emit(scrip: str, symbol: str, label: str, basis: str, row, status: str) -> None:
+        """One CSV line for a listed row with its status and every timestamp the raw row carries (``Tap.rows``)."""
+        if row_sink is None:
+            return
+        kind, raw = guard.tap.rows.get(row.xbrl_url, ("", {})) if guard is not None else ("", {})
+        stamp, stamp_iso = file_name_stamp(row.xbrl_url)
+        record = {"scrip": scrip, "symbol": symbol, "period": label, "basis": basis, "status": status, "list": kind,
+                  "url": row.xbrl_url, "filed_at": row.filed_at, "period_end": row.period_end, "taxonomy": row.taxonomy,
+                  "revised": row.revised, "name_stamp_raw": stamp, "name_stamp_iso": stamp_iso,
+                  "times": json.dumps({k: v for k, v in raw.items() if isinstance(v, str) and TIME_VALUE.search(v)},
+                                      ensure_ascii=False, sort_keys=True),
+                  "raw_keys": "|".join(sorted(raw))}
+        record.update({name: raw.get(name) or "" for name in TIME_FIELDS})
+        row_sink(record)
+
+    def listing_covered(scrip: str) -> bool:
+        """Whether the company's marker says its list need not be asked for: written under LIST_REFRESH_DAYS ago, and every period it
+        names has its facts stored (or was a file NSE listed and did not serve). No request: the folder was listed once at the start."""
+        if force or listed_key(scrip) not in stored_facts:
+            return False
+        try:
+            doc = json.loads(sink.get_object(listed_key(scrip)))
+            age = ((today or today_ist()) - date.fromisoformat(doc["listed_on"])).days
+            gone = {(p, b) for p, b, _ in doc.get("gone", [])}
+            return 0 <= age < LIST_REFRESH_DAYS and all((p, b) in gone or key(scrip, p, b) in stored_facts
+                                                         for p, b in doc.get("files", []))
+        except Exception:   # noqa: BLE001 - a marker that cannot be read is no marker: the list is asked for
+            return False
+
+    def nse_company(scrip: str, symbol: str) -> None:
+        if dry_run and not download:
+            summary["lists_skipped"]["dry_run"] += 1      # nothing would be fetched and the list is a request: none is made
+            return
+        if listing_covered(scrip):
+            summary["lists_skipped"]["stored"] += 1       # every period of its last list is stored: no request at all
+            return
+        check_time()
+        guard.tap.rows.clear()
+        stats = seed.SeedStats()
+        listed, why = guard.call(seed._rows_or_partial, client, symbol, stats, scrip)
+        summary["lists"] += 1
+        if why:
+            note_failure(why, f"{scrip} list", guard.last, "", "list_failed")
+            return
+        partial = bool(stats.failures)      # the integrated list failed and only the older one came back: not a complete list
+        summary["partial_lists"] += partial
+        selected = select_files(listed)
+        summary["listed_files"] += len(selected)
+        summary["files_listed"] += len(selected)
+        gone: list[list[str]] = []
+        for index, (label, basis, row) in enumerate(selected):
+            try:
+                gone += file_of_company(scrip, symbol, label, basis, row)
+            except (SourceBlockedError, _OutOfTime):
+                for rest_label, rest_basis, rest_row in selected[index:]:
+                    summary["not_reached"] += 1
+                    emit(scrip, symbol, rest_label, rest_basis, rest_row, "not_reached")
+                raise
+        if not dry_run and not partial:
+            marker = {"v": 1, "listed_on": (today or today_ist()).isoformat(), "symbol": symbol,
+                      "files": [[label, basis] for label, basis, _ in selected], "gone": gone}
+            sink.put_object(listed_key(scrip), json.dumps(marker, separators=(",", ":")).encode(), content_type="application/json")
+
+    def file_of_company(scrip: str, symbol: str, label: str, basis: str, row) -> list[list[str]]:
+        """One listed file: skipped when its facts are stored, else read from R2 or fetched, its facts saved at once. The
+        [period, basis, reason] of a file NSE does not serve (404) comes back for the company's marker."""
+        if key(scrip, label, basis) in stored_facts and not force:
+            summary["facts_stored_before"] += 1
+            summary["skipped_stored"] += 1
+            emit(scrip, symbol, label, basis, row, "skipped_stored")
+            return []
+        data, why, source = None, None, ""
+        if xbrl_store.key(row.xbrl_url) in stored_files:
+            data = xbrl_store.get(sink, row.xbrl_url)
+            source = "from_store" if data else ""
+        if not data:
+            summary["missing"] += 1
+            if dry_run:
+                summary["would_download"] += 1
+                emit(scrip, symbol, label, basis, row, "would_fetch")
+                return []
+            check_time()
+            data, why = guard.call(seed._fetch, client, row.xbrl_url, None, sink, limit=ANNUAL_REPORT_MAX_BYTES,
+                                   max_bytes=ANNUAL_REPORT_MAX_BYTES)
+            source = "fetched"
+        if why or not data:
+            note_failure(why or "no_response", f"{scrip} {label} {basis.lower()}", guard.last, row.xbrl_url)
+            emit(scrip, symbol, label, basis, row, f"failed:{why}")
+            return [[label, basis, why]] if why in GONE_STATUSES else []
+        summary["from_store" if source == "from_store" else "downloaded"] += 1
+        emit(scrip, symbol, label, basis, row, source if keep(scrip, label, basis, row.xbrl_url, data) else "not_results")
+        return []
+
+    consecutive_errors = 0
+    last_progress = clock()
     try:
         for scrip, symbol in (companies[:limit] if limit else companies):
+            check_time()
             if annual:
                 annual_company(scrip, symbol)
             summary["companies"] += 1
+            if from_nse:
+                try:
+                    nse_company(scrip, symbol)
+                    consecutive_errors = 0
+                except (SourceBlockedError, _OutOfTime):
+                    raise
+                except Exception as exc:   # noqa: BLE001 - one company's trouble (R2 hiccup, odd row) is that company's gap
+                    reason = f"company_error:{type(exc).__name__}"
+                    consecutive_errors += 1
+                    note_failure(reason, f"{scrip} {symbol}", None, "", "company_errors")
+                    log.exception("xbrl-facts %s %s failed", scrip, symbol)
+                    if consecutive_errors >= 5:      # R2 or the Worker down: stopping saves nothing less than going on
+                        summary["stopped"] = f"5 companies in a row failed ({reason}): stopped"
+                        break
+                if progress is not None and clock() - last_progress >= 60:
+                    progress(summary)
+                    last_progress = clock()
+                continue
             where = plan(sink.get_dossier(scrip), scrip, stored_files, stored_facts)
             summary["files_listed"] += sum(len(where[k]) for k in ("have", "todo", "missing"))
             summary["facts_stored_before"] += len(where["have"])
@@ -621,9 +1026,18 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             for period, _, _ in where["no_url"]:
                 summary["missing_rows"].append({"scrip": scrip, "symbol": symbol, "period": period, "basis": "", "url": "",
                                                 "reason": "memory recorded no file url for this period"})
+    except _OutOfTime:
+        summary["out_of_time"] = True
+        summary["stopped"] = (f"time budget reached after {summary['companies']} companies: everything fetched is saved, "
+                              "the rest waits for the next run")
     except SourceBlockedError as exc:
         summary["stopped"] = stop_reason(exc)
         summary["capped"] = isinstance(exc, FileCapReached)
+    if guard is not None:
+        summary["refusal"] = guard.refusal
+    summary["store_full"] = xbrl_store.is_full()
+    if progress is not None:
+        progress(summary)
     return summary
 
 
@@ -665,6 +1079,21 @@ def render(summary: dict) -> str:
                   f"{summary['annual_missing']}, downloaded {summary['annual_downloaded']}, not Ind AS (left out) {summary['annual_not_ind_as']}"]
         if summary["annual_skipped"]:
             lines.append("annual reports skipped: " + summary["annual_skipped"])
+    if summary.get("from_nse"):
+        skipped = summary["lists_skipped"]
+        lines += [f"NSE results lists asked for      {summary['lists']} (skipped {skipped['stored']}: every period stored, "
+                  f"{skipped['dry_run']}: dry run without download), failed {summary['list_failed']}, "
+                  f"older list only {summary['partial_lists']}",
+                  f"results files listed (seed's selection, both bases) {summary['listed_files']}: facts already stored "
+                  f"{summary['skipped_stored']}, read from R2 {summary['from_store']}, downloaded {summary['downloaded']}, "
+                  f"not reached {summary['not_reached']}"]
+        if summary["failed_reasons"]:
+            lines.append("no file kept, by reason: " + ", ".join(f"{k} {v}" for k, v in sorted(summary["failed_reasons"].items())))
+        if summary["refusal"]:
+            r = summary["refusal"]
+            lines.append(f"REFUSED: HTTP {r['status']} for {r['url']}; body starts: {r['body_head']!r}")
+        if summary["store_full"]:
+            lines.append("the raw-file store is full (XBRL_STORE_MAX_MB): files were read and their facts kept, but not stored raw")
     if not summary["store_available"]:
         lines.append("this sink has no R2 XBRL store: no stored file can be read")
     if summary["download_failed"]:

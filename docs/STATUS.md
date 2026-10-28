@@ -74,6 +74,9 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
    column header date, unit), so every PDF reader is scored on thousands of figures instead of a few hundred typed by
    hand, and every filing where the XBRL figure is not on the page is listed. Being built (`xbrl-key`, read only; its
    locator is measured against the hand keys first, and its first run is on 100 files).
+   First run read against its PDFs (28 Oct, F224, `docs/audit/xbrl-key-disagreements-2026-10-28.md`): of the 28 figures
+   with another number printed, 7 are wrong in memory (all IMPAL Q1FY27, a unit slip the guard missed; fixed, and on the
+   known-wrong list), 9 were the locator's misreads (fixed, locator 2026-10-28.4), 12 are another line by definition.
 3. **The PDF reader, one filing at a time**: fix everything on one PDF, then the next, a new layout each time (upright,
    sideways, tilted, scanned, sub-headings, units, notes). Every fix is re-scored on the whole key and kept only if
    nothing gets worse (a fix for one PDF broke the Titan test on 27 Oct). Ideas to use: one layout per company reused

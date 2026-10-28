@@ -26,8 +26,9 @@ How a figure is found (word positions, not text lines):
   but only when the headings read agree with its runs). A heading that is missing, or that only the layout rule supplied, leaves the
   column *not proven*: the same date can head a quarter and a year, so such a column never gives ``found_unique``;
 - every number token under a column is a cell: brackets for a negative, a minus sign that is its own token and a bracket that is
-  its own token are joined; a figure with a stray dot or comma for its separator (an OCR layer: "5.58.271.46") is read once more
-  with the separators repaired and marked ``repaired``;
+  its own token are joined; a figure a text layer cut in two words next to each other is put back ("12,31" "4.66" is 12,314.66,
+  "7" "864.39" is 7,864.39, "10" "246" is 10,246, "(1" ".73)" is (1.73); ``_mend_numbers``); a figure with a stray dot or comma
+  for its separator (an OCR layer: "5.58.271.46") is read once more with the separators repaired and marked ``repaired``;
 - the unit is the last declaration above the row ("(Rs. in lakhs)", ``grounding._DECLARED_UNIT``); a figure is compared in that
   unit, within the larger of half a unit of its last printed digit and ₹0.006 Cr (memory keeps crore to two decimals); with no unit
   declared every unit is tried and the printed unit is marked ``?``;
@@ -72,7 +73,7 @@ import logging
 import re
 import time
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date
 
 from .grounding import _DECLARED_UNIT, _PER_CRORE
@@ -88,7 +89,7 @@ log = logging.getLogger(__name__)
 STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text", "fetch_failed", "locate_error")
 # Bump whenever placement logic changes (what counts as a column, a row, a basis, a unit, a statement table, a status): saved rows
 # of another version are dropped on resume and their filings are read again.
-LOCATOR_VERSION = "2026-10-28.3"
+LOCATOR_VERSION = "2026-10-28.4"
 METRICS = ("revenue", "other_income", "total_income", "total_expenses", "exceptional_items", "pbt", "tax_expense", "pat", "eps",
            "interest_earned")
 TOL_CR = 0.006              # memory keeps crore to two decimals: half a hundredth, with a little to spare
@@ -250,10 +251,56 @@ def _union(words: list[Word]) -> tuple[float, float, float, float, tuple]:
     return (min(w.x0 for w in words), min(w.y0 for w in words), max(w.x1 for w in words), max(w.y1 for w in words), box)
 
 
+_NEG = "(\\-\u2212\u2013"
+_HEAD_DIGITS = re.compile(rf"^[{_NEG}]?\d{{1,3}}$")                              # "7", "10", "(2": the front of a grouped number
+_GROUP_TAIL = re.compile(r"^,?\d{3}(?:\.\d+)?\)?$")                             # "246", ",459.29", "864.39": its last group
+_CUT_GROUP = re.compile(rf"^[{_NEG}]?\d{{1,3}}(?:,\d{{2,3}})*,\d{{1,2}}$")        # "12,31": cut inside its last group
+_CUT_TAIL = re.compile(r"^\d{1,2}(?:\.\d+)?\)?$")                                # "4.66": the rest of that group, then the decimals
+_HEAD_DOT = re.compile(rf"^[{_NEG}]?[\d,]*\d\.?$")                               # "(1", "41", "(0.": a number ending where the point is
+_TAIL_DOT = re.compile(r"^\.?\d+\)?$")                                         # ".73)", "12", "13)": the decimals
+_NUMBERING = re.compile(r"^\(?(?:\d{1,2}\.|[A-Za-z]|[ivxIVX]{1,4})\)?\.?$|^\(\d{1,2}\)$")   # "2.", "(a)", "iv", "(2)": a line number
+_MEND_GAP = 0.5      # the words' gap, in their heights: a space is 0.3, a figure's neighbour column is far more
+
+
+def _mend_numbers(ordered: list[Word]) -> list[Word]:
+    """A figure a text layer cut into two words put back in one, only when the two pieces sit a space apart and nothing else would
+    make a number of them: the thousands separator lost between a head of one to three digits and a last group of three
+    (Kirloskar "10" "246", WeWork "7" "864.39", Ashok Leyland ",459.29" after "51"), a group cut in its middle ("12,31" "4.66"
+    printed 12,314.66, which read alone is 12.31), a decimal point split off ("(1" ".73)", "41" ".12", "(0." "13)"). The joined text
+    must be a number as printed, not one an OCR separator repair makes; the words' boxes are joined."""
+    out: list[Word] = []
+    i = 0
+    while i < len(ordered):
+        a = ordered[i]
+        b = ordered[i + 1] if i + 1 < len(ordered) else None
+        joined = None
+        # a lone line number ("2." "(a)" "iv") with no label word before it, then a figure: "2." "123" is a line number and a
+        # figure, not 2.123
+        numbering = bool(_NUMBERING.match(a.text)) and not any(re.search(r"[A-Za-z]{3}", w.text) for w in ordered[:i])
+        if b is not None and not numbering and 0 <= b.x0 - a.x1 <= _MEND_GAP * max(a.h, b.h) \
+                and abs(a.yc - b.yc) <= 0.5 * max(a.h, b.h):
+            if _HEAD_DIGITS.match(a.text) and _GROUP_TAIL.match(b.text):
+                joined = a.text + ("" if b.text.startswith(",") else ",") + b.text
+            elif _CUT_GROUP.match(a.text) and _CUT_TAIL.match(b.text):
+                joined = a.text + b.text
+            elif (a.text.endswith(".") and _HEAD_DOT.match(a.text) and _TAIL_DOT.match(b.text)) or \
+                    (b.text.startswith(".") and _HEAD_DOT.match(a.text) and _TAIL_DOT.match(b.text)):
+                joined = a.text + b.text
+        num = parse_number(joined) if joined else None
+        if num is not None and not num.repaired:
+            x0, y0, x1, y1, box = _union([a, b])
+            out.append(Word(x0, y0, x1, y1, joined, box))
+            i += 2
+        else:
+            out.append(a)
+            i += 1
+    return out
+
+
 def figures_in(words: list[Word]) -> tuple[list[Fig], list[Word]]:
     """(the number tokens of a row, the words that are not part of one). A bracket or a minus that is its own word is joined to
-    the number next to it, a closing bracket too."""
-    ordered = sorted(words, key=lambda w: w.x0)
+    the number next to it, a closing bracket too; a figure the text layer cut in two is put back (``_mend_numbers``)."""
+    ordered = _mend_numbers(sorted(words, key=lambda w: w.x0))
     figs: list[Fig] = []
     rest: list[Word] = []
     i = 0
@@ -358,8 +405,17 @@ def _mend_dates(words: list[Word]) -> list[Word]:
     return out
 
 
+_MONTH_COMMA = re.compile(r"^(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?,$", re.I)
+
+
+def _month_commas(words: list[Word]) -> list[Word]:
+    """"Jun," "30" "2026": the comma a header prints after the month (Styrenix's "Jun, 30 2026") taken off, so the date reader, which
+    knows "Jun 30, 2026", reads the column. Boxes stay as they are."""
+    return [replace(w, text=w.text[:-1]) if _MONTH_COMMA.match(w.text) else w for w in words]
+
+
 def row_dates(row: Row) -> list[DateTok]:
-    text, spans = _spans(_mend_dates(row.words))
+    text, spans = _spans(_mend_dates(_month_commas(row.words)))
     out = []
     for m in _DATE_LOOSE_2.finditer(text):
         # "30 September 30 June": the 30 after the month is the next date's day, not a two-digit year
@@ -381,7 +437,7 @@ def stacked_dates(row: Row, below: Row | None) -> list[DateTok]:
     with the year word nearest its centre on the next row, only when the row has as many year words as day-months, one each."""
     if below is None:
         return []
-    text, spans = _spans(_mend_dates(row.words))
+    text, spans = _spans(_mend_dates(_month_commas(row.words)))
     found = [(m, _box_of(spans, m.start(), m.end())) for m in _DAY_MONTH.finditer(text)]
     years = [w for w in below.words if _YEAR_WORD.match(w.text)]
     if not found or len(years) != len(found):
@@ -428,6 +484,8 @@ class Column:
         heading = {"quarter": "Quarter ended", "half": "Half year ended", "nine": "Nine months ended", "year": "Year ended"}.get(self.kind or "")
         if heading is None:
             heading = "[no heading]"
+        elif self.kind_how == "duplicate":
+            heading += " [date repeated in the table]"
         elif not self.proven:
             heading += " [layout]"
         path = [heading, f"{self.day:%d.%m.%Y}"]
@@ -447,6 +505,7 @@ class Table:
     number: int = 0
     n_metrics: int = 0            # distinct metrics named by the table's rows: a results statement has several, a segment table one
     segment: bool = False         # a heading just above the table names segments
+    discontinued: bool = False    # a line just above the table says it is about a discontinued operation
 
 
 def _date_row(row: Row, below: Row | None = None) -> tuple[list[DateTok], bool]:
@@ -584,6 +643,23 @@ def _stripped(label: str) -> str:
     return out
 
 
+DISCONTINUED_SEPARATE = {"exceptional_items", "tax_expense"}   # printed again for the discontinued business, under its own heading
+_DISCONTINUED = re.compile(r"discontinu", re.I)
+_CONTINUING = re.compile(r"\bcontinu(?:ing|ed)\b", re.I)
+
+
+def _in_discontinued(label: str, inside: bool) -> bool:
+    """Whether the lines from this one are the discontinued business's: a line that names discontinued operations opens that part
+    of a results statement (Aditya Birla Real Estate's "DISCONTINUED OPERATIONS" heading, or its line 12 "Profit before tax from
+    discontinued operations"), a line that names continuing operations (and not discontinued, nor both) closes it. Its exceptional
+    item (the ₹868.12 Cr gain on the pulp and paper sale) and its tax (₹(73.38) Cr) are not the company's continuing ones."""
+    if _DISCONTINUED.search(label):
+        return not re.search(r"continuing\s*(?:and|&|\+)|(?:and|&|\+)\s*discontinu", label, re.I)
+    if _CONTINUING.search(label):
+        return False
+    return inside
+
+
 def classify(label: str) -> set[str]:
     """The metrics a row label names (usually one): the PDF referee's own label patterns where it has them."""
     core = _stripped(label)
@@ -704,7 +780,15 @@ def analyse_page(words: list[Word], turn: int, page_no: int, carried: dict, doc_
         end = (headers[n + 1][0] - 1) if n + 1 < len(headers) else len(rows) - 1
         floor = headers[n - 1][1] + 1 if n else 0
         t = Table(first, last, end, _table_columns(rows, first, last, dates, page_text, floor), number=table_count + n)
+        repeated = Counter((c.day, c.kind) for c in t.columns if c.proven and c.basis is None)
+        for c in t.columns:
+            if c.proven and c.basis is None and repeated[(c.day, c.kind)] > 1:
+                # two columns of one table with the same date and heading, no basis between them: the page (or its text layer)
+                # misprints one (Styrenix's third column reads "Jun 30, 2026" in the text layer, "2025" on the page), so neither
+                # column can prove a figure
+                c.kind_how = "duplicate"
         t.segment = any(re.search(r"\bsegment", rows[k].text, re.I) for k in range(max(floor, first - 6), first))
+        t.discontinued = any(_in_discontinued(rows[k].text, False) for k in range(max(floor, first - 4), first))
         lines = [r.text for r in rows]
         basis, contested = _basis_above_boxed(lines, first)
         if basis:
@@ -732,7 +816,9 @@ def analyse_page(words: list[Word], turn: int, page_no: int, carried: dict, doc_
                        if placed2 and not re.search(r"[A-Za-z]{3}", label2) and abs(r2.yc - r.yc) <= reach]
             if options:
                 attached.setdefault(min(options)[1], []).append((r, label))
+        discontinued = t.discontinued
         for r, placed, label in info:
+            discontinued = _in_discontinued(label, discontinued)
             if not placed:
                 continue
             if re.search(r"[A-Za-z]{3}", label):
@@ -747,6 +833,8 @@ def analyse_page(words: list[Word], turn: int, page_no: int, carried: dict, doc_
                     candidates.append(" ".join(l2 for _, l2 in sorted(near, key=lambda p: p[0].yc)))
             shown = next((c for c in candidates if classify(c)), candidates[0] if candidates else "")
             metrics = classify(shown) if candidates else set()
+            if discontinued:
+                metrics = metrics - DISCONTINUED_SEPARATE   # the discontinued business's own exceptional item and tax
             above = [u for i, u in declared if i <= r.idx]
             unit, how = (above[-1], "page") if above else (carried.get("unit"), "previous page" if carried.get("unit") else "none")
             for f, k in placed:
@@ -1055,7 +1143,18 @@ def failure_stage(model: DocModel, e: Expected) -> str:
     return "in_text_wrong_place"
 
 
+def _point_lost(e: Expected, cell: Cell, fig: Fig) -> bool:
+    """The printed token is the figure with its decimal point lost ("827" for 8.27: Techno Electric's scanned page, whose text layer
+    dropped the dot of every EPS)."""
+    if fig.num.decimals or not e.value:
+        return False
+    per = 1.0 if e.metric == "eps" else (cell.unit or 1.0)
+    return abs(abs(fig.num.value) / per - abs(e.value) * 100) <= 0.5 / per + 1e-9 and abs(e.value) * 100 >= 10
+
+
 def _other_unit_note(e: Expected, cell: Cell, fig: Fig) -> str:
+    if _point_lost(e, cell, fig):
+        return f"equals the value with its decimal point lost (the text layer prints '{fig.text}')"
     if e.metric == "eps":
         return ""
     for per_crore in _ALL_UNITS:

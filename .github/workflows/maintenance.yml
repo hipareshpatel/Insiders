@@ -90,6 +90,15 @@
 # - screener-crosscheck: read only. Memory's exchange-file figures against the stored screener pages (no screener request),
 #   the cached official results text as referee (no download); summary.json, crosscheck.csv, referee.csv and the markdown
 #   report go up as the artifact `screener-crosscheck`. Commits nothing.
+# - xbrl-facts (owner, 28 Oct 2026: "save everything from XBRL"): every fact of each results XBRL file already stored in R2
+#   (raw/xbrl/, F191) is kept as raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz, outside the dossier, for the screener
+#   cross-check's complete screener view; no NSE request. It lists the filings whose file is not stored (not-stored.csv, with
+#   the url memory recorded) and, with `apply`, downloads those files through the seed's own fetch and pace, under `file_cap`
+#   (the first run: 100; the cap is a planned stop, not a failure). `ids` = companies, `limit` = at most N companies, `dry_run`
+#   = parse and count, write nothing. summary.json (what is stored, bytes a file, which levy, lease or treasury lines the files
+#   carry) and not-stored.csv go up as the artifact `xbrl-facts`. Group maint-ro-xbrl-facts; writes nothing but raw/xbrl-facts/
+#   (and raw/xbrl/ for a downloaded file); no memory, card or branch change. screener-crosscheck takes `ids` (companies) and
+#   `limit` (the N largest by market cap) too.
 # - tijori-referee: read only (owner 26 Oct 2026). The Tijori cross-check's revenue and profit leads (screener agrees with
 #   Tijori against memory) and its sign differences, each looked up in NSE's results XBRL as screener-referee does; the CSV's
 #   screener_value is Tijori's where screener has none. Artifact `tijori-referee`. Writes nothing.
@@ -162,7 +171,7 @@
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2, and NSE files only with `apply`), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -183,7 +192,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, xbrl-facts, screener-referee, screener-explain, pdf-referee, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
       backup:
         description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -199,7 +208,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: screener-crosscheck and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -215,7 +224,7 @@ on:
         type: string
         default: '110'
       limit:
-        description: text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies
+        description: screener-crosscheck - only the N largest companies by market cap (of `ids`, else of the universe); xbrl-facts - at most N companies; text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies
         type: string
         default: ''
       no_ocr:
@@ -231,11 +240,11 @@ on:
         type: string
         default: ''
       apply:
-        description: memory-gaps-fill-bse only - write the figures (labelled BSE); without it a dry run that writes nothing
+        description: memory-gaps-fill-bse - write the figures (labelled BSE); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap; the first run is 100)
         type: boolean
         default: false
       dry_run:
-        description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned)
+        description: count what would change, write nothing (refresh-card-blocks, requeue-failed, release-pruned, xbrl-facts)
         type: boolean
         default: false
       min_mcap_cr:
@@ -259,7 +268,7 @@ concurrency:
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -634,16 +643,39 @@ jobs:
         env:
           PLATFORM_TIMEOUT_S: "30"   # F216
           PLATFORM_ATTEMPTS: "3"
+          IDS: ${{ inputs.ids }}       # through the environment, never pasted into the script
+          LIMIT: ${{ inputs.limit }}
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/crosscheck"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-crosscheck --json "$RUNNER_TEMP/crosscheck/summary.json" --csv "$RUNNER_TEMP/crosscheck/crosscheck.csv" --referee-csv "$RUNNER_TEMP/crosscheck/referee.csv" --md "$RUNNER_TEMP/crosscheck/screener-crosscheck.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-crosscheck ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} --json "$RUNNER_TEMP/crosscheck/summary.json" --csv "$RUNNER_TEMP/crosscheck/crosscheck.csv" --referee-csv "$RUNNER_TEMP/crosscheck/referee.csv" --md "$RUNNER_TEMP/crosscheck/screener-crosscheck.md" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'screener-crosscheck'
         with:
           name: screener-crosscheck
           path: ${{ runner.temp }}/crosscheck/
+          if-no-files-found: ignore
+      - name: Keep every fact of the stored results XBRL files (R2 and memory; NSE only with apply)
+        if: inputs.command == 'xbrl-facts'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
+          IDS: ${{ inputs.ids }}       # through the environment, never pasted into the script
+          LIMIT: ${{ inputs.limit }}
+          APPLY: ${{ inputs.apply }}
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/xbrl-facts"
+          download=; if [ "$APPLY" = "true" ]; then download=--download; fi   # the files not stored: NSE, under FILE_CAP
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--limit "$LIMIT"} $download ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/not-stored.csv" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'xbrl-facts'
+        with:
+          name: xbrl-facts
+          path: ${{ runner.temp }}/xbrl-facts/
           if-no-files-found: ignore
       - name: Cross-check memory against the stored Tijori pages (reads only)
         if: inputs.command == 'tijori-crosscheck'

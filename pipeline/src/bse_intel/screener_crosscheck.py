@@ -26,17 +26,25 @@ memory's basis with the exchange file's figure only (``metrics._figures``: ``xbr
   year ends and the latest half year, Q4FYxx and Q2FYxx) against memory's results-file snapshots (``metrics._snapshots``) on
   memory's basis, within ₹1 Cr or 0.5%. Total Liabilities is equity plus liabilities, so it is compared with our total assets
   (our ``total_liabilities_cr`` leaves equity out); Other Liabilities and Other Assets are screener's plugs, worked out from our
-  lines as the company page does (a missing part gives no pair). Where screener's own rules (docs/bench/screener-rules.md rows
-  10 and 11) add a part memory has no line for and screener's figure is the larger by more than twice the tolerance, the gap is
-  named: ``definition:lease_not_in_memory`` (borrowings), ``definition:intangibles_rou_not_in_memory`` (fixed assets),
-  ``definition:intangibles_under_development_not_in_memory`` (CWIP), ``definition:other_financial_assets_not_in_memory``
-  (investments, not a lender's: the last two are the mapping study's assumption, not a stated rule); also
-  ``matches_screener_view:goodwill_in_fixed_assets`` and ``matches_screener_view:net_worth_less_capital`` (reserves),
-  ``derived:part_differs`` (a plug that differs only because a line it is worked out of differs), ``wrong_period`` (ours equals
-  screener's figure for another date), ``scale``, ``small_gap``, ``mismatch``. Cash flow: operating, investing, financing and net
-  cash flow of March years (FYxx) against our file figures; classes match, ``sign``, wrong_period, scale, small_gap, mismatch.
-  The page sections are read by their ids ``balance-sheet`` and ``cash-flow`` (assumption: no stored sample page here holds
-  them; the first run on the runner shows whether they are found).
+  lines as the company page does (a missing part gives no pair); they are information, and the report says so. Screener's
+  own rules (docs/bench/screener-rules.md rows 10 and 11) add parts memory has no line for. A part counts only when the stored
+  XBRL facts of the file show it (``xbrl_facts.py``, ``screener_parts.py``) and our figure plus it matches screener's within the
+  tolerance: ``matches_screener_view:<line>_plus_<parts>`` (borrowings plus lease liabilities and current maturities, none in a
+  half-year balance sheet; fixed assets plus goodwill, intangibles and right-of-use assets; CWIP plus intangibles under
+  development; investments plus equity-method investments, investment property, other financial assets; both totals less the
+  deferred tax netted off), also ``goodwill_in_fixed_assets`` and ``net_worth_less_capital`` (reserves) from memory's own lines. A
+  gap no found part closes is NEVER a "definition" (independent review, 28 Oct 2026: that name, given to any larger screener
+  figure, hid a missing current-borrowings block): ``unexplained_larger`` (screener's figure the larger of borrowings, fixed
+  assets, CWIP, a non-lender's investments) or ``mismatch``, the note saying what the facts held. Also ``derived:part_differs`` (a
+  plug that differs only because a line it is worked out of differs), ``wrong_period`` (ours equals screener's figure for another
+  date), ``scale``, ``small_gap``. Cash flow: operating, investing, financing and net cash flow by the company's own year end:
+  a March year (FYxx) against our file figures, any other year end ("YE:2025-06") against the 12-month cash flow in the stored
+  facts of the file ending then (memory labels no such year), a column neither can pair is counted and its reason listed
+  (``cf_skipped``); classes match, ``sign``, wrong_period, scale, small_gap, mismatch. The page sections are read by their ids
+  ``balance-sheet`` and ``cash-flow``; ``sections`` in the summary counts the stored pages that carry them and how many were
+  compared, always (also at 0), and the report warns in words when a section is missing. Revenue and EPS pairs use the facts too:
+  Sales less excise, sales tax / VAT / GST and discounts, EPS on total shares (treasury shares tagged), EPS on total or on
+  continuing profit named. Each adjustment applied is in the CSV field ``adjustment`` (rule and where the parts came from).
 
 Each pair gets one class:
 
@@ -67,20 +75,22 @@ non-match pair and a short markdown report; the job uploads them as an artifact 
 from __future__ import annotations
 
 import csv
+import calendar
 import io
 import json
 import re
 import statistics
 from concurrent.futures import ThreadPoolExecutor
+from datetime import date
 
-from . import line_map
+from . import line_map, screener_parts, xbrl_facts
 from .dossier import _norm
 from .memory_gaps import main_basis, quarter_end
 from .metrics import CONSOLIDATED, STANDALONE, _figures, _snapshots, _value_source, is_lender
-from .periods import quarter_index
+from .periods import canonical_period, quarter_index
 from .screener_referee import referee, text_of
 from .screener_download import PREFIX, unpack
-from .screener_fill import BALANCE_LINES, CASH_LINES, parse_full
+from .screener_fill import BALANCE_LINES, CASH_LINES, YEAR_END, parse_full
 
 MONEY_ABS, MONEY_REL = 1.0, 0.005
 EPS_ABS, EPS_REL = 0.06, 0.005
@@ -95,8 +105,10 @@ STEADY_RATIO_SPREAD = 0.02       # relative spread of theirs/ours
 STEADY_DIFF_SPREAD = (2.0, 0.05)  # max spread of the difference: ₹2 Cr or 5% of its median
 
 VIEW = "matches_screener_view:"   # a class prefix: screener's own treatment of our figure closes the gap (never stored)
+# screener's Sales: revenue less the levies and discounts the parts show, every non-empty mix (screener_parts, 28 Oct 2026)
+REVENUE_RULES = tuple("_".join(c) for c in screener_parts.subsets(list(screener_parts.FLOW_ORDER)))
 CLASSES = ("match", "wrong_quarter", "scale", "naming", "lender_definition", "steady_line_difference",
-           VIEW + "excise", VIEW + "share_adjust", "steady_older", "mismatch")
+           *(VIEW + r for r in REVENUE_RULES), VIEW + "share_adjust", VIEW + "treasury_shares", "steady_older", "mismatch")
 # the six other lines: our metric names (Tax % is a ratio of two of ours)
 SIX_METRICS = ("ebitda", "other_income", "finance_cost", "depreciation", "pbt", "tax_pct")
 SIX_LENDER_SKIP = ("ebitda", "finance_cost")      # a lender page's Operating Profit and Interest are not these lines
@@ -110,12 +122,15 @@ ASSOCIATES_MIN = 1.0                               # a share of associates' prof
 STEADY_OLDER_MIN, STEADY_OLDER_SPREAD, STEADY_OLDER_OFF = 3, 0.03, 0.03
 STEADY_OLDER_LINES = ("revenue", *SMALL_GAP_LINES)
 SIX_EXPLAINED = (VIEW + "exceptional_in_other_income", VIEW + "associates_in_pbt", VIEW + "associates_in_other_income")
+SECTION_KEYS = ("pages_read", "pages_unparsed", "pages_with_balance_sheet", "pages_with_cash_flow", "compared_pages",
+                "compared_with_balance_sheet", "compared_with_cash_flow", "companies_with_balance_sheet_pairs",
+                "companies_with_cash_flow_pairs")
 SIX_CLASSES = ("match", *SIX_EXPLAINED, "small_gap", "tax_sign_on_loss", "tax_follows_pbt", "steady_older", "mismatch")
 GAP_CLASSES = ("screener_only", "memory_only")
 WORKERS = 8
 
 CSV_HEADER = ("scrip,symbol,sector,basis,period,metric,class,memory_value,screener_value,memory_source_id,"
-              "memory_filed,note,table").split(",")
+              "memory_filed,note,table,adjustment").split(",")
 
 # our metric names for each compared line; a lender's revenue line is its revenue from operations, a bank's interest earned
 _OURS = {k: line_map.crosscheck_ours(k) for k in ("revenue", "pat", "eps")}
@@ -215,10 +230,14 @@ def screener_views(dossier: dict | None, figures: dict, period: str, today: str 
         return _value(figures, name, period)
 
     out: dict[str, list[tuple[float, str]]] = {}
-    excise, exceptional = v("excise_duty"), v("exceptional_items")
-    if excise:
-        if v("revenue") is not None:   # not Operating Profit: ours (PBT + interest + depreciation - other income) never held it
-            out["revenue"] = [(v("revenue") - excise, "excise")]
+    exceptional = v("exceptional_items")
+    # Sales is revenue less excise duty, sales tax / VAT / GST and discounts (rules rows 1 and 2): every mix of the parts found,
+    # singles first. Memory's excise (``excise_duty``) and the facts' (``excise_duty``, ``indirect_taxes``, ``discounts``, put in
+    # by the caller from the stored XBRL facts where memory has none) are read alike.
+    levies = {"excise": v("excise_duty"), "taxes": v("indirect_taxes"), "discounts": v("discounts")}
+    found = [p for p in screener_parts.FLOW_ORDER if levies[p]]
+    if found and v("revenue") is not None:   # not Operating Profit: ours (PBT + interest + depreciation - other income) never held it
+        out["revenue"] = [(v("revenue") - sum(levies[p] for p in combo), "_".join(combo)) for combo in screener_parts.subsets(found)]
     # a small exceptional item beside a few crore of gap would "explain" it by chance (blind review, 27 Oct 2026: other income
     # 10 against 7.2 with exceptional -3): the item must be at least 5 Cr and a quarter of our other income
     other = v("other_income")
@@ -252,6 +271,15 @@ def screener_views(dossier: dict | None, figures: dict, period: str, today: str 
         factor, actions = share_factor(dossier, period, today or today_ist().isoformat())
         if actions and abs(factor - 1) > 1e-9:
             out["eps"] = [(v("eps") / factor, "share_adjust")]
+    # EPS on total shares (rules row 13: screener divides its own profit by its own share count): the file's basic EPS is on
+    # the shares outstanding without the treasury (own) shares a filer tags; with them the count is larger. Only where a count
+    # is tagged (``treasury_shares``, from the facts); the share count behind the EPS is profit / EPS.
+    profit = v("pat_owners") if v("pat_owners") is not None else v("pat")
+    treasury = v("treasury_shares")
+    if v("eps") and treasury and profit:
+        shares = profit * 1e7 / v("eps")
+        if shares > 0:
+            out.setdefault("eps", []).append((v("eps") * shares / (shares + treasury), "treasury_shares"))
     return out
 
 
@@ -359,17 +387,23 @@ CF_LINES = tuple(CASH_LINES)
 BS_FIELD = {"equity_capital": "equity_capital_cr", "reserves": "reserves_cr", "borrowings": "gross_debt_cr", "deposits": "deposits_cr",
             "total_liabilities": "total_assets_cr",   # screener's Total Liabilities is equity plus liabilities: our total assets
             "fixed_assets": "fixed_assets_cr", "cwip": "cwip_cr", "investments": "investments_cr", "total_assets": "total_assets_cr"}
-# a part screener adds that memory has no line for; only a LARGER screener figure (the rule's direction) gets the name, and only
-# beyond twice the tolerance. Rules: docs/bench/screener-rules.md rows 10 and 11; CWIP and investments are the mapping study's
-# assumption (docs/design/screener-mapping.md 1d), not a rule screener states.
-BS_DEFINITIONS = {"borrowings": "lease_not_in_memory", "fixed_assets": "intangibles_rou_not_in_memory",
-                  "cwip": "intangibles_under_development_not_in_memory", "investments": "other_financial_assets_not_in_memory"}
-BS_DEFINITION_NOT_LENDER = ("investments",)     # a lender's investments equal screener's (mapping study: 25 of 25)
+# The parts screener adds to a line (docs/bench/screener-rules.md rows 10 and 11), in the order they are tried. A part counts
+# only when the stored XBRL facts show it (screener_parts.balance_parts; goodwill is also memory's own ``goodwill_cr``) and our
+# figure plus it matches screener's within the tolerance: the class is then ``matches_screener_view:<line>_plus_<parts>``. A gap
+# no found part closes is NEVER given a definition (independent review, 28 Oct 2026: a "definition" class with no cap hid a
+# missing current-borrowings block): it is ``unexplained_larger`` when screener's figure is the larger of these four lines (the
+# rule's direction), else ``mismatch``, with the state of the facts in the note.
+BS_PARTS = {"borrowings": ("lease_liabilities", "current_maturities"), "fixed_assets": ("goodwill", "intangibles", "right_of_use"),
+            "cwip": ("intangibles_under_development",), "investments": ("equity_method", "investment_property", "other_financial_assets")}
+BS_PARTS_NOT_LENDER = ("investments",)     # a lender's investments equal screener's (mapping study: 25 of 25)
+BS_TOTALS = ("total_assets", "total_liabilities")   # deferred tax net: the totals lose the part of the two lines that is offset
 BS_CLASSES = ("match", "wrong_period", "scale", VIEW + "net_worth_less_capital", VIEW + "goodwill_in_fixed_assets",
-              *("definition:" + rule for rule in BS_DEFINITIONS.values()), "derived:part_differs", "small_gap", "mismatch")
+              VIEW + "deferred_tax_net", "derived:part_differs", "small_gap", "unexplained_larger", "mismatch")
 CF_CLASSES = ("match", "sign", "wrong_period", "scale", "small_gap", "mismatch")
 PLUG_ABS = 3.0       # a plug is worked out from up to five rounded figures: its gap is explained within 3 Cr (or 0.5%)
-BS_PLUGS = ("other_liabilities", "other_assets")
+BS_PLUGS = ("other_liabilities", "other_assets")     # screener's remainders: reported as information, never as an error count
+PLUG_NOTE = "informational (plug): "
+MEMORY_VIEWS = ("net_worth_less_capital", "goodwill_in_fixed_assets")     # views built from memory's own lines, no facts
 TABLE_RESULTS, TABLE_SIX, TABLE_PERIOD, TABLE_GAP = "results", "results_six", "period_check", "gap"
 TABLE_BALANCE, TABLE_CASH = "balance_sheet", "cash_flow"
 
@@ -392,12 +426,15 @@ def _small(ours: float, theirs: float) -> bool:
     return abs(ours - theirs) <= max(SMALL_ABS, SMALL_REL * abs(theirs)) + 1e-9
 
 
-def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], views: list[tuple[float, str]],
-                     lender: bool, period: str = "") -> tuple[str, str]:
+def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], views, lender: bool, period: str = "",
+                     state=None) -> tuple[str, str]:
     """(class, note) of one balance-sheet pair, in this order: ``match`` (within ₹1 Cr or 0.5%); ``wrong_period`` (ours
     equals screener's figure for another date); ``scale``; for a gap of more than twice the tolerance, a view of our own figure
-    that closes it (``matches_screener_view:...``) and then, when screener's figure is the larger, the part screener adds that
-    memory lacks (``definition:...``); ``small_gap`` (at most 1 Cr or 1%); else ``mismatch``."""
+    that closes it (``matches_screener_view:...``: our figure plus a part the facts show, or memory's own net worth less capital
+    and goodwill); ``unexplained_larger`` when no view closes a gap in the direction of screener's rule (screener's figure is the
+    larger of borrowings, fixed assets, CWIP or a non-lender's investments): the note says what the facts hold, and it is never
+    a definition; ``small_gap`` (at most 1 Cr or 1%); else ``mismatch``. ``views`` is a list of (value, rule) or a function
+    giving it (read only for a gap that needs it: the facts file is fetched then); ``state`` a function giving the facts' state."""
     if _close(ours, theirs, "money"):
         return "match", ""
     if shifted:
@@ -405,12 +442,13 @@ def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], 
     if _is_scale(ours, theirs):
         return "scale", ""
     if _apart(ours, theirs, "money"):
-        for value, rule in views:
+        for value, rule in (views() if callable(views) else views):
             if _close(value, theirs, "money"):
                 return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
-        rule = BS_DEFINITIONS.get(line)
-        if rule and theirs > ours and not (lender and line in BS_DEFINITION_NOT_LENDER):
-            return "definition:" + rule, f"screener {theirs:g} against ours {ours:g}: {theirs - ours:g} more on screener"
+        if line in BS_PARTS and theirs > ours and not (lender and line in BS_PARTS_NOT_LENDER):
+            why = state() if callable(state) else ""
+            return "unexplained_larger", (f"screener {theirs:g} against ours {ours:g}: {theirs - ours:g} more on screener, "
+                                          "no part found that closes it" + (f"; {why}" if why else ""))
     if _small(ours, theirs):
         return "small_gap", f"{ours:g} against {theirs:g}: gap {abs(ours - theirs):.2f}"
     return "mismatch", ""
@@ -441,13 +479,51 @@ def _bs_ours(snap: dict, line: str) -> float | None:
     return value
 
 
-def _bs_views(snap: dict, line: str) -> list[tuple[float, str]]:
+def _half_year(period: str, fy_end: int) -> bool:
+    """A balance sheet at a date that is not the company's year end (screener's half-year column: no current maturities)."""
+    end = quarter_end(period)
+    return end is not None and end.month != fy_end
+
+
+def _bs_views(snap: dict, line: str, ours: float | None = None, parts: dict | None = None, lender: bool = False,
+              half_year: bool = False) -> list[tuple[float, str]]:
+    """The views of one balance-sheet line: memory's own (reserves: net worth less capital) and, from ``parts`` (the facts'
+    ``screener_parts.balance_parts``: name -> (value in crore, where read)), our figure plus each mix of the parts screener
+    adds to the line (BS_PARTS; goodwill is memory's own ``goodwill_cr`` where it has it; a half-year balance sheet has no
+    current maturities); the two totals less the deferred tax screener nets (assets and liabilities offset)."""
     out: list[tuple[float, str]] = []
     if line == "reserves" and snap.get("reserves_cr") is not None and None not in (snap.get("net_worth_cr"), snap.get("equity_capital_cr")):
         out.append((snap["net_worth_cr"] - snap["equity_capital_cr"], "net_worth_less_capital"))
-    if line == "fixed_assets" and snap.get("fixed_assets_cr") is not None and snap.get("goodwill_cr") is not None:
-        out.append((snap["fixed_assets_cr"] + snap["goodwill_cr"], "goodwill_in_fixed_assets"))
+    ours = _bs_ours(snap, line) if ours is None else ours
+    if ours is None:
+        return out
+    order = BS_PARTS.get(line)
+    if (order or line in BS_TOTALS) and callable(parts):
+        parts = parts()     # read only for a line a part can change: the facts file is fetched then
+    if order and not (lender and line in BS_PARTS_NOT_LENDER):
+        found = {name: value for name, (value, _) in (parts or {}).items() if name in order}
+        if line == "fixed_assets" and snap.get("goodwill_cr"):
+            found["goodwill"] = snap["goodwill_cr"]
+        if line == "borrowings" and half_year:
+            found.pop("current_maturities", None)
+        out += screener_parts.additive_views(line, ours, found, order)
+    if line in BS_TOTALS and parts and parts.get("dta") and parts.get("dtl"):
+        net = min(parts["dta"][0], parts["dtl"][0])
+        if net > 0:
+            out.append((ours - net, "deferred_tax_net"))
     return out
+
+
+def _facts_state(line: str, parts: dict | None) -> str:
+    """What the facts hold for a line's parts, for the note of an unexplained gap."""
+    order = BS_PARTS.get(line) or (("dta", "dtl") if line in BS_TOTALS else ())
+    if not order:
+        return ""
+    if parts is None:
+        return "no XBRL facts stored for this date"
+    found = [p for p in order if p in parts]
+    return f"XBRL facts stored: no {'/'.join(order)} tagged" if not found else \
+        f"XBRL facts stored: {', '.join(found)} found, they do not close the gap"
 
 
 def _plug_parts(snap: dict, line: str) -> dict[str, float] | None:
@@ -486,10 +562,13 @@ def classify_plug(ours: float, theirs: float, our_total: float, their_total: flo
     return "mismatch", ""
 
 
-def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bool) -> list[dict]:
+def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bool, parts_for=None, fy_end: int = 3) -> list[dict]:
     """The pairs of screener's balance-sheet lines against memory's exchange-file statements (``metrics._snapshots``: results
     files only, on memory's basis), by statement date. Screener's Total Liabilities is compared with our total assets (it is
-    equity plus liabilities); Other Liabilities and Other Assets are screener's plugs, worked out from our lines."""
+    equity plus liabilities); Other Liabilities and Other Assets are screener's plugs, worked out from our lines (informational:
+    the note says so). ``parts_for(period)`` gives the date's balance-sheet parts from the stored XBRL facts
+    (``screener_parts.balance_parts``) or None when no facts are stored; it is called once a date, and only for a gap that a
+    part could close. ``fy_end`` is the company's year-end month: another date is a half year."""
     out: list[dict] = []
     for period, row in table.items():
         snap = snapshots.get(period)
@@ -497,6 +576,14 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
             continue
         base = {"table": TABLE_BALANCE, "period": period, "memory_source_id": str(snap.get("source_news_id") or ""),
                 "memory_filed": snap.get("as_of") or "", "shifted": []}
+        read: list = []
+
+        def parts(period=period, read=read):
+            if not read:
+                read.append(parts_for(period) if parts_for else None)
+            return read[0]
+
+        half = _half_year(period, fy_end)
         for line in BS_LINES:
             theirs = row.get(line)
             if theirs is None or line in BS_PLUGS:
@@ -505,36 +592,80 @@ def balance_pairs(snapshots: dict[str, dict], table: dict[str, dict], lender: bo
             if ours is None:
                 continue
             shifted = _shifted_columns(table, period, line, ours, theirs)
-            cls, note = classify_balance(line, ours, theirs, shifted, _bs_views(snap, line), lender, period)
-            out.append({**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls, "note": note,
-                        "shifted": shifted})
+            cls, note = classify_balance(line, ours, theirs, shifted,
+                                         lambda snap=snap, line=line, ours=ours: _bs_views(snap, line, ours, parts, lender, half),
+                                         lender, period, lambda line=line: _facts_state(line, parts()))
+            pair = {**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls, "note": note,
+                    "shifted": shifted}
+            if cls.startswith(VIEW):
+                pair["adjustment"] = cls[len(VIEW):] + (" (memory)" if cls[len(VIEW):] in MEMORY_VIEWS else " (xbrl facts)")
+            out.append(pair)
         their_total = row.get("total_assets") if row.get("total_assets") is not None else row.get("total_liabilities")
         for line in BS_PLUGS:
-            theirs, parts = row.get(line), _plug_parts(snap, line)
-            if theirs is None or parts is None:
+            theirs, plug_parts = row.get(line), _plug_parts(snap, line)
+            if theirs is None or plug_parts is None:
                 continue
-            ours = snap["total_assets_cr"] - sum(parts.values())
-            cls, note = classify_plug(ours, theirs, snap["total_assets_cr"], their_total, parts,
-                                      {p: row.get(p) or 0.0 for p in parts})
-            out.append({**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls, "note": note})
+            ours = snap["total_assets_cr"] - sum(plug_parts.values())
+            cls, note = classify_plug(ours, theirs, snap["total_assets_cr"], their_total, plug_parts,
+                                      {p: row.get(p) or 0.0 for p in plug_parts})
+            out.append({**base, "metric": line, "memory_value": ours, "screener_value": theirs, "class": cls,
+                        "note": PLUG_NOTE + note if note else PLUG_NOTE.rstrip(": ")})
     return out
 
 
-def cash_flow_pairs(figures: dict, table: dict[str, dict]) -> list[dict]:
-    """The pairs of screener's cash-flow lines (March years) against memory's exchange-file figures of the year."""
+CASH_ELEMENTS = {"operating_cash_flow": "CashFlowsFromUsedInOperatingActivities",
+                 "investing_cash_flow": "CashFlowsFromUsedInInvestingActivities",
+                 "financing_cash_flow": "CashFlowsFromUsedInFinancingActivities",
+                 "net_cash_flow": "IncreaseDecreaseInCashAndCashEquivalents"}
+
+
+def _year_end(key: str) -> date | None:
+    """The date a "YE:2025-06" cash-flow column's year ended (the last day of the month)."""
+    year, month = int(key[len(YEAR_END):][:4]), int(key[len(YEAR_END):][5:7])
+    return date(year, month, calendar.monthrange(year, month)[1])
+
+
+def cash_flow_pairs(figures: dict, table: dict[str, dict], facts_for=None, skipped: list | None = None) -> list[dict]:
+    """The pairs of screener's cash-flow lines against the exchange file's, by the company's own year end. A March year (FY26)
+    is read from memory's figures of the year. Any other year end ("YE:2025-06", screener_fill.cash_year_of) is not in memory at
+    all (xbrl.period_label gives a 6-, 9- or 12-month period no label when the year does not end in March), so it is read from
+    the stored XBRL facts of the file whose quarter ends at that date (``facts_for(quarter label)``, its 12-month cash-flow
+    elements). A column that cannot be paired is appended to ``skipped`` with the reason, never dropped silently."""
     out: list[dict] = []
     for period, row in table.items():
+        if not period.startswith(YEAR_END):
+            for line, name in CASH_LINES.items():
+                theirs = row.get(line)
+                entry = figures.get((_norm(name), period))
+                if theirs is None or not entry or entry.get("value") is None:
+                    continue
+                ours = entry["value"]
+                shifted = _shifted_columns(table, period, line, ours, theirs)
+                cls, note = classify_cash(ours, theirs, shifted, period)
+                out.append({"table": TABLE_CASH, "period": period, "metric": line, "memory_value": ours, "screener_value": theirs,
+                            "class": cls, "shifted": shifted, "memory_source_id": _value_source(entry),
+                            "memory_filed": entry.get("as_of") or "", "note": note})
+            continue
+        end = _year_end(period)
+        label = canonical_period(f"quarter ended {end:%d.%m.%Y}")
+        facts = facts_for(label) if facts_for and quarter_index(label) else None
+        reason = ("" if facts is not None else f"year ends {end:%b %Y}, not a quarter end" if not quarter_index(label)
+                  else f"no XBRL facts stored for {label}" if facts_for else "no XBRL facts available")
+        paired = 0
         for line, name in CASH_LINES.items():
             theirs = row.get(line)
-            entry = figures.get((_norm(name), period))
-            if theirs is None or not entry or entry.get("value") is None:
+            ours = facts.cr(CASH_ELEMENTS[name], end=end, months=12) if facts is not None and theirs is not None else None
+            if ours is None:
                 continue
-            ours = entry["value"]
+            paired += 1
             shifted = _shifted_columns(table, period, line, ours, theirs)
             cls, note = classify_cash(ours, theirs, shifted, period)
             out.append({"table": TABLE_CASH, "period": period, "metric": line, "memory_value": ours, "screener_value": theirs,
-                        "class": cls, "shifted": shifted, "memory_source_id": _value_source(entry),
-                        "memory_filed": entry.get("as_of") or "", "note": note})
+                        "class": cls, "shifted": shifted, "memory_source_id": f"facts:{label}", "memory_filed": "",
+                        "note": (note + "; " if note else "") + f"from the file's own 12-month cash flow to {end:%d %b %Y} (memory keeps none)",
+                        "adjustment": "own_year_end (xbrl facts)"})
+        if not paired and skipped is not None:
+            skipped.append({"period": period, "reason": reason or f"the {label} file holds no 12-month cash flow to {end:%d %b %Y}"})
     return out
 
 
@@ -620,7 +751,9 @@ def alternatives(figures: dict, metric: str, period: str, lender: bool) -> list[
         if v("pat") is not None and v("pat_minority") is not None:
             out.append(("pat less pat_minority", v("pat") - v("pat_minority")))
     elif metric == "eps":
-        out += [("basic_eps", v("basic_eps")), ("diluted_eps", v("diluted_eps")), ("eps", v("eps"))]
+        out += [("basic_eps", v("basic_eps")), ("diluted_eps", v("diluted_eps")), ("eps", v("eps")),
+                # on total profit (continuing and discontinued) or on continuing profit only: which one screener printed
+                ("eps_total (on total profit)", v("eps_total")), ("eps_continuing (on continuing profit)", v("eps_continuing"))]
     return [(label, value) for label, value in out if value is not None]
 
 
@@ -668,12 +801,71 @@ def memory_suspects(figures: dict) -> list[dict]:
     return out
 
 
-def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symbol: str = "") -> dict:
-    """Pairs and gaps for one company. ``pages`` maps a basis to parse_full's result. Pure."""
+def _file_period(period: str) -> str:
+    """The results file a period is read from: a quarter's own, a year's March (Q4) file."""
+    return f"Q4{period}" if period.startswith("FY") else period
+
+
+def _flow_window(period: str) -> tuple[date | None, int]:
+    """(end date, months) of the context a quarter (3 months) or a March year (12) is read at in a results file."""
+    return quarter_end(_file_period(period)), 12 if period.startswith("FY") else 3
+
+
+FACT_FIGURES = {"excise": "excise_duty", "taxes": "indirect_taxes", "discounts": "discounts"}
+
+
+def facts_extra(get_facts, figures: dict, period: str) -> dict:
+    """Figure-like entries for a period that memory has no line for, from the stored XBRL facts of its file: ``excise_duty``,
+    ``indirect_taxes`` (sales tax, VAT, GST), ``discounts`` (each only where memory holds none: memory's own is never
+    doubled), ``treasury_shares`` and the two EPS bases ``eps_total`` / ``eps_continuing``. ``{}`` when no facts are stored.
+    Each entry carries ``note`` (where the facts had it) and ``from_facts``."""
+    facts = get_facts(_file_period(period)) if get_facts else None
+    end, months = _flow_window(period)
+    if facts is None or end is None:
+        return {}
+    out: dict = {}
+    for part, (value, where) in screener_parts.flow_parts(facts, end, months).items():
+        name = FACT_FIGURES[part]
+        if _value(figures, name, period) is None:
+            out[(_norm(name), period)] = {"value": value, "note": where, "from_facts": True}
+    treasury = screener_parts.treasury_shares(facts, end, months)
+    if treasury:
+        out[("treasury_shares", period)] = {"value": treasury[0], "note": treasury[1], "from_facts": True}
+    for label, value in screener_parts.eps_variants(facts, end, months).items():
+        if _value(figures, label, period) is None:
+            out[(label, period)] = {"value": value, "note": "XBRL facts", "from_facts": True}
+    return out
+
+
+def _view_from_facts(rule: str, extra: dict, period: str) -> bool:
+    """Whether a view's parts came from the facts (any part of it is in ``extra``)."""
+    tokens = ["treasury_shares"] if rule == "treasury_shares" else [FACT_FIGURES[t] for t in rule.split("_") if t in FACT_FIGURES]
+    return any((_norm(t), period) in extra for t in tokens)
+
+
+def page_sections(pages: dict[str, dict]) -> dict:
+    """What the stored pages carry (parse_full's ``sections``: the ids balance-sheet and cash-flow), per page read."""
+    return {"pages": len(pages), "balance_sheet": sum(1 for p in pages.values() if (p.get("sections") or {}).get("balance_sheet")),
+            "cash_flow": sum(1 for p in pages.values() if (p.get("sections") or {}).get("cash_flow"))}
+
+
+def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symbol: str = "", facts=None) -> dict:
+    """Pairs and gaps for one company. ``pages`` maps a basis to parse_full's result. ``facts(period, basis)`` gives a file's
+    stored XBRL facts (xbrl_facts.Facts) or None; it is called only for a pair that a part or a year end the facts hold could
+    settle, once a period. Pure otherwise."""
     basis = main_basis(dossier) if dossier else None
     out = {"scrip": scrip, "symbol": symbol, "basis": basis, "sector": (dossier or {}).get("sector")
            or (dossier or {}).get("industry") or "unknown", "pairs": [], "six_pairs": [], "bs_pairs": [], "cf_pairs": [], "gaps": [], "suspects": [],
-           "skipped": None}
+           "skipped": None, "sections": page_sections(pages), "page_used": None, "cf_skipped": []}
+    cache: dict[str, object] = {}
+
+    def get_facts(period: str):
+        if facts is None:
+            return None
+        if period not in cache:
+            cache[period] = facts(period, basis)
+        return cache[period]
+
     if not basis:
         out["skipped"] = "no memory basis"
         return out
@@ -682,6 +874,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
     if not page or page.get("basis") != basis:
         out["skipped"] = "no stored page on memory's basis"
         return out
+    out["page_used"] = page_sections({basis: page})
     lender = is_lender(dossier, basis)
     figures, _ = _figures(dossier, basis)
     columns = {"quarter": page["quarters"], "year": page.get("annual") or {}}
@@ -709,15 +902,34 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                     if len(shifted) > 1:
                         note += f" (chance risk: {len(shifted)} columns match)"
                 cls = classify(entry["value"], theirs, metric, shifted_to, lender, named)
+                adjustment = ""
                 if cls == "mismatch" and metric in ("revenue", "eps"):   # the existing "naming" (revenue less excise) keeps its place
-                    got = screener_view(dossier, figures, period).get(metric)
-                    if got and _close(got[0], theirs, metric) and _apart(entry["value"], theirs, metric):
-                        cls, note = VIEW + got[1], f"screener's view of our figure: {entry['value']:g} -> {got[0]:g} ({got[1]})"
+                    extra = facts_extra(get_facts, figures, period)      # the stored XBRL facts: only now, for a gap to settle
+                    withfacts = {**figures, **extra} if extra else figures
+                    if metric == "eps" and extra:
+                        named = next((label for label, alt in alternatives(withfacts, metric, period, lender)
+                                      if _close(alt, theirs, metric) and abs(alt - entry["value"]) > 1e-9), None)
+                        if named:
+                            cls = "naming"
+                            adjustment = "eps_on_total_profit" if named.startswith("eps_total") else \
+                                "eps_on_continuing_profit" if named.startswith("eps_continuing") else ""
+                    if cls == "mismatch":
+                        for value, rule in screener_views(dossier, withfacts, period).get(metric, []):
+                            if _close(value, theirs, metric) and _apart(entry["value"], theirs, metric):
+                                cls, note = VIEW + rule, f"screener's view of our figure: {entry['value']:g} -> {value:g} ({rule})"
+                                from_facts = _view_from_facts(rule, extra, period)
+                                adjustment = rule + (" (xbrl facts)" if from_facts else " (memory)")
+                                if from_facts:
+                                    note += "; parts read from " + "; ".join(
+                                        f"{FACT_FIGURES[t]} {extra[(_norm(FACT_FIGURES[t]), period)]['value']:g} "
+                                        f"({extra[(_norm(FACT_FIGURES[t]), period)]['note']})"
+                                        for t in rule.split("_") if t in FACT_FIGURES and (_norm(FACT_FIGURES[t]), period) in extra)
+                                break
                 if cls == "naming":
                     note = f"screener {_SCREENER_LINE[metric]} = our {named}"
                 pairs.append({"period": period, "metric": metric, "memory_value": entry["value"], "screener_value": theirs,
                               "class": cls, "shifted": shifted, "memory_source_id": _value_source(entry),
-                              "memory_filed": entry.get("as_of") or "", "note": note})
+                              "memory_filed": entry.get("as_of") or "", "note": note, "adjustment": adjustment})
     unmatched = [p for p in pairs if p["metric"] == "revenue" and p["class"] == "mismatch"]
     if _steady(unmatched):
         for p in unmatched:
@@ -727,8 +939,15 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
     out["six_pairs"] = six_pairs(figures, page["quarters"], lender, bool(page.get("lender_layout")), dossier)
     steady_older(pairs, out["six_pairs"])
     # the balance sheet and the cash flow (28 Oct 2026): counted apart, read only, never in "pairs"
-    out["bs_pairs"] = balance_pairs(_snapshots(dossier, basis), page.get("balance") or {}, lender)
-    out["cf_pairs"] = cash_flow_pairs(figures, page.get("cash_flow") or {})
+    def parts_for(period: str):
+        facts_of = get_facts(period)
+        end = quarter_end(period)
+        return screener_parts.balance_parts(facts_of, end) if facts_of is not None and end else None
+
+    out["bs_pairs"] = balance_pairs(_snapshots(dossier, basis), page.get("balance") or {}, lender, parts_for,
+                                    int(dossier.get("fy_end_month") or 3))
+    out["cf_pairs"] = cash_flow_pairs(figures, page.get("cash_flow") or {}, get_facts if facts is not None else None,
+                                      out["cf_skipped"])
     # gaps: a quarter of the span screener shows, one side has and the other lacks
     ours_quarters = {p for (m, p) in figures if m in ("revenue", "interest_earned", "pat") and quarter_index(p)}
     theirs_quarters = {p for p, row in page["quarters"].items() if row.get("revenue") is not None or row.get("pat") is not None}
@@ -807,13 +1026,20 @@ def run(sink, companies: list[tuple[str, str]], day: str | None = None, workers:
     def one(item: tuple[str, str]) -> dict:
         scrip, symbol = item
         dossier = sink.get_dossier(scrip)
-        pages = {}
+        pages, unparsed = {}, 0
         for basis, key in (pages_by_symbol.get(symbol) or {}).items():
             blob = sink.get_object(key)
             parsed = parse_full(unpack(blob)) if blob else None
             if parsed:
                 pages[basis] = parsed
-        result = compare_company(dossier or {}, pages, scrip, symbol)
+            else:
+                unparsed += 1
+
+        def facts(period: str, basis: str | None):    # a company's stored XBRL facts, read only for a pair that needs them
+            return xbrl_facts.load(sink, scrip, period, basis)
+
+        result = compare_company(dossier or {}, pages, scrip, symbol, facts)
+        result["pages_unparsed"] = unparsed
         if not pages_by_symbol.get(symbol):
             result["skipped"] = "no stored page"
         if use_referee and any(p["class"] in REFEREED for p in result["pairs"]):
@@ -844,33 +1070,57 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     bs_by_line: dict[str, dict[str, int]] = {}
     cf_by_line: dict[str, dict[str, int]] = {}
     table_rows = []     # balance-sheet and cash-flow rows: the CSV carries them, summary["rows"] (the referees' input) does not
+    sections = {k: 0 for k in SECTION_KEYS}
+    cf_skipped: dict[str, int] = {}
+    cf_skipped_companies = 0
+
+    def adjusted(p: dict) -> dict:
+        """The pair with its ``adjustment`` field: the view rule applied and where its parts came from (memory or the XBRL facts)."""
+        if p.get("adjustment") or not p["class"].startswith(VIEW):
+            return p
+        return {**p, "adjustment": p["class"][len(VIEW):] + " (memory)"}
+
     for r in results:
+        sec, used = r.get("sections") or {}, r.get("page_used") or {}
+        sections["pages_read"] += sec.get("pages", 0)
+        sections["pages_unparsed"] += r.get("pages_unparsed", 0)
+        sections["pages_with_balance_sheet"] += sec.get("balance_sheet", 0)
+        sections["pages_with_cash_flow"] += sec.get("cash_flow", 0)
+        sections["compared_pages"] += used.get("pages", 0)
+        sections["compared_with_balance_sheet"] += used.get("balance_sheet", 0)
+        sections["compared_with_cash_flow"] += used.get("cash_flow", 0)
+        sections["companies_with_balance_sheet_pairs"] += bool(r.get("bs_pairs"))
+        sections["companies_with_cash_flow_pairs"] += bool(r.get("cf_pairs"))
+        for skip in r.get("cf_skipped", []):
+            cf_skipped[skip["reason"]] = cf_skipped.get(skip["reason"], 0) + 1
+        cf_skipped_companies += bool(r.get("cf_skipped"))
         if r["skipped"]:
             skipped[r["skipped"]] = skipped.get(r["skipped"], 0) + 1
         base = {"scrip": r["scrip"], "symbol": r["symbol"], "sector": r["sector"], "basis": r["basis"]}
         bad = 0
         for p in r["pairs"]:
-            by_class[p["class"]] += 1
-            by_metric.setdefault(p["metric"], {c: 0 for c in CLASSES})[p["class"]] += 1
-            by_sector.setdefault(r["sector"], {c: 0 for c in CLASSES})[p["class"]] += 1
+            by_class[p["class"]] = by_class.get(p["class"], 0) + 1
+            for table, key in ((by_metric, p["metric"]), (by_sector, r["sector"])):
+                counts = table.setdefault(key, {c: 0 for c in CLASSES})
+                counts[p["class"]] = counts.get(p["class"], 0) + 1
             if p.get("verdict"):
                 verdicts[p["verdict"]] = verdicts.get(p["verdict"], 0) + 1
             if p["class"] == "naming":
                 naming[p["note"]] = naming.get(p["note"], 0) + 1
             if p["class"] != "match":
-                rows.append({**base, **p, "table": TABLE_RESULTS})
+                rows.append({**base, **adjusted(p), "table": TABLE_RESULTS})
                 if p["class"] in ("mismatch", "scale", "wrong_quarter"):
                     bad += 1
         for p in r.get("six_pairs", []):
             six_by_class.setdefault(p["metric"], {c: 0 for c in SIX_CLASSES})[p["class"]] += 1
             if p["class"] != "match":
-                rows.append({**base, **p, "table": TABLE_SIX})
+                rows.append({**base, **adjusted(p), "table": TABLE_SIX})
         for key, by_line, classes in (("bs_pairs", bs_by_line, BS_CLASSES), ("cf_pairs", cf_by_line, CF_CLASSES)):
             for p in r.get(key, []):
                 counts = by_line.setdefault(p["metric"], {c: 0 for c in classes})
                 counts[p["class"]] = counts.get(p["class"], 0) + 1
                 if p["class"] != "match":
-                    table_rows.append({**base, **p})
+                    table_rows.append({**base, **adjusted(p)})
         for s in r.get("suspects", []):
             suspects[s["kind"]] += 1
             rows.append({**base, **s, "table": TABLE_PERIOD})
@@ -888,6 +1138,8 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             "six_pairs": sum(sum(row.values()) for row in six_by_class.values()), "six_by_class": six_by_class,
             "bs_pairs": sum(sum(row.values()) for row in bs_by_line.values()), "bs_by_line": _in_order(bs_by_line, BS_LINES),
             "cf_pairs": sum(sum(row.values()) for row in cf_by_line.values()), "cf_by_line": _in_order(cf_by_line, CF_LINES),
+            "sections": sections, "cf_skipped": {"columns": sum(cf_skipped.values()), "companies": cf_skipped_companies,
+                                                  "by_reason": cf_skipped},
             "gaps": gaps, "memory_period_suspect": suspects, "verdicts": verdicts, "naming": naming,
             "worst_companies": worst[:25], "rows": rows, "table_rows": table_rows}
 
@@ -927,6 +1179,45 @@ def to_json(summary: dict) -> str:
     return json.dumps({k: v for k, v in summary.items() if k not in ("rows", "table_rows")}, ensure_ascii=False, indent=1) + "\n"
 
 
+def _line_label(line: str) -> str:
+    return f"{line} (plug: informational)" if line in BS_PLUGS else line
+
+
+def _columns(by_line: dict, classes: tuple[str, ...]) -> tuple[str, ...]:
+    """The class columns of a per-line table: the fixed ones, then any other class the run found (a view's name carries the
+    parts it used, so the set is open)."""
+    return (*classes, *sorted({k for row in by_line.values() for k, n in row.items() if n and k not in classes}))
+
+
+def sections_lines(summary: dict) -> list[str]:
+    """How many stored pages carry the balance-sheet and cash-flow sections and how many were compared, with a warning in
+    words when a section is missing: shown always, also at 0 (independent review, 28 Oct 2026: a missing section must be loud)."""
+    sec = {**{k: 0 for k in SECTION_KEYS}, **(summary.get("sections") or {})}
+    skipped = summary.get("cf_skipped") or {"columns": 0, "companies": 0, "by_reason": {}}
+    lines = [f"stored pages read            {sec['pages_read']} ({sec['pages_unparsed']} could not be parsed)",
+             f"  with id=balance-sheet      {sec['pages_with_balance_sheet']} of {sec['pages_read']}",
+             f"  with id=cash-flow          {sec['pages_with_cash_flow']} of {sec['pages_read']}",
+             f"pages compared (memory's basis) {sec['compared_pages']}",
+             f"  with id=balance-sheet      {sec['compared_with_balance_sheet']} of {sec['compared_pages']}; "
+             f"companies with balance-sheet pairs {sec['companies_with_balance_sheet_pairs']}",
+             f"  with id=cash-flow          {sec['compared_with_cash_flow']} of {sec['compared_pages']}; "
+             f"companies with cash-flow pairs {sec['companies_with_cash_flow_pairs']}",
+             f"cash-flow columns not paired {skipped['columns']} ({skipped['companies']} companies)"]
+    lines += [f"  {n:4}  {reason}" for reason, n in sorted(skipped["by_reason"].items(), key=lambda kv: -kv[1])]
+    if not sec["pages_read"]:
+        lines.append("WARNING: no stored page was read: nothing was compared")
+    else:
+        for name, key, pairs in (("balance-sheet", "pages_with_balance_sheet", "companies_with_balance_sheet_pairs"),
+                                 ("cash-flow", "pages_with_cash_flow", "companies_with_cash_flow_pairs")):
+            if not sec[key]:
+                lines.append(f'WARNING: NO stored page carries id="{name}": the {name} was not compared at all '
+                             "(the download or the page layout lacks the section)")
+            elif not sec[pairs]:
+                lines.append(f'WARNING: pages carry id="{name}" but no {name} pair was made (no column read, or no figure of '
+                             "ours to set against it)")
+    return lines
+
+
 def render(summary: dict) -> str:
     c, g = summary["by_class"], summary["gaps"]
     lines = [f"screener cross-check (pages of {summary['pages_day']}, read only):",
@@ -934,6 +1225,8 @@ def render(summary: dict) -> str:
              f"compared                     {summary['companies_compared']}",
              f"pairs compared               {summary['pairs']}"]
     lines += [f"  {name:26}{c[name]}" for name in CLASSES]
+    lines += [f"  {name:26}{n}" for name, n in sorted(c.items()) if name not in CLASSES and n]
+    lines += sections_lines(summary)
     if summary.get("six_by_class"):
         lines += [f"six other lines, pairs       {summary['six_pairs']}"]
         for metric, row in sorted(summary["six_by_class"].items()):
@@ -943,7 +1236,7 @@ def render(summary: dict) -> str:
         if by_line:
             lines += [f"{title}, pairs               {total}"]
             for line, row in by_line.items():
-                lines += [f"  {line:18}" + "  ".join(f"{k} {n}" for k, n in row.items() if n)]
+                lines += [f"  {_line_label(line):38}" + "  ".join(f"{k} {n}" for k, n in row.items() if n)]
     lines += [f"memory_period_suspect        {sum(summary['memory_period_suspect'].values())}"]
     lines += [f"  {k:26}{v}" for k, v in summary["memory_period_suspect"].items()]
     lines += ["referee verdicts:"] + [f"  {k:34}{v}" for k, v in sorted(summary["verdicts"].items())]
@@ -991,6 +1284,9 @@ def to_markdown(summary: dict, date: str) -> str:
             f"{len(screener_wrong)} pairs.", ""] + _table(screener_wrong)
     out += ["## Naming (screener equals another official line of ours)", "", f"{c['naming']} pairs.", ""]
     out += [f"- {note}: {n}" for note, n in sorted(summary["naming"].items(), key=lambda kv: -kv[1])[:15]] + [""]
+    out += ["## Sections found on the stored pages", "",
+            "The balance sheet and the cash flow are read from the page sections `id=\"balance-sheet\"` and `id=\"cash-flow\"`. "
+            "A missing section is not a clean result: no pair was made.", "", "```", *sections_lines(summary), "```", ""]
     out += ["## Not settled", "", f"- both_match (two different lines): {v.get('both_match', 0)}",
             f"- neither: {v.get('neither', 0)}",
             f"- no_official_text: {v.get('no_official_text', 0)} (listed in referee.csv, for a later step to fetch)", "",
@@ -1014,15 +1310,18 @@ def to_markdown(summary: dict, date: str) -> str:
              summary.get("bs_by_line"), BS_CLASSES,
              "Compared on memory's basis with the exchange file's statement of assets and liabilities, within 1 Cr or 0.5%. "
              "Total Liabilities is compared with our total assets (it is equity plus liabilities); Other Liabilities and Other "
-             "Assets are screener's plugs worked out from our lines. A `definition:` class names a part screener adds that memory "
-             "has no line for (docs/bench/screener-rules.md rows 10 and 11): borrowings with lease liabilities, fixed assets with "
-             "intangibles and right-of-use assets; CWIP and investments are the mapping study's assumption."),
+             "Assets are screener's plugs worked out from our lines: informational, not an error count. A "
+             "`matches_screener_view:` class names a part the stored XBRL facts show and screener adds (docs/bench/screener-rules.md "
+             "rows 10 and 11: lease liabilities and current maturities in borrowings, goodwill, intangibles and right-of-use assets in "
+             "fixed assets, intangibles under development in CWIP, deferred tax netted off the totals); a gap no found part closes is "
+             "never named a definition: `unexplained_larger` (screener's figure the larger) or `mismatch`."),
             ("The cash flow (years)", summary.get("cf_pairs", 0), summary.get("cf_by_line"), CF_CLASSES,
              "Operating, investing, financing and net cash flow of March years against the exchange file's figures.")):
         if by_line:
+            classes = _columns(by_line, classes)
             out += ["", f"## {title}", "", f"{total} pairs, counted apart from the tables above. {intro}", "",
                     "| Line | Pairs | " + " | ".join(classes) + " |", "|---|---|" + "---|" * len(classes)]
-            out += [f"| {line} | {sum(row.values())} | " + " | ".join(str(row.get(k, 0)) for k in classes) + " |"
+            out += [f"| {_line_label(line)} | {sum(row.values())} | " + " | ".join(str(row.get(k, 0)) for k in classes) + " |"
                     for line, row in by_line.items()]
     out += ["", "## Sectors with the most unexplained pairs (mismatch, scale, wrong_quarter)", "",
             "| Sector | Pairs | Wrong |", "|---|---|---|"]

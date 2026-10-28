@@ -228,7 +228,7 @@ LINES: tuple[Line, ...] = (
        derived_from=("debt_noncurrent", "debt_current", "debt_borrowings", "debt_securities", "debt_subordinated"),
        screener=("Borrowings", "Borrowing"),
        note="worked out in xbrl._balance_sheet; screener's row also holds lease liabilities and current maturities (rules row 10), "
-            "memory has no lease line: a larger screener figure is class definition:lease_not_in_memory. A lender's page names "
+            "memory has no lease line: the lease liabilities come from the stored XBRL facts where tagged (screener_parts.py), a gap they do not close is unexplained_larger. A lender's page names "
             "the row Borrowing (assumption: the mapping study's wording, not seen in a stored page here)"),
     _l("debt_noncurrent", "Borrowings, non-current", "balance", xbrl=("BorrowingsNoncurrent",)),
     _l("debt_current", "Borrowings, current", "balance", xbrl=("BorrowingsCurrent",)),

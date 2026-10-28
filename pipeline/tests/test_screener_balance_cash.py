@@ -141,17 +141,19 @@ def test_total_liabilities_is_compared_with_our_total_assets_never_our_total_lia
     assert pair["class"] == "match" and pair["memory_value"] == 1580.0 and pair["screener_value"] == 1580.0
 
 
-def test_borrowings_with_leases_is_named_and_a_smaller_screener_figure_is_a_mismatch():
-    # screener's Borrowings hold lease liabilities (rules row 10): 330 in memory, 380 on screener
+def test_a_larger_screener_borrowings_without_a_found_part_is_never_a_definition():
+    # screener's Borrowings hold lease liabilities (rules row 10): 330 in memory, 380 on screener. With no facts stored the part
+    # is not shown, so the gap is not explained: independent review, 28 Oct 2026 (a "definition" there hid a missing block)
     rows = with_rows(**{"Borrowings&nbsp;+": [300, 380, 350], "Other_Liabilities&nbsp;+": [200, 200, 290],
                         "Total_Liabilities": [1400, 1580, 1750]})
     result = compare(**{"bs": rows})
     pair = bs(result, "borrowings", "Q4FY26")[("Q4FY26", "borrowings")]
-    assert pair["class"] == "definition:lease_not_in_memory" and "50 more on screener" in pair["note"]
+    assert pair["class"] == "unexplained_larger" and "50 more on screener" in pair["note"] and "no XBRL facts stored" in pair["note"]
+    assert not any(p["class"].startswith("definition") for p in result["bs_pairs"])
     # the plug carries the same 50 the other way: not a second error
     plug = bs(result, "other_liabilities", "Q4FY26")[("Q4FY26", "other_liabilities")]
     assert plug["memory_value"] == 250.0 and plug["screener_value"] == 200.0
-    assert plug["class"] == "derived:part_differs" and "borrowings" in plug["note"]
+    assert plug["class"] == "derived:part_differs" and "borrowings" in plug["note"] and plug["note"].startswith("informational (plug)")
     # the other direction has no rule: ours bigger than screener's is a mismatch
     smaller = compare(**{"bs": with_rows(**{"Borrowings&nbsp;+": [300, 250, 350]})})
     assert bs(smaller, "borrowings", "Q4FY26")[("Q4FY26", "borrowings")]["class"] == "mismatch"
@@ -163,18 +165,18 @@ def test_fixed_assets_with_goodwill_then_with_intangibles_and_right_of_use():
     snaps[2]["goodwill_cr"] = 30.0
     goodwill = compare(dossier(snaps), bs=with_rows(**{"Fixed_Assets&nbsp;+": [600, 730, 760]}))
     assert bs(goodwill, "fixed_assets", "Q4FY26")[("Q4FY26", "fixed_assets")]["class"] == "matches_screener_view:goodwill_in_fixed_assets"
-    # goodwill does not close Q2FY27 (760 + 30 against 900): the intangibles and right-of-use assets screener adds
+    # goodwill does not close Q2FY27 (760 + 30 against 900) and no intangible or right-of-use line is shown: not explained
     wide = compare(dossier(snaps), bs=with_rows(**{"Fixed_Assets&nbsp;+": [600, 730, 900]}))
-    assert bs(wide, "fixed_assets", "Q2FY27")[("Q2FY27", "fixed_assets")]["class"] == "definition:intangibles_rou_not_in_memory"
+    assert bs(wide, "fixed_assets", "Q2FY27")[("Q2FY27", "fixed_assets")]["class"] == "unexplained_larger"
     # nothing explains a screener figure below ours
     below = compare(bs=with_rows(**{"Fixed_Assets&nbsp;+": [600, 500, 760]}))
     assert bs(below, "fixed_assets", "Q4FY26")[("Q4FY26", "fixed_assets")]["class"] == "mismatch"
 
 
-def test_cwip_and_investments_names_and_a_lenders_investments_are_never_named():
+def test_cwip_and_investments_are_not_named_without_a_tagged_part_and_a_lenders_investments_never():
     result = compare(bs=with_rows(CWIP=[50, 90, 70], Investments=[250, 340, 300]))
-    assert bs(result, "cwip", "Q4FY26")[("Q4FY26", "cwip")]["class"] == "definition:intangibles_under_development_not_in_memory"
-    assert bs(result, "investments", "Q4FY26")[("Q4FY26", "investments")]["class"] == "definition:other_financial_assets_not_in_memory"
+    assert bs(result, "cwip", "Q4FY26")[("Q4FY26", "cwip")]["class"] == "unexplained_larger"
+    assert bs(result, "investments", "Q4FY26")[("Q4FY26", "investments")]["class"] == "unexplained_larger"
     bank = compare(dossier(lender=True), bs=with_rows(Investments=[250, 340, 300]))
     assert bs(bank, "investments", "Q4FY26")[("Q4FY26", "investments")]["class"] == "mismatch"
 
@@ -261,14 +263,14 @@ def test_summary_counts_the_lines_apart_and_the_rows_reach_the_csv_marked_by_tab
     assert out["pairs"] == plain["pairs"] and out["by_class"] == plain["by_class"] and out["six_pairs"] == plain["six_pairs"]
     assert out["bs_pairs"] == 30 and out["cf_pairs"] == 2
     assert list(out["bs_by_line"]) == [line for line in sc.BS_LINES if line != "deposits"]
-    assert out["bs_by_line"]["borrowings"]["definition:lease_not_in_memory"] == 1 and out["bs_by_line"]["borrowings"]["match"] == 2
+    assert out["bs_by_line"]["borrowings"]["unexplained_larger"] == 1 and out["bs_by_line"]["borrowings"]["match"] == 2
     assert out["bs_by_line"]["other_liabilities"]["derived:part_differs"] == 1
     assert out["cf_by_line"]["investing"]["sign"] == 1 and out["cf_by_line"]["operating"]["match"] == 1
     # the referees read summary["rows"]: the new rows are not in it
     assert not any(r.get("table") in ("balance_sheet", "cash_flow") for r in out["rows"])
     rows = list(csv.DictReader(io.StringIO(sc.to_csv(out))))
     marked = {(r["table"], r["metric"], r["class"]) for r in rows if r["table"] in ("balance_sheet", "cash_flow")}
-    assert marked == {("balance_sheet", "borrowings", "definition:lease_not_in_memory"),
+    assert marked == {("balance_sheet", "borrowings", "unexplained_larger"),
                       ("balance_sheet", "other_liabilities", "derived:part_differs"), ("cash_flow", "investing", "sign")}
     assert rows[0].keys() >= {"scrip", "symbol", "table", "class", "memory_value", "screener_value"}
     assert all(r["table"] for r in rows)                                                    # every row says which table it is
@@ -278,7 +280,7 @@ def test_summary_counts_the_lines_apart_and_the_rows_reach_the_csv_marked_by_tab
 def test_the_report_and_the_text_summary_carry_per_line_counts():
     out = sc.summarise([result_with_gaps()], "2026-10-28")
     text = sc.render(out)
-    assert "balance sheet, pairs" in text and "borrowings" in text and "definition:lease_not_in_memory 1" in text
+    assert "balance sheet, pairs" in text and "borrowings" in text and "unexplained_larger 1" in text
     assert "cash flow, pairs" in text and "sign 1" in text
     md = sc.to_markdown(out, "2026-10-28")
     assert "## The balance sheet" in md and "## The cash flow" in md and "| borrowings | 3 |" in md and "| investing | 1 |" in md

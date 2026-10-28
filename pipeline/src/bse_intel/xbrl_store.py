@@ -59,6 +59,18 @@ def get(sink, url: str) -> bytes | None:
         return None
 
 
+def stored_keys(sink) -> set[str]:
+    """The object keys of the files held (one listing of the folder, not a read of each file); empty when the sink has no
+    store or the listing fails. The ``_total`` bookkeeping object is in it; no file key equals it."""
+    if not enabled(sink):
+        return set()
+    try:
+        return set(sink.list_objects(PREFIX))
+    except Exception as exc:  # noqa: BLE001
+        log.warning("xbrl store listing failed: %s", exc)
+        return set()
+
+
 def put(sink, url: str, data: bytes) -> bool:
     """Keep a downloaded file, unless the store is full (the total is read once a process). True when it was kept."""
     if not enabled(sink) or not data:

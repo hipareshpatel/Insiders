@@ -1504,14 +1504,47 @@ def cmd_text_backfill(args, settings, sink) -> int:
     return MORE_LEFT if outcome["more"] else 0
 
 
-def cmd_screener_crosscheck(args, settings, sink) -> int:
-    """Read-only cross-check of memory against the stored screener pages (screener_crosscheck.py, F163): no request to
-    screener or NSE, no write, no AI. Writes the summary JSON, the CSV of every non-match pair, referee.csv and the markdown."""
-    from . import screener_crosscheck as sc
+def _largest_by_mcap(sink, companies: list[tuple[str, str]], n: int) -> list[tuple[str, str]]:
+    """The ``n`` of ``companies`` ((scrip, symbol) pairs) with the largest market cap, read from the companies table the way
+    universe.py reads it (query ``companies_universe``, paged); a company with no market cap there sorts last, ties by symbol."""
+    caps: dict[str, float] = {}
+    after = ""
+    while True:
+        page = sink.query("companies_universe", [after, 500])
+        if not page:
+            break
+        caps.update({r["scrip_code"]: r.get("market_cap_cr") or 0.0 for r in page})
+        after = page[-1]["scrip_code"]
+        if len(page) < 500:
+            break
+    return sorted(companies, key=lambda c: (-caps.get(c[0], 0.0), c[1]))[:n]
 
+
+def _selected_companies(args, sink):
+    """(scrip, symbol) pairs for ``--scrips`` and ``--top-mcap`` (the N largest of the universe, or of the named companies);
+    None with a message printed when there is no universe file, or a bad number."""
     companies = _universe_companies(sink, args.scrips)
     if companies is None:
         print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return None
+    top = getattr(args, "top_mcap", None)
+    if top is not None:
+        if top <= 0:
+            print("--top-mcap takes a number above 0")
+            return None
+        companies = _largest_by_mcap(sink, companies, top)
+        print(f"top {top} by market cap: " + ", ".join(symbol for _, symbol in companies[:60]) + (" ..." if len(companies) > 60 else ""))
+    return companies
+
+
+def cmd_screener_crosscheck(args, settings, sink) -> int:
+    """Read-only cross-check of memory against the stored screener pages (screener_crosscheck.py, F163): no request to
+    screener or NSE, no write, no AI. Writes the summary JSON, the CSV of every non-match pair, referee.csv and the markdown.
+    ``--scrips`` limits it to named companies, ``--top-mcap N`` to the N largest by market cap."""
+    from . import screener_crosscheck as sc
+
+    companies = _selected_companies(args, sink)
+    if companies is None:
         return 2
     summary = sc.run(sink, companies, args.day, args.workers, not args.no_referee)
     print(sc.render(summary))
@@ -1524,6 +1557,32 @@ def cmd_screener_crosscheck(args, settings, sink) -> int:
     if args.md:
         Path(args.md).write_text(sc.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
     return 0
+
+
+def cmd_xbrl_facts(args, settings, sink) -> int:
+    """Every fact of the results XBRL files already stored in R2 (raw/xbrl/), into raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz
+    (xbrl_facts.py; owner, 28 Oct 2026). Reads R2 and memory only: no request to NSE. Lists the filings whose file is not stored
+    (``--csv``); ``--download`` also fetches those files, through the seed's own fetch (cache, R2, then NSE with its pacing) and
+    under FILE_CAP (the first run: 100). ``--dry-run`` writes nothing. Exit 75 when NSE refused the session; the file cap is a
+    planned stop (0)."""
+    from . import xbrl_facts as xf
+
+    companies = _selected_companies(args, sink)
+    if companies is None:
+        return 2
+    if args.download:
+        from .nse import NseClient
+
+        with NseClient() as nse:
+            summary = xf.run(sink, companies, download=True, client=nse, force=args.force, dry_run=args.dry_run, limit=args.limit)
+    else:
+        summary = xf.run(sink, companies, force=args.force, dry_run=args.dry_run, limit=args.limit)
+    print(xf.render(summary))
+    if args.json:
+        Path(args.json).write_text(xf.to_json(summary), encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(xf.to_csv(summary), encoding="utf-8")
+    return REFUSED if summary["stopped"] and not summary["capped"] else 0
 
 
 def cmd_pdf_referee(args, settings, sink) -> int:
@@ -2267,6 +2326,7 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("screener-crosscheck", help="read-only: compare memory with the stored screener pages, the official text as referee")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
     p.add_argument("--day", help="use the pages stored on or before this day (default the newest)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (of --scrips, else of the universe)")
     p.add_argument("--workers", type=int, default=8, help="companies read at a time")
     p.add_argument("--no-referee", action="store_true", help="skip the look-up in the official text")
     p.add_argument("--json", help="write the summary to this file")
@@ -2274,6 +2334,17 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--referee-csv", help="write the refereed pairs, with the official line and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown report to this file")
     p.set_defaults(func=cmd_screener_crosscheck)
+
+    p = sub.add_parser("xbrl-facts", help="keep every fact of the stored results XBRL files in R2 (raw/xbrl-facts/); lists the filings whose file is not stored; no NSE request unless --download")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (of --scrips, else of the universe)")
+    p.add_argument("--limit", type=int, help="at most N companies (the first N of the selection)")
+    p.add_argument("--download", action="store_true", help="also download the files that are not stored (NSE, the seed's fetch and pace; counts toward FILE_CAP)")
+    p.add_argument("--force", action="store_true", help="read again the files whose facts are stored")
+    p.add_argument("--dry-run", action="store_true", help="parse and count, write no facts")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write the filings whose file is not stored to this file")
+    p.set_defaults(func=cmd_xbrl_facts)
 
     p = sub.add_parser("screener-referee", help="read-only: NSE's results XBRL as the referee of the screener cross-check's disagreeing pairs")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

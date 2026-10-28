@@ -984,7 +984,7 @@ def locate_in(model: DocModel, expected: list[Expected]) -> list[Result]:
                 res.note = "unit_not_declared: no unit line was read, every unit was tried"
             else:
                 fill(res, p, cell, "found_unique")
-                res.note = (res.note + "; " if res.note else "") + how
+                res.note = "; ".join(x for x in (res.note, how) if x)
         elif found:
             best = strong[0] if strong else found[0]
             fill(res, best[0], best[1], "found_ambiguous")

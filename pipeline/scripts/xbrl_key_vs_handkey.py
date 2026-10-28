@@ -110,7 +110,7 @@ def main() -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     with open(out / "locator-vs-key.csv", "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(out_rows[0]) if out_rows else ["symbol"])
+        w = csv.DictWriter(fh, fieldnames=list(out_rows[0]) if out_rows else ["symbol"], lineterminator="\n")
         w.writeheader()
         w.writerows(out_rows)
     status = Counter(r["status"] for r in out_rows)

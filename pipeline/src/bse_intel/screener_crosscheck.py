@@ -147,6 +147,19 @@ def _close(ours: float, theirs: float, metric: str) -> bool:
     return abs(ours - theirs) <= max(absolute, relative * abs(ours))
 
 
+VIEW_ABS, VIEW_REL = 1.5, 0.0005    # a screener view closes a gap only within 1.5 Cr or 0.05% of screener's figure
+
+
+def view_close(value: float, theirs: float, metric: str = "money") -> bool:
+    """Whether a view of our figure (ours plus the parts screener adds) closes the gap to screener's figure. Tighter than a plain
+    match (1 Cr or 0.5%): screener prints whole crore, so the residual of a sum of parts is at most a rounding or two, and 0.5% of a
+    1,50,000 Cr line (750 Cr) would let almost any part close almost any gap (review, 28 Oct 2026). An EPS view keeps the EPS
+    tolerance, which is already a few paise."""
+    if metric == "eps":
+        return _close(value, theirs, "eps")
+    return abs(value - theirs) <= max(VIEW_ABS, VIEW_REL * abs(theirs)) + 1e-9
+
+
 def _apart(ours: float, theirs: float, metric: str) -> bool:
     """More than twice the match tolerance: a rule credited with a gap this wide did not match by chance."""
     absolute, relative = (EPS_ABS, EPS_REL) if metric == "eps" else (MONEY_ABS, MONEY_REL)
@@ -310,7 +323,7 @@ def classify_six(metric: str, ours: float, theirs: float, figures: dict, period:
         return "match", ""
     if _six_apart(ours, theirs, metric):
         for value, rule in (view or {}).get(metric, []):
-            if _six_close(value, theirs, metric):
+            if _six_close(value, theirs, metric) if metric == "tax_pct" else view_close(value, theirs):
                 return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
     if metric in SMALL_GAP_LINES and abs(ours - theirs) <= max(SMALL_ABS, SMALL_REL * abs(theirs)) + 1e-9:
         return "small_gap", f"{ours:g} against {theirs:g}: gap {abs(ours - theirs):.2f}"
@@ -446,7 +459,7 @@ def classify_balance(line: str, ours: float, theirs: float, shifted: list[str], 
     why = ""
     if _apart(ours, theirs, "money"):
         for value, rule in (views() if callable(views) else views):
-            if _close(value, theirs, "money"):
+            if view_close(value, theirs):
                 return VIEW + rule, f"screener's view of our figure: {ours:g} -> {value:g} ({rule})"
         why = state() if callable(state) else ""
         if line in BS_PARTS and theirs > ours and not (lender and line in BS_PARTS_NOT_LENDER):
@@ -935,7 +948,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                                 "eps_on_continuing_profit" if named.startswith("eps_continuing") else ""
                     if cls == "mismatch":
                         for value, rule in screener_views(dossier, withfacts, period).get(metric, []):
-                            if _close(value, theirs, metric) and _apart(entry["value"], theirs, metric):
+                            if view_close(value, theirs, metric) and _apart(entry["value"], theirs, metric):
                                 cls, note = VIEW + rule, f"screener's view of our figure: {entry['value']:g} -> {value:g} ({rule})"
                                 from_facts = _view_from_facts(rule, extra, period)
                                 adjustment = rule + (" (xbrl facts)" if from_facts else " (memory)")

@@ -88,14 +88,35 @@ def test_other_companies_parts_do_not_close_gaps_beyond_chance():
         cls, _ = sc.classify_balance("borrowings", ours, theirs, [], lambda: sc._bs_views({}, "borrowings", ours, other, False), False)
         shuffled += cls.startswith(sc.VIEW)
         if cls != "match" and sc._apart(ours, theirs, "money"):
-            searched += any(sc._close(ours + sum(c), theirs, "money")
+            searched += any(sc.view_close(ours + sum(c), theirs)
                             for size in (1, 2) for c in itertools.combinations((other_lease, other_maturities), size))
         elif cls.startswith(sc.VIEW) or cls == "match":
             searched += 1
-    assert real >= 0.98 * n                                        # screener's own sums are explained (the rest are gaps inside 2 tolerances)
-    # the tolerance (1 Cr or 0.5%: 12 Cr on a 2,500 Cr line) is itself the chance: measured 17% shuffled, 33% when the mixes are searched
-    assert shuffled / n < 0.20
+    # the view tolerance (1.5 Cr or 0.05% of screener's figure) leaves little room for chance: measured on this seed, the real parts
+    # close 596 of 600 gaps, the shuffled parts 10 (1.7%), and searching the mixes for a fit would have closed 29 (4.8%)
+    assert shuffled / n < 0.03
     assert shuffled < searched * 0.6 and searched / n > shuffled / n * 1.5
+
+
+def test_a_view_closes_a_gap_only_within_a_crore_and_a_half_or_five_hundredths_of_a_percent():
+    assert sc.view_close(149_080.40, 149_080.0)                      # BPCL Q2FY27: 157,817.93 - 8,737.53 against 1,49,080
+    assert sc.view_close(100.0, 101.4) and not sc.view_close(100.0, 101.6)
+    assert sc.view_close(149_080.0, 149_150.0) and not sc.view_close(149_080.0, 149_160.0)        # 0.05% of 1,50,000 is 75 Cr
+    assert sc._close(150_000.0, 150_600.0, "money") and not sc.view_close(150_000.0, 150_600.0)   # a plain match keeps 0.5%
+    # a part that would close the gap at 0.5% (150,000 + 400 against 150,600) closes nothing as a view
+    cls, _ = sc.classify_balance("borrowings", 150_000.0, 150_600.0, [], lambda: [(150_400.0, "borrowings_plus_lease_liabilities")], False)
+    assert cls == "match"
+    cls, _ = sc.classify_balance("borrowings", 150_000.0, 153_000.0, [], lambda: [(150_400.0, "borrowings_plus_lease_liabilities")], False)
+    assert cls == "unexplained_larger"
+    assert sc.view_close(9.52, 9.52, "eps") and not sc.view_close(9.50, 9.60, "eps")                # EPS keeps its own tolerance
+
+
+def test_a_lease_maturity_analysis_is_not_a_balance_but_a_current_maturity_of_a_lease_is():
+    analysis = (money("LeaseLiabilitiesMaturityAnalysis", "I", 90.0), money("LeaseLiabilitiesMaturityLessThanOneYear", "I", 20.0),
+                money("LeaseLiabilitiesMaturities", "I", 30.0))
+    assert "lease_liabilities" not in parts(*analysis)
+    got = parts(money("LeaseLiabilitiesNoncurrent", "I", 40.0), money("CurrentMaturitiesOfLeaseLiabilities", "I", 8.0), *analysis)
+    assert got["lease_liabilities"] == pytest.approx(48.0)            # the analysis adds nothing, the current maturity stays
 
 
 # --- each item once ----------------------------------------------------------------------------------------------------------

@@ -48,8 +48,10 @@ FLOW_PARTS = {   # part -> (element name regex, breakdown row description regex)
 FLOW_ORDER = ("excise", "taxes", "discounts")
 # a lease line is a lease-liability element, or a current maturity OF a lease (a current lease liability, never a maturity of
 # borrowings); a payment, interest, expense or undiscounted amount is no balance
-LEASE_ELEMENT = r"LeaseLiabilit|Maturit\w*Lease|Lease\w*Maturit"
-LEASE_NOT = r"Payments|Interest|Expense|Proceeds|Adjustments|Undiscounted"
+LEASE_ELEMENT = r"LeaseLiabilit|Maturit\w*Lease"
+# a payment, interest, expense or undiscounted amount is no balance, and neither is a maturity analysis (LeaseLiabilitiesMaturity...,
+# LeaseLiabilitiesMaturityAnalysis...); the current-maturity form (CurrentMaturitiesOfLeaseLiabilities) is a balance and stays
+LEASE_NOT = r"Payments|Interest|Expense|Proceeds|Adjustments|Undiscounted|Maturity|LeaseLiabilit\w*Maturit"
 # a part counts only above a floor: a sliver of a line is how a chance match is made (independent review, 28 Oct 2026)
 PART_FLOOR_ABS, PART_FLOOR_REL = 1.0, 0.002     # 1 Cr and 0.2% of the line it would be added to
 

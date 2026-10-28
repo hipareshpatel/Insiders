@@ -1046,6 +1046,11 @@ class Solver:
 
 # --- a PDF into tables ----------------------------------------------------------------------------------------------------
 
+# OCR's spelling of "consolidated" as the negative check above reads it: anything like "consol" ("C0NSOLIDATED", "Consolldated",
+# "Consoli-" broken over a line) counts, so a garbled title can never be taken for no consolidated statement; a false alarm
+# ("console", "consolation") only costs an answer
+_LOOSE_CONSOLIDATED = re.compile(r"c\W{0,2}[o0]\W{0,2}n\W{0,2}[s5]\W{0,2}[o0]\W{0,2}[l1i|!]", re.I)
+
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
             keep_unnamed: bool = False) -> list[Table]:
     """The solved tables of a results PDF. Every page with a text layer (the first ``max_pages``) is read from its words. A page
@@ -1175,7 +1180,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     no_layer = [p for p, layer in layers.items() if not layer.has_layer]
     if anywhere and no_layer and all(p in ocr_texts for p in no_layer) \
             and not any(names_consolidated(layer.text) for layer in layers.values()) \
-            and not any(names_consolidated(ocr_texts[p]) for p in no_layer):
+            and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer):
         from .metrics import STANDALONE
         for p in by_page:
             for t in by_page[p]:

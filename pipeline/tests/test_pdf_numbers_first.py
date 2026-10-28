@@ -744,3 +744,9 @@ def test_an_untitled_scanned_statement_is_standalone_once_ocr_finds_no_consolida
     # OCR of the scanned page names a consolidated statement: the untitled table's basis stays unproven
     noted = as_ocr_boxes(untitled(rows, "Statement of Consolidated Financial Results is on the next page."))
     assert got(lambda png: noted).status == "none"
+
+
+def test_a_garbled_consolidated_in_ocr_still_leaves_the_basis_unproven():
+    for garbled in ("C0NSOLIDATED FINANCIAL RESULTS", "Consolldated Results", "Consoli-\\ndated", "CONSOL IDATED"):
+        assert nf._LOOSE_CONSOLIDATED.search(garbled)
+    assert not nf._LOOSE_CONSOLIDATED.search("Statement of Unaudited Standalone Financial Results; the Company considers")

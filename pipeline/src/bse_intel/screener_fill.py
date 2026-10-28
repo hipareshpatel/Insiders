@@ -163,7 +163,7 @@ LENDER_ROW = "Financing Profit"   # a lender page's own layout: "Revenue", "Inte
 
 
 def parse_full(body: str) -> dict | None:
-    """parse_page plus EPS per quarter, the six other lines (``ebitda`` = Operating Profit, ``other_income``,
+    """parse_page plus ``balance`` and ``cash_flow`` (``parse_balance_and_cash``), EPS per quarter, the six other lines (``ebitda`` = Operating Profit, ``other_income``,
     ``finance_cost`` = Interest, ``depreciation``, ``pbt`` = Profit before tax, ``tax_pct`` = Tax %; None where the page has
     no such row) and the annual profit and loss section: ``{"basis", "lender_layout", "quarters": {period: {"revenue",
     "pat", "eps", ...six}}, "annual": {"FY25": {"revenue", "pat", "eps"}}}`` (``annual`` empty when the page has no such
@@ -184,6 +184,7 @@ def parse_full(body: str) -> dict | None:
             for key, row in six.items():
                 page["quarters"][period][key] = row[i] if i < len(row) else None
     annual: dict[str, dict] = {}
+    annual_six: dict[str, dict] = {}
     pl = _section_table(body, "profit-loss")
     if pl:
         columns, rows, _ = pl
@@ -196,8 +197,77 @@ def parse_full(body: str) -> dict | None:
                 annual[year] = {"revenue": sales[i] if i < len(sales) else None,
                                 "pat": profit[i] if i < len(profit) else None,
                                 "eps": eps[i] if i < len(eps) else None}
+        # the same six lines as the quarters (Operating Profit, Other Income, Interest, Depreciation, PBT, Tax %), kept apart so
+        # ``annual`` keeps its three keys; read against the annual-report XBRL by the cross-check
+        six_year = {key: _row_of(rows, key) for key in SIX_LINES}
+        six_year["tax_pct"] = rows.get(TAX_ROW) or []
+        for i, column in enumerate(columns):
+            year = year_of(column)
+            if year:
+                annual_six[year] = {key: (row[i] if i < len(row) else None) for key, row in six_year.items()}
     page["annual"] = annual
+    page["annual_six"] = annual_six
+    page["balance"], page["cash_flow"] = parse_balance_and_cash(body)
+    # the sections as the page carries them (the ids), so a run says loudly when a stored page has none (28 Oct 2026)
+    page["sections"] = {"balance_sheet": 'id="balance-sheet"' in body, "cash_flow": 'id="cash-flow"' in body}
     return page
+
+
+# screener's balance sheet (id "balance-sheet", Mar columns and the latest half year) and cash flows (id "cash-flow", Mar
+# columns), by the compared line's name -> the line map's key whose screener row names it (TODO 93; 28 Oct 2026). A lender's
+# page names the debt row Borrowing and has a Deposits row; "Total Liabilities" is equity plus liabilities, the Total Assets figure.
+BALANCE_LINES = {"equity_capital": "equity_capital_cr", "reserves": "reserves_cr", "borrowings": "gross_debt_cr",
+                 "deposits": "deposits_cr", "other_liabilities": "other_liabilities_cr",
+                 "total_liabilities": "equity_and_liabilities_cr", "fixed_assets": "fixed_assets_cr", "cwip": "cwip_cr",
+                 "investments": "investments_cr", "other_assets": "other_assets_cr", "total_assets": "total_assets_cr"}
+CASH_LINES = {"operating": "operating_cash_flow", "investing": "investing_cash_flow", "financing": "financing_cash_flow",
+              "net": "net_cash_flow"}
+
+
+_MONTHS = {m: i for i, m in enumerate(("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), 1)}
+YEAR_END = "YE:"      # the cash-flow key of a column whose year does not end in March: "YE:2025-06" (the year ended June 2025)
+
+
+def cash_year_of(column: str) -> str | None:
+    """A cash-flow column's key: "Mar 2026" -> FY26 (as memory labels a March year); a company's own year end in any other month
+    ("Jun 2025", "Dec 2025") -> "YE:2025-06", "YE:2025-12": the balance sheet reads its columns by their own date the same way
+    (``period_of``), and a December or June year is as much a year on screener as a March one."""
+    m = re.fullmatch(r"\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(20\d{2})\s*", column or "")
+    if not m:
+        return None
+    if m[1] == "Mar":
+        return f"FY{int(m[2]) % 100:02d}"
+    return f"{YEAR_END}{m[2]}-{_MONTHS[m[1]]:02d}"
+
+
+def parse_balance_and_cash(body: str) -> tuple[dict[str, dict], dict[str, dict]]:
+    """``({period: {line: value}}, {year: {line: value}})`` from the stored page's balance sheet and cash-flow sections: the
+    balance sheet by statement date (a "Sep 2026" column is Q2FY27, "Mar 2026" is Q4FY26: the period label memory's balance
+    snapshots carry), the cash flows by the company's own year end (``cash_year_of``: FY26 for March, "YE:2025-06" for a June
+    year). A line the page has no row for is absent; a page without the section gives ``{}``. Whole-crore figures as printed."""
+    balance: dict[str, dict] = {}
+    cash: dict[str, dict] = {}
+    got = _section_table(body, "balance-sheet")
+    if got:
+        columns, rows, _ = got
+        lines = {name: _row_of(rows, key) for name, key in BALANCE_LINES.items()}
+        for i, column in enumerate(columns):
+            period = period_of(column)
+            if period:
+                values = {name: row[i] for name, row in lines.items() if i < len(row) and row[i] is not None}
+                if values:
+                    balance[period] = values
+    got = _section_table(body, "cash-flow")
+    if got:
+        columns, rows, _ = got
+        lines = {name: _row_of(rows, key) for name, key in CASH_LINES.items()}
+        for i, column in enumerate(columns):
+            year = cash_year_of(column)
+            if year:
+                values = {name: row[i] for name, row in lines.items() if i < len(row) and row[i] is not None}
+                if values:
+                    cash[year] = values
+    return balance, cash
 
 
 def url_for(symbol: str, basis: str) -> str:

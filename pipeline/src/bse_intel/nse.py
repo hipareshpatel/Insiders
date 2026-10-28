@@ -346,6 +346,8 @@ def parse_annual_report_rows(rows: list[dict]) -> list[AnnualReportFiling]:
             continue
         if not url.lower().endswith(".xml") or basis not in ("CONSOLIDATED", "STANDALONE"):
             continue
+        if "BRSR" in str(row.get("report_type") or "").upper():
+            continue    # a sustainability report (BRSR) is no statements, and a later one must not displace the year's Ind AS file
         try:
             filed = datetime.strptime(str(row.get("broadcast_dttm") or "").strip(), "%d-%b-%Y %H:%M:%S")
         except ValueError:

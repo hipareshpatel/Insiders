@@ -34,7 +34,7 @@ from bse_intel.screener_fill import _section_table  # noqa: E402
 from bse_intel.xbrl import taxonomy  # noqa: E402
 
 UNDECLARED = "UNDECLARED"
-SCREENER_SECTIONS = ("quarters", "profit-loss")
+SCREENER_SECTIONS = ("quarters", "profit-loss", "balance-sheet", "cash-flow")
 
 
 def read_bytes(path: pathlib.Path) -> bytes:

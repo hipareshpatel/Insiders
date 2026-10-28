@@ -371,12 +371,18 @@ def _units(root) -> dict[str, str]:
     return out
 
 
-def _facts(root):
+def _fact_elements(root):
+    """The elements that are facts (a contextRef and a text), in file order: ``_facts`` and the full-facts store
+    (xbrl_facts.py) both read them from here, so there is one rule for what a fact is."""
     for el in root.iter():
-        ctx = el.get("contextRef")
-        if ctx is None or el.text is None:
+        if el.get("contextRef") is None or el.text is None:
             continue
-        yield _local(el.tag), ctx, el.get("unitRef"), el.text.strip()
+        yield el
+
+
+def _facts(root):
+    for el in _fact_elements(root):
+        yield _local(el.tag), el.get("contextRef"), el.get("unitRef"), el.text.strip()
 
 
 def _num(text: str) -> float | None:

@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 10:15 IST.
+Last updated: 28 Oct 2026, 15:17 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -67,6 +67,56 @@ in older files are history.
 Not met. The rate has stayed between 15% and 23% for a week while about 120 fixes shipped (F104-F222).
 
 ## 3. Open work, in order
+
+**Afternoon of 28 Oct (15:17 IST):**
+- **The bulk NSE download (owner, 28 Oct, ~15:00 IST: "start downloading all the files from NSE... Don't miss annual
+  reports").**
+  - The owner chose XBRL now, PDFs on demand. A trial downloads the PDFs it needs (measured 28 Oct: 525 files in 349 s
+    with 8 parallel downloads).
+  - The 180-day auto-delete of the raw files stays. The facts taken from them are kept (`raw/xbrl-facts/` is not under the
+    rule).
+  - Scope: the results XBRL (latest 12 quarters, both bases) and the annual-report XBRL (Ind AS only, 3 years) of the
+    1,778 universe companies (count measured 19 Oct).
+  - Size, measured 28 Oct on the 525 files of the fifty-company study:
+    - results file: 9 KB gzipped on average;
+    - annual-report file: 85 KB median and 240 KB mean gzipped;
+    - their facts: about 75 KB a file.
+  - Expected total: about 2 to 3.5 GB of the 5 GB R2 budget. That corrects the "about 1 GB" told to the owner at 15:05 IST,
+    which left out the annual reports' size. The raw XBRL store stops taking new files at its 2 GB cap; the facts are
+    still saved past it.
+  - Why a new path: today's `xbrl-facts --download` fetches only the files memory recorded, and memory misses whole
+    quarters for 21 of 42 large companies. A download from NSE's own list, in up to 8 shards, is being built (read-only for
+    memory).
+  - The first run is the 100-file test (`file_cap` = 100), read before the full run. It stops at once on any refusal. It
+    also records NSE's own timestamps for every results row, to measure when the XBRL appears against the PDF.
+- **Owner, 28 Oct: "PDF and XBRL almost come together... Once we get XBRL and Screener matching, we will use XBRL only for
+  cards."**
+  - Timing: an assumption for results until the timestamps above are measured. For Reg 30 event XBRL it was measured on
+    18 Oct: 8 minutes median, up to 21 hours (`docs/SOURCES.md`).
+  - Lead's view: the XBRL is not always right. IMPAL Q1FY27 was 100 times too small, and 13 known-wrong exchange figures
+    were dropped from memory today. So a card from the XBRL alone still needs a check: the PDF, or the XBRL's own sums.
+- **Screener against XBRL, 50 large companies** (`docs/audit/screener-fifty-2026-10-28.md`, partial: 64 files not fetched
+  after a download returned nothing for one CIPLA annual file, with no refusal seen).
+  - Pairs agreeing, exact or by a named rule:
+    - quarterly P&L 95.5% (2,530 pairs);
+    - FY26 P&L 81.1%;
+    - balance sheet 86.0%;
+    - cash flow 95.8%.
+  - Short of the 99% aim. The main causes:
+    - screener's annual column is built from the annual report;
+    - quarters screener restated for a demerger (HUL, Vedanta);
+    - lender balance sheets;
+    - screener's own share count for EPS.
+  - Memory against the files: 24 differences in 21,300 checks.
+    - 17 are continuing-operations EPS (HUL, Vedanta). EPS is never shown.
+    - Maruti and Bajaj Auto Q2FY27 profit before tax include the associates' share.
+    - Vedanta FY26 revenue is on another basis.
+    - SBI Life H1FY27 profit: 1,270 against 1,274.17.
+- **Keeping every XBRL fact (PR #213, F224)**: four review rounds, 2,359 tests pass, CI pending.
+- **The numbers-first PDF reader** (normal key: 125 right, 0 wrong, 212 no answer; the native reader gave 45 / 0 / 292):
+  independent review resumed 15:02 IST; then it is merged as bench-only and scored on the XBRL key.
+- The 50-card blind audit: at the 15:30 IST check-in, then the card-wording experiment (owner: "build it after the
+  50-card check").
 
 **Order the owner approved, 28 Oct 2026, ~06:50 IST** ("Yes, go ahead in that order"):
 1. The blind audit of about 50 cards (item 1 below), this afternoon (check-in at 15:30 IST).

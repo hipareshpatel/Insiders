@@ -413,3 +413,17 @@ def test_sector_and_industry_come_from_the_companies_table_as_the_site_shows_the
 
     assert sv._sector(S(), "1") == ("Chemicals", "Dyes And Pigments")
     assert sv._sector(S(), "2") == ("power", "") and sv._sector(S(), "3") == ("unknown", "")
+
+
+def test_a_suppliers_credit_row_is_borrowings_but_a_sale_and_lease_back_payable_is_not():
+    """Hindalco FY25 "Supplier's credit" 1,713 Cr is in screener's Borrowings; JSW Steel's "Payable for sale and lease back of an
+    under construction asset" 1,286 Cr is not (both exact after, 28 Oct 2026)."""
+    extra = [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Supplier's credit"),
+             ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 5.0),
+             ("DescriptionOfOtherNoncurrentAssetsOthers", "D2026_M4", "Right-of-use assets")]
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + extra[:2]))
+    assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 5
+    sale = [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Payable for sale and lease back of an under construction asset"),
+            ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 5.0)]
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + sale))
+    assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12

@@ -107,7 +107,10 @@ ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEqui
 EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # a row of other financial liabilities that is bank debt by its own words: Titan standalone "Secured and Unsecured Payable to Banks"
 # 7,043 Cr FY25 and 14,314 Cr FY26 = screener's Borrowings less ours, exactly (its gold on loan; measured 28 Oct 2026)
-BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?"
+# a supplier's or buyer's credit too (Hindalco FY25 "Supplier's credit" 1,713 Cr = the gap, cons and standalone; a temporary
+# overdraft of 13 Cr in the same table is not in screener's figure); a "lease" that is not a lease liability is not debt (JSW
+# Steel "Payable for sale and lease back of an under construction asset" 1,286 Cr, which screener leaves out)
+BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(supplier|buyer)'?s'? credit"
 INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
@@ -387,7 +390,7 @@ def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
         rows = [x for x in r.rows(LIABILITY_PARENTS, rf"current maturit|{BANK_DEBT_ROW}") if not re.search("lease", x[1], re.I)]
         lease_note = f"lease {_fmt(lease)} ({', '.join(lease_names)})"
     else:
-        rows = r.rows(LIABILITY_PARENTS, rf"lease|current maturit|{BANK_DEBT_ROW}")
+        rows = r.rows(LIABILITY_PARENTS, rf"lease liabilit|current maturit|{BANK_DEBT_ROW}")
         lease_note = ""
     extra = _sum_rows(rows)
     row_note = ("rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in rows)) if rows else ""

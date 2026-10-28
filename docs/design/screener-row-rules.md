@@ -64,7 +64,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 |---|---|---|---|
 | Equity Capital | EquityShareCapital | Statement | 97 % |
 | Reserves | OtherEquity | Statement | 97 % |
-| Borrowings | BorrowingsNoncurrent + BorrowingsCurrent + lease liabilities (elements, else described rows) + "current maturities" rows + bank-debt rows ("payable to banks", "due to banks", "gold on loan", "metal loan") | Policy (help article 11) + Sector (jewellers' gold loans) + Wording | Reliance FY26 270,751 + 103,670 + 23,579 + 4,962 = 402,962; Infosys 9,176; Titan standalone 7,043 / 14,314 payable to banks |
+| Borrowings | BorrowingsNoncurrent + BorrowingsCurrent + lease liabilities (elements, else described rows) + "current maturities" rows + bank-debt rows ("payable to banks", "due to banks", "gold on loan", "metal loan", "supplier's / buyer's credit"); a lease row counts only as "lease liabilities" | Policy (help article 11) + Sector (jewellers' gold loans; metals' supplier's credit) + Wording | Reliance FY26 270,751 + 103,670 + 23,579 + 4,962 = 402,962; Infosys 9,176; Titan standalone 7,043 / 14,314 payable to banks; Hindalco FY25 supplier's credit 1,713 (its temporary overdraft 13 is not counted); JSW Steel's "payable for sale and lease back" 1,286 is not debt |
 | Fixed Assets | PPE + Goodwill + OtherIntangibleAssets + InvestmentProperty + right-of-use assets (element, else the described row of OtherNoncurrentAssets) | Policy | TCS FY26 + 11,027 right-of-use; L&T 3,774 |
 | CWIP | CapitalWorkInProgress + IntangibleAssetsUnderDevelopment | Policy | Reliance FY26 237,686 |
 | Investments | NoncurrentInvestments + CurrentInvestments + InvestmentsAccountedForUsingEquityMethod | Policy | 98 % |

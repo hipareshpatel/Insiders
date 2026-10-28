@@ -1129,3 +1129,11 @@ def test_a_title_naming_the_basis_and_a_line_naming_the_other_give_none():
     assert nf.layer_basis("STATEMENTOFAUDITEDCONSOLIDATEDFINANCIALRESULTS\nStandalone figures are given in a separate statement") is None
     assert nf.layer_basis("STATEMENT OF NON CONSOLIDATED FINANCIAL RESULTS") is None
     assert nf.layer_basis("STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER") == "CONSOLIDATED"
+
+
+def test_a_total_revenue_line_with_a_line_reference_is_the_revenue():
+    # EMKAY Q2FY25: "Total Revenue from Operations (1)" is the total, not a list opened by "(1)"
+    assert not nf._REVENUE_LIST.search("Total Revenue from Operations (1)")
+    rows, want = pl()
+    rows[0] = (["Total Revenue from Operations (1)"], REVENUE)
+    assert read(statement(rows), "revenue").value == pytest.approx(crore(1000.00))

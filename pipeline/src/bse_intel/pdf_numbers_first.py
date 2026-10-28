@@ -868,7 +868,9 @@ Proof = tuple[int, tuple[tuple[int, int], ...]]        # (row that equals, ((row
 # (a list's first marker: "(a)", "a)", "[a]", "a.", "(i)", "i.", "(1)" - a numbered one is a note reference when "refer" or
 # "note" follows it; a lettered or roman one never is, whatever word follows: "(a) Note income" is a part, nineteenth review)
 _ITEM_MARK = r"(?:\(?[a-z]\)|\[[a-z]\]|[a-z]\.|\(?[ivx]{1,5}\)|[ivx]{1,5}\.|\(?\d{1,2}\)(?!\s*(?:refer|notes?|see)\b))"
-_REVENUE_LIST = re.compile(r"revenue\s+from\s+operations?(?:\s*\((?:refer\s+)?notes?\s*\d+\))?\W{0,3}" + _ITEM_MARK, re.I)
+# the marker is followed by the first part's name; a total is never a list ("Total Revenue from Operations (1)", EMKAY Q2FY25)
+_REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:refer\s+)?notes?\s*\d+\))?\W{0,3}" + _ITEM_MARK
+                           + r"\s*[a-z]", re.I)
 # a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
 # its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
 _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)

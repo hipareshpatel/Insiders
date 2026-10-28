@@ -194,9 +194,10 @@ unexplained rows is not started (owner to say).
 - The answer key follows the **printed page** when the XBRL differs by a rounding step. Applied: SPANDANA consolidated
   Q2FY24 revenue is 610.27 in `docs/bench/hardpdf/key.csv` (was the XBRL's 610.26).
 - A BSE figure that fills a quarter memory lacks is checked against the filing's **PDF**, NSE's and BSE's alike: that is
-  what the PDF work (section 3, steps 2-3) is for. Open: whether a disagreement holds the figure back (lead's
-  recommendation: hold back only when the PDF reader places a different figure for certain; write otherwise, marked
-  unchecked).
+  what the PDF work (section 3, steps 2-3) is for. Decided too (owner, ~08:25 IST): when the PDF reader places a
+  different figure for certain, the BSE figure is held back; when it cannot read the page, the BSE figure is written,
+  marked unchecked, and checked again once the reader improves. To build: the fill's compare step (section 3 item 3,
+  second half) with an `unchecked` mark on each such figure.
 - The company page switches to screener's layout (`VITE_SCREENER_LINES`) only after a check of the 50 largest companies
   against screener with every XBRL line and screener's rules; cards keep the printed figures.
 

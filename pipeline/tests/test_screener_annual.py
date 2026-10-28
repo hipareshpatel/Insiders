@@ -211,7 +211,7 @@ def test_a_half_filled_company_gets_its_list_asked_again_and_a_complete_one_make
     nse = AnnualNse([], hits)
     out = xbrl_facts.run(sink, [("1", "A"), ("2", "B"), ("3", "C")], client=nse, annual=True, today=today)
     assert nse.lists == ["B", "C"] and out["annual_lists"] == 2 and out["annual_list_skipped"] == {"covered": 1, "dry_run": 0}
-    assert "list requests made 2, skipped 1 (newest year already stored)" in xbrl_facts.render(out)
+    assert "list requests made 2, skipped 1 (every year kept already stored)" in xbrl_facts.render(out)
     # a rerun over the complete company alone: 0 requests
     only = AnnualNse([], hits)
     assert xbrl_facts.run(sink, [("1", "A")], client=only, annual=True, today=today)["annual_lists"] == 0 and only.lists == []

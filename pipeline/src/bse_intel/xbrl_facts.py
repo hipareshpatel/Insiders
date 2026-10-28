@@ -531,7 +531,7 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             summary["annual_list_skipped"]["dry_run"] += 1     # nothing would be fetched, --force or not: no request for a list
             return
         if not force and annual_covered(scrip, stored_facts, today or today_ist(), annual_years):
-            summary["annual_list_skipped"]["covered"] += 1     # the newest year is stored already
+            summary["annual_list_skipped"]["covered"] += 1     # every year kept is stored already
             return
         if client is None:
             summary["annual_skipped"] = "no NSE client: the annual-report list is one request a company"
@@ -658,7 +658,7 @@ def render(summary: dict) -> str:
              f"not a results file             {summary['not_results']}"]
     if summary.get("annual"):
         skipped = summary["annual_list_skipped"]
-        lines += [f"annual-report list requests made {summary['annual_lists']}, skipped {skipped['covered']} (newest year already stored) "
+        lines += [f"annual-report list requests made {summary['annual_lists']}, skipped {skipped['covered']} (every year kept already stored) "
                   f"and {skipped['dry_run']} (dry run without download)"]
         lines += [f"annual reports (Ind AS only): facts already stored {summary['annual_have']}, "
                   f"written {summary['annual_saved']} ({summary['annual_bytes'] / 1000:.0f} KB gzipped), files not stored "

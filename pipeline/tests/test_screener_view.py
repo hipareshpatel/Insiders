@@ -317,12 +317,14 @@ def test_workflow_runs_screener_rows_read_only_and_always_uploads():
 
 # --- the review's findings (28 Oct 2026) -----------------------------------------------------------------------------------
 
-def test_two_rows_with_the_same_text_both_count_in_the_joined_reader():
+def test_a_text_counts_once_even_on_two_members_as_the_older_files_tag_the_year_to_date():
+    """Reliance Q2FY24: "Excise duty recovered" on the quarter and again on the year to date, both with the quarter's dates and
+    each its own member; counted once (run 40725169900 took it twice in 24 quarters)."""
     extra = [("DescriptionOtherNoncurrentFinancialLiabilitiesOthers", "D2026_M3", "Lease liabilities"),
              ("OtherNoncurrentFinancialLiabilitiesOthers", "I2026_M3", 4.0)]
     facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")] + extra))
     got = facts.described(("OtherNoncurrentFinancialLiabilitiesOthers",), "lease", instant=END, joined=True)
-    assert sorted(v for _, _, v in got) == [4.0, 30.0]
+    assert [v for _, _, v in got] == [30.0]
 
 
 def test_a_balance_sheet_with_no_debt_line_has_borrowings_of_zero():

@@ -135,6 +135,86 @@ KNOWN_WRONG_FIGURES: tuple[KnownWrong, ...] = (
         "523323", "", "Q4FY26", "eps", 54.55, 57.90,
         "Kovai Medical: the same corrigendum gives basic EPS 57.90; BSE's XBRL of 22 May still has 54.55.",
         "2026-10-27", "BSE"),
+    # India Motor Parts & Accessories (IMPAL), Q1FY27, standalone: the file tags every amount at a hundredth of its value (the
+    # statement's 234.29 crore typed as lakh: 23,429,000 rupees), while its EPS (17.38) is right. Found by the xbrl-key run of
+    # 28 Oct 2026 against the printed page (docs/audit/xbrl-key-disagreements-2026-10-28.md). A unit slip is also put right by a
+    # re-read now (xbrl.fix_scale with the PDF's proof); these entries take the stored figures out and keep a seed that cannot
+    # read the PDF from writing them.
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "revenue", 2.34, 234.29,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): Net Revenue from Operations prints 234.29 for the quarter ended 30 June "
+        "2026; the file's 2.34 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "total_income", 2.44, 243.96,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): TOTAL INCOME prints 243.96 for the quarter ended 30 June "
+        "2026; the file's 2.44 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "other_income", 0.1, 9.67,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): Other income prints 9.67 for the quarter ended 30 June "
+        "2026; the file's 0.1 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "total_expenses", 2.17, 216.52,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): Total Expenses prints 216.52 for the quarter ended 30 June "
+        "2026; the file's 2.17 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "pbt", 0.27, 27.44,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): Profit/ (Loss) before tax (1-2) prints 27.44 for the quarter ended 30 June "
+        "2026; the file's 0.27 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "tax_expense", 0.06, 5.74,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): Total Tax Expense prints 5.74 for the quarter ended 30 June "
+        "2026; the file's 0.06 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "pat", 0.22, 21.7,
+        "IMPAL, PDF IMPAL_30072026125038 page 2 (text layer, 'Rs in Crores'): Profit after tax for the period prints 21.7 for the quarter ended 30 June "
+        "2026; the file's 0.22 is that figure at a hundredth. Quarters before it: revenue 188.85-230.99. EPS 17.38 matches.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "pat_continuing", 0.22, 21.7,
+        "IMPAL, same file and statement (page 2): the same profit under the continuing-operations name, 21.7 on the page, 0.22 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "ebitda", 0.18, 18.18,
+        "IMPAL, same file and statement (page 2): our own EBITDA from the slipped lines (PBT 27.44 + finance cost 0 + depreciation 0.41 - other income 9.67), 18.18 on the page, 0.18 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "employee_cost", 0.11, 10.68,
+        "IMPAL, same file and statement (page 2): Employee benefits expense, 10.68 on the page, 0.11 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "other_expenses", 0.08, 8.47,
+        "IMPAL, same file and statement (page 2): Other expenses, 8.47 on the page, 0.08 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "purchases_stock_in_trade", 1.98, 197.63,
+        "IMPAL, same file and statement (page 2): Purchase of stock-in-trade, 197.63 on the page, 1.98 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "inventory_change", -0.01, -0.67,
+        "IMPAL, same file and statement (page 2): Changes in inventories of finished goods & work-in-progress, -0.67 on the page, -0.01 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "depreciation", 0.0, 0.41,
+        "IMPAL, same file and statement (page 2): Depreciation and amortisation expense, 0.41 on the page, 0 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "current_tax", 0.06, 6.01,
+        "IMPAL, same file and statement (page 2): Current tax, 6.01 on the page, 0.06 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "deferred_tax", -0.0, -0.27,
+        "IMPAL, same file and statement (page 2): Deferred tax, -0.27 on the page, -0 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
+    KnownWrong(
+        "590065", "STANDALONE", "Q1FY27", "paid_up_capital", 0.12, 12.48,
+        "IMPAL, same file and statement (page 2): Paid-up equity share capital, 12.48 on the page, 0.12 at a hundredth in the file.",
+        "2026-10-28", "NSE"),
 )
 
 

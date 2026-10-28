@@ -238,6 +238,11 @@ class XbrlResult:
     fy_end_month: int | None = None             # the company's year end, from DateOfEndOfFinancialYear (3 = March)
     slip_held: str = ""                         # why a detected unit slip was not corrected (fix_scale, F200): the file's figures are held out
     slip_unsure: bool = False                   # the PDF could not settle the slip (no PDF read): memory keeps what it holds
+    # the file's own figures before they were rounded to two decimals, {(metric, period): crore}, and its balance sheets the same
+    # way: a unit slip is put right from these (fix_scale), because 2.34 crore times 100 is 234.00 where the file says 234.29
+    exact_values: dict = field(default_factory=dict)
+    balance_exact: BalanceSheet | None = None
+    balance_prior_exact: BalanceSheet | None = None
 
     def memory_metrics(self) -> list[FinancialMetric]:
         """What memory stores from this file: the figures a card reads and the memory-only ones (F166)."""
@@ -556,8 +561,10 @@ def fy_end_month(text_facts: dict) -> int | None:
     return int(m[2]) if m and 1 <= int(m[2]) <= 12 else None
 
 
-def _balance_sheet(balance: dict[str, float], balance_date: date) -> BalanceSheet:
-    """One date's statement of assets and liabilities from its tagged lines (crore)."""
+def _balance_sheet(balance: dict[str, float], balance_date: date, digits: int = 2) -> BalanceSheet:
+    """One date's statement of assets and liabilities from its tagged lines (crore); ``digits`` is how far it is rounded
+    (more than two for the unrounded copy a unit slip is corrected from)."""
+    _r = lambda v: round(v, digits) if v is not None else None   # noqa: E731 - this sheet's rounding
     debt = ([balance[k] for k in ("debt_noncurrent", "debt_current") if k in balance]
             or [balance[k] for k in ("debt_borrowings", "debt_securities", "debt_subordinated") if k in balance])
     if "cash_cr" not in balance and ("cash_rbi" in balance or "cash_banks" in balance):
@@ -720,8 +727,12 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     sheet = _balance_sheet(instants[dates[-1]], dates[-1]) if dates else None
     # the file's own earlier date (March for a half year): like for like by construction, what facts.py compares with
     prior = _balance_sheet(instants[dates[-2]], dates[-2]) if len(dates) > 1 else None
+    exact = {(m.metric, m.period): values[(m.metric, m.period)] for m in metrics if m.unit == "INR_CR"}
+    exact.update({(m, label): v for (m, label), v in minority.items() if m not in PER_SHARE})
     return XbrlResult("RESULTS", basis, quarter or latest, metrics, sheet, fy_end_month=year_end, balance_prior=prior,
-                      memory_extra=extra)
+                      memory_extra=extra, exact_values=exact,
+                      balance_exact=_balance_sheet(dict(instants[dates[-1]]), dates[-1], 6) if dates else None,
+                      balance_prior_exact=_balance_sheet(dict(instants[dates[-2]]), dates[-2], 6) if len(dates) > 1 else None)
 
 
 def _pbt_without_associates(values: dict, label: str) -> float | None:
@@ -1149,22 +1160,40 @@ _NEIGHBOUR_BAND = 3.0   # a quarter within this factor of an adjacent one is in 
 _SCALE_TOLERANCE = 0.2   # in powers of ten: within 0.63x-1.58x of an exact 10^k
 
 
-def _quarters(metrics) -> dict[str, dict[str, float]]:
-    """{quarter: {metric: value}} for the single-quarter figures among metrics (XBRL's or memory's)."""
+def _quarters(metrics, exact: dict | None = None) -> dict[str, dict[str, float]]:
+    """{quarter: {metric: value}} for the single-quarter figures among metrics (XBRL's or memory's). ``exact`` is the file's
+    own unrounded figures (XbrlResult.exact_values): a file's figure of 0.22 crore is 0.2170 there, and a share count worked
+    out from the rounded one is off by a tenth."""
     out: dict[str, dict[str, float]] = {}
     for m in metrics or []:
         get = m.get if isinstance(m, dict) else (lambda key, m=m: getattr(m, key, None))
         period, value = get("period") or "", get("value")
         if re.fullmatch(r"Q[1-4]FY\d\d", period) and isinstance(value, (int, float)) and not isinstance(value, bool):
+            value = _exact_of(exact, get("metric"), period, value)
             out.setdefault(period, {})[get("metric")] = float(value)
     return out
 
 
-def _shares(figures: dict[str, float]) -> float | None:
+def _exact_of(exact: dict | None, metric: str, period: str, value: float) -> float:
+    """The file's unrounded figure for (metric, period) when it is the one this rounded value came from (within a rounding)."""
+    raw = (exact or {}).get((metric, period))
+    return raw if isinstance(raw, (int, float)) and abs(raw - value) <= 0.0051 else value
+
+
+_SHARES_MIN_PAT = 0.001   # crore (₹10,000): below it a profit says nothing about the share count, even unrounded
+_SHARES_MIN_PAT_STORED = 0.05   # the same floor for a quarter from history (stored, rounded to 0.01, no unrounded figure): a
+#                                 profit of 0.04 is 25% rounding noise, and the history is the yardstick the file is judged by
+
+
+def _shares(figures: dict[str, float], floor: float = _SHARES_MIN_PAT) -> float | None:
     """The share count a quarter's profit and EPS imply, in crore: EPS is per share and keeps its value
-    whatever unit a file's amounts are tagged in, so a file in the wrong unit moves this with them."""
+    whatever unit a file's amounts are tagged in, so a file in the wrong unit moves this with them.
+
+    The profit's floor is tiny, not ₹0.5 Cr: a file tagged at a hundredth of its value has a profit of ₹0.22 Cr where the
+    statement prints ₹21.70 Cr (IMPAL Q1FY27, 28 Oct 2026), and a floor of ₹0.5 Cr read that quarter's share count as unknown,
+    so the slip was never confirmed by the share count and the file went into memory at a hundredth of its value."""
     pat, eps = figures.get("pat"), figures.get("eps")
-    if pat and eps and abs(eps) >= 0.5 and abs(pat) >= 0.5:
+    if pat and eps and abs(eps) >= 0.5 and abs(pat) >= floor:
         return abs(pat / eps)
     return None
 
@@ -1182,7 +1211,7 @@ def scale_slip(result: XbrlResult, history) -> int:
     does not."""
     if result.kind != "RESULTS" or not result.period:
         return 0
-    own = _quarters(result.metrics).get(result.period) or {}
+    own = _quarters(result.metrics, result.exact_values).get(result.period) or {}
     others = [f for period, f in _quarters(history).items() if period != result.period]
 
     def power(mine: float | None, theirs: list) -> int | None:
@@ -1201,7 +1230,7 @@ def scale_slip(result: XbrlResult, history) -> int:
     # grew from 2 to 40 crore a quarter while its share count rose tenfold (split), which looked like a slip in its
     # Q2FY24 and Q4FY24 files and put memory at 10x (Tijori referee, 26 Oct 2026, F196).
     by_revenue = power(own[metric], [f.get(metric) for f in others])
-    by_shares = power(_shares(own), [_shares(f) for f in others])
+    by_shares = power(_shares(own), [_shares(f, _SHARES_MIN_PAT_STORED) for f in others])
     slip = by_revenue if by_revenue is not None and by_revenue == by_shares else 0
     index = quarter_index(result.period)
     by_quarter = _quarters(history)
@@ -1265,22 +1294,31 @@ def fix_scale(result: XbrlResult | None, history, source: str = "", verify=None)
     k = scale_slip(result, history) if result else 0
     if not k:
         return 0
-    metric = next((m for m in _SCALE_REFERENCE if _quarters(result.metrics).get(result.period, {}).get(m)), None)
-    corrected = round(_quarters(result.metrics)[result.period][metric] * 10 ** k, 2)
+    own = _quarters(result.metrics, result.exact_values).get(result.period, {})
+    metric = next((m for m in _SCALE_REFERENCE if own.get(m)), None)
+    factor = 10 ** k
+    corrected = round(own[metric] * factor, 2)   # from the file's unrounded figure: 2.3429 x 100 is 234.29, not 234.00
     agrees, why = verify(result, metric, corrected) if verify else (False, "no PDF check available")
     if not agrees:
         result.slip_unsure = agrees is None
         result.slip_held = f"unit slip 10^{k} not confirmed by the filing's PDF ({why})"
         log.warning("XBRL %s %s: %s; the quarter's figures are held out of memory", source, result.period, result.slip_held)
         return 0
-    factor = 10 ** k
-    for m in result.metrics:
+    # every figure of the file moves together by the one factor: the statement's amounts (the memory-only ones too, the profit
+    # to minorities), the balance sheet and its earlier date. Each is taken from its unrounded copy where the file gave one.
+    for m in [*result.metrics, *result.memory_extra]:
         if m.unit == "INR_CR" and m.value is not None:
-            m.value = round(m.value * factor, 2)
-    if result.balance_sheet:
-        for name, value in result.balance_sheet.model_dump().items():
+            m.value = round(_exact_of(result.exact_values, m.metric, m.period, m.value) * factor, 2)
+    for sheet, exact in ((result.balance_sheet, result.balance_exact), (result.balance_prior, result.balance_prior_exact)):
+        if not sheet:
+            continue
+        for name, value in sheet.model_dump().items():
             if name.endswith("_cr") and isinstance(value, (int, float)):
-                setattr(result.balance_sheet, name, round(value * factor, 2))
+                raw = getattr(exact, name, None) if exact is not None else None
+                base = raw if isinstance(raw, (int, float)) and abs(raw - value) <= 0.0051 else value
+                setattr(sheet, name, round(base * factor, 2))
+    result.exact_values = {key: round(v * factor, 6) for key, v in result.exact_values.items()}
+    result.balance_exact = result.balance_prior_exact = None   # used: nothing can read the unscaled copies later
     log.warning("XBRL %s %s: amounts tagged at 10^%d of their value (revenue and the share count its profit "
                 "and EPS imply both off by it against the company's other quarters); multiplied by %g",
                 source, result.period, -k, factor)

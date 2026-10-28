@@ -1005,6 +1005,8 @@ def test_ocr_spellings_of_month_names_in_a_header_still_give_dates():
     # NEWGEN Q2FY27: OCR read "30 Septemher 2026" and "30 Seplember 2025"; a word near no single month stays as it is
     assert nf.header_dates("Quarter ended 30 Septemher 2026 30 Seplember 2025") == [date(2026, 9, 30), date(2025, 9, 30)]
     assert nf.header_dates("30June 2026") == [date(2026, 6, 30)]
+    # the fuzzy path proper: the first letters themselves garbled
+    assert nf.header_dates("31 Dccember 2025 31 Qctober 2025") == [date(2025, 12, 31), date(2025, 10, 31)]
     assert nf.header_dates("Number of shares 2026") == []
     assert nf.mend_months("remember member employee") == "remember member employee"
 

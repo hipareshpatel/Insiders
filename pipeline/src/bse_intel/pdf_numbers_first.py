@@ -561,7 +561,10 @@ def header_dates(text: str) -> list[date]:
     "March 2026 12 months" is not 12 March)."""
     found = _dates_in_text(text) or _dates_in_text(
         re.sub(r"\b([A-Za-z]{3,9}\.?)\s+(20\d\d)\s+(2[89]|3[01])\b(?!\s*months?),?", r"\1 \3, \2", text, flags=re.I))
-    return found or (_dates_in_text(mend_months(text)) if mend_months(text) != text else [])
+    if found:
+        return found
+    mended = mend_months(text)
+    return _dates_in_text(mended) if mended != text else []
 
 def typical_gap(words: list[Word], height: float) -> float:
     """The usual space between two words of a line on this page."""

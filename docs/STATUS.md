@@ -204,6 +204,12 @@ unexplained rows is not started (owner to say).
 - The company page switches to screener's layout (`VITE_SCREENER_LINES`) only after a check of the 50 largest companies
   against screener with every XBRL line and screener's rules; cards keep the printed figures.
 
+**Decided 28 Oct, ~11:40 IST (owner):** annual-report XBRL (NSE, IND-AS type, not BRSR) is used as soon as it is
+listed (measured: ITC FY26 on 20 Aug 2026, L&T FY26 on 4 Jul 2026, L&T FY25 only on 13 Jan 2026); screener's annual
+columns equal it to the paisa (ITC FY26: sales 89,913.33 - excise 11,044.93 = 78,868.40, power and fuel 947.71,
+employee cost 6,781.50). Annual-report PDFs are read only later, once the PDF reader meets a measured bar on the
+answer keys (lead's proposal: no wrong figure and at least 98% placed).
+
 **Measured 28 Oct, 10:10 IST (owner asked: BPCL's files from both exchanges, line by line):** BPCL Q2FY27 consolidated
 XBRL from NSE (`INTEGRATED_FILING_INDAS_1744982_...`) and from BSE (`Integrated_Finance_Ind_As_500547_23102026081027.xml`,
 maintenance run 40633429544, 2 calls, both 200): the same 356 facts, 0 differences, so NSE and BSE agreeing is one source,

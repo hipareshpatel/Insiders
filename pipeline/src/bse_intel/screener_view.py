@@ -115,6 +115,7 @@ EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 LEASE_ROW = r"\blease\s+lia"
 BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(supplier|buyer)'?s'? credit"
 INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
+DISCONTINUED = "ProfitLossFromDiscontinuedOperationsAfterTax"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
 CORPORATE, BANK, NBFC, INSURER = "corporate", "bank", "nbfc", "insurer"
@@ -167,7 +168,9 @@ def gap_hints(r: _Reader, gap: float, limit: int = 3) -> list[str]:
         facts = r.facts
         found = [(el, v) for el, v in facts.find(".", **r.at)]
         names = {row[0] for row in facts.rows}
-        found += [(f"{el} [{text.strip()[:60]}]", v) for el, text, v in facts.described(tuple(names), ".", joined=True, **r.at)]
+        # a "description" that is a unit or a blank ("INR", "NA") names nothing
+        found += [(f"{el} [{text.strip()[:60]}]", v) for el, text, v in facts.described(tuple(names), ".", joined=True, **r.at)
+                  if len(re.sub(r"[^A-Za-z]", "", text)) >= 4]
         r._money = found
     hits = sorted((abs(abs(v) - abs(gap)), label, v) for label, v in found if v and abs(abs(v) - abs(gap)) <= ABS_TOL)
     return [f"{label} {_fmt(v)}" for _, label, v in hits[:limit]]
@@ -258,18 +261,23 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     inv_rows = r.rows(EXPENSE_ROW_PARENTS, INVESTMENT_LOSS)
     inv_loss = _sum_rows(inv_rows) if inv_rows else 0.0
     loss += inv_loss
+    # bank charges are a finance cost for screener: HAL, IndiGo and IOC, every year FY24-FY26 and both bases, the yearly
+    # Interest gap = the annual report's BankCharges (run 40735344929); the quarters' files carry no such element
+    bank = r.cr("BankCharges") or 0.0
     sales = None if rev is None else rev - lev
     out["Sales"] = Row(sales, ("RevenueFromOperations" + (" less " + ", ".join(levy_notes) if levy_notes else "")
                                if rev is not None else "missing RevenueFromOperations") + src)
-    interest = None if fc is None else fc + fin
-    out["Interest"] = Row(interest, ("FinanceCosts" + (" + " + fin_note if fin_note else "") if fc is not None
+    interest = None if fc is None else fc + fin + bank
+    out["Interest"] = Row(interest, ("FinanceCosts" + (" + " + fin_note if fin_note else "") + (f" + BankCharges {_fmt(bank)}" if bank else "")
+                                     if fc is not None
                                      else "missing FinanceCosts") + src)
     out["Depreciation"] = Row(dep, ("DepreciationDepletionAndAmortisationExpense" if dep is not None
                                     else "missing DepreciationDepletionAndAmortisationExpense") + src)
     expenses = None
     if None not in (exp, fc, dep):
-        expenses = exp - fc - dep - lev - fin - loss
+        expenses = exp - fc - dep - lev - fin - loss - bank
         parts = ["FinanceCosts", "depreciation"] + (["levies"] if lev else []) + (["financial-services finance cost"] if fin else []) \
+            + (["bank charges"] if bank else []) \
             + ([f"loss on disposal of PPE {_fmt(loss - inv_loss)}"] if loss - inv_loss else []) \
             + ([f"loss on investments {_fmt(inv_loss)}"] if inv_loss else [])
         out["Expenses"] = Row(expenses, "Expenses less " + ", ".join(parts) + src)
@@ -281,6 +289,9 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     out["OPM %"] = Row(_pct(op, sales), "Operating Profit / Sales" + src)
     oi_parts, exc, share = r.cr("OtherIncome"), r.cr("ExceptionalItemsBeforeTax"), r.cr(ASSOCIATES)
     regulatory = r.cr(REGULATORY_DEFERRAL)
+    # screener has no line for discontinued operations: their profit after tax is in its PBT (Hindustan Unilever FY26 13,812 +
+    # 4,407 = 18,219, the ice-cream demerger; Q3FY26 2,919 + 4,485 = 7,404; ITC Q3FY25 + 203.44, the hotels; run 40735344929)
+    discontinued = r.cr(DISCONTINUED)
     # screener's PBT holds the associates' share ("profit from associates is always other ordinary income") and a utility's
     # net movement in regulatory deferral balances, both of which SEBI's results format puts below the filed PBT (measured
     # 28 Oct 2026 on the owner's screener Excel files: 39 of 55 quarters with associates, e.g. Coal India Q4FY26 14,510.7 +
@@ -288,8 +299,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # Reliance is the one company seen the other way (screener follows its own layout, associates after tax): it stays apart.
     filed_pbt = pbt
     if pbt is not None:
-        pbt = pbt + (share or 0.0) + (regulatory or 0.0)
-    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + (regulatory or 0.0) - loss
+        pbt = pbt + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0)
+    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0) - loss
     if None not in (pbt, dep, interest, op):
         oi = pbt + dep + interest - op
         note = "PBT + Depreciation + Interest - Operating Profit"
@@ -301,7 +312,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     else:
         out["Other Income"] = Row(None, "missing a line of the identity (PBT, Depreciation, Interest, Operating Profit)" + src)
     out["Profit before tax"] = Row(pbt, ("ProfitBeforeTax" + (" + associates' share" if share else "")
-                                         + (" + regulatory deferral movement" if regulatory else "") if pbt is not None
+                                         + (" + regulatory deferral movement" if regulatory else "")
+                                         + (" + discontinued operations after tax" if discontinued else "") if pbt is not None
                                          else "missing ProfitBeforeTax") + src)
     if filed_pbt is not None and pbt != filed_pbt:
         out["PBT as filed"] = Row(filed_pbt, "ProfitBeforeTax" + src)
@@ -352,8 +364,14 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     net = r.cr(name)
     if net is None and r.cr("ProfitLossForThePeriod") is not None:
         net, name = r.cr("ProfitLossForThePeriod"), "ProfitLossForThePeriod"
-    out["Net Profit"] = Row(net, (name if net is not None else "missing " + name) + src)
     minority = r.cr("ProfitLossOfMinorityInterest")
+    # the website's Net Profit is the whole profit, the minority's share included (policy; a bank's consolidated quarter:
+    # HDFC Bank Q3FY24-Q1FY27 and ICICI Q3FY24-Q2FY26, the gap = ProfitLossOfMinorityInterest each quarter, run 40735344929)
+    whole = None if net is None else net + (minority or 0.0)
+    out["Net Profit"] = Row(whole, (name + (" + ProfitLossOfMinorityInterest" if minority else "") if net is not None
+                                    else "missing " + name) + src)
+    if net is not None and minority:
+        out["Net Profit (owners)"] = Row(net, name + src)
     if minority is not None:
         out["Minority share"] = Row(minority, "ProfitLossOfMinorityInterest" + src)
     share = r.cr("ShareOfProfitLossOfAssociates")
@@ -396,7 +414,10 @@ def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str =
 
 # --- balance sheet ------------------------------------------------------------------------------------------------
 
-def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
+def corporate_bs(r: _Reader, source: str = "", half_year: bool = False) -> dict[str, Row]:
+    """``half_year``: a September balance sheet, read from its results file, where screener puts intangibles under development in
+    Fixed Assets (HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27: the CWIP and Fixed Assets gaps both =
+    IntangibleAssetsUnderDevelopment, run 40735344929); in a year's column they are CWIP (Reliance FY26 237,686)."""
     src = f" [{source}]" if source else ""
     out: dict[str, Row] = {}
 
@@ -431,11 +452,14 @@ def corporate_bs(r: _Reader, source: str = "") -> dict[str, Row]:
         rou_rows = r.rows(ASSET_PARENTS, r"right.of.use")
         rou = _sum_rows(rou_rows) if rou_rows else None
         rou_note = ("right-of-use row " + _fmt(rou)) if rou_rows else ""
-    fa = fixed + (rou or 0.0)
+    iaud = r.cr("IntangibleAssetsUnderDevelopment") if half_year else None
+    if iaud is not None:
+        fixed_names.append("IntangibleAssetsUnderDevelopment")
+    fa = fixed + (rou or 0.0) + (iaud or 0.0)
     out["Fixed Assets"] = Row(fa if fixed_names or rou else None,
                               " + ".join(fixed_names + ([rou_note] if rou_note else [])) + src if fixed_names or rou
                               else "missing PropertyPlantAndEquipment" + src)
-    cwip, cwip_names = total("CapitalWorkInProgress", "IntangibleAssetsUnderDevelopment")
+    cwip, cwip_names = total("CapitalWorkInProgress", *(() if half_year else ("IntangibleAssetsUnderDevelopment",)))
     # a 0 only on a balance sheet: a results file without one (the Q4 files of FY21-FY23 often) has no CWIP to show
     out["CWIP"] = Row(cwip if cwip_names or has_sheet else None,
                       (" + ".join(cwip_names) or ("neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0" if has_sheet
@@ -476,14 +500,14 @@ def nbfc_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     return out
 
 
-def bs_rows(fam: str, r: _Reader, source: str = "") -> dict[str, Row]:
+def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False) -> dict[str, Row]:
     if fam == BANK:
         return bank_bs(r, source)
     if fam == NBFC:
         return nbfc_bs(r, source)
     if fam == INSURER:
         return {}
-    return corporate_bs(r, source)
+    return corporate_bs(r, source, half_year)
 
 
 # --- cash flow ------------------------------------------------------------------------------------------------------
@@ -637,7 +661,8 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
         else:
             f, label = cf.result(period, basis), f"results file {period}"
         reader = _Reader(f, instant=end) if f is not None and end else None
-        result = (bs_rows(fam, reader, label), "") if reader else (None, f"no facts for {period}")
+        result = (bs_rows(fam, reader, label, half_year=not period.startswith("Q4")), "") if reader \
+            else (None, f"no facts for {period}")
     memo[k] = result
     memo[("reader", k)] = reader
     return result

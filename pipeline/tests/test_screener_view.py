@@ -452,3 +452,34 @@ def test_a_row_apart_names_the_filed_fact_equal_to_its_gap():
          "diff": -7.0, "status": "apart", "note": "", "hints": "OtherExpensesOthers [Bank charges] 7.00"}]} for s in ("A", "B")])
     assert summary["gap_hints"] == [["annual: Interest", "bank charges", ["A", "B"]]]
     assert "| annual: Interest | bank charges | 2: A, B |" in sv.to_markdown(summary, "2026-10-28")
+
+
+def test_bank_charges_are_interest_not_expenses():
+    """HAL, IndiGo and IOC FY24-FY26, both bases: the yearly Interest gap = the annual report's BankCharges."""
+    got = values(sv.corporate_pl(sv._Reader(annual_facts([("BankCharges", "D2026", 4.0)]), end=END, months=12)))
+    assert got["Interest"] == 24.0 and got["Expenses"] == 750 - 20 - 40 - 100 - 5 - 4
+    assert got["Other Income"] == 30 - 10 - 5                     # the identity: Other Income does not move
+
+
+def test_discontinued_operations_profit_is_in_pbt():
+    """Hindustan Unilever FY26 13,812 + 4,407 = 18,219 (the ice-cream demerger): screener has no discontinued line."""
+    got = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.DISCONTINUED, "D2026", 15.0)]), end=END, months=12)))
+    assert got["Profit before tax"] == 285.0 and got["PBT as filed"] == 270.0
+    assert got["Other Income"] == 30 - 10 - 5 + 15
+
+
+def test_a_half_year_balance_sheet_puts_intangibles_under_development_in_fixed_assets():
+    """HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27; a year's column keeps them in CWIP (Reliance FY26)."""
+    year = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))
+    half = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END), half_year=True))
+    assert (year["CWIP"], half["CWIP"]) == (20.0, 15.0)
+    assert half["Fixed Assets"] == year["Fixed Assets"] + 5 and half["Other Assets"] == year["Other Assets"]
+
+
+def test_a_banks_net_profit_holds_the_minority_share():
+    """HDFC Bank Q3FY24-Q1FY27, ICICI Q3FY24-Q2FY26: the consolidated quarter's gap = ProfitLossOfMinorityInterest."""
+    net = "ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates"
+    facts = xf.Facts(doc([("InterestEarned", "Q2026", 100.0), (net, "Q2026", 30.0), ("ProfitLossOfMinorityInterest", "Q2026", 2.0)],
+                         kind="results", template="BANKING"))
+    got = values(sv.bank_pl(sv._Reader(facts, end=END, months=3)))
+    assert got["Net Profit"] == 32.0 and got["Net Profit (owners)"] == 30.0

@@ -439,11 +439,14 @@ def newest_filed_year(today: date) -> int:
     return year % 100
 
 
-def annual_covered(scrip: str, stored_facts: set[str], today: date) -> bool:
-    """Whether the annual facts stored for the company already reach the newest year NSE could have filed, so the list need not
-    be asked for again (a rerun then makes no NSE request for it)."""
-    years = [int(m[1]) for k in stored_facts if k.startswith(f"{PREFIX}{scrip}/") and (m := _ANNUAL_KEY.search(k))]
-    return bool(years) and max(years) >= newest_filed_year(today)
+def annual_covered(scrip: str, stored_facts: set[str], today: date, annual_years: int = ANNUAL_YEARS) -> bool:
+    """Whether the company's stored annual facts cover EVERY year the run would keep: the ``annual_years`` years from the newest NSE
+    could have filed down, each with at least one stored basis. Then the list need not be asked for again (a rerun makes no NSE
+    request for it). A company half filled (FY26 stored by a dry run or a FILE_CAP stop, FY25 and FY24 missing) is not covered: its
+    list is asked for again, and only the files not yet stored are read or fetched. The newest year alone proved nothing."""
+    have = {int(m[1]) for k in stored_facts if k.startswith(f"{PREFIX}{scrip}/") and (m := _ANNUAL_KEY.search(k))}
+    newest = newest_filed_year(today)
+    return all((newest - back) % 100 in have for back in range(max(1, annual_years)))
 
 
 def is_ind_as(report_type: str) -> bool:
@@ -481,8 +484,8 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
     ``annual_years`` years and each basis, as ``annual-<FY>-<basis>``. NSE's annual-report list is one request a company (a list, not
     a file: it does not count toward FILE_CAP), so it needs the ``client``; a file is read from R2 when stored, and fetched
     (``fetch_annual``: NSE's pace, FILE_CAP) only with ``download`` and never in a dry run. The list is not asked for again for a
-    company whose stored annual facts already reach the newest year NSE could have filed (``annual_covered``), nor in a dry run
-    without ``download``, unless ``force``: ``annual_list_skipped`` counts both, ``annual_lists`` the requests made."""
+    company whose stored annual facts cover every year kept (``annual_covered``) unless ``force``, nor in a dry run without
+    ``download`` (``force`` or not: nothing would be fetched): ``annual_list_skipped`` counts both, ``annual_lists`` the requests made."""
     from . import seed
     from .nse import FileCapReached, SourceBlockedError, stop_reason
 
@@ -524,10 +527,10 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
         summary["facts"] += doc["n_facts"]
 
     def annual_company(scrip: str, symbol: str) -> None:
-        if not force and dry_run and not download:
-            summary["annual_list_skipped"]["dry_run"] += 1     # nothing would be fetched: no request for a list
+        if dry_run and not download:
+            summary["annual_list_skipped"]["dry_run"] += 1     # nothing would be fetched, --force or not: no request for a list
             return
-        if not force and annual_covered(scrip, stored_facts, today or today_ist()):
+        if not force and annual_covered(scrip, stored_facts, today or today_ist(), annual_years):
             summary["annual_list_skipped"]["covered"] += 1     # the newest year is stored already
             return
         if client is None:

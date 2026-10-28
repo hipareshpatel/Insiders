@@ -180,37 +180,52 @@ def test_annual_reports_list_one_request_a_company_and_download_only_with_the_fl
     assert len(nse.lists) == lists + 1 and forced["annual_lists"] == 1 and len(hits) == 4
 
 
-def test_the_list_is_asked_for_only_when_a_newer_year_could_exist_and_a_rerun_makes_no_request(monkeypatch):
+def facts_key(scrip, fy, basis="consolidated"):
+    return f"raw/xbrl-facts/{scrip}/annual-FY{fy}-{basis}.json.gz"
+
+
+def test_a_company_is_covered_only_when_every_year_kept_is_stored_not_when_the_newest_alone_is():
     assert xbrl_facts.newest_filed_year(date(2026, 10, 28)) == 26 and xbrl_facts.newest_filed_year(date(2026, 5, 20)) == 25
     assert xbrl_facts.newest_filed_year(date(2026, 5, 31)) == 26 and xbrl_facts.newest_filed_year(date(2027, 1, 5)) == 26
-    stored = {"raw/xbrl-facts/1/annual-FY26-consolidated.json.gz", "raw/xbrl-facts/1/annual-FY25-standalone.json.gz",
-              "raw/xbrl-facts/2/annual-FY25-consolidated.json.gz", "raw/xbrl-facts/3/Q2FY27-consolidated.json.gz"}
     today = date(2026, 10, 28)
-    assert xbrl_facts.annual_covered("1", stored, today)                      # FY26 is the newest year there could be
-    assert not xbrl_facts.annual_covered("2", stored, today)                  # only FY25: a newer one may have been filed since
-    assert not xbrl_facts.annual_covered("3", stored, today)                  # quarterly facts only
-    assert xbrl_facts.annual_covered("2", stored, date(2026, 5, 20))          # in May FY25 is the newest possible
-    # three companies, one covered: a rerun asks for two lists
+    half = {facts_key("1", 26)}                                                       # FY26 stored by a dry run or a FILE_CAP stop
+    assert not xbrl_facts.annual_covered("1", half, today)                            # FY25 and FY24 absent: ask for the list again
+    assert xbrl_facts.annual_covered("1", half, today, annual_years=1)                # the newest year alone, if that is all that is kept
+    full = {facts_key("1", 26), facts_key("1", 25, "standalone"), facts_key("1", 24)}   # one basis each year is enough
+    assert xbrl_facts.annual_covered("1", full, today)
+    assert not xbrl_facts.annual_covered("1", full - {facts_key("1", 25, "standalone")}, today)       # a hole in the middle
+    assert not xbrl_facts.annual_covered("1", {facts_key("1", 25), facts_key("1", 24), facts_key("1", 23)}, today)   # old years only
+    assert not xbrl_facts.annual_covered("3", {"raw/xbrl-facts/3/Q2FY27-consolidated.json.gz"}, today)  # quarterly facts only
+    assert not xbrl_facts.annual_covered("2", full, today)                            # another company's keys
+    assert xbrl_facts.annual_covered("1", {facts_key("1", 25), facts_key("1", 24), facts_key("1", 23)}, date(2026, 5, 20))   # in May FY25 is newest
+
+
+def test_a_half_filled_company_gets_its_list_asked_again_and_a_complete_one_makes_no_request():
+    today = date(2026, 10, 28)
     sink, hits = sink_for(), []
     for scrip in ("2", "3"):
         sink.objects[f"memory/{scrip}.json"] = json.dumps({"financial_metrics": []}).encode()
-    sink.objects["raw/xbrl-facts/1/annual-FY26-consolidated.json.gz"] = b"x"
-    sink.objects["raw/xbrl-facts/2/annual-FY25-consolidated.json.gz"] = b"x"
+    for key in (facts_key("1", 26), facts_key("1", 25), facts_key("1", 24, "standalone"),      # company 1: all three years
+                facts_key("2", 26)):                                                           # company 2: FY26 only, FY25 and FY24 absent
+        sink.objects[key] = b"x"
     nse = AnnualNse([], hits)
     out = xbrl_facts.run(sink, [("1", "A"), ("2", "B"), ("3", "C")], client=nse, annual=True, today=today)
     assert nse.lists == ["B", "C"] and out["annual_lists"] == 2 and out["annual_list_skipped"] == {"covered": 1, "dry_run": 0}
     assert "list requests made 2, skipped 1 (newest year already stored)" in xbrl_facts.render(out)
+    # a rerun over the complete company alone: 0 requests
+    only = AnnualNse([], hits)
+    assert xbrl_facts.run(sink, [("1", "A")], client=only, annual=True, today=today)["annual_lists"] == 0 and only.lists == []
 
 
-def test_a_dry_run_without_download_asks_for_no_list_unless_forced():
+def test_a_dry_run_without_download_asks_for_no_list_force_or_not():
     sink, hits = sink_for(), []
     nse = AnnualNse([row(2026)], hits)
     dry = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, dry_run=True, today=date(2026, 10, 28))
     assert nse.lists == [] and dry["annual_lists"] == 0 and dry["annual_list_skipped"] == {"covered": 0, "dry_run": 1}
     forced = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, dry_run=True, force=True, today=date(2026, 10, 28))
-    assert nse.lists == ["ITC"] and forced["annual_lists"] == 1 and forced["annual_missing"] == 1 and hits == []
+    assert nse.lists == [] and forced["annual_lists"] == 0 and forced["annual_list_skipped"]["dry_run"] == 1 and hits == []   # nothing would be fetched
     listed = xbrl_facts.run(sink, [("1", "ITC")], client=nse, annual=True, dry_run=True, download=True, today=date(2026, 10, 28))
-    assert nse.lists == ["ITC", "ITC"] and listed["would_download"] == 1 and hits == []          # with --download the list shows what would be fetched
+    assert nse.lists == ["ITC"] and listed["would_download"] == 1 and hits == []          # with --download the list shows what would be fetched
 
 
 def test_annual_download_stops_at_the_file_cap_and_a_dry_run_fetches_nothing(monkeypatch):
@@ -228,7 +243,7 @@ def test_annual_without_a_client_is_said_not_silently_skipped():
     assert "no NSE client" in out["annual_skipped"] and "annual reports skipped" in xbrl_facts.render(out)
 
 
-def test_the_cli_annual_flag_builds_a_client_even_for_a_dry_run_and_a_plain_run_does_not(monkeypatch, tmp_path):
+def test_the_cli_annual_flag_builds_a_client_only_when_a_list_will_be_asked_for(monkeypatch, tmp_path):
     sink, hits = sink_for(), []
     monkeypatch.setattr(cli, "make_sink", lambda settings: sink, raising=False)
     monkeypatch.setattr(cli, "_universe_companies", lambda s, scrips: [("1", "ITC")])
@@ -238,9 +253,10 @@ def test_the_cli_annual_flag_builds_a_client_even_for_a_dry_run_and_a_plain_run_
     assert built == [] and hits == []                                        # a dry run without --download asks for no list
     assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["annual_list_skipped"]["dry_run"] == 1
     assert cli.main(["xbrl-facts", "--annual", "--dry-run", "--force", "--json", str(tmp_path / "u.json")]) == 0
-    assert built == [1] and hits == [] and json.loads((tmp_path / "u.json").read_text(encoding="utf-8"))["annual_lists"] == 1
-    assert cli.main(["xbrl-facts", "--annual", "--dry-run", "--download", "--json", str(tmp_path / "v.json")]) == 0 and built == [1, 1]
-    assert cli.main(["xbrl-facts", "--json", str(tmp_path / "t.json")]) == 0 and built == [1, 1]
+    assert built == [] and hits == [] and json.loads((tmp_path / "u.json").read_text(encoding="utf-8"))["annual_lists"] == 0   # --force: still none
+    assert cli.main(["xbrl-facts", "--annual", "--dry-run", "--download", "--json", str(tmp_path / "v.json")]) == 0 and built == [1]
+    assert json.loads((tmp_path / "v.json").read_text(encoding="utf-8"))["annual_lists"] == 1 and hits == []
+    assert cli.main(["xbrl-facts", "--json", str(tmp_path / "t.json")]) == 0 and built == [1]
 
 
 # --- the cross-check: screener's annual columns --------------------------------------------------------------------------------------
@@ -375,3 +391,44 @@ def test_the_cash_flow_of_a_march_year_is_read_from_the_annual_report_when_memor
     assert cash["operating"]["class"] == "match" and cash["operating"]["source"] == "annual_report_xbrl"
     assert cash["investing"]["class"] == "matches_screener_view:investing_plus_exchange_effect"       # -12,845 + 959 = -11,886
     assert cash["investing"]["memory_source_id"] == "annual_report_xbrl:FY26"
+
+
+# --- review fixes: the view guard on the annual path, and small lines marked ---------------------------------------------------
+
+def test_the_annual_associates_view_is_tried_only_past_twice_its_tolerance():
+    # ours 98.4 and a 0.3 share against screener's 100: the share would close the gap (98.7 within 1.5) but the gap is 1.6 Cr
+    rows = [money("ProfitBeforeTax", "D", 98.4), money("ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod", "D", 0.3)]
+    quarter, yearly = loader(annual_rows=rows)
+    page = section("profit-loss", {"Profit before tax": ["100"]}, ["Mar 2026"])
+    got = run_company(section("quarters", {"Sales&nbsp;+": ["100"], "Net Profit&nbsp;+": ["10"]}, ["Mar 2026"]) + page, quarter, yearly)
+    p = annual(got, "pbt")
+    assert p["class"] == "mismatch" and not p["class"].startswith("matches_screener_view")
+    # a gap past twice the tolerance that the share does close is still named
+    rows = [money("ProfitBeforeTax", "D", 96.0), money("ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod", "D", 4.0)]
+    quarter, yearly = loader(annual_rows=rows)
+    got = run_company(section("quarters", {"Sales&nbsp;+": ["100"], "Net Profit&nbsp;+": ["10"]}, ["Mar 2026"]) + page, quarter, yearly)
+    assert annual(got, "pbt")["class"] == "matches_screener_view:associates_in_pbt"
+
+
+def test_view_explanations_on_small_lines_are_marked_counted_apart_and_not_called_proof():
+    small = run_company(section("quarters", {"Sales&nbsp;+": ["100"], "Net Profit&nbsp;+": ["10"]}, ["Mar 2026"])
+                        + section("profit-loss", {"Profit before tax": ["100"]}, ["Mar 2026"]), *loader(annual_rows=[
+                            money("ProfitBeforeTax", "D", 96.0),
+                            money("ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod", "D", 4.0)]))
+    p = annual(small, "pbt")
+    assert p["class"] == "matches_screener_view:associates_in_pbt" and p["small_line"] is True
+    assert p["note"].endswith(" (chance risk: small line)")
+    big = annual(run_company(itc_page(), *loader(annual_rows=ITC_ROWS)), "other_income")          # 2,523 Cr: not a small line
+    assert big["class"].startswith("matches_screener_view") and "small_line" not in big and "chance risk" not in big["note"]
+    out = sc.summarise([small, run_company(itc_page(), *loader(annual_rows=ITC_ROWS))], "2026-10-28")
+    assert out["view_small_line"] == 1 and out["view_large_line"] >= 2
+    assert out["views_by_class"]["small_line"] == {"matches_screener_view:associates_in_pbt": 1}
+    text, md = sc.render(out), sc.to_markdown(out, "2026-10-28")
+    assert "1 on lines under 150 Cr (chance risk: not proof of a match)" in text
+    assert "## Explained by a screener view (large and small lines apart)" in md and "the small-line ones are not proof of a match" in md
+    assert "| under 150 Cr (chance risk) | 1 |" in md
+    # EPS is no crore line: never marked
+    eps_pair = {"class": "matches_screener_view:treasury_shares", "metric": "eps", "screener_value": 9.5, "note": ""}
+    fake = {"pairs": [eps_pair]}
+    sc.mark_small_line_views(fake)
+    assert "small_line" not in eps_pair and eps_pair["note"] == ""

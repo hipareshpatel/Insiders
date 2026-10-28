@@ -444,6 +444,23 @@ def six_pairs(figures: dict, quarters: dict[str, dict], lender: bool, lender_lay
     return out
 
 
+SMALL_LINE = 150.0       # Cr: on a line this small a view's closing tolerance (1.5 Cr) is a large share of the line, so chance explains many
+SMALL_LINE_NOTE = " (chance risk: small line)"
+PAIR_LISTS = ("pairs", "six_pairs", "bs_pairs", "cf_pairs", "annual_pairs")
+
+
+def mark_small_line_views(result: dict) -> None:
+    """In place: a ``matches_screener_view`` on a line under 150 Cr (screener's figure; EPS is no crore line) is marked ``small_line``
+    and its note says so. Shuffle test, 28 Oct 2026: on lines of 50 to 150 Cr other companies' parts explained 83 gaps of 600 beside
+    108 real ones, so about 4 in 10 such explanations can be chance. The class name stays; the report counts them apart."""
+    for key in PAIR_LISTS:
+        for p in result.get(key, []):
+            if p["class"].startswith(VIEW) and p["metric"] != "eps" and p.get("screener_value") is not None \
+                    and abs(p["screener_value"]) < SMALL_LINE:
+                p["small_line"] = True
+                p["note"] = (p.get("note") or "") + SMALL_LINE_NOTE
+
+
 # --- the annual columns against the annual report's XBRL --------------------------------------------------------------
 
 # screener's annual lines -> the key of ``screener_parts.year_figures``; a lender's page has other Sales, Operating Profit, Interest
@@ -482,7 +499,8 @@ def annual_pairs(annual: dict[str, dict], annual_six: dict[str, dict], get_facts
             cls, note, way, adjustment = "match", "", "", ""
             if not close(ours):
                 with_ = figures.get(line + "_with_associates")
-                if with_ is not None and close(with_[0]):
+                # like every other view: tried only past twice its own tolerance (ours 98.4 and a 0.3 share explain nothing of 100)
+                if with_ is not None and _view_apart(ours, theirs) and close(with_[0]):
                     cls, adjustment = VIEW + "associates_in_" + line, f"associates_in_{line} (xbrl facts)"
                     note = f"with the associates' share: {ours:g} -> {with_[0]:g} ({with_[1]})"
                 elif line == "pat" and "pat_owners" in figures and close(figures["pat_owners"][0]):
@@ -1164,6 +1182,7 @@ def compare_company(dossier: dict, pages: dict[str, dict], scrip: str = "", symb
                                                                lender or bool(page.get("lender_layout")), have_facts)
     for way in out["associates"]:
         out["associates"][way] += sum(1 for p in out["annual_pairs"] if p.get("associates") == way)
+    mark_small_line_views(out)
     # gaps: a quarter of the span screener shows, one side has and the other lacks
     ours_quarters = {p for (m, p) in figures if m in ("revenue", "interest_earned", "pat") and quarter_index(p)}
     theirs_quarters = {p for p, row in page["quarters"].items() if row.get("revenue") is not None or row.get("pat") is not None}
@@ -1290,6 +1309,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     cf_by_line: dict[str, dict[str, int]] = {}
     table_rows = []     # balance-sheet and cash-flow rows: the CSV carries them, summary["rows"] (the referees' input) does not
     sections = {k: 0 for k in SECTION_KEYS}
+    views: dict[str, dict[str, int]] = {"small_line": {}, "large_line": {}}   # view explanations by line size and class
     annual_by_line: dict[str, dict[str, int]] = {}
     annual_by_source: dict[str, dict[str, int]] = {}
     annual_no_facts = annual_no_facts_companies = 0
@@ -1314,6 +1334,11 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
         sections["compared_with_cash_flow"] += used.get("cash_flow", 0)
         sections["companies_with_balance_sheet_pairs"] += bool(r.get("bs_pairs"))
         sections["companies_with_cash_flow_pairs"] += bool(r.get("cf_pairs"))
+        for key in PAIR_LISTS:
+            for p in r.get(key, []):
+                if p["class"].startswith(VIEW) and p["metric"] != "eps":
+                    side = views["small_line" if p.get("small_line") else "large_line"]
+                    side[p["class"]] = side.get(p["class"], 0) + 1
         for p in r.get("annual_pairs", []):
             counts = annual_by_line.setdefault(p["metric"], {c: 0 for c in ANNUAL_CLASSES})
             counts[p["class"]] = counts.get(p["class"], 0) + 1
@@ -1374,6 +1399,8 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             "six_pairs": sum(sum(row.values()) for row in six_by_class.values()), "six_by_class": six_by_class,
             "bs_pairs": sum(sum(row.values()) for row in bs_by_line.values()), "bs_by_line": _in_order(bs_by_line, BS_LINES),
             "cf_pairs": sum(sum(row.values()) for row in cf_by_line.values()), "cf_by_line": _in_order(cf_by_line, CF_LINES),
+            "view_small_line": sum(views["small_line"].values()), "view_large_line": sum(views["large_line"].values()),
+            "views_by_class": views,
             "annual_pairs": sum(sum(row.values()) for row in annual_by_line.values()),
             "annual_by_line": {k: annual_by_line[k] for k in ANNUAL_LINES if k in annual_by_line}, "annual_by_source": annual_by_source,
             "annual_columns_without_facts": {"columns": annual_no_facts, "companies": annual_no_facts_companies},
@@ -1428,6 +1455,17 @@ def associates_treatment(way: dict) -> str:
     that could tell), ``not counted``, ``mixed`` or ``unclear`` (only quarters where neither way fits)."""
     with_, without = way.get("with", 0), way.get("without", 0)
     return "mixed" if with_ and without else "counted" if with_ else "not counted" if without else "unclear"
+
+
+def view_lines(summary: dict) -> list[str]:
+    """The view explanations (``matches_screener_view``) by line size: those on lines under 150 Cr are not proof of a match."""
+    by = summary.get("views_by_class") or {"small_line": {}, "large_line": {}}
+    lines = [f"explained by a screener view: {summary.get('view_large_line', 0)} on lines of 150 Cr or more, "
+             f"{summary.get('view_small_line', 0)} on lines under 150 Cr (chance risk: not proof of a match)"]
+    for side, label in (("large_line", "150 Cr or more"), ("small_line", "under 150 Cr")):
+        for cls, n in sorted(by.get(side, {}).items(), key=lambda kv: -kv[1])[:12]:
+            lines.append(f"  {label:15}{cls:60}{n}")
+    return lines
 
 
 def annual_lines(summary: dict) -> list[str]:
@@ -1504,6 +1542,7 @@ def render(summary: dict) -> str:
     lines += [f"  {name:26}{n}" for name, n in sorted(c.items()) if name not in CLASSES and n]
     lines += sections_lines(summary)
     lines += associates_lines(summary)
+    lines += view_lines(summary)
     lines += annual_lines(summary)
     if summary.get("six_by_class"):
         lines += [f"six other lines, pairs       {summary['six_pairs']}"]
@@ -1565,6 +1604,16 @@ def to_markdown(summary: dict, date: str) -> str:
     out += ["## Sections found on the stored pages", "",
             "The balance sheet and the cash flow are read from the page sections `id=\"balance-sheet\"` and `id=\"cash-flow\"`. "
             "A missing section is not a clean result: no pair was made.", "", "```", *sections_lines(summary), "```", ""]
+    by = summary.get("views_by_class") or {"small_line": {}, "large_line": {}}
+    out += ["## Explained by a screener view (large and small lines apart)", "",
+            "A `matches_screener_view` class says our figure plus the parts screener adds matches screener's figure. On a line under 150 Cr "
+            "the closing tolerance (1.5 Cr) is a large share of the line, and a shuffle test found about 4 in 10 such explanations can be "
+            "chance: **the small-line ones are not proof of a match** (their note says so; the class names are unchanged).", "",
+            "| Line size | Explanations | Classes |", "|---|---|---|",
+            f"| 150 Cr or more | {summary.get('view_large_line', 0)} | " + ", ".join(
+                f"{c} {n}" for c, n in sorted(by.get('large_line', {}).items(), key=lambda kv: -kv[1])[:8]) + " |",
+            f"| under 150 Cr (chance risk) | {summary.get('view_small_line', 0)} | " + ", ".join(
+                f"{c} {n}" for c, n in sorted(by.get('small_line', {}).items(), key=lambda kv: -kv[1])[:8]) + " |", ""]
     out += ["## The annual columns against the annual-report XBRL", "",
             "Screener's annual profit and loss (Sales, Operating Profit, Other Income, Interest, Depreciation, PBT, Net Profit, EPS) worked "
             "out from the year's facts by screener's own formulas (docs/audit/screener-five-2026-10-28.md, 11.2): the annual report's "

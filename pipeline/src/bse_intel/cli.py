@@ -1572,9 +1572,9 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     companies = _selected_companies(args, sink)
     if companies is None:
         return 2
-    if (args.download and not args.dry_run) or (args.annual and (args.force or args.download or not args.dry_run)):
+    if (args.download and not args.dry_run) or (args.annual and (args.download or not args.dry_run)):
         # a dry run lists the files and makes no client, so no request at all; the annual-report list is a request a company (a
-        # list, not a file): --annual builds a client except in a dry run without --download or --force, which asks for no list
+        # list, not a file): --annual builds a client except in a dry run without --download (--force or not), which asks for no list
         from .nse import NseClient
 
         with NseClient() as nse:

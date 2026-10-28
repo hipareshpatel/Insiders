@@ -385,8 +385,11 @@ def run(sink, report: dict, symbols: dict[str, str], client, apply: bool = False
     earlier run of the same mode is skipped unless ``restart`` (the list is saved after every company); ``more`` is true
     when the time budget ended the run with companies left. A refusal from screener.in propagates."""
     from . import memory_gaps
+    from .backup import BackupError, RunBackup
 
     suffix = f":{shard[0]}of{shard[1]}" if shard else ""
+    # each dossier is saved to R2 backup/ before its first write; a shard has its own folder (shards start together)
+    backup = RunBackup(sink, "screener-fill" + suffix.replace(":", "-")) if apply else None
     key = (TRIED_KEY if apply else DRY_TRIED_KEY) + suffix
     tried = set() if restart else set(json.loads(sink.kv_get(key) or "[]"))
     todo = [s for s, r in sorted(report["companies"].items()) if memory_gaps.has_gap(r)]
@@ -440,13 +443,19 @@ def run(sink, report: dict, symbols: dict[str, str], client, apply: bool = False
         if decision["fills"]:
             totals["companies_with_fills"] += 1
             if apply:
-                totals["written"] += _write(sink, scrip, symbol, decision["fills"])
+                try:
+                    totals["written"] += _write(sink, scrip, symbol, decision["fills"], backup)
+                except BackupError as exc:   # nothing more is written; the outcome so far is returned, this company is not marked tried
+                    totals["error"] = f"{type(exc).__name__}: {exc}"[:300]
+                    failed.append(f"{scrip} {symbol}: {exc}"[:200])
+                    log.error("screener-fill stopped: %s", exc)
+                    break
         tried.add(scrip)
         sink.kv_set(key, json.dumps(sorted(tried)), now_iso())
     return {"apply": apply, "more": more, "failed": failed, "rows": rows, **totals}
 
 
-def _write(sink, scrip: str, symbol: str, fills: list[dict]) -> int:
+def _write(sink, scrip: str, symbol: str, fills: list[dict], backup=None) -> int:
     """The fills into the company's memory through the three-way merge; never over a figure that is there."""
     read = sink.get_dossier(scrip)
     if read is None:
@@ -455,6 +464,8 @@ def _write(sink, scrip: str, symbol: str, fills: list[dict]) -> int:
     added = put_screener(merged, fills, symbol, now_iso())
     if added:
         keep_concurrent_writes(merged, read, sink.get_dossier(scrip))
+        if backup is not None:
+            backup.dossier(scrip, merged)
         sink.put_dossier(scrip, merged)
     return added
 

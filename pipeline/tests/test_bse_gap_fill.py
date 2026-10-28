@@ -94,6 +94,8 @@ def test_a_backup_that_does_not_read_back_stops_the_fill_but_returns_the_outcome
     out = bf.run(sink, report, symbols, nse, bse, SETTINGS, apply=True)
     assert out["error"].startswith("BackupError") and out["figures_written"] == 0 and sink.writes == 0 and out["failed"]
     assert "1" not in json.loads(sink.kv.get(bf.TRIED_KEY) or "[]") and bse.listed == ["1"]   # stopped at the first company
+    # the totals, the rows (summary and CSV) count only what was written: nothing
+    assert out["companies_filled"] == 0 and out["quarters_filled"] == 0 and out["figures_filled"] == 0 and out["rows"] == []
 
 
 def test_market_cap_filter_skips_small_and_unknown_without_asking_anyone():

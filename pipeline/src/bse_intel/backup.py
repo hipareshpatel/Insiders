@@ -15,7 +15,9 @@ a dossier's "before" once per run (its first backup is the state before the run)
 
 Runs whose work is done elsewhere (seed-memory for named companies; requeue-failed, whose filings the live run re-reads
 later) take a snapshot of the named companies' dossiers and their cards first (``start_scope``) and the "after" at the end
-(``save_after``, also ``restore --seal`` once the live run has re-read the filings)."""
+(``save_after``, for the runs that finish before the command ends: seed-memory). requeue-failed --ids has no after-state:
+the live run re-reads the filings later, and a seal taken then would count unrelated live writes as the job's, so such a backup
+restores only with ``--force``."""
 
 from __future__ import annotations
 
@@ -144,10 +146,23 @@ def start_scope(sink, job: str, scrips=(), news_ids=(), cards_of_scrips: bool = 
     return backup
 
 
+def check_prefix(sink, prefix: str) -> str:
+    """The backup folder's prefix with its closing slash; ValueError for anything that is not an existing folder
+    ``backup/<name>/`` (a restore never reads or writes elsewhere)."""
+    name = prefix[len(PREFIX):].strip("/") if prefix.startswith(PREFIX) else ""
+    if not name or "/" in name or ".." in name:
+        raise ValueError(f"a backup prefix is {PREFIX}<job>-<time>/, not {prefix!r}")
+    prefix = f"{PREFIX}{name}/"
+    if not sink.list_objects(prefix):
+        raise ValueError(f"no backup {prefix} (restore --list shows them)")
+    return prefix
+
+
 def save_after(sink, prefix: str) -> dict:
-    """The after-state of a backup made by ``start_scope``: the current dossiers and card rows of what it holds. Refuses a
-    backup that has an after-state already (a job's own, more exact one is never replaced)."""
-    prefix = prefix.rstrip("/") + "/"
+    """The after-state of a backup made by ``start_scope``, taken by the job that ran in between (seed-memory, at its end):
+    the current dossiers and card rows of what it holds. Never for a run the live pipeline finishes later: what it writes
+    meanwhile would count as the job's own. Refuses a backup that has an after-state already."""
+    prefix = check_prefix(sink, prefix)
     keys = sink.list_objects(prefix)
     if any(k.startswith(prefix + AFTER) for k in keys):
         raise BackupError(f"{prefix} has an after-state already")

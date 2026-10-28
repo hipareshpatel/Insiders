@@ -430,21 +430,23 @@ def run(sink, report: dict, symbols: dict[str, str], nse, bse, settings, apply: 
                 done(scrip)
             continue
         periods = {e["period"] for e in fresh}
-        totals["companies_filled"] += 1
-        totals["quarters_filled"] += len(periods)
-        totals["figures_filled"] += len(fresh)
         added = [{"scrip": scrip, "symbol": symbol, "period": entry["period"], "metric": entry["metric"],
                   "value": entry["value"], "basis": entry.get("basis"), "source": EXCHANGE, "url": entry.get("source_url")}
                  for entry in sorted(fresh, key=lambda e: (quarter_index(e["period"]) or 0, e["metric"]))]
-        rows.extend(added)
+        written = 0
         if apply:
             try:
-                totals["figures_written"] += _write(sink, scrip, fresh, scratch.dossier, backup)
-            except BackupError as exc:   # nothing more is written; the summary and files so far stay, this company is not done
+                written = _write(sink, scrip, fresh, scratch.dossier, backup)
+            except BackupError as exc:   # nothing more is written; the totals, summary and files count only what was written
                 totals["error"] = f"{type(exc).__name__}: {exc}"[:300]
                 failed.append(f"{scrip} {symbol}: {exc}"[:200])
                 log.error("bse-gap-fill stopped: %s", exc)
                 break
+        totals["figures_written"] += written
+        totals["companies_filled"] += 1
+        totals["quarters_filled"] += len(periods)
+        totals["figures_filled"] += len(fresh)
+        rows.extend(added)
         if record is not None:
             record.company(added, outcome())   # after the write to memory: the record never lists a figure that was not written
         if not stats.failures:

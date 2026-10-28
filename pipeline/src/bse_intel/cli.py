@@ -485,7 +485,10 @@ def cmd_requeue_failed(args, settings, sink) -> int:
 def _snapshot_requeue(sink, ids: list[str]) -> bool:
     """Before named filings are set pending (the live run re-reads them later and rewrites their cards and their companies'
     memory): save the named filings' cards and those companies' dossiers (backup.start_scope). False when a copy did not read
-    back: nothing is requeued. The after-state comes with ``restore --seal`` once the live run has read the filings."""
+    back: nothing is requeued. The backup has no after-state (the live run rewrites the filings later, and what it or anything
+    else writes meanwhile cannot be told from the job's), so it restores only with ``--force``, the dry run listing every
+    difference. Finding the cards of named filings reads every stored card once (export_cards, about 80 pages): acceptable for
+    a named re-run, and the reason a re-run by date takes no backup."""
     from .backup import BackupError, start_scope
 
     ids = [i for i in dict.fromkeys(ids) if i]
@@ -496,8 +499,8 @@ def _snapshot_requeue(sink, ids: list[str]) -> bool:
         return False
     summary = backup.summary()
     print("requeue-failed: " + (f"backup of {summary['cards']} stored cards and {summary['dossiers']} dossiers before the re-run: "
-                                f"{summary['prefix']} (after the live run has read the filings: restore --seal --backup {summary['prefix']}, "
-                                "else a restore needs --force)" if summary else "no backup taken (none of the filings has a stored card)"))
+                                f"{summary['prefix']} (no after-state: restore it only with --force; the dry run lists every difference, "
+                                "later live writes included)" if summary else "no backup taken (none of the filings has a stored card)"))
     if backup.missing_ids and summary:
         print(f"requeue-failed: no stored card, not in the backup: {len(backup.missing_ids)} filings")
     return True
@@ -1769,18 +1772,6 @@ def cmd_restore(args, settings, sink) -> int:
         for entry in restore.list_backups(sink):
             print(json.dumps(entry))
         return 0
-    if args.seal:
-        from .backup import BackupError, save_after
-
-        if not args.backup:
-            print("restore --seal: give --backup", file=sys.stderr)
-            return 2
-        try:
-            print(json.dumps(save_after(sink, args.backup)))
-        except BackupError as exc:
-            print(f"restore --seal: {exc}", file=sys.stderr)
-            return 1
-        return 0
     scrips = {s.strip() for s in (args.scrips or "").split(",") if s.strip()}
     news_ids = {s.strip() for s in (args.news_ids or "").split(",") if s.strip()}
     if not args.backup or bool(scrips or news_ids) == bool(args.all):
@@ -2118,8 +2109,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--news-ids", help="only these cards (comma separated)")
     p.add_argument("--all", action="store_true", help="everything in the backup (required when no filter is given)")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
-    p.add_argument("--force", action="store_true", help="also put back what was changed since the job (and restore a backup with no after-state)")
-    p.add_argument("--seal", action="store_true", help="save the current state as the after-state of a snapshot backup (requeue-failed), then exit")
+    p.add_argument("--force", action="store_true", help="also put back what was changed since the job (and restore a backup with no after-state: a requeue-failed --ids snapshot)")
     p.add_argument("--list", action="store_true", help="list the backups and exit")
     p.set_defaults(func=cmd_restore)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")

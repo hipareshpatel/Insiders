@@ -226,30 +226,38 @@ def test_what_was_written_since_the_job_survives_a_restore(settings):
     del refreshed
 
 
-def test_a_dossier_the_job_created_is_deleted_only_if_nothing_changed_it_since(settings):
-    sink = LocalSink(settings)
+def _gap_fill_created(settings, name):
+    """A dossier the BSE gap fill created for a company that had none, with its backup folder."""
+    other = settings.__class__(**{**settings.__dict__, "local_dir": settings.local_dir.parent / name})
+    sink = LocalSink(other)
     sink.execute("companies_upsert", [{"scrip_code": "500009", "symbol": "NEW", "company_name": "New Ltd", "updated_at": "x"}])
     entry = {"metric": "revenue", "period": "Q1FY27", "value": 10.0, "unit": "INR_CR", "basis": "STANDALONE",
              "as_of": "2026-10-01", "source_news_id": "x"}
     backup = RunBackup(sink, "bse-gap-fill")
     assert bf._write(sink, "500009", [entry], {**_dossier(), "scrip_code": "500009"}, backup) == 1
+    return sink, backup
+
+
+def test_a_dossier_the_job_created_is_deleted_only_if_it_is_exactly_what_the_job_wrote(settings):
+    sink, backup = _gap_fill_created(settings, "one")
     assert json.loads(sink.get_object(f"{backup.prefix}memory/500009.json")) is None      # it had none before the write
     written = sink.get_dossier("500009")
     assert json.loads(sink.get_object(f"{backup.prefix}after/memory/500009.json")) == written
-
     untouched = restore.plan(sink, backup.prefix, scrips={"500009"})
     assert untouched["memory"][0]["changed"] and untouched["memory"][0]["restored"] == ["(dossier created by the job)"]
-    # a later writer put a deal in: only the job's own entries come out, the deal stays
-    _later_write(sink, "500009", lambda d: d.__setitem__("deals", [{"id": "d1"}]))
-    restore.apply(sink, restore.plan(sink, backup.prefix, scrips={"500009"}))
-    left = sink.get_dossier("500009")
-    assert left["deals"] == [{"id": "d1"}] and not left.get("financial_metrics") and "company_name" not in left
-    # and a dossier nobody touched is deleted
-    sink2 = LocalSink(settings.__class__(**{**settings.__dict__, "local_dir": settings.local_dir.parent / "two"}))
-    b2 = RunBackup(sink2, "bse-gap-fill")
-    bf._write(sink2, "500009", [entry], {**_dossier(), "scrip_code": "500009"}, b2)
-    restore.apply(sink2, restore.plan(sink2, b2.prefix, scrips={"500009"}))
-    assert sink2.get_dossier("500009") is None
+    restore.apply(sink, untouched)
+    assert sink.get_dossier("500009") is None
+
+    # any change since, even a section the job never wrote, and the whole dossier is left exactly as it is (review 2)
+    sink, backup = _gap_fill_created(settings, "two")
+    _later_write(sink, "500009", lambda d: d.__setitem__("pledges", {"events": [{"as_of": "2026-10-29", "x": 1}]}))
+    later = sink.get_dossier("500009")
+    report = restore.plan(sink, backup.prefix, scrips={"500009"})
+    assert report["memory"][0]["conflicts"] == ["(dossier created by the job)"] and not report["memory"][0]["changed"]
+    assert restore.apply(sink, report)["memory"] == 0 and sink.get_dossier("500009") == later
+    assert "scrip_code" in later and later["pledges"]["events"] and later["financial_metrics"]
+    forced = restore.apply(sink, restore.plan(sink, backup.prefix, scrips={"500009"}, force=True))
+    assert forced["memory"] == 1 and sink.get_dossier("500009") is None                   # --force deletes it
 
 
 def test_a_backup_with_no_after_state_restores_only_with_force(settings):
@@ -330,45 +338,104 @@ def test_only_the_columns_cards_upsert_can_write_are_compared():
     assert restore.decide_card(row, None, {**row, "headline": "x"}, force=True)["restored"] == ["headline"]
 
 
-def test_the_three_way_merge_goes_down_to_entries_and_fields():
-    m = restore.Merge(False)
-    before = {"timeline": [{"id": "a", "text": "old"}, {"id": "b", "text": "b"}], "x": 1, "updated_at": "1"}
-    after = {"timeline": [{"id": "a", "text": "job"}, {"id": "b", "text": "b"}], "x": 2, "updated_at": "2"}
-    current = {"timeline": [{"id": "a", "text": "job"}, {"id": "b", "text": "later"}, {"id": "c", "text": "c"}], "x": 2, "updated_at": "3"}
+def test_the_smallest_unit_is_a_whole_entry_never_a_field_and_never_a_partial_entry():
+    job_entry = {"metric": "revenue", "period": "Q1FY27", "basis": "STANDALONE", "value": 10.0, "unit": "INR_CR"}
+    before = {"scrip_code": "1", "financial_metrics": [{"metric": "pat", "period": "Q4FY26", "value": 1.0}]}
+    after = {**before, "financial_metrics": [*before["financial_metrics"], job_entry]}
+    # the reviewer's case: the job's entry, changed to 11 by a later writer: a conflict, the entry stays as it is, whole
+    current = {**after, "financial_metrics": [*before["financial_metrics"], {**job_entry, "value": 11.0}]}
     d = restore.decide_dossier(before, after, current, True, False)
-    assert d["new"]["x"] == 1 and d["new"]["updated_at"] == "3"
-    assert d["new"]["timeline"] == [{"id": "a", "text": "old"}, {"id": "b", "text": "later"}, {"id": "c", "text": "c"}]
-    assert d["conflicts"] == [] and set(d["restored"]) == {"x", "timeline[a]"}
-    # the same field changed by both: a conflict, theirs stays
-    current["timeline"][0]["text"] = "theirs"
+    assert d["new"] == current and not d["changed"] and d["conflicts"] == ["financial_metrics[revenue Q1FY27 STANDALONE]"]
+    forced = restore.decide_dossier(before, after, current, True, True)
+    assert forced["new"]["financial_metrics"] == before["financial_metrics"]            # force takes the entry out whole
+    # an entry the job did not touch but a later writer changed, beside the job's own: both stay as they should
+    current = {**after, "financial_metrics": [{**before["financial_metrics"][0], "value": 2.0}, job_entry]}
     d = restore.decide_dossier(before, after, current, True, False)
-    assert d["conflicts"] == ["timeline[a].text"] and d["new"]["timeline"][0]["text"] == "theirs"
-    assert restore.decide_dossier(before, after, current, True, True)["new"]["timeline"][0]["text"] == "old"
-    del m
+    assert d["new"]["financial_metrics"] == [{**before["financial_metrics"][0], "value": 2.0}] and d["conflicts"] == []
+    # a dict section: its entries are whole values too
+    before = {"identity": {"former_names": ["A"], "entities": []}}
+    after = {"identity": {"former_names": ["A", "B"], "entities": ["E"]}}
+    current = {"identity": {"former_names": ["A", "B", "C"], "entities": ["E"]}}
+    d = restore.decide_dossier(before, after, current, True, False)
+    assert d["new"]["identity"] == {"former_names": ["A", "B", "C"], "entities": []}   # entities back; former_names changed since: whole, kept
+    assert d["conflicts"] == ["identity.former_names"] and d["restored"] == ["identity.entities"]
+
+
+def test_a_restored_entry_goes_back_to_its_place_in_the_list():
+    rows = [{"id": str(i), "text": f"t{i}"} for i in range(5)]
+    before = {"timeline": rows}
+    after = {"timeline": [rows[0], rows[1], rows[4]]}                                   # the job took 2 and 3 out
+    current = {"timeline": [rows[0], rows[1], rows[4], {"id": "9", "text": "later"}]}
+    d = restore.decide_dossier(before, after, current, True, False)
+    assert [e["id"] for e in d["new"]["timeline"]] == ["0", "1", "2", "3", "4", "9"] and d["conflicts"] == []
+
+
+def test_a_restore_never_drops_a_key_both_the_backup_and_the_dossier_have():
+    """Over many made-up histories (a seeded generator): the stored dossier after a restore keeps every top-level key that both
+    the before dossier and the current one had, and every entry of a list is a whole entry from the backup or from now."""
+    import random
+
+    rng = random.Random(28)
+    keys = ["scrip_code", "financial_metrics", "timeline", "identity", "deals", "business_summary", "governance"]
+
+    def entries(tag):
+        return [{"metric": m, "period": p, "value": rng.choice([1.0, 2.0, 3.0]), "tag": tag}
+                for m in ("revenue", "pat") for p in ("Q1", "Q2", "Q3") if rng.random() < 0.6]
+
+    def dossier(tag):
+        d = {"scrip_code": "1", "financial_metrics": entries(tag), "timeline": [{"id": f"t{i}", "text": tag} for i in range(rng.randint(0, 3))],
+             "identity": {"former_names": [tag], "entities": []}, "deals": [], "business_summary": tag, "governance": {"auditor": tag}}
+        for k in keys[1:]:
+            if rng.random() < 0.15:
+                d.pop(k, None)
+        return d
+
+    for _ in range(400):
+        before, after, current = dossier("b"), dossier("a"), dossier("c")
+        for force in (False, True):
+            d = restore.decide_dossier(before, after, current, True, force)
+            new = d["new"]
+            for k in set(before) & set(current):
+                assert k in new, (k, force)
+            for k, v in new.items():
+                if isinstance(v, list):
+                    pool = [e for src in (before, current) for e in src.get(k, [])]
+                    assert all(e in pool for e in v), (k, force)
 
 
 # --- snapshots for runs that cannot back up row by row -----------------------------------------------------------------
 
-def test_a_snapshot_taken_before_a_rerun_is_sealed_after_it_and_then_restores_three_way(settings):
+def test_a_snapshot_taken_before_a_rerun_has_no_after_state_and_restores_only_with_force(settings):
     sink = _store(settings)
     original = _parsed(sink)
     snapshot = bk.start_scope(sink, "requeue", news_ids=["n1", "nope"])
     assert snapshot.summary()["cards"] == 1 and snapshot.summary()["dossiers"] == 1 and snapshot.missing_ids == ["nope"]
-    sink.get_object(f"{snapshot.prefix}memory/500001.json")
-    # the live run re-reads n1: new card, new memory; and unrelated writes follow
+    # the live run re-reads n1 (new card, new memory) and unrelated writes follow
     _later_card(sink, "n1", headline="Re-read headline", card={"headline": "Re-read headline"})
     _later_write(sink, "500001", lambda d: d.__setitem__("deals", [{"id": "d1"}]))
-    plain = restore.plan(sink, snapshot.prefix, everything=True)
-    assert not plain["has_after"] and plain["cards"][0]["needs_force"]
-    sealed = bk.save_after(sink, snapshot.prefix)
-    assert sealed["cards"] == 1 and sealed["dossiers"] == 1
-    with pytest.raises(BackupError):
-        bk.save_after(sink, snapshot.prefix)                                             # an after-state is never replaced
-    _later_write(sink, "500001", lambda d: d.__setitem__("operating_notes", [{"id": "o1"}]))   # after the seal
-    restore.apply(sink, restore.plan(sink, snapshot.prefix, everything=True))
-    assert json.loads(_cards(sink)["n1"]["card_json"]) == original["n1"]
-    memory = sink.get_dossier("500001")
-    assert memory["operating_notes"] == [{"id": "o1"}] and memory["deals"] == []        # the seal saw d1: it is the "job's"
+    report = restore.plan(sink, snapshot.prefix, everything=True)
+    text = restore.render(report)
+    assert not report["has_after"] and report["cards"][0]["needs_force"] and report["memory"][0]["needs_force"]
+    assert "differences now (these include anything written since the job): " in text
+    assert "headline" in text and "card_json" in text and "deals (job added 1, removed 0, changed 0 entries)" in text   # every difference listed
+    plain = restore.apply(sink, report)
+    assert plain["memory"] == 0 and plain["cards"] == 0 and plain["undo_backup"] is None   # a plain apply writes nothing
+    with pytest.raises((ValueError, BackupError)):
+        bk.save_after(sink, "backup/requeue-nothing/")                                   # and no after-state can be taken for a wrong prefix
+    restore.apply(sink, restore.plan(sink, snapshot.prefix, everything=True, force=True))
+    assert json.loads(_cards(sink)["n1"]["card_json"]) == original["n1"] and _cards(sink)["n1"]["headline"] == original["n1"]["headline"]
+    assert sink.get_dossier("500001")["deals"] == []                                     # the later deal is gone too: that is what --force means
+
+
+def test_every_restore_entry_refuses_a_prefix_that_is_not_an_existing_backup(settings):
+    sink, prefix, _, _ = _refreshed(settings)
+    for bad in ("memory/", "backup/", "backup", "backup/nothing-here/", f"{prefix}after/", "backup/../memory/", ""):
+        with pytest.raises(ValueError):
+            restore.plan(sink, bad, everything=True)
+        with pytest.raises((ValueError, BackupError)):
+            bk.save_after(sink, bad)
+    args = SimpleNamespace(list=False, backup="backup/nothing-here/", scrips=None, news_ids=None, all=True, apply=True, force=False)
+    assert cmd_restore(args, None, sink) == 2
 
 
 def test_a_named_seed_backs_up_the_companies_first_and_seals_the_backup_at_its_end(settings, monkeypatch, capsys):
@@ -408,7 +475,7 @@ def test_requeue_by_id_takes_a_backup_first_and_requeues_nothing_when_it_does_no
     args = SimpleNamespace(ids="n1,n3", dry_run=False, needs_review=False, since=None, days=30, attempts=None)
     assert cmd_requeue_failed(args, SimpleNamespace(max_attempts=3), sink) == 0
     (folder,) = _backups(sink)
-    assert folder.startswith("requeue-") and "restore --seal --backup backup/" in capsys.readouterr().out
+    assert folder.startswith("requeue-") and "no after-state: restore it only with --force" in capsys.readouterr().out
     assert sink.seen[-1][0] == "filings_update" and f"backup/{folder}/cards/00001.json" in sink.seen[-1][1]
     bad = _store(settings.__class__(**{**settings.__dict__, "local_dir": settings.local_dir.parent / "bad"}), BadReadback)
     bad.seen = []
@@ -448,8 +515,8 @@ def test_list_shows_each_backup_folder_and_single_file_backups(settings):
 def test_the_maintenance_restore_step_writes_only_on_an_explicit_mode():
     text = (WORKFLOWS / "maintenance.yml").read_text(encoding="utf-8")
     inputs = re.search(r"      restore_mode:\n(?:        .*\n)+", text).group(0)
-    assert "default: preview" in inputs and "options: [preview, apply, apply-force, seal]" in inputs
+    assert "default: preview" in inputs and "options: [preview, apply, apply-force]" in inputs
     step = next(s for s in re.split(r"\n\s+- (?=name:|uses:)", text) if s.startswith("name: Restore from a backup"))
     assert "MODE: ${{ inputs.restore_mode }}" in step and "inputs.dry_run" not in step
     assert 'apply) args+=(--apply) ;;' in step and '"${IDS,,}" = all' in step      # case-insensitive `all`
-    assert step.count("--apply") == 2                                                # only the two explicit modes
+    assert step.count("--apply") == 2 and "seal" not in step                         # only the two explicit modes

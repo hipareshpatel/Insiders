@@ -1173,3 +1173,12 @@ def test_a_revenue_row_above_a_sum_that_leaves_it_out_blocks_a_revenue_row_insid
                      (["Total income"], cols_sum(part, OTHER))] + rows[3:])
     r = read(got, "revenue")
     assert r.status != "ok" or r.value == pytest.approx(crore(1000.00))
+
+
+def test_an_unnamed_line_below_a_whole_revenue_line_does_not_stop_the_revenue():
+    # SONACOMS Q2FY27: "Revenue from operations", "Foreign exchange gain (net)", "Other income" = "Total income"
+    rows, want = pl()
+    fx = [7.0, 6.0, 5.0, 20.0]
+    oi = [round(o - f, 2) for o, f in zip(OTHER, fx)]
+    pdf = statement(rows[:1] + [(["Foreign exchange gain (net)"], fx), (["Other income"], oi)] + rows[2:])
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))

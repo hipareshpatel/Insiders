@@ -876,6 +876,8 @@ _REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:
 # a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
 # its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
 _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
+# a whole revenue line: the label ends with the revenue's own name (a note or "(net)" in brackets may follow)
+_WHOLE_REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations?\W*(?:\((?:net|gross|refer[^)]*|notes?[^)]*)\)\W*)?$", re.I)
 
 
 def list_item(label: str) -> bool:
@@ -1159,9 +1161,16 @@ class Solver:
         # nor is one followed by a row that says nothing (no landmark): "Revenue from operations" over "(a) Sales" and
         # "Dividend income" or "- Fees" may be a heading over its parts, whatever marks them or none (twentieth review)
         # nor one with a row that says nothing above it ("Interest income" over "Net sales": the revenue is both, twenty-first)
+        # A row that says nothing BELOW a whole revenue line ("Revenue from operations" and nothing after it: a line with its own
+        # figures) is another line of income, not a part (SONACOMS Q2FY27: "Foreign exchange gain (net)"; NEWGEN: OCR's
+        # "Other incume"); below a heading joined to its first part ("Revenue from operations Sale of products") it may be one
         rev_at = [i for i, r in enumerate(rows) if self.cls[r] == "REV"]
-        if rev_at and any(self.cls[r] is None for r in rows):
-            rows_rev_ok = False
+        if rev_at:
+            first = rev_at[0]
+            if any(self.cls[r] is None for r in rows[:first]):
+                rows_rev_ok = False
+            elif any(self.cls[r] is None for r in rows[first + 1:]) and not _WHOLE_REVENUE.search(self.t.rows[rows[first]].label):
+                rows_rev_ok = False
         if len(rows) == 2:
             # a revenue row right above the sum and outside it: the first row is not the revenue (22nd review: "Revenue from
             # operations" over "Interest income" + "Other income" = a total that leaves the revenue out)

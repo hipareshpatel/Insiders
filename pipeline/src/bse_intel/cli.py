@@ -1507,6 +1507,51 @@ def cmd_pdf_referee(args, settings, sink) -> int:
     return 124 if outcome["out_of_time"] else 0
 
 
+def cmd_xbrl_key(args, settings, sink) -> int:
+    """Read-only: the exchange's XBRL figures in memory as a free answer key for the PDF reader (xbrl_key.py). Companies in a seeded
+    shuffle; for each its newest results filing(s) with XBRL figures; the filing's PDF the way pdf-referee gets it (``Sources``:
+    the announcement list, ``NseClient.fetch`` on the archive pace); each figure located on the page by word position. The CSV,
+    JSON and markdown are written every 10 filings or 3 minutes and at the end, the decided filings also go to R2
+    (``--progress``), so a run stopped by its time budget, the file cap or a lost runner keeps what it did. No memory write, no
+    card change, no AI. Exit 75 when NSE refused the session, 124 when the time budget ended with filings left."""
+    from . import xbrl_key as xk
+    from .nse import NseClient
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    saved = xk.load_progress(sink, args.progress) if args.progress else None
+    if saved:
+        print(f"xbrl-key: {len(saved)} rows saved by an earlier run of '{args.progress}'; those filings are not read again")
+
+    def write(rows: list[dict], summary: dict) -> None:
+        if args.json:
+            Path(args.json).write_text(xk.to_json(summary), encoding="utf-8")
+        if args.out_csv:
+            Path(args.out_csv).write_text(xk.to_csv(rows), encoding="utf-8")
+        if args.md:
+            Path(args.md).write_text(xk.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
+        if args.progress:
+            xk.save_progress(sink, args.progress, rows)
+
+    with NseClient() as nse:
+        outcome = xk.run(nse, sink, companies, args.limit, args.per_company, args.seed, args.time_budget, progress=write, saved=saved)
+    rows = outcome.pop("rows")
+    print(f"xbrl-key: {outcome['figures']} figures of {outcome['filings']} filings, {outcome['calls']['lists']} announcement lists, "
+          f"{outcome['calls']['pdfs']} PDFs")
+    for status, n in outcome["statuses"].items():
+        print(f"  {status:24}{n}")
+    for stage, n in outcome["failure_stages"].items():
+        print(f"  not found at {stage:20}{n}")
+    if outcome["file_cap_reached"]:
+        print("file cap reached: the rest waits for the next run")
+    write(rows, outcome)
+    if outcome["blocked"]:
+        return REFUSED
+    return 124 if outcome["out_of_time"] else 0
+
+
 def cmd_screener_explain(args, settings, sink) -> int:
     """Read-only: which of the screener-referee's ours_matches_official pairs come from a bonus, split or consolidation after
     the period (the dossier's recorded actions) or from a later results file restating the figure (memory's stored later-file
@@ -2217,6 +2262,18 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--md", help="write the short markdown summary to this file")
     p.add_argument("--progress", metavar="NAME", help="save the decided pairs to R2 (meta/pdf-referee/NAME.csv) every 25 pairs or 3 minutes, and skip the pairs an earlier run of NAME decided (scrip, basis, period, metric)")
     p.set_defaults(func=cmd_pdf_referee)
+
+    p = sub.add_parser("xbrl-key", help="read-only: the exchange's XBRL figures in memory located on their filing's PDF page by word position (a free answer key for the PDF reader)")
+    p.add_argument("--limit", type=int, help="read at most this many filings (the first-test run is on 100 files: set the file cap too)")
+    p.add_argument("--per-company", type=int, default=1, help="the newest N results filings of each company (default 1)")
+    p.add_argument("--seed", type=int, default=28, help="the seed of the company shuffle")
+    p.add_argument("--scrips", help="only these companies (scrip codes or NSE symbols, comma separated)")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if filings are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--out-csv", help="write every figure, with its place on the page, to this file")
+    p.add_argument("--md", help="write the short markdown report to this file")
+    p.add_argument("--progress", metavar="NAME", help="save the rows to R2 (meta/xbrl-key/NAME.csv) as the run goes, and skip the filings an earlier run of NAME did")
+    p.set_defaults(func=cmd_xbrl_key)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

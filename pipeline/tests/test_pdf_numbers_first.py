@@ -483,3 +483,80 @@ def test_ocr_never_changes_a_unit_the_text_layer_gives(monkeypatch):
     lakh_ocr = as_ocr_boxes(statement(rows, unit="(Rs. in Lakhs)"))
     got = nf.reading_from_tables(nf.analyse(crore_page, ocr_boxes=lambda png: lakh_ocr), "Q2FY27", "pat", "STANDALONE")
     assert got.value == pytest.approx(want["pat"][0])                         # crore as printed, not divided by 100
+
+
+# --- the second review's cases: OCR text is used only when it is proved to describe this page -------------------------
+
+def bare_and_ocr(exceptional=(5.0, 4.0, 3.0, 10.0)):
+    rows, want = pl(exceptional=list(exceptional))
+    full = statement(rows)
+    bare = statement([([""] * len(label), cells) for label, cells in rows], unit="")
+    return bare, as_ocr_boxes(full), want
+
+
+def pat_of(pdf, boxes):
+    return nf.reading_from_tables(nf.analyse(pdf, ocr_boxes=lambda png: boxes), "Q2FY27", "pat", "STANDALONE")
+
+
+def test_no_ocr_unit_when_the_layer_names_a_unit_elsewhere_on_the_page(monkeypatch):
+    # the layer names two units in its notes (so it gives none); OCR that missed one of them must not decide
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    bare, seen, _ = bare_and_ocr()
+    doc = pymupdf.open(stream=bare, filetype="pdf")
+    doc[0].insert_text((LEFT, 780), "(Rs. in Crore)", fontsize=FONT)
+    doc[0].insert_text((LEFT, 800), "(Rs. in Lakhs)", fontsize=FONT)
+    two_units = doc.tobytes()
+    doc.close()
+    assert pat_of(two_units, seen).status == "none"
+
+
+def test_ocr_is_aligned_only_when_its_figures_sit_on_the_layers_cells():
+    from bse_intel import ocr
+    bare, seen, _ = bare_and_ocr()
+    k = 72 / ocr.DPI
+
+    def as_words(boxes):
+        return nf.straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in nf.words_from_boxes(boxes)], True)
+
+    table = nf.analyse(bare, ocr_boxes=lambda png: [], keep_unnamed=True)[0]
+    assert nf.ocr_aligned(table, as_words(seen), 8.0)
+    shifted = [([[x, y + 12 / k] for x, y in box], text, score) for box, text, score in seen]        # 12 pt lower
+    assert not nf.ocr_aligned(table, as_words(shifted), 8.0)
+
+
+def test_ocr_labels_are_not_used_when_many_rows_stay_unlabelled(monkeypatch):
+    # the second review's case: a part of the labels, on the wrong rows ("Profit before tax" on the current tax row), gave a
+    # wrong profit before tax and profit; with fewer than nine rows in ten labelled no OCR label is used, so no answer
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl(exceptional=[5.0, 4.0, 3.0, 10.0])
+    scrambled = ["", "Other income", "Total income (I+II)", "Employee benefits expense", "", "", "Other expenses", "", "", "",
+                 "", "Profit before tax (V-VI)", "Deferred tax", "Total tax expense", "Profit for the period"]
+    ocr_view = statement([([lb], cells) for lb, (_, cells) in zip(scrambled, rows)])
+    bare = statement([([""], cells) for _, cells in rows])           # the same rows, at the same heights, with no labels
+    got = {m: nf.reading_from_tables(nf.analyse(bare, ocr_boxes=lambda png: as_ocr_boxes(ocr_view)), "Q2FY27", m, "STANDALONE")
+           for m in ("pbt", "pat", "tax")}
+    assert all(r.status == "none" for r in got.values()), got
+
+
+def test_no_ocr_text_on_a_rotated_page(monkeypatch):
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    bare, seen, _ = bare_and_ocr()
+    doc = pymupdf.open(stream=bare, filetype="pdf")
+    doc[0].set_rotation(90)
+    turned = doc.tobytes()
+    doc.close()
+    assert pat_of(turned, seen).status == "none"
+
+
+def test_the_half_year_sum_needs_the_september_column_before_june():
+    rows, _ = q2_rows()
+    swapped = [(label, [cells[1], cells[0]] + cells[2:]) for label, cells in rows]    # June printed first, September second
+    tables = nf.analyse(statement(swapped, cols=SIX, groups=["Quarter ended"] * 3 + ["Year to date"] * 2 + ["Year ended"],
+                                  dates=["30.06.2026", "30.09.2026", "30.09.2025", "30.09.2026", "30.09.2025", "31.03.2026"]))
+    for c in tables[0].columns:
+        if c.index in (1, 3, 4):
+            c.date, c.kind = None, None
+    assert nf.reading_from_tables(tables, "Q2FY27", "pat", "STANDALONE").status == "none"

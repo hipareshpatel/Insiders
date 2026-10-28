@@ -179,6 +179,26 @@ def ocr_page_boxes(png: bytes):
     return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in result]
 
 
+
+OCR_ALIGN_SHARE = 0.9        # of a table's figures that OCR must read at the layer's own place before its text is used
+OCR_LABELS_SHARE = 0.9       # of a table's rows that must have a label once OCR's are added, or none are added
+
+
+def ocr_aligned(table: "Table", words: list["Word"], height: float) -> bool:
+    """OCR sees the page the layer describes: at least ``OCR_ALIGN_SHARE`` of the table's figures are read by OCR as the same
+    value within half the figure's last printed digit, its centre within half a text height of the row and within the
+    column. A rotated page, a shifted render or a different page frame fails this, and then no OCR text is used."""
+    figs = [(w, c) for w in words if (c := parse_figure(w.text)) is not None and not c.nil]
+    total = hits = 0
+    for r in table.rows:
+        for col, cell in zip(table.columns, r.cells):
+            if cell is None or cell.nil:
+                continue
+            total += 1
+            hits += any(abs(w.y - r.y) <= 0.5 * height and col.x0 - height <= w.xc <= col.x1 + height
+                        and abs(c.value - cell.value) <= cell.tol + 1e-9 for w, c in figs)
+    return total > 0 and hits >= OCR_ALIGN_SHARE * total
+
 def words_from_boxes(boxes) -> list[tuple[float, float, float, float, str]]:
     """OCR boxes as words: a box of several tokens is cut in proportion to its characters."""
     from . import ocr
@@ -971,14 +991,18 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
         return found
 
-    def fill_from_ocr(page, tables: list[Table]) -> None:
+    def fill_from_ocr(page, tables: list[Table], layer_text: str) -> None:
         """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"
-        and every row label are drawn without text). A table with no unit gets the unit of the OCR lines between the table above
-        it (or the page top) and its first row, as ``unit_of`` reads a text layer's. A table whose rows mostly have no label
-        gets, for each row without one, the OCR words from below the row before down to the row's own line that are not figures and stand outside the
-        number columns (NESTLEIND prints its labels between the quarter and the half-year columns); the table is solved
-        again, so the labels can object to a row the arithmetic alone could not tell apart (profit before exceptional items
-        against profit before tax). A unit or label the layer gives is never changed."""
+        and every row label are drawn without text). Nothing is taken unless OCR is proved to see the same page as the layer:
+        the page is not rotated, and OCR reads nearly every figure of the table at the layer's own place (``ocr_aligned``).
+        A table with no unit, on a page whose layer names no unit at all, gets the unit of the OCR lines between the table
+        above it (or the page top) and its first row, with no page-wide guess. A table whose rows mostly have no label gets,
+        for each row without one, the OCR words from below the row before down to the row's own line that are not figures and
+        stand outside the number columns (NESTLEIND prints its labels between the quarter and the half-year columns), and only
+        when nearly every row then has a label (a partly labelled table is where a misplaced label could name a wrong row);
+        the table is solved again. A unit or label the layer gives is never changed."""
+        if page.rotation:
+            return
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         k = 72.0 / ocr.DPI
         words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(ocr_boxes(png))], True)
@@ -986,23 +1010,32 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
             return
         height = text_height(words)
         lines = [(line[0].y, line_text(line)) for line in lines_of(words, height)]
-        page_lines = [t for _, t in lines]
+        layer_names_a_unit = bool(scan_units(layer_text.splitlines())) or unit_of(layer_text.splitlines(), []) is not None
         above = 0.0
         for n, t in sorted(enumerate(tables), key=lambda e: e[1].rows[0].top):
-            if t.named and t.unit is None:
-                t.unit = unit_of([text for y, text in lines if above < y < t.rows[0].top], page_lines)
+            top_of_table, floor = t.rows[0].top, above
             above = max(above, t.rows[-1].bottom)
-            if t.named and sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows):
+            if not t.named or not ocr_aligned(t, words, height):
+                continue
+            if t.unit is None and not layer_names_a_unit:
+                t.unit = unit_of([text for y, text in lines if floor < y < top_of_table], [])
+            if sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows):
                 def in_column(w: Word) -> bool:
                     return any(w.x1 > c.x0 - 0.5 * height and w.x0 < c.x1 + 0.5 * height for c in t.columns)
+                labels = []
                 for i, r in enumerate(t.rows):
-                    if not r.label.strip():
-                        # the row's own line and, for a wrapped label, the lines above it down from the row before
-                        top = t.rows[i - 1].y + 0.5 * height if i else r.y - 0.5 * height
-                        own = sorted((w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
-                                      and parse_figure(w.text) is None), key=lambda w: (round(w.y / height), w.x0))
-                        r.label = " ".join(w.text for w in own)
-                tables[n] = Table_solved(t)
+                    if r.label.strip():
+                        labels.append(r.label)
+                        continue
+                    # the row's own line and, for a wrapped label, the lines above it down from the row before
+                    top = t.rows[i - 1].y + 0.5 * height if i else r.y - 0.5 * height
+                    own = sorted((w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
+                                  and parse_figure(w.text) is None), key=lambda w: (round(w.y / height), w.x0))
+                    labels.append(" ".join(w.text for w in own))
+                if sum(bool(lb.strip()) for lb in labels) >= OCR_LABELS_SHARE * len(t.rows):
+                    for r, lb in zip(t.rows, labels):
+                        r.label = lb
+                    tables[n] = Table_solved(t)
 
     with _pymupdf().open(stream=pdf_bytes, filetype="pdf") as doc:
         for p in layers:
@@ -1013,7 +1046,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 if wanting and ocr_used < MAX_OCR_PAGES and ocr.available():
                     ocr_used += 1
                     try:
-                        fill_from_ocr(page, by_page[p])
+                        fill_from_ocr(page, by_page[p], layers[p].text)
                     except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
                         log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
                 if not any(t.named for t in by_page[p]) and page.get_images(full=False):
@@ -1098,7 +1131,9 @@ def quarter_by_half_sum(table: Table, solver: "Solver", when: date) -> list[Colu
     2026 to ..." read as a year): the column dated ``when`` and the one dated the quarter before are two quarters when a third
     column is their sum, the half year, on every line the arithmetic named (revenue, other income, total income, expenses,
     profit before tax, tax, profit), at least four lines and none against (TATAELXSI Q2FY27: 105,565.73 + 102,110.75 =
-    2,07,676.48 and so on down the table). Both dates must be read; the half year's need not. Empty otherwise."""
+    2,07,676.48 and so on down the table). Both dates must be read; the half year's need not, but if read it is ``when`` or the
+    first of April it runs from. The
+    sum cannot tell the two quarters apart, so the September column must stand left of the June one. Empty otherwise."""
     if when.month != 9:
         return []
     prev = previous_quarter_end(when)
@@ -1117,9 +1152,11 @@ def quarter_by_half_sum(table: Table, solver: "Solver", when: date) -> list[Colu
     found = []
     for i in cur:
         k = prv[0]
+        if i.xc >= k.xc:            # results print the newest quarter first: a September column right of June is not trusted
+            continue
         for h in table.columns:
-            if h.index in (i.index, k.index):
-                continue
+            if h.index in (i.index, k.index) or (h.date or h.read_date) not in (None, when, date(when.year, 4, 1)):
+                continue            # the half year is dated its end, or its start ("from April 01"), or was not read
             holds = fails = 0
             for rows in lines:
                 a, b, c = total(rows, i.index), total(rows, k.index), total(rows, h.index)

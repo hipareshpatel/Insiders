@@ -84,7 +84,6 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 
 | Company | Row | What | Why it stays apart |
 |---|---|---|---|
-| Reliance, Sun Pharma | PBT, Other Income | screener keeps the filed PBT, associates left out (Reliance prints them after tax; Sun Pharma Q1FY26 3,172.77 = filed, ours with associates 3,163.02) | 2 of the 13 companies with Excel files; the XBRL cannot show the print layout. If the larger batch shows more, read the P&L layout from the PDF |
 | Reliance | Sales, Expenses | sales tax / VAT 1,439 (FY26), 1,873 (FY25) is a line of the PDF's other-expenses note only | not in either XBRL file |
 | L&T | Interest; Power and fuel | bank charges 211.78 and the split of power and fuel by note are PDF-only | |
 | Airtel | Expenses | FY26 regulatory levy 3,160.7 put into Expenses, the labour-code charge into Other Income (note 32) | screener splits one-offs by nature; PDF note only |
@@ -93,7 +92,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Grasim | Quarters Q1–Q3 FY25 (Sales, Expenses) | about 585–770 Cr more in screener's Sales and Expenses, Operating Profit within 25 Cr: a restatement (assumption) | as above |
 | Hindalco | Borrowings FY24 | the FY25 annual report's comparative column has "Supplier's credit" 4,475 Cr (cons) for FY24; screener's FY24 (56,356 cons, 8,376 standalone) leaves it out, while its FY25 includes the 1,713 Cr. Adani Green and Hindalco FY25 taken from a later report's comparative both match with it | assumption: a reclassification into the row in the FY25 report that screener's FY24 (from the FY24 report) never had; no FY24 annual-report XBRL is stored to check. If more companies show a comparative-column row the year's own report lacked, the year source rule changes |
 | IndiGo | Expenses, Other Income (years) | screener keeps its loss on disposal (48.2 Cr FY25, 51.7 Cr FY26) in Expenses, both bases; 29 other rows of 13 companies take it out | assumption: aircraft sale-and-leaseback disposals are a normal operating item for an airline. Watch other airlines in the larger batch |
-| Reliance, Sun Pharma, L&T | quarterly PBT, Other Income | the associates' share left out of PBT (37 quarters with a profit, 22 with a loss) | to test: whether these files' own layout puts the share after the filed PBT differently |
+| Reliance, Sun Pharma, L&T | PBT, Other Income, Expenses (quarters and years) | screener leaves the associates' share out of every row: not in PBT (37 quarters with a profit, 22 with a loss), and a loss not in Expenses (the 39 rows the loss rule broke in run 40737252219 are all these three) | the XBRL cannot tell them apart: Reliance's results file has the share outside the filed PBT exactly as Coal India's does (checked 28 Oct 2026); its printed results put it after tax. If the larger batch shows more, read the P&L layout from the PDF |
 | M&M, JSW Steel, Asian Paints, Eicher, TVS, Solar | standalone FY23 Total Assets | the filed Assets, no deferred tax offset (FY23 from the Q4 results file) | lead only |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
 

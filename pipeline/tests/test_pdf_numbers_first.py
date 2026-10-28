@@ -747,6 +747,17 @@ def test_an_untitled_scanned_statement_is_standalone_once_ocr_finds_no_consolida
 
 
 def test_a_garbled_consolidated_in_ocr_still_leaves_the_basis_unproven():
-    for garbled in ("C0NSOLIDATED FINANCIAL RESULTS", "Consolldated Results", "Consoli-\\ndated", "CONSOL IDATED"):
+    for garbled in ("C0NSOLIDATED FINANCIAL RESULTS", "Consolldated Results", "Consoli-\\ndated", "CONSOL IDATED",
+                    "StatementofConsolidatedFinancialResults", "Coxsolidated", "Group Financial Results"):
         assert nf._LOOSE_CONSOLIDATED.search(garbled)
     assert not nf._LOOSE_CONSOLIDATED.search("Statement of Unaudited Standalone Financial Results; the Company considers")
+
+
+def test_the_scanned_standalone_rule_needs_the_word_standalone_and_reaches_only_scanned_pages(monkeypatch):
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl()
+    page = statement(rows, title="Statement of Unaudited Financial Results")
+    silent = scanned(page, "Please find enclosed the Un-Audited Financial Results for the quarter.")     # no "standalone"
+    assert nf.reading_from_tables(nf.analyse(silent, ocr_boxes=lambda png: as_ocr_boxes(page)), "Q2FY27", "pat",
+                                  "STANDALONE").status == "none"

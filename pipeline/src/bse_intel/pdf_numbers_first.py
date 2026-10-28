@@ -1049,7 +1049,8 @@ class Solver:
 # OCR's spelling of "consolidated" as the negative check above reads it: anything like "consol" ("C0NSOLIDATED", "Consolldated",
 # "Consoli-" broken over a line) counts, so a garbled title can never be taken for no consolidated statement; a false alarm
 # ("console", "consolation") only costs an answer
-_LOOSE_CONSOLIDATED = re.compile(r"c\W{0,2}[o0]\W{0,2}n\W{0,2}[s5]\W{0,2}[o0]\W{0,2}[l1i|!]", re.I)
+_LOOSE_CONSOLIDATED = re.compile(r"c\W{0,2}[o0]\W{0,2}n\W{0,2}[s5]\W{0,2}[o0]\W{0,2}[l1i|!]"
+                                 r"|[s5]\W{0,2}[o0]\W{0,2}[l1i|]\W{0,2}[i1l|]\W{0,2}d\W{0,2}a\W{0,2}t|group\s+financial", re.I)
 
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
             keep_unnamed: bool = False) -> list[Table]:
@@ -1177,14 +1178,18 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     # a filing where only pages with no text layer left the basis of untitled tables unproven: once OCR has read every one of
     # them and none, like no layer, names a consolidated statement, such a table is standalone (CMPDI and RIR Q2FY27, whose
     # statements are scans and whose covering letters say "Standalone")
+    # (seventh review) only with positive evidence, the word standalone somewhere in the filing, and only for the tables OCR
+    # read from those pages themselves: a blank page cannot switch it on for the typed pages
     no_layer = [p for p, layer in layers.items() if not layer.has_layer]
+    texts = [layer.text for layer in layers.values()] + list(ocr_texts.values())
     if anywhere and no_layer and all(p in ocr_texts for p in no_layer) \
             and not any(names_consolidated(layer.text) for layer in layers.values()) \
-            and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer):
+            and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer) \
+            and any(re.search(r"stand[- ]?alone", t, re.I) for t in texts):
         from .metrics import STANDALONE
-        for p in by_page:
-            for t in by_page[p]:
-                if t.basis is None and not t.contested:
+        for p in no_layer:
+            for t in by_page.get(p, []):
+                if t.basis is None and not t.contested and t.source == "ocr":
                     t.basis = STANDALONE
     return [t for p in sorted(by_page) for t in by_page[p] if t.named or keep_unnamed]
 

@@ -163,7 +163,7 @@ LENDER_ROW = "Financing Profit"   # a lender page's own layout: "Revenue", "Inte
 
 
 def parse_full(body: str) -> dict | None:
-    """parse_page plus EPS per quarter, the six other lines (``ebitda`` = Operating Profit, ``other_income``,
+    """parse_page plus ``balance`` and ``cash_flow`` (``parse_balance_and_cash``), EPS per quarter, the six other lines (``ebitda`` = Operating Profit, ``other_income``,
     ``finance_cost`` = Interest, ``depreciation``, ``pbt`` = Profit before tax, ``tax_pct`` = Tax %; None where the page has
     no such row) and the annual profit and loss section: ``{"basis", "lender_layout", "quarters": {period: {"revenue",
     "pat", "eps", ...six}}, "annual": {"FY25": {"revenue", "pat", "eps"}}}`` (``annual`` empty when the page has no such
@@ -197,7 +197,49 @@ def parse_full(body: str) -> dict | None:
                                 "pat": profit[i] if i < len(profit) else None,
                                 "eps": eps[i] if i < len(eps) else None}
     page["annual"] = annual
+    page["balance"], page["cash_flow"] = parse_balance_and_cash(body)
     return page
+
+
+# screener's balance sheet (id "balance-sheet", Mar columns and the latest half year) and cash flows (id "cash-flow", Mar
+# columns), by the compared line's name -> the line map's key whose screener row names it (TODO 93; 28 Oct 2026). A lender's
+# page names the debt row Borrowing and has a Deposits row; "Total Liabilities" is equity plus liabilities, the Total Assets figure.
+BALANCE_LINES = {"equity_capital": "equity_capital_cr", "reserves": "reserves_cr", "borrowings": "gross_debt_cr",
+                 "deposits": "deposits_cr", "other_liabilities": "other_liabilities_cr",
+                 "total_liabilities": "equity_and_liabilities_cr", "fixed_assets": "fixed_assets_cr", "cwip": "cwip_cr",
+                 "investments": "investments_cr", "other_assets": "other_assets_cr", "total_assets": "total_assets_cr"}
+CASH_LINES = {"operating": "operating_cash_flow", "investing": "investing_cash_flow", "financing": "financing_cash_flow",
+              "net": "net_cash_flow"}
+
+
+def parse_balance_and_cash(body: str) -> tuple[dict[str, dict], dict[str, dict]]:
+    """``({period: {line: value}}, {year: {line: value}})`` from the stored page's balance sheet and cash-flow sections: the
+    balance sheet by statement date (a "Sep 2026" column is Q2FY27, "Mar 2026" is Q4FY26: the period label memory's balance
+    snapshots carry), the cash flows by March year (FY26). A line the page has no row for is absent; a page without the section
+    gives ``{}``. Whole-crore figures as printed."""
+    balance: dict[str, dict] = {}
+    cash: dict[str, dict] = {}
+    got = _section_table(body, "balance-sheet")
+    if got:
+        columns, rows, _ = got
+        lines = {name: _row_of(rows, key) for name, key in BALANCE_LINES.items()}
+        for i, column in enumerate(columns):
+            period = period_of(column)
+            if period:
+                values = {name: row[i] for name, row in lines.items() if i < len(row) and row[i] is not None}
+                if values:
+                    balance[period] = values
+    got = _section_table(body, "cash-flow")
+    if got:
+        columns, rows, _ = got
+        lines = {name: _row_of(rows, key) for name, key in CASH_LINES.items()}
+        for i, column in enumerate(columns):
+            year = year_of(column)
+            if year:
+                values = {name: row[i] for name, row in lines.items() if i < len(row) and row[i] is not None}
+                if values:
+                    cash[year] = values
+    return balance, cash
 
 
 def url_for(symbol: str, basis: str) -> str:

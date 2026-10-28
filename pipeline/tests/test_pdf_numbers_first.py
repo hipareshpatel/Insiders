@@ -1194,3 +1194,15 @@ def test_a_whole_revenue_line_over_a_line_that_may_be_a_part_names_no_revenue(se
     assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))
     assert nf.not_revenue_line("Foreign exchange gain (net)") and nf.not_revenue_line("Other incume")
     assert not nf.not_revenue_line(second)
+
+
+@pytest.mark.parametrize("second", ["Net gain on fair value changes", "Gain on derecognition of financial instruments"])
+def test_a_gain_that_is_a_revenue_part_is_a_part(second):
+    # twenty-fifth review: an NBFC's gain on fair value changes is a part of revenue from operations ("Other incomes" is
+    # labelled other income, a landmark, and is no part of revenue from operations)
+    assert not nf.not_revenue_line(second) and not nf.not_revenue_line("Other incomes")
+    rows, want = pl()
+    a = [round(v * 0.7, 2) for v in REVENUE]
+    b = [round(v - x, 2) for v, x in zip(REVENUE, a)]
+    got = read(statement([(["Revenue from operations"], a), ([second], b)] + rows[1:]), "revenue")
+    assert got.status != "ok" or got.value == pytest.approx(crore(1000.00))

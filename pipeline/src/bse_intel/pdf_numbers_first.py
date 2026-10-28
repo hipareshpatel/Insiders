@@ -877,13 +877,14 @@ _REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:
 # its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
 _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
 def not_revenue_line(label: str) -> bool:
-    """A line that cannot be a part of revenue: a gain or loss ("Foreign exchange gain (net)", SONACOMS Q2FY27) or OCR's
-    spelling of "Other income" ("Other incume", NEWGEN Q2FY27). "Dividend income", "Sale of services" may be parts (24th review)."""
-    import difflib
-    if re.search(r"\b(?:gains?|loss(?:es)?)\b", label, re.I) and not re.search(r"\b(?:sales?|services?|fees?|interest|dividend)\b", label, re.I):
+    """A line that cannot be a part of revenue, by an allow-list (25th review: a gain on fair value changes or on
+    derecognition is a revenue part in an NBFC's statement): a foreign-exchange gain or loss ("Foreign exchange gain (net)",
+    SONACOMS Q2FY27), or "Other" and OCR's spelling of "income", one letter off ("Other incume", NEWGEN Q2FY27)."""
+    if re.search(r"\b(?:gains?|loss(?:es)?)\b", label, re.I) and re.search(r"\b(?:foreign\s+exchange|exchange|forex|currency)\b", label, re.I) \
+            and not re.search(r"\b(?:fair\s+value|derecogni|investments?|securities|sales?|services?|fees?|interest|dividend)", label, re.I):
         return True
-    m = re.match(r"^\W*other\s+([a-z]{4,8})\W*$", label, re.I)
-    return bool(m) and difflib.SequenceMatcher(None, m[1].lower(), "income").ratio() >= 0.66
+    m = re.match(r"^\W*other\s+([a-z]{6})\W*$", label, re.I)
+    return bool(m) and sum(x != y for x, y in zip(m[1].lower(), "income")) == 1
 
 
 # a whole revenue line: the label ends with the revenue's own name (a note or "(net)" in brackets may follow)

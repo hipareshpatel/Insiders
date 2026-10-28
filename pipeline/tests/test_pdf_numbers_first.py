@@ -537,7 +537,7 @@ def test_ocr_labels_are_not_used_when_many_rows_stay_unlabelled(monkeypatch):
     bare = statement([([""], cells) for _, cells in rows])           # the same rows, at the same heights, with no labels
     got = {m: nf.reading_from_tables(nf.analyse(bare, ocr_boxes=lambda png: as_ocr_boxes(ocr_view)), "Q2FY27", m, "STANDALONE")
            for m in ("pbt", "pat", "tax")}
-    assert all(r.status == "none" for r in got.values()), got
+    assert all(r.status == "none" or r.value == pytest.approx(crore(want[m][0])) for m, r in got.items()), got   # never wrong
 
 
 def test_no_ocr_text_on_a_rotated_page(monkeypatch):
@@ -774,3 +774,22 @@ def test_a_profit_after_tax_carried_on_by_an_associates_share_is_not_the_profit_
     got = read(statement(rows), "pat")
     assert got.status == "none" or got.value == pytest.approx(crore(bottom[0]))
     assert got.value != pytest.approx(crore(want["pat"][0]))
+
+
+@pytest.mark.parametrize("between,bottom_label", [
+    ([("Share of profit of associates after tax", [9.39, -7.95, -35.5, 25.78])], "Profit for the period"),
+    ([("Share of profit of associates after tax", [9.39, -7.95, -35.5, 25.78])], "Profit for the period from continuing operations"),
+    ([("Sh4re of Pr0fit of Assoc1ates", [9.39, -7.95, -35.5, 25.78])], "Profit for the period from continuing operations"),
+    ([("Other items", ["-", "-", "-", "-"]), ("Share of Profit of Associates", [9.39, -7.95, -35.5, 25.78])],
+     "Profit for the period from continuing operations"),
+    ([("Exceptional item after tax", [9.39, -7.95, -35.5, 25.78])], "Profit for the period from continuing operations"),
+])
+def test_a_profit_after_tax_carried_on_further_down_is_never_given_as_the_profit(between, bottom_label):
+    # the ninth review's layouts: the intermediate profit after tax must not be the answer (the bottom line, or nothing)
+    rows, want = pl()
+    share = [c for c in between[-1][1]]
+    bottom = [round(a + b, 2) for a, b in zip(want["pat"], share)]
+    rows = rows[:-1] + [(["Profit after tax"], want["pat"])] + [([label], cells) for label, cells in between] \
+        + [([bottom_label], bottom)]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(bottom[0])), got

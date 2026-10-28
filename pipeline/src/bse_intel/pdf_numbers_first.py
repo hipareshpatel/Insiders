@@ -781,6 +781,8 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
 # --- the stitched label's landmark (the second signal) --------------------------------------------------------------------
 
 _CLASS_RULES: list[tuple[str, re.Pattern]] = [
+    # before the PAT rule: "Share of profit of associates after tax" is an associate's share, not a profit (ninth review)
+    ("ASSOC", re.compile(r"^\W*(?:[a-z]{1,4}\W+)?(?:add:?\s*|less:?\s*)?share\s+(?:of|in)\b.*\b(?:associates?|joint\s+ventures?)", re.I)),
     ("EPS", re.compile(r"earnings?\s+per|\beps\b|per\s+(?:equity\s+)?share", re.I)),
     ("TCI", re.compile(r"comprehensive", re.I)),
     ("PAT", re.compile(r"(?:profit|loss)\b.*\bfor\s+the\s+(?:period|year|quarter)\b.*continuing\s+and\s+discontinu", re.I)),
@@ -939,11 +941,30 @@ class Solver:
 
     def carried_on(self, a: int) -> bool:
         """The profit after tax ``a`` is not the bottom line: the row after it is an associate's share or discontinued operations
-        that is not nil (EMKAY Q2FY25: "IX Profit after tax" 2,581.77, then "X Share of Profit of Associates" 9.39, then the
+        that is not nil, or a later row is the profit carried on by such rows (EMKAY Q2FY25: "IX Profit after tax" 2,581.77, then "X Share of Profit of Associates" 9.39, then the
         profit for the period 2,591.16). Only an extension that reaches the bottom line may then be the profit."""
+        def nonzero(r: int) -> bool:
+            return any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)
+
         nxt = a + 1
-        return nxt < self.n and self.cls[nxt] in ("ASSOC", "DISC") \
-            and any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[nxt].cells)
+        if nxt < self.n and self.cls[nxt] in ("ASSOC", "DISC") and nonzero(nxt):
+            return True
+        # by arithmetic, whatever the labels say (ninth review: a garbled share label, a nil row between, an exceptional item
+        # after tax): a later row equals the profit plus or minus one or two non-nil rows between; the other comprehensive
+        # income block (every statement's total comprehensive income = profit + OCI) and the owners' split are not this
+        for x in range(a + 2, min(self.n, a + 9)):
+            between = list(range(a + 1, x))
+            if any(self.cls[r] in ("TCI", "ATTR", "EPS") for r in between):
+                break
+            if self.cls[x] in ("TCI", "ATTR", "EPS", "TE", "TI"):
+                continue
+            live = [r for r in between if nonzero(r)]
+            for size in (1, 2):
+                for subset in itertools.combinations(live, size):
+                    for signs in itertools.product((1, -1), repeat=size):
+                        if self.valid((x, ((a, 1),) + tuple(zip(subset, signs)))):
+                            return True
+        return False
 
     def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
         """Rows after the profit after tax ``a`` that equal it plus or minus one or two of the rows between (discontinued

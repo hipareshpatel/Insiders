@@ -84,3 +84,21 @@ def test_a_concurrent_writer_s_statements_are_kept_and_the_newest_periods_win():
     many = [dict(x, table=t) for x, t in zip(many, ["quarters", "balance", "cash_flow", "x"] * 40)]
     kept = statements.keep_latest(many)
     assert len(kept) == statements.MAX_ENTRIES and kept[-1]["period"] == "Q4FY29"
+
+
+def test_the_standalone_file_beside_a_consolidated_one_keeps_its_statements_too(settings):
+    """Screener's rules hold for both bases (standalone 97.5% of quarter rows exact, 29 Oct): the standalone file read beside
+    the consolidated one keeps its rows for the company page's standalone view; the card stays consolidated."""
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-both", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    text = ("Statement of unaudited consolidated financial results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,091.00. Net profit 1,500.00.")
+    day = now.date()
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml(),
+                                                      "https://bse.invalid/sa.xml": results_xml("Standalone")},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    pipeline.bse.archive = {"999001": [XbrlLink("Q2FY27", "CONSOLIDATED", "https://bse.invalid/co.xml", f"{day}T18:05:00"),
+                                       XbrlLink("Q2FY27", "STANDALONE", "https://bse.invalid/sa.xml", f"{day}T18:00:00")]}
+    pipeline.run("live", time_budget_s=60)
+    bases = {e["basis"] for e in sink.get_dossier(filing.scrip_code).get("statements", []) if e["period"] == "Q2FY27"}
+    assert bases == {"CONSOLIDATED", "STANDALONE"}

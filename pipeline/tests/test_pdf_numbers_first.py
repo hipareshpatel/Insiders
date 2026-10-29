@@ -1564,3 +1564,96 @@ def test_a_profit_before_a_lost_associates_share_is_not_the_profit_behind_nil_li
         "8 Share of profit of associates", "9 Profit for the period (7+8)"], lambda c: [round(v + 5.0, 2) for v in c])
     got = read(statement(rows), "pat")
     assert not (got.status == "ok" and got.value == pytest.approx(crore(cont[0]))), got
+
+
+def _layout(spec):
+    out = [nf.Column(0, 1, 0.5, i) for i in range(len(spec))]
+    for c, (k, d) in zip(out, spec):
+        c.kind, c.date = k, d
+    return out
+
+
+Q, H, Y = "quarter", "half", "year"
+SEP = [(Q, date(2026, 9, 30)), (Q, date(2026, 6, 30)), (Q, date(2025, 9, 30)), (H, date(2026, 9, 30)), (H, date(2025, 9, 30)),
+       (Y, date(2026, 3, 31))]
+
+
+@pytest.mark.parametrize("damaged,expect", [
+    (0, (Q, date(2026, 9, 30))),      # ANGELONE Q2FY27: the current quarter's date and kind lost
+    (1, (Q, date(2026, 6, 30))),      # ARMANFIN Q3FY24: the previous quarter's
+    (2, (Q, date(2025, 9, 30)))])     # the year-ago quarter's
+def test_the_one_damaged_quarter_of_a_sebi_layout_is_given_by_its_slot(damaged, expect):
+    spec = list(SEP)
+    spec[damaged] = (None, None)
+    cols = _layout(spec)
+    nf.fill_damaged_quarter(cols)
+    assert (cols[damaged].kind, cols[damaged].date, cols[damaged].inferred) == (*expect, True)
+    # a date read as the slot's own but with no kind (SUNDARMFIN Q4FY23) gets its kind
+    spec[damaged] = (None, SEP[damaged][1])
+    cols = _layout(spec)
+    nf.fill_damaged_quarter(cols)
+    assert (cols[damaged].kind, cols[damaged].date) == expect
+
+
+def test_a_damaged_quarter_is_not_given_when_the_layout_leaves_room_for_doubt():
+    def damaged(spec):
+        cols = _layout(spec)
+        nf.fill_damaged_quarter(cols)
+        return [(c.kind, c.date) for c in cols] != [(k, d) for k, d in spec]
+    assert damaged([(None, None)] + SEP[1:])                                  # control: this one is filled
+    assert not damaged([(None, None), (None, None)] + SEP[2:])                # two columns damaged
+    assert not damaged([(None, date(2026, 9, 29))] + SEP[1:])                 # a date read that is not the slot's
+    assert not damaged([(None, None), (Q, date(2026, 6, 30)), (Q, date(2025, 12, 31))] + SEP[3:])      # the two read disagree on X
+    assert not damaged([(None, None)] + SEP[1:3] + [(H, date(2026, 6, 30))] + SEP[4:])                 # no year to date dated X
+    assert not damaged([(None, None)] + SEP[1:4] + [(H, date(2025, 3, 31)), (Y, date(2026, 3, 31))])   # none dated a year before X
+    assert not damaged([(None, None)] + SEP[1:5] + [(None, None)])            # a tail column undated
+    assert not damaged(SEP[:3])                                               # no tail: the first columns may be all there is
+    assert not damaged([(None, None), (Q, date(2026, 6, 30)), (H, date(2025, 9, 30))] + SEP[3:])      # the third is not a quarter
+    assert not damaged([(None, None)] + SEP[1:] + [(Q, date(2026, 6, 30))])                            # a fourth quarter-like column
+
+
+def _six_columns(first_date, third_date="30.09.2025"):
+    rows, _ = pl()
+    rows = [(label, cells[:3] + [cells[0], cells[2], cells[3]]) for label, cells in rows]
+    return statement(rows, unit="(Rs. in Lakhs)", cols=[200, 270, 340, 410, 480, 550],
+                     groups=["Quarter ended"] * 3 + ["Half year ended"] * 2 + ["Year ended"],
+                     dates=[first_date, "30.06.2026", third_date, "30.09.2026", "30.09.2025", "31.03.2026"])
+
+
+def test_a_current_quarter_whose_date_is_lost_is_found_by_the_layout():
+    got = read(_six_columns(""), "revenue")
+    assert got.status == "ok" and got.value == pytest.approx(crore(REVENUE[0]))
+
+
+def test_a_current_quarter_whose_date_is_lost_is_not_guessed_when_the_layout_does_not_fit():
+    # the year-ago quarter is not dated a year before the half year to date: the first column could be any quarter
+    assert read(_six_columns("", third_date="30.09.2024"), "revenue").value is None
+
+
+@pytest.mark.parametrize("unit,per_crore", [("CIN: L65110JK1938SGC000048 ( In Crores)", 1), ("[ J (Ks. in Lacs)", 100)])
+def test_a_bracketed_unit_ending_a_line_that_holds_other_header_words_is_read(unit, per_crore):
+    # J&KBANK ("CIN: ... ( In Crores)", the rupee sign lost) and PARIN ("[ J (Ks. in Lacs)")
+    rows, _ = pl()
+    got = read(statement(rows, unit=unit), "revenue")
+    assert got.status == "ok" and got.value == pytest.approx(REVENUE[0] / per_crore)
+
+
+@pytest.mark.parametrize("line", [
+    "Loans sanctioned ( In Crores) during the quarter",       # the bracket does not close the line: prose about something else
+    "Details of loans (Figures in crore) are given in note 4",
+    "(Rs. in thousands)",                                     # a unit the reader does not convert
+    "Total assets (as per the balance sheet of the in lakhs)",
+    "In Crores"])                                             # no bracket
+def test_a_bracketed_unit_is_taken_only_at_the_end_of_a_line(line):
+    assert nf.tail_units([line]) == set()
+
+
+def test_two_bracketed_units_on_one_line_name_no_unit():
+    assert nf.tail_units(["Revenue (Rs. in crores) and costs (Rs. in lakhs)"]) == {None}
+    assert nf.tail_units(["(Ks. in Lacs)", "CIN: L1 ( In Crores)"]) == {100, 1}      # two lines: unit_of then sees two units
+
+
+def test_trap_tail_unit_share_count_is_not_table_unit():
+    from bse_intel.pdf_numbers_first import unit_of
+    # a share-count unit in the header region must not become the table's money unit (100x)
+    assert unit_of(["Statement of results", "Paid up shares (No. in Lakhs)", "Particulars"], []) is None

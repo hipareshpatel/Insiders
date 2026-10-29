@@ -732,6 +732,29 @@ def scan_units(lines: list[str]) -> set:
     return found
 
 
+# A unit in brackets that ends a header line which also holds other words of the page's top (J&KBANK: "CIN: L6511... ( In Crores)",
+# the rupee sign lost; PARIN: "[ J (Ks. in Lacs)"): the bracket must close the line, hold nothing but at most two stray symbols or one
+# rupee word ("Rs", its garble "Ks", "INR") before "in" and the unit word itself; never a count's word ("No. in Lakhs": a share count).
+_TAIL_UNIT = re.compile(r"(?:^|\s)\(\s*[^\w\s]{0,2}\s*(?:(?:[RK][s5]|INR)\.?\s*)?in\s+(crores?|lakhs?|lacs?|millions?)\s*\)\s*$", re.I)
+
+
+_ANY_UNIT_BRACKET = re.compile(r"\([^()]{0,12}\bin\s+(?:crores?|lakhs?|lacs?|millions?)\s*\)", re.I)
+
+
+def tail_units(lines: list[str]) -> set:
+    """The units of ``_TAIL_UNIT``; a line with two bracketed units names None (two units: no unit)."""
+    found = set()
+    for line in lines:
+        if len(line) <= 200 and (m := _TAIL_UNIT.search(line)):
+            found.add(None if len(_ANY_UNIT_BRACKET.findall(line)) > 1 else _PER_CRORE_UNIT().get(m[1].lower().rstrip("s")))
+    return found
+
+
+def _PER_CRORE_UNIT():
+    from .grounding import _PER_CRORE
+    return _PER_CRORE
+
+
 def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
     """Figures per crore: the unit declared above the table (``grounding.unit_before``, then the short unit lines a lost rupee
     sign or a garbled word leave), else the one unit the page names anywhere; None when none, or two."""
@@ -740,7 +763,7 @@ def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
     u = unit_before(text, len(text))
     if u is not None:
         return u
-    units = scan_units(lines)
+    units = scan_units(lines) | tail_units(lines)
     if len(units) == 1 and None not in units:
         return units.pop()
     page_text = "\n".join(page_lines)
@@ -819,6 +842,7 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         cols = [Column(c.x0, c.x1, c.xc, c.index, whole=c.whole) for c in columns]
         column_kinds(cols, dates, group_phrases(gap, cols, height), march)
         fill_corresponding_quarter(cols)
+        fill_damaged_quarter(cols)
         basis, contested = _basis_above_boxed(texts, len(texts))
         if basis and any(_NON_CONSOLIDATED.search(x) for x in [" ".join(texts)] + texts):
             basis, contested = None, True     # "Non-Consolidated Financial Results" names neither as a word (22nd review)
@@ -1914,6 +1938,55 @@ def fill_corresponding_quarter(columns: list[Column]) -> None:
     c.date, c.kind, c.inferred = year_before, "quarter", True
 
 
+def next_quarter_end(d: date) -> date:
+    import calendar
+    y, m = (d.year, d.month + 3) if d.month <= 9 else (d.year + 1, d.month - 9)
+    return date(y, m, calendar.monthrange(y, m)[1])
+
+
+def fill_damaged_quarter(columns: list[Column]) -> None:
+    """The one quarter column of a SEBI layout whose date or kind was lost, when its two neighbours are read: the first three
+    columns are the current quarter X, the quarter before it, the same quarter a year before, and every column after them is a
+    dated half year, nine months or year, one dated X (the year to date) and one dated a year before X. Exactly one of the three
+    is damaged (no date and no kind, or a date that is exactly its slot's and no kind); the other two are quarters whose dates
+    are exactly their slots' for one X. Nothing is filled when two are damaged, when a read date is not its slot's, or when X
+    could be two dates (ANGELONE Q2FY27: the current quarter undated; ARMANFIN Q3FY24: the previous quarter undated; SUNDARMFIN
+    Q4FY23: the year-ago quarter dated but with no kind)."""
+    if len(columns) < 5:
+        return
+    first, rest = columns[:3], columns[3:]
+    if not all(x.date and x.kind in ("half", "nine", "year") for x in rest):
+        return
+    xs = set()
+    if first[0].date and first[0].kind == "quarter":
+        xs.add(first[0].date)
+    if first[1].date and first[1].kind == "quarter":
+        xs.add(next_quarter_end(first[1].date))
+    if first[2].date and first[2].kind == "quarter":
+        try:
+            xs.add(first[2].date.replace(year=first[2].date.year + 1))
+        except ValueError:
+            return
+    if len(xs) != 1:
+        return
+    x = next(iter(xs))
+    try:
+        slots = [x, previous_quarter_end(x), x.replace(year=x.year - 1)]
+    except ValueError:
+        return
+    damaged = [i for i, c in enumerate(first) if not (c.kind == "quarter" and c.date == slots[i])]
+    if len(damaged) != 1:
+        return
+    c = first[damaged[0]]
+    if c.kind not in (None, "quarter") or c.date not in (None, slots[damaged[0]]):
+        return
+    if not any(y.date == x for y in rest) or not any(y.date == slots[2] for y in rest):
+        return
+    if any(y.date == slots[1] for y in rest):      # a column dated the previous quarter after the three: not this layout
+        return
+    c.date, c.kind, c.inferred = slots[damaged[0]], "quarter", True
+
+
 def previous_quarter_end(d: date) -> date:
     import calendar
     y, m = (d.year, d.month - 3) if d.month > 3 else (d.year - 1, d.month + 9)
@@ -2030,7 +2103,10 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
             theirs = True
     if not mine:
         if theirs:
-            return Reading(reader, family, "otherbasis", note=f"the figure is printed on the {other} basis only")
+            # status stays "otherbasis"; the note also carries why the asked basis gave none (its tables' own reasons)
+            why_mine = "; ".join(dict.fromkeys(notes))[:250] or "no table of the asked basis"
+            return Reading(reader, family, "otherbasis",
+                           note=f"the figure is printed on the {other} basis only [asked basis: {why_mine}]")
         return Reading(reader, family, "none", note="; ".join(dict.fromkeys(notes))[:300] or "no table")
     first = mine[0]
     if any(not same_value(first[0], v, max(first[1], tol)) for v, tol, *_ in mine[1:]):

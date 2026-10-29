@@ -438,15 +438,15 @@ def _safe_float(token: str) -> bool:
         return False
 
 
-def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | None = None) -> bool:
+def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | None = None, not_required: bool = False) -> bool:
     """Shared by every reader of a PDF: a table with no title of its own is read as standalone only when every page's text
     layer is there to say "consolidated" and does not. A page with no layer, or a layer that names consolidated anywhere,
-    leaves such a table's basis unproven."""
+    leaves such a table's basis unproven. ``not_required``: see ``names_consolidated`` (numbers-first only)."""
     if any(not layer.has_layer for layer in layers.values()) or not layers:
         return True
-    if any(names_consolidated(layer.text) for layer in layers.values()):
+    if any(names_consolidated(layer.text, not_required) for layer in layers.values()):
         return True
-    return any(names_consolidated(table_text(t.cells)) for t in tables or [])
+    return any(names_consolidated(table_text(t.cells), not_required) for t in tables or [])
 
 
 def _cons_or_alone(text: str) -> bool:

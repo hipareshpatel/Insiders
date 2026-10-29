@@ -1410,7 +1410,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
     ocr_boxes = ocr_boxes or ocr_page_boxes
     layers = page_layers(pdf_bytes, max_pages)
-    anywhere = consolidated_anywhere(layers)
+    anywhere = consolidated_anywhere(layers, not_required=True)    # SBICARD: "not required to prepare consolidated"
     ranked = statement_pages(layers, MAX_STATEMENT_PAGES)
     scans = [p for p, layer in layers.items() if not layer.has_layer] if len(layers) <= SCAN_PAGE_LIMIT else []
     by_page: dict[int, list[Table]] = {}

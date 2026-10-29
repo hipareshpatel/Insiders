@@ -1423,3 +1423,28 @@ def test_a_company_not_required_to_prepare_consolidated_results_files_standalone
         assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))
     else:
         assert got.status == "none"
+
+
+def with_note_page(pdf: bytes, text: str) -> bytes:
+    """The filing with a typed notes page after the statement."""
+    doc = pymupdf.open(stream=pdf, filetype="pdf")
+    page = doc.new_page(width=620, height=842)
+    page.insert_text((LEFT, 60), text, fontsize=FONT)
+    return doc.tobytes()
+
+
+@pytest.mark.parametrize("note,standalone", [
+    ("The Company does not have any subsidiary, associate or joint venture. Accordingly, the Company is not required to "
+     "prepare consolidated financial results.", True),
+    ("The Company does not have any subsidiary, associate or joint venture except XYZ Ltd. Accordingly, the Company is not "
+     "required to prepare consolidated financial results.", False),
+])
+def test_an_untitled_typed_statement_of_a_company_not_required_to_consolidate_is_standalone(note, standalone):
+    # SBICARD Q2FY27: every page has text; the untitled table was standalone only when no page named consolidated results,
+    # and the notes page's "not required to prepare consolidated financial results" counted as naming them
+    rows, want = pl()
+    got = read(with_note_page(statement(rows, title="Statement of Unaudited Financial Results"), note), "pat")
+    if standalone:
+        assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))
+    else:
+        assert got.status == "none"

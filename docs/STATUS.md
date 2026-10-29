@@ -92,7 +92,7 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
      quarter (505 pairs) waits for the PDF reader to read the comparative column.
   5. The PDF reader's next PR (TODO 123): the causes behind its patches and one OCR per page, then a speed check against
      main on an empty OCR cache, before the owner decides its switches.
-- **Owner, 29 Oct, ~19:05 IST: "run the 50 card blind audit after financials".** It runs once items 1-3 above are done
+- **Owner, 29 Oct, ~19:02 IST: "run the 50 card blind audit after financials".** It runs once items 1-3 above are done
   (the BSE annual files and the gap fill read, TODO 118 B measured): 50 cards published since then, blind, independent
   reviewers (mid model at least), WRONG on the checked face with its 95 % interval (`daily_audit/rates.py`), against the bar of
   5 %. Its result says whether the financial work reached the cards.

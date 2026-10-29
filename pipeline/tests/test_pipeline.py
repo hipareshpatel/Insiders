@@ -1281,3 +1281,6 @@ def test_a_deck_or_transcript_filed_under_a_results_heading_is_read_as_one():
     assert not is_deck_or_transcript(f("ABC_Results_and_Presentation.pdf", "Financial Results"))
     assert not is_deck_or_transcript(f("XYZ_outcome.pdf", "Outcome of board meeting and investor presentation"))
     assert not is_deck_or_transcript(f("ROUTE_28102026000940_Upload_.pdf"))
+    # the headline alone never makes a deck (blind review): a results filing over a generic file name stays results
+    assert not is_deck_or_transcript(f("ABC_28102026_Upload.pdf", "Outcome of Board Meeting - Results and Investor Presentation"))
+    assert not is_deck_or_transcript(f("XYZ_FinancialResultsandPresentation.pdf"))

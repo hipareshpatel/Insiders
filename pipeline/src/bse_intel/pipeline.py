@@ -1158,9 +1158,9 @@ def companion_quarter(filing: Filing, dossier: dict) -> str | None:
             continue
         try:
             when = datetime.fromisoformat(str(t.get("date")))
-        except ValueError:
-            continue
-        if when > at or at - when > timedelta(days=COMPANION_DAYS):
+            if when > at or at - when > timedelta(days=COMPANION_DAYS):
+                continue
+        except (TypeError, ValueError):   # an unreadable or naive date is no companion
             continue
         periods = [m["period"] for m in metrics if reported_by(m, t["news_id"]) and re.fullmatch(r"Q[1-4]FY\d{2}", str(m["period"]))]
         if periods:
@@ -1177,15 +1177,15 @@ def carries_results(event_type: str, text: str, tagged=None) -> bool:
 
 
 _DECK_NAME = re.compile(r"presentation|investor[_\s-]*(?:ppt|deck)|(?<![a-z])ppt(?![a-z])|transcript|earnings[_\s-]*call", re.I)
-_RESULTS_NAME = re.compile(r"(?<![a-z])(?:results?|outcome)(?![a-z])", re.I)   # in the file name: "_Result.pdf", "_outcome."
+_RESULTS_NAME = re.compile(r"result|outcome", re.I)   # anywhere in the file name, glued or not ("FinancialResultsandPresentation")
 
 
 def is_deck_or_transcript(filing: Filing) -> bool:
-    """An investor presentation or a call transcript by its own file name or headline (COALINDIA_29102026183725_Presentation.pdf),
-    and not a results statement by the same words (a file named "Results_and_Presentation" stays results)."""
+    """An investor presentation or a call transcript by its own file name (COALINDIA_29102026183725_Presentation.pdf), never
+    by the headline alone: "Outcome of Board Meeting - Results and Investor Presentation" over a generic file name is the
+    results filing (blind review, 30 Oct 2026). A file name that also says result or outcome stays results."""
     name = (filing.pdf_url or "").rsplit("/", 1)[-1]
-    words = f"{name} {filing.headline} {filing.subject or ''}"
-    return bool(_DECK_NAME.search(words)) and not _RESULTS_NAME.search(name)
+    return bool(_DECK_NAME.search(name)) and not _RESULTS_NAME.search(name)
 
 
 def results_cover(text: str) -> bool:
@@ -3544,7 +3544,10 @@ class Pipeline:
             # those are the filing's own words, and what its quotes answer to.
             text = "\n".join(t for t in (filing.headline, filing.subject) if t)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
-            quarter = results_quarter(tagged, text, filing.filed_at) or companion_quarter(filing, dossier)
+            quarter = results_quarter(tagged, text, filing.filed_at)
+            if quarter is None and not tagged and not _RESULTS_STATEMENT.search(text[:20000]) and amounts(text) < FIGURE_PAGE_AMOUNTS:
+                # no statement, no file, few figures: a press release or an update, never a new quarter's statement
+                quarter = companion_quarter(filing, dossier)
             earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None))
             if earlier:
                 with self._lock:

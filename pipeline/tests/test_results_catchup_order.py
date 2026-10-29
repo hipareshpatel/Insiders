@@ -8,6 +8,25 @@ def test_results_cards_recent_is_newest_first():
     sql = (Path(__file__).resolve().parents[2] / "db" / "queries" / "results_cards_recent.sql").read_text(encoding="utf-8")
     order = [l for l in sql.splitlines() if l.strip().startswith("ORDER BY")]
     assert order and "c.filed_at DESC" in order[0]
+    # the cards still waiting for their file come first (Coal India, 29 Oct 2026: a busy evening's PDF-only cards unread)
+    assert order[0].index("IS NULL) DESC") < order[0].index("c.filed_at DESC")
+
+
+def test_results_cards_recent_puts_the_pdf_only_cards_first(settings):
+    import json
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    for i, (day, xbrl) in enumerate([("2026-10-28T18:00:00+05:30", None), ("2026-10-29T20:00:00+05:30", "https://x/f.xml"),
+                                     ("2026-10-29T21:00:00+05:30", "https://x/g.xml"), ("2026-10-29T10:00:00+05:30", None)]):
+        nid = f"nse-{i}"
+        sink._db.execute("INSERT INTO filings (news_id, scrip_code, status, filing_date, filed_at, headline) VALUES (?,?,?,?,?,?)",
+                         (nid, "500001", "ANALYZED", day[:10], day, "r"))
+        card = {"xbrl": {"url": xbrl}} if xbrl else {}
+        sink._db.execute("INSERT INTO cards (news_id, scrip_code, filed_at, filing_date, event_category, impact_level, headline, card_json) VALUES (?,?,?,?,?,?,?,?)",
+                         (nid, "500001", day, day[:10], "RESULTS", "HIGH", "r", json.dumps(card)))
+    rows = sink.query("results_cards_recent", ["2026-10-20", 10])
+    assert [r["news_id"] for r in rows] == ["nse-3", "nse-0", "nse-2", "nse-1"]
 
 
 def test_quote_exact_numbers_switch(monkeypatch):

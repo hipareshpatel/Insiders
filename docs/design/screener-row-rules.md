@@ -265,6 +265,9 @@ Net Profit (381 companies; the 200 with most hold 79 %), sorted by what the gap 
 | two lines together | 297 | to sort |
 | one other line (OtherExpenses 128, other income / exceptional 127, a tax line 103, finance costs 44, segment lines 76, depreciation 36, regulatory deferral 23, ...) | ~770 | rule candidates, each to test on/off |
 
+**Target (owner, 29 Oct 2026):** 98–98.5 % exact on the six main rows of the FY26 quarters from the current files; every pair still
+apart is sorted into a cause (screener's format, our line, the filing wrong, no file), never forced to match.
+
 **Screener updates a quarter from the next year's filing.** Q2FY26 pairs: of companies that have filed Q2FY27, 2.8 % are apart by
 a small gap no line explains; of those that have not, 0.9 % (all apart: 5.6 % against 2.6 %). Screener takes the year-ago column of
 the new results, which a company may restate; we keep the original filing. The results XBRL cannot give the restated figure: it has

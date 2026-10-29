@@ -303,7 +303,7 @@ no comparative column (checked 29 Oct 2026, HDFC Bank and Bajaj Finance Q2FY27, 
 year-to-date contexts). Only the PDF prints it, so this class waits for the PDF reader (TODO 112) to read the comparative column.
 Both numbers are right; ours is the figure as first filed.
 
-**Re-run with the BSE FY26 fill, before-listing and the two rules (run 40874998205, 29 Oct 2026, 18:08–18:50 IST), against
+**Re-run with the BSE FY26 fill, before-listing and the two rules (run 40874998205, 29 Oct 2026, 18:09–18:28 IST), against
 run 40837941625:** the six main rows of the FY26 quarters 96.7 % exact on 94,251 pairs (from 89,079: 5,172 more pairs, the BSE
 files); every table from FY25 94.3 %. 8,530 pairs are now "before listing" instead of "no facts". Bank PBT as filed: 13 pairs
 fixed at 8 banks, 6 broken, all HDFC Bank (a known exception): kept. The fair-value change on investments: 5 fixed, all TMCV, 10

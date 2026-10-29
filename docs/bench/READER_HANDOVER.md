@@ -7,6 +7,11 @@ it down, and why.
 
 ## 1. The goal, and what the owner decided
 
+- **Owner, 29 Oct 2026, ~06:20 IST: the reader is a checker.** "Don't measure the XBRL timing first, it's minute in most cases, and
+  30 minutes for rare times." So the reader's main job is to confirm the XBRL figure on the PDF (row, column, basis, unit) or say the
+  PDF prints another figure; reading a page blind is the fallback. The handover is a reference, not a script ("if you have better
+  solutions apply it"). The checker bench: given the printed figure (must be confirmed) and plausible wrong figures (x100, /100,
+  x10, another period's, another line's, the other basis's: must never be confirmed).
 - **The reader's job may be changing from "read everything" to "check, and never be wrong".**
   - The owner said on 28 Oct: "PDF and XBRL almost come together or might be a few minutes delay. Once we get XBRL and Screener
     matching, we will use XBRL only for cards."

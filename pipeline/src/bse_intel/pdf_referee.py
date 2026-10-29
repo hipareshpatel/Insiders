@@ -339,6 +339,9 @@ def _align(row_words: list[tuple], header_words: list[tuple], dates: list[date],
     return out
 
 
+from .currency import names_other_currency  # noqa: E402  (another currency's million: no rupee unit, 29 Oct 2026)
+
+
 _BARE_UNIT = re.compile(r"^(?:in\s+)?(?:\S{1,4}\s+)?(?:in\s+)?(crores?|crs?\.?|lakhs?|lacs?|millions?|mn|thousands?)(?![a-z])"
                         r"[^\w]*(?:except\b.*|\(.*)?$", re.I)
 
@@ -349,7 +352,7 @@ def _bare_unit(lines: list[str], header: int) -> float | None:
     found = set()
     for line in lines[max(0, header - 8): header + 2]:
         probe = re.sub(r"^[^\w]+|[^\w.)]+$", "", line.strip())
-        if len(probe) <= 40 and (m := _BARE_UNIT.match(probe)):
+        if len(probe) <= 40 and not names_other_currency(line) and (m := _BARE_UNIT.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
     return found.pop() if len(found) == 1 and None not in found else None
 
@@ -367,6 +370,8 @@ def _garbled_units(lines: list[str], header: int) -> tuple[set, set]:
     garbled, bare = set(), set()
     for line in lines[max(0, header - 8): header + 2]:
         probe = line.strip()
+        if names_other_currency(probe):
+            continue
         if len(probe) <= 70 and (m := _GARBLED_UNIT.match(probe)):
             garbled.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
         clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)

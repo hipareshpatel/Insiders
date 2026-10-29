@@ -52,6 +52,30 @@ XBRL_FILER_CHECKS, LINE_MAP, CRITIC. The 13 were switched on on 27 Oct at the ow
 ON"); their release check never finished (run 40407491267 stopped at 6 hours with nothing saved), so the measurement is
 the blind audit in section 3.
 
+### Switches: what each off one does, and the owner's call (30 Oct 2026, 00:25 IST)
+
+A switch turns a rule that is already on `main` on or off, without new code. Code goes to `main` only after the tests, a
+blind review and a measurement; a switch then decides whether the rule acts on live cards. The owner decides each line.
+
+| Switch (off today) | What it does, in one line | Lead's advice | Owner |
+|---|---|---|---|
+| MEMORY_CALL_V2 | Each call transcript and deck gets its own memory reading (Gemini key 3); its points are checked by code and kept | On after one more blind check of 10 new documents (TODO 101) | Yes / No / Later |
+| MEMORY_YEAR_CHECK | A year or half-year figure its own quarters do not add up to is not used on a card | Measure on stored memory, then on | Yes / No / Later |
+| XBRL_FILER_CHECKS | Where the company's own file contradicts itself, the figure is held, not kept | Measure on stored memory, then on | Yes / No / Later |
+| MEMORY_RESTATED | A restated comparative is named as such on the card ("restated in Q2FY27, first filed X") | Later, with the card work | Yes / No / Later |
+| CARD_CONSOLIDATED_ONLY | A consolidated company's card states consolidated figures only | Decide in the card work (the fact-sheet flow covers it) | Yes / No / Later |
+| CARD_EBITDA_PROFIT_V2 | The company's own EBITDA first, ours below as "calculated"; one profit line | Decide in the card work | Yes / No / Later |
+| CARD_TWO_PARTS | The card in two parts: "from the filing (checked)" and "our reading (AI)" | Decide in the card work | Yes / No / Later |
+| CARD_GUIDANCE_DATED | A guidance verdict (met / missed) only from a dated target due this period | Decide in the card work | Yes / No / Later |
+| CARD_EPS_WHOLE | EPS line on the whole company (EPS is not shown on cards, so memory only) | Later | Yes / No / Later |
+| LINE_MAP | Row names mapped by one table for changes that would alter output | Keep off | Yes / No / Later |
+| SLIP_CHECK_NUMFIRST, PDF_SHADOW | The new PDF reader in the unit check; its shadow run | Off until the PDF work resumes | Yes / No / Later |
+| MEMORY_SCREENER | Screener's figures read as memory | Keep off: screener is for checking only | Yes / No / Later |
+| CRITIC | A second AI reviewing each card | Keep off (D41) | Yes / No / Later |
+
+No switch, on as soon as merged (30 Oct): the exchange file's figure outranks a later AI reading (TODO 118 B); a footer
+figure 10x off its comparative is not shown (TODO 127); each filing's own results XBRL kept in R2.
+
 ## 2. The go-live bar (one definition)
 
 WRONG on the checked face at or below 5% of published cards, read pooled over days, with the top of the 95% interval at

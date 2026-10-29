@@ -96,6 +96,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Hindalco | Borrowings FY24 | the FY25 annual report's comparative column has "Supplier's credit" 4,475 Cr (cons) for FY24; screener's FY24 (56,356 cons, 8,376 standalone) leaves it out, while its FY25 includes the 1,713 Cr. Adani Green and Hindalco FY25 taken from a later report's comparative both match with it | assumption: a reclassification into the row in the FY25 report that screener's FY24 (from the FY24 report) never had; no FY24 annual-report XBRL is stored to check. If more companies show a comparative-column row the year's own report lacked, the year source rule changes |
 | IndiGo | Expenses, Other Income (years) | screener keeps its loss on disposal (48.2 Cr FY25, 51.7 Cr FY26) in Expenses, both bases; 29 other rows of 13 companies take it out | assumption: aircraft sale-and-leaseback disposals are a normal operating item for an airline. Watch other airlines in the larger batch |
 | Reliance, Sun Pharma, L&T | PBT, Other Income, Expenses (quarters and years) | screener leaves the associates' share out of every row: not in PBT (37 quarters with a profit, 22 with a loss), and a loss not in Expenses (the 39 rows the loss rule broke in run 40737252219 are all these three) | the XBRL cannot tell them apart: Reliance's results file has the share outside the filed PBT exactly as Coal India's does (checked 28 Oct 2026); its printed results put it after tax. If the larger batch shows more, read the P&L layout from the PDF |
+| Sundaram Finance, Shriram Finance, Cholamandalam (and its holding company), Nippon AMC, Motilal Oswal, LIC Housing | an NBFC's PBT | the associates' share left out, as at Reliance (40 rows; the rule fixed 143 at Bajaj Holdings, M&M Finance, Tata Investment, Jio Financial, TVS Holdings, Nuvama and others) | the same company-layout class: not in the XBRL |
 | M&M, JSW Steel, Asian Paints, Eicher, TVS, Solar | standalone FY23 Total Assets | the filed Assets, no deferred tax offset (FY23 from the Q4 results file) | lead only |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
 
@@ -115,6 +116,15 @@ The rules worked out on the top 50 run unchanged on the next 450: exact 91.0 % o
 material share agree with it, 326 do not (9 companies always against it: Adani Enterprises, BEL, DLF, Mazagon Dock, Natco,
 Petronet, Sun Pharma, Tata Communications, Tata Consumer; 29 mixed, Reliance and L&T among them). Weakest rows: Other
 Liabilities 59.6 %, Borrowings 65.4 %, yearly Operating Profit 72.1 %, Expenses 73.5 %, Other Income 75.1 %.
+
+## Every company (run 40793194881, 29 Oct 2026, 06:48–07:09 IST)
+
+1,856 companies read, 1,723 with facts to compare (565,126 pairs): **92.7 % exact, 94.3 % FY25–FY27**. The 1,226 companies
+beyond the 500 largest: 93.4 % (94.8 %), so the rules hold on small companies too. Against the 500-company run, on the same
+companies, the three rules of 34f7274 fixed 896 rows and broke 56 (90.65 % → 91.14 %): Tax % on the size of PBT 463 fixed and
+14 broken; an NBFC's PBT with the associates' share 143 fixed and 40 broken, the 40 all companies that leave the share out
+(Sundaram Finance 14, Shriram Finance 10, Cholamandalam 8, Nippon AMC 3, Motilal Oswal 3, LIC Housing 2: the same
+company-layout class as Reliance's, recorded below); the lease wordings and parents 290 fixed, 2 broken.
 
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 

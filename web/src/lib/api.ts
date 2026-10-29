@@ -1,4 +1,3 @@
-import type { MemoryByScrip } from "../../shared/memoryResults";
 import type { BriefResponse, CardRow, Catalyst, CompaniesResponse, CompanyDetail, FeedResponse, NoiseRow, OverduePromise, RadarCompany, ReviewCard, PublicSystemResponse, SearchResponse } from "../../shared/types";
 
 export class ApiError extends Error {
@@ -15,12 +14,6 @@ async function get<T>(path: string, params?: Record<string, string | number | nu
   const query = qs.toString(); // not qs.size: undefined on Safari 16, which would drop every filter
   const url = query ? `${path}?${query}` : path;
   const res = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!res.ok) throw new ApiError(res.status, `${res.status} ${res.statusText}`);
-  return res.json() as Promise<T>;
-}
-
-async function post<T>(path: string, body: unknown): Promise<T> {
-  const res = await fetch(path, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(body) });
   if (!res.ok) throw new ApiError(res.status, `${res.status} ${res.statusText}`);
   return res.json() as Promise<T>;
 }
@@ -45,8 +38,6 @@ export interface FeedFilters {
 }
 
 export const api = {
-  /** The Results table's lines from memory for up to 50 companies (scrip codes). */
-  resultsMemory: (scrips: string[]) => post<{ memory: MemoryByScrip }>("/api/results/memory", { scrips }),
   feed: (filters: FeedFilters, cursor?: string | null, limit = 20) =>
     get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
   feedPage: (filters: FeedFilters, page: number, limit = 50) =>

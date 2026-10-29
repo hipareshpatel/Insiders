@@ -1858,7 +1858,7 @@ HALF_KINDS = ["Quarter ended"] * 3 + ["Half year ended"] * 2 + ["Year ended"]
 EDGES = [150 + 40 * i for i in range(12)]
 
 
-def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2):
+def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2, xs=None):
     rows, want = pl()
     wide = []
     for lines, cells in rows:
@@ -1874,8 +1874,8 @@ def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2)
     doc = pymupdf.open(stream=pdf, filetype="pdf")
     page = doc[0]
     centre = lambda a, b: (EDGES[a] + EDGES[b]) / 2 - 20
-    page.insert_text((centre(0, 5) - 25, 66), words[0], fontsize=8)
-    page.insert_text((centre(6, 11) - 25, 66), words[1], fontsize=8)
+    for text, x in zip(words, xs or (centre(0, 5) - 25, centre(6, 11) - 25)):
+        page.insert_text((x, 66), text, fontsize=8)
     out = doc.tobytes()
     doc.close()
     return out, want
@@ -1898,6 +1898,35 @@ def test_a_header_of_one_phrase_or_two_equal_ones_or_halves_dated_differently_is
             got = read(pdf, "pat", basis=basis)
             assert got.status != "ok" or got.value in (pytest.approx(crore(want["pat"][0])), pytest.approx(crore(2 * want["pat"][0]))), got
             assert not (got.status == "ok" and basis == "STANDALONE" and got.value == pytest.approx(crore(2 * want["pat"][0]))), got
+
+
+def test_two_side_by_side_headings_with_heading_words_are_read_each_on_its_own_basis():
+    # CYIENT Q2FY27: "Consolidated results" over the first six columns, "Standalone results" over the last six; HITECHGEAR
+    # Q1FY27: "Standalone Results" first, "Consolidated Results" second
+    for words, left, right_basis in ((("Consolidated results", "Standalone results"), "CONSOLIDATED", "STANDALONE"),
+                                     (("Standalone Financial Results", "Consolidated Financial Results"), "STANDALONE", "CONSOLIDATED")):
+        pdf, want = _two_bases(words=words)
+        for metric in ("pbt", "pat"):
+            a, b = read(pdf, metric, basis=left), read(pdf, metric, basis=right_basis)
+            assert a.status == "ok" and a.value == pytest.approx(crore(want[metric][0])), (words, metric, a)
+            assert b.status == "ok" and b.value == pytest.approx(crore(2 * want[metric][0])), (words, metric, b)
+
+
+def test_trap_side_by_side_headings_that_are_not_two_headings_each_over_its_own_columns_give_no_basis():
+    centre = lambda a, b: (EDGES[a] + EDGES[b]) / 2 - 20
+    for kwargs in (
+        dict(words=("Standalone results", "Quarter ended")),                    # one heading only
+        dict(words=("Standalone results", "Standalone results")),               # the same basis twice
+        dict(words=("Standalone results", "Consolidated results"), xs=(EDGES[0] - 20, EDGES[2])),    # both over the first half
+        dict(words=("Standalone Financial Results", "Consolidated results"), xs=(centre(4, 6) - 40, centre(6, 11) + 30)),
+        # ^ the first heading runs on across the second half's columns
+        dict(words=("Standalone results for", "Consolidated results")),         # a word that is not a heading word
+        dict(words=("Unaudited Standalone results", "Consolidated results")),   # the line does not open on a basis word
+    ):
+        pdf, want = _two_bases(**kwargs)
+        for basis in ("STANDALONE", "CONSOLIDATED"):
+            got = read(pdf, "pat", basis=basis)
+            assert got.status != "ok", (kwargs, basis, got)
 
 
 def test_swapped_phrases_name_the_bases_the_other_way_round():

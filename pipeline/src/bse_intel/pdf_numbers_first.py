@@ -952,6 +952,10 @@ def _basis_word(text: str) -> str | None:
     return (STANDALONE, CONSOLIDATED)[best]
 
 
+# the words a side-by-side heading may carry after its basis word ("Consolidated results", "Standalone Financial Results")
+_HEADING_FILLER = re.compile(r"^\W*(?:financial|results?|statements?|figures)\W*$", re.I)
+
+
 def side_by_side(gap: list[Word], cols: list[Column], dates: list, height: float):
     """(k, basis of the first k columns, basis of the rest) when one printed grid holds the standalone and the consolidated figures
     side by side (SPLPETRO Q2FY27: 12 columns). Every condition must hold, else None: an even number of columns, eight or more; a
@@ -963,13 +967,21 @@ def side_by_side(gap: list[Word], cols: list[Column], dates: list, height: float
     k = n // 2
     margin = 2 * height
     for line in lines_of(gap, height):
-        if len(line) != 2:
+        # the line is two headings and nothing else: each a basis word, optionally followed by heading words ("Consolidated
+        # results   Standalone results", CYIENT Q2FY27; "Standalone Results   Consolidated Results", HITECHGEAR Q1FY27)
+        named = [i for i, w in enumerate(line) if _basis_word(w.text) is not None]
+        if len(named) != 2 or named[0] != 0 or not all(i in named or _HEADING_FILLER.match(w.text) for i, w in enumerate(line)):
             continue
-        b1, b2 = _basis_word(line[0].text), _basis_word(line[1].text)
+        first, second = line[:named[1]], line[named[1]:]
+        b1, b2 = _basis_word(first[0].text), _basis_word(second[0].text)
         if b1 is None or b2 is None or b1 == b2:
             continue
-        if not (cols[0].x0 - margin <= line[0].xc <= cols[k - 1].x1 + margin and cols[k].x0 - margin <= line[1].xc <= cols[-1].x1 + margin):
+        c1, c2 = (first[0].x0 + first[-1].x1) / 2, (second[0].x0 + second[-1].x1) / 2
+        if not (cols[0].x0 - margin <= c1 <= cols[k - 1].x1 + margin and cols[k].x0 - margin <= c2 <= cols[-1].x1 + margin):
             continue
+        if not (first[0].x0 >= cols[0].x0 - margin and first[-1].x1 < cols[k].x0 and second[0].x0 > cols[k - 1].x1
+                and second[-1].x1 <= cols[-1].x1 + margin):
+            continue                      # each whole heading stands over its own half, never across the other's columns
         pairs = [(x, y) for x, y in zip(dates[:k], dates[k:]) if x is not None and y is not None]
         if sum(x == y for x, y in pairs) >= 3 and sum(x != y for x, y in pairs) <= 1:
             return k, b1, b2

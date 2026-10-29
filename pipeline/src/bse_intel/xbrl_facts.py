@@ -452,6 +452,8 @@ def interesting(facts: Facts) -> set[str]:
 
 MAX_SHARDS = 16           # owner, 28 Oct 2026: 8 parallel downloads, then "Can we take it to 16" (the same day)
 SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
+FACTS_QUARTERS = 13       # screener's quarterly table shows a company's 13 latest results; the seed keeps 12 (owner, 29 Oct 2026)
+MARKER_V = 2              # a marker written under the 12-quarter selection (v1) is no marker: its company is listed again once
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
 GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS
@@ -488,8 +490,11 @@ def listed_key(scrip: str) -> str:
 def select_files(rows) -> list[tuple[str, str, object]]:
     """(period, basis, row) of the files to keep from NSE's results list: the seed's own selection (``seed._nse_quarters``: consolidated
     over standalone, the integrated filing over the older list's row, then the later filing, from SINCE; ``seed._recent_and_years``:
-    the latest SEED_QUARTERS quarters and the March quarters before them), with BOTH bases of each chosen quarter (the seed
-    keeps one, and the standalone files of a consolidated filer apart). Newest first."""
+    the latest quarters and the March quarters before them), with BOTH bases of each chosen quarter (the seed keeps one, and the
+    standalone files of a consolidated filer apart). Newest first. The latest FACTS_QUARTERS, not the seed's SEED_QUARTERS: the
+    screener comparison reads 13 quarters, and with 12 the oldest one was missing for nearly every company (measured 29 Oct 2026:
+    NSE lists Q2FY24 with a file for HDFCBANK, TCS, INFY, LT, MARUTI, KOTAKBANK, ULTRACEMCO, JSWSTEEL, BAJAJ-AUTO, NESTLEIND, none
+    of which we had kept)."""
     from . import seed
 
     by_basis: dict[bool, dict] = {True: {}, False: {}}
@@ -499,7 +504,7 @@ def select_files(rows) -> list[tuple[str, str, object]]:
         label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
         if label:
             by_basis[bool(row.consolidated)][label] = row
-    chosen = seed._recent_and_years({**by_basis[False], **by_basis[True]})
+    chosen = seed._recent_and_years({**by_basis[False], **by_basis[True]}, FACTS_QUARTERS)
     out = [(label, "CONSOLIDATED" if consolidated else "STANDALONE", row)
            for consolidated in (True, False) for label, row in by_basis[consolidated].items() if label in chosen]
     return sorted(out, key=lambda t: (t[2].period_end, t[1] == "CONSOLIDATED"), reverse=True)
@@ -954,6 +959,8 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             return False
         try:
             doc = json.loads(sink.get_object(listed_key(scrip)))
+            if doc.get("v") != MARKER_V:
+                return False
             age = ((today or today_ist()) - date.fromisoformat(doc["listed_on"])).days
             gone = {(p, b) for p, b, _ in doc.get("gone", [])}
             return 0 <= age < LIST_REFRESH_DAYS and all((p, b) in gone or key(scrip, p, b) in stored_facts
@@ -991,7 +998,7 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                     emit(scrip, symbol, rest_label, rest_basis, rest_row, "not_reached")
                 raise
         if not dry_run and not partial:
-            marker = {"v": 1, "listed_on": (today or today_ist()).isoformat(), "symbol": symbol,
+            marker = {"v": MARKER_V, "listed_on": (today or today_ist()).isoformat(), "symbol": symbol,
                       "files": [[label, basis] for label, basis, _ in selected], "gone": gone}
             sink.put_object(listed_key(scrip), json.dumps(marker, separators=(",", ":")).encode(), content_type="application/json")
 

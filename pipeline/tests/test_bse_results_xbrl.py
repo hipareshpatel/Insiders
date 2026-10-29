@@ -92,3 +92,15 @@ def test_a_file_the_store_did_not_keep_stops_the_run():
     bse.files["downloaded"] = 1                      # the client downloaded a file and the store kept none
     out = br.run(Sink(), [("532811", "ABC")], bse, today=TODAY)
     assert out["store_full"] and out["more"] and out["facts_saved"] == 0
+
+
+def test_a_quarter_before_its_filing_deadline_is_not_missing():
+    assert not br.due("Q2FY27", TODAY) and br.due("Q1FY27", TODAY)          # Sep 2026 is due by 14 Nov; Jun 2026 was by 14 Aug
+    assert br.due("Q4FY26", date(2026, 5, 30)) is False and br.due("Q4FY26", date(2026, 5, 31))   # March: 60 days
+    sink = Sink()
+    for p in br.window(TODAY):
+        if p != "Q2FY27":
+            sink.put_object(xf.key("532811", p, "STANDALONE"), b"x")       # only the quarter still being filed is absent
+    bse = Bse(LINKS, FILES)
+    out = br.run(sink, [("532811", "ABC")], bse, today=TODAY)
+    assert bse.lists == 0 and out["complete"] == 1                           # no list asked in vain

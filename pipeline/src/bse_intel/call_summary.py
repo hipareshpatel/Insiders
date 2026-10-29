@@ -141,13 +141,16 @@ def remember_call_points(dossier: dict, news_id: str, filed_at: str, takeaways) 
     """The call's verified takeaways (call_summary.check_ai_takeaways) into memory, replacing this filing's earlier
     ones: what the quarterly summary on the company page is built from first."""
     kept = [p for p in dossier.get("call_points", []) if p.get("news_id") != news_id]
+    # a point already held keeps its label: a refresh that changes nothing must leave memory as it is (a fresh stamp made
+    # every card refresh rewrite every call company's dossier, and a test fail when two runs straddled a second)
+    held = {(p.get("category"), p.get("text")): p.get("lab") for p in dossier.get("call_points", []) if p.get("news_id") == news_id}
     for t in takeaways or []:
         get = t.get if isinstance(t, dict) else lambda k, d=None, t=t: getattr(t, k, d)   # a stored card's, or a model's
         if get("verified", False) and get("text"):
             kept.append({"news_id": news_id, "date": _day(filed_at), "category": get("category") or "Other",
                          "text": get("text"), **({"versus_prior": get("versus_prior")} if get("versus_prior") else {}),
                          # what the call said, as our AI read it and our checks passed; no page or quote yet (memory label)
-                         "lab": label("ai", "call", now_iso(), ok=True)})
+                         "lab": held.get((get("category") or "Other", get("text"))) or label("ai", "call", now_iso(), ok=True)})
     kept.sort(key=lambda p: p.get("date") or "", reverse=True)
     dossier["call_points"] = kept[:CALL_POINTS_KEPT]
 

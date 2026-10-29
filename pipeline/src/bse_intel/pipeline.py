@@ -2986,7 +2986,9 @@ class Pipeline:
         # figures (MEMORY_FILE_ONLY keeps a PDF-only card's figures on the card)
         named = {t["news_id"]: t.get("quarter") for t in dossier.get("timeline", [])
                  if t.get("event_type") == "RESULTS" and t.get("news_id") in dates and t.get("quarter")}
-        owners = list(dict.fromkeys([n for m in metrics if m.get("period") == quarter for n in dates if reported_by(m, n)]
+        # a card that names its own quarter owns that one alone, never the comparatives its figures cover (blind review)
+        owners = list(dict.fromkeys([n for m in metrics if m.get("period") == quarter for n in dates if reported_by(m, n)
+                                     and named.get(n, quarter) == quarter]
                                     + [n for n, q in named.items() if q == quarter]))
         # A results filing filed after this one also reports this quarter as its comparative: it owns the quarter only
         # when it is its own latest quarter, the quarter of its results (Sunteck's Q1FY27 filings report Q4FY26 too).
@@ -3560,7 +3562,8 @@ class Pipeline:
                 # no statement, no file, few figures: a press release or an update, never a new quarter's statement
                 quarter = companion_quarter(filing, dossier)
             earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None))
-            results_q = quarter
+            # stamped only when the quarter is the file's or a statement's own, never a text guess (blind review)
+            results_q = quarter if (tagged or _RESULTS_STATEMENT.search(text[:20000])) else None
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1

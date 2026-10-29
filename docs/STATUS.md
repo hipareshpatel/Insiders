@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 15:17 IST.
+Last updated: 29 Oct 2026, 18:45 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -67,6 +67,32 @@ in older files are history.
 Not met. The rate has stayed between 15% and 23% for a week while about 120 fixes shipped (F104-F222).
 
 ## 3. Open work, in order
+
+**29 Oct 2026, 18:45 IST: where the financial work stands (the blocks below are the record they came from).**
+- Done today:
+  - The Screener rows compare quarters from Q1FY26 only (owner); a period before a company's listing is "before listing",
+    not "no facts". Re-run 40874998205: the six main rows of the FY26 quarters 96.7 % exact (94,251 pairs); target 98–98.5 %
+    (owner). Bank PBT as filed kept (13 fixed, 6 broken, all HDFC Bank); the fair-value rule dropped (5 fixed, 10 broken).
+    Every rule is marked "cause known" or "numbers only" (TODO 115). `docs/design/screener-row-rules.md`.
+  - The BSE FY26 results fill (894 facts) and the BSE annual reports part 1 (773 facts); part 2 (run 40875086865) runs.
+  - Results XBRL against the PDF, 40 companies, Q1FY27: median 75 minutes after the PDF, 39 of 40 within 6.5 h
+    (`docs/SOURCES.md`).
+  - The numbers-first PDF reader merged (PR #215, 18:35 IST), switches off: 0 wrong on both keys, options off and on; about
+    1.6–2x slower than the old reader (TODO 117).
+  - Memory gaps (run 40875940744, read only): 326 of 1,856 companies have a gap from Q2FY25; from Q1FY26, 132 of 199 only
+    before their first held quarter (likely before listing), 20 with a hole, 26 stopping early, 21 with nothing held.
+  - Memory's own errors traced in code (TODO 118): Maruti and Bajaj PBT and the HUL/Vedanta EPS are by design; a ranking gap
+    (a live file figure ranks like a card) is to be measured; Vedanta FY26 and SBI Life H1FY27 need their stored sources read.
+- Next, in order:
+  1. Sort the 239 year and balance-sheet pairs the BSE annual files moved away from screener; finish BSE annual part 2.
+  2. The 47 memory-gap companies with a hole, an early stop or nothing held: check each against NSE's list, fill from files
+     already downloaded where they exist.
+  3. TODO 118 B (the ranking gap): an on/off count over stored memory, then the owner's Yes.
+  4. The gap to 98 %: confirm the merger/demerger restatements as exceptions (327 pairs); screener's restated year-ago
+     quarter (505 pairs) waits for the PDF reader to read the comparative column.
+  5. The PDF reader's next PR (TODO 123): the causes behind its patches and one OCR per page, then a speed check against
+     main on an empty OCR cache, before the owner decides its switches.
+- Waiting for the owner: TODO 118 A/B/C; the PDF reader's switches (`SLIP_CHECK_NUMFIRST`, `PDF_SHADOW`).
 
 **Owner, 28 Oct, ~15:40 IST: "No blind audit of cards today", "Let's settle financial first".** The card audit and the
 card-wording experiment wait. The financial-data order, until the owner says otherwise:

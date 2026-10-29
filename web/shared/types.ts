@@ -454,6 +454,10 @@ export interface Dossier {
     balance_sheet: (Record<string, string | number | null> & { as_of: string })[] };
   segment_mix: { segment: string; period: string; revenue_cr?: number | null; share_pct?: number | null; as_of: string }[];
   balance_sheet: (Record<string, string | number | null> & { as_of: string })[];
+  /** screener.in's tables by its own rules (screener_view recipes), from the exchange's files (statements.py): one entry per
+   *  period, basis and table ("quarters" | "annual" | "balance" | "cash_flow"); rows by screener's own row names */
+  statements?: { period: string; basis: string | null; table: string; family?: string; rows: Record<string, number>;
+    source_news_id?: string; as_of?: string }[];
   capital_actions?: { instrument: string; new_shares?: number | null; issue_price?: number | null; amount_cr?: number | null; as_of: string }[];
   guidance: Guidance[];
   watchlist?: WatchItem[];

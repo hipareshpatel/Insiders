@@ -162,3 +162,21 @@ test("screener mode: one table never mixes definitions, TTM needs every part in 
   const sheet = { period: "Q4FY26", as_of: "2026-05-01", source_news_id: "xbrl:res:1:x", equity_capital_cr: 10, gross_debt_cr: 20, total_assets_cr: 200, fixed_assets_cr: 100 };
   assert.ok(!balanceTable([sheet], true).rows.some((r) => r.label === "Other liabilities"));
 });
+
+test("screener's tables come from memory's statements, by basis, latest periods in date order", async () => {
+  const { screenerTable } = await import("../src/components/company/statements.ts");
+  const e = (period: string, basis: string, table: string, rows: Record<string, number>) => ({ period, basis, table, rows });
+  const entries = [
+    e("Q2FY27", "CONSOLIDATED", "quarters", { Sales: 44178.7, Expenses: 32000, "OPM %": 27.6, "Net Profit": 6547.4 }),
+    e("Q1FY27", "CONSOLIDATED", "quarters", { Sales: 46254.8, Expenses: 34000, "OPM %": 26.5, "Net Profit": 8849.8 }),
+    e("Q2FY27", "STANDALONE", "quarters", { Sales: 10, "Net Profit": 1 }),
+    e("FY26", "CONSOLIDATED", "annual", { Sales: 150000 }),
+  ];
+  const t = screenerTable(entries, "CONSOLIDATED", "quarters", 12);
+  assert.deepEqual(t.columns, ["Q1FY27", "Q2FY27"]);
+  assert.deepEqual(t.rows.map((r) => r.label), ["Sales", "Expenses", "OPM %", "Net Profit"]);
+  assert.equal(t.rows.find((r) => r.label === "OPM %")!.kind, "pct");
+  assert.deepEqual(t.rows[0].cells, [46254.8, 44178.7]);
+  assert.deepEqual(screenerTable(entries, "STANDALONE", "quarters", 12).columns, ["Q2FY27"]);
+  assert.equal(screenerTable(undefined, "CONSOLIDATED", "quarters", 12).columns.length, 0);
+});

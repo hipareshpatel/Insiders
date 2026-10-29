@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import type { Dossier } from "../../../shared/types";
 import { cn } from "../../lib/cn";
 import {
-  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, statementDate, type Table,
+  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, screenerTable, statementDate, type Table,
 } from "./statements";
 import { Panel } from "./Panel";
 
@@ -18,15 +18,23 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   // consolidated and standalone, as screener.in switches them (owner, 2026-10-21); memory's main figures are the
   // consolidated ones for a group that files both, its standalone file is kept apart (dossier.put_standalone)
   const main = mainBasis(dossier.financial_metrics);
-  const alone = dossier.standalone?.metrics?.length ? dossier.standalone : null;
+  const alone = dossier.standalone?.metrics?.length || (dossier.statements ?? []).some((e) => e.basis === "STANDALONE")
+    ? (dossier.standalone ?? { metrics: [], balance_sheet: [] }) : null;
   const [basis, setBasis] = useState<"main" | "standalone">("main");
   const useAlone = basis === "standalone" && alone;
   const metrics = (useAlone ? alone.metrics : dossier.financial_metrics) as Dossier["financial_metrics"];
   const sheets = useAlone ? alone.balance_sheet ?? [] : dossier.balance_sheet;
   const label = useAlone ? "Standalone" : main === "CONSOLIDATED" ? "Consolidated" : main === "STANDALONE" ? "Standalone" : null;
   const bank = isBank(metrics);
-  const quarterly = quarterlyTable(metrics, SCREENER_LINES), annual = annualTable(metrics, SCREENER_LINES);
-  const balance = balanceTable(sheets, SCREENER_LINES), cash = cashFlowTable(metrics), ratios = ratioTable(metrics, sheets);
+  // screener's tables by its rules from the exchange's files when memory holds them (owner, 30 Oct 2026: "our stock page
+  // having financial statements will be saved as per screener"); else the lines worked out from memory's figures, as before
+  const stBasis = useAlone ? "STANDALONE" : (main ?? "CONSOLIDATED");
+  const pick = (t: Table, fallback: () => Table) => (t.columns.length ? t : fallback());
+  const quarterly = pick(screenerTable(dossier.statements, stBasis, "quarters", 12), () => quarterlyTable(metrics, SCREENER_LINES));
+  const annual = pick(screenerTable(dossier.statements, stBasis, "annual", 6), () => annualTable(metrics, SCREENER_LINES));
+  const balance = pick(screenerTable(dossier.statements, stBasis, "balance", 8), () => balanceTable(sheets, SCREENER_LINES));
+  const cash = pick(screenerTable(dossier.statements, stBasis, "cash_flow", 6), () => cashFlowTable(metrics));
+  const ratios = ratioTable(metrics, sheets);
   const top = bank ? "interest_earned" : "revenue";
   const boxes = [
     { title: bank ? "Compounded revenue growth" : "Compounded sales growth", rows: growth(metrics, top) },
@@ -68,7 +76,7 @@ export function Financials({ dossier }: { dossier: Dossier }) {
             ))}
           </div>
         )} />
-      <Statement title="Balance sheet" t={balance} label={(p) => p} sub={sub} empty="No full statement of assets and liabilities in memory yet: it comes with the half-year and year results" />
+      <Statement title="Balance sheet" t={balance} label={(p) => (/^(Q[1-4]|H[12])FY/.test(p) ? statementDate(p) : p)} sub={sub} empty="No full statement of assets and liabilities in memory yet: it comes with the half-year and year results" />
       <Statement title="Cash flows" t={cash} sub={sub} label={(p) => (p.startsWith("H1") ? `${statementDate(p)} (6 months)` : statementDate(p))}
         empty="No cash-flow statement in memory yet: it comes with the half-year and year results" />
       <Statement title="Ratios" t={ratios} label={statementDate} sub={sub} />

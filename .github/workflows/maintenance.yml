@@ -210,6 +210,10 @@
 #   already holds is never overwritten; each figure written carries exchange BSE and the file's address. A dry run unless the
 #   input `apply` is set (the summary, a CSV of every figure and the log go up as the artifact `memory-gaps-fill-bse`). `restart`
 #   tries the companies an earlier apply run handled. The daily pipeline stays NSE only. Group maint-nse-memory.
+# - statements-backfill: every company's past statements by screener's rules (screener_view recipes) from the facts already
+#   stored in R2 (raw/xbrl-facts/), into dossier['statements']: quarters, years, balance sheets, cash flows, both bases. No NSE
+#   request. A dry run unless `apply`; `file_cap` unused; at most 50 companies a run, resuming (restart starts again); each
+#   dossier backed up first (backup/statements-backfill-<time>/), so `restore` undoes it. Group maint-nse-memory.
 # - memory-rerank: re-ranks stored figures under TODO 118 B (dossier._metric_entry: a live filing's own file figure above a model's
 #   later reading). A figure is rebuilt from its own sources only when its stored value is the old rule's and the new rule gives
 #   another; at most 50 figures a run (rule A), whole companies; each dossier is backed up first (R2 backup/memory-rerank-<time>/),
@@ -226,7 +230,7 @@
 # different sources run side by side, and two jobs that write the same store never run together. cancel-in-progress is
 # false and a group keeps one waiting run (a newer one replaces the waiting one): do not queue two commands of one group.
 #   group              commands
-#   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, fill-memory, fill-trades,
+#   maint-nse-memory   everything that reads NSE or writes memory: seed-memory, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, fill-memory, fill-trades,
 #                      label-memory-apply, screener-fill-apply, prune-companies-apply (writes memory and companies),
 #                      text-backfill (reads NSE; writes only text/ objects)
 #   maint-cards        writes cards in D1 (or commits to the branch): refresh-card-blocks, refresh-summaries, both,
@@ -258,7 +262,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
       backup:
         description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -274,7 +278,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank - only these companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -306,7 +310,7 @@ on:
         type: string
         default: ''
       apply:
-        description: memory-gaps-fill-bse, memory-drop-known-wrong and memory-rerank only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
+        description: memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank and statements-backfill only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
         type: boolean
         default: false
       dry_run:
@@ -345,7 +349,7 @@ permissions:
 concurrency:
   # groups by source and by what a job writes: the table in the header comment (a downloading xbrl-facts run is NSE traffic: the NSE memory group)
   group: >-
-    ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
+    ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["text-backfill-bse","bse-annual-xbrl","bse-results-xbrl"]'), inputs.command) && format('maint-bse-{0}', inputs.command)
@@ -585,6 +589,34 @@ jobs:
         with:
           name: memory-drop-known-wrong
           path: ${{ runner.temp }}/knownwrong/
+          if-no-files-found: ignore
+      - name: Statements by screener's rules from the stored facts (a dry run unless apply)
+        if: inputs.command == 'statements-backfill'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
+          APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script
+          IDS: ${{ inputs.ids }}
+          RESTART: ${{ inputs.restart }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          set -o pipefail
+          code=0
+          mkdir -p "$RUNNER_TEMP/stmts"
+          args=(--json "$RUNNER_TEMP/stmts/statements-backfill.json")
+          [ "$APPLY" = "true" ] && args+=(--apply)
+          [ "$RESTART" = "true" ] && args+=(--restart)
+          if [ -n "$LIMIT" ]; then args+=(--limit "$LIMIT"); fi
+          if [ -n "$IDS" ]; then args+=(--scrips "$IDS"); fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel statements-backfill "${args[@]}" | tee "$RUNNER_TEMP/stmts/statements-backfill.txt" || code=$?
+          if [ "$code" -eq 124 ]; then exit 0; fi   # companies left: the next run resumes
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'statements-backfill'
+        with:
+          name: statements-backfill
+          path: ${{ runner.temp }}/stmts/
           if-no-files-found: ignore
       - name: Re-rank stored figures under TODO 118 B (a dry run unless apply)
         if: inputs.command == 'memory-rerank'

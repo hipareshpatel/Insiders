@@ -199,6 +199,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         others = [m for other, (_, _, result, _) in found.items() if other != period for m in result.metrics]
         if xbrl_fast_path.fix_scale(parsed, others, scrip, verify=check):
             stats.rescaled += 1
+            raw_files.pop(period, None)   # the file itself is in the wrong unit: its screener tables would be too (blind review)
         elif getattr(parsed, "slip_held", ""):
             held_slips[period] = parsed.slip_held
             if getattr(parsed, "slip_unsure", False):

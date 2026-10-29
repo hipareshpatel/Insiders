@@ -324,3 +324,30 @@ export function formatCell(c: Cell, kind?: Row["kind"]): string {
   const digits = Math.abs(c) < 10 ? 2 : 0;
   return c.toLocaleString("en-IN", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 }
+
+
+type StatementEntry = NonNullable<Dossier["statements"]>[number];
+
+/** The table screener.in shows, from memory's statements (the exchange's files by screener's rules, statements.py), for one
+ *  basis: the latest `most` periods, rows in the order the recipes give them. Empty when memory holds none. */
+export function screenerTable(entries: StatementEntry[] | undefined, basis: string | null, table: string, most: number): Table {
+  const mine = (entries ?? []).filter((e) => e.table === table && (e.basis ?? null) === basis && e.rows && Object.keys(e.rows).length);
+  if (!mine.length) return { columns: [], rows: [] };
+  const byPeriod = new Map<string, Record<string, number>>();
+  for (const e of mine) byPeriod.set(e.period, e.rows);
+  const columns = [...byPeriod.keys()].sort((a, b) => periodEnd(a).localeCompare(periodEnd(b))).slice(-most);
+  const names: string[] = [];
+  for (const p of columns) for (const n of Object.keys(byPeriod.get(p)!)) if (!names.includes(n)) names.push(n);
+  const STRONG = new Set(["Sales", "Revenue", "Operating Profit", "Financing Profit", "Net Profit", "Total Liabilities",
+    "Total Assets", "Cash from Operating Activity"]);
+  return {
+    columns,
+    rows: names.map((n) => ({ label: n, kind: n.includes("%") ? "pct" as const : undefined, strong: STRONG.has(n),
+      cells: columns.map((p) => byPeriod.get(p)?.[n] ?? null) })),
+  };
+}
+
+/** The bases memory's statements cover. */
+export function statementBases(entries: StatementEntry[] | undefined): string[] {
+  return [...new Set((entries ?? []).map((e) => e.basis ?? "").filter(Boolean))];
+}

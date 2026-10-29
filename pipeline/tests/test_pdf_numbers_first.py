@@ -1513,3 +1513,10 @@ def test_a_tax_is_added_only_where_the_labels_say_so():
     rows, want = nbfc_rows(pat_label="7 Profit for the Period", tax_label="6 Tax expense")
     got = read(statement(rows), "pat")
     assert got.status != "ok" or got.value != pytest.approx(crore(want["pat"][0])), got
+
+
+def test_a_cost_of_sales_section_is_never_revenue_in_sections():
+    # review of 5b84304: "Cost of sales" is revenue-class by its word "sales"; a section it opens is costs
+    rows, want = nbfc_rows(first_label="(a) Cost of sales (i) Materials")
+    got = read(statement(rows), "revenue")
+    assert got.status != "ok" or got.value != pytest.approx(crore(want["revenue"][0])), got

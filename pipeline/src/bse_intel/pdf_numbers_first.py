@@ -891,6 +891,8 @@ _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
 # a profit line whose label adds two numbered lines ("Profit for the period (5+6)") and a tax printed as "(expense)/credit"
 _ADDS_LINES = re.compile(r"\(\s*(?:\d{1,2}|[ivx]{1,4})\s*\+\s*(?:\d{1,2}|[ivx]{1,4})\s*\)", re.I)
 _TAX_CREDIT = re.compile(r"\btax\b.*\bcredit\b|\(expense\)\s*/\s*credit", re.I)
+# a revenue-class label that opens a section of costs, not of revenue ("Cost of sales", "Excise duty on sales", "Sales promotion")
+_NOT_REVENUE_OPENER = re.compile(r"\bcost\s+of\b|\bexcise\b|\bpromotion\b", re.I)
 # a section's subtotal that names only its letter or number: "Total (a)", "Total [b]", "Total (II)" (an NBFC's statement)
 _SECTION_TOTAL = re.compile(r"^\W*total\s*[\(\[]?\s*(?:[a-e]|i{1,3}|iv|[1-5])\s*[\)\]]?\W*$", re.I)
 _TOTAL_REVENUE = re.compile(r"^\W*(?:[\divx]+\W+)?total\s+revenue\s+from\s+operations?\W*(?:\(\w{1,4}\))?\W*$", re.I)
@@ -1224,12 +1226,13 @@ class Solver:
             if not _SECTION_TOTAL.match(self.t.rows[a].label):
                 continue
             oi = list(range(a + 1, b))
-            if len(oi) > 6 or not any(self.cls[r] == "OI" for r in oi) or any(self.cls[r] not in (None, "OI") for r in oi):
+            # the other-income section opens right after "Total (a)" (review of 5b84304)
+            if len(oi) > 6 or self.cls[a + 1] != "OI" or any(self.cls[r] not in (None, "OI") for r in oi):
                 return
             if not self.valid((b, tuple((r, 1) for r in oi))):
                 return
             first = next((r for r in range(a - 1, max(a - 10, -1), -1) if self.cls[r] is not None), None)
-            if first is None or self.cls[first] != "REV" or a - first < 2:
+            if first is None or self.cls[first] != "REV" or a - first < 2 or _NOT_REVENUE_OPENER.search(self.t.rows[first].label):
                 return
             proof: Proof = (t, ((a, 1), (b, 1)))
             if self.valid((a, tuple((r, 1) for r in range(first, a)))) and self.valid(proof):

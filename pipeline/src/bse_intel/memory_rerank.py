@@ -8,7 +8,7 @@ rule gives another value. That figure is rebuilt from its own sources as ``memor
 dossier changes. Measured over stored memory on 29 Oct: 128 figures in 46 companies, each an AI reading beaten by the file.
 
 At most ``limit`` figures a run (the owner's rule A, 50): companies are taken in scrip order and a company whose changes would
-pass the limit waits for the next run, so a company is never half done. Before any write each dossier is saved through
+pass the limit waits for the next run, so a company is never half done (one with more than ``limit`` goes alone, first). Before any write each dossier is saved through
 ``backup.RunBackup`` (as stored, and as about to be written, read back): ``restore`` undoes it. Any failure of a read, the backup
 or a write stops the run; the report of what was done so far is still returned.
 
@@ -66,7 +66,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT) -> dic
             changed = rerank(merged)
             if not changed:
                 continue
-            if out["figures"] + len(changed) > limit:
+            if out["figures"] and out["figures"] + len(changed) > limit:   # a company over the limit alone still goes, alone
                 out["waiting"].append(scrip)
                 continue
             if apply:
@@ -92,7 +92,7 @@ def render(outcome: dict) -> str:
     lines = [f"Memory re-rank, TODO 118 B ({'applied' if outcome['apply'] else 'dry run, nothing written'}), "
              f"{outcome['companies_read']} companies read:"]
     for r in outcome["rows"]:
-        lines.append(f"  {r['scrip']} {r['metric']} {r['period']}: {r['old']:g} -> {r['new']:g} (from {r['from']}, was {r['was_from']})")
+        lines.append(f"  {r['scrip']} {r['metric']} {r['period']}: {r['old']} -> {r['new']} (from {r['from']}, was {r['was_from']})")
     lines.append(f"  {outcome['figures']} figures {verb} in {len({r['scrip'] for r in outcome['rows']})} companies "
                  f"(limit {outcome['limit']}); {len(outcome['waiting'])} companies wait for the next run")
     if outcome["backup"]:

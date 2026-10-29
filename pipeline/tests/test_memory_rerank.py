@@ -62,3 +62,9 @@ def test_the_limit_keeps_whole_companies_for_the_next_run(settings):
     out = memory_rerank.run(sink, ["500000", "500001", "500002"], apply=True, limit=2)
     assert out["figures"] == 2 and out["dossiers_written"] == 2 and out["waiting"] == ["500002"]
     assert memory_rerank.run(sink, ["500000", "500001", "500002"], apply=True, limit=2)["figures"] == 1
+
+
+def test_a_company_over_the_limit_goes_alone_rather_than_waiting_for_ever(settings):
+    sink = _sink(settings, 2)
+    out = memory_rerank.run(sink, ["500000", "500001"], limit=0)
+    assert out["figures"] == 1 and out["waiting"] == ["500001"]

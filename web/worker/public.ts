@@ -4,7 +4,6 @@
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { dedupeEvents } from "../shared/events";
 import { isCompanyKey } from "../shared/companyKey";
-import { resultRows, type MemoryByScrip } from "../shared/memoryResults";
 import type { CallQuarter, PublicSystemResponse } from "../shared/types";
 import { Hono } from "hono";
 import type { Context } from "hono";
@@ -436,23 +435,6 @@ api.get("/companies/:scrip", async (c) => {
   const calls = await callLinks(c, parseCalls(callsJson), cards.results as { news_id: string; pdf_url: string | null }[]);
   return c.body(`{"company":${JSON.stringify(company ? companyRow : null)},"cards":${JSON.stringify(cards.results)},"peers":${JSON.stringify(peers)},"chart":${series},"calls":${JSON.stringify(calls)},"dossier":${dossier}}`, 200,
     { "Content-Type": "application/json; charset=UTF-8" });
-});
-
-// The Results table's figures from memory (owner, 29 Oct 2026): each company's result lines, trimmed by shared/memoryResults.ts.
-// Up to 50 companies a call; a company with no memory file answers with no rows.
-api.post("/results/memory", async (c) => {
-  const body = await c.req.json<{ scrips?: unknown }>().catch(() => null);
-  const scrips = Array.isArray(body?.scrips)
-    ? body.scrips.filter((s): s is string => typeof s === "string" && /^\d+$/.test(s)).slice(0, 50)
-    : [];
-  const memory: MemoryByScrip = {};
-  await Promise.all(scrips.map(async (scrip) => {
-    const object = await c.env.VAULT.get(`memory/${scrip}.json`);
-    if (!object) return;
-    const dossier = await object.json<{ financial_metrics?: unknown }>();
-    memory[scrip] = resultRows(dossier.financial_metrics);
-  }));
-  return c.json({ memory }, 200, { "Cache-Control": "public, max-age=300" });
 });
 
 api.get("/calendar", async (c) => {

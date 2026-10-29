@@ -165,7 +165,6 @@ The order: correct memory first, from the exchange's files by screener's rules; 
   (the BSE annual files and the gap fill read, TODO 118 B measured): 50 cards published since then, blind, independent
   reviewers (mid model at least), WRONG on the checked face with its 95 % interval (`daily_audit/rates.py`), against the bar of
   5 %. Its result says whether the financial work reached the cards.
-- **Results page blanks, 29 Oct 2026 (measured on the live feed, 1,949 RESULTS cards).** The table's figures now come from memory, consolidated first, standalone only where memory has no consolidated figure, and a year-ago figure only on the quarter's own basis (`web/shared/memoryResults.ts`, `POST /api/results/memory`). Sample of 40 companies: 19 blank cells against 35 from the card. Still blank, because memory holds no year-ago figure: TODO 132 (319 company tables). The card's own table is unchanged and still shows in the expanded card. TODO 131 (119 cards with no table: half-year and annual filings) is the pipeline's to fix.
 - Waiting for the owner: TODO 118 A/B/C; the PDF reader's switches (`SLIP_CHECK_NUMFIRST`, `PDF_SHADOW`).
 
 **Owner, 28 Oct, ~15:40 IST: "No blind audit of cards today", "Let's settle financial first".** The card audit and the

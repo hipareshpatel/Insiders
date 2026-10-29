@@ -52,7 +52,7 @@ XBRL_FILER_CHECKS, LINE_MAP, CRITIC. The 13 were switched on on 27 Oct at the ow
 ON"); their release check never finished (run 40407491267 stopped at 6 hours with nothing saved), so the measurement is
 the blind audit in section 3.
 
-### Switches: what each off one does, and the owner's call (30 Oct 2026, 00:25 IST)
+### Switches: what each off one does, and the owner's call (30 Oct 2026, 00:20 IST)
 
 A switch turns a rule that is already on `main` on or off, without new code. Code goes to `main` only after the tests, a
 blind review and a measurement; a switch then decides whether the rule acts on live cards. The owner decides each line.

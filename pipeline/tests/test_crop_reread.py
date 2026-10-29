@@ -63,3 +63,53 @@ def test_crop_text_parsing():
     assert nf.figure_from_crop("1,912.15 17.15", 2) is None       # two figures
     assert nf.figure_from_crop("1(1.93)", 2) is None
     assert nf.figure_from_crop("", 2) is None
+
+
+def test_a_reread_never_helps_name_a_row():
+    # review of 0b30926: revenue printed in one column only; one re-read made the identity checkable in two columns and named
+    # revenue, total income and other income on that alone
+    t = table(revenue=[None, 1896.41, None, None, None], rereads={(0, 0): nf.figure_from_crop("1,912.15", 2)})
+    assert "revenue" not in t.named and "total_income" not in t.named
+
+
+def test_a_crop_pass_that_fails_part_way_leaves_the_table_as_it_was(monkeypatch):
+    # review of 0b30926: the first empty cell's re-read stayed on the table when a later crop raised
+    import cv2
+    import numpy as np
+    from bse_intel import ocr
+    labels = ["Revenue from operations", "Other income", "Total income (I+II)", "Cost of materials", "Employee benefits",
+              "Total expenses", "Profit before tax", "Tax expense"]
+    data = [[None, 1896.41, 1436.43, 3808.56, 6512.46], [17.15, 73.78, 23.63, 90.93, 152.40],
+            [1929.30, 1970.19, 1460.06, 3899.49, 6664.86], [900.10, 800.20, None, 1700.30, 3000.10],
+            [100.10, 110.20, 120.30, 210.30, 400.10], [1000.20, 910.40, 820.60, 1910.60, 3400.20],
+            [929.10, 1059.79, 639.46, 1988.89, 3264.66], [200.10, 210.20, 220.30, 410.30, 800.10]]
+    cols = [nf.Column(100 * j, 100 * j + 60, 100 * j + 30, j, d, k, True) for j, (d, k) in enumerate(zip(COLS, KINDS))]
+    rows = [nf.NRow(10.0 * (n + 1), 10.0 * n + 5, 10.0 * n + 15, lb, [cell(v) for v in vals]) for n, (lb, vals) in enumerate(zip(labels, data))]
+    t = nf.Table_solved(nf.Table(1, "CONSOLIDATED", 1.0, cols, rows, "ocr"))
+    png = cv2.imencode(".png", np.full((40, 100, 3), 255, np.uint8))[1].tobytes()
+
+    class Pix:
+        def tobytes(self, fmt):
+            return png
+
+    class Page:
+        rotation = 0
+
+        def get_pixmap(self, clip=None, dpi=300):
+            return Pix()
+
+    known = [(i, j) for i, r in enumerate(t.rows) for j, c in enumerate(r.cells) if c is not None and not c.nil and c.strict]
+    sample = [known[int(n * len(known) / 6)] for n in range(6)]
+    queue = [(f"{t.rows[i].cells[j].value:,.2f}", False) for i, j in sample for _ in range(2)] + [("1,912.15", False)] * 2
+
+    def fake(image):
+        if not queue:
+            raise RuntimeError("crop failed")
+        return queue.pop(0)
+
+    monkeypatch.setattr(ocr, "read_cell", fake)
+    try:
+        nf.reread_empty_cells(Page(), t, 0.0, 1.0, [220])
+    except RuntimeError:
+        pass
+    assert t.rereads == {}

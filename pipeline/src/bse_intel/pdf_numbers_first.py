@@ -926,7 +926,7 @@ class Solver:
     def cell(self, i: int, j: int) -> Cell | None:
         return self.t.rows[i].cells[j]
 
-    def mask(self, proof: Proof) -> list[bool | None]:
+    def mask(self, proof: Proof, rereads: bool = True) -> list[bool | None]:
         """Per column: True when the identity holds, False when it is broken, None when a cell is missing. A cell read again
         from a crop (``Table.rereads``) takes the place of ONE missing cell of an identity in a column, and only counts when the
         identity then holds EXACTLY (no rounding tolerance for any term: the sum of the printed figures equals the printed
@@ -940,7 +940,7 @@ class Solver:
             cs = [(self.cell(r, j), s) for r, s in parts]
             if a is None or any(c is None for c, _ in cs):
                 gaps = [r for r in rows if self.cell(r, j) is None]
-                if len(gaps) == 1 and (gaps[0], j) in self.t.rereads:
+                if rereads and len(gaps) == 1 and (gaps[0], j) in self.t.rereads:
                     got = {r: self.cell(r, j) or self.t.rereads[(r, j)] for r in rows}
                     total = sum(s * got[r].value for r, s in parts)
                     out.append(True if abs(got[target].value - total) <= REREAD_EXACT else None)
@@ -966,8 +966,9 @@ class Solver:
 
     def valid(self, proof: Proof) -> bool:
         """The identity holds in at least three columns (all of them when fewer can be checked), is broken in at most one, and is
-        not made of zeros."""
-        mask = self.mask(proof)
+        not made of zeros. A re-read cell never counts here: it may give an answer from a row the printed cells already
+        name, never help name one (review of 0b30926: one normal column plus one re-read column named a row)."""
+        mask = self.mask(proof, rereads=False)
         checked = sum(v is not None for v in mask)
         holds = sum(v is True for v in mask)
         fails = sum(v is False for v in mask)
@@ -1742,15 +1743,15 @@ def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[
     if bad or ok < REREAD_CALIBRATE_SHARE * REREAD_CALIBRATE:
         table.note = (table.note + "; " if table.note else "") + f"crop grid not trusted ({ok}/{REREAD_CALIBRATE} known cells read back)"
         return 0
-    found = 0
+    found: dict[tuple[int, int], Cell] = {}       # set on the table only once every crop is read: a failure leaves it as it was
     for i, j in wanted[:MAX_REREAD_TABLE]:
         if budget[0] <= 0:
             break
         got = read(i, j)
         if got is not None:
-            table.rereads[(i, j)] = got
-            found += 1
-    return found
+            found[(i, j)] = got
+    table.rereads.update(found)
+    return len(found)
 
 
 def _rect(t):

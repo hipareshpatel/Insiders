@@ -1106,6 +1106,7 @@ class Solver:
                 self.chain_from(t, k, ti_proof)
             self.nested_income(t)
             self.parts_income(t)
+            self.bank_income(t)
         if "total_income" not in self.explanations:
             # no chain below it: a total income by its label AND the arithmetic (never the label alone)
             for t in range(1, self.n):
@@ -1159,6 +1160,92 @@ class Solver:
             if self.valid(proof):
                 self.chain_from(t, (parts, t - 1), proof)
             return
+
+    _OF_WHICH = re.compile(r"^\W*(?:\w{1,2}\W+)?of\s+which\b", re.I)
+
+    def bank_hops(self, start: int) -> list[tuple[int, list[Proof]]]:
+        """Rows reached from ``start`` over the rows between that are not "Of which ..." lines: a bank's provisions are followed by
+        "Of which provisions for non-performing assets", a part of the provisions that is not taken off again (UNIONBANK).
+        Only the rows between that do not say "of which" are in the sum; the identity is the table's own."""
+        found: list[tuple[int, list[Proof]]] = []
+        for x in range(start + 2, min(self.n, start + 6)):
+            between = list(range(start + 1, x))
+            used = [r for r in between if not self._OF_WHICH.match(self.t.rows[r].label)]
+            if len(used) == len(between) or not 1 <= len(used) <= 3 or any(self.cls[r] not in self.HOP_OK for r in used):
+                continue
+            for signs in itertools.product((1, -1), repeat=len(used)):
+                proof: Proof = (x, ((start, 1),) + tuple(zip(used, signs)))
+                if self.valid(proof):
+                    found.append((x, [proof]))
+                    break
+        return found
+
+    BANK_LEVEL = re.compile(r"operating\s+profit|profit\s+before\s+provision", re.I)
+    BANK_SEGMENT = re.compile(r"segment|treasury|retail\s+banking|wholesale|corporate\s*/?\s*(?:wholesale\s+)?banking", re.I)
+
+    BANK_CARRIED = re.compile(r"associate|minorit|share\s+(?:of|in)\b|discontinu", re.I)
+
+    def bank_carried_on(self, a: int) -> bool:
+        """A row after a bank's profit after tax ``a`` that is an associate's share, a minority's share or discontinued
+        operations and is not nil (or is unreadable): the bottom line is further down, so ``a`` is not the profit."""
+        for r in range(a + 1, min(self.n, a + 9)):
+            label = re.sub(r"before\s+minorit\w*", "", self.t.rows[r].label, flags=re.I)   # "profit for the period before minority interest"
+            if self.cls[r] in ("ASSOC", "DISC") or self.BANK_CARRIED.search(label):
+                if any(c is None or abs(c.value) > 1e-9 for c in self.t.rows[r].cells):
+                    return True
+        return False
+
+    def parts_sum(self, head: int, first: int, last: int) -> bool:
+        """The rows ``first``..``last`` (the printed parts of the row ``head``) add up to it; no parts is also fine."""
+        return first > last or self.valid((head, tuple((r, 1) for r in range(first, last + 1))))
+
+    def bank_income(self, t: int) -> None:
+        """A bank's statement (RBI format): "1 Interest earned (a)+(b)+(c)+(d)" printed over its parts, "2 Other income" (also over
+        its parts, ICICI's group), "3 Total income (1+2)" = the two; "4 Interest expended", "5 Operating expenses" (over its
+        parts), "6 Total expenditure (4+5)"; "7 Operating profit (3-6)", then provisions and the exceptional items down to the
+        profit before tax, the tax and the profit after tax. Every identity is the table's own (the parts of each line
+        add up to it, the totals are sums of the two lines), so the chain runs through eight or more of them. The two-row
+        sums of a corporate chain cannot see it: the parts stand between the lines. Revenue is the interest earned (the
+        bench key's revenue for a bank), other income the second line."""
+        if not self.label_ok(t, {"TI"}):
+            return
+        for b in range(t - 1, max(t - 5, 0), -1):
+            if not self.label_ok(b, {"OI"}) or not self.parts_sum(b, b + 1, t - 1):
+                continue
+            for a in range(b - 1, max(b - 9, -1), -1):
+                if not self.label_ok(a, {"REV"}) or not self.parts_sum(a, a + 1, b - 1):
+                    continue
+                ti_proof: Proof = (t, ((a, 1), (b, 1)))
+                if b - a < 2 or not self.valid(ti_proof):
+                    continue            # the parts stand between them: adjacent rows are the corporate chain's
+                self.bank_chain_from(t, a, b, ti_proof)
+
+    def bank_chain_from(self, t: int, a: int, b: int, ti_proof: Proof) -> None:
+        for c in (t + 1, t + 2):                      # interest expended
+            for e in range(c + 2, min(self.n, c + 12)):    # total expenditure = interest expended + operating expenses
+                if not self.label_ok(e, {"TE"}):
+                    continue
+                for d in range(c + 1, e):
+                    te_proof: Proof = (e, ((c, 1), (d, 1)))
+                    if not self.parts_sum(d, d + 1, e - 1) or not self.valid(te_proof):
+                        continue
+                    if any(self.BANK_SEGMENT.search(self.t.rows[r].label) for r in range(a, e + 1)):
+                        continue            # a segment table has its own chain: never a bank's statement of results
+                    for p in range(e + 1, min(self.n, e + 4)):      # operating profit
+                        p_proof: Proof = (p, ((t, 1), (e, -1)))
+                        if not self.label_ok(p, {"PBEI", "PBT", "TAX", "EXC"}) or not self.valid(p_proof):
+                            continue
+                        self.chains += 1
+                        pending: list = [("expenses", (e,), [te_proof]), ("total_income", (t,), [p_proof]),
+                                         ("total_income", (t,), [ti_proof]), ("revenue", (a,), [ti_proof]),
+                                         ("other_income", (b,), [ti_proof])]
+                        completed = self.profit_tail(p, p_proof, pending, bank=True)
+                        said = self.cls[t] == "TI" or self.cls[e] == "TE" or any(
+                            self.cls[x] == "PBT" for x, _ in self.hops(p))
+                        if not (said or completed):
+                            continue
+                        for metric, rows, proofs in pending:
+                            self.add(metric, rows, proofs)
 
     def name_income(self, t: int, k, proof: Proof) -> None:
         """``k``: the number of rows right above the total that add up to it, or the (revenue, other income) rows of a nested
@@ -1225,6 +1312,45 @@ class Solver:
             if len(oi) == 1 and (rows_rev_ok or not list_item(self.t.rows[oi[0]].label)):
                 self.add("other_income", (oi[0],), [proof])
 
+    def profit_tail(self, p: int, p_proof: Proof, pending: list, bank: bool = False) -> bool:
+        """From the row ``p`` (profit before exceptional items, or a bank's operating profit): the hops to the profit before tax,
+        the tax and the profit after tax are added to ``pending``. True when a profit after tax was reached. ``bank``: a profit
+        carried on by a later associate's share, a minority or a discontinued block is never the bottom line (the chain's own
+        arithmetic cannot name it)."""
+        completed = False
+        for b, hop_proofs in self.hops(p) + (self.bank_hops(p) if bank else []):
+            # a bank's profit before tax shares its row with the exceptional items' line, whose label then leads the stitched
+            # label (UNIONBANK: "E. Exceptional Items Profit/(Loss) from Oridnary Activi..."); the arithmetic (provisions,
+            # exceptional items nil, then a tax that leads to a profit after tax) is what names it
+            if not self.label_ok(b, {"PBT", "EXC"} if bank else {"PBT"}):
+                continue
+            # the three profit levels stay apart: the operating profit (the row ``p`` itself, or a label saying "operating") is
+            # never the profit before tax
+            if bank and (b == p or self.BANK_LEVEL.search(self.t.rows[b].label)):
+                continue
+            if self.cls[b] == "PBT":          # the label says profit before tax and the arithmetic reaches it
+                pending.append(("pbt", (b,), [p_proof] + hop_proofs))
+            for a, block, pat_proof in self.tax_and_pat(b):
+                completed = True
+                pending.append(("pbt", (b,), [p_proof] + hop_proofs))
+                pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
+                if block:
+                    pending.append(("tax", block, [pat_proof]))
+                carried = self.carried_on(a)
+                if bank and not isinstance(carried, tuple) and self.bank_carried_on(a):
+                    carried = (a, None)
+                if isinstance(carried, tuple):
+                    # the arithmetic alone says the profit is carried on, and the labels cannot tell an associate's
+                    # share from a total comprehensive income (eleventh review): no profit from this table at all
+                    self.pat_unsure = True
+                elif self.label_ok(a, {"PAT"}) and carried != "label" \
+                        and not (bank and re.search(r"operating|before", self.t.rows[a].label, re.I)):
+                    pending.append(("pat", (a,), [pat_proof]))
+                # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
+                for x, ext in self.pat_extensions(a):
+                    pending.append(("pat", (x,), [pat_proof] + ext))
+        return completed
+
     def chain_from(self, t: int, k, ti_proof: Proof) -> None:
         """Total income at row ``t`` (its identity holds): look below it for total expenses, the profit identity, the hops to
         the profit before tax, the tax and the profit after tax. The names are kept only when a label of the chain says what
@@ -1246,28 +1372,7 @@ class Solver:
                         # the profit identity ties total income, total expenses and the profit before exceptional items together
                         # in the period's column: where a part of a sum is not legible there, it proves each of the three alone
                         ("total_income", (t,), [p_proof]), ("expenses", (e,), [p_proof])]
-                    completed = False
-                    for b, hop_proofs in self.hops(p):
-                        if not self.label_ok(b, {"PBT"}):
-                            continue
-                        if self.cls[b] == "PBT":          # the label says profit before tax and the arithmetic reaches it
-                            pending.append(("pbt", (b,), [p_proof] + hop_proofs))
-                        for a, block, pat_proof in self.tax_and_pat(b):
-                            completed = True
-                            pending.append(("pbt", (b,), [p_proof] + hop_proofs))
-                            pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
-                            if block:
-                                pending.append(("tax", block, [pat_proof]))
-                            carried = self.carried_on(a)
-                            if isinstance(carried, tuple):
-                                # the arithmetic alone says the profit is carried on, and the labels cannot tell an associate's
-                                # share from a total comprehensive income (eleventh review): no profit from this table at all
-                                self.pat_unsure = True
-                            elif self.label_ok(a, {"PAT"}) and carried != "label":
-                                pending.append(("pat", (a,), [pat_proof]))
-                            # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
-                            for x, ext in self.pat_extensions(a):
-                                pending.append(("pat", (x,), [pat_proof] + ext))
+                    completed = self.profit_tail(p, p_proof, pending)
                     said = self.cls[t] == "TI" or self.cls[e] == "TE" or self.cls[p] in ("PBEI", "PBT")
                     if not (said or completed):
                         continue

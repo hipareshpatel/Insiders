@@ -1299,3 +1299,84 @@ def test_a_numbered_associates_share_carries_the_chain_to_the_profit(label):
     for metric in ("pbt", "pat"):
         got = read(statement(rows, title="Statement of Consolidated Financial Results"), metric, basis="CONSOLIDATED")
         assert got.status == "ok" and got.value == pytest.approx(crore(want[metric][0])), (metric, got)
+
+
+def bank_rows(op_label="7 Operating profit before provisions and contingencies (3-6)", pbt_label="9 Profit before tax (7-8)",
+              pat_label="11 Net profit for the period (9-10)"):
+    """An RBI-format bank statement (RBLBANK, KARURVYSYA, UNIONBANK Q2FY27): the parent lines over their parts, two subtractions
+    before the tax (operating profit, then provisions), an "Of which" line under the provisions that is not taken off again."""
+    add = lambda *xs: [round(sum(v), 2) for v in zip(*xs)]       # noqa: E731
+    sub = lambda a, b: [round(x - y, 2) for x, y in zip(a, b)]   # noqa: E731
+    adv, inv, rbi = [2410.55, 2301.4, 2205.12, 4711.95], [905.3, 880.12, 851.07, 1785.42], [61.2, 58.33, 55.9, 119.53]
+    earned = add(adv, inv, rbi)
+    other = [912.35, 870.6, 801.44, 1782.95]
+    total = add(earned, other)
+    expended = [1950.4, 1871.25, 1790.6, 3821.65]
+    emp, oth = [610.2, 598.7, 570.15, 1208.9], [720.45, 690.3, 655.8, 1410.75]
+    opex = add(emp, oth)
+    expenditure = add(expended, opex)
+    op = sub(total, expenditure)
+    prov, npa = [420.15, 401.3, 380.6, 821.45], [300.1, 290.5, 270.3, 590.6]
+    pbt = sub(op, prov)
+    tax = [101.25, 95.4, 90.1, 196.65]
+    pat = sub(pbt, tax)
+    rows = [(["1 Interest earned (a)+(b)+(c)"], earned), (["(a) Interest/discount on advances/bills"], adv),
+            (["(b) Income on investments"], inv), (["(c) Interest on balances with RBI"], rbi), (["2 Other income"], other),
+            (["3 Total income (1+2)"], total), (["4 Interest expended"], expended), (["5 Operating expenses (i)+(ii)"], opex),
+            (["(i) Employees cost"], emp), (["(ii) Other operating expenses"], oth), (["6 Total expenditure (4+5)"], expenditure),
+            ([op_label], op), (["8 Provisions (other than tax) and contingencies"], prov),
+            (["Of which provisions for non-performing assets"], npa), ([pbt_label], pbt), (["10 Tax expense"], tax),
+            ([pat_label], pat)]
+    return rows, dict(revenue=earned, total_income=total, op=op, pbt=pbt, pat=pat)
+
+
+def test_a_bank_statement_is_read_through_its_own_chain():
+    # RBLBANK, KARURVYSYA, UNIONBANK Q2FY27: none of a bank's lines was named (its parts stand between the lines a corporate
+    # chain adds); the key's revenue for a bank is the interest earned, its profit the net profit
+    rows, want = bank_rows()
+    pdf = statement(rows)
+    for metric in ("revenue", "total_income", "pbt", "pat"):
+        got = read(pdf, metric)
+        assert got.status == "ok" and got.value == pytest.approx(crore(want[metric][0])), (metric, got)
+
+
+@pytest.mark.parametrize("labels", [
+    dict(op_label="7 Profit before tax (3-6)", pbt_label="9 Profit after tax (7-8)", pat_label="11 Net profit (9-10)"),
+    dict(pbt_label="9 Operating profit after provisions (7-8)"),
+    dict(pat_label="11 Operating profit before tax"),
+])
+def test_a_banks_three_profit_levels_are_never_shifted(labels):
+    # the outside review's trap: with two subtractions before the tax, the operating profit can be named the profit before tax
+    # and that the profit after tax; whatever the labels, no profit is ever given from the wrong level
+    rows, want = bank_rows(**labels)
+    pdf = statement(rows)
+    for metric, wrong in (("pbt", want["op"]), ("pat", want["pbt"]), ("pat", want["op"])):
+        got = read(pdf, metric)
+        assert got.status != "ok" or got.value != pytest.approx(crore(wrong[0])), (metric, got)
+
+
+def test_a_banks_segment_table_is_not_its_statement():
+    rows, _ = bank_rows()
+    rows[0] = (["Segment revenue 1 Treasury"], rows[0][1])
+    pdf = statement(rows)
+    for metric in ("pbt", "pat"):
+        assert read(pdf, metric).status != "ok"
+
+
+def test_a_banks_profit_carried_on_by_associates_is_not_its_bottom_line():
+    # UNIONBANK consolidated: "L. Net profit (H-I-J+K)" after minority and associates; the profit after tax above them is not it
+    rows, want = bank_rows()
+    share = [12.5, 11.0, 9.8, 23.5]
+    rows += [(["12 Share in profit of associates"], share), (["13 Consolidated net profit for the period"],
+                                                             [round(a + b, 2) for a, b in zip(want["pat"], share)])]
+    got = read(statement(rows), "pat")
+    assert got.status != "ok" or got.value != pytest.approx(crore(want["pat"][0])), got
+
+
+def test_capital_adequacy_ratios_below_a_bank_statement_never_take_its_profit():
+    rows, want = bank_rows()
+    rows += [(["CET1 ratio (%)"], [12.1, 12.3, 12.0, 12.1]), (["AT1 ratio (%)"], [1.2, 1.2, 1.3, 1.2]),
+             (["Tier 1 ratio (%)"], [13.3, 13.5, 13.3, 13.3]), (["Tier 2 ratio (%)"], [2.1, 2.0, 2.2, 2.1]),
+             (["Capital adequacy ratio (%)"], [15.4, 15.5, 15.5, 15.4])]
+    got = read(statement(rows), "pat")
+    assert got.status != "ok" or got.value == pytest.approx(crore(want["pat"][0])), got

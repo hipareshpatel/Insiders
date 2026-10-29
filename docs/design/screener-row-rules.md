@@ -174,8 +174,8 @@ Income (2,340 exact, 686 apart) and Financing Profit (1,240 / 310).
 ### The standalone total without the deferred tax offset (run 40802884540, 29 Oct 2026, 07:21–07:43 IST, 741bec6)
 
 Against run 40800766534: 620 rows fixed, 141 broken (TCS, Infosys, Wipro and the other 12 of the 35 known), all four rows of
-the total and its balancing lines; 92.55 % → 92.63 % exact (FY25–FY27 94.08 % → 94.12 %). Kept; the 15 companies are under
-Known exceptions by this measurement.
+the total and its balancing lines; 92.55 % → 92.63 % exact (FY25–FY27 94.08 % → 94.12 %). Kept; the 15 companies are named in the balance sheet's Total row
+above.
 
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 

@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 29 Oct 2026, 18:45 IST.
+Last updated: 29 Oct 2026, 18:37 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -68,7 +68,7 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
-**29 Oct 2026, 18:45 IST: where the financial work stands (the blocks below are the record they came from).**
+**29 Oct 2026, 18:37 IST: where the financial work stands (the blocks below are the record they came from).**
 - Done today:
   - The Screener rows compare quarters from Q1FY26 only (owner); a period before a company's listing is "before listing",
     not "no facts". Re-run 40874998205: the six main rows of the FY26 quarters 96.7 % exact (94,251 pairs); target 98–98.5 %

@@ -34,7 +34,7 @@ annual-report XBRL for banks, NBFCs or insurers). Consolidated by default; stand
 | Interest | FinanceCosts + the financing arm's finance-cost row of OtherExpenses + BankCharges (out of Expenses) | Sector (conglomerates with a lending arm) + Wording; bank charges: Policy (any company that tags them) | HAL, IndiGo, IOC FY24–FY26, both bases: the yearly gap = BankCharges to within 0.5 Cr (e.g. IOC FY26 cons 8,307.88 + 46.22 = 8,354); L&T FY26 2,848.82 + 6,995.34 (+ bank charges 211.78, PDF note only) = 10,055.94; Grasim Q1FY26 816.2 + 2,734.5 = 3,550.71 |
 | Depreciation | DepreciationDepletionAndAmortisationExpense | Statement | 93 % exact |
 | Profit before tax | ProfitBeforeTax + associates' share + net movement in regulatory deferral balances + profit from discontinued operations after tax | Policy (associates are "other ordinary income"; screener has no discontinued line) + Sector (utilities) | HUL FY26 13,812 + 4,407 = 18,219 and Q3FY26 2,919 + 4,485 = 7,404 (ice-cream demerger); ITC Q3FY25 + 203.44 (hotels); 39 of 55 quarters with associates; Coal India Q4FY26 14,510.7 + 116.1 = 14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; Power Grid Q1FY26 4,330.2 + 212.8 − 44.4 = 4,498.57 |
-| Tax % | TaxExpense / Profit before tax (above) | Policy | 92 % quarters, 95 % years after the PBT rule |
+| Tax % | TaxExpense / the size of Profit before tax (above): a loss with a tax charge shows a positive rate | Policy | 92 % quarters, 95 % years after the PBT rule; L&T standalone Q2FY26 PBT −2,982, screener +20.0; the 500 largest: 289 quarters and 88 years exact by the size rule, 1 year broken |
 | Net Profit (website) | ProfitLossForPeriod (whole profit) | Policy (contradicts the help page; measured, docs/bench/screener-rules.md row 5) | 90 % quarters, 95 % years |
 | Net Profit (Excel Data Sheet) | ProfitOrLossAttributableToOwnersOfParent | Policy | Airtel FY26 26,695.2; Reliance FY26 80,775 |
 | Exceptional items AT | exceptional − tax × exceptional / PBT (the exceptional item itself if that tax is larger) | Policy (help article 42) | carried, not on the page |
@@ -56,7 +56,9 @@ Breakdown-row patterns (Wording; `screener_view.py` / `screener_parts.py` consta
 | Net Profit (Excel Data Sheet) | ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates | ICICI 54,208, SBI 83,299 |
 | Deposits / Borrowing | separate lines (screener, March 2025) | 100 % on the banks compared |
 
-NBFC and insurer templates: only Revenue, Interest, Depreciation, PBT, Tax, Net Profit, cash flows, Equity, Reserves have a recipe;
+NBFC and insurer templates: only Revenue, Interest, Depreciation, PBT (ProfitBeforeTax + the associates' share: Bajaj Holdings
+Q2FY24 + 1,464.08, Jio Financial Q3FY24 + 66.11, 93 quarters of NBFCs and holding companies in the 500 largest), Tax, Net Profit,
+cash flows, Equity, Reserves have a recipe;
 the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC needs its own insurer recipe).
 
 ## Balance sheet
@@ -65,7 +67,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 |---|---|---|---|
 | Equity Capital | EquityShareCapital | Statement | 97 % |
 | Reserves | OtherEquity | Statement | 97 % |
-| Borrowings | BorrowingsNoncurrent + BorrowingsCurrent + lease liabilities (elements, else described rows) + "current maturities" rows + bank-debt rows ("payable to banks", "due to banks", "gold on loan", "metal loan", "supplier's / buyer's credit"); a lease row counts only as "lease liabilities" ("lease" then "lia": filers misspell it, HUL "Lease Liablities", Coal India "Lease Liabiiities") | Policy (help article 11) + Sector (jewellers' gold loans; metals' supplier's credit) + Wording | Reliance FY26 270,751 + 103,670 + 23,579 + 4,962 = 402,962; Infosys 9,176; Titan standalone 7,043 / 14,314 payable to banks; Hindalco FY25 supplier's credit 1,713 (its temporary overdraft 13 is not counted); + CurrentMaturitiesOfFinanceLeaseObligations (58 rows of 23 companies in the 500 largest, the gap exactly); JSW Steel's "payable for sale and lease back" 1,286 is not debt |
+| Borrowings | BorrowingsNoncurrent + BorrowingsCurrent + lease liabilities (elements, else described rows) + "current maturities" rows + bank-debt rows ("payable to banks", "due to banks", "gold on loan", "metal loan", "supplier's / buyer's credit"); a lease row counts only as a lease liability or obligation ("lease" then "lia" / "lib" / "obl", or "liability for lease": filers misspell it, HUL "Lease Liablities", Coal India "Lease Liabiiities", Persistent "CurrentbLease Liability", MTAR "lease libaility"), also when filed under the non-financial other liabilities (Ambuja FY25 304.14, Concor FY24 746.11, Delhivery FY25 243.88) | Policy (help article 11) + Sector (jewellers' gold loans; metals' supplier's credit) + Wording | Reliance FY26 270,751 + 103,670 + 23,579 + 4,962 = 402,962; Infosys 9,176; Titan standalone 7,043 / 14,314 payable to banks; Hindalco FY25 supplier's credit 1,713 (its temporary overdraft 13 is not counted); + CurrentMaturitiesOfFinanceLeaseObligations (58 rows of 23 companies in the 500 largest, the gap exactly); JSW Steel's "payable for sale and lease back" 1,286 is not debt |
 | Fixed Assets | PPE + Goodwill + OtherIntangibleAssets + InvestmentProperty + right-of-use assets (element, else the described row of OtherNoncurrentAssets) | Policy | TCS FY26 + 11,027 right-of-use; L&T 3,774 |
 | CWIP | a year's column: CapitalWorkInProgress + IntangibleAssetsUnderDevelopment; the half-year column (September, from the results file): CapitalWorkInProgress only, intangibles under development in Fixed Assets | Policy (measured, by source) | Reliance FY26 237,686; HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27: CWIP and Fixed Assets both apart by IntangibleAssetsUnderDevelopment |
 | Investments | NoncurrentInvestments + CurrentInvestments + InvestmentsAccountedForUsingEquityMethod | Policy | 98 % |
@@ -113,6 +115,25 @@ The rules worked out on the top 50 run unchanged on the next 450: exact 91.0 % o
 material share agree with it, 326 do not (9 companies always against it: Adani Enterprises, BEL, DLF, Mazagon Dock, Natco,
 Petronet, Sun Pharma, Tata Communications, Tata Consumer; 29 mixed, Reliance and L&T among them). Weakest rows: Other
 Liabilities 59.6 %, Borrowings 65.4 %, yearly Operating Profit 72.1 %, Expenses 73.5 %, Other Income 75.1 %.
+
+### What the four parallel reviews of the 500 found (29 Oct 2026)
+
+- **The year's source decides most of the yearly misses.** Years read from the annual report: Expenses 82.4 % exact, Interest
+  96.3 %; years read from the Q4 results file (FY23 almost all, and FY26 where no report is stored yet): 58.6 % and 76.7 %. The
+  Q4 file carries no breakdown rows (levies, bank charges, the financing arm's cost, lease lines), so the fix is data: the FY24
+  annual reports, whose comparative column holds FY23. The same holds for Borrowings: 468 of its 1,045 misses are FY23 years
+  read from a results file with no lease breakdown at all (80 % of FY23 columns apart, 21–27 % of FY24–FY26).
+- **Screener's year is not the sum of its own quarters** in 83 % of the yearly misses (31 % of the exact rows): the year
+  carries a reclassification of the annual report. Summing quarters would fix 29 rows and break 377: rejected.
+- **The deferred tax offset on Total Assets has no single rule.** Consolidated years offset (465 annual-report rows exact with
+  it, 12 not); standalone is split (36 rows exact, 56 not; TCS, Infosys and Wipro standalone exact with it). "Offset only on
+  consolidated" would net +30 rows but has no reason behind it: not coded.
+- **Coincidences**, not rules: DeferredTax and other comprehensive income items on quarterly PBT (sign agrees in about half),
+  OtherNoncurrentFinancialLiabilities and ProvisionsNoncurrent on Borrowings (aggregates that happen to equal a gap).
+- **Still to settle:** an exception list for the 33 company-bases that leave the associates' share out of PBT (mixed quarters
+  in several, so a per-company rule needs the P&L layout); SRF's "payable to banks for discounted receivables" (one company);
+  CurrentMaturitiesOfLongTermDebt as its own element (4 companies, may already sit inside BorrowingsCurrent for others);
+  two public-sector banks with no tax fact read (Union Bank, Canara Bank).
 
 ## How a pattern is found
 

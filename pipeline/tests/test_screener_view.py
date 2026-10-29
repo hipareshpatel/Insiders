@@ -506,3 +506,31 @@ def test_current_maturities_of_finance_lease_obligations_are_borrowings_once():
                          + [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Current maturities of finance lease obligations"),
                             ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 6.0), (sv.FINANCE_LEASE_MATURITIES, "I2026", 6.0)]))
     assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 6
+
+
+def test_tax_percent_is_on_the_size_of_the_pbt():
+    """L&T standalone Q2FY26: PBT -2,982 with a tax charge, screener +20.0 (289 quarters of the 500 largest)."""
+    assert round(sv._tax_pct(596.4, -2982.0), 1) == 20.0 and sv._tax_pct(1.0, 0.0) is None
+
+
+def test_an_nbfcs_pbt_holds_the_associates_share():
+    """Bajaj Holdings Q2FY24 1,464.08, Jio Financial Q3FY24 66.11: screener's PBT includes the share."""
+    facts = xf.Facts(doc([("ProfitBeforeTax", "Q2026", 100.0), ("TaxExpense", "Q2026", 20.0), (sv.ASSOCIATES, "Q2026", 50.0)],
+                         kind="results", template="NBFC"))
+    got = values(sv.nbfc_pl(sv._Reader(facts, end=END, months=3)))
+    assert got["Profit before tax"] == 150.0 and got["PBT as filed"] == 100.0 and round(got["Tax %"], 2) == round(2000 / 150, 2)
+
+
+def test_lease_rows_under_non_financial_liabilities_and_misspelt_count_once():
+    """Ambuja FY25 "CURRENT LEASE LIABILITY" under other current liabilities; Persistent "CurrentbLease Liability";
+    MTAR "lease libaility"; a sale-and-lease-back payable is still not debt."""
+    for parent, words, counted in (("DescriptionOfOtherCurrentLiabilitiesOthers", "CURRENT LEASE LIABILITY", True),
+                                   ("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "CurrentbLease Liability", True),
+                                   ("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "lease libaility", True),
+                                   ("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "Payable for sale and lease back", False)):
+        amount = parent.replace("DescriptionOf", "")
+        row = [(parent, "D2026_M3", words), (amount, "I2026_M3", 5.0)]
+        if "FinancialLiabilities" not in parent:      # the same line on the parent too: counted once
+            row += [("DescriptionOfOtherCurrentLiabilities", "D2026_M4", words), ("OtherCurrentLiabilities", "I2026_M4", 5.0)]
+        facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3", "D2026_M4", "I2026_M4")] + row))
+        assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + (5 if counted else 0), words

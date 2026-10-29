@@ -115,7 +115,13 @@ EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # Steel "Payable for sale and lease back of an under construction asset" 1,286 Cr, which screener leaves out)
 # filers misspell the words (Hindustan Unilever "Lease Liablities" 365-404 Cr, Coal India "Lease Liabiiities" 3.30 Cr, both in
 # screener's figure), so the pattern is "lease" followed by "lia", not the whole word
-LEASE_ROW = r"\blease\s+lia"
+# and in other ways (Persistent "CurrentbLease Liability", MTAR "lease libaility", Belrise "Lease libilities", Avalon "Lease
+# Obligations", Asahi India "Liability for Leased ...": 16 rows of 8 companies in the 500 largest, screener above ours)
+LEASE_ROW = r"lease\w*\s*(lia|lib|obl)|liab\w*\s+for\s+leas"
+# a lease liability filed under the NON-financial other liabilities (Ambuja FY25 "CURRENT LEASE LIABILITY" 304.14, Concor FY24
+# "Lease liability-Ind AS 116" 746.11, Delhivery FY25 243.88: 18 rows of 12 companies, the gap exactly) is still debt
+LEASE_PARENTS = ("OtherNoncurrentLiabilitiesOthers", "OtherCurrentLiabilitiesOthers", "OtherNoncurrentLiabilities",
+                 "OtherCurrentLiabilities")
 BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(supplier|buyer)'?s'? credit"
 INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
 DISCONTINUED = "ProfitLossFromDiscontinuedOperationsAfterTax"
@@ -230,6 +236,12 @@ def _pct(num: float | None, den: float | None) -> float | None:
     return None if num is None or not den else 100.0 * num / den
 
 
+def _tax_pct(tax: float | None, pbt: float | None) -> float | None:
+    """Screener divides the tax by the size of the PBT: a loss with a tax charge shows a positive rate (L&T standalone Q2FY26,
+    PBT -2,982: screener +20.0; the 500 largest, run 40759776253: 289 quarters and 88 years exact by it, 1 year broken)."""
+    return None if tax is None or not pbt else 100.0 * tax / abs(pbt)
+
+
 # --- profit and loss -----------------------------------------------------------------------------------------------
 
 def _exceptional_rows(out: dict[str, Row], exceptional: float | None, tax: float | None, pbt: float | None,
@@ -328,7 +340,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     if filed_pbt is not None and pbt != filed_pbt:
         out["PBT as filed"] = Row(filed_pbt, "ProfitBeforeTax" + src)
     out["Tax"] = Row(tax, "TaxExpense" + src)
-    out["Tax %"] = Row(_pct(tax, pbt), "TaxExpense / Profit before tax" + src)
+    out["Tax %"] = Row(_tax_pct(tax, pbt), "TaxExpense / |Profit before tax|" + src)
     whole, owners = r.cr("ProfitLossForPeriod"), r.cr("ProfitOrLossAttributableToOwnersOfParent")
     out["Net Profit"] = Row(whole, ("ProfitLossForPeriod (whole profit)" if whole is not None else "missing ProfitLossForPeriod") + src
                             + (f"; owners' share {_fmt(owners)}" if owners is not None else ""))
@@ -369,7 +381,7 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
                                                                                         if (exc or 0) < 0 else "")
                                          if pbt_filed is not None else "missing ProfitLossFromOrdinaryActivitiesBeforeTax") + src)
     out["Tax"] = Row(tax, "TaxExpense" + src)
-    out["Tax %"] = Row(_pct(tax, pbt), "TaxExpense / Profit before tax" + src)
+    out["Tax %"] = Row(_tax_pct(tax, pbt), "TaxExpense / |Profit before tax|" + src)
     name = "ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates"
     net = r.cr(name)
     if net is None and r.cr("ProfitLossForThePeriod") is not None:
@@ -401,7 +413,13 @@ def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
                       ("Net Profit (owners)", "ProfitOrLossAttributableToOwnersOfParent")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
-    out["Tax %"] = Row(_pct(out["Tax"].value, out["Profit before tax"].value), "TaxExpense / ProfitBeforeTax" + src)
+    # the associates' share is in PBT as for every company (policy): the holding companies and NBFCs of the 500 largest were
+    # short by it in 93 quarters (Bajaj Holdings Q2FY24 1,464.08; Jio Financial Q3FY24 66.11; M&M Finance Q3FY24 12.75)
+    share, pbt = r.cr(ASSOCIATES), out["Profit before tax"].value
+    if share and pbt is not None:
+        out["PBT as filed"] = Row(pbt, "ProfitBeforeTax" + src)
+        out["Profit before tax"] = Row(pbt + share, f"ProfitBeforeTax + associates' share {_fmt(share)}" + src)
+    out["Tax %"] = Row(_tax_pct(out["Tax"].value, out["Profit before tax"].value), "TaxExpense / |Profit before tax|" + src)
     return out
 
 
@@ -446,6 +464,11 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False) -> dict[
         lease_note = f"lease {_fmt(lease)} ({', '.join(lease_names)})"
     else:
         rows = r.rows(LIABILITY_PARENTS, rf"{LEASE_ROW}|current maturit|{BANK_DEBT_ROW}")
+        seen = {(t, round(v, 2)) for _, t, v in rows}
+        for x in r.rows(LEASE_PARENTS, LEASE_ROW):      # a parent and its "Others" member can carry the same line
+            if (x[1], round(x[2], 2)) not in seen:
+                seen.add((x[1], round(x[2], 2)))
+                rows.append(x)
         lease_note = ""
     fl = r.cr(FINANCE_LEASE_MATURITIES)
     if fl:      # the element, not the same line again as a described row

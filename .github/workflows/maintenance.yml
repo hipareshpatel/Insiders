@@ -92,7 +92,8 @@
 #   report go up as the artifact `screener-crosscheck`. Commits nothing.
 # - screener-rows: read only. Every screener website row of the stored screener pages against one fixed recipe a row worked out
 #   from the stored XBRL facts in R2 (raw/xbrl-facts/, screener_view.py); no NSE, BSE or screener request. `ids` = companies,
-#   `limit` = the N largest by market cap (default 50). summary.json, rows.csv and screener-rows.md go up as the artifact
+#   `limit` = the N largest by market cap (default 50; 10000 = every company), 24 companies read at a time (the stored facts
+#   are network reads, no AI). summary.json, rows.csv and screener-rows.md go up as the artifact
 #   `screener-rows`, always. Group maint-ro-screener-rows. Commits nothing.
 # - xbrl-facts (owner, 28 Oct 2026: "save everything from XBRL"): every fact of each results XBRL file already stored in R2
 #   (raw/xbrl/, F191) is kept as raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz, outside the dossier, for the screener
@@ -756,7 +757,7 @@ jobs:
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/screener-rows"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-rows ${IDS:+--scrips "$IDS"} --top-mcap "${LIMIT:-50}" --json "$RUNNER_TEMP/screener-rows/summary.json" --csv "$RUNNER_TEMP/screener-rows/rows.csv" --md "$RUNNER_TEMP/screener-rows/screener-rows.md" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-rows ${IDS:+--scrips "$IDS"} --top-mcap "${LIMIT:-50}" --workers 24 --json "$RUNNER_TEMP/screener-rows/summary.json" --csv "$RUNNER_TEMP/screener-rows/rows.csv" --md "$RUNNER_TEMP/screener-rows/screener-rows.md" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'screener-rows'

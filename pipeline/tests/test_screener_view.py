@@ -607,3 +607,11 @@ def test_screener_expense_sub_rows_name_the_part_apart_and_the_lines_inside_it()
     where, found = sv.part_gaps(r, 600.0, answer, "Mar 2026", 1000.0, 42.0)
     assert where == "rest +42"
     assert "Freight outward" in found and "Commission to selling agents" in found
+
+
+def test_expense_parts_take_the_rest_from_screeners_total_and_round_by_the_places_shown():
+    # the quarters' sub-rows: material and employee only; whole percents round to half a percent of Sales
+    got, slack = sv.expense_parts({"Material Cost %": {"Mar 2026": "72%"}, "Employee Cost %": {"Mar 2026": "4.90%"}},
+                                  "Mar 2026", 1000.0, 870.0)
+    assert got == pytest.approx({"material": 720.0, "employee": 49.0, "rest": 101.0})
+    assert slack["material"] == pytest.approx(5.0) and slack["employee"] == pytest.approx(0.05)

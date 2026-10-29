@@ -273,16 +273,27 @@ def _percent_text(text) -> float | None:
         return None
 
 
-def expense_parts(answer: dict, column: str, sales: float) -> dict[str, float] | None:
-    """Screener's material, employee and the rest (manufacturing + other) in crore, from its Expenses sub-rows of one column."""
-    got = {}
+def expense_parts(answer: dict, column: str, sales: float, expenses: float) -> tuple[dict[str, float], dict[str, float]] | None:
+    """Screener's material and employee cost in crore from its Expenses sub-rows of one column, and the rest as its Expenses
+    less those two (the quarters' sub-rows have no manufacturing or other cost); with each part's rounding in crore, as screener
+    shows a percent to two places for some companies and to whole numbers for others (Maruti FY26 "72%": about 900 Cr)."""
+    got, slack = {}, {}
     for name, row in (answer or {}).items():
-        if isinstance(row, dict) and (v := _percent_text(row.get(column))) is not None:
-            got[name.lower()] = v * sales / 100
+        if not isinstance(row, dict) or (v := _percent_text(raw := row.get(column))) is None:
+            continue
+        places = len(str(raw).split(".")[1].rstrip("% ")) if "." in str(raw) else 0
+        for part in ("material", "employee"):
+            if part in name.lower():
+                got[part] = got.get(part, 0.0) + v * sales / 100
+                slack[part] = slack.get(part, 0.0) + 0.5 * 10 ** -places * abs(sales) / 100
     if not got:
         return None
-    pick = lambda word: sum(v for k, v in got.items() if word in k)
-    return {"material": pick("material"), "employee": pick("employee"), "rest": pick("manufacturing") + pick("other")}
+    got.setdefault("material", 0.0)
+    got.setdefault("employee", 0.0)
+    got["rest"] = expenses - got["material"] - got["employee"]
+    slack = {"material": slack.get("material", 0.0), "employee": slack.get("employee", 0.0)}
+    slack["rest"] = slack["material"] + slack["employee"]
+    return got, slack
 
 
 def part_lines(r: _Reader) -> list[tuple[str, float]]:
@@ -312,18 +323,19 @@ def lines_making(cand: list[tuple[str, float]], gap: float, most: int = 3, limit
 
 def part_gaps(r: _Reader, ours_expenses: float, answer: dict, column: str, sales: float, gap: float) -> tuple[str, str]:
     """(which part holds the gap, the lines inside that part that make it) for an Expenses row apart."""
-    theirs = expense_parts(answer, column, sales)
-    if theirs is None:
+    parts = expense_parts(answer, column, sales, ours_expenses + gap)     # screener's Expenses: ours + its gap
+    if parts is None:
         return "", ""
+    theirs, slack = parts
     mat = sum(v for n in MATERIAL if (v := r.cr(n)) is not None)
     emp = sum(v for n in EMPLOYEE if (v := r.cr(n)) is not None)
     ours = {"material": mat, "employee": emp, "rest": ours_expenses - mat - emp}
-    slack = max(ABS_TOL, abs(sales) * 0.0001)      # a percent to two places
     gaps = {k: theirs[k] - ours[k] for k in ours}
-    where = ", ".join(f"{k} {gaps[k]:+.0f}" for k in gaps if abs(gaps[k]) > slack) or "no part apart"
-    alone = [k for k in gaps if abs(gaps[k]) > slack]
+    tol = {k: max(ABS_TOL, slack[k]) for k in ours}
+    alone = [k for k in gaps if abs(gaps[k]) > tol[k]]
+    where = ", ".join(f"{k} {gaps[k]:+.0f}" for k in alone) or "no part apart beyond rounding"
     found = ""
-    if len(alone) == 1 and abs(gaps[alone[0]] - gap) <= 2 * slack:
+    if len(alone) == 1 and tol[alone[0]] < abs(gap) / 2:
         found = "; ".join(lines_making(part_lines(r), gaps[alone[0]]))
     return where, found
 
@@ -1029,7 +1041,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
     by_part_line: dict[str, set[str]] = {}
     for r in rows:
         if r.get("parts"):
-            for part in re.findall(r"(material|employee|rest) [+-]", r["parts"]) or ["no part apart"]:
+            for part in re.findall(r"(material|employee|rest) [+-]", r["parts"]) or ["no part apart beyond rounding"]:
                 by_part[f"{r['table']}: {part}"] = by_part.get(f"{r['table']}: {part}", 0) + 1
         for found in filter(None, (r.get("part lines") or "").split("; ")):
             label = re.sub(r" -?[\d,]+\.\d\d", "", found).lower()

@@ -21,9 +21,10 @@ def _doc(name):
 
 def test_a_march_quarter_file_gives_its_pl_balance_sheet_and_years_cash_flow():
     d = {}
-    assert statements.remember(d, _doc("nse_dolphin_q4fy24_cons.xml"), "n1", AS_OF, AT) == 3
+    assert statements.remember(d, _doc("nse_dolphin_q4fy24_cons.xml"), "n1", AS_OF, AT) == 4
     by = {e["table"]: e for e in d["statements"]}
-    assert set(by) == {"quarters", "balance", "cash_flow"}
+    assert set(by) == {"quarters", "balance", "annual", "cash_flow"}
+    assert (by["annual"]["period"], by["cash_flow"]["period"], by["balance"]["period"]) == ("FY24", "FY24", "Q4FY24")
     q = by["quarters"]
     assert (q["period"], q["basis"], q["source_news_id"], q["lab"]["by"], q["lab"]["rules"]) == \
         ("Q4FY24", "CONSOLIDATED", "n1", "file", "screener_view")
@@ -44,8 +45,8 @@ def test_a_revised_file_replaces_the_same_period_basis_and_table_and_nothing_els
     statements.remember(d, _doc("nse_dolphin_q4fy24_cons.xml"), "n1", AS_OF, AT)
     statements.remember(d, _doc("nse_dolphin_q4fy24_cons.xml"), "n9", AS_OF, AT)
     keys = [(e["period"], e["table"], e.get("source_news_id")) for e in d["statements"]]
-    assert ("Q3FY24", "quarters", None) in keys and len(keys) == 4
-    assert {k[2] for k in keys if k[0] == "Q4FY24"} == {"n9"}
+    assert ("Q3FY24", "quarters", None) in keys and len(keys) == 5
+    assert {k[2] for k in keys if k[0] in ("Q4FY24", "FY24")} == {"n9"}
 
 
 def test_bad_bytes_never_raise_and_write_nothing():

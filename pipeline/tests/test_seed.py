@@ -474,4 +474,4 @@ def test_the_seed_keeps_each_quarter_as_screener_tables_too():
     seed_results(sink, None, "522261", "Dolphin Offshore", "2023-01-01", None, stats, company={},
                  nse=Nse([row], {url: data}), symbol="DOLPHIN")
     tables = {(e["period"], e["table"]) for e in sink.dossiers["522261"].get("statements", [])}
-    assert {("Q4FY24", "quarters"), ("Q4FY24", "balance"), ("Q4FY24", "cash_flow")} <= tables
+    assert {("Q4FY24", "quarters"), ("Q4FY24", "balance"), ("FY24", "annual"), ("FY24", "cash_flow")} <= tables

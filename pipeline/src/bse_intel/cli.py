@@ -2145,8 +2145,8 @@ def cmd_statements_backfill(args, settings, sink) -> int:
     run by default, --apply backs each dossier up first; at most --limit companies a run, resuming. No NSE, BSE or AI."""
     from . import statements_backfill as sb
 
-    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()] or sink.list_dossiers()
-    outcome = sb.run(sink, scrips, args.apply, args.limit, args.restart)
+    named = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+    outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
     print(sb.render(outcome))
     if args.json:
         Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

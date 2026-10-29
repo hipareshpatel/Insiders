@@ -41,6 +41,25 @@ def test_apply_fills_memory_backs_up_resumes_and_restores(settings):
     assert sink.get_dossier("522261") == before
 
 
+def test_named_companies_neither_read_nor_move_the_resume_point(settings):
+    sink = _sink(settings)
+    sink.kv_set(sb.RESUME_KEY, "540000", "2026-10-30T02:00:00+05:30")
+    out = sb.run(sink, ["522261"], apply=True, named=True)
+    assert out["written"] == 1 and sink.kv_get(sb.RESUME_KEY) == "540000"
+
+
+def test_the_live_and_backfill_tables_share_their_columns(settings):
+    """A March file's year is one column whichever writer filled it first (blind review: "Q4FY26" and "FY26" both showed
+    as Mar 2026)."""
+    from bse_intel import statements
+    sink = _sink(settings)
+    d = sink.get_dossier("522261")
+    statements.remember(d, xbrl_facts.loads(sink.get_object(xbrl_facts.key("522261", "Q4FY24", "CONSOLIDATED"))), "n1",
+                        "2024-05-20T18:00:00+05:30", "2024-05-20T18:01:00+05:30")
+    sink.put_dossier("522261", d)
+    assert sb.run(sink, ["522261"], apply=True, named=True)["entries"] == 0
+
+
 def test_a_quarter_far_from_memorys_revenue_is_left_out(settings):
     sink = _sink(settings, revenue=194.78)   # memory holds the figure 100x the stored file: a slip memory put right
     out = sb.run(sink, ["522261"])

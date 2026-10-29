@@ -39,7 +39,11 @@ _QUARTER = re.compile(r"Q[1-4]FY\d{2}")
 
 
 def _memory_revenue(dossier: dict, period: str, basis: str) -> float | None:
-    for m in dossier.get("financial_metrics", []):
+    """Memory's own top line for the period and basis: the main figures, and a consolidated filer's standalone block."""
+    rows = list(dossier.get("financial_metrics", []))
+    if basis == "STANDALONE":
+        rows += [dict(m, basis="STANDALONE") for m in (dossier.get("standalone") or {}).get("metrics", [])]
+    for m in rows:
         if m.get("period") == period and m.get("metric") in ("revenue", "interest_earned") and m.get("basis") in (basis, None) \
                 and isinstance(m.get("value"), (int, float)):
             return float(m["value"])
@@ -66,13 +70,14 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
             values = {name: row.value for name, row in (rows or {}).items() if row.value is not None}
             if not values:
                 continue
-            if table == "quarters":
+            if table in ("quarters", "annual"):
                 top = values.get("Sales", values.get("Revenue"))
                 mine = _memory_revenue(dossier, period, basis)
                 if top and mine and mine > 0 and not (1 / SLIP_RATIO <= top / mine <= SLIP_RATIO):
-                    left.append(f"{basis} quarters {period}: Sales {top:g} against memory's revenue {mine:g}")
+                    left.append(f"{basis} {table} {period}: Sales {top:g} against memory's revenue {mine:g}")
                     continue
-            entries.append({"period": period, "basis": basis, "table": table, "family": fam, "rows": values,
+            column = period
+            entries.append({"period": column, "basis": basis, "table": table, "family": fam, "rows": values,
                             "source_news_id": f"xbrl-facts:{period}:{basis.lower()}", "as_of": at,
                             "lab": {"by": "file", "doc": "results", "basis": basis, "at": at, "rules": "screener_view",
                                     "from": "stored facts"}})
@@ -88,10 +93,11 @@ def fill(dossier: dict, entries: list[dict]) -> int:
     return len(new)
 
 
-def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False) -> dict:
+def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False) -> dict:
+    """``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review)."""
     from .backup import RunBackup
 
-    after = "" if (restart or not apply) else (sink.kv_get(RESUME_KEY) or "")
+    after = "" if (restart or not apply or named) else (sink.kv_get(RESUME_KEY) or "")
     todo = [s for s in sorted(scrips) if s > after][:limit]
     backup = RunBackup(sink, "statements-backfill") if apply else None
     out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
@@ -111,9 +117,11 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
             merged = json.loads(json.dumps(read))
             entries, left = company_entries(cf, merged, at)
             out["left_out"] += [f"{scrip} {x}" for x in left]
-            added = fill(merged, entries)
+            have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
             for e in entries:
-                out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
+                if (e["period"], e["basis"], e["table"]) not in have:
+                    out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
+            added = fill(merged, entries)
             if added and apply:
                 stage = "saving the backup"
                 keep_concurrent_writes(merged, read, sink.get_dossier(scrip))
@@ -123,7 +131,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
                 out["written"] += 1
             out["entries"] += added
             out["last"] = scrip
-            if apply:
+            if apply and not named:
                 sink.kv_set(RESUME_KEY, scrip, at)
         except Exception as exc:  # noqa: BLE001 - a read, backup or write failure stops the run; what was done stays
             out["error"] = f"{scrip}, {stage}: {type(exc).__name__}: {exc}"[:300]

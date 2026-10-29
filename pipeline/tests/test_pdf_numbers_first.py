@@ -1448,3 +1448,25 @@ def test_an_untitled_typed_statement_of_a_company_not_required_to_consolidate_is
         assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))
     else:
         assert got.status == "none"
+
+
+def test_the_reader_runs_with_its_measured_options_whatever_the_settings(monkeypatch):
+    # 29 Oct: the live pipeline runs with PDF_DATES_2DIGIT, PDF_PAGE_RANK and PDF_ROW_FIXES off (the old reader's settings);
+    # numbers-first was measured with them on and turns them on for its own calls only
+    from bse_intel import settings
+    for name in ("PDF_DATES_2DIGIT", "PDF_PAGE_RANK", "PDF_ROW_FIXES"):
+        monkeypatch.setenv(name, "0")
+    settings.get_settings.cache_clear()
+    seen = []
+    real = nf.tables_of_page
+
+    def spy(*args, **kwargs):
+        seen.append((settings.pdf_option("pdf_dates_2digit"), settings.pdf_option("pdf_page_rank"),
+                     settings.pdf_option("pdf_row_fixes")))
+        return real(*args, **kwargs)
+    monkeypatch.setattr(nf, "tables_of_page", spy)
+    rows, _ = pl()
+    nf.analyse(statement(rows))
+    assert seen and all(s == (True, True, True) for s in seen)
+    assert not settings.pdf_option("pdf_row_fixes")          # outside the reader the settings stand
+    settings.get_settings.cache_clear()

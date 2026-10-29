@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import os
 import tomllib
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
@@ -469,3 +471,23 @@ def _load_toml(path: Path) -> dict:
 @cache
 def get_settings() -> Settings:
     return Settings()
+
+
+# The numbers-first reader was measured with PDF_DATES_2DIGIT, PDF_PAGE_RANK and PDF_ROW_FIXES on; the live pipeline runs with
+# them off for the old reader. ``pdf_reader_options()`` turns the three on inside its block for this thread only (a ContextVar:
+# the pipeline's other worker threads, and the old reader there, keep the settings), 29 Oct 2026.
+_PDF_READER_OPTIONS: ContextVar[bool] = ContextVar("pdf_reader_options", default=False)
+
+
+def pdf_option(name: str) -> bool:
+    """``pdf_dates_2digit``, ``pdf_page_rank`` or ``pdf_row_fixes``: on inside ``pdf_reader_options()``, else the setting."""
+    return _PDF_READER_OPTIONS.get() or bool(getattr(get_settings(), name))
+
+
+@contextmanager
+def pdf_reader_options():
+    token = _PDF_READER_OPTIONS.set(True)
+    try:
+        yield
+    finally:
+        _PDF_READER_OPTIONS.reset(token)

@@ -1432,6 +1432,20 @@ def usable_dates(tables: list[Table]) -> int:
     # which answers the year, was skipped)
     return max((sum(c.date is not None and not c.inferred for c in t.columns) for t in tables if t.named), default=-1)
 
+def _measured(fn):
+    """The reader runs with the options it was measured with (PDF_DATES_2DIGIT, PDF_PAGE_RANK, PDF_ROW_FIXES on), whatever the
+    caller's settings, for this thread only (``settings.pdf_reader_options``; the live pipeline keeps them off for the old reader)."""
+    import functools
+    from .settings import pdf_reader_options
+
+    @functools.wraps(fn)
+    def run(*args, **kwargs):
+        with pdf_reader_options():
+            return fn(*args, **kwargs)
+    return run
+
+
+@_measured
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
             keep_unnamed: bool = False) -> list[Table]:
     """The solved tables of a results PDF. Every page with a text layer (the first ``max_pages``) is read from its words. A page
@@ -1899,6 +1913,7 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     return first[0] / table.unit, first[1] / table.unit, first[2], ""
 
 
+@_measured
 def reading_from_tables(tables: list[Table], period: str, metric: str, basis: str | None, reader: str = NAME):
     """A ``pdf_readers.Reading`` from the solved tables: the figure when every table of the basis that names it agrees."""
     from .metrics import CONSOLIDATED, STANDALONE

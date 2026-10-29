@@ -498,8 +498,8 @@ def _period_index(row, period: str) -> int | None:
 
 
 def _row_fixes() -> bool:
-    from .settings import get_settings
-    return get_settings().pdf_row_fixes
+    from .settings import pdf_option
+    return pdf_option("pdf_row_fixes")
 
 
 def _other(basis: str | None) -> str | None:
@@ -600,8 +600,8 @@ def _has_date_header(layer: PageLayer) -> bool:
         return True
     if any(len(_dates_in(" ".join([b.label] + b.nums))) >= 2 for b in layer.bands()):
         return True
-    from .settings import get_settings
-    if get_settings().pdf_page_rank:     # F215: each date of the header on a line of its own ("-31Mar-23" / "31-Dec-22" / ...)
+    from .settings import pdf_option
+    if pdf_option("pdf_page_rank"):     # F215: each date of the header on a line of its own ("-31Mar-23" / "31-Dec-22" / ...)
         lines = layer.text.splitlines()
         counts = [len(_dates_in(line)) if len(line.strip()) <= 16 else 0 for line in lines]     # a line of its own, not prose
         return any(sum(counts[i:i + 8]) >= 3 for i in range(len(lines)))
@@ -632,8 +632,8 @@ def statement_pages(layers: dict[int, PageLayer], max_pages: int = MAX_PAGES) ->
     With PDF_PAGE_RANK (F215): a page whose date header is split over lines, or one with three metric kinds under a results
     heading, passes the date gate too; a segment page ranks below a page of the statement itself before the top ``max_pages``
     are taken; scanned pages are searched in PDFs of up to ``SCAN_PAGE_LIMIT_RANKED`` pages."""
-    from .settings import get_settings
-    ranked = get_settings().pdf_page_rank
+    from .settings import pdf_option
+    ranked = pdf_option("pdf_page_rank")
     scored: list[tuple[int, int]] = []
     for page, layer in layers.items():
         if not layer.has_layer:

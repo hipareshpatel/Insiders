@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+import os
 import re
 import statistics
 from dataclasses import dataclass, field
@@ -52,6 +53,7 @@ MAX_TEXT_PAGES = 60            # pages with a text layer read from their words
 SCAN_PAGE_LIMIT = 30           # a scan with no text layer is searched in a PDF of up to this many pages
 MIN_COLUMN_FIGURES = 3         # figures that line up to make a column
 IDENT_MIN_COLUMNS = 3
+REREAD_EXACT = 1e-6            # an identity holding with a re-read cell: no rounding tolerance at all
 LABEL_WORDS_LINES = 14         # text lines above a table searched for its title and header
 
 
@@ -88,11 +90,17 @@ def upright_words(page) -> list[tuple[float, float, float, float, str]]:
     return out
 
 
+def tilt(raw: list[tuple[float, float, float, float, str]]) -> float:
+    """The page's tilt (``ocr._skew``) of its words; 0 for fewer than 30 words."""
+    from . import ocr
+    items = [((y0 + y1) / 2, max(y1 - y0, 1.0), x0, text, x1) for x0, y0, x1, y1, text in raw]
+    return ocr._skew(items) if len(items) >= 30 else 0.0
+
+
 def straighten(raw: list[tuple[float, float, float, float, str]], ocr_source: bool = False) -> list[Word]:
     """Words with the page's tilt taken out of their heights (``ocr._skew``: the angle whose row histogram is sharpest)."""
     from . import ocr
-    items = [((y0 + y1) / 2, max(y1 - y0, 1.0), x0, text, x1) for x0, y0, x1, y1, text in raw]
-    theta = ocr._skew(items) if len(items) >= 30 else 0.0
+    theta = tilt(raw)
     import math
     t = math.tan(theta)
     return [Word(x0, x1, ((y0 + y1) / 2) - (x0 + x1) / 2 * t, max(y1 - y0, 1.0), text, ocr_source) for x0, y0, x1, y1, text in raw]
@@ -300,6 +308,7 @@ class Table:
     named: dict = field(default_factory=dict)   # metric -> list of (rows, proofs)
     header_lines: list = field(default_factory=list)   # the text lines above the table (title, unit, header), for diagnosis
     contested: bool = False        # the lines above the table name both bases: its basis is never guessed
+    rereads: dict = field(default_factory=dict)    # (row, column) -> Cell read again from a crop of the empty cell (``reread_empty_cells``)
 
 
 def _cluster(values: list[float], tol: float) -> list[list[int]]:
@@ -918,18 +927,42 @@ class Solver:
         return self.t.rows[i].cells[j]
 
     def mask(self, proof: Proof) -> list[bool | None]:
+        """Per column: True when the identity holds, False when it is broken, None when a cell is missing. A cell read again
+        from a crop (``Table.rereads``) takes the place of ONE missing cell of an identity in a column, and only counts when the
+        identity then holds EXACTLY (no rounding tolerance for any term: the sum of the printed figures equals the printed
+        total to the last digit); when it does not hold, the column is None, never False: a misread crop is no evidence against
+        the identity. Two missing cells in one identity and column stay None."""
         target, parts = proof
+        rows = [target] + [r for r, _ in parts]
         out: list[bool | None] = []
         for j in range(self.m):
             a = self.cell(target, j)
             cs = [(self.cell(r, j), s) for r, s in parts]
             if a is None or any(c is None for c, _ in cs):
-                out.append(None)
+                gaps = [r for r in rows if self.cell(r, j) is None]
+                if len(gaps) == 1 and (gaps[0], j) in self.t.rereads:
+                    got = {r: self.cell(r, j) or self.t.rereads[(r, j)] for r in rows}
+                    total = sum(s * got[r].value for r, s in parts)
+                    out.append(True if abs(got[target].value - total) <= REREAD_EXACT else None)
+                else:
+                    out.append(None)
                 continue
             total = sum(s * c.value for c, s in cs)
             tol = a.tol + sum(c.tol for c, _ in cs) + 1e-9
             out.append(abs(a.value - total) <= tol)
         return out
+
+    def reread_proved(self, row: int, j: int, proofs: list[Proof]) -> Cell | None:
+        """The re-read cell of (row, column) when an identity of ``proofs`` that holds it holds exactly with it in that column
+        (``mask``: the one missing cell of the identity, every other term read normally); else None."""
+        cell = self.t.rereads.get((row, j))
+        if cell is None or self.cell(row, j) is not None:
+            return None
+        for pf in proofs:
+            if row == pf[0] or any(r == row for r, _ in pf[1]):
+                if self.mask(pf)[j] is True:
+                    return cell
+        return None
 
     def valid(self, proof: Proof) -> bool:
         """The identity holds in at least three columns (all of them when fewer can be checked), is broken in at most one, and is
@@ -1418,6 +1451,21 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     ocr_used = 0
     fill_used = 0
     ocr_texts: dict[int, str] = {}     # the OCR text of the pages with no text layer
+    crops = [MAX_REREAD_FILING]
+
+    def crop_pass(page, p: int, tables: list[Table], raw, k: float) -> None:
+        """Empty cells of the page's tables read again from crops (``reread_empty_cells``; env ``PDF_CROP_REREAD=1``)."""
+        if os.environ.get("PDF_CROP_REREAD") != "1" or not ocr.available() or crops[0] <= 0:
+            return
+        theta = tilt(raw)
+        for n, t in enumerate(tables):
+            if not (t.named or p in ranked):
+                continue
+            try:
+                if reread_empty_cells(page, t, theta, k, crops):
+                    tables[n] = Table_solved(t)
+            except Exception as exc:    # noqa: BLE001 - the table keeps what it had
+                log.warning("numbers-first: crop re-read failed on page %d (%s)", p, type(exc).__name__, exc_info=bool(os.environ.get("PDF_CROP_DEBUG")))
 
     def read_ocr(page, p: int) -> list[Table]:
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
@@ -1425,6 +1473,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         if not layers[p].has_layer:
             ocr_texts[p] = " ".join(w[4] for w in raw)
         found = [Table_solved(t) for t in tables_of_page(p, straighten(raw, True), anywhere, "ocr")]
+        crop_pass(page, p, found, raw, 72.0 / ocr.DPI)
         if layers[p].has_layer:
             title = layer_basis(layers[p].text)
             for t in found:
@@ -1484,7 +1533,9 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         for p in layers:
             page = doc[p - 1]
             if layers[p].has_layer:
-                by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(upright_words(page)), anywhere)]
+                layer_raw = upright_words(page)
+                by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(layer_raw), anywhere)]
+                crop_pass(page, p, by_page[p], layer_raw, 1.0)
                 wanting = [t for t in by_page[p] if t.named and (t.unit is None or sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows))]
                 if wanting and fill_used < MAX_FILL_OCR_PAGES and ocr.available():
                     fill_used += 1          # its own budget: the scanned statement pages keep all of MAX_OCR_PAGES (TBZ)
@@ -1573,6 +1624,138 @@ def Table_solved(table: Table) -> Table:
     table.named = solver.explanations
     table.solver = solver          # type: ignore[attr-defined]
     return table
+
+
+# --- empty cells read again from a crop ----------------------------------------------------------------------------------------
+
+REREAD_DPI = 300
+REREAD_DPI_2 = 400           # the same box rendered again: a second, independent reading
+REREAD_PAD_X = 3.0           # points around a cell's box
+REREAD_PAD_Y = 2.0
+REREAD_CALIBRATE = 6         # known cells read again to prove the grid sits where the figures are
+REREAD_CALIBRATE_SHARE = 0.66  # of the known cells read back to the last digit, and none read as another figure
+MAX_REREAD_TABLE = 90        # crops of one table
+MAX_REREAD_FILING = 220      # crops of one filing
+_REREAD_FIG = re.compile(r"^(?P<open>[\(\[\{]?)(?P<minus>-?)(?P<int>\d[\d,]*)(?P<sep>[.,])(?P<frac>\d+)(?P<close>[\)\]\}]?)$")
+
+
+def column_decimals(table: Table, j: int) -> int | None:
+    """The decimals a column prints: the mode of its figures (at least three, at least 60%), else of the table's figures."""
+    def mode(cells: list[Cell]) -> int | None:
+        decs = [c.decimals for c in cells if not c.nil]
+        if len(decs) < 3:
+            return None
+        best = max(set(decs), key=decs.count)
+        return best if decs.count(best) >= 0.6 * len(decs) else None
+    return mode([r.cells[j] for r in table.rows if r.cells[j] is not None]) or mode([c for r in table.rows for c in r.cells if c is not None])
+
+
+def figure_from_crop(text: str, decimals: int) -> Cell | None:
+    """The one figure a crop's text is, with the column's decimals, or a nil dash; else None. Recognition often reads the small
+    decimal point as a comma or a space ("97 35", "1,592,88", "(140,17)"): a last group of exactly ``decimals`` digits after a
+    comma, a space or a point is the fraction. A wrong repair cannot stand: the figure counts only where an exact identity
+    holds with it (``Solver.mask``)."""
+    t = text.strip().translate(str.maketrans({"−": "-", "–": "-", "—": "-"}))
+    if t in ("-", "Nil", "nil"):
+        return Cell(0.0, 0, True, False, None, t)       # type: ignore[arg-type]
+    if decimals < 1:
+        return None
+    m = re.fullmatch(r"(?P<open>[\(\[\{]?)(?P<minus>-?)(?P<int>\d[\d, ]*?)(?P<sep>[., ])(?P<frac>\d+)(?P<close>[\)\]\}]?)", t)
+    if not m or len(m["frac"]) != decimals:
+        return None
+    whole = m["int"].replace(" ", "")
+    if not re.fullmatch(r"\d{1,3}(?:,\d{2,3})*|\d+", whole):
+        return None
+    value = float(whole.replace(",", "") + "." + m["frac"])
+    if len(whole.replace(",", "")) > 9:
+        return None
+    negative = bool(m["open"] or m["close"] or m["minus"])
+    return Cell(-value if negative else value, decimals, False, True, None, t)     # type: ignore[arg-type]
+
+
+def cell_box(table: Table, i: int, j: int, theta: float, k: float):
+    """The page rectangle (points) of cell (row i, column j): the column's interval (to the middle of the gap to its
+    neighbours) and the row's band, the row's straightened height put back on the page's tilt."""
+    import math
+    h = statistics.median(r.bottom - r.top for r in table.rows)
+    col = table.columns[j]
+    lo = col.x0 - 2.0 * h if j == 0 else (table.columns[j - 1].x1 + col.x0) / 2
+    hi = col.x1 + 1.0 * h if j == len(table.columns) - 1 else (col.x1 + table.columns[j + 1].x0) / 2
+    xc = (lo + hi) / 2
+    yc = table.rows[i].y + xc * math.tan(theta)
+    return (lo * k - REREAD_PAD_X, (yc - 0.6 * h) * k - REREAD_PAD_Y, hi * k + REREAD_PAD_X, (yc + 0.6 * h) * k + REREAD_PAD_Y)
+
+
+def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[int]) -> int:
+    """Read again the empty cells of the table's nearly full rows, from a crop of the cell's box at 300 dpi (``table.rereads``).
+    A row is nearly full when at least 40% of its columns, and at least two, hold a figure: a cell empty there is a dropped one,
+    not a blank. The grid is trusted only after a calibration: ``REREAD_CALIBRATE`` known cells (spread over the table) are read
+    from their crops, and at least ``REREAD_CALIBRATE_SHARE`` must read as the table's own value to the last digit and none as another figure. A crop is
+    kept only if it holds exactly one text box and parses as one figure with the column's decimals (``figure_from_crop``). Nothing
+    here is an answer: ``Solver.mask`` lets a re-read cell count only in an identity that holds exactly with it."""
+    import cv2
+    import numpy as np
+    from . import ocr
+
+    if page.rotation or len(table.columns) < 3 or len(table.rows) < 6 or budget[0] <= 0:
+        return 0
+    wanted = [(i, j) for i, r in enumerate(table.rows) if sum(c is not None for c in r.cells) >= max(2, 0.4 * len(r.cells))
+              for j, c in enumerate(r.cells) if c is None and not r.cells[j]]
+    if not wanted:
+        return 0
+
+    def read_once(i: int, j: int, dpi: int):
+        x0, y0, x1, y1 = cell_box(table, i, j, theta, k)
+        pix = page.get_pixmap(clip=_rect((x0, y0, x1, y1)), dpi=dpi)
+        image = cv2.imdecode(np.frombuffer(pix.tobytes("png"), np.uint8), cv2.IMREAD_COLOR)
+        if image is None:
+            return None
+        budget[0] -= 1
+        return ocr.read_cell(image)
+
+    def read(i: int, j: int) -> Cell | None:
+        """The cell's figure when two renders of the box (300 and 400 dpi) both show no cut glyph and read with the same
+        digits, and the text parses as one figure with the column's decimals."""
+        dec = column_decimals(table, j)
+        if dec is None:
+            return None
+        a = read_once(i, j, REREAD_DPI)
+        b = read_once(i, j, REREAD_DPI_2)
+        if a is None or b is None or a[1] or b[1]:
+            return None
+        if re.sub(r"\D", "", a[0]) != re.sub(r"\D", "", b[0]):
+            return None
+        return figure_from_crop(a[0], dec)
+
+    known = [(i, j) for i, r in enumerate(table.rows) for j, c in enumerate(r.cells) if c is not None and not c.nil and c.strict]
+    if len(known) < REREAD_CALIBRATE:
+        return 0
+    step = len(known) / REREAD_CALIBRATE
+    sample = [known[int(n * step)] for n in range(REREAD_CALIBRATE)]
+    ok = bad = 0
+    for i, j in sample:
+        got = read(i, j)
+        if got is not None:        # a crop that gives a figure of its own, two renders agreeing, that is not the table's figure
+            same = abs(got.value - table.rows[i].cells[j].value) < 1e-9
+            ok += same
+            bad += not same
+    if bad or ok < REREAD_CALIBRATE_SHARE * REREAD_CALIBRATE:
+        table.note = (table.note + "; " if table.note else "") + f"crop grid not trusted ({ok}/{REREAD_CALIBRATE} known cells read back)"
+        return 0
+    found = 0
+    for i, j in wanted[:MAX_REREAD_TABLE]:
+        if budget[0] <= 0:
+            break
+        got = read(i, j)
+        if got is not None:
+            table.rereads[(i, j)] = got
+            found += 1
+    return found
+
+
+def _rect(t):
+    import pymupdf
+    return pymupdf.Rect(*t)
 
 
 # --- one figure ----------------------------------------------------------------------------------------------------------
@@ -1699,7 +1882,7 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     j = cols[0].index
     found: list[tuple[float, float, str]] = []
     for rows, proofs in solver.explanations.get(metric, []):
-        cells = [solver.cell(r, j) for r in rows]
+        cells = [solver.cell(r, j) or solver.reread_proved(r, j, proofs) for r in rows]
         if any(c is None for c in cells):
             continue
         if not all(solver.mask(pf)[j] is True for pf in proofs):

@@ -42,6 +42,7 @@ SETTINGS = {
 }
 
 _engine = None
+_cell_engine = None
 _lock = threading.Lock()  # one page at a time: OCR is rare, and the CPU is shared with the workers
 
 
@@ -428,3 +429,59 @@ def page_reader(vision: Callable[[bytes], str] | None) -> Callable[[bytes], str]
         return text
 
     return read
+
+
+def ink_cut(image) -> bool:
+    """Whether a cell crop (a BGR array) shows a glyph cut by its edge: dark pixels touching the left or right edge, or the top or
+    bottom edge outside the middle, that are not a table rule (a rule runs the whole edge). A cell's box that sits a little off, or
+    a neighbour's digit inside it, shows here; the detector is not used for this: on a crop it resizes the image up to its minimum
+    side and takes seconds."""
+    import cv2
+    import numpy as np
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    ink = (gray < 140).astype(np.uint8)
+    h, w = ink.shape
+    if h < 8 or w < 8:
+        return True
+    edge = max(3, w // 40)
+    band = ink[int(h * 0.3):int(h * 0.7)]     # the rows of the figure itself: the cell's top and bottom rules run across the edges
+    for strip in (band[:, :edge], band[:, w - edge:]):
+        col = strip.sum(axis=0)
+        if (col >= 0.8 * band.shape[0]).any():     # a vertical rule on the edge
+            continue
+        if int(strip.max(axis=1).sum()) > 1:
+            return True
+    return False
+
+
+def read_cell(image) -> tuple[str, bool]:
+    """One table cell's crop (a BGR array): (the recogniser's text for the whole crop, whether a glyph is cut by the crop's edge).
+    Recognition alone, no detector: it reads a lone figure better than detection plus recognition (which cut "1,912.15" to
+    "1,912 15" in a measured case) and takes 0.05 s where the detector takes seconds on a crop. Bench only
+    (``PDF_OCR_CACHE_DIR``): the answer is kept on disk under the sha1 of the crop's pixels."""
+    cache = os.environ.get("PDF_OCR_CACHE_DIR", "")
+    path = ""
+    if cache:
+        import hashlib
+        path = os.path.join(cache, "cell3-" + hashlib.sha1(f"{image.shape}:{image.dtype}:".encode() + image.tobytes()).hexdigest() + ".json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                text, cut = json.load(fh)
+            return str(text), bool(cut)
+        except (OSError, ValueError, TypeError):
+            pass
+    global _cell_engine
+    with _lock:
+        if _cell_engine is None:       # its own engine: a call with use_det=False leaves the engine in that mode for the next call
+            from rapidocr import ModelType, RapidOCR
+            _cell_engine = RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
+        rec = _cell_engine(image, use_det=False, use_cls=False, use_rec=True)
+        text = (list(getattr(rec, "txts", None) or ("",)) or [""])[0]
+    cut = ink_cut(image)
+    if path:
+        try:
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump([str(text), cut], fh)
+        except OSError:
+            pass
+    return str(text), cut

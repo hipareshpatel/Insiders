@@ -45,7 +45,12 @@ review and four frozen bench re-scores with 0 new wrong answers.
 
 **No answer.** In groups 1-3, 52 of the 244 figures pair with a PDF that is not a results statement: AGM proceedings, postal
 ballot results, a Reg 30 disclosure or an intimation letter (AFCONS, SWANCORP, KSL, POLYPLEX, RMDRIP, INDOTECH, SREEL and
-ASIANTILES). No reader can answer them. Groups 4-6 have not been sorted this way yet.
+ASIANTILES). No reader can answer them.
+
+Groups 4-6 were sorted the same way only after the after-fix read. 24 of their figures pair with a PDF that is not a results
+statement: JKCEMENT's asset-cover certificate and FABTECH's intimation letter. Without those, the after-fix score for groups
+4-6 is 126 / 6 / 100 of 232 (54% right). JSWHL, KDDL and AVALON are results statements that give "no table". They are left
+for the next batch's fixes.
 
 The other misses in groups 1-3 have causes seen in only one filing each, so under the rules they are not fixed yet:
 

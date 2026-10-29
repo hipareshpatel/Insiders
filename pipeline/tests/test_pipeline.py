@@ -1284,3 +1284,24 @@ def test_a_deck_or_transcript_filed_under_a_results_heading_is_read_as_one():
     # the headline alone never makes a deck (blind review): a results filing over a generic file name stays results
     assert not is_deck_or_transcript(f("ABC_28102026_Upload.pdf", "Outcome of Board Meeting - Results and Investor Presentation"))
     assert not is_deck_or_transcript(f("XYZ_FinancialResultsandPresentation.pdf"))
+
+
+def test_d20_finds_a_cards_quarter_from_its_timeline_when_memory_holds_none_of_its_figures(settings, monkeypatch):
+    """TODO 133: with MEMORY_FILE_ONLY a card read from the PDF leaves no figures in memory, so D20 finds the quarter's card
+    through the quarter its own timeline entry names."""
+    from dataclasses import replace
+
+    monkeypatch.setenv("MEMORY_FILE_ONLY", "1")
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1)
+    now = now_ist() - timedelta(hours=3)
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    again = _filing("q-2", "Outcome of Board Meeting - results", now + timedelta(hours=1), "Board Meeting")
+    pipeline, sink, fake = build(settings, [first, again], {f.pdf_url: _pdf(RESULT_TEXT) for f in (first, again)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    pipeline._commit([pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))])
+    d = sink.get_dossier(first.scrip_code)
+    assert not [m for m in d["financial_metrics"] if m["period"] == "Q2FY27" and m["metric"] == "revenue"], "no AI figure kept"
+    assert any(t.get("news_id") == "q-1" and t.get("quarter") == "Q2FY27" for t in d["timeline"])
+    pipeline._results_quarters.clear()   # a later run: only memory knows the quarter has its card
+    two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert two.update["status"] == "DUPLICATE" and "q-1" in two.update["reason"]

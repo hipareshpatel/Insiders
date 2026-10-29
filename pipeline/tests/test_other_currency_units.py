@@ -33,3 +33,17 @@ def test_a_unit_line_of_another_currency_is_no_rupee_unit(line):
 def test_a_rupee_unit_line_is_still_read(line, per_crore):
     assert nf.unit_of(["Particulars"], [line]) == per_crore
     assert xk._declared_unit(line) == per_crore
+
+
+@pytest.mark.parametrize("line", ["(Amount in millions of US dollars)", "(Amount in millions of USD unless otherwise stated)",
+                                  "(Amount in thousands of USD unless otherwise stated)", "(Amount in millions of €)"])
+def test_an_amount_in_millions_of_another_currency_is_no_rupee_unit(line):
+    assert not list(grounding._DECLARED_UNIT.finditer(line)) and xk._declared_unit(line) is None
+
+
+@pytest.mark.parametrize("line,per_crore", [("(Amount in millions of ₹ unless otherwise stated)", 10),
+                                            ("(,\\mount in millions of Z unless otherwise stated)", 10),   # Heritage's scans
+                                            ("(Amount 111 millions of Z unless otherwise stated)", 10), ("(Amount in lakhs of Rupees)", 100)])
+def test_an_amount_in_rupee_units_is_still_read(line, per_crore):
+    words = [next(g for g in m.groups() if g) for m in grounding._DECLARED_UNIT.finditer(line)]
+    assert words and grounding._PER_CRORE.get(words[0].lower().rstrip("s")) == per_crore

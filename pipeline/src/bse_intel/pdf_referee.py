@@ -65,6 +65,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from .bse import AttachmentError, AttachmentTooLarge
+from .currency import names_other_currency
 from .extract import _MUPDF, Document, upright_text
 from .grounding import _PER_CRORE, unit_before
 from .memory_gaps import quarter_end
@@ -337,9 +338,6 @@ def _align(row_words: list[tuple], header_words: list[tuple], dates: list[date],
         out[nearest] = value
         last = nearest
     return out
-
-
-from .currency import names_other_currency  # noqa: E402  (another currency's million: no rupee unit, 29 Oct 2026)
 
 
 _BARE_UNIT = re.compile(r"^(?:in\s+)?(?:\S{1,4}\s+)?(?:in\s+)?(crores?|crs?\.?|lakhs?|lacs?|millions?|mn|thousands?)(?![a-z])"

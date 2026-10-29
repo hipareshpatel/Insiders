@@ -69,7 +69,8 @@ _DECLARED_UNIT = re.compile(
     # figure, where a unit belongs to that figure alone ("12,345.67 (lakhs)").
     r"|(?<![\d.,]\s)(?<![\d.,])\([ \t]*" + _NO_OTHER_CURRENCY + r"[^\s()\w]?[A-Za-z']{0,2}[^\s()\w]?[ \t]*(lakhs?|lacs?|crores?|millions?)[ \t]*\)"
     r"|^[ \t]*[(\[{/\"'`]?[ \t]*" + _NO_OTHER_CURRENCY + r"[^\s()]{0,3}[ \t]*in[ \t]*(lakhs?|lacs?|crores?|millions?|thousands?)\.?[ \t]*\)"
-    r"|mount[ \t]+(?:in|ln|1n|111)[ \t]+(lakhs?|lacs?|crores?|millions?|thousands?)[ \t]+of\b",
+    # "(Amount in millions of US dollars)" is another currency's unit, not a rupee one (29 Oct 2026, the lead's review)
+    r"|mount[ \t]+(?:in|ln|1n|111)[ \t]+(lakhs?|lacs?|crores?|millions?|thousands?)[ \t]+of\b(?![ \t]*" + OTHER_UNIT_CURRENCY + r")",
     re.I | re.M)  # Jubilant's rupee sign arrives as a Tibetan letter: "(ཪ in million)"; Heritage's
 # scanned headers as "(,\mount in millions of Z unless otherwise stated)" and "(Amount 111 millions oft"
 # SML writes the currency out ("(Rupees in Crores, except share data)") and some filers write thousands

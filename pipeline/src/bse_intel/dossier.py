@@ -577,13 +577,20 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
 
     Only within one basis, though: the value comes from the consolidated sources when any source is consolidated
     (a source with no basis recorded counts with either). Heritage's standalone Q4FY25 file (PAT 20.51) outranked
-    five consolidated sources (38.17) and a card said PAT +16.7% YoY where it fell 37% (T5, 2026-10-20)."""
+    five consolidated sources (38.17) and a card said PAT +16.7% YoY where it fell 37% (T5, 2026-10-20).
+
+    Below the seed, a live filing's figure the XBRL reader built (labelled ``file`` or ``calc``) outranks a model's reading
+    of a slide deck or release (TODO 118 B): SBI Life's H1FY27 PAT from its own file, 1,274.17, lost to the press release's
+    rounded 1,270 filed four minutes later. Over stored memory on 29 Oct this changed 128 figures in 46 companies, each
+    an AI reading beaten by the file. The seed stays first: ranking every file label alike made 18 figures worse, where
+    the live file and the seed differ on PBT with associates and on EPS signs."""
     sources = sorted(sources, key=lambda s: s["as_of"])
     bases = {s.get("basis") for s in sources} - {None}
     keep = "CONSOLIDATED" if "CONSOLIDATED" in bases else next(iter(bases), None)
     usable = [s for s in sources if s.get("basis") in (None, keep)] or sources
     tagged = [s for s in usable if str(s.get("news_id", "")).startswith(XBRL_SOURCE)]
-    last = tagged[-1] if tagged else usable[-1]
+    from_file = [s for s in usable if (s.get("lab") or {}).get("by") in ("file", "calc")]
+    last = (tagged or from_file or usable)[-1]
     entry = {"metric": metric, "period": period, "value": last["value"], "unit": last.get("unit") or "INR_CR",
              "yoy_pct": last.get("yoy_pct"), "qoq_pct": last.get("qoq_pct"), "as_of": sources[0]["as_of"],
              "source_news_id": sources[0]["news_id"]}

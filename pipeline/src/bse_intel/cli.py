@@ -2140,6 +2140,24 @@ def cmd_restore(args, settings, sink) -> int:
     return 0
 
 
+def cmd_memory_rerank(args, settings, sink) -> int:
+    """Put right the stored figures the TODO 118 B ranking changes (memory_rerank.py): a dry run by default, --apply backs
+    each dossier up (backup.RunBackup) and writes at most --limit figures. No AI, no exchange."""
+    from . import memory_rerank
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()] or sink.list_dossiers()
+    outcome = memory_rerank.run(sink, scrips, args.apply, args.limit)
+    print(memory_rerank.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:
+        print(f"memory-rerank: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-rerank-<time>/, then writes)")
+    return 0
+
+
 def cmd_memory_drop_known_wrong(args, settings, sink) -> int:
     """Take the figures on the known-wrong list (known_wrong.py, F223) out of the stored dossiers: a dry run by default,
     --apply backs each dossier up (backup.RunBackup, before and after) and then writes it. No AI, no exchange."""
@@ -2484,6 +2502,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_drop_known_wrong)
+    p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--limit", type=int, default=50, help="at most this many figures a run (default 50, the owner's rule A)")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_rerank)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")

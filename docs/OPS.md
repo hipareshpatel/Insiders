@@ -79,6 +79,7 @@ Every maintenance run stays here until its result is read and acted on; the 15-m
 | 40407491267 | release-check | Stopped by GitHub at 6 h (08:49 IST), nothing saved. It hung on our own site's API ("Server disconnected without sending a response" for nse-106605841, nse-106606044, memory/544570), not on NSE | Make it save as it goes, run in parts |
 | 40393302149 | pdf-referee "explained" | Done (5 h budget). 1,982 open pairs: PDF = ours 130, PDF = screener 9, = NSE file 1, none 9, unsure 151, unreadable 178, not run 1,504 | Run the rest after the PDF date/page fix (F215) and the file cap |
 | 40935230306 | memory-rerank --apply (run 1 of 3, TODO 118 B; owner's Yes 29 Oct) | 50 figures corrected in 18 companies (limit 50), 34 companies wait; backup backup/memory-rerank-20261029T185515Z/ (18 dossiers); undo with restore | Run 2 dispatched 30 Oct ~01:00 IST |
+| 40940399601 | memory-rerank --apply (run 2) | 49 figures corrected in 16 companies, backup backup/memory-rerank-20261029T192903Z/; then stopped cleanly at 543322 on a Worker read timeout (nothing half-written; exit 1) | Run 3 dispatched 30 Oct ~01:30 IST to finish |
 | not run | memory-gaps-fill-bse dry run, text-backfill | Never ran (skipped in the chain) | Dispatch |
 | not found | seed signs APARINDS Q1FY27, PVRINOX Q1FY25, GLENMARK Q4FY26 | No run re-read them | seed-memory with ids |
 

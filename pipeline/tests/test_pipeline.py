@@ -485,6 +485,41 @@ def test_a_later_results_filing_owns_a_quarter_only_when_it_is_its_own(settings,
     assert pipeline._supersede(f, held) == [] and "q-2" not in pipeline._superseding
 
 
+def test_a_consolidated_file_takes_the_quarter_from_a_standalone_card_and_never_the_other_way(settings):
+    """Owner, 30 Oct 2026: "if consolidated results available, use it only, if not available, use standalone. Make a rule to
+    avoid two cards". A company that files its standalone results first and its consolidated ones in a later filing gets
+    one card, the consolidated one: the standalone card becomes its duplicate once the consolidated card is published."""
+    pipeline, sink, _ = build(settings, [], {}, {})
+    f = _filing("q-cons", "Consolidated Unaudited Financial Results", now_ist() - timedelta(hours=1))
+    earlier = (now_ist() - timedelta(hours=2)).isoformat(timespec="seconds")
+
+    def metric(n, basis):
+        return {"metric": "revenue", "period": "Q2FY27", "value": 1.0, "unit": "INR_CR", "as_of": earlier, "basis": basis,
+                "source_news_id": n, "sources": [{"news_id": n, "as_of": earlier, "value": 1.0, "unit": "INR_CR", "basis": basis}]}
+
+    dossier = {"timeline": [{"news_id": "q-sa", "date": earlier, "event_type": "RESULTS"}],
+               "financial_metrics": [metric("q-sa", "STANDALONE")]}
+    assert pipeline._same_results_quarter(f, dossier, "Q2FY27", basis="CONSOLIDATED") is None
+    assert pipeline._superseding["q-cons"] == (["q-sa"], "Q2FY27")
+    # a standalone file never takes the quarter from a standalone or consolidated card
+    pipeline._results_quarters.clear(), pipeline._superseding.clear()
+    sa = _filing("q-sa2", "Standalone Unaudited Financial Results", now_ist() - timedelta(minutes=30))
+    assert pipeline._same_results_quarter(sa, dossier, "Q2FY27", basis="STANDALONE") == ("q-sa", "Q2FY27")
+    dossier["financial_metrics"] = [metric("q-c1", "CONSOLIDATED")]
+    dossier["timeline"] = [{"news_id": "q-c1", "date": earlier, "event_type": "RESULTS"}]
+    pipeline._results_quarters.clear()
+    assert pipeline._same_results_quarter(sa, dossier, "Q2FY27", basis="STANDALONE") == ("q-c1", "Q2FY27")
+    # and a consolidated card is never taken by another consolidated file (the first keeps it, as before)
+    pipeline._results_quarters.clear()
+    assert pipeline._same_results_quarter(f, dossier, "Q2FY27", basis="CONSOLIDATED") == ("q-c1", "Q2FY27")
+    # in one run: a standalone claim gives way to a consolidated file of the same quarter
+    pipeline._results_quarters.clear(), pipeline._superseding.clear()
+    empty = {"timeline": [], "financial_metrics": []}
+    assert pipeline._same_results_quarter(sa, empty, "Q2FY27", basis="STANDALONE") is None
+    assert pipeline._same_results_quarter(f, empty, "Q2FY27", basis="CONSOLIDATED") is None
+    assert pipeline._superseding["q-cons"] == (["q-sa2"], "Q2FY27")
+
+
 def test_a_board_outcome_typed_as_a_corporate_action_still_takes_part_in_d20(settings):
     """Kapston filed its Q2FY27 board outcome (results and a 5:1 stock split) twice, four minutes apart (O3, 2026-10-20).
     The copy typed CORPORATE_ACTION was made RESULTS only after pass 2, so it skipped the quarter's claim and the

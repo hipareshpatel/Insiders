@@ -247,6 +247,87 @@ def gap_pairs(r: _Reader, gap: float, limit: int = 3) -> list[str]:
     return [x for _, x in sorted(singles + hits)][:limit]
 
 
+# screener's Expenses sub-rows, each a percent of Sales (screener_schedules.py), against our own parts of the same Expenses: the
+# part whose gap is the row's gap is where screener moved a line, and only that part's own lines are searched (owner, 29 Oct
+# 2026: "It can be two lines or 3 lines also, why don't we check sub rows"); a lead only, no recipe reads it
+MATERIAL = ("CostOfMaterialsConsumed", "PurchasesOfStockInTrade", "ChangesInInventoriesOfFinishedGoodsWorkInProgressAndStockInTrade")
+EMPLOYEE = ("EmployeeBenefitExpense",)
+_MONTH = {"1": "Jun", "2": "Sep", "3": "Dec", "4": "Mar"}
+
+
+def column_of(table: str, period: str) -> str | None:
+    """Our period label as screener's column heading: FY25 -> "Mar 2025", Q1FY26 -> "Jun 2025" (March years only)."""
+    m = re.fullmatch(r"FY(\d\d)", period) if table == "annual" else re.fullmatch(r"Q([1-4])FY(\d\d)", period)
+    if not m:
+        return None
+    if table == "annual":
+        return f"Mar 20{m[1]}"
+    year = 2000 + int(m[2]) - (0 if m[1] == "4" else 1)
+    return f"{_MONTH[m[1]]} {year}"
+
+
+def _percent_text(text) -> float | None:
+    try:
+        return float(str(text).replace("%", "").replace(",", "").strip())
+    except ValueError:
+        return None
+
+
+def expense_parts(answer: dict, column: str, sales: float) -> dict[str, float] | None:
+    """Screener's material, employee and the rest (manufacturing + other) in crore, from its Expenses sub-rows of one column."""
+    got = {}
+    for name, row in (answer or {}).items():
+        if isinstance(row, dict) and (v := _percent_text(row.get(column))) is not None:
+            got[name.lower()] = v * sales / 100
+    if not got:
+        return None
+    pick = lambda word: sum(v for k, v in got.items() if word in k)
+    return {"material": pick("material"), "employee": pick("employee"), "rest": pick("manufacturing") + pick("other")}
+
+
+def part_lines(r: _Reader) -> list[tuple[str, float]]:
+    """The lines a part's gap may be made of: the other expenses breakdown, the exceptional-items breakdown, and the statement's
+    loss, gain, impairment, provision and charge lines."""
+    cand = [(f"{el} [{t.strip()[:40]}]", v) for el, t, v in r.facts.described(PAIR_PARENTS, ".", joined=True, **r.at)
+            if v and len(re.sub(r"[^A-Za-z]", "", t)) >= 4]
+    cand += [(el, v) for el, v in r.facts.find(r"Loss|Gain|Impairment|Provision|Charges|ExchangeDifference|Exceptional|WrittenOff|"
+                                              r"WriteOff|Regulatory|ShareOfProfit", **r.at) if v and not PAIR_NOISE.search(el)]
+    return sorted(set(cand), key=lambda x: -abs(x[1]))[:40]
+
+
+def lines_making(cand: list[tuple[str, float]], gap: float, most: int = 3, limit: int = 3) -> list[str]:
+    """One, two or three of the lines whose sizes add up to the gap within ₹1 Cr, fewest lines first."""
+    from itertools import combinations
+    g, out = abs(gap), []
+    for n in range(1, most + 1):
+        for combo in combinations(cand, n):
+            if abs(sum(abs(v) for _, v in combo) - g) <= ABS_TOL:
+                out.append(" + ".join(f"{label} {_fmt(v)}" for label, v in combo))
+                if len(out) >= limit:
+                    return out
+        if out:
+            return out
+    return out
+
+
+def part_gaps(r: _Reader, ours_expenses: float, answer: dict, column: str, sales: float, gap: float) -> tuple[str, str]:
+    """(which part holds the gap, the lines inside that part that make it) for an Expenses row apart."""
+    theirs = expense_parts(answer, column, sales)
+    if theirs is None:
+        return "", ""
+    mat = sum(v for n in MATERIAL if (v := r.cr(n)) is not None)
+    emp = sum(v for n in EMPLOYEE if (v := r.cr(n)) is not None)
+    ours = {"material": mat, "employee": emp, "rest": ours_expenses - mat - emp}
+    slack = max(ABS_TOL, abs(sales) * 0.0001)      # a percent to two places
+    gaps = {k: theirs[k] - ours[k] for k in ours}
+    where = ", ".join(f"{k} {gaps[k]:+.0f}" for k in gaps if abs(gaps[k]) > slack) or "no part apart"
+    alone = [k for k in gaps if abs(gaps[k]) > slack]
+    found = ""
+    if len(alone) == 1 and abs(gaps[alone[0]] - gap) <= 2 * slack:
+        found = "; ".join(lines_making(part_lines(r), gaps[alone[0]]))
+    return where, found
+
+
 def _levies(r: _Reader) -> tuple[dict[str, float], list[str]]:
     """Each levy and discount the facts show: its own element(s), else the described rows of the Other expenses breakdown."""
     out: dict[str, float] = {}
@@ -790,7 +871,8 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
     return result
 
 
-def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", basis: str | None = None) -> list[dict]:
+def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", basis: str | None = None,
+            sub_rows: dict | None = None) -> list[dict]:
     """Every (table, row, period) the page shows, with ours and a status: ok, apart, no_facts, no_recipe."""
     basis = basis or page.get("basis") or CONSOLIDATED
     fam = cf.family(basis)
@@ -817,6 +899,11 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                         if rec["status"] == "apart" and row not in PCT_ROWS and reader is not None:
                             rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
                             rec["pairs"] = "; ".join(gap_pairs(reader, theirs - got.value))
+                            sales = ((page.get("tables") or {}).get(table, {}).get("Sales") or {}).get(period)
+                            answer = (sub_rows or {}).get(("quarters" if table == "quarters" else "profit-loss") + "|Expenses")
+                            col = column_of(table, period)
+                            if row == "Expenses" and answer and col and sales:
+                                rec["parts"], rec["part lines"] = part_gaps(reader, got.value, answer, col, sales, theirs - got.value)
                 out.append(rec)
     return out
 
@@ -846,6 +933,12 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
     from .screener_download import unpack
 
     pages_by_symbol, newest = stored_pages(sink, day)
+    from . import screener_schedules as ss
+    bundles: dict[str, str] = {}
+    for key in sorted(sink.list_objects(ss.PREFIX)):       # the newest day's file of a company wins
+        m = re.fullmatch(re.escape(ss.PREFIX) + r"[\d-]+/([^/_]+)\.json\.gz", key)
+        if m:
+            bundles[m[1]] = key
 
     def one(item: tuple[str, str]) -> dict:
         try:
@@ -864,12 +957,16 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
         facts = CompanyFacts(sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/"), sink.get_object)
         if not facts.results and not facts.annual:
             entry["skipped"] = "no stored facts"
+        bundle = {}
+        if symbol in bundles and (raw := sink.get_object(bundles[symbol])):
+            bundle = ss.unpack(raw).get("pages") or {}
         for basis, key in sorted(stored.items()):
             blob = sink.get_object(key)
             if not blob:
                 continue
             page = parse_page(unpack(blob))
-            entry["rows"] += compare(page, facts, scrip, symbol, page.get("basis") or basis)
+            answers = (bundle.get(page.get("basis") or basis) or {}).get("answers") or {}
+            entry["rows"] += compare(page, facts, scrip, symbol, page.get("basis") or basis, answers)
         return entry
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
@@ -928,13 +1025,24 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             label = re.sub(r"\s*\[[^\]]*\]", "", re.sub(r" -?[\d,]+\.\d\d$", "", pair)).lower()
             by_pair.setdefault((f"{r['table']}: {r['row']}", label), set()).add(r["company"])
     pairs = sorted(([k[0], k[1], sorted(v)] for k, v in by_pair.items() if len(v) >= 3), key=lambda h: (-len(h[2]), h[0], h[1]))
+    by_part: dict[str, int] = {}
+    by_part_line: dict[str, set[str]] = {}
+    for r in rows:
+        if r.get("parts"):
+            for part in re.findall(r"(material|employee|rest) [+-]", r["parts"]) or ["no part apart"]:
+                by_part[f"{r['table']}: {part}"] = by_part.get(f"{r['table']}: {part}", 0) + 1
+        for found in filter(None, (r.get("part lines") or "").split("; ")):
+            label = re.sub(r" -?[\d,]+\.\d\d", "", found).lower()
+            by_part_line.setdefault(f"{r['table']}: {label}", set()).add(r["company"])
+    part_lines_seen = sorted(([k, sorted(v)] for k, v in by_part_line.items() if len(v) >= 3), key=lambda x: -len(x[1]))
     total = {s: sum(1 for r in rows if r["status"] == s) for s in STATUSES}
     return {"pages_day": pages_day, "companies": len(results), "pairs": len(rows), "by_status": total, "by_row": by_row,
-            "per_company": companies, "by_sector_row": by_sector_row, "gap_hints": hints, "gap_pairs": pairs, "rows": rows}
+            "per_company": companies, "by_sector_row": by_sector_row, "gap_hints": hints, "gap_pairs": pairs,
+            "expense_parts": by_part, "expense_part_lines": part_lines_seen, "rows": rows}
 
 
 CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
-              "gap matches", "gap pairs")
+              "gap matches", "gap pairs", "expense parts apart", "lines in that part")
 
 
 def to_csv(summary: dict) -> str:
@@ -944,7 +1052,7 @@ def to_csv(summary: dict) -> str:
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
-                    r.get("hints", ""), r.get("pairs", "")])
+                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", "")])
     return buf.getvalue()
 
 

@@ -592,3 +592,18 @@ def test_a_row_apart_by_two_filed_lines_names_the_pair_and_exceptional_losses_ar
                "[Commission to selling agents] + OtherExpenses [Freight outward]" in p for p in sv.gap_pairs(r, 42.2))
     assert any(p.startswith("exceptional losses") for p in sv.gap_pairs(r, 211.4))
     assert sv.gap_pairs(r, 1.5) == []
+
+
+def test_screener_expense_sub_rows_name_the_part_apart_and_the_lines_inside_it():
+    assert sv.column_of("annual", "FY26") == "Mar 2026" and sv.column_of("quarters", "Q1FY27") == "Jun 2026"
+    assert sv.column_of("quarters", "Q4FY26") == "Mar 2026" and sv.column_of("annual", "YE:Dec2025") is None
+    extra = [("CostOfMaterialsConsumed", "D2026", 300.0), ("EmployeeBenefitExpense", "D2026", 100.0),
+             ("DescriptionOfOtherExpenses", "D2026_M8", "Freight outward"), ("OtherExpenses", "D2026_M8", 13.0),
+             ("DescriptionOfOtherExpenses", "D2026_M9", "Commission to selling agents"), ("OtherExpenses", "D2026_M9", 29.0)]
+    r = sv._Reader(annual_facts(extra), end=END, months=12)
+    # screener: Sales 1,000; material 30 %, employee 10 %, manufacturing 10 %, other 14.2 %: its rest is 242, ours 200
+    answer = {"Material Cost %": {"Mar 2026": "30.00%"}, "Employee Cost %": {"Mar 2026": "10.00%"},
+              "Manufacturing Cost %": {"Mar 2026": "10.00%"}, "Other Cost %": {"Mar 2026": "14.20%"}}
+    where, found = sv.part_gaps(r, 600.0, answer, "Mar 2026", 1000.0, 42.0)
+    assert where == "rest +42"
+    assert "Freight outward" in found and "Commission to selling agents" in found

@@ -204,6 +204,15 @@ results file (1,392): 15.2 / 23.4 / 27.5 / 6.9 / 11.2 / 15.8 %.
   (1.6 MB) parses with `xbrl_facts.parse_annual_facts` as it is: MCA-INDAS, standalone, FY25 and its FY24 column; Sales 746.69
   and 968.04 Cr, Expenses, PBT and Net Profit equal to screener's.
 
+### The associates' share counted twice: tested and rejected (run 40827893497, 29 Oct 2026)
+
+523 quarters were apart by exactly the associates' share, ours above when it is a profit and below when a loss, which looked
+like a double count. Coded as "the share is not added where the filing's profit equals its filed PBT less tax" (d0bb0b5) and
+measured: it fired for 2 companies only (NTPC, Oriental Carbon), broke both their quarters and fixed none, so reverted. The 86
+companies file the share below PBT like everyone else; screener leaves it out of their PBT. They belong to the separate list
+`docs/design/screener-associates-outside-pbt.md` (company structure, validated over years), not to code. The same run, with
+the BSE annual reports stored so far: 1,153 rows fixed and 133 broken elsewhere (92.63 % -> 92.75 % exact).
+
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 
 - **The year's source decides most of the yearly misses.** Years read from the annual report: Expenses 82.4 % exact, Interest

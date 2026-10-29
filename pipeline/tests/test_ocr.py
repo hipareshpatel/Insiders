@@ -315,6 +315,7 @@ def test_a_stray_cache_folder_without_the_bench_flag_is_not_used(monkeypatch, tm
     monkeypatch.delenv("PDF_BENCH", raising=False)
     monkeypatch.setattr(ocr, "_cell_engine", None)
     monkeypatch.setattr(ocr, "available", lambda: True)
+    monkeypatch.setattr(ocr, "ink_cut", lambda image: False)    # needs cv2, which CI's install does not have
     built = []
 
     class Engine:

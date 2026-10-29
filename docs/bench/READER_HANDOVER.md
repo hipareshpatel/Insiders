@@ -191,6 +191,9 @@ it and an independent review: normal **260 / 0 / 77** (from 253), hard **264 / 0
 - A numbered associates' share ("04. Share of net profit of associates") is no longer a profit row (84c604b): ATUL 2, BFINVEST 3.
 - "Not required to prepare consolidated financial results" with no subsidiary, associate or joint venture (f1b2c43, f8f6635,
   29b51f1): SBICARD 4. SBICARD was a held-out company; it was looked at to build this, so it no longer counts as held out.
+- Empty-cell re-read from crops (0b30926, 1fcb1ae), behind `PDF_CROP_REREAD=1`, off by default: normal 262 / 0 / 75, hard 266 / 0 / 74
+  with it on (JSWCEMENT 2, 360ONE 1, BFINVEST 1). The review made re-read cells answer-only (they never help name a row), which
+  cost CROMPTON's 2 from the small test. About 12-17 s a filing against 9 s, so it stays off until the runner-time measurement.
 - Tried and dropped (0 gain, 0 wrong): a cell-by-cell merge of the scanner's text and our OCR (the blockers on its targets come
   earlier: a 12-column page with both bases, garbled dates, a statement split over two pages); a basis from the auditor's report
   (survey of the 66 titled statements: the only rules with 0 wrong fixed nothing, and the review reports of SBICARD and AYE name no

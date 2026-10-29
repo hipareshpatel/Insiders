@@ -78,6 +78,7 @@ Every maintenance run stays here until its result is read and acted on; the 15-m
 | 40414799620 | pdf-referee-ensemble hardset | Done. 340 key figures. Right / wrong / no answer: docling 54/0/286, native (ours) 65/10/265, tatr 36/5, marker 44/7, tabula 40/9, mineru 60/18, paddle 39/24, rapidtable 26/19, surya 17/16, camelot 12/8, pdfplumber 12/7. Ensemble settled 14, all right; 130 disagreements | No reader answers most figures; docling is never wrong but answers 16%. Decide the reader set from this |
 | 40407491267 | release-check | Stopped by GitHub at 6 h (08:49 IST), nothing saved. It hung on our own site's API ("Server disconnected without sending a response" for nse-106605841, nse-106606044, memory/544570), not on NSE | Make it save as it goes, run in parts |
 | 40393302149 | pdf-referee "explained" | Done (5 h budget). 1,982 open pairs: PDF = ours 130, PDF = screener 9, = NSE file 1, none 9, unsure 151, unreadable 178, not run 1,504 | Run the rest after the PDF date/page fix (F215) and the file cap |
+| 40935230306 | memory-rerank --apply (run 1 of 3, TODO 118 B; owner's Yes 29 Oct) | 50 figures corrected in 18 companies (limit 50), 34 companies wait; backup backup/memory-rerank-20261029T185515Z/ (18 dossiers); undo with restore | Run 2 dispatched 30 Oct ~01:00 IST |
 | not run | memory-gaps-fill-bse dry run, text-backfill | Never ran (skipped in the chain) | Dispatch |
 | not found | seed signs APARINDS Q1FY27, PVRINOX Q1FY25, GLENMARK Q4FY26 | No run re-read them | seed-memory with ids |
 
@@ -111,4 +112,3 @@ no card, memory or site change, no AI. **To switch it on (owner):** set the repo
 to anything else. A manual dispatch (`limit`, `since_hours`) runs whatever the variable says. The first run measures seconds a PDF
 on the runner (column `pdf_seconds`); the disagreements are set beside the daily audit after a few days. Assumption: a card that
 does not store its basis is read on CONSOLIDATED first, then STANDALONE (the reason says so).
-| 40935230306 | memory-rerank --apply (run 1 of 3, TODO 118 B; owner's Yes 29 Oct) | 50 figures corrected in 18 companies (limit 50), 34 companies wait; backup backup/memory-rerank-20261029T185515Z/ (18 dossiers); undo with restore | Run 2 dispatched 30 Oct ~01:00 IST |

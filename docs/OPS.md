@@ -111,3 +111,4 @@ no card, memory or site change, no AI. **To switch it on (owner):** set the repo
 to anything else. A manual dispatch (`limit`, `since_hours`) runs whatever the variable says. The first run measures seconds a PDF
 on the runner (column `pdf_seconds`); the disagreements are set beside the daily audit after a few days. Assumption: a card that
 does not store its basis is read on CONSOLIDATED first, then STANDALONE (the reason says so).
+| 40935230306 | memory-rerank --apply (run 1 of 3, TODO 118 B; owner's Yes 29 Oct) | 50 figures corrected in 18 companies (limit 50), 34 companies wait; backup backup/memory-rerank-20261029T185515Z/ (18 dossiers); undo with restore | Run 2 dispatched 30 Oct ~01:00 IST |

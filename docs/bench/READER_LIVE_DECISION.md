@@ -80,18 +80,18 @@ decide what goes live. Times are IST. Every number below is measured unless it s
 |---|---|---|---|
 | The reader and all fixes | many, latest reader code 1fcb1ae | bench only | tested, reviewed, CI green |
 | Empty-cell re-read from crops | 0b30926, 1fcb1ae | `PDF_CROP_REREAD` | reviewed; +4 figures; ~12-17 s a filing against ~9 s |
-| Unit-slip check asks the new reader first, old reader as fallback, same download | eb2474a | `SLIP_CHECK_NUMFIRST` (repository variable) | tested (5 tests), CI green; **independent review not yet done** |
-| Shadow check of live results cards (TODO 116): one row per card figure, agrees / disagrees / unknown, seconds per PDF, to R2 `meta/pdf-shadow/`; hourly workflow `pdf-shadow.yml`; figures that agree on different bases are flagged as mixed bases | 0739dcf | `PDF_SHADOW=on` (repository variable) | 9 tests; **independent review running** |
+| Unit-slip check asks the new reader first, old reader as fallback, same download | eb2474a | `SLIP_CHECK_NUMFIRST` (repository variable) | 7 tests; independently reviewed, its two fixes in 58b4eb1 (a later candidate filing can still prove the figure; no second download) |
+| Shadow check of live results cards (TODO 116): one row per card figure, agrees / disagrees / unknown, seconds per PDF, to R2 `meta/pdf-shadow/`; hourly workflow `pdf-shadow.yml`; figures that agree on different bases are flagged as mixed bases | 0739dcf | `PDF_SHADOW=on` (repository variable) | 12 tests; independently reviewed, fixes in 58b4eb1: a failed read of the day's log stops the run (it could overwrite the log); verdicts agrees / disagrees / unknown / basis_mismatch / mixed_bases / unclear (a consolidated profit may be the owners' share) |
 
 ## 5. Open before anything goes live
 
-1. **The live reading options.** The reader was measured with `PDF_DATES_2DIGIT`, `PDF_PAGE_RANK`, `PDF_ROW_FIXES` on; the live
-   pipeline runs with them off. A re-score with them off is running. If it is worse or not 0 wrong, the new reader must turn
-   them on for itself only (small change) before `SLIP_CHECK_NUMFIRST` is switched on.
+1. **The live reading options: done (eda3793).** Measured with the three options off (as the live pipeline runs), the new
+   reader fell to 227 (normal) and 133 (hard) right, still 0 wrong; the old reader in that mode gave 1 and 10 wrong. The new
+   reader now turns the three on for its own calls only (a per-thread switch), so live it reads as measured.
 2. **Runner time.** Maintenance run 40810936312 (pdf-bench on this branch, started 08:43 IST) measures both readers on a runner
    with fresh OCR. The 28 Oct run: about 76-84 s a filing on the answer keys (mostly scans). Locally on 29 Oct, fresh OCR at
    200 dpi: 29-78 s for each of 8 hard scanned filings.
-3. **Reviews:** the unit-slip change (eb2474a) and the shadow job (0739dcf) are under one independent review (running).
+3. **Reviews: done.** One independent review of both; every defect it found is fixed with a test (58b4eb1).
 4. **TODO 115** (owner chose "check first"): the live reader reads "Non-Consolidated" as consolidated; recorded, not changed.
 
 ## 6. The decisions asked of the lead (the reader session's recommendation in brackets)

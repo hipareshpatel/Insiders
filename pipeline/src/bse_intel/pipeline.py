@@ -3197,6 +3197,8 @@ class Pipeline:
             # our copy in R2 first, and a fresh download kept there (F191): the filing's own file was the one results XBRL
             # the live path fetched without keeping (audit of the live write path, 30 Oct 2026)
             data = xbrl_store.get(self.sink, filing.xbrl_url)
+            if data and path:
+                self._xbrl_local_put(path, data)
         if data is None:
             try:
                 with stages.stage("xbrl"):

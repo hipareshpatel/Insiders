@@ -2861,9 +2861,15 @@ class Pipeline:
             return None
         link = max(links, key=lambda link: link.filed_at)
         try:
-            with stages.stage("xbrl"):
-                data = self._attachment(link.url, 8_000_000)
-            return xbrl_fast_path.parse(data, filing.news_id)
+            data = xbrl_store.get(self.sink, link.url)   # our copy first, a download kept like the consolidated file (F191)
+            if not data:
+                with stages.stage("xbrl"):
+                    data = self._attachment(link.url, 8_000_000)
+                xbrl_store.put(self.sink, link.url, data)
+            result = xbrl_fast_path.parse(data, filing.news_id)
+            if result is not None and result.kind == "RESULTS":
+                result.raw, result.url = data, link.url   # its screener-rule statements, for the company page's standalone view
+            return result
         except nse_api.FileCapReached:
             raise   # the run's file cap (F213): the filing waits for the next run, not a card without its extra
         except Exception as exc:  # an extra: the consolidated card stands without it
@@ -3767,6 +3773,10 @@ class Pipeline:
         if standalone_file is not None and standalone_file.kind == "RESULTS":
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
             put_standalone(merged, standalone_file.memory_metrics(), standalone_file.balance_sheet, filing.filed_at, filing.news_id)
+            if getattr(standalone_file, "raw", None):
+                # the standalone statements by the same rules (screener_view's standalone recipes); the card never reads them
+                statements.from_file(self.sink, merged, standalone_file.raw, filing.scrip_code, standalone_file.url,
+                                     filing.news_id, filing.filed_at, now)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
         raw_xbrl = getattr(tagged, "raw", None) if tagged else None
         if raw_xbrl:
@@ -4032,6 +4042,10 @@ class Pipeline:
                        fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
         if standalone_file is not None and standalone_file.kind == "RESULTS":
             put_standalone(merged, standalone_file.memory_metrics(), standalone_file.balance_sheet, filing.filed_at, filing.news_id)
+            if getattr(standalone_file, "raw", None):
+                # the standalone statements by the same rules (screener_view's standalone recipes); the card never reads them
+                statements.from_file(self.sink, merged, standalone_file.raw, filing.scrip_code, standalone_file.url,
+                                     filing.news_id, filing.filed_at, now)
         sector = self.prompts.sector_for(industry).name
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector),
                                          ("symbol", company.get("symbol") or filing.symbol)) if v})

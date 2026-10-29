@@ -1794,3 +1794,37 @@ def test_trap_garbled_pbei_label_is_not_the_pbt():
     rows[8] = (["V. Profit beforc exceptional items and tax (III-IV)"], rows[8][1])
     r = read(statement(rows), "pbt")
     assert r.status == "none" or abs(r.value - crore(k["pbt"][0])) < 1e-6, (r.status, r.value)
+
+
+
+def _nrow(label, *values):
+    cells = [None if v is None else nf.Cell(v, 2, False, True, None, str(v)) for v in values]    # type: ignore[arg-type]
+    return nf.NRow(0.0, 0.0, 0.0, label, cells)
+
+
+def test_a_line_read_twice_with_no_label_is_dropped_and_the_figures_are_still_answered():
+    # CREDITACC Q2FY27: OCR gave the "Other income" figures again as a second row with no label, which cut the sums
+    rows, _ = pl()
+    twin = list(rows)
+    twin.insert(2, ([""], rows[1][1]))
+    pdf = statement(twin)
+    for metric, want in (("revenue", REVENUE[0]), ("total_income", None), ("pbt", None), ("pat", None)):
+        got = read(pdf, metric)
+        assert got.status == "ok", metric
+        if want:
+            assert got.value == pytest.approx(crore(want))
+    assert read(pdf, "total_income").value == read(statement(rows), "total_income").value
+    assert read(pdf, "pat").value == read(statement(rows), "pat").value
+
+
+def test_a_row_is_dropped_only_when_it_is_an_unlabelled_exact_copy_of_the_row_above():
+    a = _nrow("II Other income", 1.06, 0.92, 0.67, 1.98)
+    kept = lambda *rows: len(nf.drop_twin_rows(list(rows)))
+    assert kept(a, _nrow("", 1.06, 0.92, 0.67, 1.98)) == 1                       # control: dropped
+    assert kept(a, _nrow("", 1.06, 0.92, 0.67, 1.99)) == 2                       # one figure differs
+    assert kept(a, _nrow("", 1.06, 0.92, 0.67, None)) == 2                       # a cell missing on one side
+    assert kept(a, _nrow("Other income (restated)", 1.06, 0.92, 0.67, 1.98)) == 2   # it has a label of its own
+    assert kept(_nrow("", 1.06, 0.92, 0.67, 1.98), _nrow("", 1.06, 0.92, 0.67, 1.98)) == 2     # nothing above to be a copy of
+    assert kept(a, _nrow("Total", 5.0, 5.0, 5.0, 5.0), _nrow("", 1.06, 0.92, 0.67, 1.98)) == 3  # not the row just above
+    b = _nrow("Exceptional", 1.0, 1.0, None, None)
+    assert kept(b, _nrow("", 1.0, 1.0, None, None)) == 2                         # fewer than three figures

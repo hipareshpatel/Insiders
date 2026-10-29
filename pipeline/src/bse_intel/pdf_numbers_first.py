@@ -787,6 +787,27 @@ def date_parts(words: list[Word], height: float) -> set[int]:
             out.add(id(w))
     return out
 
+TWIN_MIN_FIGURES = 3
+
+
+def drop_twin_rows(rows: list) -> list:
+    """The rows without the second reading of a line: a row with no label whose every cell is the row just above's (the same
+    figures in the same columns, at least ``TWIN_MIN_FIGURES`` of them, none missing on one side only) is the same printed line
+    read twice (CREDITACC Q2FY27: OCR gave "II Other income" 1.06 0.92 ... and, as a second row with no label, the same six
+    figures, which put a row between the two sections and so cut the sums that name total income). A line is never printed
+    twice without its own label, and the row above is kept, so no figure is lost or made up."""
+    out: list = []
+    for r in rows:
+        prev = out[-1] if out else None
+        if prev is not None and not r.label.strip() and prev.label.strip() and len(r.cells) == len(prev.cells):
+            same = all((a is None) == (b is None) and (a is None or (a.value == b.value and a.nil == b.nil))
+                       for a, b in zip(r.cells, prev.cells))
+            if same and sum(a is not None and not a.nil for a in r.cells) >= TWIN_MIN_FIGURES:
+                continue
+        out.append(r)
+    return out
+
+
 def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str = "textlayer") -> list[Table]:
     """The tables of one page: numeric rows, split where a header with dates stands between two rows, each with its columns'
     dates and kinds, its basis, its unit and its stitched labels."""
@@ -851,6 +872,7 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         rows_t = [NRow(r.y, r.top, r.bottom, "", list(r.cells)) for r in rows[a:b]]
         header_bottom = max((w.y for w in gap if any(abs(w.xc - c.xc) < 0.5 * (c.x1 - c.x0 + 4 * height) for c in cols)), default=None)
         stitch_labels(rows_t, free, cols, set(), height, header_bottom)
+        rows_t = drop_twin_rows(rows_t)
         unit = unit_of(texts, page_texts)
         tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts, contested=contested))
     return tables

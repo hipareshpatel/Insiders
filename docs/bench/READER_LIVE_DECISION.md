@@ -25,10 +25,13 @@ decide what goes live. Times are IST. Every number below is measured unless it s
      hard held-out set is 3 filings: GEOJITFSL 12 of 12 right; J&KBANK 16 blank (no unit read) and REPCOHOME 16 blank (a
      garbled scan). So its 27% is blanks, not wrong figures. It is small: 115 figures in all, 64 right, 0 wrong. Every change
      is re-scored on both keys from frozen code.
-2. **Right against wrong.** The new reader: normal **260 right, 0 wrong, 77 blank**; hard **264 right, 0 wrong, 76 blank**,
-   so 0 wrong in 524 answers (677 figures). It leaves a figure blank whenever the sums or labels do not prove it.
+2. **Right against wrong.** Numbers-first alone: normal **250 right, 0 wrong, 87 blank**; hard **203 / 0 / 137**. Combined
+   with the old reader in front (bench, options on): normal **260 / 0 / 77**; hard **264 / 0 / 76**,
+   so 0 wrong in 453 answers alone and 524 combined (677 figures). It leaves a figure blank whenever the sums or labels
+   do not prove it. The combined row needs the bench's reading options on: with them off, as live runs, the old reader adds
+   1 and 10 wrong (GAEL; VLSFINANCE).
    - **The lead's "19% right, 13% wrong" (27 Oct, run 40414799620) is the old reader on the hard key** (65 right, 10 wrong,
-     265 blank). On that same hard key the new reader now gives 264 right and 0 wrong. The two numbers are different readers.
+     265 blank). On that same hard key numbers-first alone now gives 203 right and 0 wrong (264 combined). The two numbers are different readers.
    - This morning's annual-report test (46% right, 1.1% wrong) is a different tool on different documents; the new reader
      has not been run on annual reports, so the two are not comparable.
 3. **What it is for.** Quarterly results statements only (the four headline figures, any period printed, both bases).
@@ -51,8 +54,10 @@ decide what goes live. Times are IST. Every number below is measured unless it s
 | | Normal key (337 figures) | Hard key (340 figures) |
 |---|---|---|
 | Start of 28 Oct night | 144 right / 0 wrong / 193 no answer | 168 / 0 / 172 |
-| 29 Oct ~09:00 (29b51f1) | **260 / 0 / 77** (77%) | **264 / 0 / 76** (78%) |
-| With the empty-cell re-read on (`PDF_CROP_REREAD=1`, off by default) | 262 / 0 / 75 | 266 / 0 / 74 |
+| 29 Oct ~09:00 (29b51f1), combined (old reader first, numbers-first where it gives none) | **260 / 0 / 77** (77%) | **264 / 0 / 76** (78%) |
+| Same code, **numbers-first alone** (what the shadow check uses; the slip check asks it first) | **250 / 0 / 87** (74%) | **203 / 0 / 137** (60%) |
+| Same code, live reading options off (190765c): numbers-first alone / combined | 250 / 0 / 87 / 255 / **1** / 81 | 203 / 0 / 137 / 240 / **10** / 90 |
+| Combined with the empty-cell re-read on (`PDF_CROP_REREAD=1`, off by default) | 262 / 0 / 75 | 266 / 0 / 74 |
 
 - 0 wrong in 677 figures bounds the wrong rate at about 0.45% (rule of three). The owner's proof size is 1,000 figures (TODO 114).
 - The go-live bar set earlier for the reader (98% right, at most 5% no answer) is **not met**.

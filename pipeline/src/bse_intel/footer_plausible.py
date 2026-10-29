@@ -98,6 +98,26 @@ def hide_reason(metrics: list[dict], names: tuple[str, ...], entry: dict | None,
     return None
 
 
+SLIP_BAND = 1.25     # within 25% of 10x, 100x or 1,000x
+
+
+def scale_slip(now: dict | None, base: dict | None) -> str | None:
+    """Why a footer figure's comparative is a scale slip of it, or None: the two in one unit and one about 10, 100 or 1,000
+    times the other. Shree Cement's Q2FY27 card (nse-106826079, 29 Oct 2026 audit) showed volumes of 10.52 MT against a
+    previous quarter of 114.5 (an AI reading of 11.45), so "-90.8% QoQ". A sector volume, order book or ARPU does not move
+    tenfold in a quarter or a year; a rate is left alone (a margin from 2% to 20% is a change, not a unit)."""
+    a, b = _num(now), _num(base)
+    if a is None or b is None or a <= 0 or b <= 0 or (now.get("unit") or "") != (base.get("unit") or ""):
+        return None
+    if str(now.get("unit") or "").upper().replace(" ", "") in _PCT_UNITS:
+        return None
+    ratio = max(a, b) / min(a, b)
+    for power in (10.0, 100.0, 1000.0):
+        if power / SLIP_BAND <= ratio <= power * SLIP_BAND:
+            return f"{b:g} ({base.get('period')}) is about {power:g}x off {a:g}: a unit slip, not a change"
+    return None
+
+
 def note(label: str, entry: dict, reason: str) -> dict:
     """The record a hidden figure leaves on the block it was left off (read by ``card_notes``)."""
     return {"label": label, "period": entry.get("period"), "value": entry.get("value"), "reason": reason}

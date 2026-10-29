@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 28 Oct 2026, 15:17 IST.
+Last updated: 29 Oct 2026, 18:37 IST.
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -52,6 +52,30 @@ XBRL_FILER_CHECKS, LINE_MAP, CRITIC. The 13 were switched on on 27 Oct at the ow
 ON"); their release check never finished (run 40407491267 stopped at 6 hours with nothing saved), so the measurement is
 the blind audit in section 3.
 
+### Switches: what each off one does, and the owner's call (30 Oct 2026, 00:20 IST)
+
+A switch turns a rule that is already on `main` on or off, without new code. Code goes to `main` only after the tests, a
+blind review and a measurement; a switch then decides whether the rule acts on live cards. The owner decides each line.
+
+| Switch (off today) | What it does, in one line | Lead's advice | Owner |
+|---|---|---|---|
+| MEMORY_CALL_V2 | Each call transcript and deck gets its own memory reading (Gemini key 3); its points are checked by code and kept | On after one more blind check of 10 new documents (TODO 101) | Yes / No / Later |
+| MEMORY_YEAR_CHECK | A year or half-year figure its own quarters do not add up to is not used on a card | Measure on stored memory, then on | Yes / No / Later |
+| XBRL_FILER_CHECKS | Where the company's own file contradicts itself, the figure is held, not kept | Measure on stored memory, then on | Yes / No / Later |
+| MEMORY_RESTATED | A restated comparative is named as such on the card ("restated in Q2FY27, first filed X") | Later, with the card work | Yes / No / Later |
+| CARD_CONSOLIDATED_ONLY | A consolidated company's card states consolidated figures only | Decide in the card work (the fact-sheet flow covers it) | Yes / No / Later |
+| CARD_EBITDA_PROFIT_V2 | The company's own EBITDA first, ours below as "calculated"; one profit line | Decide in the card work | Yes / No / Later |
+| CARD_TWO_PARTS | The card in two parts: "from the filing (checked)" and "our reading (AI)" | Decide in the card work | Yes / No / Later |
+| CARD_GUIDANCE_DATED | A guidance verdict (met / missed) only from a dated target due this period | Decide in the card work | Yes / No / Later |
+| CARD_EPS_WHOLE | EPS line on the whole company (EPS is not shown on cards, so memory only) | Later | Yes / No / Later |
+| LINE_MAP | Row names mapped by one table for changes that would alter output | Keep off | Yes / No / Later |
+| SLIP_CHECK_NUMFIRST, PDF_SHADOW | The new PDF reader in the unit check; its shadow run | Off until the PDF work resumes | Yes / No / Later |
+| MEMORY_SCREENER | Screener's figures read as memory | Keep off: screener is for checking only | Yes / No / Later |
+| CRITIC | A second AI reviewing each card | Keep off (D41) | Yes / No / Later |
+
+No switch, on as soon as merged (30 Oct): the exchange file's figure outranks a later AI reading (TODO 118 B); a footer
+figure 10x off its comparative is not shown (TODO 127); each filing's own results XBRL kept in R2.
+
 ## 2. The go-live bar (one definition)
 
 WRONG on the checked face at or below 5% of published cards, read pooled over days, with the top of the 95% interval at
@@ -67,6 +91,36 @@ in older files are history.
 Not met. The rate has stayed between 15% and 23% for a week while about 120 fixes shipped (F104-F222).
 
 ## 3. Open work, in order
+
+**29 Oct 2026, 18:37 IST: where the financial work stands (the blocks below are the record they came from).**
+- Done today:
+  - The Screener rows compare quarters from Q1FY26 only (owner); a period before a company's listing is "before listing",
+    not "no facts". Re-run 40874998205: the six main rows of the FY26 quarters 96.7 % exact (94,251 pairs); target 98–98.5 %
+    (owner). Bank PBT as filed kept (13 fixed, 6 broken, all HDFC Bank); the fair-value rule dropped (5 fixed, 10 broken).
+    Every rule is marked "cause known" or "numbers only" (TODO 115). `docs/design/screener-row-rules.md`.
+  - The BSE FY26 results fill (894 facts) and the BSE annual reports part 1 (773 facts); part 2 (run 40875086865) runs.
+  - Results XBRL against the PDF, 40 companies, Q1FY27: median 75 minutes after the PDF, 39 of 40 within 6.5 h
+    (`docs/SOURCES.md`).
+  - The numbers-first PDF reader merged (PR #215, 18:35 IST), switches off: 0 wrong on both keys, options off and on; about
+    1.6–2x slower than the old reader (TODO 117).
+  - Memory gaps (run 40875940744, read only): 326 of 1,856 companies have a gap from Q2FY25; from Q1FY26, 132 of 199 only
+    before their first held quarter (likely before listing), 20 with a hole, 26 stopping early, 21 with nothing held.
+  - Memory's own errors traced in code (TODO 118): Maruti and Bajaj PBT and the HUL/Vedanta EPS are by design; a ranking gap
+    (a live file figure ranks like a card) is to be measured; Vedanta FY26 and SBI Life H1FY27 need their stored sources read.
+- Next, in order:
+  1. Sort the 239 year and balance-sheet pairs the BSE annual files moved away from screener; finish BSE annual part 2.
+  2. The 47 memory-gap companies with a hole, an early stop or nothing held: check each against NSE's list, fill from files
+     already downloaded where they exist.
+  3. TODO 118 B (the ranking gap): an on/off count over stored memory, then the owner's Yes.
+  4. The gap to 98 %: confirm the merger/demerger restatements as exceptions (327 pairs); screener's restated year-ago
+     quarter (505 pairs) waits for the PDF reader to read the comparative column.
+  5. The PDF reader's next PR (TODO 123): the causes behind its patches and one OCR per page, then a speed check against
+     main on an empty OCR cache, before the owner decides its switches.
+- **Owner, 29 Oct, ~19:02 IST: "run the 50 card blind audit after financials".** It runs once items 1-3 above are done
+  (the BSE annual files and the gap fill read, TODO 118 B measured): 50 cards published since then, blind, independent
+  reviewers (mid model at least), WRONG on the checked face with its 95 % interval (`daily_audit/rates.py`), against the bar of
+  5 %. Its result says whether the financial work reached the cards.
+- Waiting for the owner: TODO 118 A/B/C; the PDF reader's switches (`SLIP_CHECK_NUMFIRST`, `PDF_SHADOW`).
 
 **Owner, 28 Oct, ~15:40 IST: "No blind audit of cards today", "Let's settle financial first".** The card audit and the
 card-wording experiment wait. The financial-data order, until the owner says otherwise:
@@ -233,6 +287,39 @@ including discontinued operations against memory's continuing figure (ABREL Q4FY
 AXISBANK Q2FY27 15,306 = six months): reader errors. A lead for the owner: memory's profit is the continuing figure when a
 company reports a discontinued line, so a card can show ₹1,382 Cr where the company's own headline profit is ₹4,015 Cr. screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
 unexplained rows is not started (owner to say).
+
+**Every download and test run, and where its files are kept:** `docs/bench/test-downloads.md` (owner, 29 Oct: reuse test
+files, never download twice). Add a row for each run.
+
+## 3b. Built or agreed, waiting (swept from docs/TODO.md, 29 Oct 2026, ~10:50 IST; owner: "add all above")
+
+Every Yes item of `docs/TODO.md` that is not done, by what it waits on. Nothing approved was lost; none of these is on the
+live site yet. Keep this list current: an item leaves it when it ships or the owner drops it.
+
+1. **Built behind a switch that is off, waiting for the release check** (on/off over stored cards plus an independent
+   blind sample; the plan is one run with all of them together, then an audit: section 2's "single run with the 13
+   switches"). Paused by the owner on 28 Oct ("settle financial first"); this is what moves the WRONG-card rate.
+   - Card wording: the company's own EBITDA and one profit line (TODO 11, 14, 15, `CARD_EBITDA_PROFIT_V2`); two parts on
+     every card (21, `CARD_TWO_PARTS`); consolidated first (44, `CARD_CONSOLIDATED_ONLY`); the results block on one basis
+     (107, `CARD_RESULTS_ONE_LINE`); memory watch verdicts the filing contradicts (106, `CARD_WATCH_VERDICT`).
+   - Memory checks: a year that does not match its quarters and the owners' / minority share swap (64, 65, 76,
+     `MEMORY_YEAR_CHECK`); a KPI outside what its sector allows (77, `CARD_FOOTER_PLAUSIBLE`); the share count behind an EPS
+     change (79, `EPS_SHARE_COUNT_CHECK`).
+   - Other: the row-name map (93, `LINE_MAP`); the screener-style table on company pages (52, `VITE_SCREENER_LINES`); the
+     BSE quarters before a company's first NSE file (108b, `BSE_FILL_PRE_NSE`).
+2. **Waiting for the owner's decision.**
+   - **Call memory v2** (TODO 101, `MEMORY_CALL_V2`, F180): what memory keeps from call transcripts and decks. Measured 27 Oct
+     on 9 documents: important points kept 87.8% (bar 85%), wrong 1.9% (bar 2%); needs a second independent blind sample,
+     then the owner's go. First in line for the card work once the screener work is settled (owner, 29 Oct).
+   - Removing the companies not on NSE (45, `prune-companies`): built, its dry run never run.
+   - Whether the 5% bar is reachable (85): waits for the 150-card measurement.
+3. **Agreed, not started.**
+   - A daily BSE pass for the BSE-only companies kept (47).
+   - The automatic memory fixes and nightly jobs (69-74): a figure under the wrong quarter moved (69); the same figure in two
+     quarters (70); a 100x slip (71); cards re-rendered after a proven memory fix, no AI (72); failed filings retried each
+     night (73); nightly checks of the day's filings (74).
+4. **Loose ends fixed in this sweep:** TODO 1, 2 and 6 said "PR #108 not merged", out of date (the 120 MB limit, the "file
+   too large" reason and `failed-report` are on `main`); two rows were both numbered 108 (the second is now 108b).
 
 ## 4. Known problems (found 27 Oct, not fixed)
 

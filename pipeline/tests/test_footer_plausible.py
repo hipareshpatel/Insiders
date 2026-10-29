@@ -124,3 +124,36 @@ def test_refreshing_a_stored_card_records_the_hidden_footer_figure(monkeypatch):
     monkeypatch.delenv("CARD_FOOTER_PLAUSIBLE")
     off, changed = refresh(new, gic(), filing, None, [NIM])
     assert "footer_hidden" not in off["grounding"]
+
+
+VOL = {"metric": "volumes", "label": "Volumes (MT)", "format": "num"}
+
+
+def shree(prev_quarter=114.5):
+    """Shree Cement's Q2FY27 card (29 Oct 2026 audit): volumes 10.52 MT, the previous quarter stored as 114.5 (11.45 read 10x)."""
+    rows = [m("volumes", "Q2FY27", 10.52, "n2", "MT"), m("volumes", "Q1FY27", prev_quarter, "n1", "MT"),
+            m("volumes", "Q4FY26", 10.56, "n0", "MT"),
+            m("revenue", "Q2FY27", 4300.0, "n2", "INR_CR"), m("revenue", "Q2FY26", 4100.0, "n1", "INR_CR"),
+            m("revenue", "Q1FY27", 5000.0, "n1", "INR_CR"), m("pat", "Q2FY27", 300.0, "n2", "INR_CR"),
+            m("pat", "Q2FY26", 280.0, "n1", "INR_CR"), m("pat", "Q1FY27", 400.0, "n1", "INR_CR"),
+            m("pbt", "Q2FY27", 380.0, "n2", "INR_CR"), m("pbt", "Q2FY26", 360.0, "n1", "INR_CR")]
+    return {"financial_metrics": rows, "industry": "Cement & Cement Products"}
+
+
+def test_a_comparative_ten_times_the_figure_is_a_unit_slip_and_the_row_is_left_off(monkeypatch):
+    off = results_snapshot(shree(), "n2", [VOL])
+    assert off["kpi:volumes"]["prev_quarter"] == 114.5
+    monkeypatch.setenv("CARD_FOOTER_PLAUSIBLE", "1")
+    on = results_snapshot(shree(), "n2", [VOL])
+    assert "kpi:volumes" not in on and "10x off" in on["footer_hidden"][0]["reason"]
+    assert results_snapshot(shree(11.45), "n2", [VOL])["kpi:volumes"]["prev_quarter"] == 11.45   # the right figure is shown
+    assert results_snapshot(shree(6.0), "n2", [VOL])["kpi:volumes"]["prev_quarter"] == 6.0   # a real fall is a change
+
+
+def test_scale_slip_leaves_rates_other_units_and_ordinary_moves_alone():
+    a = {"value": 10.0, "unit": "MT", "period": "Q2FY27"}
+    assert fp.scale_slip(a, {"value": 101.0, "unit": "MT", "period": "Q1FY27"})
+    assert fp.scale_slip(a, {"value": 0.1, "unit": "MT", "period": "Q2FY26"})   # 100x the other way
+    assert fp.scale_slip(a, {"value": 30.0, "unit": "MT", "period": "Q1FY27"}) is None
+    assert fp.scale_slip(a, {"value": 100.0, "unit": "KT", "period": "Q1FY27"}) is None
+    assert fp.scale_slip({"value": 2.0, "unit": "PCT"}, {"value": 20.0, "unit": "PCT"}) is None

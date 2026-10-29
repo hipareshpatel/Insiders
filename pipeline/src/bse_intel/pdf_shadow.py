@@ -1,4 +1,4 @@
-"""The shadow check of live results cards with the numbers-first PDF reader (TODO 116, owner 29 Oct 2026).
+"""The shadow check of live results cards with the numbers-first PDF reader (TODO 121, owner 29 Oct 2026).
 
 For each results card published in the last hours, the card's headline figures (revenue or total income, PBT, profit, as the
 card states them, in crore, for the card's period) are compared with what the filing's PDF proves (``pdf_numbers_first``).

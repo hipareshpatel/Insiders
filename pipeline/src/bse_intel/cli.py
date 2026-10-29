@@ -1386,6 +1386,140 @@ def cmd_screener_download(args, settings, sink) -> int:
     return MORE_LEFT if outcome["more"] else 0
 
 
+def cmd_screener_schedules(args, settings, sink) -> int:
+    """The sub-rows behind each "+" head of the stored screener.in pages, into R2 (screener_schedules.py; owner, 29 Oct 2026):
+    one request a head (nested sub-rows too), 2.5 s apart a runner (owner: 2-3 s), up to 12 runners, one file a company, the largest companies first; a 403,
+    429 or 503 stops the run (exit 75). Resumable (a stored page is not asked again); exit 124 when the time budget or
+    --max-requests ends it with pages left. No AI, no NSE, no memory."""
+    from . import screener_download as sd
+    from . import screener_schedules as ss
+    from .screener_crosscheck import stored_pages
+
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count <= ss.MAX_SHARDS
+        except (ValueError, AssertionError):
+            print(f"--shard takes I/N with 0 <= I < N <= {ss.MAX_SHARDS}, e.g. 0/12")
+            return 2
+        shard = (index, count)
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    companies = _largest_by_mcap(sink, companies, len(companies))
+    pages, newest = stored_pages(sink)
+    symbols = [symbol for _, symbol in companies if symbol in pages]
+    print(f"screener schedules: {len(symbols)} companies with stored pages (newest day {newest}), largest first"
+          + (f", shard {args.shard}" if shard else "") + (f", at most {args.max_requests} requests" if args.max_requests else ""))
+    refused = False
+    with sd.ScreenerClient(pause=ss.PAUSE_SECONDS, headers=ss.XHR_HEADERS) as client:
+        try:
+            outcome = ss.run(sink, symbols, pages, client, shard, args.time_budget, args.max_requests)
+        except sd.ScreenerRefused as exc:
+            logging.getLogger("bse_intel.screener_schedules").error("screener.in refused; stopping: %s", exc)
+            refused, outcome = True, None
+    if outcome:
+        print(ss.render(outcome))
+        for line in outcome["failed"][:20]:
+            print(f"  {line}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome or {"refused": True}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome["more"] else 0
+
+
+def cmd_bse_annual_xbrl(args, settings, sink) -> int:
+    """Annual-report XBRL from BSE for the years NSE does not list, into R2 (bse_annual_xbrl.py; owner, 29 Oct 2026): through
+    the ported adapter, largest companies first; every file kept raw and its facts saved as the annual document unless NSE's is
+    stored; a stored year is not asked again. A refusal stops the run (exit 75); the file cap or the time budget ends it with
+    companies left (exit 124). No AI, no NSE, no memory."""
+    from . import bse_annual_xbrl as ba
+    from .adapters.bse import Blocked, BSEClient
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    companies = _largest_by_mcap(sink, companies, len(companies))
+    if args.limit:
+        companies = companies[:args.limit]
+    print(f"BSE annual-report XBRL: {len(companies)} companies, largest first")
+    try:
+        out = ba.run(sink, companies, BSEClient(), time_budget=args.time_budget)
+    except Blocked as exc:
+        logging.getLogger("bse_intel.bse_annual_xbrl").error("BSE refused; stopping: %s", exc)
+        if args.json:
+            Path(args.json).write_text(json.dumps({"refused": str(exc)}) + "\n", encoding="utf-8")
+        return REFUSED
+    print(ba.render(out))
+    for row in out["saved"][:40]:
+        print(f"  {row['symbol']:12s} {row['fy']} {row['basis']} {row['file']}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return MORE_LEFT if out["more"] else 0
+
+
+def cmd_bse_results_xbrl(args, settings, sink) -> int:
+    """Results XBRL from BSE for the quarters NSE does not list, into R2 (bse_results_xbrl.py; owner, 29 Oct 2026): the fill's
+    own BSE client (the ported adapter), largest companies first; every file kept in the XBRL store and its facts saved as the
+    results doc unless one is stored; a company with every quarter stored is not asked. A refusal stops the run (exit 75); the
+    file cap, the time budget or a full store ends it with companies left (exit 124). No AI, no NSE, no memory."""
+    from . import bse_results_xbrl as br
+    from .bse_gap_fill import PortedBse
+    from .nse import SourceBlockedError
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    companies = _largest_by_mcap(sink, companies, len(companies))
+    if args.limit:
+        companies = companies[:args.limit]
+    print(f"BSE results XBRL: {len(companies)} companies, largest first")
+    try:
+        with PortedBse() as bse:
+            out = br.run(sink, companies, bse, time_budget=args.time_budget)
+    except SourceBlockedError as exc:
+        logging.getLogger("bse_intel.bse_results_xbrl").error("BSE refused; stopping: %s", exc)
+        if args.json:
+            Path(args.json).write_text(json.dumps({"refused": str(exc)}) + "\n", encoding="utf-8")
+        return REFUSED
+    print(br.render(out))
+    for row in out["saved"][:40]:
+        print(f"  {row['symbol']:12s} {row['period']} {row['basis']}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return MORE_LEFT if out["more"] else 0
+
+
+def cmd_keep_annual_pdfs(args, settings, sink) -> int:
+    """Keep the named companies' annual-report PDFs in R2 once (annual_pdfs.py; owner, 29 Oct 2026), the NSE client unchanged; a
+    stored file is never fetched again. A refusal stops the run (exit 75). No AI, no memory."""
+    from . import annual_pdfs as ap
+    from .nse import NseClient, SourceBlockedError
+
+    symbols = [x.strip().upper() for x in (args.symbols or "").split(",") if x.strip()]
+    if not symbols:
+        print("--symbols takes NSE symbols, comma-separated")
+        return 2
+    try:
+        client = NseClient()
+        client.warm_up()
+        out = ap.run(sink, client, symbols, args.year)
+    except SourceBlockedError as exc:
+        logging.getLogger("bse_intel.annual_pdfs").error("NSE refused; stopping: %s", exc)
+        return REFUSED
+    print(json.dumps({k: v for k, v in out.items() if k != "kept"}, indent=1))
+    for row in out["kept"]:
+        print(f"  {row['symbol']:12s} {row['bytes'] / 1e6:6.1f} MB  {row['key']}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
+    return 0
+
+
 def cmd_tijori_download(args, settings, sink) -> int:
     """The download of every company's financials from Tijori Finance, raw and gzipped, into R2 (tijori.py, F189, TODO 92): one
     page a company at TIJORI_RATE requests a second (default 6) through 8 threads; the first refusal slows the run to one
@@ -1562,6 +1696,29 @@ def cmd_screener_crosscheck(args, settings, sink) -> int:
     return 0
 
 
+def cmd_screener_rows(args, settings, sink) -> int:
+    """Read only: every screener website row of the stored screener pages against one fixed recipe a row worked out from the stored
+    XBRL facts in R2 (screener_view.py; owner, 28 Oct 2026: "make our statements like screener, all line items row by row"). No
+    request to NSE, BSE or screener, no write, no AI. ``--top-mcap N`` (default 50) takes the N largest by market cap (of
+    ``--scrips``, else of the universe). Writes summary.json, rows.csv and the markdown report."""
+    from . import screener_view as sv
+
+    if args.top_mcap is None:
+        args.top_mcap = 50
+    companies = _selected_companies(args, sink)
+    if companies is None:
+        return 2
+    summary = sv.run(sink, companies, args.workers, args.day)
+    print(sv.render(summary))
+    if args.json:
+        Path(args.json).write_text(sv.to_json(summary), encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sv.to_csv(summary), encoding="utf-8")
+    if args.md:
+        Path(args.md).write_text(sv.to_markdown(summary, today_ist().isoformat()), encoding="utf-8")
+    return 0
+
+
 def cmd_xbrl_facts(args, settings, sink) -> int:
     """Every fact of the results XBRL files already stored in R2 (raw/xbrl/), into raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz
     (xbrl_facts.py; owner, 28 Oct 2026). Reads R2 and memory only: no request to NSE. Lists the filings whose file is not stored
@@ -1684,7 +1841,7 @@ def cmd_pdf_referee(args, settings, sink) -> int:
 
 
 def cmd_pdf_shadow(args, settings, sink) -> int:
-    """Read-only: the numbers-first PDF reader's shadow check of the results cards filed in the last hours (pdf_shadow.py, TODO 116).
+    """Read-only: the numbers-first PDF reader's shadow check of the results cards filed in the last hours (pdf_shadow.py, TODO 121).
     For each card its revenue (or total income), PBT and profit against what the filing's PDF proves: agrees / disagrees / unknown
     with the reason, a row a figure, to R2 (meta/pdf-shadow/<day>.csv, every 3 cards or 2 minutes) and ``--out-csv``. The PDF is
     fetched as pdf-referee fetches it (``Sources.payload``, the client's own pace). Nothing on the site, in memory or in a card
@@ -1980,6 +2137,24 @@ def cmd_restore(args, settings, sink) -> int:
     else:
         print("dry run: nothing changed (--apply backs up what it replaces to backup/restore-<time>/, then puts the backup back; "
               "--force also puts back what was changed since the job)")
+    return 0
+
+
+def cmd_memory_rerank(args, settings, sink) -> int:
+    """Put right the stored figures the TODO 118 B ranking changes (memory_rerank.py): a dry run by default, --apply backs
+    each dossier up (backup.RunBackup) and writes at most --limit figures. No AI, no exchange."""
+    from . import memory_rerank
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()] or sink.list_dossiers()
+    outcome = memory_rerank.run(sink, scrips, args.apply, args.limit)
+    print(memory_rerank.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:
+        print(f"memory-rerank: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-rerank-<time>/, then writes)")
     return 0
 
 
@@ -2327,6 +2502,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_drop_known_wrong)
+    p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--limit", type=int, default=50, help="at most this many figures a run (default 50, the owner's rule A)")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_rerank)
     p = sub.add_parser("dgtr-sync", help="DGTR anti-dumping / countervailing / safeguard cases into memory, no AI (module 8)")
     p.add_argument("--pages", type=int, default=1, help="list pages per investigation type (15 cases each, ongoing first)")
     p.add_argument("--scrips", help="only these companies (comma separated)")
@@ -2446,6 +2627,34 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_screener_download)
 
+    p = sub.add_parser("screener-schedules", help="the sub-rows behind each '+' head of the stored screener.in pages, into R2 (no AI, no NSE)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe, largest first)")
+    p.add_argument("--shard", help="I/N with N at most 12: this runner's share of the companies")
+    p.add_argument("--max-requests", type=int, help="stop before this many requests (a trial: the first run asks 100)")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pages are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_screener_schedules)
+
+    p = sub.add_parser("bse-annual-xbrl", help="annual-report XBRL from BSE for the years NSE does not list, into R2 (no AI, no NSE)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe, largest first)")
+    p.add_argument("--limit", type=int, help="only the N largest companies")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_bse_annual_xbrl)
+
+    p = sub.add_parser("bse-results-xbrl", help="results XBRL from BSE for the quarters NSE does not list, into R2 (no AI, no NSE)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe, largest first)")
+    p.add_argument("--limit", type=int, help="only the N largest companies")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_bse_results_xbrl)
+
+    p = sub.add_parser("keep-annual-pdfs", help="keep named companies' annual-report PDFs in R2, once (NSE, no AI)")
+    p.add_argument("--symbols", help="comma-separated NSE symbols")
+    p.add_argument("--year", help="the year the report ends, e.g. 2026 for FY26 (default: each company's newest)")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_keep_annual_pdfs)
+
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
     p.add_argument("--limit", type=int, help="only the first N companies and sweep at most N sitemap slugs (a trial)")
@@ -2487,6 +2696,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--referee-csv", help="write the refereed pairs, with the official line and the verdict, to this file")
     p.add_argument("--md", help="write the short markdown report to this file")
     p.set_defaults(func=cmd_screener_crosscheck)
+
+    p = sub.add_parser("screener-rows", help="read-only: every screener website row against one fixed recipe a row from the stored XBRL facts")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (default 50)")
+    p.add_argument("--day", help="use the pages stored on or before this day (default the newest)")
+    p.add_argument("--workers", type=int, default=8, help="companies read at a time")
+    p.add_argument("--json", help="write the summary to this file")
+    p.add_argument("--csv", help="write every pair (company, basis, period, table, row, screener, ours, diff, status, recipe note)")
+    p.add_argument("--md", help="write the markdown report to this file")
+    p.set_defaults(func=cmd_screener_rows)
 
     p = sub.add_parser("xbrl-facts", help="keep every fact of the stored results XBRL files in R2 (raw/xbrl-facts/); lists the filings whose file is not stored; no NSE request unless --download")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

@@ -518,6 +518,26 @@ def test_an_xbrl_figure_outranks_a_card_however_recent():
     assert entry["value"] == 120.0
 
 
+def test_a_live_file_figure_outranks_a_later_ai_reading_but_not_the_seed():
+    """TODO 118 B: SBI Life's H1FY27 PAT from its own results file (1,274.17) lost to the press release's rounded
+    1,270, filed four minutes later, because only xbrl: ids outranked. A figure the XBRL reader built now beats a
+    model's reading; the seed (xbrl:) still beats the live file, which can differ on PBT with associates."""
+    from bse_intel.dossier import _metric_entry
+
+    def src(news_id, value, as_of, by):
+        return {"news_id": news_id, "value": value, "as_of": as_of, "unit": "INR_CR", "lab": {"by": by}}
+
+    file_ = src("nse-1", 1274.17, "2026-10-28T18:55:00+05:30", "file")
+    release = src("nse-2", 1270.0, "2026-10-28T18:59:00+05:30", "ai")
+    assert _metric_entry("pat", "H1FY27", [file_, release])["value"] == 1274.17
+    calc = src("nse-3", 7.05, "2026-10-27T14:59:00+05:30", "calc")
+    assert _metric_entry("ebitda_margin", "Q2FY27", [calc, src("nse-4", 7.0, "2026-10-27T15:07:00+05:30", "ai")])["value"] == 7.05
+    seed = src("xbrl:res:540719:Q2FY27", 1280.0, "2026-10-01T00:00:00+05:30", "file")
+    assert _metric_entry("pbt", "H1FY27", [seed, file_, release])["value"] == 1280.0
+    # among AI readings alone the newest still carries
+    assert _metric_entry("pat", "H1FY27", [release, src("nse-5", 1271.0, "2026-10-29T10:00:00+05:30", "ai")])["value"] == 1271.0
+
+
 def test_memory_leaves_out_a_figure_that_breaks_its_own_periods():
     """Kanoria's Q1FY26 revenue sat in memory as 453.78 where H1FY26 minus Q2FY26 gives 201.38, and every
     later card read it as the year-ago figure, so "+129% YoY" became "+1.5%". A wrong comparative is worse

@@ -3194,6 +3194,10 @@ class Pipeline:
             except OSError:
                 data = None
         if data is None:
+            # our copy in R2 first, and a fresh download kept there (F191): the filing's own file was the one results XBRL
+            # the live path fetched without keeping (audit of the live write path, 30 Oct 2026)
+            data = xbrl_store.get(self.sink, filing.xbrl_url)
+        if data is None:
             try:
                 with stages.stage("xbrl"):
                     data = self._attachment(filing.xbrl_url, 8_000_000)   # NSE's archive for an NSE file
@@ -3202,6 +3206,8 @@ class Pipeline:
                     raise
                 log.warning("XBRL download failed for %s; using the PDF", filing.news_id)
                 return None
+            if data:
+                xbrl_store.put(self.sink, filing.xbrl_url, data)
             if data and path:
                 try:
                     path.parent.mkdir(parents=True, exist_ok=True)

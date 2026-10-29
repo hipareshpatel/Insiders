@@ -873,6 +873,9 @@ _CLASS_RULES: list[tuple[str, re.Pattern]] = [
     ("DISC", re.compile(r"discontinu", re.I)),
     ("PBEI", re.compile(r"before\b.*\b(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?)", re.I)),
     ("PBT", re.compile(r"before\s+(?:\w+\s+){0,3}tax|\bpbt\b", re.I)),
+    # OCR's "beforc" / "bcfore" for "before" in a line that names a profit and a tax ("5. Profit beforc Tax (3+4)", MOREPENLAB): without
+    # this it fell to the tax rule below and a tax line was never a profit before tax
+    ("PBT", re.compile(r"^(?!.*(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?))(?=.*\b(?:profit|loss)\b).*?\b(?:profit|loss)\b.{0,20}?\b(?:\wefore|b\wfore|be\wore|bef\wre|befo\we|befor\w)\s+(?:\w+\s+){0,3}tax", re.I)),
     ("TAX", re.compile(r"^(?!.*\b(?:profit|loss|surplus)\b).*\btax", re.I)),      # a tax line: no profit or loss in its words
     ("CONT", re.compile(r"continuing", re.I)),
     ("PAT", re.compile(r"(?:profit|loss|surplus)\b.*\b(?:for\s+the\s+(?:period|year|quarter)|after\s+tax)|\bpat\b|net\s+profit", re.I)),
@@ -1513,18 +1516,28 @@ class Solver:
         for s in (t + 1, t + 2):
             for e in range(s + 2, min(self.n, s + 40)):
                 te_proof: Proof = (e, tuple((r, 1) for r in range(s, e)))
-                if not self.label_ok(e, {"TE"}) or not self.valid(te_proof):
+                if not self.label_ok(e, {"TE"}):
+                    continue
+                # a total expenses row whose parts cannot be added up (a part is lost or merged in most columns: COLPAL Q2FY27,
+                # CROMPTON Q2FY27) is the total only when it SAYS so and the rows right after it say a profit before tax and the
+                # identity profit = total income - total expenses holds in the columns (the sum's proof is then left out)
+                sums = self.valid(te_proof)
+                if not sums and self.cls[e] != "TE":
                     continue
                 for p in range(e + 1, min(self.n, e + 4)):
                     p_proof: Proof = (p, ((t, 1), (e, -1)))
                     if not self.label_ok(p, {"PBEI", "PBT"}) or not self.valid(p_proof):
                         continue
+                    if not sums and self.cls[p] not in ("PBEI", "PBT"):
+                        continue
                     self.chains += 1
                     pending: list[tuple[str, tuple[int, ...], list[Proof]]] = [
-                        ("expenses", (e,), [te_proof]), ("pbt_pre", (p,), [p_proof]),
+                        ("pbt_pre", (p,), [p_proof]),
                         # the profit identity ties total income, total expenses and the profit before exceptional items together
                         # in the period's column: where a part of a sum is not legible there, it proves each of the three alone
                         ("total_income", (t,), [p_proof]), ("expenses", (e,), [p_proof])]
+                    if sums:
+                        pending.insert(0, ("expenses", (e,), [te_proof]))
                     completed = self.profit_tail(p, p_proof, pending)
                     said = self.cls[t] == "TI" or self.cls[e] == "TE" or self.cls[p] in ("PBEI", "PBT")
                     if not (said or completed):

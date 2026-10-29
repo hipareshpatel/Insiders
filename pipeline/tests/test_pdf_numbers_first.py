@@ -1735,3 +1735,62 @@ def test_trap_mixed_roman_digit_run():
     from bse_intel.pdf_numbers_first import _ROW_MARKER, _ROMAN
     t = "9 Profit from continuing operations X Net profit for the period"
     assert [m[1] for m in _ROW_MARKER.finditer(t)] == ["9", "X"]
+
+
+def _lost_part(total_label=("Total expenses",), pbt_before_label=None, bad_total=False):
+    """A statement whose last expense line has a cell in one column only (so it is no row): the total expenses cannot be summed."""
+    rows, want = pl(total_label=("Total income (I+II)",))
+    out = []
+    for lines, cells in rows:
+        if lines == ["Other expenses"]:
+            cells = [cells[0], "", "", ""]
+        elif lines == ["Total expenses"]:
+            lines = list(total_label)
+            if bad_total:
+                cells = [v + 7.0 for v in cells]
+        elif pbt_before_label and lines and lines[0].startswith("V. Profit"):
+            lines = [pbt_before_label]
+        out.append((lines, cells))
+    return out, want
+
+def test_a_total_expenses_row_whose_parts_are_lost_is_named_by_the_profit_identity():
+    rows, want = _lost_part()
+    pdf = statement(rows)
+    for metric, key in (("pbt", "pbt"), ("pat", "pat")):
+        got = read(pdf, metric)
+        assert got.status == "ok" and got.value == pytest.approx(crore(want[key][0])), (metric, got)
+
+def test_a_bare_total_is_not_named_when_the_parts_do_not_sum():
+    rows, want = _lost_part(total_label=("Total",))
+    for metric in ("pbt", "pat", "expenses"):
+        assert read(statement(rows), metric).status != "ok", metric
+
+def test_an_unlabelled_profit_row_never_names_the_total_expenses_by_itself():
+    # the profit before tax row below still says so and holds the identity, so the answer may be given, but only the true one
+    rows, want = _lost_part(pbt_before_label="V. Result of the period (III-IV)")
+    got = read(statement(rows), "pbt")
+    assert got.status != "ok" or got.value == pytest.approx(crore(want["pbt"][0])), got
+
+def test_a_total_expenses_row_that_breaks_the_profit_identity_is_not_named():
+    rows, want = _lost_part(bad_total=True)
+    for metric in ("pbt", "pat"):
+        assert read(statement(rows), metric).status != "ok"
+
+def test_a_profit_before_tax_label_garbled_by_one_letter_is_the_profit_before_tax():
+    rows, want = pl(pbt_label="Profit beforc Tax (V-VI)")
+    got = read(statement(rows), "pbt")
+    assert got.status == "ok" and got.value == pytest.approx(crore(want["pbt"][0])), got
+
+def test_a_garbled_before_does_not_turn_an_after_tax_profit_into_a_profit_before_tax():
+    rows, want = pl(pbt_label="Profit aftcr Tax (V-VI)")
+    got = read(statement(rows), "pbt")
+    assert not (got.status == "ok" and got.value == pytest.approx(crore(want["pbt"][0]))) or got.status != "ok", got
+
+
+def test_trap_garbled_pbei_label_is_not_the_pbt():
+    # REVIEW TRAP: "beforc exceptional items and tax" is a profit before EXCEPTIONAL items; the true PBT row is labelled "after exceptional"
+    rows, k = pl(exceptional=[5.0, 6.0, 7.0, 10.0], pbt_label="Profit after exceptional items")
+    rows = list(rows)
+    rows[8] = (["V. Profit beforc exceptional items and tax (III-IV)"], rows[8][1])
+    r = read(statement(rows), "pbt")
+    assert r.status == "none" or abs(r.value - crore(k["pbt"][0])) < 1e-6, (r.status, r.value)

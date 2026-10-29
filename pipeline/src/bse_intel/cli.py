@@ -1692,6 +1692,9 @@ def cmd_pdf_shadow(args, settings, sink) -> int:
     from . import pdf_shadow as ps
     from .nse import NseClient
 
+    if args.report:
+        print(json.dumps({"day": args.report, **ps.summary(ps.load_rows(sink, args.report))}))
+        return 0
     with NseClient() as nse:
         outcome = ps.run(nse, sink, args.since_hours, args.limit, args.time_budget)
     rows = outcome.pop("rows")
@@ -2553,6 +2556,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, help="read at most this many cards' PDFs")
     p.add_argument("--time-budget", type=int, default=2700, help="seconds before no new card is started")
     p.add_argument("--out-csv", help="write today's rows to this file as well")
+    p.add_argument("--report", metavar="YYYY-MM-DD", help="only print that day's summary (verdicts for held-out and tuned "
+                   "companies, PDF minutes) from the saved rows; reads no PDF")
     p.set_defaults(func=cmd_pdf_shadow)
 
     p = sub.add_parser("xbrl-key", help="read-only: the exchange's XBRL figures in memory located on their filing's PDF page by word position (a free answer key for the PDF reader)")

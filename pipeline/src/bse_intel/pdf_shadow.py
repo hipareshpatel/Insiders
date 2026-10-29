@@ -167,6 +167,49 @@ def cards_since(sink, since_iso: str):
             return
 
 
+def tuned_symbols(bench=None) -> set[str]:
+    """The companies the reader was tuned on: those in the two answer keys (docs/bench/{normal,hard}pdf/key.csv) that are not on
+    the held-out list (docs/bench/heldout.csv). Every other company's figures are held out (the lead's ask, 29 Oct 2026)."""
+    import csv
+    from pathlib import Path
+
+    bench = Path(bench) if bench else Path(__file__).resolve().parents[3] / "docs" / "bench"
+    seen: set[str] = set()
+    for key in ("normal", "hard"):
+        try:
+            with open(bench / f"{key}pdf" / "key.csv", encoding="utf-8") as fh:
+                seen |= {r["symbol"] for r in csv.DictReader(fh)}
+        except FileNotFoundError:
+            pass
+    try:
+        with open(bench / "heldout.csv", encoding="utf-8") as fh:
+            seen -= {r["symbol"] for r in csv.DictReader(fh)}
+    except FileNotFoundError:
+        pass
+    return seen
+
+
+def summary(rows: list[dict], tuned: set[str] | None = None) -> dict:
+    """Per group (``held_out``: companies the reader was never tuned on; ``tuned``), the count of each verdict and the cards read,
+    and the PDF minutes the rows took (each card's seconds counted once): the runner time a day."""
+    tuned = tuned_symbols() if tuned is None else tuned
+    out: dict = {"held_out": {}, "tuned": {}}
+    cards: dict[str, set] = {"held_out": set(), "tuned": set()}
+    seconds: dict[str, float] = {}
+    for r in rows:
+        group = "tuned" if r.get("symbol") in tuned else "held_out"
+        out[group][r["verdict"]] = out[group].get(r["verdict"], 0) + 1
+        cards[group].add(r["card_id"])
+        try:
+            seconds[r["card_id"]] = float(r.get("pdf_seconds") or 0)
+        except ValueError:
+            pass
+    for group in ("held_out", "tuned"):
+        out[group]["cards"] = len(cards[group])
+    out["pdf_minutes"] = round(sum(seconds.values()) / 60, 1)
+    return out
+
+
 def run(nse, sink, since_hours: float = 3.0, limit: int | None = None, time_budget: float | None = None, clock=time.monotonic,
         src=None, analyse=None, now=None, every: int = SAVE_EVERY_CARDS, every_seconds: float = SAVE_EVERY_SECONDS) -> dict:
     """Read the recent results cards' PDFs one after the other. ``limit`` is cards read this run (a skipped card is not counted)."""
@@ -256,4 +299,4 @@ def run(nse, sink, since_hours: float = 3.0, limit: int | None = None, time_budg
     counts: dict[str, int] = {}
     for r in mine:
         counts[r["verdict"]] = counts.get(r["verdict"], 0) + 1
-    return {"rows": rows, "day": day, "verdicts": counts, **stats}
+    return {"rows": rows, "day": day, "verdicts": counts, "summary": summary(rows), **stats}

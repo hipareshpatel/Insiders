@@ -182,3 +182,22 @@ def test_a_consolidated_profit_that_differs_is_unclear_not_a_false_alarm(monkeyp
     monkeypatch.setattr(ps, "_read", lambda tables, period, metric, basis: Reading("numfirst", status="ok", value=50.0, page=2))
     assert ps.check_card([], "Q2FY27", "CONSOLIDATED", [("pat", 45.0, "Net profit")])[0]["verdict"] == "unclear"
     assert ps.check_card([], "Q2FY27", "STANDALONE", [("pat", 45.0, "Net profit")])[0]["verdict"] == "disagrees"
+
+
+def test_the_summary_separates_held_out_companies_and_counts_the_runner_minutes(tmp_path):
+    # the lead's ask (29 Oct): held-out companies' verdicts apart, WRONG counted, and the runner minutes a day
+    (tmp_path / "normalpdf").mkdir()
+    (tmp_path / "hardpdf").mkdir()
+    (tmp_path / "normalpdf" / "key.csv").write_text("symbol,metric\nTUNED,pat\nHELD,pat\n")
+    (tmp_path / "hardpdf" / "key.csv").write_text("symbol,metric\n")
+    (tmp_path / "heldout.csv").write_text("key,symbol,page_type\nnormal,HELD,x\n")
+    tuned = ps.tuned_symbols(tmp_path)
+    assert tuned == {"TUNED"}
+    rows = [{"card_id": "a", "symbol": "TUNED", "verdict": "agrees", "pdf_seconds": "30"},
+            {"card_id": "a", "symbol": "TUNED", "verdict": "disagrees", "pdf_seconds": "30"},
+            {"card_id": "b", "symbol": "NEWCO", "verdict": "agrees", "pdf_seconds": "90"},
+            {"card_id": "c", "symbol": "HELD", "verdict": "unknown", "pdf_seconds": "60"}]
+    got = ps.summary(rows, tuned)
+    assert got["tuned"] == {"agrees": 1, "disagrees": 1, "cards": 1}
+    assert got["held_out"] == {"agrees": 1, "unknown": 1, "cards": 2}
+    assert got["pdf_minutes"] == 3.0

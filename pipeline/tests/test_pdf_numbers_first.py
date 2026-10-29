@@ -1238,3 +1238,13 @@ def test_a_subtotal_that_takes_in_an_other_income_row_is_not_the_revenue():
     r = read(pdf, "revenue")
     assert r.status != "ok" or r.value == pytest.approx(crore(rev[0]))
     assert read(pdf, "other_income").status != "ok"
+
+
+def test_a_total_revenue_from_operations_line_over_parts_that_do_not_add_up_is_still_the_revenue():
+    # BAJAJHLDNG Q4FY24: OCR lost one part, so "Total revenue from operations" is not the sum of the rows above it
+    rows, want = pl()
+    a = [round(v * 0.1, 2) for v in REVENUE]
+    pdf = statement([(["Revenue from contracts with customers - Sale of goods"], a),
+                     (["Total revenue from operations"], REVENUE)] + rows[1:])
+    assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+    assert not nf._TOTAL_REVENUE.match("Total revenues")

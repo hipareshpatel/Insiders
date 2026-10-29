@@ -876,6 +876,7 @@ _REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:
 # a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
 # its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
 _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
+_TOTAL_REVENUE = re.compile(r"^\W*(?:[\divx]+\W+)?total\s+revenue\s+from\s+operations?\W*(?:\(\w{1,4}\))?\W*$", re.I)
 def not_revenue_line(label: str) -> bool:
     """A line that cannot be a part of revenue, by an allow-list (25th review: a gain on fair value changes or on
     derecognition is a revenue part in an NBFC's statement): a foreign-exchange gain or loss ("Foreign exchange gain (net)",
@@ -1197,7 +1198,10 @@ class Solver:
                 strict((rows[0], tuple((r, 1) for r in range(above - size + 1, above + 1)))) for size in range(1, 7)
                 if above - size + 1 >= 0 and all(self.cls[r] != "OI" for r in range(above - size + 1, above + 1)))
             # (an other-income row right above is the same doubt: "Total revenues" may take it in, 28th review)
-            if above >= 0 and self.cls[above] in ("REV", "OI") and not subtotal:
+            # or the first row says it is the total of revenue from operations and the row above is a part of revenue, not other
+            # income (BAJAJHLDNG Q4FY24: OCR lost one part, so the sum cannot be checked)
+            said_total = self.cls[above] == "REV" and bool(_TOTAL_REVENUE.match(self.t.rows[rows[0]].label)) if above >= 0 else False
+            if above >= 0 and self.cls[above] in ("REV", "OI") and not subtotal and not said_total:
                 rows_rev_ok = False
             rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok
             if rev_named:

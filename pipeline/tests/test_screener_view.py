@@ -588,6 +588,9 @@ def test_an_impairment_of_investments_stays_in_expenses():
     """Tech Mahindra standalone Q4FY24-Q4FY26: screener keeps "Impairment of investments" in Expenses; a loss moves out."""
     assert not __import__("re").search(sv.INVESTMENT_LOSS, "Impairment of investments", __import__("re").I)
     assert __import__("re").search(sv.INVESTMENT_LOSS, "Loss from investments related to subsidiaries", __import__("re").I)
+    for fair_value in ("Fair value loss on equity investments measured at FVTPL", "Fair Value (gain)/loss on equity investments measured at FVT"):
+        assert __import__("re").search(sv.INVESTMENT_LOSS, fair_value, __import__("re").I)         # TMCV: gain or loss, both moved
+    assert not __import__("re").search(sv.INVESTMENT_LOSS, "Fair value loss on derivatives", __import__("re").I)
 
 
 def test_a_filler_zero_owners_share_is_the_whole_profit():

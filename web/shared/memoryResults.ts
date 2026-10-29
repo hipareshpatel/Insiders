@@ -13,11 +13,6 @@ export type MemoryByScrip = Record<string, MemoryRow[]>;
 export const RESULT_METRICS = ["revenue", "interest_earned", "gross_premium", "ebitda", "pat"] as const;
 
 const QUARTER = /^Q([1-4])FY(\d{2})$/;
-/** The periods a row can carry: quarters, the half year, nine months and the year (kept so a quarter can be worked out). */
-const RESULT_PERIOD = /^(Q[1-4]|H1|9M)?FY\d{2}$/;
-/** A quarter memory does not hold, worked out from the cumulative period it is part of (the pipeline's rule, dossier.py):
- * Q2 = H1 less Q1, Q3 = nine months less H1, Q4 = the year less nine months. Q1 is always filed, never worked out. */
-const CUMULATIVE: Record<string, [string, string]> = { Q2: ["H1", "Q1"], Q3: ["9M", "H1"], Q4: ["FY", "9M"] };
 
 /** A quarter ("Q2FY27"), not a half year, nine months or a year ("H1FY27", "FY26"). */
 export const isQuarter = (period: string | null | undefined) => QUARTER.test(period ?? "");
@@ -45,43 +40,13 @@ export function resultRows(metrics: unknown): MemoryRow[] {
   const rows: MemoryRow[] = [];
   for (const m of metrics as Array<Record<string, unknown>>) {
     if (typeof m.metric !== "string" || typeof m.period !== "string") continue;
-    if (!(RESULT_METRICS as readonly string[]).includes(m.metric) || !RESULT_PERIOD.test(m.period)) continue;
+    if (!(RESULT_METRICS as readonly string[]).includes(m.metric) || !QUARTER.test(m.period)) continue;
     const sources = Array.isArray(m.sources) ? (m.sources as Array<Record<string, unknown>>) : [];
     const candidates: Candidate[] = [{ value: m.value as number, basis: (m.basis as string | undefined) ?? null },
       ...sources.map((s) => ({ value: s.value as number, basis: (s.basis as string | undefined) ?? null }))];
     rows.push({ metric: m.metric, period: m.period, candidates });
   }
   return rows;
-}
-
-/** A quarter's figure on one basis: as filed, else worked out from the cumulative periods on that same basis (never mixed). */
-function quarterOn(rows: MemoryRow[], metric: string, period: string, basis: string): number | undefined {
-  const cands = (p: string) => rows.find((r) => r.metric === metric && r.period === p)?.candidates ?? [];
-  const filed = figureOf(cands(period), basis);
-  if (filed) return filed.value;
-  const m = QUARTER.exec(period);
-  const parts = m && CUMULATIVE[`Q${m[1]}`];
-  if (!m || !parts) return undefined;
-  const fy = m[2];
-  const whole = parts[0] === "FY" ? `FY${fy}` : `${parts[0]}FY${fy}`;
-  const earlier = `${parts[1]}FY${fy}`;
-  const a = figureOf(cands(whole), basis), b = figureOf(cands(earlier), basis);
-  return a && b ? a.value - b.value : undefined;
-}
-
-/** The figure of a quarter for a line: consolidated where memory holds it (as filed, else worked out), then standalone, then
- * whatever basis is there. `want` pins the basis: a year-ago figure is taken only on the quarter's own basis. */
-export function quarterFigure(rows: MemoryRow[], metric: string, period: string, want?: string): { value: number; basis: string | null } | undefined {
-  if (want !== undefined) {
-    const value = quarterOn(rows, metric, period, want);
-    return value === undefined ? undefined : { value, basis: want };
-  }
-  for (const basis of ["CONSOLIDATED", "STANDALONE"]) {
-    const value = quarterOn(rows, metric, period, basis);
-    if (value !== undefined) return { value, basis };
-  }
-  const cands = rows.find((r) => r.metric === metric && r.period === period)?.candidates ?? [];
-  return figureOf(cands);
 }
 
 export type Turn = "LOSS_TO_PROFIT" | "PROFIT_TO_LOSS" | "LOSS_NARROWED" | "LOSS_WIDENED";
@@ -100,14 +65,15 @@ function changeOf(now: number, base: number | undefined): Pick<TableLine, "yoy_p
 /** The table for one quarter from memory. Undefined lines are blank cells: memory holds no such figure for that quarter. */
 export function memoryTable(rows: MemoryRow[], period: string): MemoryTable {
   const prior = priorYear(period);
-  const has = (metric: string) => quarterFigure(rows, metric, period) !== undefined;
+  const cands = (metric: string, p: string | null) => rows.find((r) => r.metric === metric && r.period === p)?.candidates ?? [];
+  const has = (metric: string) => figureOf(cands(metric, period)) !== undefined;
   const lens = has("interest_earned") ? "bank" : has("gross_premium") ? "insurer" : "company";
   const salesMetric = lens === "bank" ? "interest_earned" : lens === "insurer" ? "gross_premium" : "revenue";
 
   // the sales line's basis decides the basis of every other line in the table, so a margin never mixes two bases
-  const sales = quarterFigure(rows, salesMetric, period);
+  const sales = figureOf(cands(salesMetric, period));
   const basis = sales?.basis ?? undefined;
-  const pick = (metric: string, p: string | null) => (p === null ? undefined : quarterFigure(rows, metric, p, basis));
+  const pick = (metric: string, p: string | null) => (basis ? figureOf(cands(metric, p), basis) : figureOf(cands(metric, p)));
   const line = (metric: string): TableLine | undefined => {
     const now = pick(metric, period);
     if (!now) return undefined;

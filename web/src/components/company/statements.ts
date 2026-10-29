@@ -18,50 +18,15 @@ const NO_EPS = new Set(["eps", "basic_eps", "diluted_eps", "eps_total", "eps_con
 const QUARTERS = 12;
 const YEARS = 6;
 
-/** The basis a memory figure is on: its own, else its sources' (consolidated when any of them is). */
-function basisOf(m: Metric): string | null {
-  const x = m as Metric & { basis?: string | null; sources?: { basis?: string | null }[] };
-  const kept = (x.sources ?? []).map((s) => s.basis).filter(Boolean);
-  return x.basis ?? (kept.includes("CONSOLIDATED") ? "CONSOLIDATED" : kept[0] ?? null);
-}
-
-// A quarter memory has no figure for, worked out from its cumulative period as the pipeline does (Q2 = H1 less Q1, Q3 = nine
-// months less H1, Q4 = the year less nine months). Both parts must be on the same basis; Q1 is always filed, never worked out.
-const CUMULATIVE_OF: Record<string, [string, string]> = { Q2: ["H1", "Q1"], Q3: ["9M", "H1"], Q4: ["FY", "9M"] };
-
-function deriveQuarters(out: Values, bases: Map<string, Map<string, string | null>>): void {
-  for (const [metric, row] of out) {
-    const rowBases = bases.get(metric) ?? new Map();
-    for (const [quarter, [whole, earlier]] of Object.entries(CUMULATIVE_OF)) {
-      for (const fy of new Set([...row.keys()].map((p) => p.slice(-4)).filter((p) => /^FY\d{2}$/.test(p)))) {
-        const q = `${quarter}${fy}`;
-        if (row.has(q)) continue;
-        const wholeKey = whole === "FY" ? fy : `${whole}${fy}`, earlierKey = `${earlier}${fy}`;
-        const a = row.get(wholeKey), b = row.get(earlierKey);
-        if (a == null || b == null) continue;
-        const basis = rowBases.get(wholeKey);
-        if (basis == null || basis !== rowBases.get(earlierKey)) continue;
-        row.set(q, a - b);
-        rowBases.set(q, basis);
-      }
-    }
-  }
-}
-
 function collect(metrics: Metric[]): Values {
   const out: Values = new Map();
-  const bases = new Map<string, Map<string, string | null>>();
   for (const m of metrics) {
     if (NO_EPS.has(m.metric)) continue;
     if (typeof m.value !== "number" || !Number.isFinite(m.value)) continue;
     const row = out.get(m.metric) ?? new Map<string, number>();
     row.set(m.period, m.value);
     out.set(m.metric, row);
-    const rowBases = bases.get(m.metric) ?? new Map<string, string | null>();
-    rowBases.set(m.period, basisOf(m));
-    bases.set(m.metric, rowBases);
   }
-  deriveQuarters(out, bases);
   return out;
 }
 

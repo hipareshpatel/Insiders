@@ -130,6 +130,16 @@ def slip_check_numfirst() -> bool:
     return _switch("SLIP_CHECK_NUMFIRST")
 
 
+def slip_check_numfirst_seconds() -> float:
+    """SLIP_CHECK_NUMFIRST_SECONDS (default 60): the wall-clock cap on the numbers-first read of one filing in the unit-slip check.
+    A scan can cost 16 pages of OCR and 220 cell re-reads under the one OCR lock, so past the cap the reader gives no answer
+    and the text-layer reader decides. Read at the call."""
+    try:
+        return max(0.0, float(_env("SLIP_CHECK_NUMFIRST_SECONDS", "60")))
+    except ValueError:
+        return 60.0
+
+
 def card_yoy_restated() -> bool:
     """CARD_YOY_RESTATED (on in config/switches.toml; TODO 104, F202): a results card's YoY is worked against the restated year-ago figure
     where memory holds one (read from a later filing's PDF text layer, restated_pdf.py) and says "vs restated". The history

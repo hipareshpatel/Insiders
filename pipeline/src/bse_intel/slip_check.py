@@ -13,10 +13,11 @@ The PDF is fetched only when a slip is found, so the normal path makes no extra 
 from __future__ import annotations
 
 import logging
+import time
 
 from . import pdf_referee
 from .nse import SourceBlockedError
-from .settings import slip_check_numfirst
+from .settings import slip_check_numfirst, slip_check_numfirst_seconds
 
 log = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ class PdfCheck:
         self.nse, self.symbol = nse, (symbol or "").strip().upper()
         self.pdf_url, self.pdf_period = pdf_url, pdf_period   # a PDF known to be the period's (the filing's own)
         self._sources = None
+        self.numfirst_timeouts = 0       # filings whose numbers-first read ran past its time cap and gave no answer
 
     @property
     def sources(self):
@@ -62,6 +64,7 @@ class PdfCheck:
         if isinstance(urls, str):
             return None
         refused: tuple[bool, str] | None = None
+        deadline = time.monotonic() + slip_check_numfirst_seconds()   # one cap for the filing, all its candidate files
         for url in urls:
             data, why = self.sources.payload(url)
             if not data:
@@ -73,7 +76,14 @@ class PdfCheck:
                     self.sources.docs[url] = pdf_referee.read_document(data, ocr=self.sources.ocr)
                 except Exception as exc:   # noqa: BLE001
                     self.sources.docs[url] = (None, f"unreadable ({type(exc).__name__})")
-            got = nf.reading_from_tables(nf.analyse(data, ocr_garbled=True), period, name, basis)
+            try:
+                got = nf.reading_from_tables(nf.analyse(data, ocr_garbled=True, deadline=deadline), period, name, basis)
+            except nf.OutOfTime:
+                # a scan can hold the one OCR lock for minutes: no answer, the text-layer reader decides (it needs no OCR)
+                self.numfirst_timeouts += 1
+                log.warning("slip check: numbers-first ran past %gs on %s; the text-layer reader decides",
+                            slip_check_numfirst_seconds(), url)
+                return None
             if got.status != "ok":
                 continue
             if abs(got.value - corrected) <= _XBRL_ROUNDING + got.tol:

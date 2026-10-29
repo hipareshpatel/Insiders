@@ -55,17 +55,25 @@ def available() -> bool:
     return True
 
 
+def bench_cache_dir() -> str:
+    """The bench's OCR cache folder (env ``PDF_OCR_CACHE_DIR``), taken only together with ``PDF_BENCH=1`` (``pdf_bench`` sets it
+    itself), so a stray folder variable can never feed old boxes to the live path. "" when the cache is off."""
+    if os.environ.get("PDF_BENCH") != "1":
+        return ""
+    return os.environ.get("PDF_OCR_CACHE_DIR", "")
+
+
 def _new_engine():
     def real():
         from rapidocr import ModelType, RapidOCR
         return RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
 
-    cache_dir = os.environ.get("PDF_OCR_CACHE_DIR", "")
+    cache_dir = bench_cache_dir()
     return CachedEngine(real, cache_dir) if cache_dir else real()
 
 
 class CachedEngine:
-    """Bench only (env ``PDF_OCR_CACHE_DIR``): the engine's boxes for an image are kept on disk under the sha1 of the image's
+    """Bench only (env ``PDF_OCR_CACHE_DIR`` with ``PDF_BENCH=1``): the engine's boxes for an image are kept on disk under the sha1 of the image's
     pixels (and the settings), so a re-score of the answer keys reads each page once. The boxes come back as plain lists in
     the ``_boxes`` form, which every caller reads point by point, so a cached reading equals a fresh one. The engine itself is
     loaded on the first page not in the cache."""
@@ -458,8 +466,11 @@ def read_cell(image) -> tuple[str, bool]:
     """One table cell's crop (a BGR array): (the recogniser's text for the whole crop, whether a glyph is cut by the crop's edge).
     Recognition alone, no detector: it reads a lone figure better than detection plus recognition (which cut "1,912.15" to
     "1,912 15" in a measured case) and takes 0.05 s where the detector takes seconds on a crop. Bench only
-    (``PDF_OCR_CACHE_DIR``): the answer is kept on disk under the sha1 of the crop's pixels."""
-    cache = os.environ.get("PDF_OCR_CACHE_DIR", "")
+    (``PDF_OCR_CACHE_DIR`` with ``PDF_BENCH=1``): the answer is kept on disk under the sha1 of the crop's pixels. Without the OCR
+    extra it answers ("", True): no text, so no figure is taken from the crop."""
+    if not available():
+        return "", True
+    cache = bench_cache_dir()
     path = ""
     if cache:
         import hashlib

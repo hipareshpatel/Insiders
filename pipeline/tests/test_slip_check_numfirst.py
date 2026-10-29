@@ -5,6 +5,7 @@ from types import SimpleNamespace
 import pytest
 
 from bse_intel import pdf_numbers_first as nf
+from bse_intel import slip_check as sc_module
 from bse_intel.slip_check import PdfCheck
 
 from test_pdf_numbers_first import crore, pl, statement
@@ -97,3 +98,26 @@ def test_a_failed_download_is_not_asked_again_by_the_text_layer_reader(on):
     got = PdfCheck(Gone(), "ABC", pdf_url=URL, pdf_period="Q2FY27")(SimpleNamespace(period="Q2FY27", basis="STANDALONE"),
                                                                     "pat", 1.0)
     assert got[0] is None and Gone.fetches == 1
+
+
+def test_a_numbers_first_read_past_its_time_cap_abstains_and_the_text_layer_reader_decides(on, monkeypatch, caplog):
+    # a clock that jumps a minute at every look: the cap (60 s) has passed by the first check between pages
+    ticks = iter(range(0, 10_000, 100))
+    clock = SimpleNamespace(monotonic=lambda: next(ticks))
+    monkeypatch.setattr(sc_module, "time", clock)
+    monkeypatch.setattr(nf, "time", clock)
+    rows, want = pl()
+    nse = Nse(statement(rows))
+    pc = PdfCheck(nse, "ABC", pdf_url=URL, pdf_period="Q2FY27")
+    got = pc.numbers_first("Q2FY27", "STANDALONE", "pat", crore(want["pat"][0]))
+    assert got is None and pc.numfirst_timeouts == 1
+    (agrees, why), fetches = check(statement(rows), "pat", crore(want["pat"][0]))
+    assert agrees is True and "numbers-first" not in why and fetches == 1     # the old reader still decides
+
+
+def test_analyse_without_a_deadline_is_unchanged_and_with_a_passed_one_raises():
+    rows, _ = pl()
+    data = statement(rows)
+    assert nf.analyse(data)
+    with pytest.raises(nf.OutOfTime):
+        nf.analyse(data, deadline=-1.0)

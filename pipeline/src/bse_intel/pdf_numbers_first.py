@@ -40,12 +40,24 @@ import logging
 import os
 import re
 import statistics
+import time
 from dataclasses import dataclass, field
 from datetime import date
 
 log = logging.getLogger(__name__)
 
 NAME = "numfirst"
+
+
+class OutOfTime(BaseException):
+    """The caller's ``deadline`` (a ``time.monotonic()`` value) has passed. A BaseException on purpose: the page loops below
+    catch ``Exception`` so one bad page leaves the rest, and a late deadline must not be swallowed there. Raised only when a
+    caller passes a deadline; the bench and every other caller pass none."""
+
+
+def check_deadline(deadline: float | None) -> None:
+    if deadline is not None and time.monotonic() > deadline:
+        raise OutOfTime
 MAX_STATEMENT_PAGES = 6
 MAX_OCR_PAGES = 16            # scanned pages read with OCR in a PDF (ATGL Q2FY27: 13 scanned pages, standalone on p14)
 MAX_FILL_OCR_PAGES = 4         # pages with a text layer OCR'd only for a missing unit or row labels (fill_from_ocr)
@@ -1701,13 +1713,14 @@ def _measured(fn):
 
 @_measured
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
-            keep_unnamed: bool = False) -> list[Table]:
+            keep_unnamed: bool = False, deadline: float | None = None) -> list[Table]:
     """The solved tables of a results PDF. Every page with a text layer (the first ``max_pages``) is read from its words. A page
     with no text layer is read with OCR (``ocr_boxes(png)`` returns RapidOCR's boxes; default ``ocr_page_boxes``), in a PDF of up
     to ``SCAN_PAGE_LIMIT`` pages, at most ``MAX_OCR_PAGES`` pages in all. With ``ocr_garbled``, the scanned pages whose own text
     layer gave no named row (the layer of a scan is OCR output and often garbled) are read with OCR as well, the pages that
     ``statement_pages`` ranks first, then those with most figures, while the page budget lasts. Only tables with a named row
-    are kept (``keep_unnamed`` keeps all, for diagnosis)."""
+    are kept (``keep_unnamed`` keeps all, for diagnosis). With a ``deadline`` (``time.monotonic()``), ``OutOfTime`` is raised
+    between pages, before each OCR read and between crop re-reads once it has passed (one OCR call in flight finishes)."""
     from . import ocr
     from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
     ocr_boxes = ocr_boxes or ocr_page_boxes
@@ -1726,17 +1739,19 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         """Empty cells of the page's tables read again from crops (``reread_empty_cells``; env ``PDF_CROP_REREAD=1``)."""
         if os.environ.get("PDF_CROP_REREAD") != "1" or not ocr.available() or crops[0] <= 0:
             return
+        check_deadline(deadline)
         theta = tilt(raw)
         for n, t in enumerate(tables):
             if not (t.named or p in ranked):
                 continue
             try:
-                if reread_empty_cells(page, t, theta, k, crops):
+                if reread_empty_cells(page, t, theta, k, crops, deadline):
                     tables[n] = Table_solved(t)
             except Exception as exc:    # noqa: BLE001 - the table keeps what it had
                 log.warning("numbers-first: crop re-read failed on page %d (%s)", p, type(exc).__name__, exc_info=bool(os.environ.get("PDF_CROP_DEBUG")))
 
     def read_ocr(page, p: int) -> list[Table]:
+        check_deadline(deadline)
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         raw = words_from_boxes(ocr_boxes(png))
         if not layers[p].has_layer:
@@ -1764,6 +1779,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         the table is solved again. A unit or label the layer gives is never changed."""
         if page.rotation:
             return
+        check_deadline(deadline)
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         k = 72.0 / ocr.DPI
         words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(ocr_boxes(png))], True)
@@ -1800,6 +1816,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
 
     with _pymupdf().open(stream=pdf_bytes, filetype="pdf") as doc:
         for p in layers:
+            check_deadline(deadline)
             page = doc[p - 1]
             if layers[p].has_layer:
                 layer_raw = upright_words(page)
@@ -1828,6 +1845,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 return sum(bool(re.search(r"\d", w[4])) for w in layers[p].words)
             order = sorted(unnamed, key=lambda p: (p not in ranked, -figures(p)))
             for p in order:
+                check_deadline(deadline)
                 if ocr_used >= MAX_OCR_PAGES:
                     break
                 ocr_used += 1
@@ -1955,13 +1973,14 @@ def cell_box(table: Table, i: int, j: int, theta: float, k: float):
     return (lo * k - REREAD_PAD_X, (yc - 0.6 * h) * k - REREAD_PAD_Y, hi * k + REREAD_PAD_X, (yc + 0.6 * h) * k + REREAD_PAD_Y)
 
 
-def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[int]) -> int:
+def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[int], deadline: float | None = None) -> int:
     """Read again the empty cells of the table's nearly full rows, from a crop of the cell's box at 300 dpi (``table.rereads``).
     A row is nearly full when at least 40% of its columns, and at least two, hold a figure: a cell empty there is a dropped one,
     not a blank. The grid is trusted only after a calibration: ``REREAD_CALIBRATE`` known cells (spread over the table) are read
     from their crops, and at least ``REREAD_CALIBRATE_SHARE`` must read as the table's own value to the last digit and none as another figure. A crop is
     kept only if it holds exactly one text box and parses as one figure with the column's decimals (``figure_from_crop``). Nothing
-    here is an answer: ``Solver.mask`` lets a re-read cell count only in an identity that holds exactly with it."""
+    here is an answer: ``Solver.mask`` lets a re-read cell count only in an identity that holds exactly with it. A passed ``deadline`` raises
+    ``OutOfTime`` before the next crop is read."""
     import cv2
     import numpy as np
     from . import ocr
@@ -1974,6 +1993,7 @@ def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[
         return 0
 
     def read_once(i: int, j: int, dpi: int):
+        check_deadline(deadline)
         x0, y0, x1, y1 = cell_box(table, i, j, theta, k)
         pix = page.get_pixmap(clip=_rect((x0, y0, x1, y1)), dpi=dpi)
         image = cv2.imdecode(np.frombuffer(pix.tobytes("png"), np.uint8), cv2.IMREAD_COLOR)

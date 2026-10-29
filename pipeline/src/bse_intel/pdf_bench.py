@@ -223,6 +223,7 @@ def run(key_csv: str, pdf_dir: str, out_dir: str, limit: int | None = None) -> i
     from . import pdf_readers
     from .pdf_referee import Sources, be_gentle
     be_gentle()
+    os.environ.setdefault("PDF_BENCH", "1")      # the OCR cache folder (PDF_OCR_CACHE_DIR) counts only in a bench run
     os.environ["PDF_CACHE_DIR"] = pdf_dir
     os.makedirs(out_dir, exist_ok=True)
     with open(key_csv, encoding="utf-8") as fh:

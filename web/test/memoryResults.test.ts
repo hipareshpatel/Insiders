@@ -1,7 +1,7 @@
 // The Results table read from memory (shared/memoryResults.ts). Run: npm test.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { figureOf, isQuarter, memoryTable, priorYear, resultRows, type MemoryRow } from "../shared/memoryResults.ts";
+import { figureOf, isQuarter, memoryTable, priorYear, quarterFigure, resultRows, type MemoryRow } from "../shared/memoryResults.ts";
 
 const row = (metric: string, period: string, ...candidates: [number, string | null][]): MemoryRow =>
   ({ metric, period, candidates: candidates.map(([value, basis]) => ({ value, basis })) });
@@ -18,7 +18,7 @@ test("resultRows keeps the result lines of quarters, with each source's figure a
     { metric: "pat", period: "H1FY27", value: 70 },
     { metric: "eps", period: "Q2FY27", value: 1 },
   ]);
-  assert.equal(rows.length, 1);
+  assert.deepEqual(rows.map((r) => r.period), ["Q2FY27", "H1FY27"], "the half year is kept to work a quarter out; EPS is not");
   assert.deepEqual(rows[0].candidates.map((c) => c.basis), [null, "STANDALONE", "CONSOLIDATED"]);
 });
 
@@ -75,4 +75,39 @@ test("only quarters are listed: a half year, nine months or a year is not", () =
   assert.ok(!isQuarter("9MFY27"));
   assert.ok(!isQuarter("FY26"));
   assert.ok(!isQuarter(null));
+});
+
+test("a quarter memory does not hold is worked out from the half year less the first quarter, on the same basis", () => {
+  // Coal India: the H1 filing gives H1 and Q1 EBITDA; Q2 = H1 - Q1 = 8498.58, against 6716.15 a year ago
+  const rows = [
+    row("ebitda", "H1FY27", [20567.09, "CONSOLIDATED"]),
+    row("ebitda", "Q1FY27", [12068.51, "CONSOLIDATED"]),
+    row("ebitda", "Q2FY26", [6716.15, "CONSOLIDATED"]),
+    row("revenue", "Q2FY27", [44178.74, "CONSOLIDATED"]),
+    row("revenue", "Q2FY26", [30186.7, "CONSOLIDATED"]),
+  ];
+  const t = memoryTable(rows, "Q2FY27");
+  assert.equal(t.ebitda?.value, 8498.58);
+  assert.equal(t.ebitda?.yoy_pct, 26.5);
+  assert.equal(t.sales?.value, 44178.74);
+});
+
+test("a derived quarter never mixes bases: H1 consolidated less Q1 standalone is no quarter", () => {
+  const rows = [
+    row("ebitda", "H1FY27", [200, "CONSOLIDATED"]),
+    row("ebitda", "Q1FY27", [90, "STANDALONE"]),
+  ];
+  assert.equal(quarterFigure(rows, "ebitda", "Q2FY27"), undefined);
+  assert.equal(quarterFigure(rows, "ebitda", "Q2FY27", "CONSOLIDATED"), undefined);
+});
+
+test("a filed quarter is used as filed; the cumulative figures only fill a gap", () => {
+  const rows = [
+    row("pat", "Q3FY27", [70, "CONSOLIDATED"]),
+    row("pat", "9MFY27", [300, "CONSOLIDATED"]),
+    row("pat", "H1FY27", [200, "CONSOLIDATED"]),
+  ];
+  assert.equal(quarterFigure(rows, "pat", "Q3FY27")?.value, 70);
+  const derived = [row("pat", "9MFY27", [300, "CONSOLIDATED"]), row("pat", "H1FY27", [200, "CONSOLIDATED"])];
+  assert.equal(quarterFigure(derived, "pat", "Q3FY27")?.value, 100);
 });

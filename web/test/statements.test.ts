@@ -162,3 +162,21 @@ test("screener mode: one table never mixes definitions, TTM needs every part in 
   const sheet = { period: "Q4FY26", as_of: "2026-05-01", source_news_id: "xbrl:res:1:x", equity_capital_cr: 10, gross_debt_cr: 20, total_assets_cr: 200, fixed_assets_cr: 100 };
   assert.ok(!balanceTable([sheet], true).rows.some((r) => r.label === "Other liabilities"));
 });
+
+test("a quarter memory lacks is worked out from the half year less Q1, on the same basis (Coal India's Q2FY27 EBITDA)", () => {
+  const ebitda = (period: string, value: number, basis: string | null) => ({ ...m("ebitda", period, value), basis, sources: [] });
+  const t = quarterlyTable([...quarter("Q1FY27", 1000, 100), ...quarter("Q2FY27", 1100, 120),
+    ebitda("H1FY27", 2000, "CONSOLIDATED"), ebitda("Q1FY27", 1200, "CONSOLIDATED")] as never);
+  const row = t.rows.find((r) => r.label.toLowerCase().includes("ebitda") || r.label.toLowerCase().includes("operating profit"));
+  assert.ok(row, "an EBITDA row");
+  assert.equal(row!.cells[t.columns.indexOf("Q2FY27")], 800);
+});
+
+test("no derived quarter when the two parts are on different bases", () => {
+  const ebitda = (period: string, value: number, basis: string | null) => ({ ...m("ebitda", period, value), basis, sources: [] });
+  const t = quarterlyTable([...quarter("Q1FY27", 1000, 100), ...quarter("Q2FY27", 1100, 120),
+    ebitda("H1FY27", 2000, "CONSOLIDATED"), ebitda("Q1FY27", 1200, "STANDALONE")] as never);
+  const row = t.rows.find((r) => r.label.toLowerCase().includes("ebitda") || r.label.toLowerCase().includes("operating profit"));
+  // the table's existing fallback (profit before tax plus interest and depreciation) may fill the cell; the half year less Q1 across bases must not
+  assert.notEqual(row?.cells[t.columns.indexOf("Q2FY27")], 800);
+});

@@ -122,6 +122,12 @@ def bse_fill_pre_nse() -> bool:
     return _switch("BSE_FILL_PRE_NSE")
 
 
+def slip_check_numfirst() -> bool:
+    """SLIP_CHECK_NUMFIRST (default off; owner 29 Oct 2026, step 1): the unit-slip check (slip_check.PdfCheck) asks the
+    numbers-first reader first; where it has no answer the text-layer reader decides, as before. Read at the call."""
+    return _switch("SLIP_CHECK_NUMFIRST")
+
+
 def card_yoy_restated() -> bool:
     """CARD_YOY_RESTATED (on in config/switches.toml; TODO 104, F202): a results card's YoY is worked against the restated year-ago figure
     where memory holds one (read from a later filing's PDF text layer, restated_pdf.py) and says "vs restated". The history

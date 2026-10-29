@@ -434,6 +434,12 @@ def test_a_dry_run_records_what_it_would_write(tmp_path):
     assert (tmp_path / "fill.csv").read_text(encoding="utf-8") == bf.to_csv(out) and len(out["rows"]) > 0
 
 
+def _unstamped(value):
+    if isinstance(value, dict):
+        return {k: _unstamped(v) for k, v in value.items() if k not in ("updated_at", "at")}
+    return [_unstamped(v) for v in value] if isinstance(value, list) else value
+
+
 def test_a_complete_runs_files_equal_what_the_command_wrote_before(tmp_path):
     sink, report, symbols, links, record = three(tmp_path)
     out = bf.run(sink, report, symbols, Nse(), Bse(links, {URL: Q1FY27_XML}), SETTINGS, apply=True, record=record)
@@ -441,7 +447,9 @@ def test_a_complete_runs_files_equal_what_the_command_wrote_before(tmp_path):
     # the same run without a record gives the same outcome (the record changes nothing it writes to memory)
     again_sink, again_report, again_symbols, again_links, _ = three(tmp_path)
     plain = bf.run(again_sink, again_report, again_symbols, Nse(), Bse(again_links, {URL: Q1FY27_XML}), SETTINGS, apply=True)
-    assert plain == out and again_sink.dossiers == sink.dossiers
+    # the write stamps are the clock's (the dossier's updated_at, each label's at): two runs that straddle a second differ in
+    # them alone (CI, 29 Oct 2026)
+    assert plain == out and _unstamped(again_sink.dossiers) == _unstamped(sink.dossiers)
     # the command's final write: the summary as the command wrote it before, the CSV as it wrote it before
     old_json = json.dumps({k: v for k, v in out.items() if k != "rows"} | {"as_of": "2026-10-25"}, ensure_ascii=False,
                           indent=1) + "\n"

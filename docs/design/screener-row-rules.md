@@ -246,6 +246,26 @@ the BSE annual reports stored so far: 1,153 rows fixed and 133 broken elsewhere 
   CurrentMaturitiesOfLongTermDebt as its own element (4 companies, may already sit inside BorrowingsCurrent for others);
   two public-sector banks with no tax fact read (Union Bank, Canara Bank).
 
+## FY26 quarters audit (run 40837941625, 29 Oct 2026, 13:20–13:36 IST)
+
+Quarters from Q1FY26: the six main rows 96.8 % exact (88,099 pairs). The 2,254 pairs apart on Sales, Expenses, Operating Profit, PBT and
+Net Profit (381 companies; the 200 with most hold 79 %), sorted by what the gap equals:
+
+| Gap | Pairs | Kind |
+|---|---|---|
+| the associates' share | 357 | company practice, recorded (`screener-associates-outside-pbt.md`), not coded |
+| no line, under 10 % (median 1.6 %, 1.8 Cr) | 505 | **screener's restated year-ago quarter** (below) |
+| no line, over 10 % | 327 | restatements after a merger or demerger (VEDL 17, Kirloskar Industries 15, Coforge 11, TMPV 6, Ambuja 5, Allcargo 7) — to confirm |
+| two lines together | 297 | to sort |
+| one other line (OtherExpenses 128, other income / exceptional 127, a tax line 103, finance costs 44, segment lines 76, depreciation 36, regulatory deferral 23, ...) | ~770 | rule candidates, each to test on/off |
+
+**Screener updates a quarter from the next year's filing.** Q2FY26 pairs: of companies that have filed Q2FY27, 2.8 % are apart by
+a small gap no line explains; of those that have not, 0.9 % (all apart: 5.6 % against 2.6 %). Screener takes the year-ago column of
+the new results, which a company may restate; we keep the original filing. The results XBRL cannot give the restated figure: it has
+no comparative column (checked 29 Oct 2026, HDFC Bank and Bajaj Finance Q2FY27, Dolphin Q4FY24: only the quarter's own and the
+year-to-date contexts). Only the PDF prints it, so this class waits for the PDF reader (TODO 112) to read the comparative column.
+Both numbers are right; ours is the figure as first filed.
+
 ## How a pattern is found
 
 The `screener-rows` report names, for every row apart by 2 Cr or more, the filed facts of that column equal to the gap within

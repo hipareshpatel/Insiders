@@ -1237,3 +1237,4 @@ def test_a_subtotal_that_takes_in_an_other_income_row_is_not_the_revenue():
                      (["Other income"], OTHER), (["Total income"], cols_sum(REVENUE, OTHER))] + rows[3:])
     r = read(pdf, "revenue")
     assert r.status != "ok" or r.value == pytest.approx(crore(rev[0]))
+    assert read(pdf, "other_income").status != "ok"

@@ -1204,6 +1204,9 @@ class Solver:
                 self.add("revenue", (rows[0],), [proof])
             # a row that says nothing is the other income only beside a named revenue (22nd review)
             oi_ok = self.cls[rows[1]] == "OI" or (self.cls[rows[1]] is None and rev_named and self.cls[rows[0]] == "REV")
+            # another other-income row right above: which of the two is the company's other income is not told (29th review)
+            if above >= 0 and self.cls[above] == "OI":
+                oi_ok = False
             if oi_ok and (rows_rev_ok or not list_item(self.t.rows[rows[1]].label)):
                 self.add("other_income", (rows[1],), [proof])
         else:

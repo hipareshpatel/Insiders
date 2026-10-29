@@ -74,6 +74,7 @@ def test_only_the_years_without_an_annual_document_are_fetched_kept_raw_and_the_
     client = Client()
     out = ba.run(sink, [("500279", "ONIDA"), ("BANKA", "BANKA")], client, today=TODAY)
     assert client.files == ["AnnualReport_A24.xml", "AnnualReport_B24.xml"]   # FY24 both bases; FY25 stored; FY19 too old
+    assert ba.FIRST_YEAR_END == date(2024, 3, 31)
     assert out["facts_saved"] == 2 and out["not_on_bse"] == 1 and not out["more"]
     assert gzip.decompress(sink.get_object(ba.file_key("500279", "AnnualReport_A24.xml"))) == FILES["AnnualReport_A24.xml"]
     doc = xf.loads(sink.get_object(xf.annual_key("500279", "FY24", "CONSOLIDATED")))

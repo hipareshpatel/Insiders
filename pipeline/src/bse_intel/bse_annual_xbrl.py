@@ -35,7 +35,9 @@ PREFIX = "raw/bse-annual-xbrl/"
 LIST = "GetCorXbrlDetails_ng/w"
 FILE_URL = "https://www.bseindia.com/XBRLFILES/AnnualReportUploadDocument/{name}"
 CATEGORY = "7"                      # "Annual Reports (Pdf & XBRL)" (GetCorXbrlDropdown_ng)
-FIRST_YEAR_END = date(2021, 3, 31)  # FY21 on: the older years screener's ten-year page shows are not compared yet
+# FY24 on: the FY24 report's comparative column is FY23, the oldest year the screener comparison reads (100-file test, run
+# 40817278550: 44 of the 100 files were FY21-FY22 reports, never read; a file is about 5 MB, 0.5 MB stored)
+FIRST_YEAR_END = date(2024, 3, 31)
 LIST_FRESH_DAYS = 7
 
 
@@ -67,7 +69,7 @@ def _fy(year_end: str) -> str | None:
 
 
 def wanted(files: list[dict], stored: set[str], scrip: str) -> list[dict]:
-    """The files, from FY21 on, of a year no annual document is stored for (either basis), judged once for the company's files
+    """The files, from FY24 on, of a year no annual document is stored for (either basis), judged once for the company's files
     together, so a year's standalone and consolidated files both come in the run that fills it."""
     # a year begun from BSE (one of its files stored) is finished by the next run, though its first document is stored
     begun = {_fy(f["year_end"]) for f in files if file_key(scrip, f["name"]) in stored}

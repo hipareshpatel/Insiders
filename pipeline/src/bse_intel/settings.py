@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import os
 import tomllib
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
@@ -120,6 +122,22 @@ def bse_fill_pre_nse() -> bool:
     quarters strictly older than its first NSE results row. Off, a company NSE lists any row for is left alone. Read at
     the call."""
     return _switch("BSE_FILL_PRE_NSE")
+
+
+def slip_check_numfirst() -> bool:
+    """SLIP_CHECK_NUMFIRST (default off; owner 29 Oct 2026, step 1): the unit-slip check (slip_check.PdfCheck) asks the
+    numbers-first reader first; where it has no answer the text-layer reader decides, as before. Read at the call."""
+    return _switch("SLIP_CHECK_NUMFIRST")
+
+
+def slip_check_numfirst_seconds() -> float:
+    """SLIP_CHECK_NUMFIRST_SECONDS (default 60): the wall-clock cap on the numbers-first read of one filing in the unit-slip check.
+    A scan can cost 16 pages of OCR and 220 cell re-reads under the one OCR lock, so past the cap the reader gives no answer
+    and the text-layer reader decides. Read at the call."""
+    try:
+        return max(0.0, float(_env("SLIP_CHECK_NUMFIRST_SECONDS", "60")))
+    except ValueError:
+        return 60.0
 
 
 def card_yoy_restated() -> bool:
@@ -463,3 +481,23 @@ def _load_toml(path: Path) -> dict:
 @cache
 def get_settings() -> Settings:
     return Settings()
+
+
+# The numbers-first reader was measured with PDF_DATES_2DIGIT, PDF_PAGE_RANK and PDF_ROW_FIXES on; the live pipeline runs with
+# them off for the old reader. ``pdf_reader_options()`` turns the three on inside its block for this thread only (a ContextVar:
+# the pipeline's other worker threads, and the old reader there, keep the settings), 29 Oct 2026.
+_PDF_READER_OPTIONS: ContextVar[bool] = ContextVar("pdf_reader_options", default=False)
+
+
+def pdf_option(name: str) -> bool:
+    """``pdf_dates_2digit``, ``pdf_page_rank`` or ``pdf_row_fixes``: on inside ``pdf_reader_options()``, else the setting."""
+    return _PDF_READER_OPTIONS.get() or bool(getattr(get_settings(), name))
+
+
+@contextmanager
+def pdf_reader_options():
+    token = _PDF_READER_OPTIONS.set(True)
+    try:
+        yield
+    finally:
+        _PDF_READER_OPTIONS.reset(token)

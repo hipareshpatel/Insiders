@@ -37,20 +37,35 @@ from __future__ import annotations
 
 import itertools
 import logging
+import os
 import re
 import statistics
+import time
 from dataclasses import dataclass, field
 from datetime import date
 
 log = logging.getLogger(__name__)
 
 NAME = "numfirst"
+
+
+class OutOfTime(BaseException):
+    """The caller's ``deadline`` (a ``time.monotonic()`` value) has passed. A BaseException on purpose: the page loops below
+    catch ``Exception`` so one bad page leaves the rest, and a late deadline must not be swallowed there. Raised only when a
+    caller passes a deadline; the bench and every other caller pass none."""
+
+
+def check_deadline(deadline: float | None) -> None:
+    if deadline is not None and time.monotonic() > deadline:
+        raise OutOfTime
 MAX_STATEMENT_PAGES = 6
-MAX_OCR_PAGES = 8
+MAX_OCR_PAGES = 16            # scanned pages read with OCR in a PDF (ATGL Q2FY27: 13 scanned pages, standalone on p14)
+MAX_FILL_OCR_PAGES = 4         # pages with a text layer OCR'd only for a missing unit or row labels (fill_from_ocr)
 MAX_TEXT_PAGES = 60            # pages with a text layer read from their words
 SCAN_PAGE_LIMIT = 30           # a scan with no text layer is searched in a PDF of up to this many pages
 MIN_COLUMN_FIGURES = 3         # figures that line up to make a column
 IDENT_MIN_COLUMNS = 3
+REREAD_EXACT = 1e-6            # an identity holding with a re-read cell: no rounding tolerance at all
 LABEL_WORDS_LINES = 14         # text lines above a table searched for its title and header
 
 
@@ -87,11 +102,16 @@ def upright_words(page) -> list[tuple[float, float, float, float, str]]:
     return out
 
 
-def straighten(raw: list[tuple[float, float, float, float, str]], ocr_source: bool = False) -> list[Word]:
-    """Words with the page's tilt taken out of their heights (``ocr._skew``: the angle whose row histogram is sharpest)."""
+def tilt(raw: list[tuple[float, float, float, float, str]]) -> float:
+    """The page's tilt (``ocr._skew``) of its words; 0 for fewer than 30 words."""
     from . import ocr
     items = [((y0 + y1) / 2, max(y1 - y0, 1.0), x0, text, x1) for x0, y0, x1, y1, text in raw]
-    theta = ocr._skew(items) if len(items) >= 30 else 0.0
+    return ocr._skew(items) if len(items) >= 30 else 0.0
+
+
+def straighten(raw: list[tuple[float, float, float, float, str]], ocr_source: bool = False) -> list[Word]:
+    """Words with the page's tilt taken out of their heights (``ocr._skew``: the angle whose row histogram is sharpest)."""
+    theta = tilt(raw)
     import math
     t = math.tan(theta)
     return [Word(x0, x1, ((y0 + y1) / 2) - (x0 + x1) / 2 * t, max(y1 - y0, 1.0), text, ocr_source) for x0, y0, x1, y1, text in raw]
@@ -119,6 +139,42 @@ def merge_brackets(words: list[Word], height: float) -> list[Word]:
     return out
 
 
+
+SPACE_GROUP_GAP = 1 / 3       # of the text height: TATAELXSI's split figures are 1-2 pt apart at 7.9 pt (at most 0.25)
+_GROUP_HEAD = re.compile(r"^[(\[]?\d{1,3}$")
+_GROUP_MID = re.compile(r"^\d{2,3}$")
+_GROUP_TAIL = re.compile(r"^\d{3}(?:\.\d+)?[)\]]?$")
+
+
+def merge_space_groups(words: list[Word], height: float) -> list[Word]:
+    """A figure whose thousands are set apart by a space instead of a comma, as a scanner's text layer often writes them:
+    "23 909.66" for 23,909.66, "3 02 060.27" for 3,02,060.27 (TATAELXSI Q2FY27). A run of pieces that touch (a gap under half
+    a third of the text height; columns stand ten times further apart) is joined only as a whole and only when the whole run is one
+    figure: the first piece has one to three digits, the middle pieces are all of two digits (Indian) or all of three
+    (western), and the last has exactly three digits before its decimals. Any other run is left as it is, every piece. A
+    piece with a comma is never joined: "24 1,245.60" stays a note number and a figure."""
+    out: list[Word] = []
+    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+
+    def touches(a: Word, b: Word) -> bool:
+        return abs(b.y - a.y) <= 0.5 * height and 0 <= b.x0 - a.x1 <= SPACE_GROUP_GAP * height
+
+    i = 0
+    while i < len(ordered):
+        run = [ordered[i]]
+        while i + len(run) < len(ordered) and re.match(r"[(\[]?\d", run[-1].text) \
+                and re.match(r"\d", ordered[i + len(run)].text) and touches(run[-1], ordered[i + len(run)]):
+            run.append(ordered[i + len(run)])
+        mids = {len(c.text) for c in run[1:-1]}
+        if len(run) >= 2 and _GROUP_HEAD.match(run[0].text) and all(_GROUP_MID.match(c.text) for c in run[1:-1]) \
+                and len(mids) <= 1 and _GROUP_TAIL.match(run[-1].text):
+            out.append(Word(run[0].x0, run[-1].x1, run[0].y, run[0].h, "".join(c.text for c in run), run[0].ocr))
+        else:
+            out.extend(run)
+        i += len(run)
+    return out
+
+
 def ocr_page_boxes(png: bytes):
     """RapidOCR's boxes of a page image (``ocr._boxes`` form), with the sideways turn ``ocr.recognise`` makes; [] when OCR is not
     installed. Kept apart so the bench can cache it."""
@@ -142,6 +198,26 @@ def ocr_page_boxes(png: bytes):
                 result = best
     return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in result]
 
+
+
+OCR_ALIGN_SHARE = 0.9        # of a table's figures that OCR must read at the layer's own place before its text is used
+OCR_LABELS_SHARE = 0.9       # of a table's rows that must have a label once OCR's are added, or none are added
+
+
+def ocr_aligned(table: "Table", words: list["Word"], height: float) -> bool:
+    """OCR sees the page the layer describes: at least ``OCR_ALIGN_SHARE`` of the table's figures are read by OCR as the same
+    value within half the figure's last printed digit, its centre within half a text height of the row and within the
+    column. A rotated page, a shifted render or a different page frame fails this, and then no OCR text is used."""
+    figs = [(w, c) for w in words if (c := parse_figure(w.text)) is not None and not c.nil]
+    total = hits = 0
+    for r in table.rows:
+        for col, cell in zip(table.columns, r.cells):
+            if cell is None or cell.nil:
+                continue
+            total += 1
+            hits += any(abs(w.y - r.y) <= 0.5 * height and col.x0 - height <= w.xc <= col.x1 + height
+                        and abs(c.value - cell.value) <= cell.tol + 1e-9 for w, c in figs)
+    return total > 0 and hits >= OCR_ALIGN_SHARE * total
 
 def words_from_boxes(boxes) -> list[tuple[float, float, float, float, str]]:
     """OCR boxes as words: a box of several tokens is cut in proportion to its characters."""
@@ -226,6 +302,9 @@ class Column:
     date: date | None = None
     kind: str | None = None        # quarter, half, nine, year (None: not told)
     kind_confident: bool = False
+    whole: bool = False            # a column of small whole figures found by ``whole_number_columns``
+    inferred: bool = False         # its date was not read but given by the layout (``fill_corresponding_quarter``)
+    read_date: date | None = None  # the header's date as read, kept when the kinds disagree (only the half-year sum uses it)
 
 
 @dataclass
@@ -239,6 +318,8 @@ class Table:
     note: str = ""
     named: dict = field(default_factory=dict)   # metric -> list of (rows, proofs)
     header_lines: list = field(default_factory=list)   # the text lines above the table (title, unit, header), for diagnosis
+    contested: bool = False        # the lines above the table name both bases: its basis is never guessed
+    rereads: dict = field(default_factory=dict)    # (row, column) -> Cell read again from a crop of the empty cell (``reread_empty_cells``)
 
 
 def _cluster(values: list[float], tol: float) -> list[list[int]]:
@@ -276,11 +357,58 @@ def find_columns(cells: list[tuple[Word, Cell]], height: float) -> tuple[list[Co
     for g in best[2]:
         ws = [strict[i][0] for i in g]
         x0, x1 = min(w.x0 for w in ws), max(w.x1 for w in ws)
+        # the aligned edge is the group's median, not its extreme: one garbled wider figure ("1,958.111" in ATUL's half-year
+        # column) would move the edge off the other figures, and they would not be assigned to the column
+        if best[1] == "right":
+            x1 = statistics.median(w.x1 for w in ws)
+        elif best[1] == "left":
+            x0 = statistics.median(w.x0 for w in ws)
         columns.append(Column(x0, x1, (x0 + x1) / 2))
     columns.sort(key=lambda c: c.xc)
     for i, c in enumerate(columns):
         c.index = i
     return columns, best[1]
+
+
+def whole_number_columns(cells: list[tuple[Word, Cell]], columns: list[Column], align: str, words: list[Word],
+                         height: float) -> list[Column]:
+    """Columns of small whole figures with no comma or decimals ("565 604 643" in crore, ORIENTCEM Q2FY27), which the strict
+    figures alone do not make: a group of such figures that lines up as a column does, is about as long as the strict
+    columns (six in ten of their median length) and stands on their grid (the strict columns' spacing, within a quarter of
+    it). It needs two strict columns to set the grid, and most of its figures must have a word of letters to their left on
+    their line (the row's label): a serial-number column ("1", "2", ... left of the labels) stands on the grid too but has
+    nothing to its left. A note column stands off the grid as a rule, and a column with no date or whose arithmetic fails
+    gives no answer anyway."""
+    if len(columns) < 2:
+        return []
+    tol = 0.8 * height
+    strict_sizes = [sum(1 for w, c in cells if c.strict and col.x0 - tol <= w.xc <= col.x1 + tol) for col in columns]
+    key = {"right": lambda w: w.x1, "centre": lambda w: w.xc, "left": lambda w: w.x0}[align]
+    ref = {"right": lambda c: c.x1, "centre": lambda c: c.xc, "left": lambda c: c.x0}[align]
+    edges = sorted(ref(c) for c in columns)
+    step = statistics.median([b - a for a, b in zip(edges, edges[1:])])
+    loose = [w for w, c in cells if not c.strict and not c.nil and re.fullmatch(r"\(?-?\d{1,3}\)?", w.text.strip())
+             and all(abs(key(w) - e) > tol for e in edges)]
+    groups = [g for g in _cluster([key(w) for w in loose], tol)
+              if len(g) >= max(MIN_COLUMN_FIGURES, 0.6 * statistics.median(strict_sizes))]
+    out = []
+    for g in groups:
+        ws = [loose[i] for i in g]
+        edge = statistics.median(key(w) for w in ws)
+        k = round((edge - edges[0]) / step)
+        if abs(edge - (edges[0] + k * step)) > 0.25 * step or any(abs(edge - e) < 0.5 * step for e in edges):
+            continue
+        labelled = sum(any(abs(v.y - w.y) <= 0.5 * height and v.x1 < w.x0 and re.search(r"[A-Za-z]{3}", v.text) for v in words)
+                       for w in ws)
+        if labelled < 0.6 * len(ws):
+            continue
+        x0, x1 = min(w.x0 for w in ws), max(w.x1 for w in ws)
+        if align == "right":
+            x1 = edge
+        elif align == "left":
+            x0 = edge
+        out.append(Column(x0, x1, (x0 + x1) / 2, whole=True))
+    return out
 
 
 def assign_cells(words: list[Word], columns: list[Column], align: str, height: float) -> list[tuple[int, Word, Cell]]:
@@ -299,6 +427,8 @@ def assign_cells(words: list[Word], columns: list[Column], align: str, height: f
         strict = [c for w in words if (c := parse_figure(w.text)) is not None and c.strict
                   and abs(ref(columns[j]) - key(w)) <= 0.8 * height]
         decimal_column[j] = sum(c.decimals >= 1 for c in strict) >= 0.75 * max(len(strict), 1)
+        if columns[j].whole and len(strict) < MIN_COLUMN_FIGURES:
+            decimal_column[j] = False    # a whole-figure column holds an EPS with decimals or two ("1.56", ORIENTCEM Q2FY27)
     out = []
     for w in words:
         cell = parse_figure(w.text)
@@ -314,7 +444,7 @@ def assign_cells(words: list[Word], columns: list[Column], align: str, height: f
         j = min(range(len(columns)), key=lambda k: abs(ref(columns[k]) - key(w)))
         if not cell.strict and decimal_column[j] and cell.value != 0:       # a bare 0 is a zero, never a note number
             continue
-        if abs(ref(columns[j]) - key(w)) <= (0.8 if cell.strict else 0.8) * height and abs(w.xc - columns[j].xc) <= 0.5 * spacing:
+        if abs(ref(columns[j]) - key(w)) <= 0.8 * height and abs(w.xc - columns[j].xc) <= 0.5 * spacing:
             cell.word = w
             out.append((j, w, cell))
     return out
@@ -419,8 +549,43 @@ def line_text(line: list[Word]) -> str:
 
 def _dates_in_text(text: str) -> list[date]:
     from .pdf_referee import _dates_in
-    return _dates_in(text)
+    # a comma glued to the year, "Sep 30,2026" (LOTUSDEV Q2FY27, OCR and layer alike): the year is read as after a spaced comma
+    return _dates_in(re.sub(r"(?<=\d),(?=\d{4}\b(?!,\d))", ", ", text))   # not "30,2025,2026": two dates run together
 
+
+
+_MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november",
+                "december"]
+
+
+def mend_months(text: str) -> str:
+    """OCR's spelling of month names in a header ("Septemher", "Seplember", "Septfmher", NEWGEN Q2FY27): a word of five
+    letters or more that is close to one month's full name only (difflib ratio 0.8 or more, and nearer to it than to any
+    other month) is that month; a day glued to a month ("30June") is set apart."""
+    import difflib
+    text = re.sub(r"\b(\d{1,2})([A-Za-z]{3,9})\b", r"\1 \2", text)
+
+    def one(m: re.Match) -> str:
+        word = m.group(0)
+        scores = sorted(((difflib.SequenceMatcher(None, word.lower(), name).ratio(), name) for name in _MONTH_NAMES),
+                        reverse=True)
+        best, second = scores[0], scores[1]
+        if best[0] >= 0.8 and best[0] - second[0] >= 0.15:
+            return best[1].capitalize()
+        return word
+    return re.sub(r"\b[A-Za-z]{5,10}\b", one, text)
+
+
+def header_dates(text: str) -> list[date]:
+    """The dates of a column's header text; when none parses, a year read a touch above its day ("September 2026 30," in
+    PNGSREVA Q2FY27's OCR) is put after it, for a day that ends a period only and never "12 months" (fifteenth review:
+    "March 2026 12 months" is not 12 March)."""
+    found = _dates_in_text(text) or _dates_in_text(
+        re.sub(r"\b([A-Za-z]{3,9}\.?)\s+(20\d\d)\s+(2[89]|3[01])\b(?!\s*months?),?", r"\1 \3, \2", text, flags=re.I))
+    if found:
+        return found
+    mended = mend_months(text)
+    return _dates_in_text(mended) if mended != text else []
 
 def typical_gap(words: list[Word], height: float) -> float:
     """The usual space between two words of a line on this page."""
@@ -458,6 +623,36 @@ def phrases_of(line: list[Word], gap: float) -> list[list[Word]]:
     return split
 
 
+_BORDER_MARKS = {"I", "l", "|", "!", "¦"}
+
+# a month as printed in a header, full or in its usual short form ("Sept", "Jun."): never another word that starts like one ("Market")
+_CUT_MONTH = re.compile(r"^(?:january|february|march|april|may|june|july|august|september|sept|october|november|december|"
+                        r"jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)\.?,?$", re.I)
+
+
+def month_cut(phrases: list[list[Word]], xs: list[float], spacing: float) -> list[list[Word]]:
+    """A header line of month words that run into one phrase ("September June 30, September September September March 31,",
+    the day and year on the lines below, ICICIBANK Q2FY27) cut before each month word, so each piece can go to its column. Only
+    when the cut is certain: the phrase is wider than a column, holds at least three month words, each piece fits a column's
+    width, and the pieces' centres are nearest to different columns, every one within three quarters of the spacing and in the
+    columns' own order. Otherwise the phrase is left whole."""
+    out: list[list[Word]] = []
+    for ph in phrases:
+        starts = [i for i, w in enumerate(ph) if _CUT_MONTH.match(w.text)]
+        if ph[-1].x1 - ph[0].x0 <= 1.3 * spacing or len(starts) < 3 or starts[0] != 0:
+            out.append(ph)
+            continue
+        pieces = [ph[a:b] for a, b in zip(starts, starts[1:] + [len(ph)])]
+        near = [min(range(len(xs)), key=lambda k: abs(xs[k] - (p[0].x0 + p[-1].x1) / 2)) for p in pieces]
+        fits = all(p[-1].x1 - p[0].x0 <= 1.3 * spacing and abs(xs[j] - (p[0].x0 + p[-1].x1) / 2) <= 0.5 * spacing
+                   for p, j in zip(pieces, near))
+        if fits and near == sorted(set(near)):
+            out.extend(pieces)
+        else:
+            out.append(ph)
+    return out
+
+
 def column_dates(gap_words: list[Word], columns: list[Column], height: float, sep: float) -> list[date | None]:
     """The date above each column. The header's phrases are given to the column nearest their centre (a phrase wider than a
     column is a title, not a date); the phrases over a column are read top to bottom, so a date broken over two lines is
@@ -467,8 +662,10 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     xs = [c.xc for c in columns]
     spacing = min((b - a for a, b in zip(xs, xs[1:])), default=8 * height)
     mine: list[list[tuple[float, float, str]]] = [[] for _ in columns]
+    # a table's border drawn as a letter ("I" between "September 30," and "2026" in ATUL Q2FY27) is never part of a date
+    gap_words = [w for w in gap_words if w.text.strip() not in _BORDER_MARKS]
     for line in lines_of(gap_words, height):
-        for ph in phrases_of(line, sep):
+        for ph in month_cut(phrases_of(line, sep), xs, spacing):
             width = ph[-1].x1 - ph[0].x0
             centre = (ph[0].x0 + ph[-1].x1) / 2
             j = min(range(len(columns)), key=lambda k: abs(xs[k] - centre))
@@ -477,7 +674,7 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     out: list[date | None] = []
     for items in mine:
         text = " ".join(t for _, _, t in sorted(items)).replace("_", " ").replace("|", " ")
-        found = _dates_in_text(text)
+        found = header_dates(text)
         out.append(found[-1] if found else None)
     return out
 
@@ -514,6 +711,7 @@ def column_kinds(columns: list[Column], dates: list[date | None], phrases: list[
         pattern = _pattern_kinds(list(dates), march)
     for j, c in enumerate(columns):
         c.date = dates[j] if j < len(dates) else None
+        c.read_date = c.date
         near: str | None = None
         confident = False
         if phrases:
@@ -536,6 +734,21 @@ def column_kinds(columns: list[Column], dates: list[date | None], phrases: list[
             c.kind, c.kind_confident = None, False
 
 
+# A unit line that is only the unit word with the rupee sign glued to it, often garbled by the scanner's text layer: "tlakhs" for
+# "₹ lakhs" (TATAELXSI Q2FY27), "(₹crore)", "Rs.lakhs". The whole short line, nothing else.
+_GLUED_UNIT = re.compile(r"^[(\[{]?\s*(?:[t₹{~`]|rs\.?|inr)\s*(crores?|lakhs?|lacs?|millions?)\s*[)\]}]?$", re.I)
+
+# A unit line that names no currency, or names it after the unit: "(Figures in Million , except per share data, unless stated
+# otherwise)", "(Figures in Million ₹, except ...)" (SONACOMS Q2FY27, standalone and consolidated).
+# The unit word may be followed only by a comma, a bracket, "except" or "unless", so "figures in million tonnes" is not money.
+_FIGURES_IN_UNIT = re.compile(r"^[(\[]?\s*(?:all\s+)?(?:figures|amounts?)\s+(?:are\s+)?in\s+(crores?|lakhs?|lacs?|millions?|mn|thousands?)"
+                              r"(?:\s*(?:₹|rs\.?|inr))?\s*(?:$|[,)\]]|except\b|unless\b)", re.I)
+
+# "(Amount in Rupees lakhs)" with OCR's spellings of the words around the unit ("Amunt in Rupees lakhs", "Amount in Rupces
+# lakhs", NEWGEN Q2FY27): the whole short line; the unit word itself must be clear
+_AMOUNT_IN_RUPEES = re.compile(r"^[(\[{]?\s*am[a-z]{1,5}\s+in\s+r[a-z]{3,6}\s+(crores?|lakhs?|lacs?|millions?)\s*[)\]}]?$", re.I)
+
+
 def scan_units(lines: list[str]) -> set:
     """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
     data)"), as ``pdf_referee`` reads them; a unit it does not know is None."""
@@ -549,18 +762,50 @@ def scan_units(lines: list[str]) -> set:
         clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)
         if len(clean) <= 40 and (m := _BARE_UNIT.match(clean)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
+        elif len(probe) <= 16 and (m := _GLUED_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
+        elif len(probe) <= 100 and (m := _FIGURES_IN_UNIT.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
+        elif len(probe) <= 40 and (m := _AMOUNT_IN_RUPEES.match(probe)):
+            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
     return found
+
+
+# A unit in brackets that ends a header line which also holds other words of the page's top (J&KBANK: "CIN: L6511... ( In Crores)",
+# the rupee sign lost; PARIN: "[ J (Ks. in Lacs)"): the bracket must close the line, hold nothing but a rupee sign or one rupee word
+# ("Rs", its garble "Ks", "INR") before "in" and the unit word itself; never a count's word ("No. in Lakhs": a share count) and never
+# another currency's sign or a symbol ("$ in million", "% in lakhs": the lead's review).
+_TAIL_UNIT = re.compile(r"(?:^|\s)\(\s*[₹₨]?\s*(?:(?:[RK][s5]|INR)\.?\s*)?in\s+(crores?|lakhs?|lacs?|millions?)\s*\)\s*$", re.I)
+
+
+_ANY_UNIT_BRACKET = re.compile(r"\([^()]{0,12}\bin\s+(?:crores?|lakhs?|lacs?|millions?)\s*\)", re.I)
+
+
+def tail_units(lines: list[str]) -> set:
+    """The units of ``_TAIL_UNIT``; a line with two bracketed units names None (two units: no unit)."""
+    found = set()
+    for line in lines:
+        if len(line) <= 200 and (m := _TAIL_UNIT.search(line)):
+            found.add(None if len(_ANY_UNIT_BRACKET.findall(line)) > 1 else _PER_CRORE_UNIT().get(m[1].lower().rstrip("s")))
+    return found
+
+
+def _PER_CRORE_UNIT():
+    from .grounding import _PER_CRORE
+    return _PER_CRORE
 
 
 def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
     """Figures per crore: the unit declared above the table (``grounding.unit_before``, then the short unit lines a lost rupee
-    sign or a garbled word leave), else the one unit the page names anywhere; None when none, or two."""
+    sign or a garbled word leave), else the one unit ``page_lines`` name; None when none, or two. The caller passes only the
+    page's lines above this table, so a note in another unit elsewhere on the page never sets this table's unit (the lead's
+    review)."""
     from .grounding import _DECLARED_UNIT, _PER_CRORE, unit_before
     text = "\n".join(lines)
     u = unit_before(text, len(text))
     if u is not None:
         return u
-    units = scan_units(lines)
+    units = scan_units(lines) | tail_units(lines)
     if len(units) == 1 and None not in units:
         return units.pop()
     page_text = "\n".join(page_lines)
@@ -571,6 +816,42 @@ def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
 
 # --- a page into tables ---------------------------------------------------------------------------------------------------
 
+
+def date_parts(words: list[Word], height: float) -> set[int]:
+    """The ids of day numbers that are part of a header date, never figures: a whole number of one or two digits right after
+    a month word on its line ("Sept 30" over "2026" in KIRLPNU Q2FY27, whose days made a row of 30s that cut the header
+    off the table)."""
+    out: set[int] = set()
+    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    for prev, w in zip(ordered, ordered[1:]):
+        if re.fullmatch(r"\d{1,2},?", w.text) and _MONTH_WORD.match(prev.text) and abs(prev.y - w.y) <= 0.5 * height \
+                and 0 <= w.x0 - prev.x1 <= height:
+            out.add(id(w))
+    return out
+
+TWIN_MIN_FIGURES = 3
+
+
+def drop_twin_rows(rows: list) -> list:
+    """The rows without the second reading of a line: a row with no label whose every cell is the row just above's (the same
+    figures in the same columns, at least ``TWIN_MIN_FIGURES`` of them, none missing on one side only) is the same printed line
+    read twice (CREDITACC Q2FY27: OCR gave "II Other income" 1.06 0.92 ... and, as a second row with no label, the same six
+    figures, which put a row between the two sections and so cut the sums that name total income). A line is never printed
+    twice without its own label, and the row above is kept, so no figure is lost or made up."""
+    out: list = []
+    for r in rows:
+        prev = out[-1] if out else None
+        if prev is not None and not r.label.strip() and prev.label.strip() and len(r.cells) == len(prev.cells):
+            same = all((a is None) == (b is None) and (a is None or (a.value == b.value and a.nil == b.nil))
+                       for a, b in zip(r.cells, prev.cells))
+            if same and sum(a is not None and not a.nil for a in r.cells) >= TWIN_MIN_FIGURES:
+                continue
+        out.append(r)
+    return out
+
+
+
+
 def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str = "textlayer") -> list[Table]:
     """The tables of one page: numeric rows, split where a header with dates stands between two rows, each with its columns'
     dates and kinds, its basis, its unit and its stitched labels."""
@@ -579,18 +860,24 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
     if len(words) < 12:
         return []
     height = text_height(words)
-    words = merge_brackets(words, height)
-    figs = [(w, c) for w in words if (c := parse_figure(w.text)) is not None and not c.nil]
+    words = merge_space_groups(merge_brackets(words, height), height)
+    dated = date_parts(words, height)
+    cellable = [w for w in words if id(w) not in dated]
+    figs = [(w, c) for w in cellable if (c := parse_figure(w.text)) is not None and not c.nil]
     columns, align = find_columns(figs, height)
     if len(columns) < 2:
         return []
-    assigned = decimals_filter(assign_cells(words, columns, align, height), len(columns))
+    extra = whole_number_columns(figs, columns, align, cellable, height)
+    if extra:
+        columns = sorted(columns + extra, key=lambda c: c.xc)
+        for i, c in enumerate(columns):
+            c.index = i
+    assigned = decimals_filter(assign_cells(cellable, columns, align, height), len(columns))
     rows = build_rows(assigned, words, columns, height)
     if len(rows) < 3:
         return []
     used = {id(w) for _, w, _ in assigned}
     free = [w for w in words if id(w) not in used]
-    page_texts = [line_text(line) for line in lines_of(words, height)]
     pitch = statistics.median([b.y - a.y for a, b in zip(rows, rows[1:]) if b.y > a.y] or [2 * height])
     sep = typical_gap(words, height)
     # where a header stands: a gap between two numeric rows with dates over at least two columns
@@ -603,41 +890,126 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         gaps[i] = gap
         wide[i] = [w for w in free if (rows[i - 1].bottom if i else -1e9) < w.y < r.top]
         if i:
-            dated = sum(d is not None for d in column_dates(gap, columns, height, sep))
-            if dated >= 2:
+            n_dated = sum(d is not None for d in column_dates(gap, columns, height, sep))
+            if n_dated >= 2:
                 starts.append(i)
     tables: list[Table] = []
+    page_lines_of = lines_of(words, height)
     for n, a in enumerate(starts):
+        # the page's own unit lines: only those above this table, never a note below it or beside another table (the lead's
+        # review; a page whose second table goes undetected would otherwise lend that table's unit to the first)
+        page_texts = [line_text(ln) for ln in page_lines_of if max(w.y for w in ln) < rows[a].top]
         b = starts[n + 1] if n + 1 < len(starts) else len(rows)
         gap = gaps[a]
         dates = column_dates(gap, columns, height, sep)
+        texts = [line_text(line) for line in lines_of(wide[a], height)]
+        march = bool(_MARCH_YEAR.search("\n".join(texts[-14:])))
         if sum(d is not None for d in dates) < 2:
             continue
         gap_lines = lines_of(gap, height)
-        texts = [line_text(line) for line in lines_of(wide[a], height)]
-        cols = [Column(c.x0, c.x1, c.xc, c.index) for c in columns]
-        column_kinds(cols, dates, group_phrases(gap, cols, height), bool(_MARCH_YEAR.search("\n".join(texts[-14:]))))
+        cols = [Column(c.x0, c.x1, c.xc, c.index, whole=c.whole) for c in columns]
+        title_basis, _ = _basis_above_boxed(texts, len(texts))
+        halves = None
+        if title_basis is None and not any(_NON_CONSOLIDATED.search(x) for x in texts + [line_text(ln) for ln in gap_lines]):
+            # a title naming one basis, or "Non-Consolidated" anywhere in the header, is never split into two (the review)
+            halves = side_by_side(gap, cols, dates, height)
+        if halves:
+            # two grids on one page area: each half is a table of its own basis, with its own header phrases and layout
+            k, first_basis, second_basis = halves
+            rows_all = [NRow(r.y, r.top, r.bottom, "", list(r.cells)) for r in rows[a:b]]
+            header_bottom = max((w.y for w in gap if any(abs(w.xc - c.xc) < 0.5 * (c.x1 - c.x0 + 4 * height) for c in cols)), default=None)
+            stitch_labels(rows_all, free, cols, set(), height, header_bottom)
+            phrases = group_phrases(gap, cols, height)
+            unit = unit_of(texts, page_texts)
+            for lo, hi, half_basis in ((0, k, first_basis), (k, len(cols), second_basis)):
+                half_cols = [Column(c.x0, c.x1, c.xc, i, whole=c.whole) for i, c in enumerate(cols[lo:hi])]
+                span = (cols[lo].x0 - 2 * height, cols[hi - 1].x1 + 2 * height)
+                half_dates = [d if d is None or not any(o is not None and o != d for o in (dates[i + k] if lo == 0 else dates[i],))
+                              else None for i, d in enumerate(dates[lo:hi])]       # a position whose halves disagree is dated in neither
+                column_kinds(half_cols, half_dates, [p for p in phrases if span[0] <= p[0] <= span[1]], march)
+                fill_corresponding_quarter(half_cols)
+                fill_damaged_quarter(half_cols)
+                half_rows = [NRow(r.y, r.top, r.bottom, r.label, r.cells[lo:hi], r.words_left) for r in rows_all]
+                tables.append(Table(page_no, half_basis, unit, half_cols, half_rows, source, header_lines=texts))
+            continue
+        column_kinds(cols, dates, group_phrases(gap, cols, height), march)
+        fill_corresponding_quarter(cols)
+        fill_damaged_quarter(cols)
         basis, contested = _basis_above_boxed(texts, len(texts))
+        if basis and any(_NON_CONSOLIDATED.search(x) for x in [" ".join(texts)] + texts):
+            basis, contested = None, True     # "Non-Consolidated Financial Results" names neither as a word (22nd review)
         if basis is None and not anywhere and not contested:
             basis = STANDALONE
         rows_t = [NRow(r.y, r.top, r.bottom, "", list(r.cells)) for r in rows[a:b]]
         header_bottom = max((w.y for w in gap if any(abs(w.xc - c.xc) < 0.5 * (c.x1 - c.x0 + 4 * height) for c in cols)), default=None)
         stitch_labels(rows_t, free, cols, set(), height, header_bottom)
+        rows_t = drop_twin_rows(rows_t)
         unit = unit_of(texts, page_texts)
-        tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts))
+        tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts, contested=contested))
     return tables
+
+
+def _basis_word(text: str) -> str | None:
+    """STANDALONE or CONSOLIDATED when the word is one of them even as the scanner garbled it ("Slandalone", "Consolldated"): it is
+    clearly nearer to one than to the other (a ratio of at least 0.72, and 0.15 more than for the other word)."""
+    from difflib import SequenceMatcher
+    from .metrics import CONSOLIDATED, STANDALONE
+    t = re.sub(r"[^a-z]", "", text.lower())
+    if len(t) < 6 or _NON_CONSOLIDATED.search(text) or re.match(r"(?:non|un|not)", t):
+        return None                      # "Non-Consolidated", "Unconsolidated" name neither (the review)
+    score = [SequenceMatcher(None, t, w).ratio() for w in ("standalone", "consolidated")]
+    best = 0 if score[0] >= score[1] else 1
+    if score[best] < 0.72 or score[best] - score[1 - best] < 0.15:
+        return None
+    if best == 1 and (t.endswith("tion") or not re.search(r"dat|lid", t)):
+        return None                      # "Consolidation", "Considered" are other words
+    return (STANDALONE, CONSOLIDATED)[best]
+
+
+def side_by_side(gap: list[Word], cols: list[Column], dates: list, height: float):
+    """(k, basis of the first k columns, basis of the rest) when one printed grid holds the standalone and the consolidated figures
+    side by side (SPLPETRO Q2FY27: 12 columns). Every condition must hold, else None: an even number of columns, eight or more; a
+    header line of exactly two words, one standalone and one consolidated, the first over the first half of the columns and the
+    second over the second half; the two halves dated alike (the same date at three or more positions, at most one at odds, and that position is then dated in neither half)."""
+    n = len(cols)
+    if n < 8 or n % 2:
+        return None
+    k = n // 2
+    margin = 2 * height
+    for line in lines_of(gap, height):
+        if len(line) != 2:
+            continue
+        b1, b2 = _basis_word(line[0].text), _basis_word(line[1].text)
+        if b1 is None or b2 is None or b1 == b2:
+            continue
+        if not (cols[0].x0 - margin <= line[0].xc <= cols[k - 1].x1 + margin and cols[k].x0 - margin <= line[1].xc <= cols[-1].x1 + margin):
+            continue
+        pairs = [(x, y) for x, y in zip(dates[:k], dates[k:]) if x is not None and y is not None]
+        if sum(x == y for x, y in pairs) >= 3 and sum(x != y for x, y in pairs) <= 1:
+            return k, b1, b2
+    return None
 
 
 # --- the stitched label's landmark (the second signal) --------------------------------------------------------------------
 
 _CLASS_RULES: list[tuple[str, re.Pattern]] = [
+    # before the PAT rule: "Share of profit of associates after tax" is an associate's share, not a profit (ninth review);
+    # a row number may lead it ("04. Share of net profit of associates", ATUL Q2FY27)
+    ("ASSOC", re.compile(r"^\W*(?:[a-z\d]{1,4}\W+)?(?:add:?\s*|less:?\s*)?share\s+(?:of|in)\b.*\b(?:associates?|joint\s+ventures?)", re.I)),
     ("EPS", re.compile(r"earnings?\s+per|\beps\b|per\s+(?:equity\s+)?share", re.I)),
-    ("TCI", re.compile(r"comprehensive", re.I)),
+    ("TCI", re.compile(r"comprehensive|\boci\b", re.I)),          # "Profit after tax and OCI" is a total comprehensive income
     ("PAT", re.compile(r"(?:profit|loss)\b.*\bfor\s+the\s+(?:period|year|quarter)\b.*continuing\s+and\s+discontinu", re.I)),
+    # "Profit after tax for the period (including non-controlling interests)" is the group's profit before the split (ABCAPITAL
+    # Q4FY24); a label that says attributable is never it
+    ("PAT", re.compile(r"^(?!.*attributable)(?!.*\bbefore\s+(?:\w+\s+){0,3}tax)(?=.*\b(?:profit|loss)\b.*\b(?:after\s+tax|for\s+the\s+(?:period|year|quarter))\b)"
+                       r".*\b(?:including|before)\s+(?:the\s+)?non[- ]?controlling\s+interests?", re.I)),
     ("ATTR", re.compile(r"attributable|owners\s+of|non[- ]?controlling|minority|equity\s+holders", re.I)),
     ("DISC", re.compile(r"discontinu", re.I)),
     ("PBEI", re.compile(r"before\b.*\b(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?)", re.I)),
     ("PBT", re.compile(r"before\s+(?:\w+\s+){0,3}tax|\bpbt\b", re.I)),
+    # OCR's "beforc" / "bcfore" for "before" in a line that names a profit and a tax ("5. Profit beforc Tax (3+4)", MOREPENLAB): without
+    # this it fell to the tax rule below and a tax line was never a profit before tax
+    ("PBT", re.compile(r"^(?!.*(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?))(?=.*\b(?:profit|loss)\b).*?\b(?:profit|loss)\b.{0,20}?\b(?:\wefore|b\wfore|be\wore|bef\wre|befo\we|befor\w)\s+(?:\w+\s+){0,3}tax", re.I)),
     ("TAX", re.compile(r"^(?!.*\b(?:profit|loss|surplus)\b).*\btax", re.I)),      # a tax line: no profit or loss in its words
     ("CONT", re.compile(r"continuing", re.I)),
     ("PAT", re.compile(r"(?:profit|loss|surplus)\b.*\b(?:for\s+the\s+(?:period|year|quarter)|after\s+tax)|\bpat\b|net\s+profit", re.I)),
@@ -670,6 +1042,80 @@ def label_class(label: str) -> str | None:
 Proof = tuple[int, tuple[tuple[int, int], ...]]        # (row that equals, ((row, sign), ...) its parts)
 
 
+# a revenue row that opens a list of its parts: "1 Revenue from operations (a) Interest income", "Revenue from Operations
+# (i) Interest Income", "Revenue from operations: a) Sales"
+# (a list's first marker: "(a)", "a)", "[a]", "a.", "(i)", "i.", "(1)" - a numbered one is a note reference when "refer" or
+# "note" follows it; a lettered or roman one never is, whatever word follows: "(a) Note income" is a part, nineteenth review)
+_ITEM_MARK = r"(?:\(?[a-z]\)|\[[a-z]\]|[a-z]\.|\(?[ivx]{1,5}\)|[ivx]{1,5}\.|\(?\d{1,2}\)(?!\s*(?:refer|notes?|see)\b))"
+# the marker is followed by the first part's name; a total is never a list ("Total Revenue from Operations (1)", EMKAY Q2FY25)
+_REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:refer\s+)?notes?\s*\d+\))?\W{0,3}" + _ITEM_MARK
+                           + r"\s*[a-z]", re.I)
+# a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
+# its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
+_LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
+# a profit line whose label adds two numbered lines ("Profit for the period (5+6)") and a tax printed as "(expense)/credit"
+_ADDS_LINES = re.compile(r"\(\s*(?:\d{1,2}|[ivx]{1,4})\s*\+\s*(?:\d{1,2}|[ivx]{1,4})\s*\)", re.I)
+_TAX_CREDIT = re.compile(r"\btax\b.*\bcredit\b|\(expense\)\s*/\s*credit", re.I)
+# a revenue-class label that opens a section of costs, not of revenue ("Cost of sales", "Excise duty on sales", "Sales promotion")
+_NOT_REVENUE_OPENER = re.compile(r"\bcost\s+of\b|\bexcise\b|\bpromotion\b", re.I)
+# a section's subtotal that names only its letter or number: "Total (a)", "Total [b]", "Total (II)" (an NBFC's statement)
+_SECTION_TOTAL = re.compile(r"^\W*total\s*[\(\[]?\s*(?:[a-e]|i{1,3}|iv|[1-5])\s*[\)\]]?\W*$", re.I)
+_TOTAL_REVENUE = re.compile(r"^\W*(?:[\divx]+\W+)?total\s+revenue\s+from\s+operations?\W*(?:\(\w{1,4}\))?\W*$", re.I)
+def not_revenue_line(label: str) -> bool:
+    """A line that cannot be a part of revenue, by an allow-list (25th review: a gain on fair value changes or on
+    derecognition is a revenue part in an NBFC's statement): a foreign-exchange gain or loss ("Foreign exchange gain (net)",
+    SONACOMS Q2FY27), or "Other" and OCR's spelling of "income", one letter off ("Other incume", NEWGEN Q2FY27)."""
+    if re.search(r"\b(?:gains?|loss(?:es)?)\b", label, re.I) and re.search(r"\b(?:foreign\s+exchange|exchange|forex|currency)\b", label, re.I) \
+            and not re.search(r"\b(?:fair\s+value|derecogni|investments?|securities|sales?|services?|fees?|interest|dividend)", label, re.I):
+        return True
+    m = re.match(r"^\W*other\s+([a-z]{6})\W*$", label, re.I)
+    return bool(m) and sum(x != y for x, y in zip(m[1].lower(), "income")) == 1
+
+
+# a whole revenue line: the label ends with the revenue's own name (a note or "(net)" in brackets may follow)
+_WHOLE_REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations?\W*(?:\((?:net|gross|refer[^)]*|notes?[^)]*)\)\W*)?$", re.I)
+
+
+_ROMAN = {r: i for i, r in enumerate(("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
+                                      "XVI", "XVII", "XVIII", "XIX", "XX"), 1)}
+# a row number: one or two digits or a capital roman numeral (Schedule III numbers its lines "XI", "XII": PARIN Q2FY27)
+_ROW_MARKER = re.compile(r"(?:^|(?<=\s))(\d{1,2}|[IVX]{1,5})(?=\s+[A-Za-z(])")
+
+
+def tail_label(row: "NRow") -> str | None:
+    """The label of the LAST of several numbered statement lines stitched into one label, when the row's figures sit on that
+    line: a statement prints "8 Profit from discontinued operations", "9 Tax expense of discontinued operations", "10 Profit from
+    discontinued operations (after tax)" and "11 Profit for the period (7-10)" with a nil dash in each of the first three, and a
+    nil with no cell is no numeric row, so the figures of line 11 take all four labels (AIIL Q4FY24, ARMANFIN Q4FY24). The row
+    numbers must run on one by one from the label's first word, and the marker of the last line must stand on the row's own
+    height at the left of the label: figures printed on the first line of a wrapped label are never given to its last one."""
+    text = re.sub(r"\s+", " ", row.label or "").strip()
+    marks = [(m.start(), int(m[1]) if m[1].isdigit() else _ROMAN[m[1]]) for m in _ROW_MARKER.finditer(text)
+             if m[1].isdigit() or m[1] in _ROMAN]
+    if len(marks) < 2 or marks[0][0] != 0:
+        return None
+    roman = not text[:marks[0][0] + 1].strip()[:1].isdigit()     # one kind of number in a run: "9 ... X ..." is no run
+    run = [marks[0]]
+    for pos, n in marks[1:]:
+        if text[pos].isdigit() == roman:
+            continue
+        if n == run[-1][1] + 1:
+            run.append((pos, n))
+    if len(run) < 2 or not row.words_left:
+        return None
+    pos, n = run[-1]
+    left = min(w.x0 for w in row.words_left)
+    token = text[pos:].split(" ", 1)[0]
+    for w in row.words_left:
+        if w.text == token and abs(w.y - row.y) <= 0.6 * w.h and w.x0 <= left + 3 * w.h:
+            return text[pos:]
+    return None
+
+
+def list_item(label: str) -> bool:
+    return bool(_LIST_ITEM.match(label)) and not re.match(r"^\W*[IVX]{1,4}\.\s", label)
+
+
 class Solver:
     """Names the rows of one table by the identities that hold down its columns. ``explanations`` maps a metric to its readings
     of the table: a list of (rows, proofs); a proof is an identity checked again in the period's own column when a figure is
@@ -680,31 +1126,60 @@ class Solver:
         self.n = len(table.rows)
         self.m = len(table.columns)
         self.cls = [label_class(r.label) for r in table.rows]
+        # rows whose figures belong to the last of several stitched lines (``tail_label``): the landmark of that line, used only
+        # to take such a row as the profit for the period right after the profit from continuing operations (``pat_extensions``)
+        self.tail_cls: dict[int, str | None] = {i: label_class(t) for i, r in enumerate(table.rows) if (t := tail_label(r))}
         self.explanations: dict[str, list[tuple[tuple[int, ...], list[Proof]]]] = {}
+        self.pat_unsure = False          # a profit carried on by arithmetic alone (``carried_on``): no profit from the table
         self.chains = 0
 
     # --- identities
     def cell(self, i: int, j: int) -> Cell | None:
         return self.t.rows[i].cells[j]
 
-    def mask(self, proof: Proof) -> list[bool | None]:
+    def mask(self, proof: Proof, rereads: bool = True) -> list[bool | None]:
+        """Per column: True when the identity holds, False when it is broken, None when a cell is missing. A cell read again
+        from a crop (``Table.rereads``) takes the place of ONE missing cell of an identity in a column, and only counts when the
+        identity then holds EXACTLY (no rounding tolerance for any term: the sum of the printed figures equals the printed
+        total to the last digit); when it does not hold, the column is None, never False: a misread crop is no evidence against
+        the identity. Two missing cells in one identity and column stay None."""
         target, parts = proof
+        rows = [target] + [r for r, _ in parts]
         out: list[bool | None] = []
         for j in range(self.m):
             a = self.cell(target, j)
             cs = [(self.cell(r, j), s) for r, s in parts]
             if a is None or any(c is None for c, _ in cs):
-                out.append(None)
+                gaps = [r for r in rows if self.cell(r, j) is None]
+                if rereads and len(gaps) == 1 and (gaps[0], j) in self.t.rereads:
+                    got = {r: self.cell(r, j) or self.t.rereads[(r, j)] for r in rows}
+                    total = sum(s * got[r].value for r, s in parts)
+                    out.append(True if abs(got[target].value - total) <= REREAD_EXACT else None)
+                else:
+                    out.append(None)
                 continue
             total = sum(s * c.value for c, s in cs)
             tol = a.tol + sum(c.tol for c, _ in cs) + 1e-9
             out.append(abs(a.value - total) <= tol)
         return out
 
+    def reread_proved(self, row: int, j: int, proofs: list[Proof]) -> Cell | None:
+        """The re-read cell of (row, column) when an identity of ``proofs`` that holds it holds exactly with it in that column
+        (``mask``: the one missing cell of the identity, every other term read normally); else None."""
+        cell = self.t.rereads.get((row, j))
+        if cell is None or self.cell(row, j) is not None:
+            return None
+        for pf in proofs:
+            if row == pf[0] or any(r == row for r, _ in pf[1]):
+                if self.mask(pf)[j] is True:
+                    return cell
+        return None
+
     def valid(self, proof: Proof) -> bool:
         """The identity holds in at least three columns (all of them when fewer can be checked), is broken in at most one, and is
-        not made of zeros."""
-        mask = self.mask(proof)
+        not made of zeros. A re-read cell never counts here: it may give an answer from a row the printed cells already
+        name, never help name one (review of 0b30926: one normal column plus one re-read column named a row)."""
+        mask = self.mask(proof, rereads=False)
         checked = sum(v is not None for v in mask)
         holds = sum(v is True for v in mask)
         fails = sum(v is False for v in mask)
@@ -769,13 +1244,22 @@ class Solver:
             between = list(range(b + 1, a))
             if not between or any(self.cls[r] not in {None, "TAX"} for r in between) or not self.label_ok(a, {"PAT", "CONT"}):
                 continue
+            # the tax printed signed, as "(expense)/credit", and added (VLSFINANCE Q4FY24: "6 Tax (expense)/credit (net)"
+            # -1,747.94, "7 Profit for the Period (5+6)" = 9,164.81 - 1,747.94): only where the profit's label adds the two
+            # lines or a tax label says credit
+            signs = [-1]
+            if _ADDS_LINES.search(self.t.rows[a].label) or any(_TAX_CREDIT.search(self.t.rows[r].label) for r in between):
+                signs.append(1)
             best = None
-            for size in range(1, len(between) + 1):
-                for s in range(0, len(between) - size + 1):
-                    block = tuple(between[s:s + size])
-                    proof: Proof = (a, ((b, 1),) + tuple((r, -1) for r in block))
-                    if best is None and self.valid(proof):
-                        best = (block, proof)
+            for sign in signs:
+                for size in range(1, len(between) + 1):
+                    for s in range(0, len(between) - size + 1):
+                        block = tuple(between[s:s + size])
+                        proof: Proof = (a, ((b, 1),) + tuple((r, sign) for r in block))
+                        if best is None and self.valid(proof):
+                            best = (block, proof)
+                    if best:
+                        break
                 if best:
                     break
             if best is None:
@@ -787,17 +1271,80 @@ class Solver:
             out.append((a, block, proof))
         return out
 
+    def carried_on(self, a: int):
+        """Whether the profit after tax ``a`` is carried on further down: "label" when the row after it is an associate's share
+        or discontinued operations that is not nil (EMKAY Q2FY25: "IX Profit after tax" 2,581.77, "X Share of Profit of
+        Associates" 9.39, the profit for the period 2,591.16), then only an extension that reaches the bottom line may be the
+        profit; or ``(x, proof)`` when only the arithmetic says so: a later row ``x`` equals the profit plus or minus one or two
+        non-nil rows between, whatever their labels (ninth review: a garbled share label, a nil row between, an exceptional
+        item after tax). The arithmetic cannot tell that from a total comprehensive income with a garbled label (= profit +
+        other comprehensive income, tenth review), so then ``a`` and ``x`` are both offered and the reading is a conflict:
+        no answer either way. None when neither."""
+        def nonzero(r: int) -> bool:
+            return any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)
+
+        nxt = a + 1
+        if nxt < self.n and self.cls[nxt] in ("ASSOC", "DISC") and nonzero(nxt):
+            return "label"
+        for x in range(a + 2, min(self.n, a + 13)):
+            between = list(range(a + 1, x))
+            if any(self.cls[r] in ("TCI", "ATTR", "EPS") for r in between):
+                break
+            if self.cls[x] in ("TCI", "ATTR", "EPS", "TE", "TI"):
+                continue
+            live = [r for r in between if nonzero(r)]
+            for size in (1, 2, 3):
+                for subset in itertools.combinations(live, size):
+                    for signs in itertools.product((1, -1), repeat=size):
+                        proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))
+                        if self.valid(proof):
+                            return (x, proof)
+        return None
+
+    def covered(self, skipped: list[int], subset: tuple[int, ...]) -> bool:
+        """Every non-nil row the sum leaves out is a part of a subtotal it takes in: some row of ``subset`` equals the left-out
+        rows plus or minus each other (ABREL: 14 = 11 + 13, so 15 = 9 + 14 may leave 11 and 13 out). A left-out row no subtotal
+        accounts for is a profit or a tax the sum skipped (fourteenth review), and the row is not the profit for the period."""
+        if not skipped:
+            return True
+        if len(skipped) > 3:
+            return False
+        for s_row in subset:
+            if s_row < max(skipped):     # a subtotal stands below its parts (fifteenth review: a gross row is not one)
+                continue
+            for signs in itertools.product((1, -1), repeat=len(skipped)):
+                if self.valid((s_row, tuple(zip(skipped, signs)))):
+                    return True
+        return False
+
     def pat_extensions(self, a: int) -> list[tuple[int, list[Proof]]]:
-        """Rows after the profit after tax ``a`` that equal it plus or minus one or two of the rows between (discontinued
-        operations, an associate's share), and whose label does not name another line."""
+        """Rows after the profit after tax ``a`` that equal it plus or minus the rows between (discontinued operations, an
+        associate's share): the row's label names the profit (not merely does not object), every row between is an associate's
+        share, discontinued operations, an exceptional item or a tax line, or nil, and the sum takes in every non-nil
+        associate's share between (eleventh review: a garbled total comprehensive income or an identity
+        that skips the share is not the profit)."""
         out = []
+        # the very next row, when its figures are those of the last of several numbered lines stitched together whose first ones
+        # (discontinued operations) are nil and have no cells: the profit for the period equals the profit from continuing
+        # operations printed right above it, in every column it can be checked in (``tail_label``)
+        x = a + 1
+        if x < self.n and self.tail_cls.get(x) == "PAT":
+            proof: Proof = (x, ((a, 1),))
+            if self.valid(proof):
+                out.append((x, [proof]))
         for x in range(a + 2, min(self.n, a + 9)):
             between = list(range(a + 1, x))
-            if not self.label_ok(x, {"PAT"}) or any(self.cls[r] not in {None, "DISC", "ASSOC", "EXC", "TAX"} for r in between):
+            live = [r for r in between if any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)]
+            if self.cls[x] != "PAT" or any(self.cls[r] not in {"DISC", "ASSOC", "EXC", "TAX"} for r in live):
                 continue
+            # every associate's share between must be in the sum; a discontinued block has its parts and their subtotal
+            # (ABREL Q2FY27: 15 = 9 + 14, where 14 is the net of 11 and 13), so it is not asked for row by row
+            needed = {r for r in live if self.cls[r] == "ASSOC"}
             for size in (1, 2):
                 hit = None
-                for subset in itertools.combinations(between, size):
+                for subset in itertools.combinations(live, size):
+                    if not needed <= set(subset) or not self.covered([r for r in live if r not in subset], subset):
+                        continue
                     for signs in itertools.product((1, -1), repeat=size):
                         proof: Proof = (x, ((a, 1),) + tuple(zip(subset, signs)))
                         if hit is None and self.valid(proof):
@@ -819,6 +1366,10 @@ class Solver:
                 if k == 3 and self.valid((t, parts[1:])):
                     continue
                 self.chain_from(t, k, ti_proof)
+            self.nested_income(t)
+            self.parts_income(t)
+            self.sections_income(t)
+            self.bank_income(t)
         if "total_income" not in self.explanations:
             # no chain below it: a total income by its label AND the arithmetic (never the label alone)
             for t in range(1, self.n):
@@ -832,23 +1383,265 @@ class Solver:
                             break
         return self
 
-    def name_income(self, t: int, k: int, proof: Proof) -> None:
+    def nested_income(self, t: int) -> None:
+        """Total income = revenue + an other-income subtotal printed with its parts between them (PRIMESECU Q4FY24: "I Revenue
+        from Operations" 1,136, "II Other Income" i) to iv), "Total Other Income" 146, "III Total income (I+II)" 1,282): the
+        row above the total says other income and is the sum of the two to eight rows between (its own identity), and the row
+        before those does not say anything but revenue."""
+        if t < 1 or self.cls[t - 1] != "OI" or not self.label_ok(t, {"TI"}):
+            return
+        for size in range(2, 9):
+            r = t - 2 - size
+            if r < 0:
+                return
+            sub: Proof = (t - 1, tuple((x, 1) for x in range(r + 1, t - 1)))
+            proof: Proof = (t, ((r, 1), (t - 1, 1)))
+            if self.label_ok(r, {"REV"}) and self.valid(sub) and self.valid(proof):
+                self.chain_from(t, (r, t - 1), proof)
+                return
+
+    def parts_income(self, t: int) -> None:
+        """Total income = revenue printed only as its parts + other income, with no line for the revenue itself (BFINVEST
+        Q2FY25: "1 Revenue from operations (a) Interest income" 57.46, "(b) Dividend income" 655.73, "(c) Net gain on fair
+        value changes" 24.86, "2 Other income" 7.02, "3 Total income (1+2)" 745.07): the first row says revenue from
+        operations and opens a list ("(a)", "(i)", "a)"), the rows after it say nothing (no landmark), the row above the total
+        says other income, and all of them add up to the total. The revenue is the sum of the parts."""
+        if not self.label_ok(t, {"TI"}) or t < 1 or self.cls[t - 1] != "OI":
+            return
+        for k in range(3, 9):
+            first = t - k
+            if first < 0:
+                return
+            parts = tuple(range(first, t - 1))
+            if self.cls[first] != "REV" or not _REVENUE_LIST.search(self.t.rows[first].label):
+                continue
+            if list_item(self.t.rows[t - 1].label):
+                return          # "(d) Other income": a part of the revenue list or not, the labels cannot tell
+            if any(self.cls[r] is not None for r in parts[1:]):
+                return
+            proof: Proof = (t, tuple((r, 1) for r in range(first, t)))
+            if self.valid(proof):
+                self.chain_from(t, (parts, t - 1), proof)
+            return
+
+    def sections_income(self, t: int) -> None:
+        """Total income = two section subtotals printed under their parts (an NBFC's statement, VLSFINANCE Q4FY24: "(a) Revenue
+        from Operations (i) Interest Income" 381.16, "(ii) Dividend Income", "(iii) Net gain on fair value changes", "(iv) Other
+        Operating Income", "Total (a)" 9,754.03; "(b) Other Income" 240.00, "Total (b)" 240.00; "Total Income (a+b)" 9,994.03).
+        Each subtotal is only a "Total (a)" label, so no row says revenue: the section is told by its first row (a revenue
+        heading) and proved by its own identity (the parts add up to it), the other-income section by a row saying other income
+        and its own identity, and the total by the sum of the two. Revenue is the first subtotal, other income the second."""
+        if t < 4 or not self.label_ok(t, {"TI"}) or not _SECTION_TOTAL.match(self.t.rows[t - 1].label):
+            return
+        b = t - 1
+        for a in range(b - 2, 0, -1):
+            if not _SECTION_TOTAL.match(self.t.rows[a].label):
+                continue
+            oi = list(range(a + 1, b))
+            # the other-income section opens right after "Total (a)" (review of 5b84304)
+            if len(oi) > 6 or self.cls[a + 1] != "OI" or any(self.cls[r] not in (None, "OI") for r in oi):
+                return
+            if not self.valid((b, tuple((r, 1) for r in oi))):
+                return
+            first = next((r for r in range(a - 1, max(a - 10, -1), -1) if self.cls[r] is not None), None)
+            if first is None or self.cls[first] != "REV" or a - first < 2 or _NOT_REVENUE_OPENER.search(self.t.rows[first].label):
+                return
+            proof: Proof = (t, ((a, 1), (b, 1)))
+            if self.valid((a, tuple((r, 1) for r in range(first, a)))) and self.valid(proof):
+                self.chain_from(t, ((a,), b), proof)
+            return
+
+    _OF_WHICH = re.compile(r"^\W*(?:\w{1,2}\W+)?of\s+which\b", re.I)
+
+    def bank_hops(self, start: int) -> list[tuple[int, list[Proof]]]:
+        """Rows reached from ``start`` over the rows between that are not "Of which ..." lines: a bank's provisions are followed by
+        "Of which provisions for non-performing assets", a part of the provisions that is not taken off again (UNIONBANK).
+        Only the rows between that do not say "of which" are in the sum; the identity is the table's own."""
+        found: list[tuple[int, list[Proof]]] = []
+        for x in range(start + 2, min(self.n, start + 6)):
+            between = list(range(start + 1, x))
+            used = [r for r in between if not self._OF_WHICH.match(self.t.rows[r].label)]
+            if len(used) == len(between) or not 1 <= len(used) <= 3 or any(self.cls[r] not in self.HOP_OK for r in used):
+                continue
+            for signs in itertools.product((1, -1), repeat=len(used)):
+                proof: Proof = (x, ((start, 1),) + tuple(zip(used, signs)))
+                if self.valid(proof):
+                    found.append((x, [proof]))
+                    break
+        return found
+
+    BANK_LEVEL = re.compile(r"operating\s+profit|profit\s+before\s+provision", re.I)
+    BANK_SEGMENT = re.compile(r"segment|treasury|retail\s+banking|wholesale|corporate\s*/?\s*(?:wholesale\s+)?banking", re.I)
+
+    BANK_CARRIED = re.compile(r"associate|minorit|share\s+(?:of|in)\b|discontinu", re.I)
+
+    def bank_carried_on(self, a: int) -> bool:
+        """A row after a bank's profit after tax ``a`` that is an associate's share, a minority's share or discontinued
+        operations and is not nil (or is unreadable): the bottom line is further down, so ``a`` is not the profit."""
+        for r in range(a + 1, min(self.n, a + 9)):
+            label = re.sub(r"before\s+minorit\w*", "", self.t.rows[r].label, flags=re.I)   # "profit for the period before minority interest"
+            if self.cls[r] in ("ASSOC", "DISC") or self.BANK_CARRIED.search(label):
+                if any(c is None or abs(c.value) > 1e-9 for c in self.t.rows[r].cells):
+                    return True
+        return False
+
+    def parts_sum(self, head: int, first: int, last: int) -> bool:
+        """The rows ``first``..``last`` (the printed parts of the row ``head``) add up to it; no parts is also fine."""
+        return first > last or self.valid((head, tuple((r, 1) for r in range(first, last + 1))))
+
+    def bank_income(self, t: int) -> None:
+        """A bank's statement (RBI format): "1 Interest earned (a)+(b)+(c)+(d)" printed over its parts, "2 Other income" (also over
+        its parts, ICICI's group), "3 Total income (1+2)" = the two; "4 Interest expended", "5 Operating expenses" (over its
+        parts), "6 Total expenditure (4+5)"; "7 Operating profit (3-6)", then provisions and the exceptional items down to the
+        profit before tax, the tax and the profit after tax. Every identity is the table's own (the parts of each line
+        add up to it, the totals are sums of the two lines), so the chain runs through eight or more of them. The two-row
+        sums of a corporate chain cannot see it: the parts stand between the lines. Revenue is the interest earned (the
+        bench key's revenue for a bank), other income the second line."""
+        if not self.label_ok(t, {"TI"}):
+            return
+        for b in range(t - 1, max(t - 5, 0), -1):
+            if not self.label_ok(b, {"OI"}) or not self.parts_sum(b, b + 1, t - 1):
+                continue
+            for a in range(b - 1, max(b - 9, -1), -1):
+                if not self.label_ok(a, {"REV"}) or not self.parts_sum(a, a + 1, b - 1):
+                    continue
+                ti_proof: Proof = (t, ((a, 1), (b, 1)))
+                if b - a < 2 or not self.valid(ti_proof):
+                    continue            # the parts stand between them: adjacent rows are the corporate chain's
+                self.bank_chain_from(t, a, b, ti_proof)
+
+    def bank_chain_from(self, t: int, a: int, b: int, ti_proof: Proof) -> None:
+        for c in (t + 1, t + 2):                      # interest expended
+            for e in range(c + 2, min(self.n, c + 12)):    # total expenditure = interest expended + operating expenses
+                if not self.label_ok(e, {"TE"}):
+                    continue
+                for d in range(c + 1, e):
+                    te_proof: Proof = (e, ((c, 1), (d, 1)))
+                    if not self.parts_sum(d, d + 1, e - 1) or not self.valid(te_proof):
+                        continue
+                    if any(self.BANK_SEGMENT.search(self.t.rows[r].label) for r in range(a, e + 1)):
+                        continue            # a segment table has its own chain: never a bank's statement of results
+                    for p in range(e + 1, min(self.n, e + 4)):      # operating profit
+                        p_proof: Proof = (p, ((t, 1), (e, -1)))
+                        if not self.label_ok(p, {"PBEI", "PBT", "TAX", "EXC"}) or not self.valid(p_proof):
+                            continue
+                        self.chains += 1
+                        pending: list = [("expenses", (e,), [te_proof]), ("total_income", (t,), [p_proof]),
+                                         ("total_income", (t,), [ti_proof]), ("revenue", (a,), [ti_proof]),
+                                         ("other_income", (b,), [ti_proof])]
+                        completed = self.profit_tail(p, p_proof, pending, bank=True)
+                        said = self.cls[t] == "TI" or self.cls[e] == "TE" or any(
+                            self.cls[x] == "PBT" for x, _ in self.hops(p))
+                        if not (said or completed):
+                            continue
+                        for metric, rows, proofs in pending:
+                            self.add(metric, rows, proofs)
+
+    def name_income(self, t: int, k, proof: Proof) -> None:
+        """``k``: the number of rows right above the total that add up to it, or the (revenue, other income) rows of a nested
+        total (``nested_income``: one revenue row) or of revenue printed as its parts (``parts_income``: a tuple of rows)."""
         self.add("total_income", (t,), [proof])
-        rows = list(range(t - k, t))
-        if k == 2:
-            if self.label_ok(rows[0], {"REV"}):
+        if isinstance(k, tuple) and isinstance(k[0], tuple):
+            self.add("revenue", k[0], [proof])
+            self.add("other_income", (k[1],), [proof])
+            return
+        rows = list(k) if isinstance(k, tuple) else list(range(t - k, t))
+        # a revenue row that opens a list of its parts is only the first part: never the revenue (BFINVEST Q2FY25)
+        rows_rev_ok = not any(self.cls[r] == "REV" and _REVENUE_LIST.search(self.t.rows[r].label) for r in rows)
+        # nor is one followed by a row that is an item of a list ("I. Interest income", "[a] Sales" after "Revenue from
+        # operations"): the revenue row may be a heading over its parts (nineteenth review)
+        # nor is one followed by a row that says nothing (no landmark): "Revenue from operations" over "(a) Sales" and
+        # "Dividend income" or "- Fees" may be a heading over its parts, whatever marks them or none (twentieth review)
+        # nor one with a row that says nothing above it ("Interest income" over "Net sales": the revenue is both, twenty-first)
+        # A row that says nothing BELOW a whole revenue line ("Revenue from operations" and nothing after it: a line with its own
+        # figures) is another line of income, not a part (SONACOMS Q2FY27: "Foreign exchange gain (net)"; NEWGEN: OCR's
+        # "Other incume"); below a heading joined to its first part ("Revenue from operations Sale of products") it may be one
+        rev_at = [i for i, r in enumerate(rows) if self.cls[r] == "REV"]
+        if rev_at:
+            first = rev_at[0]
+            if any(self.cls[r] is None for r in rows[:first]):
+                rows_rev_ok = False
+            elif any(self.cls[r] is None and not not_revenue_line(self.t.rows[r].label) for r in rows[first + 1:]) \
+                    or not _WHOLE_REVENUE.search(self.t.rows[rows[first]].label) and any(self.cls[r] is None for r in rows[first + 1:]):
+                rows_rev_ok = False
+        if len(rows) == 2:
+            # a revenue row right above the sum and outside it: the first row is not the revenue (22nd review: "Revenue from
+            # operations" over "Interest income" + "Other income" = a total that leaves the revenue out)
+            above = min(rows) - 1
+            # unless the first row is the subtotal of the rows right above it ("a. Sale of products", "b. Other operating
+            # revenues", "Total Revenue from operations", SRF Q2FY27): then the revenue row above is one of its parts
+            # (the subtotal says revenue itself and holds in every column it can be checked in: no broken column is
+            # tolerated here, 27th review)
+            def strict(proof: Proof) -> bool:
+                return self.valid(proof) and False not in self.mask(proof)
+            subtotal = self.cls[rows[0]] == "REV" and any(
+                strict((rows[0], tuple((r, 1) for r in range(above - size + 1, above + 1)))) for size in range(1, 7)
+                if above - size + 1 >= 0 and all(self.cls[r] != "OI" for r in range(above - size + 1, above + 1)))
+            # (an other-income row right above is the same doubt: "Total revenues" may take it in, 28th review)
+            # or the first row says it is the total of revenue from operations and the row above is a part of revenue, not other
+            # income (BAJAJHLDNG Q4FY24: OCR lost one part, so the sum cannot be checked)
+            said_total = self.cls[above] == "REV" and bool(_TOTAL_REVENUE.match(self.t.rows[rows[0]].label)) if above >= 0 else False
+            if above >= 0 and self.cls[above] in ("REV", "OI") and not subtotal and not said_total:
+                rows_rev_ok = False
+            rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok
+            if rev_named:
                 self.add("revenue", (rows[0],), [proof])
-            if self.label_ok(rows[1], {"OI"}):
+            # a row that says nothing is the other income only beside a named revenue (22nd review)
+            oi_ok = self.cls[rows[1]] == "OI" or (self.cls[rows[1]] is None and rev_named and self.cls[rows[0]] == "REV")
+            # another other-income row right above: which of the two is the company's other income is not told (29th review)
+            if above >= 0 and self.cls[above] == "OI":
+                oi_ok = False
+            if oi_ok and (rows_rev_ok or not list_item(self.t.rows[rows[1]].label)):
                 self.add("other_income", (rows[1],), [proof])
         else:
             rev = [r for r in rows if self.cls[r] == "REV"]
             oi = [r for r in rows if self.cls[r] == "OI"]
-            if len(rev) == 1:
+            if len(rev) == 1 and rows_rev_ok:
                 self.add("revenue", (rev[0],), [proof])
-            if len(oi) == 1:
+            # after a revenue list, "(c) Other income" may be one of its parts (eighteenth review)
+            if len(oi) == 1 and (rows_rev_ok or not list_item(self.t.rows[oi[0]].label)):
                 self.add("other_income", (oi[0],), [proof])
 
-    def chain_from(self, t: int, k: int, ti_proof: Proof) -> None:
+    def profit_tail(self, p: int, p_proof: Proof, pending: list, bank: bool = False) -> bool:
+        """From the row ``p`` (profit before exceptional items, or a bank's operating profit): the hops to the profit before tax,
+        the tax and the profit after tax are added to ``pending``. True when a profit after tax was reached. ``bank``: a profit
+        carried on by a later associate's share, a minority or a discontinued block is never the bottom line (the chain's own
+        arithmetic cannot name it)."""
+        completed = False
+        for b, hop_proofs in self.hops(p) + (self.bank_hops(p) if bank else []):
+            # a bank's profit before tax shares its row with the exceptional items' line, whose label then leads the stitched
+            # label (UNIONBANK: "E. Exceptional Items Profit/(Loss) from Oridnary Activi..."); the arithmetic (provisions,
+            # exceptional items nil, then a tax that leads to a profit after tax) is what names it
+            if not self.label_ok(b, {"PBT", "EXC"} if bank else {"PBT"}):
+                continue
+            # the three profit levels stay apart: the operating profit (the row ``p`` itself, or a label saying "operating") is
+            # never the profit before tax
+            if bank and (b == p or self.BANK_LEVEL.search(self.t.rows[b].label)):
+                continue
+            if self.cls[b] == "PBT":          # the label says profit before tax and the arithmetic reaches it
+                pending.append(("pbt", (b,), [p_proof] + hop_proofs))
+            for a, block, pat_proof in self.tax_and_pat(b):
+                completed = True
+                pending.append(("pbt", (b,), [p_proof] + hop_proofs))
+                pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
+                if block:
+                    pending.append(("tax", block, [pat_proof]))
+                carried = self.carried_on(a)
+                if bank and not isinstance(carried, tuple) and self.bank_carried_on(a):
+                    carried = (a, None)
+                if isinstance(carried, tuple):
+                    # the arithmetic alone says the profit is carried on, and the labels cannot tell an associate's
+                    # share from a total comprehensive income (eleventh review): no profit from this table at all
+                    self.pat_unsure = True
+                elif self.label_ok(a, {"PAT"}) and carried != "label" \
+                        and not (bank and re.search(r"operating|before", self.t.rows[a].label, re.I)):
+                    pending.append(("pat", (a,), [pat_proof]))
+                # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
+                for x, ext in self.pat_extensions(a):
+                    pending.append(("pat", (x,), [pat_proof] + ext))
+        return completed
+
+    def chain_from(self, t: int, k, ti_proof: Proof) -> None:
         """Total income at row ``t`` (its identity holds): look below it for total expenses, the profit identity, the hops to
         the profit before tax, the tax and the profit after tax. The names are kept only when a label of the chain says what
         the arithmetic says (a total income, total expenses, a profit before tax) or the chain runs through to a profit after
@@ -857,35 +1650,29 @@ class Solver:
         for s in (t + 1, t + 2):
             for e in range(s + 2, min(self.n, s + 40)):
                 te_proof: Proof = (e, tuple((r, 1) for r in range(s, e)))
-                if not self.label_ok(e, {"TE"}) or not self.valid(te_proof):
+                if not self.label_ok(e, {"TE"}):
+                    continue
+                # a total expenses row whose parts cannot be added up (a part is lost or merged in most columns: COLPAL Q2FY27,
+                # CROMPTON Q2FY27) is the total only when it SAYS so and the rows right after it say a profit before tax and the
+                # identity profit = total income - total expenses holds in the columns (the sum's proof is then left out)
+                sums = self.valid(te_proof)
+                if not sums and self.cls[e] != "TE":
                     continue
                 for p in range(e + 1, min(self.n, e + 4)):
                     p_proof: Proof = (p, ((t, 1), (e, -1)))
                     if not self.label_ok(p, {"PBEI", "PBT"}) or not self.valid(p_proof):
                         continue
+                    if not sums and self.cls[p] not in ("PBEI", "PBT"):
+                        continue
                     self.chains += 1
                     pending: list[tuple[str, tuple[int, ...], list[Proof]]] = [
-                        ("expenses", (e,), [te_proof]), ("pbt_pre", (p,), [p_proof]),
+                        ("pbt_pre", (p,), [p_proof]),
                         # the profit identity ties total income, total expenses and the profit before exceptional items together
                         # in the period's column: where a part of a sum is not legible there, it proves each of the three alone
                         ("total_income", (t,), [p_proof]), ("expenses", (e,), [p_proof])]
-                    completed = False
-                    for b, hop_proofs in self.hops(p):
-                        if not self.label_ok(b, {"PBT"}):
-                            continue
-                        if self.cls[b] == "PBT":          # the label says profit before tax and the arithmetic reaches it
-                            pending.append(("pbt", (b,), [p_proof] + hop_proofs))
-                        for a, block, pat_proof in self.tax_and_pat(b):
-                            completed = True
-                            pending.append(("pbt", (b,), [p_proof] + hop_proofs))
-                            pending.append(("pbt", (b,), [pat_proof]))     # or: the tax identity proves it where a hop is not legible
-                            if block:
-                                pending.append(("tax", block, [pat_proof]))
-                            if self.label_ok(a, {"PAT"}):
-                                pending.append(("pat", (a,), [pat_proof]))
-                            # a profit after tax followed by discontinued operations or associates: the bottom line is the sum
-                            for x, ext in self.pat_extensions(a):
-                                pending.append(("pat", (x,), [pat_proof] + ext))
+                    if sums:
+                        pending.insert(0, ("expenses", (e,), [te_proof]))
+                    completed = self.profit_tail(p, p_proof, pending)
                     said = self.cls[t] == "TI" or self.cls[e] == "TE" or self.cls[p] in ("PBEI", "PBT")
                     if not (said or completed):
                         continue
@@ -896,41 +1683,156 @@ class Solver:
 
 # --- a PDF into tables ----------------------------------------------------------------------------------------------------
 
+# OCR's spelling of "consolidated" as the negative check above reads it: anything like "consol" ("C0NSOLIDATED", "Consolldated",
+# "Consoli-" broken over a line) counts, so a garbled title can never be taken for no consolidated statement; a false alarm
+# ("console", "consolation") only costs an answer
+_LOOSE_CONSOLIDATED = re.compile(r"c\W{0,2}[o0]\W{0,2}n\W{0,2}[s5]\W{0,2}[o0]\W{0,2}[l1i|!]"
+                                 r"|[s5]\W{0,2}[o0]\W{0,2}[l1i|]\W{0,2}[i1l|]\W{0,2}d\W{0,2}a\W{0,2}t|group\s+financial", re.I)
+
+
+def usable_dates(tables: list[Table]) -> int:
+    """The most usable column dates any named table of a page has (-1 when none is named): a date the header's words dispute
+    does not count (RADICO Q2FY27: its half-year columns' dates were read and disputed, so the page looked dated and its
+    garbled layer was never read with OCR)."""
+    # a date the layout gave, not read, does not count either (CENTRUM Q4FY24: the page then looked dated and its OCR pass,
+    # which answers the year, was skipped)
+    return max((sum(c.date is not None and not c.inferred for c in t.columns) for t in tables if t.named), default=-1)
+
+def _measured(fn):
+    """The reader runs with the options it was measured with (PDF_DATES_2DIGIT, PDF_PAGE_RANK, PDF_ROW_FIXES on), whatever the
+    caller's settings, for this thread only (``settings.pdf_reader_options``; the live pipeline keeps them off for the old reader)."""
+    import functools
+    from .settings import pdf_reader_options
+
+    @functools.wraps(fn)
+    def run(*args, **kwargs):
+        with pdf_reader_options():
+            return fn(*args, **kwargs)
+    return run
+
+
+@_measured
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
-            keep_unnamed: bool = False) -> list[Table]:
+            keep_unnamed: bool = False, deadline: float | None = None) -> list[Table]:
     """The solved tables of a results PDF. Every page with a text layer (the first ``max_pages``) is read from its words. A page
     with no text layer is read with OCR (``ocr_boxes(png)`` returns RapidOCR's boxes; default ``ocr_page_boxes``), in a PDF of up
     to ``SCAN_PAGE_LIMIT`` pages, at most ``MAX_OCR_PAGES`` pages in all. With ``ocr_garbled``, the scanned pages whose own text
     layer gave no named row (the layer of a scan is OCR output and often garbled) are read with OCR as well, the pages that
     ``statement_pages`` ranks first, then those with most figures, while the page budget lasts. Only tables with a named row
-    are kept (``keep_unnamed`` keeps all, for diagnosis)."""
+    are kept (``keep_unnamed`` keeps all, for diagnosis). With a ``deadline`` (``time.monotonic()``), ``OutOfTime`` is raised
+    between pages, before each OCR read and between crop re-reads once it has passed (one OCR call in flight finishes)."""
     from . import ocr
-    from .pdf_readers import _pymupdf, consolidated_anywhere, page_layers, statement_pages
+    from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
     ocr_boxes = ocr_boxes or ocr_page_boxes
     layers = page_layers(pdf_bytes, max_pages)
-    anywhere = consolidated_anywhere(layers)
+    anywhere = consolidated_anywhere(layers, not_required=True, numbers_first=True)    # SBICARD: "not required to prepare consolidated"
     ranked = statement_pages(layers, MAX_STATEMENT_PAGES)
     scans = [p for p, layer in layers.items() if not layer.has_layer] if len(layers) <= SCAN_PAGE_LIMIT else []
     by_page: dict[int, list[Table]] = {}
     unnamed: list[int] = []
     ocr_used = 0
+    fill_used = 0
+    ocr_texts: dict[int, str] = {}     # the OCR text of the pages with no text layer
+    crops = [MAX_REREAD_FILING]
+
+    def crop_pass(page, p: int, tables: list[Table], raw, k: float) -> None:
+        """Empty cells of the page's tables read again from crops (``reread_empty_cells``; env ``PDF_CROP_REREAD=1``)."""
+        if os.environ.get("PDF_CROP_REREAD") != "1" or not ocr.available() or crops[0] <= 0:
+            return
+        check_deadline(deadline)
+        theta = tilt(raw)
+        for n, t in enumerate(tables):
+            if not (t.named or p in ranked):
+                continue
+            try:
+                if reread_empty_cells(page, t, theta, k, crops, deadline):
+                    tables[n] = Table_solved(t)
+            except Exception as exc:    # noqa: BLE001 - the table keeps what it had
+                log.warning("numbers-first: crop re-read failed on page %d (%s)", p, type(exc).__name__, exc_info=bool(os.environ.get("PDF_CROP_DEBUG")))
 
     def read_ocr(page, p: int) -> list[Table]:
+        check_deadline(deadline)
         png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         raw = words_from_boxes(ocr_boxes(png))
+        if not layers[p].has_layer:
+            ocr_texts[p] = " ".join(w[4] for w in raw)
         found = [Table_solved(t) for t in tables_of_page(p, straighten(raw, True), anywhere, "ocr")]
+        crop_pass(page, p, found, raw, 72.0 / ocr.DPI)
         if layers[p].has_layer:
             title = layer_basis(layers[p].text)
             for t in found:
-                t.basis = t.basis or title      # a title OCR cannot read (big type) is still in the garbled text layer
+                if not t.contested:            # a basis left disputed above the table stays so (22nd review)
+                    t.basis = t.basis or title  # a title OCR cannot read (big type) is still in the garbled text layer
         return found
+
+    dated = usable_dates
+
+    def fill_from_ocr(page, tables: list[Table], layer_text: str) -> None:
+        """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"
+        and every row label are drawn without text). Nothing is taken unless OCR is proved to see the same page as the layer:
+        the page is not rotated, and OCR reads nearly every figure of the table at the layer's own place (``ocr_aligned``).
+        A table with no unit, on a page whose layer names no unit at all, gets the unit of the OCR lines between the table
+        above it (or the page top) and its first row, with no page-wide guess. A table whose rows mostly have no label gets,
+        for each row without one, the OCR words from below the row before down to the row's own line that are not figures and
+        stand outside the number columns (NESTLEIND prints its labels between the quarter and the half-year columns), and only
+        when nearly every row then has a label (a partly labelled table is where a misplaced label could name a wrong row);
+        the table is solved again. A unit or label the layer gives is never changed."""
+        if page.rotation:
+            return
+        check_deadline(deadline)
+        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
+        k = 72.0 / ocr.DPI
+        words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(ocr_boxes(png))], True)
+        if not words:
+            return
+        height = text_height(words)
+        lines = [(line[0].y, line_text(line)) for line in lines_of(words, height)]
+        layer_names_a_unit = bool(scan_units(layer_text.splitlines())) or unit_of(layer_text.splitlines(), []) is not None
+        above = 0.0
+        for n, t in sorted(enumerate(tables), key=lambda e: e[1].rows[0].top):
+            top_of_table, floor = t.rows[0].top, above
+            above = max(above, t.rows[-1].bottom)
+            if not t.named or not ocr_aligned(t, words, height):
+                continue
+            if t.unit is None and not layer_names_a_unit:
+                t.unit = unit_of([text for y, text in lines if floor < y < top_of_table], [])
+            if sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows):
+                def in_column(w: Word) -> bool:
+                    return any(w.x1 > c.x0 - 0.5 * height and w.x0 < c.x1 + 0.5 * height for c in t.columns)
+                labels = []
+                for i, r in enumerate(t.rows):
+                    if r.label.strip():
+                        labels.append(r.label)
+                        continue
+                    # the row's own line and, for a wrapped label, the lines above it down from the row before
+                    top = t.rows[i - 1].y + 0.5 * height if i else r.y - 0.5 * height
+                    own = sorted((w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
+                                  and parse_figure(w.text) is None), key=lambda w: (round(w.y / height), w.x0))
+                    labels.append(" ".join(w.text for w in own))
+                if sum(bool(lb.strip()) for lb in labels) >= OCR_LABELS_SHARE * len(t.rows):
+                    for r, lb in zip(t.rows, labels):
+                        r.label = lb
+                    tables[n] = Table_solved(t)
 
     with _pymupdf().open(stream=pdf_bytes, filetype="pdf") as doc:
         for p in layers:
+            check_deadline(deadline)
             page = doc[p - 1]
             if layers[p].has_layer:
-                by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(upright_words(page)), anywhere)]
-                if not any(t.named for t in by_page[p]) and page.get_images(full=False):
+                layer_raw = upright_words(page)
+                by_page[p] = [Table_solved(t) for t in tables_of_page(p, straighten(layer_raw), anywhere)]
+                crop_pass(page, p, by_page[p], layer_raw, 1.0)
+                wanting = [t for t in by_page[p] if t.named and (t.unit is None or sum(not r.label.strip() for r in t.rows) * 2 > len(t.rows))]
+                if wanting and fill_used < MAX_FILL_OCR_PAGES and ocr.available():
+                    fill_used += 1          # its own budget: the scanned statement pages keep all of MAX_OCR_PAGES (TBZ)
+                    try:
+                        fill_from_ocr(page, by_page[p], layers[p].text)
+                    except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
+                        log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
+                if page.get_images(full=False) and (not any(t.named for t in by_page[p])
+                                                     or dated(by_page[p]) < max(len(t.columns) for t in by_page[p] if t.named)):
+                    # a scan's layer gave no named table, or named tables whose column dates it garbled ("30-Seo-26", TBZ
+                    # Q2FY27): the page is read with OCR as well
                     unnamed.append(p)
             elif p in scans and ocr_used < MAX_OCR_PAGES:
                 ocr_used += 1
@@ -943,6 +1845,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 return sum(bool(re.search(r"\d", w[4])) for w in layers[p].words)
             order = sorted(unnamed, key=lambda p: (p not in ranked, -figures(p)))
             for p in order:
+                check_deadline(deadline)
                 if ocr_used >= MAX_OCR_PAGES:
                     break
                 ocr_used += 1
@@ -952,15 +1855,54 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                     log.warning("numbers-first: OCR failed on page %d (%s)", p, type(exc).__name__)
                     continue
                 if any(t.named for t in found):
-                    by_page[p] = found
+                    # OCR's tables beside the layer's, never instead of them (third review): where both answer they must
+                    # agree or the reading is a conflict, so OCR only adds an answer the layer could not give
+                    by_page[p] = by_page.get(p, []) + found
+    # a filing where only pages with no text layer left the basis of untitled tables unproven: once OCR has read every one of
+    # them and none, like no layer, names a consolidated statement, such a table is standalone (CMPDI and RIR Q2FY27, whose
+    # statements are scans and whose covering letters say "Standalone")
+    # (seventh review) only with positive evidence, the word standalone somewhere in the filing, and only for the tables OCR
+    # read from those pages themselves: a blank page cannot switch it on for the typed pages
+    no_layer = [p for p, layer in layers.items() if not layer.has_layer]
+    if anywhere and no_layer and all(p in ocr_texts for p in no_layer) \
+            and not any(names_consolidated(layer.text, not_required=True) for layer in layers.values()) \
+            and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer):
+        from .metrics import STANDALONE
+        alone = re.compile(r"stand[- ]?alone", re.I)
+        typed = any(alone.search(layer.text) for layer in layers.values() if layer.has_layer)
+        for p in no_layer:
+            # the word standalone from a typed page (a covering letter) or from OCR of the table's own page, not any scan
+            if not (typed or alone.search(ocr_texts.get(p, ""))):
+                continue
+            for t in by_page.get(p, []):
+                if t.basis is None and not t.contested and t.source == "ocr":
+                    t.basis = STANDALONE
     return [t for p in sorted(by_page) for t in by_page[p] if t.named or keep_unnamed]
 
 
 def layer_basis(text: str) -> str | None:
     """The one basis the page's title lines name (``pdf_referee._words_basis``), None when none or two."""
+    from .metrics import CONSOLIDATED, STANDALONE
     from .pdf_referee import _TITLE, _words_basis
-    found = {b for line in text.splitlines() if _TITLE.search(line) and (b := _words_basis(line))}
+    lines = text.splitlines()
+    if _NON_CONSOLIDATED.search(text):          # also over a line break ("Non-\nConsolidated")
+        return None             # "Statement of Non Consolidated Financial Results": the words say both (twenty-first review)
+    found = {b for line in lines if _TITLE.search(line) and (b := _words_basis(line))}
+    # a title printed as one glued word, its letters garbled (SUNDARMFIN Q4FY24's garbled layer:
+    # "STATEMENTOFAUDITEDCONSOLIl)ATEDFINANCIALRESULTSFORTHEQUARTER..."): the whole "statement of ... financial results"
+    # only on a line that names neither basis as a word: a spaced line naming both ("... read with the Statement of
+    # Consolidated Financial Results") is ambiguous, not glued (twentieth review)
+    # taken with the spaced lines' bases, so a glued title and a note naming the other basis are two: none (twenty-first)
+    found |= {CONSOLIDATED if m[1].lower().startswith("consol") else STANDALONE
+             for line in lines if not _BASIS_WORD.search(line)
+             for m in _GLUED_TITLE.finditer(re.sub(r"\s+", "", line))}
     return found.pop() if len(found) == 1 else None
+
+
+# "STATEMENTOFUNCONSOLIDATED..." is not a consolidated title: "un" only as part of "unaudited" (twentieth review)
+_GLUED_TITLE = re.compile(r"statementof(?:unaudited|audited|reviewed)?(consol\S{1,4}?ated|standalone)financialresults", re.I)
+_BASIS_WORD = re.compile(r"\b(?:consolidated|standalone)\b", re.I)
+_NON_CONSOLIDATED = re.compile(r"\b(?:non|not|un)[\W_]+consolidated|\bnonconsolidated", re.I)
 
 
 def Table_solved(table: Table) -> Table:
@@ -969,6 +1911,140 @@ def Table_solved(table: Table) -> Table:
     table.named = solver.explanations
     table.solver = solver          # type: ignore[attr-defined]
     return table
+
+
+# --- empty cells read again from a crop ----------------------------------------------------------------------------------------
+
+REREAD_DPI = 300
+REREAD_DPI_2 = 400           # the same box rendered again: a second, independent reading
+REREAD_PAD_X = 3.0           # points around a cell's box
+REREAD_PAD_Y = 2.0
+REREAD_CALIBRATE = 6         # known cells read again to prove the grid sits where the figures are
+REREAD_CALIBRATE_SHARE = 0.66  # of the known cells read back to the last digit, and none read as another figure
+MAX_REREAD_TABLE = 90        # crops of one table
+MAX_REREAD_FILING = 220      # crops of one filing
+_REREAD_FIG = re.compile(r"^(?P<open>[\(\[\{]?)(?P<minus>-?)(?P<int>\d[\d,]*)(?P<sep>[.,])(?P<frac>\d+)(?P<close>[\)\]\}]?)$")
+
+
+def column_decimals(table: Table, j: int) -> int | None:
+    """The decimals a column prints: the mode of its figures (at least three, at least 60%), else of the table's figures."""
+    def mode(cells: list[Cell]) -> int | None:
+        decs = [c.decimals for c in cells if not c.nil]
+        if len(decs) < 3:
+            return None
+        best = max(set(decs), key=decs.count)
+        return best if decs.count(best) >= 0.6 * len(decs) else None
+    return mode([r.cells[j] for r in table.rows if r.cells[j] is not None]) or mode([c for r in table.rows for c in r.cells if c is not None])
+
+
+def figure_from_crop(text: str, decimals: int) -> Cell | None:
+    """The one figure a crop's text is, with the column's decimals, or a nil dash; else None. Recognition often reads the small
+    decimal point as a comma or a space ("97 35", "1,592,88", "(140,17)"): a last group of exactly ``decimals`` digits after a
+    comma, a space or a point is the fraction. A wrong repair cannot stand: the figure counts only where an exact identity
+    holds with it (``Solver.mask``)."""
+    t = text.strip().translate(str.maketrans({"−": "-", "–": "-", "—": "-"}))
+    if t in ("-", "Nil", "nil"):
+        return Cell(0.0, 0, True, False, None, t)       # type: ignore[arg-type]
+    if decimals < 1:
+        return None
+    m = re.fullmatch(r"(?P<open>[\(\[\{]?)(?P<minus>-?)(?P<int>\d[\d, ]*?)(?P<sep>[., ])(?P<frac>\d+)(?P<close>[\)\]\}]?)", t)
+    if not m or len(m["frac"]) != decimals:
+        return None
+    whole = m["int"].replace(" ", "")
+    if not re.fullmatch(r"\d{1,3}(?:,\d{2,3})*|\d+", whole):
+        return None
+    value = float(whole.replace(",", "") + "." + m["frac"])
+    if len(whole.replace(",", "")) > 9:
+        return None
+    negative = bool(m["open"] or m["close"] or m["minus"])
+    return Cell(-value if negative else value, decimals, False, True, None, t)     # type: ignore[arg-type]
+
+
+def cell_box(table: Table, i: int, j: int, theta: float, k: float):
+    """The page rectangle (points) of cell (row i, column j): the column's interval (to the middle of the gap to its
+    neighbours) and the row's band, the row's straightened height put back on the page's tilt."""
+    import math
+    h = statistics.median(r.bottom - r.top for r in table.rows)
+    col = table.columns[j]
+    lo = col.x0 - 2.0 * h if j == 0 else (table.columns[j - 1].x1 + col.x0) / 2
+    hi = col.x1 + 1.0 * h if j == len(table.columns) - 1 else (col.x1 + table.columns[j + 1].x0) / 2
+    xc = (lo + hi) / 2
+    yc = table.rows[i].y + xc * math.tan(theta)
+    return (lo * k - REREAD_PAD_X, (yc - 0.6 * h) * k - REREAD_PAD_Y, hi * k + REREAD_PAD_X, (yc + 0.6 * h) * k + REREAD_PAD_Y)
+
+
+def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[int], deadline: float | None = None) -> int:
+    """Read again the empty cells of the table's nearly full rows, from a crop of the cell's box at 300 dpi (``table.rereads``).
+    A row is nearly full when at least 40% of its columns, and at least two, hold a figure: a cell empty there is a dropped one,
+    not a blank. The grid is trusted only after a calibration: ``REREAD_CALIBRATE`` known cells (spread over the table) are read
+    from their crops, and at least ``REREAD_CALIBRATE_SHARE`` must read as the table's own value to the last digit and none as another figure. A crop is
+    kept only if it holds exactly one text box and parses as one figure with the column's decimals (``figure_from_crop``). Nothing
+    here is an answer: ``Solver.mask`` lets a re-read cell count only in an identity that holds exactly with it. A passed ``deadline`` raises
+    ``OutOfTime`` before the next crop is read."""
+    import cv2
+    import numpy as np
+    from . import ocr
+
+    if page.rotation or len(table.columns) < 3 or len(table.rows) < 6 or budget[0] <= 0:
+        return 0
+    wanted = [(i, j) for i, r in enumerate(table.rows) if sum(c is not None for c in r.cells) >= max(2, 0.4 * len(r.cells))
+              for j, c in enumerate(r.cells) if c is None and not r.cells[j]]
+    if not wanted:
+        return 0
+
+    def read_once(i: int, j: int, dpi: int):
+        check_deadline(deadline)
+        x0, y0, x1, y1 = cell_box(table, i, j, theta, k)
+        pix = page.get_pixmap(clip=_rect((x0, y0, x1, y1)), dpi=dpi)
+        image = cv2.imdecode(np.frombuffer(pix.tobytes("png"), np.uint8), cv2.IMREAD_COLOR)
+        if image is None:
+            return None
+        budget[0] -= 1
+        return ocr.read_cell(image)
+
+    def read(i: int, j: int) -> Cell | None:
+        """The cell's figure when two renders of the box (300 and 400 dpi) both show no cut glyph and read with the same
+        digits, and the text parses as one figure with the column's decimals."""
+        dec = column_decimals(table, j)
+        if dec is None:
+            return None
+        a = read_once(i, j, REREAD_DPI)
+        b = read_once(i, j, REREAD_DPI_2)
+        if a is None or b is None or a[1] or b[1]:
+            return None
+        if re.sub(r"\D", "", a[0]) != re.sub(r"\D", "", b[0]):
+            return None
+        return figure_from_crop(a[0], dec)
+
+    known = [(i, j) for i, r in enumerate(table.rows) for j, c in enumerate(r.cells) if c is not None and not c.nil and c.strict]
+    if len(known) < REREAD_CALIBRATE:
+        return 0
+    step = len(known) / REREAD_CALIBRATE
+    sample = [known[int(n * step)] for n in range(REREAD_CALIBRATE)]
+    ok = bad = 0
+    for i, j in sample:
+        got = read(i, j)
+        if got is not None:        # a crop that gives a figure of its own, two renders agreeing, that is not the table's figure
+            same = abs(got.value - table.rows[i].cells[j].value) < 1e-9
+            ok += same
+            bad += not same
+    if bad or ok < REREAD_CALIBRATE_SHARE * REREAD_CALIBRATE:
+        table.note = (table.note + "; " if table.note else "") + f"crop grid not trusted ({ok}/{REREAD_CALIBRATE} known cells read back)"
+        return 0
+    found: dict[tuple[int, int], Cell] = {}       # set on the table only once every crop is read: a failure leaves it as it was
+    for i, j in wanted[:MAX_REREAD_TABLE]:
+        if budget[0] <= 0:
+            break
+        got = read(i, j)
+        if got is not None:
+            found[(i, j)] = got
+    table.rereads.update(found)
+    return len(found)
+
+
+def _rect(t):
+    import pymupdf
+    return pymupdf.Rect(*t)
 
 
 # --- one figure ----------------------------------------------------------------------------------------------------------
@@ -996,19 +2072,156 @@ def target_columns(table: Table, kind: str, when: date) -> list[Column]:
     return []
 
 
+
+HALF_SUM_METRICS = ("revenue", "other_income", "total_income", "expenses", "pbt_pre", "pbt", "tax", "pat")
+HALF_SUM_MIN_ROWS = 4
+
+
+def fill_corresponding_quarter(columns: list[Column]) -> None:
+    """The one date a SEBI results layout allows in an undated third column (A5, date-candidate matching; ABCAPITAL Q4FY24:
+    "31.03.2024" quarter, "31.12.2023" quarter, an unreadable date, "31.03.2024" year, "31.03.2023" year): when the first two
+    columns are quarters dated the current quarter and the one before it, the third has no date and no kind, every column after
+    it is dated and is a half year, nine months or year, and one of those is dated a year before the current quarter, the third
+    is the same quarter a year before. Nothing else is filled."""
+    if len(columns) < 4:
+        return
+    a, b, c, rest = columns[0], columns[1], columns[2], columns[3:]
+    if not (a.kind == b.kind == "quarter" and a.date and b.date and c.date is None and c.kind is None):
+        return
+    if b.date != previous_quarter_end(a.date):
+        return
+    if not all(x.date and x.kind in ("half", "nine", "year") for x in rest):
+        return
+    try:
+        year_before = a.date.replace(year=a.date.year - 1)
+    except ValueError:          # 29 February
+        return
+    if not any(x.date == year_before for x in rest):
+        return
+    # and the current year to date is printed and dated after it: otherwise the undated third column may itself be the
+    # current half year, nine months or year of a layout that leaves the same quarter last year out (31st review)
+    if not any(x.date == a.date and x.kind in ("half", "nine", "year") for x in rest):
+        return
+    c.date, c.kind, c.inferred = year_before, "quarter", True
+
+
+def next_quarter_end(d: date) -> date:
+    import calendar
+    y, m = (d.year, d.month + 3) if d.month <= 9 else (d.year + 1, d.month - 9)
+    return date(y, m, calendar.monthrange(y, m)[1])
+
+
+def fill_damaged_quarter(columns: list[Column]) -> None:
+    """The one quarter column of a SEBI layout whose date or kind was lost, when its two neighbours are read: the first three
+    columns are the current quarter X, the quarter before it, the same quarter a year before, and every column after them is a
+    dated half year, nine months or year, one dated X (the year to date) and one dated a year before X. Exactly one of the three
+    is damaged (no date and no kind, or a date that is exactly its slot's and no kind); the other two are quarters whose dates
+    are exactly their slots' for one X. Nothing is filled when two are damaged, when a read date is not its slot's, or when X
+    could be two dates (ANGELONE Q2FY27: the current quarter undated; ARMANFIN Q3FY24: the previous quarter undated; SUNDARMFIN
+    Q4FY23: the year-ago quarter dated but with no kind)."""
+    if len(columns) < 5:
+        return
+    first, rest = columns[:3], columns[3:]
+    if not all(x.date and x.kind in ("half", "nine", "year") for x in rest):
+        return
+    xs = set()
+    if first[0].date and first[0].kind == "quarter":
+        xs.add(first[0].date)
+    if first[1].date and first[1].kind == "quarter":
+        xs.add(next_quarter_end(first[1].date))
+    if first[2].date and first[2].kind == "quarter":
+        try:
+            xs.add(first[2].date.replace(year=first[2].date.year + 1))
+        except ValueError:
+            return
+    if len(xs) != 1:
+        return
+    x = next(iter(xs))
+    try:
+        slots = [x, previous_quarter_end(x), x.replace(year=x.year - 1)]
+    except ValueError:
+        return
+    damaged = [i for i, c in enumerate(first) if not (c.kind == "quarter" and c.date == slots[i])]
+    if len(damaged) != 1:
+        return
+    c = first[damaged[0]]
+    if c.kind not in (None, "quarter") or c.date not in (None, slots[damaged[0]]) \
+            or c.read_date not in (None, slots[damaged[0]]):
+        return                           # a date read but disputed by the header words is never revived (the lead's review)
+    if not any(y.date == x for y in rest) or not any(y.date == slots[2] for y in rest):
+        return
+    if any(y.date == slots[1] for y in rest):      # a column dated the previous quarter after the three: not this layout
+        return
+    c.date, c.kind, c.inferred = slots[damaged[0]], "quarter", True
+
+
+def previous_quarter_end(d: date) -> date:
+    import calendar
+    y, m = (d.year, d.month - 3) if d.month > 3 else (d.year - 1, d.month + 9)
+    return date(y, m, calendar.monthrange(y, m)[1])
+
+
+def quarter_by_half_sum(table: Table, solver: "Solver", when: date) -> list[Column]:
+    """The September quarter's column when the header's kinds do not fit (a garbled "Year to date for the period from April 01,
+    2026 to ..." read as a year): the column dated ``when`` and the one dated the quarter before are two quarters when a third
+    column is their sum, the half year, on every line the arithmetic named (revenue, other income, total income, expenses,
+    profit before tax, tax, profit), at least four lines and none against (TATAELXSI Q2FY27: 105,565.73 + 102,110.75 =
+    2,07,676.48 and so on down the table). Both dates must be read; the half year's need not, but if read it is ``when`` or the
+    first of April it runs from. The
+    sum cannot tell the two quarters apart, so the September column must stand left of the June one. Empty otherwise."""
+    if when.month != 9:
+        return []
+    prev = previous_quarter_end(when)
+    # the dates as the header prints them, also where the header's group words disagree with them (BRIGHOTEL Q2FY27: the title's
+    # "six months" and a "Year to date" read as a year): the sum, not the words, tells the quarters here
+    cur = [c for c in table.columns if (c.date or c.read_date) == when]
+    prv = [c for c in table.columns if (c.date or c.read_date) == prev]
+    if not cur or len(prv) != 1:
+        return []
+    lines = list(dict.fromkeys(rows for metric in HALF_SUM_METRICS for rows, _ in solver.explanations.get(metric, [])))
+
+    def total(rows: tuple[int, ...], j: int):
+        cells = [solver.cell(r, j) for r in rows]
+        return None if any(c is None for c in cells) else (sum(c.value for c in cells), sum(c.tol for c in cells))
+
+    found = []
+    for i in cur:
+        k = prv[0]
+        if i.xc >= k.xc:            # results print the newest quarter first: a September column right of June is not trusted
+            continue
+        for h in table.columns:
+            if h.index in (i.index, k.index) or (h.date or h.read_date) not in (None, when, date(when.year, 4, 1)):
+                continue            # the half year is dated its end, or its start ("from April 01"), or was not read
+            holds = fails = 0
+            for rows in lines:
+                a, b, c = total(rows, i.index), total(rows, k.index), total(rows, h.index)
+                if a is None or b is None or c is None or (a[0] == 0 and b[0] == 0 and c[0] == 0):
+                    continue
+                if abs(c[0] - (a[0] + b[0])) <= a[1] + b[1] + c[1] + 1e-9:
+                    holds += 1
+                else:
+                    fails += 1
+            if holds >= HALF_SUM_MIN_ROWS and fails == 0:
+                found.append((i, h))
+    return [found[0][0]] if len(found) == 1 else []
+
 def table_figure(table: Table, metric: str, kind: str, when: date):
     """(value in crore, tolerance in crore, label, why) of ``metric`` in the period's column of one table. ``value`` is None with
     the reason in ``why`` when the table gives no answer."""
     solver: Solver = getattr(table, "solver", None) or Solver(table).solve()
+    if metric == "pat" and solver.pat_unsure:
+        return None, 0.0, "", "the profit after tax is carried on further down and the labels do not tell by what"
     if table.unit is None:
         return None, 0.0, "", "no unit declared above the table"
     cols = target_columns(table, kind, when)
+    if not cols and kind == "quarter":
+        cols = quarter_by_half_sum(table, solver, when)
     if len(cols) != 1:
         return None, 0.0, "", f"{len(cols)} columns for {kind} ended {when}"
     j = cols[0].index
     found: list[tuple[float, float, str]] = []
     for rows, proofs in solver.explanations.get(metric, []):
-        cells = [solver.cell(r, j) for r in rows]
+        cells = [solver.cell(r, j) or solver.reread_proved(r, j, proofs) for r in rows]
         if any(c is None for c in cells):
             continue
         if not all(solver.mask(pf)[j] is True for pf in proofs):
@@ -1024,6 +2237,7 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     return first[0] / table.unit, first[1] / table.unit, first[2], ""
 
 
+@_measured
 def reading_from_tables(tables: list[Table], period: str, metric: str, basis: str | None, reader: str = NAME):
     """A ``pdf_readers.Reading`` from the solved tables: the figure when every table of the basis that names it agrees."""
     from .metrics import CONSOLIDATED, STANDALONE
@@ -1043,6 +2257,10 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
             notes.append(f"p{t.page}: the table's basis is not told")
             continue
         value, tol, label, why = table_figure(t, metric, kind, when)
+        if metric == "pat" and (t.basis == basis or not basis) and getattr(getattr(t, "solver", None), "pat_unsure", False):
+            # one table of the basis whose profit is carried on by arithmetic alone vetoes the others (twelfth review: a
+            # second table of the basis that stops at the profit after tax would give the profit before the share)
+            return Reading(reader, family, "none", note=f"p{t.page}: {why}"[:300])
         if value is None:
             if t.basis == basis or not basis:
                 notes.append(f"p{t.page}: {why}")
@@ -1053,7 +2271,10 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
             theirs = True
     if not mine:
         if theirs:
-            return Reading(reader, family, "otherbasis", note=f"the figure is printed on the {other} basis only")
+            # status stays "otherbasis"; the note also carries why the asked basis gave none (its tables' own reasons)
+            why_mine = "; ".join(dict.fromkeys(notes))[:250] or "no table of the asked basis"
+            return Reading(reader, family, "otherbasis",
+                           note=f"the figure is printed on the {other} basis only [asked basis: {why_mine}]")
         return Reading(reader, family, "none", note="; ".join(dict.fromkeys(notes))[:300] or "no table")
     first = mine[0]
     if any(not same_value(first[0], v, max(first[1], tol)) for v, tol, *_ in mine[1:]):

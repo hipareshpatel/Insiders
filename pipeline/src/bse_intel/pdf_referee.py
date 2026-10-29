@@ -156,13 +156,13 @@ _DATE_LOOSE_2 = re.compile(_DATE_LOOSE.pattern + r"|(?<![\w./,])\d{1,2}(?:st|nd|
 
 
 def _row_fixes() -> bool:
-    from .settings import get_settings
-    return get_settings().pdf_row_fixes
+    from .settings import pdf_option
+    return pdf_option("pdf_row_fixes")
 
 
 def _two_digit() -> bool:
-    from .settings import get_settings
-    return get_settings().pdf_dates_2digit
+    from .settings import pdf_option
+    return pdf_option("pdf_dates_2digit")
 
 
 def _date_of(text: str, two_digit: bool = False) -> date | None:

@@ -272,3 +272,68 @@ def test_a_half_lost_bracket_is_put_back_and_close_rows_stay_apart():
         "(d) Finance Costs  1.2  3.6\n"
         "Impairment loss  (2.0)"
     )
+
+
+def test_the_bench_cache_gives_the_fresh_reading_back_and_loads_no_engine_on_a_hit(tmp_path):
+    import numpy as np
+
+    calls = []
+
+    class Fake:
+        def __call__(self, image):
+            calls.append(image.shape)
+            return ([(np.array([[1.5, 2.0], [9.0, 2.0], [9.0, 4.0], [1.5, 4.0]], dtype=np.float32), "Revenue 1,245.60", np.float32(0.97))], 0.1)
+
+    built = []
+
+    def factory():
+        built.append(1)
+        return Fake()
+
+    page = np.zeros((4, 5, 3), np.uint8)
+    first = ocr.CachedEngine(factory, str(tmp_path))
+    fresh = first(page)
+    again = ocr.CachedEngine(factory, str(tmp_path))      # a new run: same folder
+    cached = again(page)
+    assert cached == fresh and ocr._boxes(cached) == ocr._boxes(fresh)
+    assert ocr.positioned_lines(cached) == ocr.positioned_lines(fresh)
+    assert (first.misses, again.hits, again.misses, len(built), len(calls)) == (1, 1, 0, 1, 1)
+    other = page.copy(); other[0, 0, 0] = 1                # one pixel differs: another page
+    again(other)
+    assert again.misses == 1 and len(built) == 2
+
+
+def test_the_engine_is_cached_only_when_the_bench_names_a_folder(monkeypatch, tmp_path):
+    monkeypatch.setenv("PDF_OCR_CACHE_DIR", str(tmp_path))
+    monkeypatch.setenv("PDF_BENCH", "1")
+    assert isinstance(ocr._new_engine(), ocr.CachedEngine)
+
+
+def test_a_stray_cache_folder_without_the_bench_flag_is_not_used(monkeypatch, tmp_path):
+    import numpy as np
+    monkeypatch.setenv("PDF_OCR_CACHE_DIR", str(tmp_path))
+    monkeypatch.delenv("PDF_BENCH", raising=False)
+    monkeypatch.setattr(ocr, "_cell_engine", None)
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    monkeypatch.setattr(ocr, "ink_cut", lambda image: False)    # needs cv2, which CI's install does not have
+    built = []
+
+    class Engine:
+        def __init__(self, **k):
+            built.append(1)
+
+        def __call__(self, image, **k):
+            return type("R", (), {"txts": ("12.50",)})()
+
+    import sys, types
+    fake = types.SimpleNamespace(RapidOCR=Engine, ModelType=lambda v: v)
+    monkeypatch.setitem(sys.modules, "rapidocr", fake)
+    ocr.read_cell(np.zeros((12, 40, 3), np.uint8))
+    assert list(tmp_path.iterdir()) == []            # nothing read from it, nothing written to it
+
+
+def test_without_the_ocr_extra_a_cell_read_answers_unread(monkeypatch):
+    import numpy as np
+    monkeypatch.setattr(ocr, "available", lambda: False)
+    monkeypatch.setattr(ocr, "_cell_engine", None)
+    assert ocr.read_cell(np.zeros((12, 40, 3), np.uint8)) == ("", True)

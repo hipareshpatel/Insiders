@@ -70,6 +70,52 @@ HEADER_LINES = 25           # lines at the top of a page kept as the table's tit
 _UNIT_WORD = re.compile(r"\b(crores?|lakhs?|lacs?|millions?|thousands?|mn|cr)\b", re.I)
 _CONS_WORD = re.compile(r"\bconsolidated\b", re.I)
 _ALONE_WORD = re.compile(r"\bstand[- ]?alone\b", re.I)
+# "consolidated" as a verb in prose ("the Government has consolidated 29 labour laws into 4 Labour Codes", TATAELXSI Q2FY27): not a
+# sign of a consolidated statement, unless a group word stands near it ("the subsidiaries have been consolidated")
+_CONS_VERB = re.compile(r"\b(?:has|have|had|been|being|is|are|was|were|be|will|shall)\s+consolidated\b", re.I)
+_GROUP_WORDS = re.compile(r"subsidiar|\bgroup\b|results|financial|statements?\b|accounts|entit|joint\s+ventures?|associates?\b"
+                          r"|\bbasis\b|holding\s+company", re.I)
+
+
+_NO_SUBSIDIARY = re.compile(r"(?:does\s+not\s+have|has\s+no|have\s+no|not\s+having)\s+(?:any\s+)?subsidiar", re.I)
+# said of the consolidated results themselves: "consolidated financial results is not applicable" (at most three words between)
+_NOT_APPLICABLE = re.compile(r"[ \t]+(?:[\w-]+[ \t]+){0,3}?(?:is|are)[ \t]+not[ \t]+applicable", re.I)
+# "the Company is not required to prepare consolidated financial results" (SBICARD Q2FY27), only where the page also says the
+# company has no subsidiary, associate or joint venture (one sentence naming all three: a company with associates alone may still
+# publish consolidated results)
+_NOT_REQUIRED_BEFORE = re.compile(r"(?:is|are)\s+not\s+required\s+to\s+(?:prepare|present|publish|submit|draw\s+up)\s+(?:the\s+)?$", re.I)
+_NO_SUB_ASSOC_JV = re.compile(r"(?:does\s*not\s+have|has\s+no|have\s+no)\s+(?:any\s+)?subsidiar\w*\s*[/,]?\s*(?:or\s+)?associate\w*"
+                              r"\s*[/,]?\s*(?:or\s+)?joint\s+venture", re.I)
+# "... or joint venture except XYZ Ltd": the company has one after all
+_EXCEPT = re.compile(r"\b(?:except|other\s+than|save|barring|apart\s+from|excluding|but)\b", re.I)
+
+
+def _none_of_three(text: str) -> bool:
+    """The page says the company has no subsidiary, associate or joint venture, with no exception in the rest of that sentence."""
+    return any(not _EXCEPT.search(re.split(r"[.\n]", text[m.end():], maxsplit=1)[0]) for m in _NO_SUB_ASSOC_JV.finditer(text))
+
+
+def names_consolidated(text: str, not_required: bool = False) -> bool:
+    """Whether ``text`` says "consolidated" of the accounts: every use counts but a verb in prose with no group word within about
+    eight words either side, and, on a page that says the company has no subsidiary, a use that the same sentence calls not
+    applicable ("...does not have any subsidiary ... Accordingly, preparation of consolidated financial results is not
+    applicable", ORIENTCEM Q2FY27). ``not_required`` (numbers-first only): also a use the same sentence says the company is not
+    required to prepare, on a page that says it has no subsidiary, associate or joint venture (SBICARD Q2FY27)."""
+    no_subsidiary = bool(_NO_SUBSIDIARY.search(text))
+    none_of_three = not_required and _none_of_three(text)
+    for m in _CONS_WORD.finditer(text):
+        if no_subsidiary and _NOT_APPLICABLE.match(text, m.end()):
+            continue
+        if none_of_three and _NOT_REQUIRED_BEFORE.search(text[max(0, m.start() - 60):m.start()]):
+            continue
+        verb = _CONS_VERB.search(text, max(0, m.start() - 12), m.end())
+        if not verb or verb.end() != m.end():
+            return True
+        before = " ".join(text[:m.start()].split()[-8:])
+        after = " ".join(text[m.end():].split()[:8])
+        if _GROUP_WORDS.search(before) or _GROUP_WORDS.search(after):
+            return True
+    return False
 _RESULTS_HEAD = re.compile(r"statement\s+of\s+(?:\w+\s+){0,6}results|financial\s+results", re.I)
 _PERIOD_WORDS = re.compile(r"months?\s+ended|quarter|year\s+ended", re.I)
 _TOKEN = re.compile(r"\d[\d,]*(?:\.\d+)?")
@@ -392,15 +438,18 @@ def _safe_float(token: str) -> bool:
         return False
 
 
-def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | None = None) -> bool:
+def consolidated_anywhere(layers: dict[int, PageLayer], tables: list[Table] | None = None, not_required: bool = False,
+                          numbers_first: bool = False) -> bool:
     """Shared by every reader of a PDF: a table with no title of its own is read as standalone only when every page's text
     layer is there to say "consolidated" and does not. A page with no layer, or a layer that names consolidated anywhere,
-    leaves such a table's basis unproven."""
+    leaves such a table's basis unproven. ``numbers_first``: the word is read by ``names_consolidated`` (with ``not_required``);
+    every other reader keeps the plain word search it has always had (the lead's review: the old reader unchanged)."""
     if any(not layer.has_layer for layer in layers.values()) or not layers:
         return True
-    if any(_CONS_WORD.search(layer.text) for layer in layers.values()):
+    names = (lambda text: names_consolidated(text, not_required)) if numbers_first else (lambda text: bool(_CONS_WORD.search(text)))
+    if any(names(layer.text) for layer in layers.values()):
         return True
-    return any(_CONS_WORD.search(table_text(t.cells)) for t in tables or [])
+    return any(names(table_text(t.cells)) for t in tables or [])
 
 
 def _cons_or_alone(text: str) -> bool:
@@ -452,8 +501,8 @@ def _period_index(row, period: str) -> int | None:
 
 
 def _row_fixes() -> bool:
-    from .settings import get_settings
-    return get_settings().pdf_row_fixes
+    from .settings import pdf_option
+    return pdf_option("pdf_row_fixes")
 
 
 def _other(basis: str | None) -> str | None:
@@ -554,8 +603,8 @@ def _has_date_header(layer: PageLayer) -> bool:
         return True
     if any(len(_dates_in(" ".join([b.label] + b.nums))) >= 2 for b in layer.bands()):
         return True
-    from .settings import get_settings
-    if get_settings().pdf_page_rank:     # F215: each date of the header on a line of its own ("-31Mar-23" / "31-Dec-22" / ...)
+    from .settings import pdf_option
+    if pdf_option("pdf_page_rank"):     # F215: each date of the header on a line of its own ("-31Mar-23" / "31-Dec-22" / ...)
         lines = layer.text.splitlines()
         counts = [len(_dates_in(line)) if len(line.strip()) <= 16 else 0 for line in lines]     # a line of its own, not prose
         return any(sum(counts[i:i + 8]) >= 3 for i in range(len(lines)))
@@ -586,8 +635,8 @@ def statement_pages(layers: dict[int, PageLayer], max_pages: int = MAX_PAGES) ->
     With PDF_PAGE_RANK (F215): a page whose date header is split over lines, or one with three metric kinds under a results
     heading, passes the date gate too; a segment page ranks below a page of the statement itself before the top ``max_pages``
     are taken; scanned pages are searched in PDFs of up to ``SCAN_PAGE_LIMIT_RANKED`` pages."""
-    from .settings import get_settings
-    ranked = get_settings().pdf_page_rank
+    from .settings import pdf_option
+    ranked = pdf_option("pdf_page_rank")
     scored: list[tuple[int, int]] = []
     for page, layer in layers.items():
         if not layer.has_layer:

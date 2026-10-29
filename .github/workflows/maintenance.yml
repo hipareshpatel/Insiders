@@ -65,6 +65,11 @@
 #   again; a run that ends on its time budget (exit 124) is started again and resumes; `restart` ignores the finished list;
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
+# - screener-schedules (owner, 29 Oct 2026: "Feel free to even get everything"): the sub-rows behind each "+" head of the stored
+#   screener pages (screener_schedules.py): one request a head to /api/company/<id>/schedules/ (robots.txt allows it), at the
+#   same pace and stop rule, the largest companies first, two runners; stored at raw/screener-schedules/<day>/<SYMBOL>_<c|s>.json.gz,
+#   a stored page is not asked again; `file_cap` = at most that many requests a runner (the first run: 50 each, 100 in all);
+#   exit 124 resumes. Artifacts `screener-schedules-0` and `-1`.
 # - tijori-download: the download of every company's financials page from Tijori Finance (owner request 26 Oct 2026; F189, TODO 92),
 #   gzipped JSON tables into R2 at raw/tijori/<date>/<SYMBOL>.json.gz. One runner (job `tijori`) for the whole universe: 8 threads
 #   behind one shared limiter at TIJORI_RATE requests a second (default 6; about 1,900 pages, 5 to 6 minutes). The first refusal
@@ -231,7 +236,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
       backup:
         description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -322,7 +327,7 @@ concurrency:
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
-    || contains(fromJSON('["screener-download","screener-fill"]'), inputs.command) && 'maint-screener'
+    || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
@@ -339,7 +344,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -1232,7 +1237,7 @@ jobs:
   # every second company with gaps; each saves the companies it tried (kv screenerfill:tried:<i>of2, or the dry run's own
   # screenerfill:dry_tried:<i>of2). No AI and no NSE call.
   screener:
-    if: inputs.command == 'screener-fill' || inputs.command == 'screener-fill-apply' || inputs.command == 'screener-download'
+    if: inputs.command == 'screener-fill' || inputs.command == 'screener-fill-apply' || inputs.command == 'screener-download' || inputs.command == 'screener-schedules'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 320
     strategy:
@@ -1264,8 +1269,16 @@ jobs:
           timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-download --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/screener/screener-download-${{ matrix.shard }}.json" || code=$?
           if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with companies left: run the same command again to resume"; mkdir -p "$RUNNER_TEMP/more"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
           exit "$code"
+      - name: Download this shard's screener.in sub-rows
+        if: inputs.command == 'screener-schedules'
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/screener"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-schedules --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.file_cap && format('--max-requests {0}', inputs.file_cap) || '' }} --json "$RUNNER_TEMP/screener/screener-schedules-${{ matrix.shard }}.json" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget or request cap ended with pages left: run the same command again to resume"; mkdir -p "$RUNNER_TEMP/more"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
+          exit "$code"
       - name: Fill this shard's gaps from screener.in
-        if: inputs.command != 'screener-download'
+        if: inputs.command != 'screener-download' && inputs.command != 'screener-schedules'
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/screener"
@@ -1275,7 +1288,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ${{ inputs.command == 'screener-download' && 'screener-download' || 'screener-fill' }}-${{ matrix.shard }}
+          name: ${{ inputs.command == 'screener-fill-apply' && 'screener-fill' || inputs.command }}-${{ matrix.shard }}
           path: ${{ runner.temp }}/screener/
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4

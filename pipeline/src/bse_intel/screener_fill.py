@@ -278,8 +278,9 @@ class ScreenerClient:
     """Plain HTTP: a browser User-Agent, no login, at least ``pause`` seconds between two requests."""
 
     def __init__(self, pause: float = PAUSE_SECONDS, transport: httpx.BaseTransport | None = None, sleep=time.sleep,
-                 clock=time.monotonic):
-        self._client = httpx.Client(headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"},
+                 clock=time.monotonic, headers: dict | None = None):
+        self._client = httpx.Client(headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml",
+                                             **(headers or {})},
                                     timeout=30.0, follow_redirects=True, transport=transport)
         self.pause, self._sleep, self._clock = pause, sleep, clock
         self._last: float | None = None

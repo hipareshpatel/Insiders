@@ -401,7 +401,7 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     whole = None if net is None else net + (minority or 0.0)
     out["Net Profit"] = Row(whole, (name + (" + ProfitLossOfMinorityInterest" if minority else "") if net is not None
                                     else "missing " + name) + src)
-    if net is not None and minority:
+    if net is not None:
         out["Net Profit (owners)"] = Row(net, name + src)
     if minority is not None:
         out["Minority share"] = Row(minority, "ProfitLossOfMinorityInterest" + src)
@@ -413,7 +413,8 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
 
 
 def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
-    """An NBFC (Ind AS NBFC template): the rows that map cleanly; Expenses, Financing Profit and Other Income have no recipe yet."""
+    """An NBFC (Ind AS NBFC template): every row of a lender's page (Revenue, Financing Profit) and a holding company's
+    (Sales, Operating Profit) from the template's elements."""
     src = f" [{source}]" if source else ""
     out: dict[str, Row] = {}
     for row, name in (("Revenue", "RevenueFromOperations"), ("Interest", "FinanceCosts"),
@@ -429,6 +430,22 @@ def nbfc_pl(r: _Reader, source: str = "") -> dict[str, Row]:
         out["PBT as filed"] = Row(pbt, "ProfitBeforeTax" + src)
         out["Profit before tax"] = Row(pbt + share, f"ProfitBeforeTax + associates' share {_fmt(share)}" + src)
     out["Tax %"] = Row(_tax_pct(out["Tax"].value, out["Profit before tax"].value), "TaxExpense / |Profit before tax|" + src)
+    # screener's own identities hold on every NBFC of the every-company run (116 companies, 5,009 periods, no miss): Operating
+    # Profit = Sales - Expenses, Financing Profit = Revenue - Expenses - Interest (no depreciation), Other Income the plug of PBT.
+    # A lender's page shows Revenue / Financing Profit, a holding company's Sales / Operating Profit (Bajaj Holdings Q4FY26
+    # Expenses 36.97; Aditya Birla Capital Q4FY26 12,106.74 - 3,100.59 - 81.88 = 8,924.27; the owner's sheets, 29 Oct 2026)
+    rev, exp = out["Revenue"].value, r.cr("Expenses")
+    fc, dep, pbt = out["Interest"].value, out["Depreciation"].value, out["Profit before tax"].value
+    out["Sales"] = Row(rev, out["Revenue"].note)
+    if None not in (rev, exp, fc, dep):
+        e = exp - fc - dep
+        out["Expenses"] = Row(e, "Expenses less FinanceCosts, depreciation" + src)
+        out["Operating Profit"] = Row(rev - e, "Sales - Expenses" + src)
+        out["OPM %"] = Row(_pct(rev - e, rev), "Operating Profit / Sales" + src)
+        out["Financing Profit"] = Row(rev - e - fc, "Revenue - Expenses - Interest" + src)
+        out["Financing Margin %"] = Row(_pct(rev - e - fc, rev), "Financing Profit / Revenue" + src)
+        if pbt is not None:
+            out["Other Income"] = Row(pbt + dep + fc - (rev - e), "PBT + Depreciation + Interest - Operating Profit" + src)
     return out
 
 

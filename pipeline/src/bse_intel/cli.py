@@ -1386,6 +1386,51 @@ def cmd_screener_download(args, settings, sink) -> int:
     return MORE_LEFT if outcome["more"] else 0
 
 
+def cmd_screener_schedules(args, settings, sink) -> int:
+    """The sub-rows behind each "+" head of the stored screener.in pages, into R2 (screener_schedules.py; owner, 29 Oct 2026):
+    one request a head at screener_download's pace (3.2 s a runner, at most 2 runners), the largest companies first; a 403,
+    429 or 503 stops the run (exit 75). Resumable (a stored page is not asked again); exit 124 when the time budget or
+    --max-requests ends it with pages left. No AI, no NSE, no memory."""
+    from . import screener_download as sd
+    from . import screener_schedules as ss
+    from .screener_crosscheck import stored_pages
+
+    shard = None
+    if args.shard:
+        try:
+            index, count = (int(x) for x in args.shard.split("/"))
+            assert 0 <= index < count <= sd.MAX_SHARDS
+        except (ValueError, AssertionError):
+            print(f"--shard takes I/N with 0 <= I < N <= {sd.MAX_SHARDS}, e.g. 0/2")
+            return 2
+        shard = (index, count)
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    companies = _largest_by_mcap(sink, companies, len(companies))
+    pages, newest = stored_pages(sink)
+    symbols = [symbol for _, symbol in companies if symbol in pages]
+    print(f"screener schedules: {len(symbols)} companies with stored pages (newest day {newest}), largest first"
+          + (f", shard {args.shard}" if shard else "") + (f", at most {args.max_requests} requests" if args.max_requests else ""))
+    refused = False
+    with sd.ScreenerClient(headers=ss.XHR_HEADERS) as client:
+        try:
+            outcome = ss.run(sink, symbols, pages, client, shard, args.time_budget, args.max_requests)
+        except sd.ScreenerRefused as exc:
+            logging.getLogger("bse_intel.screener_schedules").error("screener.in refused; stopping: %s", exc)
+            refused, outcome = True, None
+    if outcome:
+        print(ss.render(outcome))
+        for line in outcome["failed"][:20]:
+            print(f"  {line}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome or {"refused": True}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if refused:
+        return REFUSED
+    return MORE_LEFT if outcome["more"] else 0
+
+
 def cmd_tijori_download(args, settings, sink) -> int:
     """The download of every company's financials from Tijori Finance, raw and gzipped, into R2 (tijori.py, F189, TODO 92): one
     page a company at TIJORI_RATE requests a second (default 6) through 8 threads; the first refusal slows the run to one
@@ -2447,6 +2492,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_screener_download)
+
+    p = sub.add_parser("screener-schedules", help="the sub-rows behind each '+' head of the stored screener.in pages, into R2 (no AI, no NSE)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe, largest first)")
+    p.add_argument("--shard", help="I/N with N at most 2: this runner's share of the companies")
+    p.add_argument("--max-requests", type=int, help="stop before this many requests (a trial: the first run asks 100)")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pages are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_screener_schedules)
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

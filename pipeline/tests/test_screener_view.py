@@ -560,3 +560,13 @@ def test_a_filler_zero_owners_share_is_the_whole_profit():
         + [("ProfitOrLossAttributableToOwnersOfParent", "D2026", 0.0), ("ProfitOrLossAttributableToNonControllingInterests", "D2026", 0.0)])),
         end=END, months=12)))
     assert got["Net Profit (owners)"] == 200.0
+
+
+def test_an_nbfc_has_every_row_of_a_lenders_and_a_holding_companys_page():
+    """Screener's identities on 116 NBFCs: Operating Profit = Sales - Expenses, Financing Profit = Revenue - Expenses - Interest."""
+    facts = xf.Facts(doc([("RevenueFromOperations", "Q2026", 100.0), ("Expenses", "Q2026", 70.0), ("FinanceCosts", "Q2026", 40.0),
+                          ("DepreciationDepletionAndAmortisationExpense", "Q2026", 5.0), ("ProfitBeforeTax", "Q2026", 35.0),
+                          ("TaxExpense", "Q2026", 9.0)], kind="results", template="NBFC"))
+    got = values(sv.nbfc_pl(sv._Reader(facts, end=END, months=3)))
+    assert got["Expenses"] == 25.0 and got["Operating Profit"] == 75.0 and got["Financing Profit"] == 35.0
+    assert got["Sales"] == got["Revenue"] == 100.0 and got["Other Income"] == 35 + 5 + 40 - 75

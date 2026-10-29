@@ -62,7 +62,13 @@ Breakdown-row patterns (Wording; `screener_view.py` / `screener_parts.py` consta
 | Net Profit (Excel Data Sheet) | ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates | ICICI 54,208, SBI 83,299 |
 | Deposits / Borrowing | separate lines (screener, March 2025) | 100 % on the banks compared |
 
-NBFC and insurer templates: only Revenue, Interest, Depreciation, PBT (ProfitBeforeTax + the associates' share: Bajaj Holdings
+NBFC template (29 Oct 2026, the owner's Aditya Birla Capital and Bajaj Holdings sheets): Expenses = Expenses − FinanceCosts −
+depreciation; Operating Profit = Sales − Expenses (a holding company's page); Financing Profit = Revenue − Expenses − Interest (a
+lender's page; no depreciation); Other Income = PBT + Depreciation + Interest − Operating Profit. Screener's own identities hold on
+all 116 NBFCs of the every-company run (5,009 periods, no miss). Union Bank's Q3FY25–Q2FY26 Revenue and Interest are restated
+(interbank interest netted from the Q3FY26 results; only the nine-month sum is filed): an Event exception.
+
+Insurer template, and the older NBFC note: only Revenue, Interest, Depreciation, PBT (ProfitBeforeTax + the associates' share: Bajaj Holdings
 Q2FY24 + 1,464.08, Jio Financial Q3FY24 + 66.11, 93 quarters of NBFCs and holding companies in the 500 largest), Tax, Net Profit,
 cash flows, Equity, Reserves have a recipe;
 the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC needs its own insurer recipe).

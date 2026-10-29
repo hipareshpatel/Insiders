@@ -191,7 +191,14 @@ results file (1,392): 15.2 / 23.4 / 27.5 / 6.9 / 11.2 / 15.8 %.
   32, so the rule stands; most of the 383 name no single filed line (Bharti Airtel FY25 consolidated 11,802 Cr).
 - NSE circular NSE/CML/2026/08 (20 Apr 2026, read 29 Oct 2026) extends the exchanges' single filing to Annual Report-XBRL from
   that date: before it a company could file its annual-report XBRL with BSE only, so BSE may hold FY24 and FY25 reports NSE lacks.
-  Not yet measured.
+  **Measured 29 Oct 2026 (about 140 BSE requests, no refusal):** BSE's XBRL filings page (bseindia.com/corporates/xbrldetails)
+  lists them through `GET api.bseindia.com/BseIndiaAPI/api/GetCorXbrlDetails_ng/w?Flag=7&scripcode=<code>&fromdate=YYYY/MM/DD
+  &todate=YYYY/MM/DD` (category 7, "Annual Reports (Pdf & XBRL)"; the answer repeats joined rows, the company's own rows are
+  those whose fld_scripcode is its code; each names the year end, `fld_filename` AnnualReport_<stamp>.xml and the XBRL date).
+  Of 10 companies picked at random among the 262 whose FY24 or FY25 year we read from a results file for want of an NSE file,
+  9 have that year on BSE (Onida, Ganesh Housing, Bosch Home Comfort, CMS Info, Rhetan, BF Investment, Wonderla, Ion Exchange,
+  Timken; Sical Logistics none), and 6 have FY23 (year end 31 Mar 2023) too, which no NSE list holds. The download folder of
+  these files is not yet known (the page's code builds links only for results files, /XBRLFILES/<XMLName>).
 
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 

@@ -15,6 +15,13 @@ or individual companies and their events"). A rule is added here in the same com
   wherever the words are used, and a new wording needs the pattern widened (never a company name in code).
 - **Event**: one company's one-off (a merger restatement, a levy, its own layout). Recorded, not coded; the row stays apart.
 
+**Which kind a new rule should be (owner, 29 Oct 2026):** "most of the screener rules must be event specific vs few, a very few on
+the basis of company based on company structure like holding company or other different structures". So a rule fires on an
+event the filing shows (a discontinued operation, a loss from associates, a negative regulatory-deferral movement, bank charges,
+an exceptional item, a finance lease): the line's presence is the trigger, on any company. A rule by company structure
+(holding company, a lender inside a group, associates kept outside PBT) is kept rare and needs a signal read from the filing
+itself, never a list of names. An event seen at one company only, with no line to trigger on, stays a recorded exception.
+
 Source of a quarter: its own results file. NSE's results XBRL has no comparative column (measured 28 Oct 2026, Hindustan
 Unilever Q1FY27: only the quarter's own contexts), so screener's restated quarters (a merger, a demerger) cannot be read from
 XBRL; they are Event exceptions below.

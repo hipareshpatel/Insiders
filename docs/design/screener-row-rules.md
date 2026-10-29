@@ -204,16 +204,6 @@ results file (1,392): 15.2 / 23.4 / 27.5 / 6.9 / 11.2 / 15.8 %.
   (1.6 MB) parses with `xbrl_facts.parse_annual_facts` as it is: MCA-INDAS, standalone, FY25 and its FY24 column; Sales 746.69
   and 968.04 Cr, Expenses, PBT and Net Profit equal to screener's.
 
-### The associates' share counted twice (run 40820489722, 29 Oct 2026)
-
-Quarterly PBT apart in 1,575 of 32,562 pairs. 523 of them are apart by exactly the associates' share, ours above when the share
-is a profit (387) and below when a loss (136), in 86 companies (31 of which are exact with the share in other quarters): the
-signature of a double count, not of a company that leaves the share out. The filing's own sums tell which: where the period's
-profit equals the filed PBT less tax (plus any discontinued profit), the share is already inside the filed PBT and is not added
-again; where it equals filed PBT less tax plus the share, it sits below PBT (SEBI's results format) and is added as before.
-Checked on the 13 owner companies' stored files (Maruti, Tata Motors, DLF, BEL, Bajaj Holdings, Mankind, Tata Consumer: every
-quarter "below", unchanged by the rule; Tata Power's sums close neither way and are left as they are). Statement scope.
-
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 
 - **The year's source decides most of the yearly misses.** Years read from the annual report: Expenses 82.4 % exact, Interest

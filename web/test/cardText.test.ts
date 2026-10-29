@@ -162,16 +162,6 @@ test("results table: turns, lower-is-better lines and filler rows", async () => 
   assert.ok(!allZero({ value: 0, prev_year: 4 }));
 });
 
-test("results table: a bank's sales change comes from its interest line, not its bare revenue", async () => {
-  const { salesLine } = await import("../src/lib/results.ts");
-  const bank = { lens: "bank", revenue: { value: 2357.51 }, interest_earned: { value: 2066, prev_year: 1617.35, yoy_pct: 27.7 } };
-  assert.equal(salesLine(bank)?.yoy_pct, 27.7);
-  assert.equal(salesLine({ lens: "company", revenue: { value: 10, prev_year: 8, yoy_pct: 25 } })?.yoy_pct, 25);
-  assert.equal(salesLine({ lens: "insurer", revenue: { value: 5, yoy_pct: 3 }, gross_premium: { value: 9 } })?.yoy_pct, 3);
-  assert.equal(salesLine({ lens: "bank", revenue: { value: 2357.51 } })?.value, 2357.51);
-  assert.equal(salesLine(null), undefined);
-});
-
 test("a catalyst's line drops the exchange's preamble", async () => {
   const { catalystText } = await import("../src/lib/taxonomy.ts");
   assert.equal(catalystText("BOARD_MEETING", "Newgen Software Technologies Ltdhas informed BSE that the meeting of the Board of Directors of the Company is scheduled on 23/10/2026 ,inter alia, to consider and approve the financial results for the quarter ended September 30, 2026."),

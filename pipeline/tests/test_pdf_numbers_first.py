@@ -1266,7 +1266,12 @@ def test_an_undated_third_column_of_a_sebi_layout_is_the_same_quarter_a_year_bef
                  ("year", date(2023, 3, 31))],
                 [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31)),
                  (None, None)],
-                [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31))]):
+                [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31))],
+                # 31st review: the undated third column is the current year (or nine months) of a layout without the
+                # same quarter last year
+                [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2023, 3, 31))],
+                [("quarter", date(2023, 12, 31)), ("quarter", date(2023, 9, 30)), (None, None), ("nine", date(2022, 12, 31)),
+                 ("year", date(2023, 3, 31))]):
         c = cols(bad)
         nf.fill_corresponding_quarter(c)
         assert c[2].date is None

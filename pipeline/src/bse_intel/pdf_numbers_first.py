@@ -1517,6 +1517,10 @@ def fill_corresponding_quarter(columns: list[Column]) -> None:
         return
     if not any(x.date == year_before for x in rest):
         return
+    # and the current year to date is printed and dated after it: otherwise the undated third column may itself be the
+    # current half year, nine months or year of a layout that leaves the same quarter last year out (31st review)
+    if not any(x.date == a.date and x.kind in ("half", "nine", "year") for x in rest):
+        return
     c.date, c.kind = year_before, "quarter"
 
 

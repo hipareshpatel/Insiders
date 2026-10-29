@@ -32,3 +32,17 @@ export const NO_TURN = new Set(["exceptional_items", "tax_expense", "other_incom
 /** A row with nothing but zeros ("Exceptional items 0 0 0") is filler, not a figure. */
 export const allZero = (line: { value: number; prev_year?: number; prev_quarter?: number }) =>
   [line.value, line.prev_year, line.prev_quarter].every((v) => v == null || v === 0);
+
+/** The results table's sales line, read by the lens the card's table was built on: a bank's interest earned, an insurer's
+ * gross premium, else revenue. A bank's "revenue" is set without its year-ago figure, so the lens's own line comes first
+ * and the first line that carries a year-on-year change wins; with none, the first line present (its blank change shows). */
+export function salesLine<L extends { yoy_pct?: number | null }>(
+  r?: { lens?: string; revenue?: L; interest_earned?: L; gross_premium?: L } | null,
+): L | undefined {
+  if (!r) return undefined;
+  const order = r.lens === "bank" ? ["interest_earned", "revenue", "gross_premium"]
+    : r.lens === "insurer" ? ["gross_premium", "revenue", "interest_earned"]
+    : ["revenue", "interest_earned", "gross_premium"];
+  const lines = order.map((k) => r[k as "revenue" | "interest_earned" | "gross_premium"]).filter((l): l is L => !!l);
+  return lines.find((l) => l.yoy_pct != null) ?? lines[0];
+}

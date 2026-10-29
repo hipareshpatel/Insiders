@@ -15,7 +15,7 @@ import { cr, istDate, todayIST, companyPath } from "../lib/format";
 import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
 import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
-import { TURN, turnOf } from "../lib/results";
+import { TURN, salesLine, turnOf } from "../lib/results";
 import { Empty, Loading } from "./FeedView";
 
 export { turnOf };
@@ -134,7 +134,7 @@ export function ResultsView() {
                         <td className="px-3 py-3"><Badge className={TONE_CHIP[v.tone]}>{v.label}</Badge></td>
                         <td className="whitespace-nowrap px-3 py-3 text-right text-ink-2">{cr(row.market_cap_cr)}</td>
                         <td className="num whitespace-nowrap px-3 py-3 font-medium text-ink">{r?.period ?? "—"}</td>
-                        <td className="px-3 py-3 text-right"><Change value={(r?.revenue ?? r?.interest_earned ?? r?.gross_premium)?.yoy_pct} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={salesLine(r)?.yoy_pct} /></td>
                         <td className="px-3 py-3 text-right"><Change value={r?.ebitda?.yoy_pct} turn={turnOf(r?.ebitda)} /></td>
                         <td className="px-3 py-3 text-right"><Change value={r?.ebitda_margin?.yoy_bps} unit="bp" /></td>
                         <td className="px-3 py-3 text-right"><Change value={r?.pat?.yoy_pct} turn={turnOf(r?.pat)} /></td>

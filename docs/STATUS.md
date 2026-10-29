@@ -120,6 +120,7 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
   (the BSE annual files and the gap fill read, TODO 118 B measured): 50 cards published since then, blind, independent
   reviewers (mid model at least), WRONG on the checked face with its 95 % interval (`daily_audit/rates.py`), against the bar of
   5 %. Its result says whether the financial work reached the cards.
+- **Results page blanks, 29 Oct 2026 (measured on the live feed, 1,949 RESULTS cards).** Fixed in the site: a bank's sales change now comes from its interest line (77 blank cells, 40 recovered; `salesLine` in `web/src/lib/results.ts`). Still blank, in the pipeline, with owner decisions in TODO 129 (119 cards with no table: half-year and annual filings) and TODO 130 (319 company tables with no year-ago PAT). Consolidated-first already holds: only 2 tables were removed for a basis mismatch.
 - Waiting for the owner: TODO 118 A/B/C; the PDF reader's switches (`SLIP_CHECK_NUMFIRST`, `PDF_SHADOW`).
 
 **Owner, 28 Oct, ~15:40 IST: "No blind audit of cards today", "Let's settle financial first".** The card audit and the

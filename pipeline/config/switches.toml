@@ -24,3 +24,9 @@ EPS_BASE_CHECK = true            # F208: standalone EPS stored as consolidated r
 EPS_SHARE_COUNT_CHECK = true     # F211: split/bonus adjusted only when the record and the share count agree
 CARD_RESULTS_ONE_LINE = true     # F206: a results row's figures from one statement line
 CARD_WATCH_VERDICT = true        # F205: code decides met / missed / not due
+# Turned on 30 Oct 2026, ~00:40 IST (owner: "Turn on a, b, c and d"): how a card states its figures. Measured after
+# the fact by the next blind audit of live cards; a repository variable of the same name set to 0 turns one back off.
+CARD_CONSOLIDATED_ONLY = true    # F154: a consolidated filer's card states consolidated figures only
+CARD_EBITDA_PROFIT_V2 = true     # F151: the company's own EBITDA first, ours as "calculated"; one profit line
+CARD_TWO_PARTS = true            # F152: "From the filing (checked)" and "Our reading (AI)"; a failing AI line hidden alone
+CARD_GUIDANCE_DATED = true       # F172: a guidance verdict only from a dated target due this period

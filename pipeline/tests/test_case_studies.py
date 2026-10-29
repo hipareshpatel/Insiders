@@ -6,6 +6,8 @@ size against market cap, funding and brownfield scoring, and former-name continu
 case studies' own numbers; where the blueprint states a computed figure, the test asserts it.
 """
 
+import pytest
+
 from bse_intel.dossier import dossier_as_of, merge, new_dossier
 from bse_intel.models import Filing, Pass2Output, QuantifiedImpact
 from bse_intel.quality import quality_signals
@@ -33,6 +35,7 @@ def _card(headline, **extra):
     return {"impact_level": "HIGH", "headline": headline, "what_happened": [extra.pop("fact", headline)], **extra}
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_case_1_kanoria_chemicals_triacetin_launch():
     assert market_session("2026-10-07T17:50:00+05:30") == "AFTER_MARKET"
     # Show Working: full_cap_rev_cr (250, MEMORY) * fy27_util (0.40, MEMORY) = ₹100 Cr, and 12 TPD x 330 days
@@ -136,6 +139,7 @@ def test_case_5_jubilant_grant_funded_brownfield():
     assert s.pillars["margin"] >= 20 and s.gates["price"]  # brownfield, price not run up
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_case_6_hariom_pipe_solar_rollout():
     assert market_session("2026-10-14T20:03:00+05:30") == "AFTER_MARKET"
     filing = _filing("har-1", "543517", "Hariom Pipe Industries Ltd", "2026-10-14T20:03:00+05:30",

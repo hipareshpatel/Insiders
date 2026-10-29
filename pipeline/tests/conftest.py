@@ -12,8 +12,12 @@ from bse_intel import timeutil
 from bse_intel.settings import Settings
 
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "switches_off(*names): run the test with these switches off, live run or not")
+
+
 @pytest.fixture(autouse=True)
-def _switches(monkeypatch):
+def _switches(monkeypatch, request):
     """Tests run on the code's defaults, every switch off unless a test turns one on. With BSE_INTEL_TEST_SWITCHES=live
     they run with the switches config/switches.toml turns on, each set as an environment variable, so a test that removes
     one still turns it off: the mix every job runs (CI runs the suite both ways)."""
@@ -31,6 +35,10 @@ def _switches(monkeypatch):
             monkeypatch.delenv(name, raising=False)
     for name in names:
         monkeypatch.setenv(name, "1")
+    # a test of a switch's off behaviour names it: @pytest.mark.switches_off("CARD_TWO_PARTS"), so the live run keeps it off
+    for mark in request.node.iter_markers("switches_off"):
+        for name in mark.args:
+            monkeypatch.delenv(name, raising=False)
 
 
 @pytest.fixture(autouse=True)

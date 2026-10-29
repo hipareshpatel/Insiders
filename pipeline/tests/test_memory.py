@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 import json
 
 from bse_intel.dossier import memory_ids, merge, new_dossier, view_as_of
@@ -112,6 +114,7 @@ def test_older_filing_never_overrides_a_later_restatement():
     assert pat["as_of"] == Q1 and pat["source_news_id"] == "n1" and len(pat["sources"]) == 2
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_guidance_promise_tracking_and_hallucinated_ids():
     d = merge(new_dossier(filing("agm", AGM)),
               output(event_type="CONCALL_PRESENTATION",
@@ -143,6 +146,7 @@ def test_view_as_of_hides_future_facts():
     assert view_as_of(None, Q1) is None
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_overdue_guidance_is_flagged():
     d = merge(new_dossier(filing("agm", AGM)), output(guidance=[{"statement": "Start new line", "due": "Sep-2026"}]),
               filing("agm", AGM), "LOW", "now")
@@ -228,6 +232,7 @@ def test_lenient_model_parsing():
     assert out.timeline_entry == "Acquires Demo Chem for ₹300 Cr"
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_track_next_becomes_watch_items_that_later_filings_resolve():
     capex = Pass2Output.model_validate({
         "is_material": True, "event_type": "CAPEX",
@@ -322,6 +327,7 @@ def test_a_long_annual_table_does_not_push_out_recent_quarters():
     assert any(line.startswith("Q2FY27") for line in lines)
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_reanalysing_the_filing_that_set_guidance_keeps_later_status():
     agm = filing("agm", AGM)
     d = merge(new_dossier(agm), output(event_type="CONCALL_PRESENTATION",
@@ -656,6 +662,7 @@ def test_a_balance_sheet_figure_out_of_scale_with_the_other_sources_is_refused()
     assert any(b.get("net_worth_cr") == 9000.0 for b in d["balance_sheet"])
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_jindal_period_guidance_waits_for_its_results():
     """44c7bf29: Jindal's H1FY27 EBITDA/tonne guidance read "Deadline passed" on 16 October 2026, a month before the
     H1 results; a period is judged on its results, filed up to 60 days after it ends."""

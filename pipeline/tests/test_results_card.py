@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from pathlib import Path
 
 from bse_intel import results_card, xbrl
@@ -21,6 +23,7 @@ def _model_card():
                  "key_numbers": [{"label": "Revenue", "value": "₹1,952 Cr", "change": "+12% YoY"}]}})
 
 
+@pytest.mark.switches_off("CARD_EBITDA_PROFIT_V2")   # the behaviour before the switch; the switch has its own tests
 def test_code_writes_the_figures_and_the_model_keeps_a_line_or_two():
     tagged = xbrl.parse((FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes())
     out = _model_card()

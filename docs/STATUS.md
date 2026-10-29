@@ -63,10 +63,10 @@ blind review and a measurement; a switch then decides whether the rule acts on l
 | MEMORY_YEAR_CHECK | A year or half-year figure its own quarters do not add up to is not used on a card | Measure on stored memory, then on | Yes / No / Later |
 | XBRL_FILER_CHECKS | Where the company's own file contradicts itself, the figure is held, not kept | Measure on stored memory, then on | Yes / No / Later |
 | MEMORY_RESTATED | A restated comparative is named as such on the card ("restated in Q2FY27, first filed X") | Later, with the card work | Yes / No / Later |
-| CARD_CONSOLIDATED_ONLY | A consolidated company's card states consolidated figures only | Decide in the card work (the fact-sheet flow covers it) | Yes / No / Later |
-| CARD_EBITDA_PROFIT_V2 | The company's own EBITDA first, ours below as "calculated"; one profit line | Decide in the card work | Yes / No / Later |
-| CARD_TWO_PARTS | The card in two parts: "from the filing (checked)" and "our reading (AI)" | Decide in the card work | Yes / No / Later |
-| CARD_GUIDANCE_DATED | A guidance verdict (met / missed) only from a dated target due this period | Decide in the card work | Yes / No / Later |
+| CARD_CONSOLIDATED_ONLY | A consolidated company's card states consolidated figures only | Decide in the card work (the fact-sheet flow covers it) | **On** (owner, 30 Oct 2026, ~00:40 IST) |
+| CARD_EBITDA_PROFIT_V2 | The company's own EBITDA first, ours below as "calculated"; one profit line | Decide in the card work | **On** (owner, 30 Oct 2026, ~00:40 IST) |
+| CARD_TWO_PARTS | The card in two parts: "from the filing (checked)" and "our reading (AI)" | Decide in the card work | **On** (owner, 30 Oct 2026, ~00:40 IST) |
+| CARD_GUIDANCE_DATED | A guidance verdict (met / missed) only from a dated target due this period | Decide in the card work | **On** (owner, 30 Oct 2026, ~00:40 IST) |
 | CARD_EPS_WHOLE | EPS line on the whole company (EPS is not shown on cards, so memory only) | Later | Yes / No / Later |
 | LINE_MAP | Row names mapped by one table for changes that would alter output | Keep off | Yes / No / Later |
 | SLIP_CHECK_NUMFIRST, PDF_SHADOW | The new PDF reader in the unit check; its shadow run | Off until the PDF work resumes | Yes / No / Later |

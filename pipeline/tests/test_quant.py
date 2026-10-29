@@ -508,6 +508,7 @@ def test_an_exceptional_charge_that_did_not_recur_is_no_turn():
     assert [line["key"] for line in snap["lines"]] == ["revenue", "pat"]
 
 
+@pytest.mark.switches_off("CARD_EBITDA_PROFIT_V2")   # the behaviour before the switch; the switch has its own tests
 def test_a_company_table_shows_five_lines_and_the_one_that_moved_profit():
     """Owner, 2026-10-20 (O15): Revenue, EBITDA, EBITDA margin, PAT and EPS, plus at most one line - the one that moved
     profit most this quarter when that move is significant (a payroll ahead of a new plant's output, a tax credit)."""

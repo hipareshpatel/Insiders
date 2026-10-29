@@ -179,6 +179,7 @@ def test_real_bse_results_file_parses_to_the_statement_figures():
     assert now["ebitda"] == 84.36 and now["eps"] == 7.37
 
 
+@pytest.mark.switches_off("CARD_CONSOLIDATED_ONLY")   # the behaviour before the switch; the switch has its own tests
 def test_results_filing_finds_its_xbrl_in_the_archive(settings):
     """No link on the announcement: the archive's file for the statement's quarter is used,
     consolidated over standalone, the timely revision over a later one."""

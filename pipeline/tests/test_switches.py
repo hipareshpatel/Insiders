@@ -23,7 +23,7 @@ def _file(monkeypatch):
 def test_the_file_turns_a_switch_on_when_nothing_else_is_set(monkeypatch):
     _file(monkeypatch)
     assert settings.card_watch_verdict() is True
-    assert settings.card_two_parts() is False   # not in the file: off
+    assert settings.card_eps_whole() is False   # not in the file: off
 
 
 def test_a_repository_variable_wins_over_the_file_and_a_step_variable_over_both(monkeypatch):
@@ -48,7 +48,7 @@ def test_no_workflow_sets_a_listed_switch_itself_and_every_python_workflow_passe
     import tomllib
 
     listed = {k for k, v in tomllib.loads(SWITCHES.read_text(encoding="utf-8"))["on"].items() if v}
-    assert len(listed) == 13
+    assert len(listed) == 17   # the 13 of 27 Oct and the four card switches of 30 Oct
     for wf in sorted((ROOT / ".github" / "workflows").glob("*.yml")):
         text = wf.read_text(encoding="utf-8")
         for name in listed:

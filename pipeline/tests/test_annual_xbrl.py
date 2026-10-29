@@ -6,6 +6,8 @@ Fixtures are the real files for Kanoria Chemicals FY25 (consolidated and standal
 
 from __future__ import annotations
 
+import pytest
+
 import json
 from datetime import datetime
 from pathlib import Path
@@ -191,6 +193,7 @@ def test_annual_report_is_read_with_its_xbrl_table_in_front(settings):
     assert outcome.card["held"] == 0 and len(nse.downloads) == 2
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_without_the_file_the_annual_report_is_read_as_before(settings):
     outcome, fake, nse = _annual(settings, {})
     assert "Machine-tagged annual report" not in fake.calls[0]["messages"][-1]["content"]

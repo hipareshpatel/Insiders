@@ -52,6 +52,26 @@ Every row carries its `pdf_url` and tags (`scanned_no_text_layer`, `lender`, `tw
 | `numfirst` (numbers-first, bench only) | 125 / 0 / 212 | 71 / 0 / 269 |
 | combined (native first, numfirst where native gives none) | **150 / 0 / 187** | **168 / 0 / 172** |
 
+**Measured 29 Oct 2026, ~06:00 IST (session branch `ccr-d86d5b66-tvxfy0`, frozen code 3940f00, the same flags):**
+
+| reader | normal key (337) | hard key (340) |
+|---|---|---|
+| `native` | 44 / 0 / 293 | 156 / 0 / 184 |
+| `numfirst` | 243 / 0 / 94 | 143 / 0 / 197 |
+| combined | **253 / 0 / 84** | **219 / 0 / 121** |
+
+- Held-out companies (`docs/bench/heldout.csv`, never tuned on): normal 36 -> 48 of 71 right, hard 10 -> 12 of 44.
+- Still far from the normal key's pass marks (98% right, at most 5% no answer): 75% right, 25% no answer.
+- What is left, by numfirst's own reason (normal / hard): no named table 45 / 66 (banks, garbled scans, two bases in one table);
+  the period's column not found 3 / 27; no row named for the metric 10 / 14; one basis only 16 / 14; basis not told 8 / 2.
+- The night's fixes, each with a test that fails without it and an independent review: NEWGEN (OCR month spellings, "Amount in
+  Rupees lakhs"), PRIMESECU (other income printed as parts and a subtotal), BFINVEST (revenue printed only as its parts),
+  SUNDARMFIN (a title glued into one garbled word), BAJAJHLDNG (a "Total revenue from operations" line over a lost part), ABCAPITAL
+  (A5: the undated same-quarter-last-year column of a SEBI layout). The reviews also found about a dozen layouts that gave a wrong
+  figure, several in the code before that night (part (a) of a revenue list taken as the revenue; "Non-Consolidated" read as
+  consolidated; a revenue row with an unnamed row above it); all are closed with tests.
+- **Open for the owner:** `pdf_referee._words_basis`, which the live reader uses, reads "Non-Consolidated" as consolidated. Numbers-first
+  guards it on its own side; the live path was not changed.
 - Zero wrong in 677 figures bounds the true wrong rate at about 3/677, so about 0.45% (rule of three, below).
 - On the normal key, native has no rows for total income or PBT at all, and 29 of 50 filings get no answer.
 - Numfirst is worse on the hard key. That key is mostly lender layouts, where the chain total income - total expenses = PBT does not
@@ -147,7 +167,7 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 | A2 | **A "Note" column is label text**: in "Revenue from operations 24 1,245.60", the 24 is not revenue | Gemini | built in `numfirst` |
 | A3 | **Our own OCR replaces a bad scanner layer**: re-read only the bad parts of the page; keep the layer where its numbers are sound; when the two disagree on a digit, give no answer | ChatGPT, XBRL-key finding | partly: numfirst OCRs no-text pages and scans with no named row; the digit-level gate is not built |
 | A4 | **Offline OCR relabel of the answer key**: the XBRL key finds figures by searching the text, so pages with no text never get a key row, and anything tuned on it learns only the easy pages. Read those pages offline with OCR at the slowest, best settings, then search for the known figures there | the long Claude answer | not built; do it before tuning on the XBRL key |
-| A5 | **Date-candidate matching**: we know which dates a quarter's columns should show, so a garbled "30.09.202S" only has to match one of about five expected dates | the long Claude answer | not built; it targets the biggest loss (garbled label or date, 128 / 151 figures) |
+| A5 | **Date-candidate matching**: we know which dates a quarter's columns should show, so a garbled "30.09.202S" only has to match one of about five expected dates | the long Claude answer | started 29 Oct: OCR month spellings, reordered dates, the SEBI layout's undated third column (`fill_corresponding_quarter`); matching a garbled date to the expected set is not built |
 | A6 | **More sum checks**: half year = this quarter + last quarter (most filings arriving now are Q2), nine months = H1 + Q3, year = 9M + Q4, last quarter's own column equals this filing's previous-quarter column; a match in every column at once is hard to get by luck | the long Claude answer, STATUS item 3 | partly (numfirst checks vertical identities, not across periods) |
 | A7 | **Fill empty cells with two OCR engines**: re-read only the empty cell with two different free engines and accept a figure only when both agree | the long Claude answer | not built |
 | A8 | **Never publish a computed figure**: a figure the arithmetic implies but the page does not print is never an answer | the long Claude answer | numfirst answers only printed cells (check that the review confirms it) |

@@ -280,6 +280,7 @@ def test_live_filing_of_a_company_with_a_long_backlog_is_not_held_back(settings,
     assert pipeline._priority == ["999001"]
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-q3", "Unaudited Financial Results for the quarter", now, "Result")

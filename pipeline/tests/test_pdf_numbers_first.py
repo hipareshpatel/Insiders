@@ -1657,3 +1657,81 @@ def test_trap_tail_unit_share_count_is_not_table_unit():
     from bse_intel.pdf_numbers_first import unit_of
     # a share-count unit in the header region must not become the table's money unit (100x)
     assert unit_of(["Statement of results", "Paid up shares (No. in Lakhs)", "Particulars"], []) is None
+
+
+def test_roman_numbered_nil_lines_give_the_profit_for_the_period():
+    # PARIN Q2FY27: "X Profit from continuing operations", then "XI ... discontinued" and "XII Net Profit for the period" stitched
+    rows, cont = _merged_nil_rows("X Profit for the period from continuing operations (VIII-IX)", [
+        "XI Profit from discontinued operations (net of tax)", "XII Net Profit for the period"], lambda c: c)
+    got = read(statement(rows), "pat")
+    assert got.status == "ok" and got.value == pytest.approx(crore(cont[0])), got
+
+
+def test_roman_numbered_lines_ending_in_comprehensive_income_or_skipping_a_number_are_never_the_profit():
+    for last in ("XII Total comprehensive income for the period", "XIII Net Profit for the period"):
+        rows, cont = _merged_nil_rows("X Profit for the period from continuing operations (VIII-IX)", [
+            "XI Other comprehensive income", last], lambda c: c)
+        got = read(statement(rows), "pat")
+        assert got.status != "ok", (last, got)
+
+
+def _nci_rows(label9, minority=(-10.0, -9.0, -8.0, -30.0)):
+    rows, want = pl()
+    pat = want["pat"]
+    owners = [round(a + b, 2) for a, b in zip(pat, minority)]
+    return rows[:-1] + [([label9], pat), (["10 (Profit) / Loss attributable to non-controlling interests"], list(minority)),
+                        (["11 Profit for the period attributable to owners of the company (9+10)"], owners)], pat
+
+
+def test_profit_after_tax_including_non_controlling_interests_is_the_profit():
+    rows, pat = _nci_rows("9 Profit after tax for the period (including non-controlling interests) (7-8)")
+    got = read(statement(rows), "pat")
+    assert got.status == "ok" and got.value == pytest.approx(crore(pat[0])), got
+
+
+def test_a_label_saying_attributable_or_comprehensive_is_not_helped_by_including_non_controlling_interests():
+    for label in ("9 Profit attributable to owners of the company (including non-controlling interests) (7-8)",
+                  "9 Total comprehensive income for the period (including non-controlling interests) (7-8)"):
+        rows, pat = _nci_rows(label)
+        got = read(statement(rows), "pat")
+        assert got.status != "ok", (label, got)
+
+
+@pytest.mark.parametrize("label,share_label,bottom_label", [
+    ("9 Profit after tax before non-controlling interest and share of profit of associates", "10 Share of profit of associates", "11 Profit for the period"),
+    ("9 Profit after tax before non-controlling interest and share of profit of associates", "10 Share of profit of associates", "11 Net profit after share of associates"),
+    ("9 Profit for the period before non-controlling interests", "10 Share of profit of associates", "11 Profit for the period"),
+    ("9 Profit after tax before non-controlling interest", "10 Share of profit of associates", "11 Profit for the period"),
+    ("9 Profit after tax before non-controlling interest", "10 Share of profit of associates", "11 Net income"),
+    ("9 Profit after tax before non-controlling interest", "10 Share of profit of associates", "11 Profit for the year, group"),
+    ("9 Profit after tax before non-controlling interest", "10 Add: Share in JV", "11 Consolidated net profit"),
+    ("9 Profit after tax including non-controlling interests", "10 Share of profit of associates", "11 Group result"),
+])
+def test_trap_pre_associates_row_never_given(label, share_label, bottom_label):
+    rows, want = pl()
+    sh = [9.4, 5.1, 3.3, 12.2]
+    bottom = [round(a + b, 2) for a, b in zip(want["pat"], sh)]
+    rows = rows[:-1] + [([label], want["pat"]), ([share_label], sh), ([bottom_label], bottom)]
+    got = read(statement(rows), "pat")
+    assert got.status == "none" or got.value == pytest.approx(crore(bottom[0])), (label, bottom_label, got)
+
+
+def test_trap_pbt_row_labelled_including_nci():
+    rows, want = pl()
+    # a PBT row mislabelled "for the period before tax including NCI" followed by a nil-tax equal row
+    rows = rows[:-1] + [(["Profit for the period before tax including non-controlling interests"], want["pbt"]),
+                        (["Tax expense"], ["-", "-", "-", "-"]), (["Profit after tax"], want["pbt"])]
+    got = read(statement(rows), "pat")
+    print(got)
+
+
+def test_trap_pbt_labelled_for_the_period_before_tax_incl_nci_is_not_pat_class():
+    from bse_intel.pdf_numbers_first import label_class
+    assert label_class("Profit for the period before tax including non-controlling interests") != "PAT"
+    assert label_class("Profit/(loss) for the year before tax and before non-controlling interests") != "PAT"
+
+
+def test_trap_mixed_roman_digit_run():
+    from bse_intel.pdf_numbers_first import _ROW_MARKER, _ROMAN
+    t = "9 Profit from continuing operations X Net profit for the period"
+    assert [m[1] for m in _ROW_MARKER.finditer(t)] == ["9", "X"]

@@ -865,6 +865,10 @@ _CLASS_RULES: list[tuple[str, re.Pattern]] = [
     ("EPS", re.compile(r"earnings?\s+per|\beps\b|per\s+(?:equity\s+)?share", re.I)),
     ("TCI", re.compile(r"comprehensive|\boci\b", re.I)),          # "Profit after tax and OCI" is a total comprehensive income
     ("PAT", re.compile(r"(?:profit|loss)\b.*\bfor\s+the\s+(?:period|year|quarter)\b.*continuing\s+and\s+discontinu", re.I)),
+    # "Profit after tax for the period (including non-controlling interests)" is the group's profit before the split (ABCAPITAL
+    # Q4FY24); a label that says attributable is never it
+    ("PAT", re.compile(r"^(?!.*attributable)(?!.*\bbefore\s+(?:\w+\s+){0,3}tax)(?=.*\b(?:profit|loss)\b.*\b(?:after\s+tax|for\s+the\s+(?:period|year|quarter))\b)"
+                       r".*\b(?:including|before)\s+(?:the\s+)?non[- ]?controlling\s+interests?", re.I)),
     ("ATTR", re.compile(r"attributable|owners\s+of|non[- ]?controlling|minority|equity\s+holders", re.I)),
     ("DISC", re.compile(r"discontinu", re.I)),
     ("PBEI", re.compile(r"before\b.*\b(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?)", re.I)),
@@ -935,7 +939,10 @@ def not_revenue_line(label: str) -> bool:
 _WHOLE_REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations?\W*(?:\((?:net|gross|refer[^)]*|notes?[^)]*)\)\W*)?$", re.I)
 
 
-_ROW_MARKER = re.compile(r"(?:^|(?<=\s))(\d{1,2})(?=\s+[A-Za-z(])")
+_ROMAN = {r: i for i, r in enumerate(("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV",
+                                      "XVI", "XVII", "XVIII", "XIX", "XX"), 1)}
+# a row number: one or two digits or a capital roman numeral (Schedule III numbers its lines "XI", "XII": PARIN Q2FY27)
+_ROW_MARKER = re.compile(r"(?:^|(?<=\s))(\d{1,2}|[IVX]{1,5})(?=\s+[A-Za-z(])")
 
 
 def tail_label(row: "NRow") -> str | None:
@@ -946,19 +953,24 @@ def tail_label(row: "NRow") -> str | None:
     numbers must run on one by one from the label's first word, and the marker of the last line must stand on the row's own
     height at the left of the label: figures printed on the first line of a wrapped label are never given to its last one."""
     text = re.sub(r"\s+", " ", row.label or "").strip()
-    marks = [(m.start(), int(m[1])) for m in _ROW_MARKER.finditer(text)]
+    marks = [(m.start(), int(m[1]) if m[1].isdigit() else _ROMAN[m[1]]) for m in _ROW_MARKER.finditer(text)
+             if m[1].isdigit() or m[1] in _ROMAN]
     if len(marks) < 2 or marks[0][0] != 0:
         return None
+    roman = not text[:marks[0][0] + 1].strip()[:1].isdigit()     # one kind of number in a run: "9 ... X ..." is no run
     run = [marks[0]]
     for pos, n in marks[1:]:
+        if text[pos].isdigit() == roman:
+            continue
         if n == run[-1][1] + 1:
             run.append((pos, n))
     if len(run) < 2 or not row.words_left:
         return None
     pos, n = run[-1]
     left = min(w.x0 for w in row.words_left)
+    token = text[pos:].split(" ", 1)[0]
     for w in row.words_left:
-        if w.text == str(n) and abs(w.y - row.y) <= 0.6 * w.h and w.x0 <= left + 3 * w.h:
+        if w.text == token and abs(w.y - row.y) <= 0.6 * w.h and w.x0 <= left + 3 * w.h:
             return text[pos:]
     return None
 

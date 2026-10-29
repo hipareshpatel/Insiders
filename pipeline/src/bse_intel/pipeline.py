@@ -1997,6 +1997,7 @@ class Pipeline:
         self._held_this_run: set[str] = set()   # news_ids whose card this run held (D20: not the quarter's card)
         self._shown_this_run: set[str] = set()  # news_ids whose card this run published (repeated_order)
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
+        self._results_quarter_basis: dict[tuple[str, str], str | None] = {}  # the basis of this run's quarter claims
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
         self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
@@ -2919,7 +2920,8 @@ class Pipeline:
             held.append(f"Held after review: {self._holds[filing.news_id]}")
         return held
 
-    def _same_results_quarter(self, filing: Filing, dossier: dict, quarter: str | None) -> tuple[str, str] | None:
+    def _same_results_quarter(self, filing: Filing, dossier: dict, quarter: str | None,
+                              basis: str | None = None) -> tuple[str, str] | None:
         """(news_id, quarter) of the results filing that already has this company's card for the quarter
         (decision D20: one card per company per results quarter; the others are linked to it). Novartis
         filed one quarter's results as three documents, Ahluwalia as a board outcome and a later meeting
@@ -2943,13 +2945,23 @@ class Pipeline:
         # while the statement itself was marked a duplicate of it (funnel, 2026-10-18).
         owners = [n for n in owners if not self._card_held(n)]
         later = [n for n in later if not self._card_held(n)]
+        # Consolidated first (owner, 30 Oct 2026: "if consolidated results available, use it only, if not available, use
+        # standalone"): a consolidated file of the quarter takes it from a standalone-only card filed before it, which
+        # becomes its duplicate once this card is published (_supersede); a standalone file never takes it from either
+        standalone_owners = [n for n in owners if basis == "CONSOLIDATED" and _standalone_only(metrics, quarter, n)]
         with self._lock:
             claimed = self._results_quarters.get(key)
             if claimed and claimed != filing.news_id:
-                return claimed, quarter
-            if owners:
+                if not (basis == "CONSOLIDATED" and self._results_quarter_basis.get(key) == "STANDALONE"):
+                    return claimed, quarter
+                standalone_owners.append(claimed)
+            if owners and set(owners) - set(standalone_owners):
                 return owners[0], quarter
             self._results_quarters[key] = filing.news_id
+            self._results_quarter_basis[key] = basis
+            if standalone_owners:
+                self._superseding[filing.news_id] = (list(dict.fromkeys(standalone_owners + later)), quarter)
+                return None
             if later:
                 # A later document of the quarter got the card first: this one was retried after a failure or requeued
                 # by id once the later one had its card, and both stayed on the feed (Sunteck Q1FY27: the statement
@@ -3478,7 +3490,8 @@ class Pipeline:
             # those are the filing's own words, and what its quotes answer to.
             text = "\n".join(t for t in (filing.headline, filing.subject) if t)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
-            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text, filing.filed_at))
+            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text, filing.filed_at),
+                                                 basis=getattr(tagged, "basis", None))
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1
@@ -4774,6 +4787,13 @@ def _still_noise(decision, filing: Filing, row: list, returning: bool = False) -
 # skipped at that cap and called not material, F57), and so can a full-year results filing: NHPC's FY26 results PDF
 # (nse-106633606) was skipped at 30 MB on 25 Oct 2026 and failed as "no readable text" (owner: 120 MB for all).
 ATTACHMENT_MAX_BYTES = 120_000_000
+def _standalone_only(metrics: list[dict], quarter: str, news_id: str) -> bool:
+    """Whether every figure ``news_id`` gave memory for ``quarter`` is on the standalone basis (a standalone results card)."""
+    bases = [s.get("basis") or m.get("basis") for m in metrics if m.get("period") == quarter
+             for s in (m.get("sources") or [m]) if (s.get("news_id") or s.get("source_news_id")) == news_id]
+    return bool(bases) and all(b == "STANDALONE" for b in bases)
+
+
 ANNUAL_REPORT_MIN_PAGES = 60   # as Document.kind() reads a directors' report: an AGM notice alone runs to 10-30 pages
 
 

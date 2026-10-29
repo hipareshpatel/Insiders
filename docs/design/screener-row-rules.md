@@ -142,6 +142,7 @@ results season (TODO 116) and dropped once it stops winning.
 
 | Company | Row | What | Why it stays apart |
 |---|---|---|---|
+| EID Parry | every standalone FY23 row | the FY24 annual-report file tags its standalone prior year at nonsense values (Sales 440,403 against 2,895) | the filing's own error; the results file is right |
 | TMCV | Expenses, Other Income | FY26 quarters: the fair-value change on equity investments (both signs) is out of Expenses | the same rule breaks five other companies (29 Oct) |
 | Reliance | Sales, Expenses | sales tax / VAT 1,439 (FY26), 1,873 (FY25) is a line of the PDF's other-expenses note only | not in either XBRL file |
 | L&T | Interest; Power and fuel | bank charges 211.78 and the split of power and fuel by note are PDF-only | |
@@ -308,7 +309,12 @@ run 40837941625:** the six main rows of the FY26 quarters 96.7 % exact on 94,251
 files); every table from FY25 94.3 %. 8,530 pairs are now "before listing" instead of "no facts". Bank PBT as filed: 13 pairs
 fixed at 8 banks, 6 broken, all HDFC Bank (a known exception): kept. The fair-value change on investments: 5 fixed, all TMCV, 10
 broken at five companies: dropped (TMCV a known exception). The BSE annual-report files changed another 1,185 pairs of years and
-balance sheets: 946 to exact, 239 away, to sort. The 96.7 % is flat because the new pairs match at the same rate; the gap to 98 %
+balance sheets: 946 to exact, 239 away. Sorted (18:40 IST): 200 of the 239 are pairs whose source moved from the Q4 results
+file to the annual report; on every such pair the annual report wins 914 to 200 (the prior-year column 851 to 189, the own
+year 63 to 11), so it stays the source. The 189 have no shared signal (51 are under 1 %, 34 over 2x; no sector, size or
+year pattern); EID Parry's standalone FY23 in its FY24 annual report (Sales 440,403 against 2,895, net profit -8,974 against
+197; 18 pairs) is the filing's own error, a known exception. The other 39 are the two rules above (bank Tax % follows its
+PBT; the dropped fair-value rule). The 96.7 % is flat because the new pairs match at the same rate; the gap to 98 %
 is still the classes in the table above.
 
 ## How a pattern is found

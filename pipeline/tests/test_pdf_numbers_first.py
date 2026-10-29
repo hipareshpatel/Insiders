@@ -2002,3 +2002,12 @@ def test_the_old_reader_keeps_its_plain_consolidated_word_search():
     layers = {1: prd.PageLayer(text, True, set(), "")}
     assert prd.consolidated_anywhere(layers)                                          # the old reader: the word is there
     assert not prd.consolidated_anywhere(layers, not_required=True, numbers_first=True)   # numbers-first reads the exemption
+
+
+def test_a_unit_in_a_note_below_the_only_table_never_sets_its_unit():
+    rows, _ = pl()
+    doc = pymupdf.open(stream=statement(rows, unit=" "), filetype="pdf")
+    draw(doc[0], LEFT, 650, "Notes: segment figures below (Rs. in Crores)")
+    pdf = doc.tobytes()
+    doc.close()
+    assert read(pdf, "revenue").status != "ok"

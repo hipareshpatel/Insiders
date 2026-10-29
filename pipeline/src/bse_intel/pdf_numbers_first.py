@@ -797,9 +797,9 @@ def _PER_CRORE_UNIT():
 
 def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
     """Figures per crore: the unit declared above the table (``grounding.unit_before``, then the short unit lines a lost rupee
-    sign or a garbled word leave), else the one unit ``page_lines`` name; None when none, or two. The caller passes the whole
-    page only when it holds one table, else only the lines above this table, so a note in another unit elsewhere on the page
-    never sets this table's unit (the lead's review)."""
+    sign or a garbled word leave), else the one unit ``page_lines`` name; None when none, or two. The caller passes only the
+    page's lines above this table, so a note in another unit elsewhere on the page never sets this table's unit (the lead's
+    review)."""
     from .grounding import _DECLARED_UNIT, _PER_CRORE, unit_before
     text = "\n".join(lines)
     u = unit_before(text, len(text))
@@ -896,9 +896,9 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
     tables: list[Table] = []
     page_lines_of = lines_of(words, height)
     for n, a in enumerate(starts):
-        # the page's own unit lines: all of them for a page of one table, else only those above this table
-        page_texts = [line_text(ln) for ln in page_lines_of] if len(starts) == 1 else \
-            [line_text(ln) for ln in page_lines_of if max(w.y for w in ln) < rows[a].top]
+        # the page's own unit lines: only those above this table, never a note below it or beside another table (the lead's
+        # review; a page whose second table goes undetected would otherwise lend that table's unit to the first)
+        page_texts = [line_text(ln) for ln in page_lines_of if max(w.y for w in ln) < rows[a].top]
         b = starts[n + 1] if n + 1 < len(starts) else len(rows)
         gap = gaps[a]
         dates = column_dates(gap, columns, height, sep)

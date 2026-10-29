@@ -468,8 +468,6 @@ def read_cell(image) -> tuple[str, bool]:
     "1,912 15" in a measured case) and takes 0.05 s where the detector takes seconds on a crop. Bench only
     (``PDF_OCR_CACHE_DIR`` with ``PDF_BENCH=1``): the answer is kept on disk under the sha1 of the crop's pixels. Without the OCR
     extra it answers ("", True): no text, so no figure is taken from the crop."""
-    if not available():
-        return "", True
     cache = bench_cache_dir()
     path = ""
     if cache:
@@ -481,6 +479,8 @@ def read_cell(image) -> tuple[str, bool]:
             return str(text), bool(cut)
         except (OSError, ValueError, TypeError):
             pass
+    if not available():               # after the bench cache, so a bench machine without the OCR extra still replays it
+        return "", True
     global _cell_engine
     with _lock:
         if _cell_engine is None:       # its own engine: a call with use_det=False leaves the engine in that mode for the next call

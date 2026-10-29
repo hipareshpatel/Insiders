@@ -1683,6 +1683,24 @@ def cmd_pdf_referee(args, settings, sink) -> int:
     return 124 if outcome["out_of_time"] else 0
 
 
+def cmd_pdf_shadow(args, settings, sink) -> int:
+    """Read-only: the numbers-first PDF reader's shadow check of the results cards filed in the last hours (pdf_shadow.py, TODO 116).
+    For each card its revenue (or total income), PBT and profit against what the filing's PDF proves: agrees / disagrees / unknown
+    with the reason, a row a figure, to R2 (meta/pdf-shadow/<day>.csv, every 3 cards or 2 minutes) and ``--out-csv``. The PDF is
+    fetched as pdf-referee fetches it (``Sources.payload``, the client's own pace). Nothing on the site, in memory or in a card
+    changes; no AI. Cards already in today's or yesterday's file are skipped, so a stopped run continues. Exit 75 when NSE refused."""
+    from . import pdf_shadow as ps
+    from .nse import NseClient
+
+    with NseClient() as nse:
+        outcome = ps.run(nse, sink, args.since_hours, args.limit, args.time_budget)
+    rows = outcome.pop("rows")
+    if args.out_csv:
+        Path(args.out_csv).write_text(ps.to_csv(rows), encoding="utf-8")
+    print(json.dumps(outcome))
+    return REFUSED if outcome["blocked"] else 0
+
+
 def cmd_xbrl_key(args, settings, sink) -> int:
     """Read-only: the exchange's XBRL figures in memory as a free answer key for the PDF reader (xbrl_key.py). Companies in a seeded
     shuffle; for each its newest results filing(s) with XBRL figures; the filing's PDF the way pdf-referee gets it (``Sources``:
@@ -2529,6 +2547,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--md", help="write the short markdown summary to this file")
     p.add_argument("--progress", metavar="NAME", help="save the decided pairs to R2 (meta/pdf-referee/NAME.csv) every 25 pairs or 3 minutes, and skip the pairs an earlier run of NAME decided (scrip, basis, period, metric)")
     p.set_defaults(func=cmd_pdf_referee)
+
+    p = sub.add_parser("pdf-shadow", help="read-only: the numbers-first PDF reader's check of recent results cards' headline figures (agrees / disagrees / unknown, logged to R2)")
+    p.add_argument("--since-hours", type=float, default=3.0, help="results cards filed in the last N hours (default 3; cards already logged are skipped)")
+    p.add_argument("--limit", type=int, help="read at most this many cards' PDFs")
+    p.add_argument("--time-budget", type=int, default=2700, help="seconds before no new card is started")
+    p.add_argument("--out-csv", help="write today's rows to this file as well")
+    p.set_defaults(func=cmd_pdf_shadow)
 
     p = sub.add_parser("xbrl-key", help="read-only: the exchange's XBRL figures in memory located on their filing's PDF page by word position (a free answer key for the PDF reader)")
     p.add_argument("--limit", type=int, help="read at most this many filings (the first-test run is on 100 files: set the file cap too)")

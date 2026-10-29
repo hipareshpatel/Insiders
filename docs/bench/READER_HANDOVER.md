@@ -183,6 +183,24 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 | A13 | **One layout per company, reused each quarter**; pages sorted first by type | owner and lead, STATUS item 3 | not built |
 | A14 | **Vision fallback that points, never types**: the model is shown numbered marks on the page (Set-of-Marks) and picks a mark's id; the digits always come from the text or OCR | Gemini (its answer was cut off at this point), ChatGPT, the long Claude answer | **last**, only for the one or two pages a filing fails on (see W3) |
 
+**Checker baselines, measured 29 Oct 2026 ~07:00-08:00 IST (frozen 3940f00, numbers-first only, scripts in the session scratchpad:
+`check_bench.py`, `where_lost.py`, `check_joint.py`).** The checker is given the true figure (must confirm) and plausible wrong
+ones (must never confirm): x100, /100, x10, the same line's other period, another line, the other basis.
+
+| | normal key (337 true / 1,618 wrong) | hard key (340 true / 1,994 wrong) |
+|---|---|---|
+| confirmed by arithmetic | 243 | 166 |
+| confirmed by label (period's column, basis, row label) | 15 | 21 |
+| wrong figures confirmed | 0 (3 rows are a true 0, where x100 is the same 0) | 0 |
+| contradicted by arithmetic | 1,170 of the wrong | 988 of the wrong |
+
+- Checker mode as built adds little over reading (normal 258 against 253 read): it fails where reading fails, on finding the row
+  and the column. The hard key's 187 counts numbers-first alone; reading there (219-227) also has `native`.
+- Where the unanswered figures are lost (normal 84 / hard 113): the digits are in no text and no OCR, 9 / 6 (so a second OCR engine
+  can win back at most 15); in the text but on a page with no table, 18 / 22; in a table cell but no row named, 38 / 57; a row named
+  but the period's column or basis not found, 19 / 28. Banks are 58 of the hard key's 113 (RBLBANK, J&KBANK, UNIONBANK, KARURVYSYA);
+  REPCOHOME 16 more.
+
 ## 6. Ideas weakened or turned down
 
 - **W1. Use memory's past figures to find the unit**: only with figures marked as checked by two sources. Memory had 10x and 100x slips
@@ -195,6 +213,13 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 - **W4. Claims in the outside answers with no source, so do not repeat them**: "quarterly XBRL has about 37% / 63% errors" (measured:
   0 differences in 2,780 figures for 5 companies; one bad file, IMPAL, in 73 filings) and "35% of pages sideways". Their idea of not
   trusting the XBRL as the production answer is turned down for now: the XBRL is the daily source and the PDF is the judge.
+- **W6. The official figures as the column key (joint match), measured 29 Oct 2026 and turned down.** Idea: in checker mode all
+  four figures of a period are known, so a column holding three or four of them on their own labelled rows must be the period's,
+  even with its date or the table's basis unread. Normal key: 266 of 337 true figures, 21 more than arithmetic. But given the PDF's
+  own other columns as the "official" figures (the realistic wrong-period error), it confirmed 244 of them in 20 filings, and
+  KFINTECH's consolidated figures as standalone: the undated column and the untitled table are exactly where another period's or the
+  other basis's figures sit. With the column's date and the basis required, it adds almost nothing. The hard key has two metrics
+  a period, so it could not be tested there. Do not retry without the PDF-column swap test.
 - **W5.** Gemini's points that annual-report PDFs are digital and bookmarked, and that annual XBRL arrives in Sep-Oct, are only partly
   true. ITC FY26 came on 20 Aug and L&T FY26 on 4 Jul, but L&T FY25 only on 13 Jan 2026. Annual work waits anyway (section 1).
 

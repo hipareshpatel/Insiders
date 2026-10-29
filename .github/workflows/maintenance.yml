@@ -65,6 +65,9 @@
 #   again; a run that ends on its time budget (exit 124) is started again and resumes; `restart` ignores the finished list;
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
+# - The three BSE downloads (text-backfill-bse, bse-annual-xbrl, bse-results-xbrl) each have their own group (owner, 29 Oct
+#   2026: "asking for 3 runners so all BSE jobs start running individually"): up to three runners on BSE at once, each at the
+#   adapter's own pace and each stopping on a refusal; the other BSE commands stay in maint-bse.
 # - bse-results-xbrl (owner, 29 Oct 2026): the results XBRL BSE holds for the quarters NSE does not (companies listed on NSE
 #   late), through the fill's ported BSE client; every file kept in the XBRL store, its facts as the results doc unless one is
 #   stored, a company with every quarter of the last 13 stored never asked. Group maint-bse; `file_cap` caps a test.
@@ -334,7 +337,8 @@ concurrency:
     ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
-    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse","bse-annual-xbrl","bse-results-xbrl"]'), inputs.command) && 'maint-bse'
+    || contains(fromJSON('["text-backfill-bse","bse-annual-xbrl","bse-results-xbrl"]'), inputs.command) && format('maint-bse-{0}', inputs.command)
+    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)

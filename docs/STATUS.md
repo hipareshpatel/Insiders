@@ -119,8 +119,8 @@ The order: correct memory first, from the exchange's files by screener's rules; 
    PBT is screener's: the filed ProfitBeforeTax + the associates' and JVs' share + regulatory deferral + discontinued profit
    (docs/design/screener-row-rules.md; 2,302 PBT rows exact), read from memory's statements; the plain file PBT the card
    shows today is before the share (M&M Q1FY27 7,260.60 against the printed 7,628.09). The ~20 companies screener keeps the
-   share out for (Reliance, Sun Pharma, L&T, DLF, BEL, some NBFCs) wait for the owner's named list
-   (docs/design/screener-associates-outside-pbt.md).
+   share out for (Reliance, Sun Pharma, L&T, DLF, BEL, some NBFCs) stay as they are (owner, 30 Oct 2026, ~02:50 IST: "Let
+   those 20 companies stay as they are right now"): the general rule, no named list (docs/design/screener-associates-outside-pbt.md).
 10. **Transcripts and presentations into memory on the third Gemini key (call-only).** Second blind check running
     (call-memory run 40934802754 against 10 blind keys); `MEMORY_CALL_V2` stays off for the owner's word (TODO 101).
 11. **Richer cards: what moved and why, from memory** (TODO 128), and the other card improvements, after memory.

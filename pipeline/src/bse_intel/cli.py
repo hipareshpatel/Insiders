@@ -1462,6 +1462,39 @@ def cmd_bse_annual_xbrl(args, settings, sink) -> int:
     return MORE_LEFT if out["more"] else 0
 
 
+def cmd_bse_results_xbrl(args, settings, sink) -> int:
+    """Results XBRL from BSE for the quarters NSE does not list, into R2 (bse_results_xbrl.py; owner, 29 Oct 2026): the fill's
+    own BSE client (the ported adapter), largest companies first; every file kept in the XBRL store and its facts saved as the
+    results doc unless one is stored; a company with every quarter stored is not asked. A refusal stops the run (exit 75); the
+    file cap, the time budget or a full store ends it with companies left (exit 124). No AI, no NSE, no memory."""
+    from . import bse_results_xbrl as br
+    from .bse_gap_fill import PortedBse
+    from .nse import SourceBlockedError
+
+    companies = _universe_companies(sink, args.scrips)
+    if companies is None:
+        print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
+        return 2
+    companies = _largest_by_mcap(sink, companies, len(companies))
+    if args.limit:
+        companies = companies[:args.limit]
+    print(f"BSE results XBRL: {len(companies)} companies, largest first")
+    try:
+        with PortedBse() as bse:
+            out = br.run(sink, companies, bse, time_budget=args.time_budget)
+    except SourceBlockedError as exc:
+        logging.getLogger("bse_intel.bse_results_xbrl").error("BSE refused; stopping: %s", exc)
+        if args.json:
+            Path(args.json).write_text(json.dumps({"refused": str(exc)}) + "\n", encoding="utf-8")
+        return REFUSED
+    print(br.render(out))
+    for row in out["saved"][:40]:
+        print(f"  {row['symbol']:12s} {row['period']} {row['basis']}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return MORE_LEFT if out["more"] else 0
+
+
 def cmd_tijori_download(args, settings, sink) -> int:
     """The download of every company's financials from Tijori Finance, raw and gzipped, into R2 (tijori.py, F189, TODO 92): one
     page a company at TIJORI_RATE requests a second (default 6) through 8 threads; the first refusal slows the run to one
@@ -2538,6 +2571,13 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_bse_annual_xbrl)
+
+    p = sub.add_parser("bse-results-xbrl", help="results XBRL from BSE for the quarters NSE does not list, into R2 (no AI, no NSE)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe, largest first)")
+    p.add_argument("--limit", type=int, help="only the N largest companies")
+    p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_bse_results_xbrl)
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

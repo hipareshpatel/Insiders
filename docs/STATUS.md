@@ -234,6 +234,9 @@ AXISBANK Q2FY27 15,306 = six months): reader errors. A lead for the owner: memor
 company reports a discontinued line, so a card can show ₹1,382 Cr where the company's own headline profit is ₹4,015 Cr. screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
 unexplained rows is not started (owner to say).
 
+**Every download and test run, and where its files are kept:** `docs/bench/test-downloads.md` (owner, 29 Oct: reuse test
+files, never download twice). Add a row for each run.
+
 ## 3b. Built or agreed, waiting (swept from docs/TODO.md, 29 Oct 2026, ~10:50 IST; owner: "add all above")
 
 Every Yes item of `docs/TODO.md` that is not done, by what it waits on. Nothing approved was lost; none of these is on the

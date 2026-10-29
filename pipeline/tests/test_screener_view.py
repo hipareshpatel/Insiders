@@ -259,6 +259,19 @@ def test_quarters_before_fy26_are_listed_but_never_counted():
     assert summary["by_status"]["before_cutoff"] == 1 and summary["by_row"]["quarters: Sales"]["exact_share"] is None
 
 
+def test_a_quarter_before_the_first_results_on_either_exchange_is_before_listing():
+    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90, 80]}, ["Mar 2026", "Dec 2025", "Jun 2025"]))
+    q4 = doc([("RevenueFromOperations", "D2026", 1.0)], kind="results", template="INDAS", year=2026)
+    def statuses(bse):
+        cf = _store({xf.key("1", "Q4FY26", "CONSOLIDATED"): q4})
+        cf.bse_periods = bse
+        return {r["period"]: r["status"] for r in sv.compare(page, cf, "1", "NEWCO")}
+    assert statuses({"Q4FY26"})["Q1FY26"] == "before_listing"               # listed in 2026: screener's quarter is from the prospectus
+    assert statuses({"Q4FY26"})["Q3FY26"] == "before_listing"
+    assert statuses(None)["Q1FY26"] == "no_facts"                             # BSE not asked yet: it may have the quarter
+    assert statuses({"Q4FY26", "Q1FY26"})["Q1FY26"] == "no_facts"           # on BSE's list: a gap to fill, not a pre-listing quarter
+
+
 def test_compare_marks_each_pair_ok_apart_no_facts_or_no_recipe():
     page = sv.parse_page(PAGE.replace('"1,99"', "199"))
     assert page["basis"] == "CONSOLIDATED" and "EPS in Rs" not in page["tables"]["annual"]

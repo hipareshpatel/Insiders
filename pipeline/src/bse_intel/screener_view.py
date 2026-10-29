@@ -80,11 +80,16 @@ from .screener_fill import _section_table, _basis_of, cash_year_of, period_of
 ABS_TOL, REL_TOL = 1.0, 0.0005          # a pair is exact within 1 Cr or 0.05% of screener's figure
 PCT_TOL = 0.51                           # screener prints whole percent
 PCT_ROWS = ("OPM %", "Financing Margin %", "Tax %")
-STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff")
+STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff", "before_listing")
 # the quarters compared start here (owner, 29 Oct 2026: "quarters from FY26"): every FY26 quarter is NSE's integrated filing, and the
 # older ones carry screener's merger restatements and the older file format; a quarter before it is listed as before_cutoff, never
 # counted in the exact share. Years and balance sheets are compared as before.
 FIRST_QUARTER = "Q1FY26"
+# a period screener shows from before the company's first results on any exchange (its prospectus, or the year-ago column of its first
+# results) is before_listing, never counted (owner, 29 Oct 2026: "we don't need it at all"): no facts for it, earlier than the first
+# results file we hold, and not on BSE's results list for the company (raw/bse-results-xbrl/<scrip>/list.json, so only once the BSE
+# fill has asked; a company listed on BSE before NSE has those quarters there). Measured 29 Oct 2026, run 40837941625: 1,253 of the
+# 1,458 FY26 quarters we had no figure for end before the company's NSE listing date.
 
 PL_ROWS = ("Sales", "Revenue", "Expenses", "Operating Profit", "Financing Profit", "OPM %", "Financing Margin %", "Other Income",
            "Interest", "Depreciation", "Profit before tax", "Tax %", "Net Profit")
@@ -764,6 +769,16 @@ class CompanyFacts:
             if m:
                 (self.annual if m[1] else self.results)[(m[2], m[3].upper())] = key
         self._cache: dict[str, xbrl_facts.Facts | None] = {}
+        self.bse_periods: set[str] | None = None     # the quarters BSE's results list holds; None: BSE not asked yet
+
+    def before_listing(self, period: str) -> bool:
+        """Whether ``period`` (a quarter, or a year "FY25": its March quarter) is before the company's first results we hold, on a
+        company whose BSE list was asked and does not hold it either."""
+        quarter = f"Q4{period}" if period.startswith("FY") else period
+        index = quarter_index(quarter)
+        held = [i for i in (quarter_index(p) for p, _ in self.results) if i is not None]
+        return (index is not None and bool(held) and index < min(held) and self.bse_periods is not None
+                and quarter not in self.bse_periods)
 
     def _load(self, key: str | None) -> xbrl_facts.Facts | None:
         if key is None:
@@ -904,7 +919,9 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                     out.append(rec)
                     continue
                 ours_rows, why = _ours(cf, fam, basis, table, period, memo)
-                if ours_rows is None:
+                if ours_rows is None and table in ("quarters", "annual") and cf.before_listing(period):
+                    rec.update(status="before_listing", note=f"{period} is before the company's first results on NSE or BSE: not compared")
+                elif ours_rows is None:
                     rec.update(status="no_facts", note=why)
                 elif row not in ours_rows:
                     rec.update(status="no_recipe", note=f"no {fam} recipe for {row} yet")
@@ -946,6 +963,17 @@ def _sector(sink, scrip: str) -> tuple[str, str]:
     return (src.get("sector") or "unknown"), (src.get("industry") or "")
 
 
+def _bse_periods(sink, scrip: str) -> set[str] | None:
+    """The quarters on the company's kept BSE results list (bse_results_xbrl.list_key), None when BSE was never asked."""
+    from .bse_results_xbrl import list_key
+
+    try:
+        blob = sink.get_object(list_key(scrip))
+        return {x["period"] for x in json.loads(blob).get("links") or []} if blob else None
+    except Exception:  # noqa: BLE001 - an unreadable list is no list: nothing is called before listing
+        return None
+
+
 def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | None = None) -> dict:
     """Read only: the stored screener pages (screener_crosscheck.stored_pages) and the stored facts docs in R2. No request to
     NSE, BSE or screener."""
@@ -975,6 +1003,7 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
             entry["skipped"] = "no stored page"
             return entry
         facts = CompanyFacts(sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/"), sink.get_object)
+        facts.bse_periods = _bse_periods(sink, scrip)
         if not facts.results and not facts.annual:
             entry["skipped"] = "no stored facts"
         bundle = {}

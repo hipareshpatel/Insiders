@@ -27,6 +27,12 @@ NSE's integrated filing; older quarters carry screener's merger restatements and
 `before_cutoff` and never counted. Years and balance sheets are compared as before. The BSE fill (`bse-results-xbrl`) fills only
 these quarters.
 
+**Before listing (owner, 29 Oct 2026: "we don't need it at all"):** screener shows quarters and years from before a company's IPO (its
+prospectus, or the year-ago column of its first results). A period with no facts, earlier than the first results file we hold, on a
+company whose BSE list was asked and does not hold it, is `before_listing` and never counted. Run 40837941625: 1,253 of the 1,458 FY26
+quarters with no figure from us end before the company's NSE listing date; some of those are on BSE (listed there first), which the
+BSE fill takes, so the rule waits for BSE's list.
+
 Source of a quarter: its own results file. NSE's results XBRL has no comparative column (measured 28 Oct 2026, Hindustan
 Unilever Q1FY27: only the quarter's own contexts), so screener's restated quarters (a merger, a demerger) cannot be read from
 XBRL; they are Event exceptions below.

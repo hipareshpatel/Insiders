@@ -137,11 +137,10 @@ def test_select_files_is_the_seeds_selection_with_both_bases():
                                       period_end=end))
     chosen = xbrl_facts.select_files(rows)
     ends = {r.period_end for _, _, r in chosen}
-    assert len(ends) == 14 and "2022-03-31" in ends                      # the 13 latest quarters, and the March quarter before them
+    assert len(ends) == 13 and "2022-03-31" in ends                      # the 12 latest quarters, and the March quarter before them
     assert sum(1 for _, b, _ in chosen if b == "CONSOLIDATED") == sum(1 for _, b, _ in chosen if b == "STANDALONE") == len(ends)
     assert max(ends) == "2025-12-31" and ("Q3FY26", "CONSOLIDATED") in {(p, b) for p, b, _ in chosen}
-    assert "2022-12-31" in ends                                          # the 13th latest: screener's table shows it
-    assert "2022-09-30" not in ends and "2022-06-30" not in ends         # older than the 13 latest quarters and not a March quarter
+    assert "2022-12-31" not in ends and "2022-09-30" not in ends         # older than the 12 latest quarters and not a March quarter
 
 
 # --- a run, a dry run, the skips -----------------------------------------------------------------------------------------
@@ -213,14 +212,14 @@ def test_a_stale_marker_asks_for_the_list_again_and_a_missing_period_is_fetched(
     assert xbrl_facts.key("1", "Q1FY24", "CONSOLIDATED") in sink.objects
 
 
-def test_a_fresh_marker_from_the_12_quarter_selection_asks_for_the_list_again():
+def test_a_fresh_marker_from_another_selection_asks_for_the_list_again():
     site = Site({"AAA": [irow("a1", Q2, True)]})
     sink, _ = run(site, companies=[("1", "AAA")])
     marker = json.loads(sink.objects[xbrl_facts.listed_key("1")])
     assert marker["v"] == xbrl_facts.MARKER_V
     _, again = run(site, sink=sink, companies=[("1", "AAA")])
     assert again["lists"] == 0                                             # today's marker, every period stored: no request
-    marker["v"] = 1                                                        # written on 28 Oct, before the 13th quarter was kept
+    marker["v"] = 2                                                        # written by the 13-quarter test run of 29 Oct
     sink.objects[xbrl_facts.listed_key("1")] = json.dumps(marker).encode()
     _, out = run(site, sink=sink, companies=[("1", "AAA")])
     assert out["lists"] == 1 and out["downloaded"] == 0 and out["skipped_stored"] == 1

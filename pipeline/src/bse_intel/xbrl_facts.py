@@ -452,8 +452,9 @@ def interesting(facts: Facts) -> set[str]:
 
 MAX_SHARDS = 16           # owner, 28 Oct 2026: 8 parallel downloads, then "Can we take it to 16" (the same day)
 SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
-FACTS_QUARTERS = 13       # screener's quarterly table shows a company's 13 latest results; the seed keeps 12 (owner, 29 Oct 2026)
-MARKER_V = 2              # a marker written under the 12-quarter selection (v1) is no marker: its company is listed again once
+FACTS_QUARTERS = 12       # the seed's 12. Screener shows 13, but the comparison starts at FY26 (screener_view.FIRST_QUARTER, owner,
+                          # 29 Oct 2026), which 12 cover; with 13 the test run 40837101219 fetched 90 files of Q1FY24 and Q2FY24
+MARKER_V = 1              # the marker's version: one written under another selection is no marker, its company is listed again
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
 GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS
@@ -491,10 +492,9 @@ def select_files(rows) -> list[tuple[str, str, object]]:
     """(period, basis, row) of the files to keep from NSE's results list: the seed's own selection (``seed._nse_quarters``: consolidated
     over standalone, the integrated filing over the older list's row, then the later filing, from SINCE; ``seed._recent_and_years``:
     the latest quarters and the March quarters before them), with BOTH bases of each chosen quarter (the seed keeps one, and the
-    standalone files of a consolidated filer apart). Newest first. The latest FACTS_QUARTERS, not the seed's SEED_QUARTERS: the
-    screener comparison reads 13 quarters, and with 12 the oldest one was missing for nearly every company (measured 29 Oct 2026:
-    NSE lists Q2FY24 with a file for HDFCBANK, TCS, INFY, LT, MARUTI, KOTAKBANK, ULTRACEMCO, JSWSTEEL, BAJAJ-AUTO, NESTLEIND, none
-    of which we had kept)."""
+    standalone files of a consolidated filer apart). Newest first. The latest FACTS_QUARTERS (screener shows 13; NSE lists Q2FY24
+    with a file for HDFCBANK, TCS, INFY, LT, MARUTI, KOTAKBANK, ULTRACEMCO, JSWSTEEL, BAJAJ-AUTO and NESTLEIND, measured 29 Oct 2026,
+    but the comparison starts at FY26)."""
     from . import seed
 
     by_basis: dict[bool, dict] = {True: {}, False: {}}

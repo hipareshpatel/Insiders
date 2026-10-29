@@ -3,7 +3,7 @@
 
 The NSE download (``xbrl-facts --from-nse``) is complete, yet each of the last 13 quarters lacks a results file for about 120-310
 companies (screener-rows run 40820489722). Two causes, measured 29 Oct 2026: that download kept 12 quarters, not screener's 13, so
-the oldest was missing for nearly every company though NSE lists it (now 13, xbrl_facts.FACTS_QUARTERS); and companies listed on
+the oldest was missing for nearly every company though NSE lists it (left so: the comparison starts at FY26); and companies listed on
 NSE late, whose earlier quarters NSE never had (Kusumgar, Rhetan, Ardee and Sudeep Pharma list no June 2025 row on either NSE
 results list). NSE is the faster source (16 shards), so it runs first and this fill takes only what NSE lacks. BSE's results
 archive has those: the 27 Oct fill (``memory-gaps-fill-bse``, F201) read it for memory, but kept no facts docs for the screener

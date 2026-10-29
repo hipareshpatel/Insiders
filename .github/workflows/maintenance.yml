@@ -315,7 +315,7 @@ on:
         type: string
         default: ''
       from_nse:
-        description: xbrl-facts only - with apply, list each company's results files from NSE's own list (the latest 13 quarters, screener's table, both bases) and download every file not stored, keeping its facts as it goes; no memory write (one list request a company, not counted toward file_cap; each file is)
+        description: xbrl-facts only - with apply, list each company's results files from NSE's own list (the latest 12 quarters, both bases; the screener comparison starts at FY26) and download every file not stored, keeping its facts as it goes; no memory write (one list request a company, not counted toward file_cap; each file is)
         type: boolean
         default: false
       shards:

@@ -67,9 +67,10 @@
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
 # - screener-schedules (owner, 29 Oct 2026: "Feel free to even get everything"): the sub-rows behind each "+" head of the stored
 #   screener pages (screener_schedules.py): one request a head to /api/company/<id>/schedules/ (robots.txt allows it), 2.5 s
-#   apart a runner (owner: 2-3 s), the same stop rule, the largest companies first, two runners; stored at raw/screener-schedules/<day>/<SYMBOL>_<c|s>.json.gz,
-#   a stored page is not asked again; `file_cap` = at most that many requests a runner (the first run: 50 each, 100 in all);
-#   exit 124 resumes. Artifacts `screener-schedules-0` and `-1`.
+#   apart a runner (owner: 2-3 s), the same stop rule, the largest companies first, twelve runners (job `schedules`); every
+#   expandable sub-row is asked too, and both pages of a company go in one file, raw/screener-schedules/<day>/<SYMBOL>.json.gz;
+#   a stored company is not asked again; `file_cap` = at most that many requests a runner; exit 124 resumes. Artifacts
+#   `screener-schedules-<shard>`.
 # - tijori-download: the download of every company's financials page from Tijori Finance (owner request 26 Oct 2026; F189, TODO 92),
 #   gzipped JSON tables into R2 at raw/tijori/<date>/<SYMBOL>.json.gz. One runner (job `tijori`) for the whole universe: 8 threads
 #   behind one shared limiter at TIJORI_RATE requests a second (default 6; about 1,900 pages, 5 to 6 minutes). The first refusal
@@ -1237,7 +1238,7 @@ jobs:
   # every second company with gaps; each saves the companies it tried (kv screenerfill:tried:<i>of2, or the dry run's own
   # screenerfill:dry_tried:<i>of2). No AI and no NSE call.
   screener:
-    if: inputs.command == 'screener-fill' || inputs.command == 'screener-fill-apply' || inputs.command == 'screener-download' || inputs.command == 'screener-schedules'
+    if: inputs.command == 'screener-fill' || inputs.command == 'screener-fill-apply' || inputs.command == 'screener-download'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 320
     strategy:
@@ -1269,16 +1270,8 @@ jobs:
           timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-download --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.restart && '--restart' || '' }} --json "$RUNNER_TEMP/screener/screener-download-${{ matrix.shard }}.json" || code=$?
           if [ "$code" -eq 124 ]; then echo "::warning::time budget ended with companies left: run the same command again to resume"; mkdir -p "$RUNNER_TEMP/more"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
           exit "$code"
-      - name: Download this shard's screener.in sub-rows
-        if: inputs.command == 'screener-schedules'
-        run: |
-          code=0
-          mkdir -p "$RUNNER_TEMP/screener"
-          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-schedules --shard ${{ matrix.shard }}/2 --time-budget 17400 ${{ inputs.file_cap && format('--max-requests {0}', inputs.file_cap) || '' }} --json "$RUNNER_TEMP/screener/screener-schedules-${{ matrix.shard }}.json" || code=$?
-          if [ "$code" -eq 124 ]; then echo "::warning::time budget or request cap ended with pages left: run the same command again to resume"; mkdir -p "$RUNNER_TEMP/more"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
-          exit "$code"
       - name: Fill this shard's gaps from screener.in
-        if: inputs.command != 'screener-download' && inputs.command != 'screener-schedules'
+        if: inputs.command != 'screener-download'
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/screener"
@@ -1289,6 +1282,52 @@ jobs:
         if: always()
         with:
           name: ${{ inputs.command == 'screener-fill-apply' && 'screener-fill' || inputs.command }}-${{ matrix.shard }}
+          path: ${{ runner.temp }}/screener/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screener-more-${{ matrix.shard }}
+          path: ${{ runner.temp }}/more/
+          if-no-files-found: ignore
+
+  # The screener.in sub-rows (owner, 29 Oct 2026: "they allow multiple GitHub machines, you can have 12 machine"): twelve runners,
+  # each taking every twelfth company (largest first), 2.5 s between its requests, one file a company. No AI, no NSE.
+  schedules:
+    if: inputs.command == 'screener-schedules'
+    runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
+    timeout-minutes: 320
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        if: ${{ !contains(vars.PIPELINE_RUNNER_LABELS || '', 'self-hosted') }}
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e "."
+      - name: Download this shard's screener.in sub-rows
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/screener"
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-schedules --shard ${{ matrix.shard }}/12 --time-budget 17400 ${{ inputs.file_cap && format('--max-requests {0}', inputs.file_cap) || '' }} --json "$RUNNER_TEMP/screener/screener-schedules-${{ matrix.shard }}.json" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::time budget or request cap ended with companies left: run the same command again to resume"; mkdir -p "$RUNNER_TEMP/more"; echo more > "$RUNNER_TEMP/more/${{ matrix.shard }}"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screener-schedules-${{ matrix.shard }}
           path: ${{ runner.temp }}/screener/
           if-no-files-found: ignore
       - uses: actions/upload-artifact@v4

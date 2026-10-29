@@ -1388,7 +1388,7 @@ def cmd_screener_download(args, settings, sink) -> int:
 
 def cmd_screener_schedules(args, settings, sink) -> int:
     """The sub-rows behind each "+" head of the stored screener.in pages, into R2 (screener_schedules.py; owner, 29 Oct 2026):
-    one request a head, 2.5 s apart a runner (owner: 2-3 s), at most 2 runners, the largest companies first; a 403,
+    one request a head (nested sub-rows too), 2.5 s apart a runner (owner: 2-3 s), up to 12 runners, one file a company, the largest companies first; a 403,
     429 or 503 stops the run (exit 75). Resumable (a stored page is not asked again); exit 124 when the time budget or
     --max-requests ends it with pages left. No AI, no NSE, no memory."""
     from . import screener_download as sd
@@ -1399,9 +1399,9 @@ def cmd_screener_schedules(args, settings, sink) -> int:
     if args.shard:
         try:
             index, count = (int(x) for x in args.shard.split("/"))
-            assert 0 <= index < count <= sd.MAX_SHARDS
+            assert 0 <= index < count <= ss.MAX_SHARDS
         except (ValueError, AssertionError):
-            print(f"--shard takes I/N with 0 <= I < N <= {sd.MAX_SHARDS}, e.g. 0/2")
+            print(f"--shard takes I/N with 0 <= I < N <= {ss.MAX_SHARDS}, e.g. 0/12")
             return 2
         shard = (index, count)
     companies = _universe_companies(sink, args.scrips)
@@ -2495,7 +2495,7 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("screener-schedules", help="the sub-rows behind each '+' head of the stored screener.in pages, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe, largest first)")
-    p.add_argument("--shard", help="I/N with N at most 2: this runner's share of the companies")
+    p.add_argument("--shard", help="I/N with N at most 12: this runner's share of the companies")
     p.add_argument("--max-requests", type=int, help="stop before this many requests (a trial: the first run asks 100)")
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if pages are left")
     p.add_argument("--json", help="write the summary to this file")

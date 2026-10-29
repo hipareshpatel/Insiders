@@ -86,6 +86,13 @@ _NOT_APPLICABLE = re.compile(r"[ \t]+(?:[\w-]+[ \t]+){0,3}?(?:is|are)[ \t]+not[ 
 _NOT_REQUIRED_BEFORE = re.compile(r"(?:is|are)\s+not\s+required\s+to\s+(?:prepare|present|publish|submit|draw\s+up)\s+(?:the\s+)?$", re.I)
 _NO_SUB_ASSOC_JV = re.compile(r"(?:does\s*not\s+have|has\s+no|have\s+no)\s+(?:any\s+)?subsidiar\w*\s*[/,]?\s*(?:or\s+)?associate\w*"
                               r"\s*[/,]?\s*(?:or\s+)?joint\s+venture", re.I)
+# "... or joint venture except XYZ Ltd": the company has one after all
+_EXCEPT = re.compile(r"\b(?:except|other\s+than|save|barring|apart\s+from|excluding|but)\b", re.I)
+
+
+def _none_of_three(text: str) -> bool:
+    """The page says the company has no subsidiary, associate or joint venture, with no exception in the rest of that sentence."""
+    return any(not _EXCEPT.search(re.split(r"[.\n]", text[m.end():], maxsplit=1)[0]) for m in _NO_SUB_ASSOC_JV.finditer(text))
 
 
 def names_consolidated(text: str, not_required: bool = False) -> bool:
@@ -95,7 +102,7 @@ def names_consolidated(text: str, not_required: bool = False) -> bool:
     applicable", ORIENTCEM Q2FY27). ``not_required`` (numbers-first only): also a use the same sentence says the company is not
     required to prepare, on a page that says it has no subsidiary, associate or joint venture (SBICARD Q2FY27)."""
     no_subsidiary = bool(_NO_SUBSIDIARY.search(text))
-    none_of_three = not_required and bool(_NO_SUB_ASSOC_JV.search(text))
+    none_of_three = not_required and _none_of_three(text)
     for m in _CONS_WORD.finditer(text):
         if no_subsidiary and _NOT_APPLICABLE.match(text, m.end()):
             continue

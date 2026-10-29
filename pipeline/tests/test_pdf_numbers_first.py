@@ -1403,6 +1403,9 @@ def test_a_banks_provisions_that_include_the_tax_never_make_its_net_profit_the_p
     # one of the three missing: a company with associates may still publish consolidated results
     ("The Company does not have any subsidiary. Accordingly, the Company is not required to prepare consolidated financial "
      "results. Standalone results enclosed.", False),
+    # an exception after the three: the company has one after all
+    ("The Company does not have any subsidiary, associate or joint venture except XYZ Ltd. Accordingly, the Company is not "
+     "required to prepare consolidated financial results. Standalone results enclosed.", False),
     # the exemption said, but a consolidated statement named elsewhere on the page
     ("The Company does not have any subsidiary, associate or joint venture. Statement of Consolidated Financial Results "
      "attached. Standalone results enclosed.", False),

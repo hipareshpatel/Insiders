@@ -65,6 +65,10 @@
 #   again; a run that ends on its time budget (exit 124) is started again and resumes; `restart` ignores the finished list;
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
+# - bse-annual-xbrl (owner, 29 Oct 2026: "go for 100 but ensure to save them"): the annual-report XBRL BSE lists for the years
+#   NSE does not (before NSE/CML/2026/08 of 20 Apr 2026 a company could file it with BSE alone; FY23 too), through the ported
+#   adapter; each file kept raw at raw/bse-annual-xbrl/<scrip>/<file>.gz and its facts as the annual document unless NSE's is
+#   stored, a stored year never asked again. Group maint-bse; `file_cap` caps a test, `limit` takes the N largest companies.
 # - screener-schedules (owner, 29 Oct 2026: "Feel free to even get everything"): the sub-rows behind each "+" head of the stored
 #   screener pages (screener_schedules.py): one request a head to /api/company/<id>/schedules/ (robots.txt allows it), 2.5 s
 #   apart a runner (owner: 2-3 s), the same stop rule, the largest companies first, twelve runners (job `schedules`); every
@@ -237,7 +241,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
       backup:
         description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -327,7 +331,7 @@ concurrency:
     ${{ contains(fromJSON('["seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","restore"]'), inputs.command) && 'maint-cards'
-    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse"]'), inputs.command) && 'maint-bse'
+    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","text-backfill-bse","bse-annual-xbrl"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
@@ -489,6 +493,24 @@ jobs:
         with:
           name: memory-gaps-fill-bse
           path: ${{ runner.temp }}/gapsbse/
+          if-no-files-found: ignore
+      - name: Annual-report XBRL from BSE (the years NSE does not list)
+        if: inputs.command == 'bse-annual-xbrl'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        run: |
+          # every file kept raw in R2 and its facts saved; a stored year is not asked again; file_cap caps a test (the first is 100)
+          set -o pipefail
+          code=0
+          mkdir -p "$RUNNER_TEMP/bseannual"
+          "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"   # the ported adapter uses requests, as bse-results-test
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel bse-annual-xbrl --time-budget 17400 ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }} --json "$RUNNER_TEMP/bseannual/bse-annual-xbrl.json" | tee "$RUNNER_TEMP/bseannual/bse-annual-xbrl.txt" || code=$?
+          if [ "$code" -eq 124 ]; then echo "::warning::the file cap or the time budget ended the run with companies left: run the same command again to resume"; exit 0; fi
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'bse-annual-xbrl'
+        with:
+          name: bse-annual-xbrl
+          path: ${{ runner.temp }}/bseannual/
           if-no-files-found: ignore
       - name: Drop the known-wrong figures from memory (a dry run unless apply)
         if: inputs.command == 'memory-drop-known-wrong'

@@ -8,6 +8,10 @@ key. A reading is right when it is within half a unit of the printed decimals (a
 
     python -m bse_intel.pdf_bench --collect <key.csv> <pdf dir> [limit]       download the key's PDFs (NSE)
     python -m bse_intel.pdf_bench --run <key.csv> <pdf dir> <out dir> [limit]  read, settle, score; writes hardset-score.json/.md
+    python -m bse_intel.pdf_bench --key-from-xbrl <xbrl-key.csv> <out key.csv>  a key from the xbrl-key rows (the out-of-sample test)
+
+A key whose rows carry ``batch:<n>`` tags (``--key-from-xbrl`` writes them, ten filings a batch) also gets a per-batch table and a
+running total in the score.
 """
 from __future__ import annotations
 
@@ -48,6 +52,54 @@ def pairs_of(key: list[dict], limit: int | None = None) -> list[dict]:
             for r in sorted((r for r in key if r["pdf_url"] in order), key=lambda r: order[r["pdf_url"]])]
 
 
+BATCH_SIZE = 10               # filings in a batch of the out-of-sample key
+SKIP_STATUSES = ("fetch_failed", "locate_error")
+KEY_HEADER = "symbol,scrip,period_end,period,basis,metric,expected_cr,unit_printed,pdf_url,tags".split(",")
+
+
+def key_from_xbrl(rows: list[dict]) -> list[dict]:
+    """Key rows (the bench's format) from ``xbrl_key`` rows: every row with a pdf_url and a numeric xbrl_value, whatever its status
+    but fetch_failed and locate_error; ``expected_cr`` is the exchange's figure. Tags: ``xbrl:<status>`` and ``batch:<n>``, n = 1 +
+    (the filing's place among the filings that give key rows, in the order the rows first show them, // 10)."""
+    from .memory_gaps import quarter_end
+
+    out, filings = [], {}
+    for r in rows:
+        value = r.get("xbrl_value")
+        try:
+            value = float(value)
+        except (TypeError, ValueError):
+            continue
+        if r.get("status") in SKIP_STATUSES or not r.get("pdf_url") or value != value:
+            continue
+        filing = (r.get("symbol"), r.get("filing_period") or "", r["pdf_url"])
+        batch = 1 + filings.setdefault(filing, len(filings)) // BATCH_SIZE
+        end = quarter_end(r.get("period") or "")
+        out.append({"symbol": r["symbol"], "scrip": "", "period_end": end.isoformat() if end else "", "period": r["period"],
+                    "basis": r["basis"], "metric": r["metric"], "expected_cr": f"{value:g}", "unit_printed": r.get("printed_unit") or "",
+                    "pdf_url": r["pdf_url"], "tags": f"xbrl:{r.get('status')}|batch:{batch}"})
+    return out
+
+
+def key_to_csv(key: list[dict]) -> str:
+    buffer = io.StringIO()
+    writer = csv.DictWriter(buffer, KEY_HEADER, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(key)
+    return buffer.getvalue()
+
+
+def make_key(xbrl_csv: str, out_csv: str) -> int:
+    from .xbrl_key import load_csv
+
+    with open(xbrl_csv, encoding="utf-8") as fh:
+        key = key_from_xbrl(load_csv(fh.read()))
+    with open(out_csv, "w", encoding="utf-8", newline="") as fh:
+        fh.write(key_to_csv(key))
+    print(f"key of {len(key)} rows, {len({r['pdf_url'] for r in key})} PDFs, written to {out_csv}")
+    return 0
+
+
 def outcome(status: str, value: float | None, expected: float, tol: float) -> str:
     """right | wrong | abstain for one reading (status ``ok``) or one settled verdict."""
     if status != "ok" or value is None:
@@ -84,6 +136,42 @@ FIRST = "FIRST ANSWER"   # the first reader, in PDF_READERS order, that gives a 
 def first_answer(readers: dict) -> dict:
     """The reading of the first reader (in the order they were asked) whose status is ``ok``; none when no reader gave one."""
     return next((rd for rd in readers.values() if rd["status"] == "ok"), {"status": "none", "value": None, "tol": MIN_TOL})
+
+
+def batch_of(rec: dict) -> int | None:
+    for t in rec["tags"]:
+        if t.startswith("batch:") and t[6:].isdigit():
+            return int(t[6:])
+    return None
+
+
+def batch_table(records: list[dict]) -> dict | None:
+    """Right / wrong / abstain of each reader, the first answer and the ensemble verdict, batch by batch and as a running total after
+    each batch; None when no key row carries a ``batch:<n>`` tag (the existing keys)."""
+    batches: dict[int, dict[str, dict]] = {}
+    sizes: dict[int, int] = defaultdict(int)
+    for rec in records:
+        n = batch_of(rec)
+        if n is None:
+            continue
+        sizes[n] += 1
+        got = batches.setdefault(n, defaultdict(_count))
+        for name, rd in list(rec["readers"].items()) + [(FIRST, first_answer(rec["readers"]))]:
+            got[name][outcome(rd["status"], rd["value"], rec["expected"], rd["tol"])] += 1
+        v = rec["verdict"]
+        got["ENSEMBLE"][outcome("ok" if v["status"] == "settled" else "", v["value"], rec["expected"], v["tol"])] += 1
+    if not batches:
+        return None
+    total: dict[str, dict] = defaultdict(_count)
+    rows, running = [], []
+    for n in sorted(batches):
+        rows.append({"batch": n, "pairs": sizes[n], "counts": {k: dict(c) for k, c in batches[n].items()}})
+        for name, c in batches[n].items():
+            for k, v in c.items():
+                total[name][k] += v
+        running.append({"through_batch": n, "pairs": sum(sizes[m] for m in sizes if m <= n),
+                        "counts": {k: dict(c) for k, c in total.items()}})
+    return {"batches": rows, "running": running}
 
 
 def score(records: list[dict]) -> dict:
@@ -130,7 +218,8 @@ def score(records: list[dict]) -> dict:
             false_settlements.append({"symbol": rec["symbol"], "period": rec["period"], "metric": rec["metric"],
                                       "basis": rec["basis"], "settled": v["value"], "expected": exp,
                                       "agreed": v["agreed"], "tags": rec["tags"], "pdf_url": rec["pdf_url"]})
-    return {"pairs": len(records), "readers": readers, "ensemble": ensemble, "first": first, "verdicts": dict(verdicts),
+    by_batch = batch_table(records)
+    return {**({"by_batch": by_batch} if by_batch else {}), "pairs": len(records), "readers": readers, "ensemble": ensemble, "first": first, "verdicts": dict(verdicts),
             "by_layer": {g: {k: dict(c) for k, c in d.items()} for g, d in by_layer.items()},
             "by_tag": {t: {k: dict(c) for k, c in d.items()} for t, d in sorted(by_tag.items())},
             "by_metric": {m: {k: dict(c) for k, c in d.items()} for m, d in sorted(by_metric.items())},
@@ -177,6 +266,14 @@ def to_markdown(s: dict) -> str:
             out += ["", f"## {title} (right/wrong/abstain)", "",
                     "| Reader | right/wrong/abstain |", "|---|---|"]
             out += [f"| {n} | {c['right']}/{c['wrong']}/{c['abstain']} |" for n, c in sorted(d.items())]
+    if s.get("by_batch"):
+        names = sorted(s["readers"]) + [FIRST, "ENSEMBLE"]
+        cell = lambda d, n: "{}/{}/{}".format(*(d.get(n, _count())[k] for k in ("right", "wrong", "abstain")))   # noqa: E731
+        for title, rows, label in (("Per batch of ten filings", s["by_batch"]["batches"], lambda r: f"{r['batch']}"),
+                                   ("Running total", s["by_batch"]["running"], lambda r: f"1-{r['through_batch']}")):
+            out += ["", f"## {title} (right/wrong/abstain; ENSEMBLE = the settled verdict)", "",
+                    "| Batch | rows | " + " | ".join(names) + " |", "|---|---|" + "---|" * len(names)]
+            out += [f"| {label(r)} | {r['pairs']} | " + " | ".join(cell(r["counts"], n) for n in names) + " |" for r in rows]
     out += ["", f"## The ensemble's false settlements ({len(s['false_settlements'])})", ""]
     out += [f"- {f['symbol']} {f['period']} {f['basis']} {f['metric']}: settled {f['settled']:g}, printed {f['expected']:g} "
             f"(agreed: {'+'.join(f['agreed'])}; tags: {', '.join(f['tags'])})" for f in s["false_settlements"]] or ["None."]
@@ -255,8 +352,10 @@ if __name__ == "__main__":
     argv = sys.argv[1:]
     if len(argv) in (3, 4) and argv[0] == "--collect":
         sys.exit(collect(argv[1], argv[2], int(argv[3]) if len(argv) == 4 else None))
+    if len(argv) == 3 and argv[0] == "--key-from-xbrl":
+        sys.exit(make_key(argv[1], argv[2]))
     if len(argv) in (4, 5) and argv[0] == "--run":
         sys.exit(run(argv[1], argv[2], argv[3], int(argv[4]) if len(argv) == 5 else None))
-    print("usage: python -m bse_intel.pdf_bench --collect <key.csv> <dir> [limit] | --run <key.csv> <pdf dir> <out dir> [limit]",
+    print("usage: python -m bse_intel.pdf_bench --collect <key.csv> <dir> [limit] | --run <key.csv> <pdf dir> <out dir> [limit] | --key-from-xbrl <xbrl-key.csv> <out key.csv>",
           file=sys.stderr)
     sys.exit(2)

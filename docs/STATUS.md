@@ -131,7 +131,9 @@ The order: correct memory first, from the exchange's files by screener's rules; 
     against the exact XBRL key, numbers-first 243 right / 11 wrong / 246 none after two fixes (the 60 never opened while fixing:
     126/6/124); all 11 wrongs hand-sorted, 0 misreadings: 10 are the PBT definition (the XBRL tag is before the associates' and
     JVs' share, the printed PBT after it: M&M Q1FY27 7,260.60 against 7,628.09), 1 a file's own unit. #218 waits for the lead's
-    line-by-line review; switch-on is the owner's call. The PBT finding matters for memory and cards: which PBT a card shows.
+    line-by-line review. **Owner, 30 Oct ~02:55 IST: Yes** to switching the new reader on (SLIP_CHECK_NUMFIRST) once the
+    review is clean; the old reader stays as the fallback. Next build (off, measured, owner decides): the new reader fills a
+    results quarter whose file is late, instead of the AI's figures. The PBT finding matters for memory and cards: which PBT a card shows.
 15. **Annual-report extras into memory** (related parties, contingent liabilities, auditor remarks, pay): TODO, owner's Yes.
 
 

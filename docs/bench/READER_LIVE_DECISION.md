@@ -20,8 +20,11 @@ decide what goes live. Times are IST. Every number below is measured unless it s
    - **Hard key** (`docs/bench/hardpdf/`): 340 figures from 21 deliberately hard PDFs (scans, rotated pages, garbled text
      layers, two bases side by side, banks and lenders). Built 26 Oct from NSE's results XBRL and checked against the page;
      where the page prints another figure, the page wins.
-   - A held-out set of companies (`docs/bench/heldout.csv`) is never tuned on: normal 48 of 71 figures right (SBICARD was
-     looked at on 29 Oct and no longer counts), hard 12 of 44. Every change is re-scored on both keys from frozen code.
+   - A held-out set of companies (`docs/bench/heldout.csv`) is never tuned on. Right / wrong / blank (frozen 29b51f1):
+     **normal 52 / 0 / 19** of 71 (48 / 0 / 19 of 67 without SBICARD, looked at on 29 Oct), **hard 12 / 0 / 32** of 44. The
+     hard held-out set is 3 filings: GEOJITFSL 12 of 12 right; J&KBANK 16 blank (no unit read) and REPCOHOME 16 blank (a
+     garbled scan). So its 27% is blanks, not wrong figures. It is small: 115 figures in all, 64 right, 0 wrong. Every change
+     is re-scored on both keys from frozen code.
 2. **Right against wrong.** The new reader: normal **260 right, 0 wrong, 77 blank**; hard **264 right, 0 wrong, 76 blank**,
    so 0 wrong in 524 answers (677 figures). It leaves a figure blank whenever the sums or labels do not prove it.
    - **The lead's "19% right, 13% wrong" (27 Oct, run 40414799620) is the old reader on the hard key** (65 right, 10 wrong,

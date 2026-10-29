@@ -122,7 +122,11 @@ The order: correct memory first, from the exchange's files by screener's rules; 
 12. **The four card switches on** (consolidated only, company EBITDA first, two parts, dated guidance): live (PR #219).
 13. **Memory gaps checked against listing dates** (TODO 130): 1,445 before listing, 26 missed by the count, 50 truly absent
     in 37 companies; the 28 NSE-listed re-read (run 40944604129).
-14. **PDF reader:** tested in its own session (100 out-of-sample PDFs); the owner comes back to it later.
+14. **PDF reader:** tested in its own session. Out-of-sample result (docs/bench/oos/README.md on #218): 60 filings, 500 figures
+    against the exact XBRL key, numbers-first 243 right / 11 wrong / 246 none after two fixes (the 60 never opened while fixing:
+    126/6/124); all 11 wrongs hand-sorted, 0 misreadings: 10 are the PBT definition (the XBRL tag is before the associates' and
+    JVs' share, the printed PBT after it: M&M Q1FY27 7,260.60 against 7,628.09), 1 a file's own unit. #218 waits for the lead's
+    line-by-line review; switch-on is the owner's call. The PBT finding matters for memory and cards: which PBT a card shows.
 15. **Annual-report extras into memory** (related parties, contingent liabilities, auditor remarks, pay): TODO, owner's Yes.
 
 

@@ -284,6 +284,7 @@ class Column:
     kind: str | None = None        # quarter, half, nine, year (None: not told)
     kind_confident: bool = False
     whole: bool = False            # a column of small whole figures found by ``whole_number_columns``
+    inferred: bool = False         # its date was not read but given by the layout (``fill_corresponding_quarter``)
     read_date: date | None = None  # the header's date as read, kept when the kinds disagree (only the half-year sum uses it)
 
 
@@ -1287,7 +1288,9 @@ def usable_dates(tables: list[Table]) -> int:
     """The most usable column dates any named table of a page has (-1 when none is named): a date the header's words dispute
     does not count (RADICO Q2FY27: its half-year columns' dates were read and disputed, so the page looked dated and its
     garbled layer was never read with OCR)."""
-    return max((sum(c.date is not None for c in t.columns) for t in tables if t.named), default=-1)
+    # a date the layout gave, not read, does not count either (CENTRUM Q4FY24: the page then looked dated and its OCR pass,
+    # which answers the year, was skipped)
+    return max((sum(c.date is not None and not c.inferred for c in t.columns) for t in tables if t.named), default=-1)
 
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
             keep_unnamed: bool = False) -> list[Table]:
@@ -1521,7 +1524,7 @@ def fill_corresponding_quarter(columns: list[Column]) -> None:
     # current half year, nine months or year of a layout that leaves the same quarter last year out (31st review)
     if not any(x.date == a.date and x.kind in ("half", "nine", "year") for x in rest):
         return
-    c.date, c.kind = year_before, "quarter"
+    c.date, c.kind, c.inferred = year_before, "quarter", True
 
 
 def previous_quarter_end(d: date) -> date:

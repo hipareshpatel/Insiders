@@ -1275,3 +1275,15 @@ def test_an_undated_third_column_of_a_sebi_layout_is_the_same_quarter_a_year_bef
         c = cols(bad)
         nf.fill_corresponding_quarter(c)
         assert c[2].date is None
+
+
+def test_a_date_given_by_the_layout_does_not_make_a_page_look_dated():
+    # CENTRUM Q4FY24: the filled third column made the scan look dated, so its OCR pass (which answers the year) was skipped
+    cols = [nf.Column(0, 1, 0.5, i) for i in range(5)]
+    for c, (k, d) in zip(cols, [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None),
+                                ("year", date(2024, 3, 31)), ("year", date(2023, 3, 31))]):
+        c.kind, c.date = k, d
+    nf.fill_corresponding_quarter(cols)
+    table = nf.Table(1, "CONSOLIDATED", 1, cols, [], "textlayer")
+    table.named = {"revenue": []}
+    assert cols[2].date == date(2023, 3, 31) and nf.usable_dates([table]) == 4

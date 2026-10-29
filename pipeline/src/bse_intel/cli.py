@@ -1495,6 +1495,31 @@ def cmd_bse_results_xbrl(args, settings, sink) -> int:
     return MORE_LEFT if out["more"] else 0
 
 
+def cmd_keep_annual_pdfs(args, settings, sink) -> int:
+    """Keep the named companies' annual-report PDFs in R2 once (annual_pdfs.py; owner, 29 Oct 2026), the NSE client unchanged; a
+    stored file is never fetched again. A refusal stops the run (exit 75). No AI, no memory."""
+    from . import annual_pdfs as ap
+    from .nse import NseClient, SourceBlockedError
+
+    symbols = [x.strip().upper() for x in (args.symbols or "").split(",") if x.strip()]
+    if not symbols:
+        print("--symbols takes NSE symbols, comma-separated")
+        return 2
+    try:
+        client = NseClient()
+        client.warm_up()
+        out = ap.run(sink, client, symbols, args.year)
+    except SourceBlockedError as exc:
+        logging.getLogger("bse_intel.annual_pdfs").error("NSE refused; stopping: %s", exc)
+        return REFUSED
+    print(json.dumps({k: v for k, v in out.items() if k != "kept"}, indent=1))
+    for row in out["kept"]:
+        print(f"  {row['symbol']:12s} {row['bytes'] / 1e6:6.1f} MB  {row['key']}")
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
+    return 0
+
+
 def cmd_tijori_download(args, settings, sink) -> int:
     """The download of every company's financials from Tijori Finance, raw and gzipped, into R2 (tijori.py, F189, TODO 92): one
     page a company at TIJORI_RATE requests a second (default 6) through 8 threads; the first refusal slows the run to one
@@ -2578,6 +2603,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--time-budget", type=int, default=17400, help="seconds; exit 124 if companies are left")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_bse_results_xbrl)
+
+    p = sub.add_parser("keep-annual-pdfs", help="keep named companies' annual-report PDFs in R2, once (NSE, no AI)")
+    p.add_argument("--symbols", help="comma-separated NSE symbols")
+    p.add_argument("--year", help="the year the report ends, e.g. 2026 for FY26 (default: each company's newest)")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_keep_annual_pdfs)
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

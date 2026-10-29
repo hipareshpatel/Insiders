@@ -95,6 +95,12 @@ jobs:
       - name: Annual reports re-read once their XBRL is listed
         if: always()
         run: timeout 12m bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel annual-xbrl-catchup --max-companies 150 || [ $? -eq 124 ]
+      # every fact of the results files the live path kept in R2 since the last run (raw/xbrl-facts/), so the screener-row
+      # rules (screener_view) have each new filing's full statements; stored files only, no NSE request, no memory write;
+      # a company whose facts are stored is skipped, so a run cut by its budget resumes the next night
+      - name: Facts of the stored results files (stored files only, no NSE)
+        if: always()
+        run: timeout 20m "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts --time-budget 1080 || [ $? -eq 124 ]
       - name: Held cards published without their unquoted points (prune.py)
         if: always()
         run: 'bash scripts/retry.sh "$RUNNER_TEMP/venv/bin/python" -m bse_intel release-pruned'

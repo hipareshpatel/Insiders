@@ -242,6 +242,14 @@ def card_one_basis() -> bool:
     return _switch("CARD_ONE_BASIS")
 
 
+def memory_results_from_file() -> bool:
+    """MEMORY_RESULTS_FROM_FILE (default OFF until the owner says on, 29 Oct 2026: "use data only from memory and don't use it from card"): a
+    quarter's profit and loss in memory is the exchange's own file figure (the XBRL, or a figure the reader built from it).
+    A results card's AI reading of that quarter is not written into memory; a card may still fill a quarter memory has no
+    figure for when it is not a results filing. Off: the earlier behaviour, a results card's reading is stored."""
+    return _switch("MEMORY_RESULTS_FROM_FILE", default=False)
+
+
 def card_results_one_line() -> bool:
     """CARD_RESULTS_ONE_LINE (on in config/switches.toml; TODO 107, F206; live audit of 26 Oct 2026, class "two bases in the results block"):
     each row of the results block takes its current and comparative figures from one statement line (revenue from

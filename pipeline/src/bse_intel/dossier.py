@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2,
+from .settings import (card_results_one_line, memory_results_from_file, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible, known_wrong
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -1189,6 +1189,12 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
         m_by = getattr(m, "by", None) or item_by
+        if m_by == "ai" and results_source and key[0] in FLOW_METRICS and key[1].startswith("Q") and memory_results_from_file():
+            # MEMORY_RESULTS_FROM_FILE (owner, 29 Oct 2026): a results card's own reading of a quarter's profit and loss is
+            # not memory; the exchange's file is (it arrives later and replaces nothing that was filed)
+            log.info("memory: %s %s %s from %s refused: a results card's own reading, memory takes it from the exchange file",
+                     key[0], key[1], m.value, news_id)
+            continue
         if m_by not in ("file", "calc") and key[0] == "eps":
             # EPS_BASE_CHECK (F208): a standalone EPS an AI read stored as consolidated is dropped, not moved (moving a figure
             # worked out from a ratio would write a second guess into the standalone block, which only files fill)

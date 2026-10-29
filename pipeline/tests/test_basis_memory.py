@@ -129,3 +129,22 @@ def test_a_presentations_annualised_eps_never_replaces_the_results_quarter():
     deck.dossier_delta.financial_metrics[0].metric = "eps"
     d = merge(d, deck, _filing("p-1", "2026-07-29T20:15:49+05:30", "CONCALL_PRESENTATION"), None, "now")
     assert next(m["value"] for m in d["financial_metrics"] if m["metric"] == "eps") == 8.65
+
+
+def test_a_results_cards_own_reading_is_not_memory_when_the_switch_is_on(monkeypatch):
+    """MEMORY_RESULTS_FROM_FILE (owner, 29 Oct 2026): a quarter's profit and loss comes from the exchange's file, not a results card."""
+    monkeypatch.setenv("MEMORY_RESULTS_FROM_FILE", "1")
+    d = new_dossier(_filing("a", "2025-05-20T10:00:00+05:30"))
+    d = merge(d, _out(38.17), _filing("card-1", "2025-05-20T10:00:00+05:30"), None, "now")
+    assert not [m for m in d["financial_metrics"] if m["metric"] == "pat" and m["period"] == "Q4FY25"]
+    seed = Pass2Output(is_material=False, timeline_entry="")
+    seed.dossier_delta.financial_metrics = _out(20.51).dossier_delta.financial_metrics
+    d = merge(d, seed, _filing("xbrl:res:519552:Q4FY25", "2025-06-12T18:00:00+05:30"), None, "now", basis="CONSOLIDATED")
+    assert _pat(d) == 20.51
+
+
+def test_the_switch_off_keeps_the_earlier_behaviour(monkeypatch):
+    monkeypatch.setenv("MEMORY_RESULTS_FROM_FILE", "0")
+    d = new_dossier(_filing("a", "2025-05-20T10:00:00+05:30"))
+    d = merge(d, _out(38.17), _filing("card-1", "2025-05-20T10:00:00+05:30"), None, "now")
+    assert _pat(d) == 38.17

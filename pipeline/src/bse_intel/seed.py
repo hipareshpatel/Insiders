@@ -130,6 +130,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     # Every quarter is read before any is written, so a file tagged in the wrong unit can be told by the
     # company's other quarters and put right before it reaches memory (xbrl.fix_scale).
     found: dict[str, tuple[str, str, object, bool]] = {}     # period -> (filed on, url, parsed, from NSE only)
+    raw_files: dict[str, bytes] = {}                          # period -> the file, for its screener-rule statements
     by_period: dict[str, object] = {}
     # Consolidated wins over standalone whenever a quarter has both, and only then the later filing: Max Financial's
     # standalone files of 13 Jul 2026 (the holding company's ₹17 Cr quarter) had replaced the consolidated quarter of
@@ -153,6 +154,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
         parsed = _parse_results(data, stats)
         if parsed:
             found[period] = (link.filed_at[:10], link.url, parsed, False)
+            raw_files[period] = data
 
     # Quarters NSE has that BSE's archive never listed at all. The fallback above only fires for a file
     # BSE named, and since March 2025 the integrated format means BSE often names none: a company that
@@ -168,6 +170,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
             parsed = _parse_results(data, stats)
             if parsed:
                 found[period] = (row.filed_at[:10], row.xbrl_url, parsed, True)
+                raw_files[period] = data
                 if bse is not None:
                     log.info("seed %s %s: BSE's archive did not list this quarter, NSE did (%s)",
                              scrip, period, row.taxonomy or "template not stated")
@@ -207,6 +210,7 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     _derive_quarters(found, stats)
     for period, (filed_on, url, parsed, from_nse) in sorted(found.items()):
         _write_results(sink, scrip, name, company, period, filed_on, url, parsed, stats, from_nse)
+    _remember_statements(sink, scrip, found, raw_files)
     _flag_slips(sink, scrip, held_slips)
     if keep_standalone and found:
         _mark_standalone_only(sink, scrip, found)
@@ -215,6 +219,24 @@ def seed_results(sink, bse, scrip: str, name: str, since: str, cache_root: Path 
     consolidated = [p for p, (_, _, result, _) in found.items() if result.basis == "CONSOLIDATED"]
     if nse is not None and symbol and consolidated:
         _seed_standalone(sink, nse, scrip, symbol, since, set(consolidated), cache_root, stats)
+
+
+def _remember_statements(sink, scrip: str, found: dict, raw_files: dict[str, bytes]) -> None:
+    """The quarters the seed wrote, as screener's tables by its rules (statements.py; owner, 30 Oct 2026: "memory must be
+    filled using exchange data and screener rules"), in one write of the company's dossier."""
+    from . import statements
+
+    todo = [(p, raw_files[p], found[p]) for p in sorted(found) if p in raw_files]
+    if not todo:
+        return
+    dossier = sink.get_dossier(scrip)
+    if dossier is None:
+        return
+    at = now_iso()
+    written = sum(statements.from_file(sink, dossier, data, scrip, url, f"xbrl:res:{scrip}:{p}", filed_on, at)
+                  for p, data, (filed_on, url, _, _) in todo)
+    if written:
+        sink.put_dossier(scrip, dossier)
 
 
 def _hold_slips(sink, scrip: str, found: dict, held: dict[str, str], stats: SeedStats,

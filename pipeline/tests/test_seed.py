@@ -458,3 +458,20 @@ def test_an_integrated_list_that_failed_is_a_failure_and_not_an_empty_company_F1
     assert stats.failures and "500001" in stats.failures[0]
     nse.integrated_failed = set()   # the next pass: listed again (a failure is not cached)
     assert set(seed_mod._nse_quarters(nse, "X", "2024-01-01", "500001", stats)) == {"Q1FY25"}
+
+
+def test_the_seed_keeps_each_quarter_as_screener_tables_too():
+    """Owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules". A seeded quarter's file goes
+    into dossier['statements'] by the screener_view recipes, beside the figures (statements.py)."""
+    from pathlib import Path
+
+    seed_mod._nse_rows.cache_clear()
+    sink, stats = Sink(), SeedStats()
+    url = "https://nsearchives.nseindia.com/corporate/xbrl/INTEGRATED_FILING_INDAS_DOLPHIN_Q4FY24.xml"
+    data = (Path(__file__).parent / "fixtures" / "nse_dolphin_q4fy24_cons.xml").read_bytes()
+    row = ResultsFiling(period="Quarterly", consolidated=True, audited="Audited", filed_at="2024-05-20", xbrl_url=url,
+                        is_bank=False, period_end="2024-03-31", taxonomy="INDAS")
+    seed_results(sink, None, "522261", "Dolphin Offshore", "2023-01-01", None, stats, company={},
+                 nse=Nse([row], {url: data}), symbol="DOLPHIN")
+    tables = {(e["period"], e["table"]) for e in sink.dossiers["522261"].get("statements", [])}
+    assert {("Q4FY24", "quarters"), ("Q4FY24", "balance"), ("Q4FY24", "cash_flow")} <= tables

@@ -3,6 +3,7 @@
 // leaked INGEST_TOKEN cannot run arbitrary SQL or read other objects.
 import { Hono, type MiddlewareHandler } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
+import { shadowAllowed } from "../shared/shadowToken";
 import { aiChatCompletions } from "./ai";
 import type { AppEnv } from "./env";
 import { QUERIES, STATEMENTS } from "./sql";
@@ -21,8 +22,12 @@ export const internal = new Hono<AppEnv>();
 
 internal.use("*", async (c, next) => {
   if (!c.env.INGEST_TOKEN) return c.json({ error: "INGEST_TOKEN is not configured" }, 503);
-  // bearerAuth compares tokens in constant time.
-  const auth: MiddlewareHandler<AppEnv> = bearerAuth({ token: c.env.INGEST_TOKEN });
+  // bearerAuth compares tokens in constant time. The shadow job's token counts only on the routes shadowAllowed names.
+  const tokens = [c.env.INGEST_TOKEN];
+  if (c.env.SHADOW_TOKEN && c.env.SHADOW_TOKEN !== c.env.INGEST_TOKEN && shadowAllowed(c.req.method, c.req.path)) {
+    tokens.push(c.env.SHADOW_TOKEN);
+  }
+  const auth: MiddlewareHandler<AppEnv> = bearerAuth({ token: tokens });
   return auth(c, next);
 });
 

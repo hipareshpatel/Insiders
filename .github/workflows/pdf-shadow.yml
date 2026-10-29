@@ -41,7 +41,9 @@ jobs:
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
-      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      # its own token (TODO 123 (10)): the Worker lets it run the read queries and read and write meta/pdf-shadow/ only, never a
+      # write statement, so this job cannot change a card. The same value is the Worker secret SHADOW_TOKEN.
+      INGEST_TOKEN: ${{ secrets.SHADOW_TOKEN }}
       PLATFORM_TIMEOUT_S: "30"
       PLATFORM_ATTEMPTS: "3"
     steps:
@@ -49,6 +51,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Token check
+        run: test -n "$INGEST_TOKEN" || { echo "::error::the repository secret SHADOW_TOKEN is not set (the shadow job never uses INGEST_TOKEN)"; exit 1; }
       - name: Install
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
       - name: Shadow check (reads only)

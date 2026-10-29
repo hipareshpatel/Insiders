@@ -171,6 +171,7 @@ below (keys from the keys file, 5 workers) and logs to `data\logs`.
    npx wrangler r2 bucket create bse-intelligence
    npx wrangler secret put INGEST_TOKEN    # a long random string
    npx wrangler secret put OWNER_TOKEN     # another one: owner mode (watchlist, Star/Noise) on the site
+   npx wrangler secret put SHADOW_TOKEN    # a third: the PDF shadow job's (read queries, meta/pdf-shadow/ only); the same value is the GitHub secret SHADOW_TOKEN
    npm run db:migrate:remote && npm run deploy
    ```
    The Worker is named `insiders`, so it serves at `https://insiders.<your-subdomain>.workers.dev`

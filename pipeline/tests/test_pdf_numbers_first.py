@@ -1520,3 +1520,47 @@ def test_a_cost_of_sales_section_is_never_revenue_in_sections():
     rows, want = nbfc_rows(first_label="(a) Cost of sales (i) Materials")
     got = read(statement(rows), "revenue")
     assert got.status != "ok" or got.value != pytest.approx(crore(want["revenue"][0])), got
+
+
+# --- numbered lines with nil cells stitched into one label (AIIL Q4FY24, ARMANFIN Q4FY24) ------------------------------------
+
+def _merged_nil_rows(first, merged_lines, merged_cells):
+    rows, want = pl()
+    cont = want["pat"]
+    # statement() spaces a row by the previous row's lines, so the first row gets as many lines as the merged one
+    # (and a blank spacer row of that many lines, so the lines drawn above a row's figures never touch the row before)
+    first_lines = [first] + ["(carried)"] * (len(merged_lines) - 1)
+    rows = rows[:-1] + [([" "] * len(merged_lines), []), (first_lines, cont), (merged_lines, merged_cells(cont))]
+    return rows, cont
+
+
+def test_the_profit_for_the_period_behind_nil_numbered_lines_is_named():
+    # "8 ... 9 ... 10 ..." are nil with no cells, so the figures of "11 Profit for the period (7-10)" take all four labels
+    rows, cont = _merged_nil_rows("7 Profit for the period from continuing operations (5-6)", [
+        "8 Profit from discontinued operations", "9 Tax expense of discontinued operations",
+        "10 Profit from discontinued operations (after tax) (8-9)", "11 Profit for the period (7-10)"], lambda c: c)
+    got = read(statement(rows), "pat")
+    assert got.status == "ok" and got.value == pytest.approx(crore(cont[0])), got
+
+
+def test_numbered_lines_ending_in_total_comprehensive_income_are_never_the_profit():
+    # the same shape, but the last line is the total comprehensive income: no profit from it
+    rows, cont = _merged_nil_rows("7 Profit for the period from continuing operations (5-6)", [
+        "8 Other comprehensive income", "9 Total comprehensive income for the period (7+8)"], lambda c: c)
+    got = read(statement(rows), "pat")
+    assert got.status != "ok", got
+
+
+def test_numbered_lines_that_do_not_run_on_one_by_one_are_not_a_nil_block():
+    rows, cont = _merged_nil_rows("7 Profit for the period from continuing operations (5-6)", [
+        "8 Profit from discontinued operations", "12 Profit for the period (7-10)"], lambda c: c)
+    got = read(statement(rows), "pat")
+    assert got.status != "ok", got
+
+
+def test_a_profit_before_a_lost_associates_share_is_not_the_profit_behind_nil_lines():
+    # the associates' share has cells in no column here but the last line's figures differ from the profit above: the identity fails
+    rows, cont = _merged_nil_rows("7 Profit after tax", [
+        "8 Share of profit of associates", "9 Profit for the period (7+8)"], lambda c: [round(v + 5.0, 2) for v in c])
+    got = read(statement(rows), "pat")
+    assert not (got.status == "ok" and got.value == pytest.approx(crore(cont[0]))), got

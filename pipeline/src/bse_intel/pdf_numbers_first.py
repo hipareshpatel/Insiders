@@ -911,6 +911,34 @@ def not_revenue_line(label: str) -> bool:
 _WHOLE_REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations?\W*(?:\((?:net|gross|refer[^)]*|notes?[^)]*)\)\W*)?$", re.I)
 
 
+_ROW_MARKER = re.compile(r"(?:^|(?<=\s))(\d{1,2})(?=\s+[A-Za-z(])")
+
+
+def tail_label(row: "NRow") -> str | None:
+    """The label of the LAST of several numbered statement lines stitched into one label, when the row's figures sit on that
+    line: a statement prints "8 Profit from discontinued operations", "9 Tax expense of discontinued operations", "10 Profit from
+    discontinued operations (after tax)" and "11 Profit for the period (7-10)" with a nil dash in each of the first three, and a
+    nil with no cell is no numeric row, so the figures of line 11 take all four labels (AIIL Q4FY24, ARMANFIN Q4FY24). The row
+    numbers must run on one by one from the label's first word, and the marker of the last line must stand on the row's own
+    height at the left of the label: figures printed on the first line of a wrapped label are never given to its last one."""
+    text = re.sub(r"\s+", " ", row.label or "").strip()
+    marks = [(m.start(), int(m[1])) for m in _ROW_MARKER.finditer(text)]
+    if len(marks) < 2 or marks[0][0] != 0:
+        return None
+    run = [marks[0]]
+    for pos, n in marks[1:]:
+        if n == run[-1][1] + 1:
+            run.append((pos, n))
+    if len(run) < 2 or not row.words_left:
+        return None
+    pos, n = run[-1]
+    left = min(w.x0 for w in row.words_left)
+    for w in row.words_left:
+        if w.text == str(n) and abs(w.y - row.y) <= 0.6 * w.h and w.x0 <= left + 3 * w.h:
+            return text[pos:]
+    return None
+
+
 def list_item(label: str) -> bool:
     return bool(_LIST_ITEM.match(label)) and not re.match(r"^\W*[IVX]{1,4}\.\s", label)
 
@@ -925,6 +953,9 @@ class Solver:
         self.n = len(table.rows)
         self.m = len(table.columns)
         self.cls = [label_class(r.label) for r in table.rows]
+        # rows whose figures belong to the last of several stitched lines (``tail_label``): the landmark of that line, used only
+        # to take such a row as the profit for the period right after the profit from continuing operations (``pat_extensions``)
+        self.tail_cls: dict[int, str | None] = {i: label_class(t) for i, r in enumerate(table.rows) if (t := tail_label(r))}
         self.explanations: dict[str, list[tuple[tuple[int, ...], list[Proof]]]] = {}
         self.pat_unsure = False          # a profit carried on by arithmetic alone (``carried_on``): no profit from the table
         self.chains = 0
@@ -1120,6 +1151,14 @@ class Solver:
         associate's share between (eleventh review: a garbled total comprehensive income or an identity
         that skips the share is not the profit)."""
         out = []
+        # the very next row, when its figures are those of the last of several numbered lines stitched together whose first ones
+        # (discontinued operations) are nil and have no cells: the profit for the period equals the profit from continuing
+        # operations printed right above it, in every column it can be checked in (``tail_label``)
+        x = a + 1
+        if x < self.n and self.tail_cls.get(x) == "PAT":
+            proof: Proof = (x, ((a, 1),))
+            if self.valid(proof):
+                out.append((x, [proof]))
         for x in range(a + 2, min(self.n, a + 9)):
             between = list(range(a + 1, x))
             live = [r for r in between if any(c is not None and abs(c.value) > 1e-9 for c in self.t.rows[r].cells)]

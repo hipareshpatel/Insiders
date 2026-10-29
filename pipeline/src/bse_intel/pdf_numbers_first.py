@@ -765,6 +765,7 @@ _AMOUNT_IN_RUPEES = re.compile(r"^[(\[{]?\s*am[a-z]{1,5}\s+in\s+r[a-z]{3,6}\s+(c
 _TAIL_UNIT = re.compile(r"(?:^|\s)\(\s*[₹₨]?\s*(?:(?:[RK][s5]|INR)\.?\s*)?in\s+(crores?|lakhs?|lacs?|millions?)\s*\)\s*$", re.I)
 
 
+_FIGURE_BEFORE = re.compile(r"(?:^|\s)[\d,.]*\d[\d,.]*\s*$")     # a bare figure just before a tail unit's bracket ("5,000 (in lakhs)")
 _ANY_UNIT_BRACKET = re.compile(r"\([^()]{0,12}\bin\s+(?:crores?|lakhs?|lacs?|millions?)\s*\)", re.I)
 
 
@@ -796,6 +797,8 @@ def scan_units(lines: list[str], only: str | None = None) -> set:
             m = (rule.search if inside else rule.match)(text) if len(text) <= longest else None
             if m is None:
                 continue
+            if name == "tail" and _FIGURE_BEFORE.search(text[:m.start()]):
+                continue                       # "Paid up capital Rs. 5,000 (in lakhs)": the bracket is that figure's unit, not the page's
             two = name == "tail" and len(_ANY_UNIT_BRACKET.findall(probe)) > 1
             found.add(None if two else _PER_CRORE.get(m[1].lower().rstrip(".").rstrip("s")))
     return found
@@ -1040,6 +1043,7 @@ _LABEL_VOCAB = frozenset("""
 _PLAIN_WORDS = frozenset("""
     basis referred owned continue continues point points sharp scale stems spare shore shores aster dilute lass loose lose
     lost posts takes tactics sharer shared shaper earner learning yearn yearns quartet ventured venue venues totally otter deterred
+    alter scales faxes shape taxis revenge warning learnings
     """.split())
 MEND_MIN_LETTERS = 5           # a shorter word is never mended: one letter of four is too much to guess
 

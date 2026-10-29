@@ -2090,3 +2090,17 @@ def test_words_of_one_line_are_one_line_however_their_heights_round():
     rows = [nf.NRow(7.3, 3.0, 11.0, "", [None, None])]
     nf.stitch_labels(rows, [nf.Word(10.0, 40.0, 7.6, 8.0, "Other"), nf.Word(45.0, 80.0, 7.0, 8.0, "income")], cols, set(), 8.0, 0.0)
     assert rows[0].label == "Other income"
+
+
+def test_trap_a_bracketed_unit_after_a_figure_is_that_figure_s_unit_never_the_page_s():
+    # review of TODO 123 part 5: "Paid up capital Rs. 5,000 (in lakhs)" above a table with no unit of its own never sets the
+    # table's unit (a 100x slip); a header line that ends in the unit ("CIN: L65110JK1938SGC000048 ( In Crores)") still does
+    page = ["Registered office: Mumbai", "Paid up capital Rs. 5,000 (in lakhs)", "Statement of Standalone Results"]
+    assert nf.unit_of(["Statement of Standalone Results"], page) is None
+    assert nf.unit_of(["Particulars"], ["CIN: L65110JK1938SGC000048 ( In Crores)"]) == 1
+
+
+@pytest.mark.parametrize("word", ["alter", "scales", "faxes", "shape", "taxis", "revenge", "warning", "learnings"])
+def test_trap_a_real_word_one_letter_from_a_statement_word_is_kept(word):
+    # review of TODO 123 part 4: "Provision for alter tax" is never "after tax", "warning" never "earning"
+    assert nf.mend_label(word) == word

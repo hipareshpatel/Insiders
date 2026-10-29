@@ -61,9 +61,12 @@ class PdfCheck:
         urls = self._urls(period)
         if isinstance(urls, str):
             return None
+        refused: tuple[bool, str] | None = None
         for url in urls:
-            data, _why = self.sources.payload(url)
+            data, why = self.sources.payload(url)
             if not data:
+                # the text-layer reader, if it decides, must not download the file again (review of eb2474a)
+                self.sources.docs.setdefault(url, (None, why or "NSE serves no file (404)"))
                 continue
             if url not in self.sources.docs:     # the text-layer reader, if it decides, reads these bytes: no second download
                 try:
@@ -75,8 +78,9 @@ class PdfCheck:
                 continue
             if abs(got.value - corrected) <= _XBRL_ROUNDING + got.tol:
                 return True, f"PDF p{got.page} prints {got.value:g} Cr ({got.label}; numbers-first)"
-            return False, f"PDF prints {got.value:g} Cr, not the corrected {corrected:g} Cr (numbers-first)"
-        return None
+            # a False removes stored figures: a later candidate (the right filing, a restated one) may still prove it
+            refused = refused or (False, f"PDF prints {got.value:g} Cr, not the corrected {corrected:g} Cr (numbers-first)")
+        return refused
 
     def __call__(self, result, metric: str, corrected: float) -> tuple[bool, str]:
         if self.sources is None:

@@ -54,11 +54,9 @@ def load_csv(text: str) -> list[dict]:
 
 
 def load_rows(sink, day: str) -> list[dict]:
-    try:
-        body = sink.get_object(progress_key(day))
-    except Exception as exc:   # noqa: BLE001 - nothing saved is a fresh start
-        log.warning("pdf-shadow: saved rows unreadable (%s: %s); starting fresh", type(exc).__name__, exc)
-        return []
+    # get_object gives None when nothing is saved yet; any other failure stops the run, because the run ends by rewriting the
+    # whole day file from what it holds and would replace the day's saved rows with its own (review of 0739dcf)
+    body = sink.get_object(progress_key(day))
     return load_csv(body.decode("utf-8")) if body else []
 
 
@@ -129,10 +127,20 @@ def check_card(tables, period: str, basis: str | None, figures) -> list[dict]:
             alt_word, alt_why = verdict(value, other)
             if alt_word == "agrees" or (word == "unknown" and alt_word != "unknown"):
                 reading, word, why, used = other, alt_word, alt_why, STANDALONE
+        if basis and word == "disagrees":
+            # the card's stored basis is the tagged file's; its figures may come from memory's other basis (review of 0739dcf)
+            alt = STANDALONE if basis == CONSOLIDATED else CONSOLIDATED
+            other = _read(tables, period, metric, alt)
+            if verdict(value, other)[0] == "agrees":
+                reading, used = other, alt
+                word, why = "basis_mismatch", f"agrees with the {alt} figure, not the stored {basis} basis; {why}"
         if not basis:
             why = f"basis assumed, the card does not store it; {why}"
         if word == "disagrees" and metric == "pat" and label and label not in DEFAULT_PROFIT_LABELS:
             word, why = "unknown", f"the card's profit line is '{label}' (not necessarily the total profit the reader gives); {why}"
+        if word == "disagrees" and metric == "pat" and used == CONSOLIDATED:
+            # a card's consolidated profit may be the owners' share (dossier prefers pat_owners); the reader gives the total
+            word, why = "unclear", f"consolidated profit: the card may show the owners' share, the reader the total; {why}"
         out.append({"metric": metric, "card_value": value, "verdict": word, "reason": why, "basis": used,
                     "pdf_value": reading.value if reading is not None and reading.status == "ok" else None,
                     "pdf_page": reading.page if reading is not None and reading.status == "ok" else None})
@@ -141,7 +149,7 @@ def check_card(tables, period: str, basis: str | None, figures) -> list[dict]:
         # each figure found on the basis that fits it hides a card that mixes the two (the 26 Oct audit's mixed-bases class)
         for r in out:
             if r["verdict"] == "agrees":
-                r["verdict"] = "disagrees"
+                r["verdict"] = "mixed_bases"
                 r["reason"] = f"the card's figures agree on different bases ({', '.join(sorted(agreed))}): mixed bases; {r['reason']}"
     return out
 

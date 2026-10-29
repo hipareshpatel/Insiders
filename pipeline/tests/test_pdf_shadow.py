@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+
+import pytest
 from datetime import datetime
 
 from bse_intel import pdf_numbers_first as nf
@@ -147,6 +149,36 @@ def test_a_card_whose_figures_agree_on_different_bases_is_flagged(monkeypatch):
         return Reading("numfirst", status="ok", value=value, page=2)
     monkeypatch.setattr(ps, "_read", fake)
     rows = ps.check_card([], "Q2FY27", None, [("revenue", 100.0, "Revenue"), ("pat", 9.0, "Net profit")])
-    assert all(r["verdict"] == "disagrees" and "mixed bases" in r["reason"] for r in rows)
+    assert all(r["verdict"] == "mixed_bases" for r in rows)
     rows = ps.check_card([], "Q2FY27", None, [("revenue", 100.0, "Revenue"), ("pat", 12.0, "Net profit")])
     assert all(r["verdict"] == "agrees" for r in rows)
+
+
+def test_an_unreadable_saved_log_stops_the_run_and_never_overwrites_it():
+    # review of 0739dcf: a timeout reading the day's file was taken for "nothing saved" and the run then rewrote the file
+    data, _ = pdf()
+
+    class Flaky(Sink):
+        def get_object(self, key):
+            raise TimeoutError("R2 read timed out")
+    sink = Flaky([card("n1", 10.0, 1.0, 1.0)])
+    with pytest.raises(TimeoutError):
+        ps.run(None, sink, 3, src=Src({"https://x/a.pdf": data}), now=NOW)
+    assert sink.puts == 0
+
+
+def test_a_stored_basis_the_figure_does_not_match_is_a_basis_mismatch_not_a_disagreement(monkeypatch):
+    def fake(tables, period, metric, basis):
+        return Reading("numfirst", status="ok", value={"CONSOLIDATED": 100.0, "STANDALONE": 80.0}[basis], page=2)
+    monkeypatch.setattr(ps, "_read", fake)
+    rows = ps.check_card([], "Q2FY27", "STANDALONE", [("revenue", 100.0, "Revenue")])
+    assert rows[0]["verdict"] == "basis_mismatch"
+    rows = ps.check_card([], "Q2FY27", "STANDALONE", [("revenue", 90.0, "Revenue")])
+    assert rows[0]["verdict"] == "disagrees"
+
+
+def test_a_consolidated_profit_that_differs_is_unclear_not_a_false_alarm(monkeypatch):
+    # a card's consolidated profit may be the owners' share; the reader gives the total profit
+    monkeypatch.setattr(ps, "_read", lambda tables, period, metric, basis: Reading("numfirst", status="ok", value=50.0, page=2))
+    assert ps.check_card([], "Q2FY27", "CONSOLIDATED", [("pat", 45.0, "Net profit")])[0]["verdict"] == "unclear"
+    assert ps.check_card([], "Q2FY27", "STANDALONE", [("pat", 45.0, "Net profit")])[0]["verdict"] == "disagrees"

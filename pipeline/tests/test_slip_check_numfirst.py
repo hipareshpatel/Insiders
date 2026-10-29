@@ -64,3 +64,36 @@ def test_a_metric_the_new_reader_does_not_read_goes_to_the_text_layer_reader(on,
     monkeypatch.setattr(nf, "analyse", lambda *a, **k: pytest.fail("numbers-first asked for EPS"))
     rows, _ = pl()
     check(statement(rows), "eps", 1.0)
+
+
+def test_a_later_candidate_filing_that_proves_the_figure_wins_over_an_earlier_one_that_does_not(on, monkeypatch):
+    # review of eb2474a: the first filing with a reading decided, and a False removes stored figures
+    rows, want = pl()
+    right = crore(want["pat"][0])
+    wrong_pdf, good_pdf = b"%PDF first", b"%PDF second"
+    monkeypatch.setattr(nf, "analyse", lambda data, **k: data)
+    monkeypatch.setattr(nf, "reading_from_tables", lambda data, *a, **k: SimpleNamespace(
+        status="ok", value=right * 10 if data == wrong_pdf else right, tol=0.005, page=1, label="Profit"))
+
+    class Two:
+        fetches = 0
+
+        def fetch(self, url, max_bytes=0):
+            Two.fetches += 1
+            return wrong_pdf if url.endswith("1.pdf") else good_pdf
+    chk = PdfCheck(Two(), "ABC")
+    monkeypatch.setattr(chk, "_urls", lambda period: ["https://x/1.pdf", "https://x/2.pdf"])
+    agrees, why = chk(SimpleNamespace(period="Q2FY27", basis="STANDALONE"), "pat", right)
+    assert agrees is True
+
+
+def test_a_failed_download_is_not_asked_again_by_the_text_layer_reader(on):
+    class Gone:
+        fetches = 0
+
+        def fetch(self, url, max_bytes=0):
+            Gone.fetches += 1
+            return b""
+    got = PdfCheck(Gone(), "ABC", pdf_url=URL, pdf_period="Q2FY27")(SimpleNamespace(period="Q2FY27", basis="STANDALONE"),
+                                                                    "pat", 1.0)
+    assert got[0] is None and Gone.fetches == 1

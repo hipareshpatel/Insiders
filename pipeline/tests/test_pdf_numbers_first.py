@@ -2123,3 +2123,18 @@ def test_trap_a_bracketed_unit_after_a_figure_is_that_figure_s_unit_never_the_pa
 def test_trap_a_real_word_one_letter_from_a_statement_word_is_kept(word):
     # review of TODO 123 part 4: "Provision for alter tax" is never "after tax", "warning" never "earning"
     assert nf.mend_label(word) == word
+
+
+def test_a_half_year_is_read_only_when_its_two_quarters_add_up_to_it(monkeypatch):
+    # out-of-sample test, 30 Oct 2026: every H1 figure of a Q2 statement was "no pbt for H1FY27" (5PAISA, ADOR, CYIENT, MAHLOG)
+    assert nf.half_year_column("H1FY27") == ("half", date(2026, 9, 30))
+    assert nf.half_year_column("Q2FY27") is None and nf.half_year_column("FY27") is None
+    def cells(q1, q2):
+        got = {date(2026, 6, 30): q1, date(2026, 9, 30): q2}
+        return lambda table, metric, kind, when: (got[when], 0.005, "Revenue", "") if kind == "quarter" else (None, 0, "", "")
+    monkeypatch.setattr(nf, "table_figure", cells(1500.25, 1600.5))
+    assert nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3100.75, 0.005) == (3100.75, "")
+    value, why = nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3050.0, 0.005)      # a column that is not the half year
+    assert value is None and "not its two quarters' sum" in why
+    monkeypatch.setattr(nf, "table_figure", cells(None, 1600.5))
+    assert nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3100.75, 0.005)[0] is None   # one quarter unread: unproven

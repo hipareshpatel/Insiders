@@ -2250,6 +2250,25 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     return first[0] / table.unit, first[1] / table.unit, first[2], ""
 
 
+def half_year_column(period: str) -> tuple[str, date] | None:
+    """("half", its end) for a first half year ("H1FY27": April to September 2026, the half-year column of a Q2 results
+    statement); None for any other period."""
+    m = re.fullmatch(r"H1FY(\d\d)", period)
+    return ("half", date(1999 + int(m[1]), 9, 30)) if m else None
+
+
+def half_year_proved(table: Table, metric: str, when: date, value: float, tol: float) -> tuple[float | None, str]:
+    """The half year's figure only when the same table's two quarters add up to it (Q1 + Q2 = H1, each column read on its own
+    date): a column taken for the half year that is not one (a year-ago quarter, a year) never gives an answer."""
+    q2, t2, _, _ = table_figure(table, metric, "quarter", when)
+    q1, t1, _, _ = table_figure(table, metric, "quarter", date(when.year, 6, 30))
+    if q1 is None or q2 is None:
+        return None, "the half year's two quarters are not both read, so its column is not proven"
+    if abs(q1 + q2 - value) > tol + t1 + t2 + 1e-9:
+        return None, f"the half year's column ({value:g}) is not its two quarters' sum ({q1 + q2:g})"
+    return value, ""
+
+
 @_measured
 def reading_from_tables(tables: list[Table], period: str, metric: str, basis: str | None, reader: str = NAME):
     """A ``pdf_readers.Reading`` from the solved tables: the figure when every table of the basis that names it agrees."""
@@ -2257,7 +2276,7 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
     from .pdf_readers import Reading, same_value
     from .pdf_referee import target_column
     family = "numbers-first"
-    target = target_column(period)
+    target = target_column(period) or half_year_column(period)
     if target is None or metric not in ("revenue", "other_income", "total_income", "expenses", "pbt", "tax", "pat"):
         return Reading(reader, family, "none", note=f"no {metric} for {period}")
     kind, when = target
@@ -2270,6 +2289,8 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
             notes.append(f"p{t.page}: the table's basis is not told")
             continue
         value, tol, label, why = table_figure(t, metric, kind, when)
+        if value is not None and kind == "half":
+            value, why = half_year_proved(t, metric, when, value, tol)
         if metric == "pat" and (t.basis == basis or not basis) and getattr(getattr(t, "solver", None), "pat_unsure", False):
             # one table of the basis whose profit is carried on by arithmetic alone vetoes the others (twelfth review: a
             # second table of the basis that stops at the profit after tax would give the profit before the share)

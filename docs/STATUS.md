@@ -234,6 +234,36 @@ AXISBANK Q2FY27 15,306 = six months): reader errors. A lead for the owner: memor
 company reports a discontinued line, so a card can show ₹1,382 Cr where the company's own headline profit is ₹4,015 Cr. screener-explain run 40498040302 finished 27 Oct, and its planned PDF check on the
 unexplained rows is not started (owner to say).
 
+## 3b. Built or agreed, waiting (swept from docs/TODO.md, 29 Oct 2026, ~10:50 IST; owner: "add all above")
+
+Every Yes item of `docs/TODO.md` that is not done, by what it waits on. Nothing approved was lost; none of these is on the
+live site yet. Keep this list current: an item leaves it when it ships or the owner drops it.
+
+1. **Built behind a switch that is off, waiting for the release check** (on/off over stored cards plus an independent
+   blind sample; the plan is one run with all of them together, then an audit: section 2's "single run with the 13
+   switches"). Paused by the owner on 28 Oct ("settle financial first"); this is what moves the WRONG-card rate.
+   - Card wording: the company's own EBITDA and one profit line (TODO 11, 14, 15, `CARD_EBITDA_PROFIT_V2`); two parts on
+     every card (21, `CARD_TWO_PARTS`); consolidated first (44, `CARD_CONSOLIDATED_ONLY`); the results block on one basis
+     (107, `CARD_RESULTS_ONE_LINE`); memory watch verdicts the filing contradicts (106, `CARD_WATCH_VERDICT`).
+   - Memory checks: a year that does not match its quarters and the owners' / minority share swap (64, 65, 76,
+     `MEMORY_YEAR_CHECK`); a KPI outside what its sector allows (77, `CARD_FOOTER_PLAUSIBLE`); the share count behind an EPS
+     change (79, `EPS_SHARE_COUNT_CHECK`).
+   - Other: the row-name map (93, `LINE_MAP`); the screener-style table on company pages (52, `VITE_SCREENER_LINES`); the
+     BSE quarters before a company's first NSE file (108b, `BSE_FILL_PRE_NSE`).
+2. **Waiting for the owner's decision.**
+   - **Call memory v2** (TODO 101, `MEMORY_CALL_V2`, F180): what memory keeps from call transcripts and decks. Measured 27 Oct
+     on 9 documents: important points kept 87.8% (bar 85%), wrong 1.9% (bar 2%); needs a second independent blind sample,
+     then the owner's go. First in line for the card work once the screener work is settled (owner, 29 Oct).
+   - Removing the companies not on NSE (45, `prune-companies`): built, its dry run never run.
+   - Whether the 5% bar is reachable (85): waits for the 150-card measurement.
+3. **Agreed, not started.**
+   - A daily BSE pass for the BSE-only companies kept (47).
+   - The automatic memory fixes and nightly jobs (69-74): a figure under the wrong quarter moved (69); the same figure in two
+     quarters (70); a 100x slip (71); cards re-rendered after a proven memory fix, no AI (72); failed filings retried each
+     night (73); nightly checks of the day's filings (74).
+4. **Loose ends fixed in this sweep:** TODO 1, 2 and 6 said "PR #108 not merged", out of date (the 120 MB limit, the "file
+   too large" reason and `failed-report` are on `main`); two rows were both numbered 108 (the second is now 108b).
+
 ## 4. Known problems (found 27 Oct, not fixed)
 
 - Fixed 27 Oct night: the audit exports are kept as a GitHub artifact (`audit-export`, or the command's name) and are

@@ -164,6 +164,13 @@ where the company has nothing else in that line. Tata Power, NHPC, Ambuja, DLF, 
 the element (54 to 11,007 Cr) and are exact without it (the owner's 15 companies' stored files). It is the FY23 data gap
 above, not a recipe.
 
+### The NBFC recipe for every row (run 40800766534, 29 Oct 2026, 07:00–07:19 IST, fda8ffb and after)
+
+Against run 40797693366: 13,544 lender rows compared for the first time (Sales, Expenses, Operating Profit, OPM %, Financing
+Profit, Financing Margin %, Other Income of the NBFC template), 11,201 of them exact (82.7 %); no row that was exact before
+broke. The share over all rows reads 92.78 % → 92.55 % only because these rows are new to the count. Weakest: NBFC Other
+Income (2,340 exact, 686 apart) and Financing Profit (1,240 / 310).
+
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 
 - **The year's source decides most of the yearly misses.** Years read from the annual report: Expenses 82.4 % exact, Interest

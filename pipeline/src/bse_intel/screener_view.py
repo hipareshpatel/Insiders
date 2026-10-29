@@ -103,7 +103,10 @@ FINANCE_LEASE_MATURITIES = "CurrentMaturitiesOfFinanceLeaseObligations"
 LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
           "sales tax": (("SalesTax", "ValueAddedTax", "GoodsAndServicesTax", "SalesTaxAndValueAddedTax"),
                         r"^\s*(sales tax|vat\b|value added tax|gst\b|goods (and|&) services tax)"),
-          "discounts": (("TradeDiscounts", "SalesDiscounts", "Discounts", "Rebates"), r"^\s*(trade )?(discount|rebate)s?\b")}
+          # DiscountingCharges too: every company-year apart by it is our Sales and Expenses both above screener's by exactly it
+          # (JSW Cement FY25 27.78 Cr, Yatharth, Borosil, Renuka: 35 years of 17 companies, all annual reports; run 40802884540)
+          "discounts": (("TradeDiscounts", "SalesDiscounts", "Discounts", "Rebates", "DiscountingCharges"),
+                        r"^\s*(trade )?(discount|rebate)s?\b")}
 from .screener_parts import FINANCE_MEMBER as FIN_SERVICES_ROW  # noqa: E402 - one pattern for both (L&T's and Grasim's wording)
 LOSS_ON_DISPOSAL = "LossOnDisposalDiscardDemolishmentAndDestructionOfDepreciablePropertyPlantAndEquipment"
 ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"

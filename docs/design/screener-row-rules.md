@@ -178,6 +178,21 @@ Against run 40800766534: 620 rows fixed, 141 broken (TCS, Infosys, Wipro and the
 the total and its balancing lines; 92.55 % → 92.63 % exact (FY25–FY27 94.08 % → 94.12 %). Kept; the 15 companies are named in the balance sheet's Total row
 above.
 
+### Where the yearly Expenses misses of annual-report years go (run 40802884540, 29 Oct 2026)
+
+1,029 company-years apart on Expenses with the year read from an annual report, sorted by the line that moves the same amount
+the other way (an outside review's three-way test): Sales by the same amount 346 (33.6 %), Other Income 383 (37.2 %), Interest
+93 (9.0 %), Depreciation 11 (1.1 %), profit before tax also apart 89 (8.6 %), none of these 107 (10.4 %). Years read from the Q4
+results file (1,392): 15.2 / 23.4 / 27.5 / 6.9 / 11.2 / 15.8 %.
+- Sales by the same amount: **DiscountingCharges** in 35 years of 17 companies, ours above every time (JSW Cement FY25 27.78
+  Cr): now a discount out of Sales and Expenses (this commit). CommissionPaidOtherSellingAgents 13 years of 5 companies only
+  (Borosil, Galaxy Surfactants, Garware Technical Fibres, Primo): not coded.
+- Other Income by the same amount: loss on disposal of PPE moved out of Expenses is exact in 350 years, exact without the move in
+  32, so the rule stands; most of the 383 name no single filed line (Bharti Airtel FY25 consolidated 11,802 Cr).
+- NSE circular NSE/CML/2026/08 (20 Apr 2026, read 29 Oct 2026) extends the exchanges' single filing to Annual Report-XBRL from
+  that date: before it a company could file its annual-report XBRL with BSE only, so BSE may hold FY24 and FY25 reports NSE lacks.
+  Not yet measured.
+
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 
 - **The year's source decides most of the yearly misses.** Years read from the annual report: Expenses 82.4 % exact, Interest

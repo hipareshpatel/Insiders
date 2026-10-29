@@ -118,6 +118,11 @@ def test_sales_tax_and_discount_rows_of_the_other_expenses_breakdown_leave_sales
     assert got["Sales"] == 890.0 and got["Expenses"] == 575.0 and got["Operating Profit"] == 315.0
 
 
+def test_discounting_charges_leave_sales_and_expenses():
+    got = values(sv.corporate_pl(sv._Reader(annual_facts([("DiscountingCharges", "D2026", 7.0)]), end=END, months=12)))
+    assert got["Sales"] == 893.0 and got["Expenses"] == 578.0 and got["Operating Profit"] == 315.0
+
+
 def test_the_financial_services_finance_cost_moves_to_interest_and_is_read_from_the_q4_file_for_an_annual_report():
     q4 = xf.Facts(doc([("DescriptionOfOtherExpenses", "D2026_M1", "Finance cost of financial services business and finance lease activity"),
                        ("OtherExpenses", "D2026_M1", 25.0)], kind="results", template="INDAS"))

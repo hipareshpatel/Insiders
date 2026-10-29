@@ -337,3 +337,41 @@ def test_without_the_ocr_extra_a_cell_read_answers_unread(monkeypatch):
     monkeypatch.setattr(ocr, "available", lambda: False)
     monkeypatch.setattr(ocr, "_cell_engine", None)
     assert ocr.read_cell(np.zeros((12, 40, 3), np.uint8)) == ("", True)
+
+
+def test_a_caller_with_a_deadline_never_waits_for_the_ocr_lock_past_it():
+    # lead's review of TODO 123: one page can hold the lock for three engine calls, and the slip check's numbers-first read
+    # has a wall-clock cap; its wait for the lock now ends at its deadline
+    import threading
+    import time
+
+    from bse_intel import pdf_numbers_first as nf
+    assert nf.OutOfTime is ocr.OutOfTime            # slip_check catches nf.OutOfTime
+    with ocr._lock:                                 # another thread's page is being read
+        started = time.monotonic()
+        with pytest.raises(ocr.OutOfTime):
+            with ocr._held(started + 0.05):
+                pass
+        assert time.monotonic() - started < 1.0
+        with pytest.raises(ocr.OutOfTime):         # a deadline already gone: no wait at all
+            with ocr._held(started - 1):
+                pass
+    with ocr._held(time.monotonic() + 5):          # a free lock is taken and given back
+        assert ocr._lock.locked()
+    assert not ocr._lock.locked()
+    with ocr._held(None):                           # no deadline: waits as before
+        pass
+    done = threading.Event()
+    ocr._lock.acquire()
+    threading.Timer(0.05, lambda: (ocr._lock.release(), done.set())).start()
+    with ocr._held(time.monotonic() + 5):          # the lock freed before the deadline is taken
+        assert done.is_set()
+
+
+def test_the_numbers_first_page_ocr_passes_its_deadline_to_the_engine(monkeypatch):
+    from bse_intel import pdf_numbers_first as nf
+    seen = []
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    monkeypatch.setattr(ocr, "page_boxes", lambda png, deadline=None: seen.append(deadline) or [])
+    nf.ocr_page_boxes(b"png", deadline=123.0)
+    assert seen == [123.0]

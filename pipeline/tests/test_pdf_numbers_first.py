@@ -2148,7 +2148,7 @@ def test_trap_a_bracketed_unit_after_a_figure_is_that_figure_s_unit_never_the_pa
     assert nf.unit_of(["Particulars"], ["CIN: L65110JK1938SGC000048 ( In Crores)"]) == 1
 
 
-@pytest.mark.parametrize("word", ["alter", "scales", "faxes", "shape", "taxis", "revenge", "warning", "learnings"])
+@pytest.mark.parametrize("word", ["alter", "scales", "faxes", "shape", "taxis", "revenge", "warning", "learnings", "learned", "joins"])
 def test_trap_a_real_word_one_letter_from_a_statement_word_is_kept(word):
     # review of TODO 123 part 4: "Provision for alter tax" is never "after tax", "warning" never "earning"
     assert nf.mend_label(word) == word

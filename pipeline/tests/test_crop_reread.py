@@ -103,7 +103,7 @@ def test_a_crop_pass_that_fails_part_way_leaves_the_table_as_it_was(monkeypatch)
     sample = [known[int(n * len(known) / 6)] for n in range(6)]
     queue = [(f"{t.rows[i].cells[j].value:,.2f}", False) for i, j in sample for _ in range(2)] + [("1,912.15", False)] * 2
 
-    def fake(image):
+    def fake(image, deadline=None):
         if not queue:
             raise RuntimeError("crop failed")
         return queue.pop(0)

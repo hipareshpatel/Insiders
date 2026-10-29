@@ -45,15 +45,11 @@ import time
 from dataclasses import dataclass, field
 from datetime import date
 
+from .ocr import OutOfTime   # the caller's deadline has passed (raised only when a caller passes one; the bench passes none)
+
 log = logging.getLogger(__name__)
 
 NAME = "numfirst"
-
-
-class OutOfTime(BaseException):
-    """The caller's ``deadline`` (a ``time.monotonic()`` value) has passed. A BaseException on purpose: the page loops below
-    catch ``Exception`` so one bad page leaves the rest, and a late deadline must not be swallowed there. Raised only when a
-    caller passes a deadline; the bench and every other caller pass none."""
 
 
 def check_deadline(deadline: float | None) -> None:
@@ -169,13 +165,15 @@ def merge_space_groups(words: list[Word], height: float) -> list[Word]:
     return out
 
 
-def ocr_page_boxes(png: bytes):
+def ocr_page_boxes(png: bytes, deadline: float | None = None):
     """RapidOCR's boxes of a page image (``ocr.page_boxes``: turned upright as ``ocr.recognise`` reads it) as plain lists; []
-    when OCR is not installed. Kept apart so the bench can cache it."""
+    when OCR is not installed. Kept apart so the bench can cache it. ``OutOfTime`` when the OCR lock is not free before a
+    ``deadline``."""
     from . import ocr
     if not ocr.available():
         return []
-    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in ocr.page_boxes(png)]
+    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score))
+            for box, text, score in ocr.page_boxes(png, deadline)]
 
 
 
@@ -1033,7 +1031,7 @@ _LABEL_VOCAB = frozenset("""
 _PLAIN_WORDS = frozenset("""
     basis referred owned continue continues point points sharp scale stems spare shore shores aster dilute lass loose lose
     lost posts takes tactics sharer shared shaper earner learning yearn yearns quartet ventured venue venues totally otter deterred
-    alter scales faxes shape taxis revenge warning learnings
+    alter scales faxes shape taxis revenge warning learnings learned joins
     """.split())
 MEND_MIN_LETTERS = 5           # a shorter word is never mended: one letter of four is too much to guess
 
@@ -1769,7 +1767,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     between pages, before each OCR read and between crop re-reads once it has passed (one OCR call in flight finishes)."""
     from . import ocr
     from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
-    ocr_boxes = ocr_boxes or ocr_page_boxes
+    ocr_boxes = ocr_boxes or functools.partial(ocr_page_boxes, deadline=deadline)
     layers = page_layers(pdf_bytes, max_pages)
     anywhere = consolidated_anywhere(layers, not_required=True, numbers_first=True)    # SBICARD: "not required to prepare consolidated"
     ranked = statement_pages(layers, MAX_STATEMENT_PAGES)
@@ -2050,7 +2048,7 @@ def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[
         if image is None:
             return None
         budget[0] -= 1
-        return ocr.read_cell(image)
+        return ocr.read_cell(image, deadline)
 
     def read(i: int, j: int) -> Cell | None:
         """The cell's figure when two renders of the box (300 and 400 dpi) both show no cut glyph and read with the same

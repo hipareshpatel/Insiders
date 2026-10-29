@@ -494,3 +494,15 @@ def test_a_loss_from_associates_is_an_expense_and_a_profit_is_other_income():
     assert loss["Expenses"] == base["Expenses"] + 8 and loss["Other Income"] == base["Other Income"]
     assert loss["Profit before tax"] == base["Profit before tax"] - 8
     assert gain["Expenses"] == base["Expenses"] and gain["Other Income"] == base["Other Income"] + 8
+
+
+def test_current_maturities_of_finance_lease_obligations_are_borrowings_once():
+    """58 rows of 23 companies (the 500 largest): screener's Borrowings above ours by exactly this element."""
+    base = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Borrowings"]
+    got = values(sv.corporate_bs(sv._Reader(annual_facts([(sv.FINANCE_LEASE_MATURITIES, "I2026", 6.0)]), instant=END)))
+    assert got["Borrowings"] == base + 6
+    # the same line also described in the breakdown is not counted twice
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")]
+                         + [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Current maturities of finance lease obligations"),
+                            ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 6.0), (sv.FINANCE_LEASE_MATURITIES, "I2026", 6.0)]))
+    assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 6

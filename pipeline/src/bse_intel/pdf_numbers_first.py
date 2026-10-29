@@ -888,6 +888,11 @@ _REVENUE_LIST = re.compile(r"(?<!total\s)revenue\s+from\s+operations?(?:\s*\((?:
 # a row that is an item of a list ("(c) Other income", "iv) Others", "B. Other income"): after a revenue list it may be one of
 # its parts; a capital roman numeral with a dot ("II. Other income") numbers the statement's own lines and is not one
 _LIST_ITEM = re.compile(r"^\W*" + _ITEM_MARK, re.I)
+# a profit line whose label adds two numbered lines ("Profit for the period (5+6)") and a tax printed as "(expense)/credit"
+_ADDS_LINES = re.compile(r"\(\s*(?:\d{1,2}|[ivx]{1,4})\s*\+\s*(?:\d{1,2}|[ivx]{1,4})\s*\)", re.I)
+_TAX_CREDIT = re.compile(r"\btax\b.*\bcredit\b|\(expense\)\s*/\s*credit", re.I)
+# a section's subtotal that names only its letter or number: "Total (a)", "Total [b]", "Total (II)" (an NBFC's statement)
+_SECTION_TOTAL = re.compile(r"^\W*total\s*[\(\[]?\s*(?:[a-e]|i{1,3}|iv|[1-5])\s*[\)\]]?\W*$", re.I)
 _TOTAL_REVENUE = re.compile(r"^\W*(?:[\divx]+\W+)?total\s+revenue\s+from\s+operations?\W*(?:\(\w{1,4}\))?\W*$", re.I)
 def not_revenue_line(label: str) -> bool:
     """A line that cannot be a part of revenue, by an allow-list (25th review: a gain on fair value changes or on
@@ -1033,13 +1038,22 @@ class Solver:
             between = list(range(b + 1, a))
             if not between or any(self.cls[r] not in {None, "TAX"} for r in between) or not self.label_ok(a, {"PAT", "CONT"}):
                 continue
+            # the tax printed signed, as "(expense)/credit", and added (VLSFINANCE Q4FY24: "6 Tax (expense)/credit (net)"
+            # -1,747.94, "7 Profit for the Period (5+6)" = 9,164.81 - 1,747.94): only where the profit's label adds the two
+            # lines or a tax label says credit
+            signs = [-1]
+            if _ADDS_LINES.search(self.t.rows[a].label) or any(_TAX_CREDIT.search(self.t.rows[r].label) for r in between):
+                signs.append(1)
             best = None
-            for size in range(1, len(between) + 1):
-                for s in range(0, len(between) - size + 1):
-                    block = tuple(between[s:s + size])
-                    proof: Proof = (a, ((b, 1),) + tuple((r, -1) for r in block))
-                    if best is None and self.valid(proof):
-                        best = (block, proof)
+            for sign in signs:
+                for size in range(1, len(between) + 1):
+                    for s in range(0, len(between) - size + 1):
+                        block = tuple(between[s:s + size])
+                        proof: Proof = (a, ((b, 1),) + tuple((r, sign) for r in block))
+                        if best is None and self.valid(proof):
+                            best = (block, proof)
+                    if best:
+                        break
                 if best:
                     break
             if best is None:
@@ -1140,6 +1154,7 @@ class Solver:
                 self.chain_from(t, k, ti_proof)
             self.nested_income(t)
             self.parts_income(t)
+            self.sections_income(t)
             self.bank_income(t)
         if "total_income" not in self.explanations:
             # no chain below it: a total income by its label AND the arithmetic (never the label alone)
@@ -1193,6 +1208,32 @@ class Solver:
             proof: Proof = (t, tuple((r, 1) for r in range(first, t)))
             if self.valid(proof):
                 self.chain_from(t, (parts, t - 1), proof)
+            return
+
+    def sections_income(self, t: int) -> None:
+        """Total income = two section subtotals printed under their parts (an NBFC's statement, VLSFINANCE Q4FY24: "(a) Revenue
+        from Operations (i) Interest Income" 381.16, "(ii) Dividend Income", "(iii) Net gain on fair value changes", "(iv) Other
+        Operating Income", "Total (a)" 9,754.03; "(b) Other Income" 240.00, "Total (b)" 240.00; "Total Income (a+b)" 9,994.03).
+        Each subtotal is only a "Total (a)" label, so no row says revenue: the section is told by its first row (a revenue
+        heading) and proved by its own identity (the parts add up to it), the other-income section by a row saying other income
+        and its own identity, and the total by the sum of the two. Revenue is the first subtotal, other income the second."""
+        if t < 4 or not self.label_ok(t, {"TI"}) or not _SECTION_TOTAL.match(self.t.rows[t - 1].label):
+            return
+        b = t - 1
+        for a in range(b - 2, 0, -1):
+            if not _SECTION_TOTAL.match(self.t.rows[a].label):
+                continue
+            oi = list(range(a + 1, b))
+            if len(oi) > 6 or not any(self.cls[r] == "OI" for r in oi) or any(self.cls[r] not in (None, "OI") for r in oi):
+                return
+            if not self.valid((b, tuple((r, 1) for r in oi))):
+                return
+            first = next((r for r in range(a - 1, max(a - 10, -1), -1) if self.cls[r] is not None), None)
+            if first is None or self.cls[first] != "REV" or a - first < 2:
+                return
+            proof: Proof = (t, ((a, 1), (b, 1)))
+            if self.valid((a, tuple((r, 1) for r in range(first, a)))) and self.valid(proof):
+                self.chain_from(t, ((a,), b), proof)
             return
 
     _OF_WHICH = re.compile(r"^\W*(?:\w{1,2}\W+)?of\s+which\b", re.I)

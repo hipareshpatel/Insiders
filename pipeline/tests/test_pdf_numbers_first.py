@@ -1470,3 +1470,46 @@ def test_the_reader_runs_with_its_measured_options_whatever_the_settings(monkeyp
     assert seen and all(s == (True, True, True) for s in seen)
     assert not settings.pdf_option("pdf_row_fixes")          # outside the reader the settings stand
     settings.get_settings.cache_clear()
+
+
+def nbfc_rows(first_label="(a) Revenue from Operations (i) Interest Income", pat_label="7 Profit for the Period (5+6)",
+              tax_label="6 Tax (expense)/credit (net)"):
+    """An NBFC's statement in sections (VLSFINANCE Q4FY24): revenue only as "Total (a)" under its parts, other income as
+    "Total (b)", total income "(a+b)"; the tax printed signed, as an expense or credit, and added to the profit."""
+    add = lambda *xs: [round(sum(v), 2) for v in zip(*xs)]       # noqa: E731
+    interest, dividend, fair = [381.16, 381.28, 340.05, 1401.31], [176.99, 164.23, 109.34, 1200.05], [9195.88, 10696.76, -2001.93, 37370.42]
+    total_a = add(interest, dividend, fair)
+    other = [240.0, 143.82, 124.99, 1019.72]
+    ti = add(total_a, other)
+    emp, fin, oth = [164.35, 142.85, 160.54, 615.85], [5.72, 6.54, 2.07, 20.56], [494.28, 378.46, 664.43, 1680.14]
+    te = add(emp, fin, oth)
+    pbt = [round(x - y, 2) for x, y in zip(ti, te)]
+    tax = [-1747.94, -1937.17, 846.96, -6092.41]
+    pat = add(pbt, tax)
+    rows = [([first_label], interest), (["(ii) Dividend Income"], dividend), (["(iii) Net gain on fair value changes"], fair),
+            (["Total (a)"], total_a), (["(b) Other Income"], other), (["Total (b)"], other), (["Total Income (a+b)"], ti),
+            (["(a) Employee benefits expense"], emp), (["(b) Finance costs"], fin), (["(c) Other Expenses"], oth),
+            (["Total expenses"], te), (["5 Profit before tax (3-4)"], pbt), ([tax_label], tax), ([pat_label], pat)]
+    return rows, dict(revenue=total_a, total_income=ti, pat=pat, pbt=pbt)
+
+
+def test_an_nbfc_statement_in_sections_names_revenue_and_a_signed_tax_profit():
+    # VLSFINANCE Q4FY24: no row said revenue ("Total (a)"), and the profit adds a tax printed as "(expense)/credit"
+    rows, want = nbfc_rows()
+    pdf = statement(rows)
+    for metric in ("revenue", "total_income", "pat"):
+        got = read(pdf, metric)
+        assert got.status == "ok" and got.value == pytest.approx(crore(want[metric][0])), (metric, got)
+
+
+def test_sections_whose_first_part_is_not_revenue_name_no_revenue():
+    rows, want = nbfc_rows(first_label="(a) Employee stock options (i) Grant")
+    got = read(statement(rows), "revenue")
+    assert got.status != "ok", got
+
+
+def test_a_tax_is_added_only_where_the_labels_say_so():
+    # no "(5+6)" and no "credit": PBT + tax = the profit would be arithmetic alone, so no profit is named
+    rows, want = nbfc_rows(pat_label="7 Profit for the Period", tax_label="6 Tax expense")
+    got = read(statement(rows), "pat")
+    assert got.status != "ok" or got.value != pytest.approx(crore(want["pat"][0])), got

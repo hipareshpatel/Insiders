@@ -99,7 +99,6 @@ def tilt(raw: list[tuple[float, float, float, float, str]]) -> float:
 
 def straighten(raw: list[tuple[float, float, float, float, str]], ocr_source: bool = False) -> list[Word]:
     """Words with the page's tilt taken out of their heights (``ocr._skew``: the angle whose row histogram is sharpest)."""
-    from . import ocr
     theta = tilt(raw)
     import math
     t = math.tan(theta)
@@ -433,7 +432,7 @@ def assign_cells(words: list[Word], columns: list[Column], align: str, height: f
         j = min(range(len(columns)), key=lambda k: abs(ref(columns[k]) - key(w)))
         if not cell.strict and decimal_column[j] and cell.value != 0:       # a bare 0 is a zero, never a note number
             continue
-        if abs(ref(columns[j]) - key(w)) <= (0.8 if cell.strict else 0.8) * height and abs(w.xc - columns[j].xc) <= 0.5 * spacing:
+        if abs(ref(columns[j]) - key(w)) <= 0.8 * height and abs(w.xc - columns[j].xc) <= 0.5 * spacing:
             cell.word = w
             out.append((j, w, cell))
     return out
@@ -761,9 +760,10 @@ def scan_units(lines: list[str]) -> set:
 
 
 # A unit in brackets that ends a header line which also holds other words of the page's top (J&KBANK: "CIN: L6511... ( In Crores)",
-# the rupee sign lost; PARIN: "[ J (Ks. in Lacs)"): the bracket must close the line, hold nothing but at most two stray symbols or one
-# rupee word ("Rs", its garble "Ks", "INR") before "in" and the unit word itself; never a count's word ("No. in Lakhs": a share count).
-_TAIL_UNIT = re.compile(r"(?:^|\s)\(\s*[^\w\s]{0,2}\s*(?:(?:[RK][s5]|INR)\.?\s*)?in\s+(crores?|lakhs?|lacs?|millions?)\s*\)\s*$", re.I)
+# the rupee sign lost; PARIN: "[ J (Ks. in Lacs)"): the bracket must close the line, hold nothing but a rupee sign or one rupee word
+# ("Rs", its garble "Ks", "INR") before "in" and the unit word itself; never a count's word ("No. in Lakhs": a share count) and never
+# another currency's sign or a symbol ("$ in million", "% in lakhs": the lead's review).
+_TAIL_UNIT = re.compile(r"(?:^|\s)\(\s*[₹₨]?\s*(?:(?:[RK][s5]|INR)\.?\s*)?in\s+(crores?|lakhs?|lacs?|millions?)\s*\)\s*$", re.I)
 
 
 _ANY_UNIT_BRACKET = re.compile(r"\([^()]{0,12}\bin\s+(?:crores?|lakhs?|lacs?|millions?)\s*\)", re.I)
@@ -785,7 +785,9 @@ def _PER_CRORE_UNIT():
 
 def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
     """Figures per crore: the unit declared above the table (``grounding.unit_before``, then the short unit lines a lost rupee
-    sign or a garbled word leave), else the one unit the page names anywhere; None when none, or two."""
+    sign or a garbled word leave), else the one unit ``page_lines`` name; None when none, or two. The caller passes the whole
+    page only when it holds one table, else only the lines above this table, so a note in another unit elsewhere on the page
+    never sets this table's unit (the lead's review)."""
     from .grounding import _DECLARED_UNIT, _PER_CRORE, unit_before
     text = "\n".join(lines)
     u = unit_before(text, len(text))
@@ -836,7 +838,6 @@ def drop_twin_rows(rows: list) -> list:
     return out
 
 
-TWIN_MIN_FIGURES = 3
 
 
 def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str = "textlayer") -> list[Table]:
@@ -865,7 +866,6 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         return []
     used = {id(w) for _, w, _ in assigned}
     free = [w for w in words if id(w) not in used]
-    page_texts = [line_text(line) for line in lines_of(words, height)]
     pitch = statistics.median([b.y - a.y for a, b in zip(rows, rows[1:]) if b.y > a.y] or [2 * height])
     sep = typical_gap(words, height)
     # where a header stands: a gap between two numeric rows with dates over at least two columns
@@ -878,11 +878,15 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         gaps[i] = gap
         wide[i] = [w for w in free if (rows[i - 1].bottom if i else -1e9) < w.y < r.top]
         if i:
-            dated = sum(d is not None for d in column_dates(gap, columns, height, sep))
-            if dated >= 2:
+            n_dated = sum(d is not None for d in column_dates(gap, columns, height, sep))
+            if n_dated >= 2:
                 starts.append(i)
     tables: list[Table] = []
+    page_lines_of = lines_of(words, height)
     for n, a in enumerate(starts):
+        # the page's own unit lines: all of them for a page of one table, else only those above this table
+        page_texts = [line_text(ln) for ln in page_lines_of] if len(starts) == 1 else \
+            [line_text(ln) for ln in page_lines_of if max(w.y for w in ln) < rows[a].top]
         b = starts[n + 1] if n + 1 < len(starts) else len(rows)
         gap = gaps[a]
         dates = column_dates(gap, columns, height, sep)
@@ -1708,7 +1712,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
     ocr_boxes = ocr_boxes or ocr_page_boxes
     layers = page_layers(pdf_bytes, max_pages)
-    anywhere = consolidated_anywhere(layers, not_required=True)    # SBICARD: "not required to prepare consolidated"
+    anywhere = consolidated_anywhere(layers, not_required=True, numbers_first=True)    # SBICARD: "not required to prepare consolidated"
     ranked = statement_pages(layers, MAX_STATEMENT_PAGES)
     scans = [p for p, layer in layers.items() if not layer.has_layer] if len(layers) <= SCAN_PAGE_LIMIT else []
     by_page: dict[int, list[Table]] = {}
@@ -2121,8 +2125,9 @@ def fill_damaged_quarter(columns: list[Column]) -> None:
     if len(damaged) != 1:
         return
     c = first[damaged[0]]
-    if c.kind not in (None, "quarter") or c.date not in (None, slots[damaged[0]]):
-        return
+    if c.kind not in (None, "quarter") or c.date not in (None, slots[damaged[0]]) \
+            or c.read_date not in (None, slots[damaged[0]]):
+        return                           # a date read but disputed by the header words is never revived (the lead's review)
     if not any(y.date == x for y in rest) or not any(y.date == slots[2] for y in rest):
         return
     if any(y.date == slots[1] for y in rest):      # a column dated the previous quarter after the three: not this layout

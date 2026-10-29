@@ -1943,3 +1943,62 @@ def test_trap_non_consolidated_word_is_not_consolidated():
 def test_trap_title_names_other_basis():
     pdf, want = _two_bases(words=("Standalone", "Consolidated"))
     assert nf._basis_word("Non-Consolidated") is None
+
+
+# --- the lead's review of 8c42311 ----------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("line", ["Figures (US$ in million)", "x ($ in million)", "Margins (% in lakhs)", "x (# in crores)",
+                                  "x (€ in million)", "x (£ in million)"])
+def test_a_bracketed_unit_after_another_currency_or_a_symbol_is_not_a_rupee_unit(line):
+    assert nf.tail_units([line]) == set()
+
+
+def test_a_bracketed_unit_after_a_rupee_sign_is_read():
+    assert nf.tail_units(["CIN: L1 (₹ in Crores)"]) == {1}
+
+
+def test_a_quarter_date_read_but_disputed_by_the_header_words_is_never_revived():
+    spec = [(None, None)] + SEP[1:]
+    cols = _layout(spec)
+    cols[0].read_date = date(2026, 6, 30)        # column_kinds read a date the header words disputed: date and kind set to None
+    nf.fill_damaged_quarter(cols)
+    assert (cols[0].kind, cols[0].date) == (None, None)
+    cols = _layout(spec)
+    cols[0].read_date = date(2026, 9, 30)        # the date read is the slot's own: the column is given
+    nf.fill_damaged_quarter(cols)
+    assert (cols[0].kind, cols[0].date) == (Q, date(2026, 9, 30))
+
+
+def test_a_unit_named_elsewhere_on_a_page_of_two_tables_never_sets_the_first_tables_unit():
+    rows, _ = pl()
+    doc = pymupdf.open(stream=statement(rows, unit=" "), filetype="pdf")
+    page = doc[0]
+    draw(page, LEFT, 650, "Statement of segment results")       # a second table below the first, in another unit
+    draw(page, LEFT, 664, "(Rs. in Crores)")
+    for edge, g, d in zip(COL_RIGHT, KINDS, DATES):
+        draw(page, edge - 15 - pymupdf.get_text_length(g, fontsize=FONT) / 2, 688, g)
+        right(page, edge, 702, d)
+    for k, label in enumerate(["Segment A", "Segment B", "Total"]):
+        draw(page, LEFT, 730 + 14 * k, label)
+        for edge, v in zip(COL_RIGHT, [10.5, 20.25, 30.75] if k < 2 else [21.0, 40.5, 61.5]):
+            right(page, edge, 730 + 14 * k, fmt(v))
+    pdf = doc.tobytes()
+    doc.close()
+    assert read(pdf, "revenue").status != "ok"
+
+
+def test_the_reader_options_are_off_outside_the_numbers_first_reader_and_on_inside_it():
+    from bse_intel import settings
+    flags = ("pdf_dates_2digit", "pdf_page_rank", "pdf_row_fixes")
+    assert not any(settings.pdf_option(f) for f in flags)
+    with settings.pdf_reader_options():
+        assert all(settings.pdf_option(f) for f in flags)
+    assert not any(settings.pdf_option(f) for f in flags)
+
+
+def test_the_old_reader_keeps_its_plain_consolidated_word_search():
+    text = ("The Company does not have any subsidiary, associate or joint venture. Accordingly, the Company is not required to "
+            "prepare consolidated financial results. Standalone results enclosed.")
+    layers = {1: prd.PageLayer(text, True, set(), "")}
+    assert prd.consolidated_anywhere(layers)                                          # the old reader: the word is there
+    assert not prd.consolidated_anywhere(layers, not_required=True, numbers_first=True)   # numbers-first reads the exemption

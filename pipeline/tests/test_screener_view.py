@@ -142,6 +142,11 @@ def test_corporate_balance_sheet_reads_rows_described_on_the_year_with_amounts_a
     assert got["Other Assets"] == 997 - 375 - 20 - 125
 
 
+def test_a_standalone_year_end_total_is_the_filed_assets_with_no_deferred_tax_offset():
+    got = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END), standalone=True))
+    assert got["Total Assets"] == got["Total Liabilities"] == 1000.0         # no min(DTA 8, DTL 3) on a standalone sheet
+
+
 def test_lease_elements_win_over_lease_rows_and_current_maturities_rows_still_count():
     got = values(sv.corporate_bs(sv._Reader(annual_facts([("LeaseLiabilitiesNoncurrent", "I2026", 3.0),
                                                            ("LeaseLiabilitiesCurrent", "I2026", 1.0)]), instant=END)))

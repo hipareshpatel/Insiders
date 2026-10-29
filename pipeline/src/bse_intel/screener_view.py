@@ -73,7 +73,7 @@ from datetime import date
 from . import xbrl_facts
 from .memory_gaps import quarter_end
 from .periods import quarter_index
-from .metrics import CONSOLIDATED
+from .metrics import CONSOLIDATED, STANDALONE
 from .screener_fill import _section_table, _basis_of, cash_year_of, period_of
 
 ABS_TOL, REL_TOL = 1.0, 0.0005          # a pair is exact within 1 Cr or 0.05% of screener's figure
@@ -468,11 +468,13 @@ def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str =
 
 # --- balance sheet ------------------------------------------------------------------------------------------------
 
-def corporate_bs(r: _Reader, source: str = "", half_year: bool = False) -> dict[str, Row]:
+def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:
     """``half_year``: a September balance sheet, read from its results file, where screener puts intangibles under development in
     Fixed Assets (HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27: the CWIP and Fixed Assets gaps both =
     IntangibleAssetsUnderDevelopment, run 40735344929); in a year's column they are CWIP (Reliance FY26 237,686). Its total is the
-    filed Assets, no deferred tax offset."""
+    filed Assets, no deferred tax offset. ``standalone``: a standalone year-end total is the filed Assets too (every company, run
+    40797693366: 147 standalone sheets exact without min(DTA, DTL), 35 with it, those of 15 companies, TCS, Infosys and Wipro among
+    them; consolidated 1,099 with it, 102 without)."""
     src = f" [{source}]" if source else ""
     out: dict[str, Row] = {}
 
@@ -535,7 +537,7 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False) -> dict[
     assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
     # the half-year column is the filed total: HCL Tech, Adani Power, Adani Green, Wipro, Torrent Pharma Q2FY27 apart by exactly
     # min(DTA, DTL), while HCL Tech's year columns FY23-FY26 are exact with it (run 40735344929)
-    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year else 0.0
+    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year and not standalone else 0.0
     tot = None if assets is None else assets - offset
     tot_note = ("Assets" + (f" - min(DTA, DTL) {_fmt(offset)}" if offset else "") if assets is not None else "missing Assets") + src
     out["Total Liabilities"] = Row(tot, tot_note)
@@ -567,14 +569,14 @@ def nbfc_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     return out
 
 
-def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False) -> dict[str, Row]:
+def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:
     if fam == BANK:
         return bank_bs(r, source)
     if fam == NBFC:
         return nbfc_bs(r, source)
     if fam == INSURER:
         return {}
-    return corporate_bs(r, source, half_year)
+    return corporate_bs(r, source, half_year, standalone)
 
 
 # --- cash flow ------------------------------------------------------------------------------------------------------
@@ -728,7 +730,8 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
         else:
             f, label = cf.result(period, basis), f"results file {period}"
         reader = _Reader(f, instant=end) if f is not None and end else None
-        result = (bs_rows(fam, reader, label, half_year=not period.startswith("Q4")), "") if reader \
+        sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE) if reader else None
+        result = (sheet, "") if reader \
             else (None, f"no facts for {period}")
     memo[k] = result
     memo[("reader", k)] = reader

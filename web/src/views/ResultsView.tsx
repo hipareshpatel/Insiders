@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueries } from "@tanstack/react-query";
 import { ArrowUpRight, FileText, Search } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
@@ -16,6 +16,7 @@ import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxono
 import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
 import { TURN, turnOf } from "../lib/results";
+import { isQuarter, memoryTable, type MemoryByScrip } from "../../shared/memoryResults";
 import { Empty, Loading } from "./FeedView";
 
 export { turnOf };
@@ -50,10 +51,21 @@ export function ResultsView() {
   });
   const rows = useMemo(() => (query.data?.pages.flatMap((p) => p.cards) ?? [])
     .map((row) => ({ row, card: parseCard(row) }))
-    .filter((r): r is { row: CardRow; card: CardBody } => !!r.card), [query.data]);
+    .filter((r): r is { row: CardRow; card: CardBody } => !!r.card && isQuarter(r.card.results?.period)), [query.data]);
   const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])]
     .sort((a, b) => periodEnd(b).localeCompare(periodEnd(a)));
   const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
+
+  // the table's figures come from memory, not the card (owner, 29 Oct 2026); 50 companies a call
+  const scrips = useMemo(() => [...new Set(visible.map((r) => r.row.scrip_code).filter(Boolean))], [visible]);
+  const memoryParts = useQueries({
+    queries: Array.from({ length: Math.ceil(scrips.length / 50) }, (_, i) => scrips.slice(i * 50, i * 50 + 50)).map((part) => ({
+      queryKey: ["results-memory", part.join(",")],
+      queryFn: () => api.resultsMemory(part),
+      staleTime: 5 * 60_000,
+    })),
+  });
+  const memory: MemoryByScrip = Object.assign({}, ...memoryParts.map((q) => q.data?.memory ?? {}));
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
@@ -118,6 +130,7 @@ export function ResultsView() {
                   const t = (card.tone ?? "NEUTRAL") as Tone;
                   const v = verdict(t, row.impact_level);
                   const r = card.results;
+                  const mem = r?.period ? memoryTable(memory[row.scrip_code] ?? [], r.period) : undefined;
                   const isOpen = open === row.news_id;
                   return (
                     <Fragment key={row.news_id}>
@@ -134,10 +147,10 @@ export function ResultsView() {
                         <td className="px-3 py-3"><Badge className={TONE_CHIP[v.tone]}>{v.label}</Badge></td>
                         <td className="whitespace-nowrap px-3 py-3 text-right text-ink-2">{cr(row.market_cap_cr)}</td>
                         <td className="num whitespace-nowrap px-3 py-3 font-medium text-ink">{r?.period ?? "—"}</td>
-                        <td className="px-3 py-3 text-right"><Change value={(r?.revenue ?? r?.interest_earned ?? r?.gross_premium)?.yoy_pct} /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.ebitda?.yoy_pct} turn={turnOf(r?.ebitda)} /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.ebitda_margin?.yoy_bps} unit="bp" /></td>
-                        <td className="px-3 py-3 text-right"><Change value={r?.pat?.yoy_pct} turn={turnOf(r?.pat)} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={mem?.sales?.yoy_pct} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={mem?.ebitda?.yoy_pct} turn={mem?.ebitda?.turn} /></td>
+                        <td className="px-3 py-3 text-right"><Change value={mem?.margin?.yoy_bps} unit="bp" /></td>
+                        <td className="px-3 py-3 text-right"><Change value={mem?.pat?.yoy_pct} turn={mem?.pat?.turn} /></td>
                         <td className="px-3 py-3 font-sans text-xs">
                           {card.signals.filter((s) => s.severity === "WARNING").length > 0 && <span className="mr-2 text-warn">⚠ {card.signals.filter((s) => s.severity === "WARNING").length}</span>}
                           {card.signals.filter((s) => s.severity === "POSITIVE").length > 0 && <span className="text-pos">✓ {card.signals.filter((s) => s.severity === "POSITIVE").length}</span>}

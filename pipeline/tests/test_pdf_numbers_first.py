@@ -1216,3 +1216,13 @@ def test_a_total_revenue_line_over_its_parts_is_the_revenue():
     pdf = statement([(["1 Revenue from operations", "a. Sale of products"], a), (["b. Other operating revenues"], b),
                      (["Total Revenue from operations"], REVENUE)] + rows[1:])
     assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
+
+
+def test_a_row_equal_to_the_revenue_row_above_in_all_but_one_column_is_no_subtotal():
+    # twenty-seventh review: "Interest income" equal to "Revenue from operations" above it except in the period's column
+    rows, want = pl()
+    interest = [600.00] + REVENUE[1:]
+    pdf = statement([(["Revenue from operations"], REVENUE), (["Interest income"], interest), (["Other income"], OTHER),
+                     (["Total income"], cols_sum(interest, OTHER))] + rows[3:])
+    r = read(pdf, "revenue")
+    assert r.status != "ok" or r.value == pytest.approx(crore(1000.00))

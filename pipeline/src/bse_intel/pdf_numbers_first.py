@@ -1189,8 +1189,13 @@ class Solver:
             above = min(rows) - 1
             # unless the first row is the subtotal of the rows right above it ("a. Sale of products", "b. Other operating
             # revenues", "Total Revenue from operations", SRF Q2FY27): then the revenue row above is one of its parts
-            subtotal = any(self.valid((rows[0], tuple((r, 1) for r in range(above - size + 1, above + 1)))) for size in range(1, 7)
-                           if above - size + 1 >= 0)
+            # (the subtotal says revenue itself and holds in every column it can be checked in: no broken column is
+            # tolerated here, 27th review)
+            def strict(proof: Proof) -> bool:
+                return self.valid(proof) and False not in self.mask(proof)
+            subtotal = self.cls[rows[0]] == "REV" and any(
+                strict((rows[0], tuple((r, 1) for r in range(above - size + 1, above + 1)))) for size in range(1, 7)
+                if above - size + 1 >= 0)
             if above >= 0 and self.cls[above] == "REV" and not subtotal:
                 rows_rev_ok = False
             rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok

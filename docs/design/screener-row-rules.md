@@ -196,7 +196,7 @@ results file (1,392): 15.2 / 23.4 / 27.5 / 6.9 / 11.2 / 15.8 %.
   &todate=YYYY/MM/DD` (category 7, "Annual Reports (Pdf & XBRL)"; the answer repeats joined rows, the company's own rows are
   those whose fld_scripcode is its code; each names the year end, `fld_filename` AnnualReport_<stamp>.xml and the XBRL date).
   Of 10 companies picked at random among the 262 whose FY24 or FY25 year we read from a results file for want of an NSE file,
-  9 have that year on BSE (Onida, Ganesh Housing, Bosch Home Comfort, CMS Info, Rhetan, BF Investment, Wonderla, Ion Exchange,
+  9 have that year on BSE (Onida, Ganesh Housing, Bosch Home Comfort, CMS Info, RGL (532923), BF Investment, Wonderla, Ion Exchange,
   Timken; Sical Logistics none), and 6 have FY23 (year end 31 Mar 2023) too, which no NSE list holds. The download folder of
   these files is not yet known (the page's code builds links only for results files, /XBRLFILES/<XMLName>).
 

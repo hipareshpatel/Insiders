@@ -13,10 +13,12 @@ import { cn } from "../lib/cn";
 import { HISTORY_START } from "../lib/config";
 import { cr, istDate, todayIST, companyPath } from "../lib/format";
 import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxonomy";
-import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
 import { TURN, turnOf } from "../lib/results";
 import { isQuarter, memoryTable, type MemoryByScrip } from "../../shared/memoryResults";
+import { reportingQuarters } from "../../shared/resultsCalendar";
+import { summariseResults } from "../../shared/resultsSummary";
+import { QuarterChips, ResultsKpis } from "./ResultsKpis";
 import { Empty, Loading } from "./FeedView";
 
 export { turnOf };
@@ -40,21 +42,31 @@ export function ResultsView() {
     return () => clearTimeout(id);
   }, [text, q, setParams]);
   const size = params.get("size");
-  const quarter = params.get("quarter");
   const tone = params.get("verdict");
+  // the calendar: the quarter whose results are being declared now, then the four before it (owner, 29 Oct 2026)
+  const calendar = useMemo(() => reportingQuarters(todayIST()), []);
+  const selected = calendar.find((c) => c.period === params.get("quarter")) ?? calendar[0];
+  const quarter = selected.period;
+  // a search looks through all history; otherwise the feed is the quarter's declaration window
+  const searching = !!params.get("q");
 
   const query = useInfiniteQuery({
-    queryKey: ["results", size, params.get("q")],
-    queryFn: ({ pageParam }) => api.feed({ from: HISTORY_START, to: todayIST(), category: "RESULTS", size: size ?? undefined, q: params.get("q") ?? undefined }, pageParam, 50),
+    queryKey: ["results", size, params.get("q"), searching ? "all" : selected.period],
+    queryFn: ({ pageParam }) => api.feed({
+      from: searching ? HISTORY_START : selected.from, to: searching ? todayIST() : selected.to,
+      category: "RESULTS", size: size ?? undefined, q: params.get("q") ?? undefined,
+    }, pageParam, 50),
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.next_cursor,
   });
+  // every page of the window is read, so the counts cover all of it (owner: counts from what is selected)
+  useEffect(() => {
+    if (query.hasNextPage && !query.isFetchingNextPage && !query.isFetchNextPageError) query.fetchNextPage();
+  }, [query.hasNextPage, query.isFetchingNextPage, query.isFetchNextPageError, query]);
   const rows = useMemo(() => (query.data?.pages.flatMap((p) => p.cards) ?? [])
     .map((row) => ({ row, card: parseCard(row) }))
     .filter((r): r is { row: CardRow; card: CardBody } => !!r.card && isQuarter(r.card.results?.period)), [query.data]);
-  const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])]
-    .sort((a, b) => periodEnd(b).localeCompare(periodEnd(a)));
-  const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
+  const visible = rows.filter((r) => r.card.results?.period === quarter && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
 
   // the table's figures come from memory, not the card (owner, 29 Oct 2026); 50 companies a call
   const scrips = useMemo(() => [...new Set(visible.map((r) => r.row.scrip_code).filter(Boolean))], [visible]);
@@ -66,6 +78,11 @@ export function ResultsView() {
     })),
   });
   const memory: MemoryByScrip = Object.assign({}, ...memoryParts.map((q) => q.data?.memory ?? {}));
+  // one company, one count: a company with two cards for the quarter counts once, on its newest card (the feed is newest first)
+  const summary = useMemo(() => {
+    const firstByCompany = [...new Map(visible.map((r) => [r.row.scrip_code, r])).values()];
+    return summariseResults(firstByCompany.map((r) => memoryTable(memory[r.row.scrip_code] ?? [], quarter)));
+  }, [visible, memory, quarter]);
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
@@ -74,11 +91,10 @@ export function ResultsView() {
         <p className="mt-1 text-sm text-ink-2">Quarterly results with year-on-year changes, read against each company's memory. Click a row for the full card.</p>
       </header>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Select aria-label="Quarter" value={quarter ?? ""} onChange={(e) => setParams({ quarter: e.target.value || null })}>
-          <option value="">All quarters</option>
-          {quarters.map((q) => <option key={q} value={q}>{q}</option>)}
-        </Select>
+      <QuarterChips quarters={calendar} value={quarter}
+        onChange={(period) => setParams({ quarter: period === calendar[0].period ? null : period })} />
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         <Select aria-label="Verdict" value={tone ?? ""} onChange={(e) => setParams({ verdict: e.target.value || null })}>
           <option value="">Any verdict</option>
           <option value="POSITIVE">Strong / Good</option>
@@ -95,6 +111,10 @@ export function ResultsView() {
           <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Search company"
             className="h-9 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none" />
         </label>
+      </div>
+
+      <div className="mt-4">
+        <ResultsKpis calendar={selected} summary={summary} pending={query.hasNextPage || memoryParts.some((m) => m.isFetching)} />
       </div>
 
       <div className="mt-4">

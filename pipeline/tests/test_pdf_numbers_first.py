@@ -1380,3 +1380,18 @@ def test_capital_adequacy_ratios_below_a_bank_statement_never_take_its_profit():
              (["Capital adequacy ratio (%)"], [15.4, 15.5, 15.5, 15.4])]
     got = read(statement(rows), "pat")
     assert got.status != "ok" or got.value == pytest.approx(crore(want["pat"][0])), got
+
+
+def test_a_banks_provisions_that_include_the_tax_never_make_its_net_profit_the_profit_before_tax():
+    # the outside reviews' trap: a bank printing one "Provisions and contingencies" line that includes the tax and no tax row;
+    # the row after it is the net profit, never the profit before tax
+    rows, want = bank_rows()
+    tax = [101.25, 95.4, 90.1, 196.65]
+    prov = [round(p + t, 2) for p, t in zip(rows[12][1], tax)]
+    net = [round(o - p, 2) for o, p in zip(want["op"], prov)]
+    rows = rows[:12] + [(["8 Provisions and contingencies (including tax)"], prov), (["9 Net profit for the period (7-8)"], net)]
+    pdf = statement(rows)
+    got = read(pdf, "pbt")
+    assert got.status != "ok" or got.value != pytest.approx(crore(net[0])), got
+    got = read(pdf, "pat")
+    assert got.status != "ok" or got.value == pytest.approx(crore(net[0])), got

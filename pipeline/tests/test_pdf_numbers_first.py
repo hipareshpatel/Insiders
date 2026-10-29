@@ -1287,3 +1287,15 @@ def test_a_date_given_by_the_layout_does_not_make_a_page_look_dated():
     table = nf.Table(1, "CONSOLIDATED", 1, cols, [], "textlayer")
     table.named = {"revenue": []}
     assert cols[2].date == date(2023, 3, 31) and nf.usable_dates([table]) == 4
+
+
+@pytest.mark.parametrize("label", ["04. Share of net profit of associates and joint ventures", "7 Share of net profit of Associates"])
+def test_a_numbered_associates_share_carries_the_chain_to_the_profit(label):
+    # ATUL Q2FY27 consolidated ("04. Share of net profit of associate and joint venture") and BFINVEST ("7 Share of net profit
+    # of Associates"): a row number before the share made it a profit row, which cut the chain to profit before tax and profit
+    share = [9.4, 5.1, 3.3, 12.2]
+    rows, want = pl(exceptional=[-v for v in share])
+    rows[9] = ([label], share)
+    for metric in ("pbt", "pat"):
+        got = read(statement(rows, title="Statement of Consolidated Financial Results"), metric, basis="CONSOLIDATED")
+        assert got.status == "ok" and got.value == pytest.approx(crore(want[metric][0])), (metric, got)

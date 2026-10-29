@@ -826,8 +826,9 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
 # --- the stitched label's landmark (the second signal) --------------------------------------------------------------------
 
 _CLASS_RULES: list[tuple[str, re.Pattern]] = [
-    # before the PAT rule: "Share of profit of associates after tax" is an associate's share, not a profit (ninth review)
-    ("ASSOC", re.compile(r"^\W*(?:[a-z]{1,4}\W+)?(?:add:?\s*|less:?\s*)?share\s+(?:of|in)\b.*\b(?:associates?|joint\s+ventures?)", re.I)),
+    # before the PAT rule: "Share of profit of associates after tax" is an associate's share, not a profit (ninth review);
+    # a row number may lead it ("04. Share of net profit of associates", ATUL Q2FY27)
+    ("ASSOC", re.compile(r"^\W*(?:[a-z\d]{1,4}\W+)?(?:add:?\s*|less:?\s*)?share\s+(?:of|in)\b.*\b(?:associates?|joint\s+ventures?)", re.I)),
     ("EPS", re.compile(r"earnings?\s+per|\beps\b|per\s+(?:equity\s+)?share", re.I)),
     ("TCI", re.compile(r"comprehensive|\boci\b", re.I)),          # "Profit after tax and OCI" is a total comprehensive income
     ("PAT", re.compile(r"(?:profit|loss)\b.*\bfor\s+the\s+(?:period|year|quarter)\b.*continuing\s+and\s+discontinu", re.I)),

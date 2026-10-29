@@ -20,8 +20,7 @@ export const sourceOf = ({ row, card }: Parsed) =>
 export function StorySoFar({ dossier, parsed, count }: { dossier: Dossier | null; parsed: Parsed[]; count: number }) {
   const story = useMemo(() => dossier && composeStory({
     metrics: dossier.financial_metrics, deals: dossier.deals ?? [], guidance: dossier.guidance, money: cr,
-    latest: parsed.find((p) => p.card.results)?.card.results,
-  }), [dossier, parsed]);
+  }), [dossier]);
   const updated = dossier?.updated_at ?? parsed[0]?.row.filed_at;
   const text = story ?? dossier?.business_summary?.text;
   return (

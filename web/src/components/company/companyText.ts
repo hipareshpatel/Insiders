@@ -1,7 +1,7 @@
 /** The company page's derived figures and short texts: what memory and the cards hold, cleaned and condensed for
  * the Overview (design audit 2026-10-20, fixes 4-9). No React and no imports beyond types, so `node --test` runs the
  * cases in test/company.test.ts. Every figure here comes from the data passed in; nothing is estimated. */
-import type { CallQuarter, CardBody, DealRecord, Dossier, Guidance, PriceReaction, ResultsSnapshot, WatchItem } from "../../../shared/types";
+import type { CallQuarter, CardBody, DealRecord, Dossier, Guidance, PriceReaction, WatchItem } from "../../../shared/types";
 
 type Series = { d: string[]; c: number[] };
 type Metric = Dossier["financial_metrics"][number];
@@ -268,8 +268,8 @@ const signed = (v: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).
 /** Two or three sentences from memory: the results streak, the latest deal, the promise record. Figures are wrapped in
  *  ** for highlighting; a sentence whose figures are missing is left out. Null when memory has none of the three. */
 export function composeStory(input: { metrics: Metric[]; deals: DealRecord[]; guidance: Guidance[]; money: (cr: number) => string;
-  latest?: ResultsSnapshot | null }): string | null {
-  const { metrics, deals, guidance, money, latest } = input;
+}): string | null {
+  const { metrics, deals, guidance, money } = input;
   const out: string[] = [];
   const rev = quarterly(metrics, ["revenue"]);
   const pat = quarterly(metrics, ["pat_owners", "pat"]);
@@ -278,16 +278,15 @@ export function composeStory(input: { metrics: Metric[]; deals: DealRecord[]; gu
     const yoy = (q: Map<number, number>, i: number) => { const a = q.get(i), b = q.get(i - 4); return a != null && b != null && b > 0 ? (a / b - 1) * 100 : null; };
     let streak = 0;
     for (let i = last; yoy(rev, i) != null && yoy(rev, i)! > 0; i--) streak++;
-    // the latest results card's own figures when it is this quarter's (the filing's basis), else memory's
-    const card = latest && quarterIndex(latest.period) === last && /^Q/.test(latest.period) ? latest : null;
-    const revNow = card?.revenue?.value ?? rev.get(last)!;
-    const r = card?.revenue?.yoy_pct ?? yoy(rev, last)!;
+    // every figure is memory's: a results card's own table is not read here (owner, 29 Oct 2026)
+    const revNow = rev.get(last)!;
+    const r = yoy(rev, last)!;
     if (r <= 0) streak = 0;
     let s = streak >= 2
       ? `Revenue has grown year on year for **${streak} quarters in a row**, to **${money(revNow)}** in ${quarterLabel(last)} (**${signed(r)}**)`
       : `Revenue was **${money(revNow)}** in ${quarterLabel(last)} (**${signed(r)}** year on year)`;
-    const p = card?.pat?.value ?? pat.get(last), pb = card?.pat?.prev_year ?? pat.get(last - 4);
-    const pc = card?.pat?.yoy_pct ?? (p != null && pb != null && pb > 0 ? (p / pb - 1) * 100 : null);
+    const p = pat.get(last), pb = pat.get(last - 4);
+    const pc = p != null && pb != null && pb > 0 ? (p / pb - 1) * 100 : null;
     if (p != null && pb != null) {
       s += p > 0 && pb > 0 && pc != null
         ? `; profit ${pc >= 0 ? "rose" : "fell"} **${Math.abs(pc).toFixed(0)}%** to **${money(p)}**`

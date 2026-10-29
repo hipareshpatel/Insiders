@@ -7,7 +7,7 @@ import { EarningsCalls } from "../components/company/EarningsCalls";
 import { Institutions } from "../components/company/Institutions";
 import { Avatar } from "../components/Avatar";
 import { PriceChart } from "../components/PriceChart";
-import { formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
+import { formerOwnName, PROVISIONAL_STAGES, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard } from "../components/FilingCard";
 import { CardList, RailTime, railDate } from "../components/company/CardList";
 import { chartTags, dayChange, allZero, inStatementOrder, metricLabel, nextResults, overdue, peTtm, quarterly, quarterLabel, short, statementPlace, unitValue, yearRange } from "../components/company/companyText";
@@ -26,7 +26,8 @@ import { ownerApi, useOwnerToken } from "../lib/owner";
 import { HISTORY_START } from "../lib/config";
 import { useQueryState } from "../lib/url";
 import { Empty, Loading } from "./FeedView";
-import { Change, turnOf } from "./ResultsView";
+import { Change } from "./ResultsView";
+import { memoryTable, resultRows, type MemoryRow } from "../../shared/memoryResults";
 
 export { Panel };
 
@@ -69,6 +70,8 @@ export function CompanyPage() {
   if (query.isPending) return <Loading />;
   if (query.isError) return <div className="mx-auto max-w-[1240px] p-6"><Empty title="Couldn't load this company" body={String(query.error)} /></div>;
   const { company, dossier, chart } = query.data;
+  // the scorecard's figures come from memory, not the cards (owner, 29 Oct 2026)
+  const memoryRows = useMemo(() => resultRows(query.data?.dossier?.financial_metrics), [query.data]);
   if (!company && !dossier) return <div className="mx-auto max-w-[1240px] p-6"><Empty title={`No company ${scrip}`} /></div>;
   const rows = query.data.cards;
   const name = company?.company_name ?? dossier?.company_name ?? scrip!;
@@ -159,7 +162,7 @@ export function CompanyPage() {
                 {dossier && <QuarterBars dossier={dossier} />}
               </div>
               <div className="min-w-0 space-y-[18px]">
-                <ResultsScorecard parsed={parsed} onOpen={(id) => openCard(id, "filings")} />
+                <ResultsScorecard parsed={parsed} memory={memoryRows} onOpen={(id) => openCard(id, "filings")} />
                 {dossier && <BalanceTiles dossier={dossier} />}
                 {dossier && <SegmentMix dossier={dossier} />}
               </div>
@@ -500,7 +503,7 @@ function PromiseTracker({ dossier, company }: { dossier: Dossier | null; company
 }
 
 /** One compact tile per results filing: the verdict, profit and revenue against a year ago; a tile opens its card. */
-function ResultsScorecard({ parsed, onOpen }: { parsed: Parsed[]; onOpen: (newsId: string) => void }) {
+function ResultsScorecard({ parsed, memory, onOpen }: { parsed: Parsed[]; memory: MemoryRow[]; onOpen: (newsId: string) => void }) {
   const [all, setAll] = useState(false);
   const quarters = parsed.filter((p) => p.card.results);
   if (!quarters.length) return null;
@@ -509,16 +512,16 @@ function ResultsScorecard({ parsed, onOpen }: { parsed: Parsed[]; onOpen: (newsI
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {(all ? quarters : quarters.slice(0, 4)).map(({ row, card }) => {
           const v = verdict((card.tone ?? "NEUTRAL") as Tone, row.impact_level);
-          const lines = resultLines(card.results!);
-          const profit = lines.find((l) => l.key === "pat");
-          const top = lines.find((l) => ["revenue", "interest_earned", "gross_premium", "net_interest_income"].includes(l.key));
+          // the verdict is the card's judgement; the figures are memory's, on the quarter's own basis
+          const t = memoryTable(memory, card.results!.period);
+          const salesLabel = t.lens === "bank" ? "Interest earned" : t.lens === "insurer" ? "Gross premium" : "Revenue";
           return (
             <button key={row.news_id} type="button" onClick={() => onOpen(row.news_id)} title="Open the card"
               className="flex min-w-0 flex-col items-start gap-1 rounded-2xl bg-surface-2 px-3 py-2.5 text-left text-[12.5px] hover:ring-1 hover:ring-accent">
               <span className="num text-ink-3">{card.results!.period}</span>
               <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-extrabold", TONE_CHIP[v.tone])}>{v.label}</span>
-              {profit && <b className="text-[14px] leading-snug">Profit <Change value={profit.line.yoy_pct} turn={turnOf(profit.line)} /></b>}
-              {top && <span className="text-ink-2">{top.label} <Change value={top.line.yoy_pct} turn={turnOf(top.line)} /></span>}
+              {t.pat && <b className="text-[14px] leading-snug">Profit <Change value={t.pat.yoy_pct} turn={t.pat.turn} /></b>}
+              {t.sales && <span className="text-ink-2">{salesLabel} <Change value={t.sales.yoy_pct} /></span>}
             </button>
           );
         })}

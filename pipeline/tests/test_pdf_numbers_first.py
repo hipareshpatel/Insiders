@@ -1248,3 +1248,25 @@ def test_a_total_revenue_from_operations_line_over_parts_that_do_not_add_up_is_s
                      (["Total revenue from operations"], REVENUE)] + rows[1:])
     assert read(pdf, "revenue").value == pytest.approx(crore(1000.00))
     assert not nf._TOTAL_REVENUE.match("Total revenues")
+
+
+def test_an_undated_third_column_of_a_sebi_layout_is_the_same_quarter_a_year_before():
+    # ABCAPITAL Q4FY24 (A5): quarter 31.03.2024, quarter 31.12.2023, an unreadable date, year 31.03.2024, year 31.03.2023
+    def cols(kinds_dates):
+        out = [nf.Column(0, 1, 0.5, i) for i in range(len(kinds_dates))]
+        for c, (k, d) in zip(out, kinds_dates):
+            c.kind, c.date = k, d
+        return out
+    good = cols([("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31)),
+                 ("year", date(2023, 3, 31))])
+    nf.fill_corresponding_quarter(good)
+    assert (good[2].kind, good[2].date) == ("quarter", date(2023, 3, 31))
+    # the second column not the quarter before, a column after it undated, or no column a year before: nothing is filled
+    for bad in ([("quarter", date(2024, 3, 31)), ("quarter", date(2023, 3, 31)), (None, None), ("year", date(2024, 3, 31)),
+                 ("year", date(2023, 3, 31))],
+                [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31)),
+                 (None, None)],
+                [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31))]):
+        c = cols(bad)
+        nf.fill_corresponding_quarter(c)
+        assert c[2].date is None

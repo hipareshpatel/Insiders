@@ -808,6 +808,7 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         gap_lines = lines_of(gap, height)
         cols = [Column(c.x0, c.x1, c.xc, c.index, whole=c.whole) for c in columns]
         column_kinds(cols, dates, group_phrases(gap, cols, height), march)
+        fill_corresponding_quarter(cols)
         basis, contested = _basis_above_boxed(texts, len(texts))
         if basis and any(_NON_CONSOLIDATED.search(x) for x in [" ".join(texts)] + texts):
             basis, contested = None, True     # "Non-Consolidated Financial Results" names neither as a word (22nd review)
@@ -1493,6 +1494,30 @@ def target_columns(table: Table, kind: str, when: date) -> list[Column]:
 
 HALF_SUM_METRICS = ("revenue", "other_income", "total_income", "expenses", "pbt_pre", "pbt", "tax", "pat")
 HALF_SUM_MIN_ROWS = 4
+
+
+def fill_corresponding_quarter(columns: list[Column]) -> None:
+    """The one date a SEBI results layout allows in an undated third column (A5, date-candidate matching; ABCAPITAL Q4FY24:
+    "31.03.2024" quarter, "31.12.2023" quarter, an unreadable date, "31.03.2024" year, "31.03.2023" year): when the first two
+    columns are quarters dated the current quarter and the one before it, the third has no date and no kind, every column after
+    it is dated and is a half year, nine months or year, and one of those is dated a year before the current quarter, the third
+    is the same quarter a year before. Nothing else is filled."""
+    if len(columns) < 4:
+        return
+    a, b, c, rest = columns[0], columns[1], columns[2], columns[3:]
+    if not (a.kind == b.kind == "quarter" and a.date and b.date and c.date is None and c.kind is None):
+        return
+    if b.date != previous_quarter_end(a.date):
+        return
+    if not all(x.date and x.kind in ("half", "nine", "year") for x in rest):
+        return
+    try:
+        year_before = a.date.replace(year=a.date.year - 1)
+    except ValueError:          # 29 February
+        return
+    if not any(x.date == year_before for x in rest):
+        return
+    c.date, c.kind = year_before, "quarter"
 
 
 def previous_quarter_end(d: date) -> date:

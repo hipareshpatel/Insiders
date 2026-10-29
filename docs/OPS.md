@@ -102,7 +102,7 @@ then the companies' own statements: 9 of 9 differences settled, BSE right in all
 `docs/bench/bse-fill-2026-10-27.md`. The full run waits for the owner. (Run 40471967773 before it stopped at the start: the
 step did not install `requests`; fixed in #179.)
 
-## 29 Oct 2026: PDF shadow check built (TODO 116), off until the owner switches it on
+## 29 Oct 2026: PDF shadow check built (TODO 121), off until the owner switches it on
 
 `pdf-shadow.yml` reads the PDF of each results card filed in the last 3 hours with the numbers-first reader and logs, per
 headline figure, agrees / disagrees / unknown against the card (R2 `meta/pdf-shadow/<day>.csv`, artifact `pdf-shadow`). Read only:

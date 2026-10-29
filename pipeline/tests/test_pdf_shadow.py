@@ -1,4 +1,4 @@
-"""The shadow check of live results cards (pdf_shadow.py, TODO 116): synthetic PDFs, fake store and fetch, no network."""
+"""The shadow check of live results cards (pdf_shadow.py, TODO 121): synthetic PDFs, fake store and fetch, no network."""
 
 from __future__ import annotations
 

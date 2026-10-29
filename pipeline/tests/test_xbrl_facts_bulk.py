@@ -212,6 +212,19 @@ def test_a_stale_marker_asks_for_the_list_again_and_a_missing_period_is_fetched(
     assert xbrl_facts.key("1", "Q1FY24", "CONSOLIDATED") in sink.objects
 
 
+def test_a_fresh_marker_from_another_selection_asks_for_the_list_again():
+    site = Site({"AAA": [irow("a1", Q2, True)]})
+    sink, _ = run(site, companies=[("1", "AAA")])
+    marker = json.loads(sink.objects[xbrl_facts.listed_key("1")])
+    assert marker["v"] == xbrl_facts.MARKER_V
+    _, again = run(site, sink=sink, companies=[("1", "AAA")])
+    assert again["lists"] == 0                                             # today's marker, every period stored: no request
+    marker["v"] = 2                                                        # written by the 13-quarter test run of 29 Oct
+    sink.objects[xbrl_facts.listed_key("1")] = json.dumps(marker).encode()
+    _, out = run(site, sink=sink, companies=[("1", "AAA")])
+    assert out["lists"] == 1 and out["downloaded"] == 0 and out["skipped_stored"] == 1
+
+
 def test_a_fresh_marker_with_a_period_whose_facts_are_gone_asks_for_the_list_again():
     site = Site({"AAA": [irow("a1", Q2, True)]})
     sink, _ = run(site, companies=[("1", "AAA")])

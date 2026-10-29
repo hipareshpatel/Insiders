@@ -59,7 +59,7 @@ decide what goes live. Times are IST. Every number below is measured unless it s
 | Same code, live reading options off (190765c): numbers-first alone / combined | 250 / 0 / 87 / 255 / **1** / 81 | 203 / 0 / 137 / 240 / **10** / 90 |
 | Combined with the empty-cell re-read on (`PDF_CROP_REREAD=1`, off by default) | 262 / 0 / 75 | 266 / 0 / 74 |
 
-- 0 wrong in 677 figures bounds the wrong rate at about 0.45% (rule of three). The owner's proof size is 1,000 figures (TODO 114).
+- 0 wrong in 677 figures bounds the wrong rate at about 0.45% (rule of three). The owner's proof size is 1,000 figures (TODO 119).
 - The go-live bar set earlier for the reader (98% right, at most 5% no answer) is **not met**.
 - The old reader (what the live site uses): normal key 44 / 0 / 293; on 27 Oct, hard key 65 right / **10 wrong**.
 - 29 Oct fixes, each with a test that fails without it and an independent review: banks in RBI format (KARURVYSYA, RBLBANK,
@@ -89,7 +89,7 @@ decide what goes live. Times are IST. Every number below is measured unless it s
 | The reader and all fixes | many, latest reader code 1fcb1ae | bench only | tested, reviewed, CI green |
 | Empty-cell re-read from crops | 0b30926, 1fcb1ae | `PDF_CROP_REREAD` | reviewed; +4 figures; ~12-17 s a filing against ~9 s |
 | Unit-slip check asks the new reader first, old reader as fallback, same download | eb2474a | `SLIP_CHECK_NUMFIRST` (repository variable) | 7 tests; independently reviewed, its two fixes in 58b4eb1 (a later candidate filing can still prove the figure; no second download) |
-| Shadow check of live results cards (TODO 116): one row per card figure, agrees / disagrees / unknown, seconds per PDF, to R2 `meta/pdf-shadow/`; hourly workflow `pdf-shadow.yml`; figures that agree on different bases are flagged as mixed bases | 0739dcf | `PDF_SHADOW=on` (repository variable) | 12 tests; independently reviewed, fixes in 58b4eb1: a failed read of the day's log stops the run (it could overwrite the log); verdicts agrees / disagrees / unknown / basis_mismatch / mixed_bases / unclear (a consolidated profit may be the owners' share) |
+| Shadow check of live results cards (TODO 121): one row per card figure, agrees / disagrees / unknown, seconds per PDF, to R2 `meta/pdf-shadow/`; hourly workflow `pdf-shadow.yml`; figures that agree on different bases are flagged as mixed bases | 0739dcf | `PDF_SHADOW=on` (repository variable) | 12 tests; independently reviewed, fixes in 58b4eb1: a failed read of the day's log stops the run (it could overwrite the log); verdicts agrees / disagrees / unknown / basis_mismatch / mixed_bases / unclear (a consolidated profit may be the owners' share) |
 
 ## 5. Open before anything goes live
 
@@ -100,7 +100,7 @@ decide what goes live. Times are IST. Every number below is measured unless it s
    with fresh OCR. The 28 Oct run: about 76-84 s a filing on the answer keys (mostly scans). Locally on 29 Oct, fresh OCR at
    200 dpi: 29-78 s for each of 8 hard scanned filings.
 3. **Reviews: done.** One independent review of both; every defect it found is fixed with a test (58b4eb1).
-4. **TODO 115** (owner chose "check first"): the live reader reads "Non-Consolidated" as consolidated; recorded, not changed.
+4. **TODO 120** (owner chose "check first"): the live reader reads "Non-Consolidated" as consolidated; recorded, not changed.
 
 ## 6. The decisions asked of the lead (the reader session's recommendation in brackets)
 

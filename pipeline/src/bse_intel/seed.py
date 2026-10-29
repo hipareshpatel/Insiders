@@ -435,12 +435,12 @@ def _nse_quarters(nse, symbol: str, since: str, scrip: str, stats: "SeedStats | 
 SEED_QUARTERS = 12   # memory keeps 12 quarters (dossier.KEEP_PERIODS); older files are read for their year only
 
 
-def _recent_and_years(best: dict) -> dict:
-    """The latest SEED_QUARTERS quarters' files, and before them only the March quarter's: its file carries the
+def _recent_and_years(best: dict, quarters: int = SEED_QUARTERS) -> dict:
+    """The latest ``quarters`` quarters' files, and before them only the March quarter's: its file carries the
     year, the March balance sheet and the year's cash flow, all the annual view needs (owner, 2026-10-21: years as
     on screener.in). A file for any other old quarter would only be cut from memory again."""
     ends = sorted({row.period_end for row in best.values()}, reverse=True)
-    recent = set(ends[:SEED_QUARTERS])
+    recent = set(ends[:quarters])
     return {label: row for label, row in best.items() if row.period_end in recent or row.period_end[5:7] == "03"}
 
 

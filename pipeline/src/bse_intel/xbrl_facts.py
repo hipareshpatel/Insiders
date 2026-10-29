@@ -294,26 +294,47 @@ class Facts:
         return out
 
     def described(self, value_names: tuple[str, ...], description: str, *, end: date | None = None, months: int | None = None,
-                  instant: date | None = None) -> list[tuple[str, str, float]]:
+                  instant: date | None = None, joined: bool = False) -> list[tuple[str, str, float]]:
         """(element, description, value in crore) of every dimensional money fact named in ``value_names`` at the period whose
         context carries a ``DescriptionOf...`` text matching the regex ``description`` (a filer's own line inside a breakdown,
-        e.g. "Excise duty" inside other expenses)."""
+        e.g. "Excise duty" inside other expenses).
+
+        ``joined`` (the screener rows, screener_view.py; the reader fix of branch ``screener-rules`` 7e30240): an annual report tags a
+        row's description on the year's DURATION and its amount on the INSTANT at the year end, both with the same dimension member
+        (Infosys FY26: "Lease liabilities" 6,016 Cr and "Current lease liabilities" 3,160 Cr, whose sum is screener's 9,176 of
+        Borrowings), and names the non-current text ``DescriptionOther...`` (no "Of"): every ``Description...`` text is read, and an
+        amount with no description of its own context takes the description of the duration that ends on its date with the same
+        dimensions. Off by default, so the cross-check's classes do not move until its on/off comparison is made."""
         rx = re.compile(description, re.I)
+        prefix = "Description" if joined else "DescriptionOf"
         texts: dict[str, list[str]] = {}
         for el, ctx_id, unit, value, _ in self.rows:
-            if el.startswith("DescriptionOf") and isinstance(value, str):
+            if el.startswith(prefix) and isinstance(value, str):
                 texts.setdefault(ctx_id, []).append(value)
+        by_dims: dict[tuple, list[str]] = {}
+        if joined:
+            for ctx_id, found in texts.items():
+                c = self.contexts.get(ctx_id) or {}
+                if c.get("d") and c.get("e"):
+                    by_dims.setdefault((frozenset(c["d"].items()), c["e"]), []).extend(found)
         out, seen = [], set()
         for el, ctx_id, unit, value, _ in self.rows:
-            if el in value_names and self._is_money(unit) and not isinstance(value, str) and ctx_id in texts \
-                    and self._at(ctx_id, end, months, instant):
-                for text in texts[ctx_id]:
-                    # a row once: the older files tag a row's year to date with the quarter's own dates (Titan Q2FY24: Advertising
-                    # 268 Cr for the quarter and 542 Cr to date, both Jul-Sep), and the quarter's comes first in the file
-                    if rx.search(text) and (el, text) not in seen:
-                        seen.add((el, text))
-                        out.append((el, text, value / CRORE))
-                        break
+            if el not in value_names or not self._is_money(unit) or isinstance(value, str) or not self._at(ctx_id, end, months, instant):
+                continue
+            own = texts.get(ctx_id)
+            if own is None and joined:
+                c = self.contexts.get(ctx_id) or {}
+                own = by_dims.get((frozenset(c["d"].items()), c["i"])) if c.get("d") and c.get("i") else None
+            for text in own or ():
+                # a row once: the older files tag a row's year to date with the quarter's own dates (Titan Q2FY24: Advertising
+                # 268 Cr for the quarter and 542 Cr to date, both Jul-Sep), and the quarter's comes first in the file
+                # one row a text, even across members: the older results files tag a row's year to date with the quarter's dates
+                # AND its own member, so counting members apart takes the excise twice (Reliance Q2FY24 9,412 Cr twice; measured in
+                # screener-rows run 40725169900, 24 quarters). Two different rows sharing one text stay one: rarer, and visible
+                if rx.search(text) and (el, text) not in seen:
+                    seen.add((el, text))
+                    out.append((el, text, value / CRORE))
+                    break
         return out
 
     def durations(self) -> list[tuple[date, int]]:
@@ -431,6 +452,9 @@ def interesting(facts: Facts) -> set[str]:
 
 MAX_SHARDS = 16           # owner, 28 Oct 2026: 8 parallel downloads, then "Can we take it to 16" (the same day)
 SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
+FACTS_QUARTERS = 12       # the seed's 12. Screener shows 13, but the comparison starts at FY26 (screener_view.FIRST_QUARTER, owner,
+                          # 29 Oct 2026), which 12 cover; with 13 the test run 40837101219 fetched 90 files of Q1FY24 and Q2FY24
+MARKER_V = 1              # the marker's version: one written under another selection is no marker, its company is listed again
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
 GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS
@@ -467,8 +491,10 @@ def listed_key(scrip: str) -> str:
 def select_files(rows) -> list[tuple[str, str, object]]:
     """(period, basis, row) of the files to keep from NSE's results list: the seed's own selection (``seed._nse_quarters``: consolidated
     over standalone, the integrated filing over the older list's row, then the later filing, from SINCE; ``seed._recent_and_years``:
-    the latest SEED_QUARTERS quarters and the March quarters before them), with BOTH bases of each chosen quarter (the seed
-    keeps one, and the standalone files of a consolidated filer apart). Newest first."""
+    the latest quarters and the March quarters before them), with BOTH bases of each chosen quarter (the seed keeps one, and the
+    standalone files of a consolidated filer apart). Newest first. The latest FACTS_QUARTERS (screener shows 13; NSE lists Q2FY24
+    with a file for HDFCBANK, TCS, INFY, LT, MARUTI, KOTAKBANK, ULTRACEMCO, JSWSTEEL, BAJAJ-AUTO and NESTLEIND, measured 29 Oct 2026,
+    but the comparison starts at FY26)."""
     from . import seed
 
     by_basis: dict[bool, dict] = {True: {}, False: {}}
@@ -478,7 +504,7 @@ def select_files(rows) -> list[tuple[str, str, object]]:
         label = canonical_period(f"quarter ended {row.period_end[8:10]}.{row.period_end[5:7]}.{row.period_end[:4]}")
         if label:
             by_basis[bool(row.consolidated)][label] = row
-    chosen = seed._recent_and_years({**by_basis[False], **by_basis[True]})
+    chosen = seed._recent_and_years({**by_basis[False], **by_basis[True]}, FACTS_QUARTERS)
     out = [(label, "CONSOLIDATED" if consolidated else "STANDALONE", row)
            for consolidated in (True, False) for label, row in by_basis[consolidated].items() if label in chosen]
     return sorted(out, key=lambda t: (t[2].period_end, t[1] == "CONSOLIDATED"), reverse=True)
@@ -933,6 +959,8 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
             return False
         try:
             doc = json.loads(sink.get_object(listed_key(scrip)))
+            if doc.get("v") != MARKER_V:
+                return False
             age = ((today or today_ist()) - date.fromisoformat(doc["listed_on"])).days
             gone = {(p, b) for p, b, _ in doc.get("gone", [])}
             return 0 <= age < LIST_REFRESH_DAYS and all((p, b) in gone or key(scrip, p, b) in stored_facts
@@ -970,7 +998,7 @@ def run(sink, companies: list[tuple[str, str]], *, download: bool = False, clien
                     emit(scrip, symbol, rest_label, rest_basis, rest_row, "not_reached")
                 raise
         if not dry_run and not partial:
-            marker = {"v": 1, "listed_on": (today or today_ist()).isoformat(), "symbol": symbol,
+            marker = {"v": MARKER_V, "listed_on": (today or today_ist()).isoformat(), "symbol": symbol,
                       "files": [[label, basis] for label, basis, _ in selected], "gone": gone}
             sink.put_object(listed_key(scrip), json.dumps(marker, separators=(",", ":")).encode(), content_type="application/json")
 

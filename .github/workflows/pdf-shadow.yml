@@ -1,4 +1,4 @@
-# The shadow check of live results cards with the numbers-first PDF reader (TODO 116, owner 29 Oct 2026). Read only: for each
+# The shadow check of live results cards with the numbers-first PDF reader (TODO 121, owner 29 Oct 2026). Read only: for each
 # results card filed in the last hours it reads the filing's PDF and logs, per headline figure (revenue or total income, PBT,
 # profit), agrees / disagrees / unknown against the card, with the reason and the seconds spent on the PDF. Nothing on the site,
 # in memory or in a card changes; no AI. Rows go to R2 (meta/pdf-shadow/<day>.csv) every 3 cards, so a stopped run keeps them and

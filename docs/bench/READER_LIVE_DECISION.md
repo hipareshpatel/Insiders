@@ -11,6 +11,38 @@ decide what goes live. Times are IST. Every number below is measured unless it s
   must hold in at least 3 columns; labels can only veto.
 - It does **not need the XBRL**: it reads the PDF alone. The XBRL was used only to build the answer keys it is scored on.
 
+## 1a. The lead's four questions, answered first
+
+1. **What it was scored against, on how many filings.** Two answer keys in the repository, every row a figure the page prints:
+   - **Normal key** (`docs/bench/normalpdf/`): 337 figures from 50 ordinary results PDFs the live pipeline received 1-27 Oct
+     2026, a random sample of what arrives. Keyed by hand from the printed page (the page is the answer; the card's value
+     is a second witness only). Revenue, total income, PBT, profit; both bases where printed; crore, lakh and million.
+   - **Hard key** (`docs/bench/hardpdf/`): 340 figures from 21 deliberately hard PDFs (scans, rotated pages, garbled text
+     layers, two bases side by side, banks and lenders). Built 26 Oct from NSE's results XBRL and checked against the page;
+     where the page prints another figure, the page wins.
+   - A held-out set of companies (`docs/bench/heldout.csv`) is never tuned on: normal 48 of 71 figures right (SBICARD was
+     looked at on 29 Oct and no longer counts), hard 12 of 44. Every change is re-scored on both keys from frozen code.
+2. **Right against wrong.** The new reader: normal **260 right, 0 wrong, 77 blank**; hard **264 right, 0 wrong, 76 blank**,
+   so 0 wrong in 524 answers (677 figures). It leaves a figure blank whenever the sums or labels do not prove it.
+   - **The lead's "19% right, 13% wrong" (27 Oct, run 40414799620) is the old reader on the hard key** (65 right, 10 wrong,
+     265 blank). On that same hard key the new reader now gives 264 right and 0 wrong. The two numbers are different readers.
+   - This morning's annual-report test (46% right, 1.1% wrong) is a different tool on different documents; the new reader
+     has not been run on annual reports, so the two are not comparable.
+3. **What it is for.** Quarterly results statements only (the four headline figures, any period printed, both bases).
+   - It fills: a check of the results cards' headline figures against the PDF (the shadow check, then perhaps holding a card
+     the PDF contradicts), and the unit-slip check. It can also give a filing's figures with no XBRL.
+   - It does not fill: FY23 years or lender years from annual reports. It was never built or tested on annual-report
+     statements. If the BSE annual-report XBRL covers FY23, that is the better source, and the reader should not be extended
+     for history. So on history the reader should indeed do less; its use is checking cards.
+   - On cards its reach is limited: the 26 Oct audit's 29 wrong cards are mostly the AI's writing, and the estimate (not
+     measured) is that it could catch 4-6 of them. The shadow check exists to measure that before anything is held.
+4. **What is built where.**
+   - `main`: the first numbers-first reader (d2b2935, "bench only", 28 Oct), long before the 29 Oct fixes.
+   - Branch `ccr-d86d5b66-tvxfy0`, draft **PR #215**, not merged, contains `main` (no conflict at 29 Oct ~10:45 IST) plus 67
+     commits: every reader fix since, the bank chain, the empty-cell re-read, the unit-slip switch (eb2474a), the shadow job
+     (0739dcf), the bench workflow job `pdf-bench` and these notes.
+   - The parked branch `claude/gracious-goodall-jn9buu` (EBITDA check, narrowed grounding) has nothing of this reader.
+
 ## 2. Where the reader stands (both answer keys, frozen code, 0 wrong throughout)
 
 | | Normal key (337 figures) | Hard key (340 figures) |
@@ -49,7 +81,7 @@ decide what goes live. Times are IST. Every number below is measured unless it s
 | The reader and all fixes | many, latest reader code 1fcb1ae | bench only | tested, reviewed, CI green |
 | Empty-cell re-read from crops | 0b30926, 1fcb1ae | `PDF_CROP_REREAD` | reviewed; +4 figures; ~12-17 s a filing against ~9 s |
 | Unit-slip check asks the new reader first, old reader as fallback, same download | eb2474a | `SLIP_CHECK_NUMFIRST` (repository variable) | tested (5 tests), CI green; **independent review not yet done** |
-| Shadow check of live results cards (TODO 116): one row per card figure, agrees / disagrees / unknown, seconds per PDF, to R2 `meta/pdf-shadow/`; hourly workflow `pdf-shadow.yml` | not committed yet | `PDF_SHADOW=on` (repository variable) | **being built by a helper; not reviewed** |
+| Shadow check of live results cards (TODO 116): one row per card figure, agrees / disagrees / unknown, seconds per PDF, to R2 `meta/pdf-shadow/`; hourly workflow `pdf-shadow.yml`; figures that agree on different bases are flagged as mixed bases | 0739dcf | `PDF_SHADOW=on` (repository variable) | 9 tests; **independent review running** |
 
 ## 5. Open before anything goes live
 
@@ -59,7 +91,7 @@ decide what goes live. Times are IST. Every number below is measured unless it s
 2. **Runner time.** Maintenance run 40810936312 (pdf-bench on this branch, started 08:43 IST) measures both readers on a runner
    with fresh OCR. The 28 Oct run: about 76-84 s a filing on the answer keys (mostly scans). Locally on 29 Oct, fresh OCR at
    200 dpi: 29-78 s for each of 8 hard scanned filings.
-3. **Reviews:** the unit-slip change (eb2474a) and the shadow job need an independent review.
+3. **Reviews:** the unit-slip change (eb2474a) and the shadow job (0739dcf) are under one independent review (running).
 4. **TODO 115** (owner chose "check first"): the live reader reads "Non-Consolidated" as consolidated; recorded, not changed.
 
 ## 6. The decisions asked of the lead (the reader session's recommendation in brackets)

@@ -2627,6 +2627,12 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
                                                                          spec.get("format", "num"), dossier.get("industry"))):
                 footer_hidden.append(footer_plausible.note(spec["label"], now, why))   # F182: not shown, the card keeps why
                 continue
+            # a comparative about 10x, 100x or 1,000x the figure is a unit slip (Shree Cement's volumes, 29 Oct 2026): the
+            # row is not shown, since which of the two is wrong is not known here
+            if now is not None and spec.get("format", "num") != "pct" and (why := next(filter(None, (
+                    footer_plausible.scale_slip(now, stored(names, periods[slot])[0]) for slot in ("prev_quarter", "prev_year"))), None)):
+                footer_hidden.append(footer_plausible.note(spec["label"], now, why))
+                continue
         pick = lambda p, names=names: lookup(names, p)   # noqa: E731
         if card_grounded_figures():
             # a figure stored in MW or GW is no ₹ Cr, and a year-ago or previous quarter in another unit than this

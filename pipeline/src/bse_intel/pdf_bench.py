@@ -73,11 +73,11 @@ def key_from_xbrl(rows: list[dict]) -> list[dict]:
             continue
         if r.get("status") in SKIP_STATUSES or r.get("metric") not in KEY_METRICS or not r.get("pdf_url") or value != value:
             continue
-        filing = (r.get("symbol"), r.get("filing_period") or "", r["pdf_url"])
+        filing = (r.get("symbol"), r.get("filing_period") or "")        # one filing, however many of its PDFs gave rows
         batch = 1 + filings.setdefault(filing, len(filings)) // BATCH_SIZE
         end = quarter_end(r.get("period") or "")
         out.append({"symbol": r["symbol"], "scrip": "", "period_end": end.isoformat() if end else "", "period": r["period"],
-                    "basis": r["basis"], "metric": r["metric"], "expected_cr": f"{value:g}", "unit_printed": r.get("printed_unit") or "",
+                    "basis": r["basis"], "metric": r["metric"], "expected_cr": repr(value), "unit_printed": r.get("printed_unit") or "",
                     "pdf_url": r["pdf_url"], "tags": f"xbrl:{r.get('status')}|batch:{batch}"})
     return out
 

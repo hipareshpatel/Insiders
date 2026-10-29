@@ -136,7 +136,7 @@ def test_key_from_xbrl_keeps_every_status_but_the_two_failures_and_tags_status_a
     key = pb.key_from_xbrl(xk.load_csv(xk.to_csv([{**r, "news_id": "n"} for r in rows])))
     assert len(key) == 24 and {r["symbol"] for r in key} == {f"S{i}" for i in range(12)}
     assert key[0]["tags"] == "xbrl:found_unique|batch:1" and key[1]["tags"] == "xbrl:not_found|batch:1"
-    assert key[1]["expected_cr"] == "12" and key[0]["period_end"] == "2026-09-30"
+    assert float(key[1]["expected_cr"]) == 12 and key[0]["period_end"] == "2026-09-30"
     assert {r["tags"].split("|")[1] for r in key if r["symbol"] in ("S9",)} == {"batch:1"}
     assert {r["tags"].split("|")[1] for r in key if r["symbol"] in ("S10", "S11")} == {"batch:2"}
     # the text is a key the bench loads: figures, tags and the pdf per row
@@ -164,3 +164,15 @@ def test_the_score_has_a_per_batch_table_and_running_total_only_for_batch_tagged
     assert "## Per batch of ten filings" in md and "| 1 | 2 | 1/1/0 | 1/0/1 | 1/1/0 | 1/1/0 |" in md and "| 1-2 | 3 | 2/1/0 |" in md
     plain = pb.score([rec(10.0, {"a": ok(10.0)}, settled(10.0))])
     assert "by_batch" not in plain and "Per batch" not in pb.to_markdown(plain)
+
+
+def test_key_from_xbrl_keeps_the_exchange_figure_whole_and_numbers_batches_by_filing():
+    # review: 234567.89 crore was written as 234568 (a right reading scored wrong); a filing whose rows came from two of its
+    # PDFs counted as two filings
+    rows = [xrow("BIG", 0, value="234567.89")] + [xrow(f"S{i}", i) for i in range(9)]
+    rows.append({**xrow("BIG", 0, metric="pat", value="12345.67"), "pdf_url": "https://x/BIG-second.pdf"})
+    rows.append(xrow("LAST", 0))
+    key = pb.key_from_xbrl(rows)
+    assert key[0]["expected_cr"] == "234567.89" and key[10]["expected_cr"] == "12345.67"
+    assert pb.outcome("ok", 234567.89, pb.load_key(pb.key_to_csv(key))[0]["expected_cr"], 0.005) == "right"
+    assert key[10]["tags"].endswith("batch:1") and key[11]["tags"].endswith("batch:2")

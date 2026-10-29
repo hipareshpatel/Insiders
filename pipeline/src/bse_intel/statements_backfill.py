@@ -11,7 +11,7 @@ They go into ``dossier["statements"]`` beside what the live path and the seed wr
 basis and table, labelled ``file`` with rules ``screener_view``. An entry a filing already wrote is kept (it is the same file,
 read when it came); the backfill only adds what is missing. Two checks before an entry goes in:
 - a quarter memory holds as unit-slipped (``scale_held``) is left out;
-- a quarter's Sales (a lender's Revenue) more than 1.5x away from memory's own revenue for that period and basis is left out
+- a quarter's or year's Net Profit more than 1.5x away from memory's own profit for that period and basis is left out
   and listed: memory's figure was checked against the PDF, the stored file may carry a unit slip memory put right.
 
 A dry run unless ``--apply``; at most ``--limit`` companies a run (rule A: 50), in scrip order, resuming after the last company
@@ -38,14 +38,23 @@ SLIP_RATIO = 1.5
 _QUARTER = re.compile(r"Q[1-4]FY\d{2}")
 
 
-def _memory_revenue(dossier: dict, period: str, basis: str) -> float | None:
-    """Memory's own top line for the period and basis: the main figures, and a consolidated filer's standalone block."""
-    rows = list(dossier.get("financial_metrics", []))
-    if basis == "STANDALONE":
-        rows += [dict(m, basis="STANDALONE") for m in (dossier.get("standalone") or {}).get("metrics", [])]
+def _main_basis(dossier: dict) -> str | None:
+    bases = {m.get("basis") for m in dossier.get("financial_metrics", [])} - {None}
+    return "CONSOLIDATED" if "CONSOLIDATED" in bases else next(iter(bases), None)
+
+
+def _memory_profit(dossier: dict, period: str, basis: str) -> float | None:
+    """Memory's own whole profit for the period on this basis: the main figures when they are this basis (an entry with no
+    basis counts as the main one), else a consolidated filer's standalone block. Profit, not revenue: screener's Sales is net
+    of excise duty and memory's revenue is not (ITC), so a top-line check would refuse right rows."""
+    if basis == _main_basis(dossier) or _main_basis(dossier) is None:
+        rows = [m for m in dossier.get("financial_metrics", []) if m.get("basis") in (basis, None)]
+    elif basis == "STANDALONE":
+        rows = list((dossier.get("standalone") or {}).get("metrics", []))
+    else:
+        return None
     for m in rows:
-        if m.get("period") == period and m.get("metric") in ("revenue", "interest_earned") and m.get("basis") in (basis, None) \
-                and isinstance(m.get("value"), (int, float)):
+        if m.get("period") == period and m.get("metric") == "pat" and isinstance(m.get("value"), (int, float)):
             return float(m["value"])
     return None
 
@@ -71,10 +80,11 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
             if not values:
                 continue
             if table in ("quarters", "annual"):
-                top = values.get("Sales", values.get("Revenue"))
-                mine = _memory_revenue(dossier, period, basis)
-                if top and mine and mine > 0 and not (1 / SLIP_RATIO <= top / mine <= SLIP_RATIO):
-                    left.append(f"{basis} {table} {period}: Sales {top:g} against memory's revenue {mine:g}")
+                top = values.get("Net Profit")
+                mine = _memory_profit(dossier, period, basis)
+                if top and mine and abs(mine) >= 1 and (top > 0) == (mine > 0) \
+                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO):
+                    left.append(f"{basis} {table} {period}: Net Profit {top:g} against memory's profit {mine:g}")
                     continue
             column = period
             entries.append({"period": column, "basis": basis, "table": table, "family": fam, "rows": values,

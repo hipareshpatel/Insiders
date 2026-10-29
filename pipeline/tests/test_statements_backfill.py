@@ -8,12 +8,15 @@ from bse_intel.sinks.local import LocalSink
 FIX = Path(__file__).parent / "fixtures"
 
 
-def _sink(settings, revenue=1.95):
+def _sink(settings, pat=None):
     sink = LocalSink(settings)
     doc = xbrl_facts.parse_facts((FIX / "nse_dolphin_q4fy24_cons.xml").read_bytes(), "522261", "u")
     xbrl_facts.save(sink, "522261", doc["period"], doc["basis"], doc)
+    from bse_intel import screener_view as sv
+    facts = sv.CompanyFacts([xbrl_facts.key("522261", "Q4FY24", "CONSOLIDATED")], sink.get_object)
+    filed = sv._ours(facts, "corporate", "CONSOLIDATED", "quarters", "Q4FY24", {})[0]["Net Profit"].value
     sink.put_dossier("522261", {"scrip_code": "522261", "financial_metrics": [
-        {"metric": "revenue", "period": "Q4FY24", "value": revenue, "unit": "INR_CR", "basis": "CONSOLIDATED",
+        {"metric": "pat", "period": "Q4FY24", "value": filed if pat is None else pat, "unit": "INR_CR", "basis": "CONSOLIDATED",
          "source_news_id": "xbrl:res:522261:Q4FY24"}]})
     sink.put_dossier("500001", {"scrip_code": "500001", "financial_metrics": []})   # no stored facts
     return sink
@@ -61,7 +64,9 @@ def test_the_live_and_backfill_tables_share_their_columns(settings):
 
 
 def test_a_quarter_far_from_memorys_revenue_is_left_out(settings):
-    sink = _sink(settings, revenue=194.78)   # memory holds the figure 100x the stored file: a slip memory put right
+    probe = _sink(settings)
+    pat = probe.get_dossier("522261")["financial_metrics"][0]["value"]
+    sink = _sink(settings, pat=pat * 100)   # memory holds the figure 100x the stored file: a slip memory put right
     out = sb.run(sink, ["522261"])
-    assert any("Q4FY24" in x and "Sales" in x for x in out["left_out"])
+    assert any("Q4FY24" in x and "Net Profit" in x for x in out["left_out"])
     assert out["by_table"].get("quarters", 0) == 0

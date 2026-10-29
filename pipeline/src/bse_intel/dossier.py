@@ -724,6 +724,7 @@ _KEYED_LISTS = {
     "financial_metrics": lambda e: (e.get("metric"), e.get("period")),
     "ownership": lambda e: e.get("period"),
     "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
+    "statements": lambda e: (e.get("period"), e.get("basis"), e.get("table")),   # statements.py: one entry a period, basis, table
 }
 
 
@@ -764,6 +765,9 @@ def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) 
                 rows = mine + added
                 if key == "financial_metrics":
                     rows = _cap_metrics(rows)
+                elif key == "statements":
+                    from .statements import keep_latest
+                    rows = keep_latest(rows)
                 elif key == "ownership":
                     rows = sorted(rows, key=lambda o: (str(due_date(o.get("period")) or ""), str(o.get("as_of") or "")))[-8:]
                 else:

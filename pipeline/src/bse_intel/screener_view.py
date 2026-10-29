@@ -471,6 +471,17 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # 116.1 = 14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; Power Grid Q1FY26 4,330.2 + 212.8 - 44.4 = 4,498.57).
     # Reliance is the one company seen the other way (screener follows its own layout, associates after tax): it stays apart.
     filed_pbt = pbt
+    # the share is added only where the filing puts it below its PBT: a company that files PBT with the share already in it
+    # (its profit = filed PBT - tax, not filed PBT - tax + share) would have it counted twice. Run 40820489722: 523 quarters
+    # apart by exactly the share, ours above when it is a profit (387) and below when a loss (136), as a double count is
+    whole_profit = r.cr("ProfitLossForPeriod")
+    share_inside = (share and pbt is not None and tax is not None and whole_profit is not None
+                    and abs(share) > 2 * ABS_TOL
+                    and abs(pbt - tax + (discontinued or 0.0) - whole_profit) <= ABS_TOL
+                    and abs(pbt - tax + (discontinued or 0.0) + share - whole_profit) > ABS_TOL)
+    filed_share = share
+    if share_inside:
+        share = 0.0
     if pbt is not None:
         pbt = pbt + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0)
     parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + assoc_loss + (regulatory or 0.0) + reg_expense \
@@ -486,6 +497,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     else:
         out["Other Income"] = Row(None, "missing a line of the identity (PBT, Depreciation, Interest, Operating Profit)" + src)
     out["Profit before tax"] = Row(pbt, ("ProfitBeforeTax" + (" + associates' share" if share else "")
+                                         + (" (associates' share already in the filed PBT)" if share_inside else "")
                                          + (" + regulatory deferral movement" if regulatory else "")
                                          + (" + discontinued operations after tax" if discontinued else "") if pbt is not None
                                          else "missing ProfitBeforeTax") + src)
@@ -503,8 +515,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     minority = r.cr("ProfitOrLossAttributableToNonControllingInterests")
     if minority is not None:
         out["Minority share"] = Row(minority, "ProfitOrLossAttributableToNonControllingInterests" + src)
-    if share is not None:
-        out["Associates' share"] = Row(share, ASSOCIATES + src)
+    if filed_share is not None:
+        out["Associates' share"] = Row(filed_share, ASSOCIATES + src + (" (inside the filed PBT)" if share_inside else ""))
     _exceptional_rows(out, exc, tax, pbt, owners)
     return out
 

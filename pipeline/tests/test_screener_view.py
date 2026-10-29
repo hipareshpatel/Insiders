@@ -75,6 +75,12 @@ def annual_facts(extra=()):
     return xf.Facts(doc(ANNUAL + list(extra)))
 
 
+def with_share(value, extra=()):
+    """Facts with an associates' share below the filed PBT, as SEBI's results format files it: the period's profit holds it."""
+    return xf.Facts(doc([r for r in ANNUAL if r[0] != "ProfitLossForPeriod"]
+                        + [("ProfitLossForPeriod", "D2026", 200.0 + value), (sv.ASSOCIATES, "D2026", value)] + list(extra)))
+
+
 def values(rows):
     return {k: (None if r.value is None else round(r.value, 2)) for k, r in rows.items()}
 
@@ -96,8 +102,7 @@ def test_corporate_profit_and_loss_by_the_fixed_recipes():
 def test_associates_and_a_utilitys_regulatory_deferral_movement_are_in_pbt_and_other_income():
     """SEBI's results format puts both below the filed PBT; screener's PBT holds them (Coal India Q4FY26 14,510.7 + 116.1 =
     14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; measured 28 Oct 2026 on the owner's Excel files)."""
-    extra = [(sv.ASSOCIATES, "D2026", 9.0), (sv.REGULATORY_DEFERRAL, "D2026", 6.0)]
-    rows = sv.corporate_pl(sv._Reader(annual_facts(extra), end=END, months=12))
+    rows = sv.corporate_pl(sv._Reader(with_share(9.0, [(sv.REGULATORY_DEFERRAL, "D2026", 6.0)]), end=END, months=12))
     assert rows["Profit before tax"].value == pytest.approx(270 + 9 + 6) and rows["PBT as filed"].value == pytest.approx(270.0)
     assert rows["Other Income"].value == pytest.approx(15.0 + 9 + 6) and "differ" not in rows["Other Income"].note
     assert rows["Tax %"].value == pytest.approx(100 * 70 / 285)
@@ -499,8 +504,8 @@ def test_a_banks_net_profit_holds_the_minority_share():
 def test_a_loss_from_associates_is_an_expense_and_a_profit_is_other_income():
     """43 of 43 quarters with Expenses and Other Income both apart by the share (PBT exact) had a loss (Bajaj Auto Q2FY25, KTM)."""
     base = values(sv.corporate_pl(sv._Reader(annual_facts(), end=END, months=12)))
-    loss = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES, "D2026", -8.0)]), end=END, months=12)))
-    gain = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES, "D2026", 8.0)]), end=END, months=12)))
+    loss = values(sv.corporate_pl(sv._Reader(with_share(-8.0), end=END, months=12)))
+    gain = values(sv.corporate_pl(sv._Reader(with_share(8.0), end=END, months=12)))
     assert loss["Expenses"] == base["Expenses"] + 8 and loss["Other Income"] == base["Other Income"]
     assert loss["Profit before tax"] == base["Profit before tax"] - 8
     assert gain["Expenses"] == base["Expenses"] and gain["Other Income"] == base["Other Income"] + 8
@@ -615,3 +620,13 @@ def test_expense_parts_take_the_rest_from_screeners_total_and_round_by_the_place
                                   "Mar 2026", 1000.0, 870.0)
     assert got == pytest.approx({"material": 720.0, "employee": 49.0, "rest": 101.0})
     assert slack["material"] == pytest.approx(5.0) and slack["employee"] == pytest.approx(0.05)
+
+
+def test_an_associates_share_already_inside_the_filed_pbt_is_not_added_again():
+    """Run 40820489722: 523 quarters apart by exactly the share, ours above when it is a profit and below when a loss: a company
+    that files PBT with the share in it (its profit = PBT - tax) had the share counted twice."""
+    inside = sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES, "D2026", 9.0)]), end=END, months=12))   # profit 200 = 270 - 70
+    assert inside["Profit before tax"].value == pytest.approx(270.0) and "already in the filed PBT" in inside["Profit before tax"].note
+    assert inside["Associates' share"].value == pytest.approx(9.0) and "inside the filed PBT" in inside["Associates' share"].note
+    below = sv.corporate_pl(sv._Reader(with_share(9.0), end=END, months=12))     # profit 209 = 270 - 70 + 9
+    assert below["Profit before tax"].value == pytest.approx(279.0)

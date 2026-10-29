@@ -70,6 +70,7 @@ from . import universe
 from . import eps_adjust, no_eps, restated_pdf
 from . import annual_xbrl
 from . import xbrl_store
+from . import statements
 from . import directions
 from . import results_card
 from . import footer_plausible, one_basis, results_one_line
@@ -1996,6 +1997,7 @@ class Pipeline:
         self._held_this_run: set[str] = set()   # news_ids whose card this run held (D20: not the quarter's card)
         self._shown_this_run: set[str] = set()  # news_ids whose card this run published (repeated_order)
         self._xbrl_links: dict[str, list[XbrlLink]] = {}  # scrip -> its results archive, read once a run
+        self._xbrl_raw: dict[str, bytes] = {}  # news id -> the results XBRL _xbrl read, for its screener-rule statements
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
         self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
@@ -3220,6 +3222,8 @@ class Pipeline:
         if result:
             with self._lock:
                 self.stats.xbrl += 1
+                if result.kind == "RESULTS":
+                    self._xbrl_raw[filing.news_id] = data
         return result
 
     def _xbrl_memory(self, filing: Filing, company: dict) -> Outcome:
@@ -3752,6 +3756,12 @@ class Pipeline:
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
             put_standalone(merged, standalone_file.memory_metrics(), standalone_file.balance_sheet, filing.filed_at, filing.news_id)
         merged.update({k: v for k, v in (("industry", industry), ("sector", sector), ("symbol", company.get("symbol") or filing.symbol)) if v})
+        with self._lock:
+            raw_xbrl = self._xbrl_raw.pop(filing.news_id, None)
+        if tagged and raw_xbrl:
+            # the same file's rows by screener's rules, kept beside the figures (owner, 30 Oct 2026); never fails the filing
+            statements.from_file(self.sink, merged, raw_xbrl, filing.scrip_code, filing.xbrl_url or "", filing.news_id,
+                                 filing.filed_at, now)
         if event_type == "CONCALL_PRESENTATION" and not held_now:
             # the call's checked takeaways, kept for the company page's quarterly summary (owner, 2026-10-21: the
             # summary was built from the few items memory happened to keep, not the call's analysis)

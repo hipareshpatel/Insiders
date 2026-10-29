@@ -74,7 +74,8 @@ def test_a_reread_never_helps_name_a_row():
 
 def test_a_crop_pass_that_fails_part_way_leaves_the_table_as_it_was(monkeypatch):
     # review of 0b30926: the first empty cell's re-read stayed on the table when a later crop raised
-    import cv2
+    import pytest
+    cv2 = pytest.importorskip("cv2")      # the crop pass needs the OCR extra, which CI does not install
     import numpy as np
     from bse_intel import ocr
     labels = ["Revenue from operations", "Other income", "Total income (I+II)", "Cost of materials", "Employee benefits",

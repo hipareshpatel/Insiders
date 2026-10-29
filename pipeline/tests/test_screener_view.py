@@ -183,8 +183,8 @@ def test_hdfc_bank_quarter_and_half_year_by_the_bank_recipe():
     assert sv.family(facts.doc["template"]) == sv.BANK
     q = sv.bank_pl(sv._Reader(facts, end=date(2026, 9, 30), months=3))
     assert q["Revenue"].value == pytest.approx(facts.cr("InterestEarned", end=date(2026, 9, 30), months=3))
-    # a negative exceptional item is added back to PBT (HDFC Bank: screener's PBT is before it); none goes to other income
-    assert q["Profit before tax"].value == pytest.approx(27825.48 + 837.06, abs=0.01)
+    # PBT as filed: adding back a negative exceptional item fitted HDFC Bank alone and broke 15 rows at 8 banks; none to other income
+    assert q["Profit before tax"].value == pytest.approx(27825.48, abs=0.01)
     assert q["Other Income"].value == pytest.approx(34227.06, abs=0.01)
     assert q["Depreciation"].value is None and q["Expenses"].value is None      # the quarter has no cash flow
     h = sv.bank_pl(sv._Reader(facts, end=date(2026, 9, 30), months=6))

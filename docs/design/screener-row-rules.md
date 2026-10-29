@@ -76,7 +76,7 @@ Breakdown-row patterns (Wording; `screener_view.py` / `screener_parts.py` consta
 | Revenue | InterestEarned | HDFC Bank, ICICI, SBI FY26 exact |
 | Expenses | OperatingExpenses + ProvisionsOtherThanTaxAndContingencies − depreciation | HDFC Bank FY26 203,635 |
 | Other Income | OtherIncome + a positive exceptional item | SBI FY26 +3,027 |
-| Profit before tax | ProfitLossFromOrdinaryActivitiesBeforeTax − a negative exceptional item | HDFC Bank FY26 98,948 + 3,193 = 102,141 |
+| Profit before tax | ProfitLossFromOrdinaryActivitiesBeforeTax, as filed | SBI FY24, Bank of Baroda Q1FY27, Indian Bank, Bank of India: the negative exceptional item stays in (adding it back fitted HDFC Bank alone, 6 rows, and broke 15; FY26 quarters audit, 29 Oct 2026) |
 | Net Profit (website) | ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates + ProfitLossOfMinorityInterest (the whole profit, as for every company) | consolidated quarters of HDFC Bank Q3FY24–Q1FY27 and ICICI Q3FY24–Q2FY26: the gap = the minority's share each quarter |
 | Net Profit (Excel Data Sheet) | ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates | ICICI 54,208, SBI 83,299 |
 | Deposits / Borrowing | separate lines (screener, March 2025) | 100 % on the banks compared |
@@ -134,6 +134,7 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | DPS (DPSCLTD) standalone | Q1FY26, FY26 | a negative regulatory movement kept in Other Income | the one exact case against the rule |
 | Vedanta, Tata Motors PV, Ambuja | restated quarters (Vedanta Q4FY25–Q3FY26 after the demerger, Sales 16,686 against 40,455 filed; TMPV Q4FY25–Q1FY26 after the CV demerger; Ambuja's depreciation after its acquisitions) | the demerger class | PDF only |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
+| HDFC Bank (consolidated) | PBT and Net Profit, Q2FY26, Q4FY26, Q2FY27, FY24-FY26 | screener's PBT and Net Profit are both above the filed figures by exactly the filed negative ExceptionalItems (Q2FY27 837.06 Cr; FY26 3,193 Cr): screener leaves that item out of both. Every other bank with a negative exceptional item keeps it in PBT | Event: recorded, not coded |
 
 ## Open sector patterns (measured, not yet a rule)
 

@@ -542,9 +542,11 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     out["Other Income"] = Row(None if other is None else other + max(exc or 0.0, 0.0),
                               ("OtherIncome" + (" + exceptional items" if (exc or 0) > 0 else "") if other is not None
                                else "missing OtherIncome") + src)
-    pbt = None if pbt_filed is None else pbt_filed - min(exc or 0.0, 0.0)
-    out["Profit before tax"] = Row(pbt, ("ProfitLossFromOrdinaryActivitiesBeforeTax" + (" less the negative exceptional items"
-                                                                                        if (exc or 0) < 0 else "")
+    # PBT as filed, a negative exceptional item in it: adding it back fitted HDFC Bank alone (6 rows, its Net Profit apart by the
+    # same item in each) and broke 15 at SBI, Bank of Baroda, Indian Bank, Bank of India, J&K Bank, AU, ESAF and Fino (FY26
+    # quarters audit, run 40837941625); HDFC Bank is a Known exception
+    pbt = pbt_filed
+    out["Profit before tax"] = Row(pbt, ("ProfitLossFromOrdinaryActivitiesBeforeTax"
                                          if pbt_filed is not None else "missing ProfitLossFromOrdinaryActivitiesBeforeTax") + src)
     out["Tax"] = Row(tax, "TaxExpense" + src)
     out["Tax %"] = Row(_tax_pct(tax, pbt), "TaxExpense / |Profit before tax|" + src)

@@ -614,6 +614,34 @@ def phrases_of(line: list[Word], gap: float) -> list[list[Word]]:
 
 _BORDER_MARKS = {"I", "l", "|", "!", "¦"}
 
+# a month as printed in a header, full or in its usual short form ("Sept", "Jun."): never another word that starts like one ("Market")
+_CUT_MONTH = re.compile(r"^(?:january|february|march|april|may|june|july|august|september|sept|october|november|december|"
+                        r"jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)\.?,?$", re.I)
+
+
+def month_cut(phrases: list[list[Word]], xs: list[float], spacing: float) -> list[list[Word]]:
+    """A header line of month words that run into one phrase ("September June 30, September September September March 31,",
+    the day and year on the lines below, ICICIBANK Q2FY27) cut before each month word, so each piece can go to its column. Only
+    when the cut is certain: the phrase is wider than a column, holds at least three month words, each piece fits a column's
+    width, and the pieces' centres are nearest to different columns, every one within three quarters of the spacing and in the
+    columns' own order. Otherwise the phrase is left whole."""
+    out: list[list[Word]] = []
+    for ph in phrases:
+        starts = [i for i, w in enumerate(ph) if _CUT_MONTH.match(w.text)]
+        if ph[-1].x1 - ph[0].x0 <= 1.3 * spacing or len(starts) < 3 or starts[0] != 0:
+            out.append(ph)
+            continue
+        pieces = [ph[a:b] for a, b in zip(starts, starts[1:] + [len(ph)])]
+        near = [min(range(len(xs)), key=lambda k: abs(xs[k] - (p[0].x0 + p[-1].x1) / 2)) for p in pieces]
+        fits = all(p[-1].x1 - p[0].x0 <= 1.3 * spacing and abs(xs[j] - (p[0].x0 + p[-1].x1) / 2) <= 0.5 * spacing
+                   for p, j in zip(pieces, near))
+        if fits and near == sorted(set(near)):
+            out.extend(pieces)
+        else:
+            out.append(ph)
+    return out
+
+
 def column_dates(gap_words: list[Word], columns: list[Column], height: float, sep: float) -> list[date | None]:
     """The date above each column. The header's phrases are given to the column nearest their centre (a phrase wider than a
     column is a title, not a date); the phrases over a column are read top to bottom, so a date broken over two lines is
@@ -626,7 +654,7 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     # a table's border drawn as a letter ("I" between "September 30," and "2026" in ATUL Q2FY27) is never part of a date
     gap_words = [w for w in gap_words if w.text.strip() not in _BORDER_MARKS]
     for line in lines_of(gap_words, height):
-        for ph in phrases_of(line, sep):
+        for ph in month_cut(phrases_of(line, sep), xs, spacing):
             width = ph[-1].x1 - ph[0].x0
             centre = (ph[0].x0 + ph[-1].x1) / 2
             j = min(range(len(columns)), key=lambda k: abs(xs[k] - centre))
@@ -808,6 +836,9 @@ def drop_twin_rows(rows: list) -> list:
     return out
 
 
+TWIN_MIN_FIGURES = 3
+
+
 def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str = "textlayer") -> list[Table]:
     """The tables of one page: numeric rows, split where a header with dates stands between two rows, each with its columns'
     dates and kinds, its basis, its unit and its stitched labels."""
@@ -861,6 +892,30 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
             continue
         gap_lines = lines_of(gap, height)
         cols = [Column(c.x0, c.x1, c.xc, c.index, whole=c.whole) for c in columns]
+        title_basis, _ = _basis_above_boxed(texts, len(texts))
+        halves = None
+        if title_basis is None and not any(_NON_CONSOLIDATED.search(x) for x in texts + [line_text(ln) for ln in gap_lines]):
+            # a title naming one basis, or "Non-Consolidated" anywhere in the header, is never split into two (the review)
+            halves = side_by_side(gap, cols, dates, height)
+        if halves:
+            # two grids on one page area: each half is a table of its own basis, with its own header phrases and layout
+            k, first_basis, second_basis = halves
+            rows_all = [NRow(r.y, r.top, r.bottom, "", list(r.cells)) for r in rows[a:b]]
+            header_bottom = max((w.y for w in gap if any(abs(w.xc - c.xc) < 0.5 * (c.x1 - c.x0 + 4 * height) for c in cols)), default=None)
+            stitch_labels(rows_all, free, cols, set(), height, header_bottom)
+            phrases = group_phrases(gap, cols, height)
+            unit = unit_of(texts, page_texts)
+            for lo, hi, half_basis in ((0, k, first_basis), (k, len(cols), second_basis)):
+                half_cols = [Column(c.x0, c.x1, c.xc, i, whole=c.whole) for i, c in enumerate(cols[lo:hi])]
+                span = (cols[lo].x0 - 2 * height, cols[hi - 1].x1 + 2 * height)
+                half_dates = [d if d is None or not any(o is not None and o != d for o in (dates[i + k] if lo == 0 else dates[i],))
+                              else None for i, d in enumerate(dates[lo:hi])]       # a position whose halves disagree is dated in neither
+                column_kinds(half_cols, half_dates, [p for p in phrases if span[0] <= p[0] <= span[1]], march)
+                fill_corresponding_quarter(half_cols)
+                fill_damaged_quarter(half_cols)
+                half_rows = [NRow(r.y, r.top, r.bottom, r.label, r.cells[lo:hi], r.words_left) for r in rows_all]
+                tables.append(Table(page_no, half_basis, unit, half_cols, half_rows, source, header_lines=texts))
+            continue
         column_kinds(cols, dates, group_phrases(gap, cols, height), march)
         fill_corresponding_quarter(cols)
         fill_damaged_quarter(cols)
@@ -876,6 +931,47 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
         unit = unit_of(texts, page_texts)
         tables.append(Table(page_no, basis, unit, cols, rows_t, source, header_lines=texts, contested=contested))
     return tables
+
+
+def _basis_word(text: str) -> str | None:
+    """STANDALONE or CONSOLIDATED when the word is one of them even as the scanner garbled it ("Slandalone", "Consolldated"): it is
+    clearly nearer to one than to the other (a ratio of at least 0.72, and 0.15 more than for the other word)."""
+    from difflib import SequenceMatcher
+    from .metrics import CONSOLIDATED, STANDALONE
+    t = re.sub(r"[^a-z]", "", text.lower())
+    if len(t) < 6 or _NON_CONSOLIDATED.search(text) or re.match(r"(?:non|un|not)", t):
+        return None                      # "Non-Consolidated", "Unconsolidated" name neither (the review)
+    score = [SequenceMatcher(None, t, w).ratio() for w in ("standalone", "consolidated")]
+    best = 0 if score[0] >= score[1] else 1
+    if score[best] < 0.72 or score[best] - score[1 - best] < 0.15:
+        return None
+    if best == 1 and (t.endswith("tion") or not re.search(r"dat|lid", t)):
+        return None                      # "Consolidation", "Considered" are other words
+    return (STANDALONE, CONSOLIDATED)[best]
+
+
+def side_by_side(gap: list[Word], cols: list[Column], dates: list, height: float):
+    """(k, basis of the first k columns, basis of the rest) when one printed grid holds the standalone and the consolidated figures
+    side by side (SPLPETRO Q2FY27: 12 columns). Every condition must hold, else None: an even number of columns, eight or more; a
+    header line of exactly two words, one standalone and one consolidated, the first over the first half of the columns and the
+    second over the second half; the two halves dated alike (the same date at three or more positions, at most one at odds, and that position is then dated in neither half)."""
+    n = len(cols)
+    if n < 8 or n % 2:
+        return None
+    k = n // 2
+    margin = 2 * height
+    for line in lines_of(gap, height):
+        if len(line) != 2:
+            continue
+        b1, b2 = _basis_word(line[0].text), _basis_word(line[1].text)
+        if b1 is None or b2 is None or b1 == b2:
+            continue
+        if not (cols[0].x0 - margin <= line[0].xc <= cols[k - 1].x1 + margin and cols[k].x0 - margin <= line[1].xc <= cols[-1].x1 + margin):
+            continue
+        pairs = [(x, y) for x, y in zip(dates[:k], dates[k:]) if x is not None and y is not None]
+        if sum(x == y for x, y in pairs) >= 3 and sum(x != y for x, y in pairs) <= 1:
+            return k, b1, b2
+    return None
 
 
 # --- the stitched label's landmark (the second signal) --------------------------------------------------------------------

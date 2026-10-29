@@ -1828,3 +1828,118 @@ def test_a_row_is_dropped_only_when_it_is_an_unlabelled_exact_copy_of_the_row_ab
     assert kept(a, _nrow("Total", 5.0, 5.0, 5.0, 5.0), _nrow("", 1.06, 0.92, 0.67, 1.98)) == 3  # not the row just above
     b = _nrow("Exceptional", 1.0, 1.0, None, None)
     assert kept(b, _nrow("", 1.0, 1.0, None, None)) == 2                         # fewer than three figures
+
+
+HALF_DATES = ["30.09.2026", "30.06.2026", "30.09.2025", "30.09.2026", "30.09.2025", "31.03.2026"]
+
+
+HALF_KINDS = ["Quarter ended"] * 3 + ["Half year ended"] * 2 + ["Year ended"]
+
+
+EDGES = [150 + 40 * i for i in range(12)]
+
+
+def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2):
+    rows, want = pl()
+    wide = []
+    for lines, cells in rows:
+        if all(isinstance(c, (int, float)) for c in cells):
+            six = list(cells) + list(cells[:2])
+            cells = six + [round(v * scale, 2) for v in six]
+        else:
+            cells = list(cells) + list(cells[:2])
+            cells = cells + cells
+        wide.append((lines, cells))
+    dates = HALF_DATES + (second_dates or HALF_DATES)
+    pdf = statement(wide, title="Statement of Financial Results", groups=HALF_KINDS * 2, dates=dates, cols=EDGES)
+    doc = pymupdf.open(stream=pdf, filetype="pdf")
+    page = doc[0]
+    centre = lambda a, b: (EDGES[a] + EDGES[b]) / 2 - 20
+    page.insert_text((centre(0, 5) - 25, 66), words[0], fontsize=8)
+    page.insert_text((centre(6, 11) - 25, 66), words[1], fontsize=8)
+    out = doc.tobytes()
+    doc.close()
+    return out, want
+
+
+def test_two_bases_printed_side_by_side_are_read_each_on_its_own_basis():
+    pdf, want = _two_bases()
+    for metric, key in (("pbt", "pbt"), ("pat", "pat")):
+        a = read(pdf, metric, basis="STANDALONE")
+        b = read(pdf, metric, basis="CONSOLIDATED")
+        assert a.status == "ok" and a.value == pytest.approx(crore(want[key][0])), (metric, a)
+        assert b.status == "ok" and b.value == pytest.approx(crore(2 * want[key][0])), (metric, b)
+
+
+def test_a_header_of_one_phrase_or_two_equal_ones_or_halves_dated_differently_is_not_split():
+    for kwargs in (dict(words=("Standalone", "Standalone")), dict(words=("Quarterly", "Particulars")),
+                   dict(second_dates=["30.09.2026", "30.06.2025", "30.09.2024", "30.09.2025", "30.09.2024", "31.03.2025"])):
+        pdf, want = _two_bases(**kwargs)
+        for basis in ("STANDALONE", "CONSOLIDATED"):
+            got = read(pdf, "pat", basis=basis)
+            assert got.status != "ok" or got.value in (pytest.approx(crore(want["pat"][0])), pytest.approx(crore(2 * want["pat"][0]))), got
+            assert not (got.status == "ok" and basis == "STANDALONE" and got.value == pytest.approx(crore(2 * want["pat"][0]))), got
+
+
+def test_swapped_phrases_name_the_bases_the_other_way_round():
+    pdf, want = _two_bases(words=("Consolidated", "Standalone"))
+    a = read(pdf, "pat", basis="CONSOLIDATED")
+    assert a.status != "ok" or a.value == pytest.approx(crore(want["pat"][0]))
+
+
+_XS = [658, 826, 996, 1158, 1328, 1488]
+
+
+_MONTH_LINE = [(573, 710, "September"), (757, 809, "June"), (822, 861, "30,"), (912, 1048, "September"), (1081, 1216, "September"),
+               (1248, 1386, "September"), (1421, 1490, "March"), (1504, 1545, "31,")]
+
+
+_DAY_LINE = [(587, 696, "30,2026"), (775, 844, "2026"), (926, 1034, "30,2025"), (1093, 1202, "30,2026"), (1262, 1372, "30,2025"),
+             (1448, 1516, "2026")]
+
+
+def _header_dates(month_line, day_line):
+    ws = [nf.Word(a, b, 500.0, 30.0, t) for a, b, t in month_line] + [nf.Word(a, b, 530.0, 30.0, t) for a, b, t in day_line]
+    cols = [nf.Column(x - 60, x, x, i) for i, x in enumerate(_XS)]       # the figures' column centres as the trace printed them
+    return nf.column_dates(ws, cols, 30.0, 27.0)
+
+
+def test_a_month_line_that_runs_into_one_phrase_is_cut_by_column():
+    # ICICIBANK Q2FY27 (OCR): "September June 30, September September September March 31," over "30,2026 2026 30,2025 ..."
+    assert _header_dates(_MONTH_LINE, _DAY_LINE) == [date(2026, 9, 30), date(2026, 6, 30), date(2025, 9, 30), date(2026, 9, 30),
+                                                   date(2025, 9, 30), date(2026, 3, 31)]
+
+
+def _merged(items):
+    return [[nf.Word(a, b, 500.0, 30.0, text) for a, b, text in items]]
+
+
+def test_a_month_line_is_not_cut_when_the_cut_is_not_certain():
+    xs = [float(x) for x in _XS]
+    whole = _merged(_MONTH_LINE)
+    assert len(nf.month_cut(whole, xs, 170.0)) == 6                       # control: cut
+    moved = list(_MONTH_LINE)
+    moved[3] = (760, 896, "September")                                    # two pieces nearest the same column
+    assert nf.month_cut(_merged(moved), xs, 170.0) == _merged(moved)
+    wide = list(_MONTH_LINE)
+    wide[0] = (400, 710, "September")                                     # a piece wider than a column
+    assert nf.month_cut(_merged(wide), xs, 170.0) == _merged(wide)
+    assert nf.month_cut(_merged(_MONTH_LINE[:3]), xs, 170.0) == _merged(_MONTH_LINE[:3])         # fewer than three month words
+    lead = [(540, 570, "Of")] + list(_MONTH_LINE)
+    assert nf.month_cut(_merged(lead), xs, 170.0) == _merged(lead)                                # the phrase does not open on a month
+    short = [(573, 640, "Sep"), (650, 700, "Jun"), (710, 760, "Mar")]                           # already narrower than a column
+    assert nf.month_cut(_merged(short), xs, 170.0) == _merged(short)
+    # and a header read with a wrong cut never carries a wrong date: every date read is the right one for its column
+    right = _header_dates(_MONTH_LINE, _DAY_LINE)
+    assert all(d in (None, r) for d, r in zip(_header_dates(moved, _DAY_LINE), right))
+
+
+def test_trap_non_consolidated_word_is_not_consolidated():
+    pdf, want = _two_bases(words=("Standalone", "Non-Consolidated"))
+    got = read(pdf, "pat", basis="CONSOLIDATED")
+    assert got.status != "ok", got
+
+
+def test_trap_title_names_other_basis():
+    pdf, want = _two_bases(words=("Standalone", "Consolidated"))
+    assert nf._basis_word("Non-Consolidated") is None

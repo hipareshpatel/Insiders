@@ -88,19 +88,12 @@ class Word:
 
 def upright_words(page) -> list[tuple[float, float, float, float, str]]:
     """The page's words as (x0, y0, x1, y1, text) with the text running left to right: a page printed sideways is turned a
-    quarter, as ``extract.upright_text`` turns it."""
-    lines = [line for block in page.get_text("dict", flags=0)["blocks"] for line in block.get("lines", [])]
-    vertical = [line for line in lines if abs(line["dir"][1]) > 0.9]
-    sideways = bool(lines) and len(vertical) >= 0.6 * len(lines)
-    up = sideways and sum(line["dir"][1] for line in vertical) < 0
-    out = []
-    for x0, y0, x1, y1, text, *_ in page.get_text("words"):
-        if not str(text).strip():
-            continue
-        if sideways:
-            x0, x1, y0, y1 = (-y1, -y0, x0, x1) if up else (y0, y1, -x1, -x0)
-        out.append((x0, y0, x1, y1, str(text)))
-    return out
+    quarter (``extract.upright_words``)."""
+    from .extract import upright_words as turned
+    words = turned(page)
+    if words is None:
+        words = [(x0, y0, x1, y1, text) for x0, y0, x1, y1, text, *_ in page.get_text("words")]
+    return [(x0, y0, x1, y1, str(text)) for x0, y0, x1, y1, text in words if str(text).strip()]
 
 
 def tilt(raw: list[tuple[float, float, float, float, str]]) -> float:
@@ -177,27 +170,12 @@ def merge_space_groups(words: list[Word], height: float) -> list[Word]:
 
 
 def ocr_page_boxes(png: bytes):
-    """RapidOCR's boxes of a page image (``ocr._boxes`` form), with the sideways turn ``ocr.recognise`` makes; [] when OCR is not
-    installed. Kept apart so the bench can cache it."""
+    """RapidOCR's boxes of a page image (``ocr.page_boxes``: turned upright as ``ocr.recognise`` reads it) as plain lists; []
+    when OCR is not installed. Kept apart so the bench can cache it."""
     from . import ocr
     if not ocr.available():
         return []
-    import cv2
-    import numpy as np
-    image = cv2.imdecode(np.frombuffer(png, np.uint8), cv2.IMREAD_COLOR)
-    with ocr._lock:
-        if ocr._engine is None:
-            ocr._engine = ocr._new_engine()
-        result = ocr._boxes(ocr._engine(image if image is not None else png))
-        if len(result) >= 8 and ocr.lying_flat(result) < 0.5 and image is not None:
-            best = None
-            for turn in (cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_90_COUNTERCLOCKWISE):
-                turned = ocr._boxes(ocr._engine(cv2.rotate(image, turn)))
-                if turned and ocr.lying_flat(turned) >= 0.5 and (best is None or ocr._mean_score(turned) > ocr._mean_score(best)):
-                    best = turned
-            if best is not None:
-                result = best
-    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in result]
+    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in ocr.page_boxes(png)]
 
 
 
@@ -1790,6 +1768,12 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     fill_used = 0
     ocr_texts: dict[int, str] = {}     # the OCR text of the pages with no text layer
     crops = [MAX_REREAD_FILING]
+    page_boxes: dict[int, list] = {}   # each page's OCR boxes, read once whichever path asks first
+
+    def boxes_of(page, p: int) -> list:
+        if p not in page_boxes:
+            page_boxes[p] = ocr_boxes(page.get_pixmap(dpi=ocr.DPI).tobytes("png"))
+        return page_boxes[p]
 
     def crop_pass(page, p: int, tables: list[Table], raw, k: float) -> None:
         """Empty cells of the page's tables read again from crops (``reread_empty_cells``; env ``PDF_CROP_REREAD=1``)."""
@@ -1808,8 +1792,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
 
     def read_ocr(page, p: int) -> list[Table]:
         check_deadline(deadline)
-        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
-        raw = words_from_boxes(ocr_boxes(png))
+        raw = words_from_boxes(boxes_of(page, p))
         if not layers[p].has_layer:
             ocr_texts[p] = " ".join(w[4] for w in raw)
         found = [Table_solved(t) for t in tables_of_page(p, straighten(raw, True), anywhere, "ocr")]
@@ -1823,7 +1806,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
 
     dated = usable_dates
 
-    def fill_from_ocr(page, tables: list[Table], layer_text: str) -> None:
+    def fill_from_ocr(page, p: int, tables: list[Table], layer_text: str) -> None:
         """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"
         and every row label are drawn without text). Nothing is taken unless OCR is proved to see the same page as the layer:
         the page is not rotated, and OCR reads nearly every figure of the table at the layer's own place (``ocr_aligned``).
@@ -1836,9 +1819,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         if page.rotation:
             return
         check_deadline(deadline)
-        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         k = 72.0 / ocr.DPI
-        words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(ocr_boxes(png))], True)
+        words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(boxes_of(page, p))], True)
         if not words:
             return
         height = text_height(words)
@@ -1882,7 +1864,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 if wanting and fill_used < MAX_FILL_OCR_PAGES and ocr.available():
                     fill_used += 1          # its own budget: the scanned statement pages keep all of MAX_OCR_PAGES (TBZ)
                     try:
-                        fill_from_ocr(page, by_page[p], layers[p].text)
+                        fill_from_ocr(page, p, by_page[p], layers[p].text)
                     except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
                         log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
                 if page.get_images(full=False) and (not any(t.named for t in by_page[p])

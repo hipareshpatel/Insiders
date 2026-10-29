@@ -234,6 +234,11 @@ def recognise(png: bytes) -> str:
     benchmark's rotated AOC-1 came back as 17 transposed "rows" (2026-10-17). So when most boxes stand on
     end, the page is read again turned a quarter each way, and the reading whose boxes lie flat is kept.
     """
+    return lines_from_boxes(page_boxes(png))
+
+
+def page_boxes(png: bytes) -> list[tuple]:
+    """RapidOCR's boxes of the page image (``_boxes`` form), turned upright as ``recognise`` describes."""
     global _engine
     import cv2
     import numpy as np
@@ -251,7 +256,7 @@ def recognise(png: bytes) -> str:
                     best = turned
             if best is not None:
                 result = best
-    return lines_from_boxes(result)
+    return result
 
 
 _NILS = {"-", "nil", "na", "n.a.", "n/a"}

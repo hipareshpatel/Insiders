@@ -631,6 +631,25 @@ def test_a_scan_whose_layer_garbled_the_dates_is_read_with_ocr(monkeypatch):
     assert kept.status == "ok" and kept.source == "textlayer"
 
 
+def test_a_page_is_ocrd_once_in_one_analyse(monkeypatch):
+    # a scan's layer with no unit and garbled dates: the unit fill and the garbled-page read both want the page's OCR, and
+    # the page is rendered and OCR'd once, the boxes shared (item 123)
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    monkeypatch.setenv("PDF_DATES_2DIGIT", "1")
+    rows, want = pl()
+    garbled = with_image(statement(rows, unit="", dates=["30-Seo-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    clean = as_ocr_boxes(statement(rows, dates=["30-Sep-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    calls = []
+
+    def ocr_boxes(png):
+        calls.append(png)
+        return clean
+
+    nf.analyse(garbled, ocr_boxes=ocr_boxes, ocr_garbled=True)
+    assert len(calls) == 1
+
+
 def test_a_date_with_the_comma_glued_to_the_year_is_read():
     # LOTUSDEV Q2FY27: "Sep 30,2026" over every column
     from datetime import date

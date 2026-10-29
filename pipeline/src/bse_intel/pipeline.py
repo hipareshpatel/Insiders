@@ -1139,12 +1139,53 @@ def results_quarter(tagged, text: str, filed_on: str | None = None) -> str | Non
     return None
 
 
+COMPANION_DAYS = 3
+
+
+def companion_quarter(filing: Filing, dossier: dict) -> str | None:
+    """The quarter of the company's results card filed in the COMPANION_DAYS before this results filing, when this one
+    names no quarter a statement would ("quarter ended 30 September 2026"): a press release or an investor update says
+    "Q2 FY27", and with no quarter D20 never ran, so 13 companies had two results cards for Q2FY27 on 28-29 Oct 2026
+    (eClerx's statement at 18:58 and its press release at 19:09, Zensar, Acme Solar, Laurus...). The quarter is the
+    latest one memory holds from that card's own filing."""
+    try:
+        at = datetime.fromisoformat(filing.filed_at)
+    except (TypeError, ValueError):
+        return None
+    metrics = dossier.get("financial_metrics", [])
+    for t in sorted(dossier.get("timeline", []), key=lambda t: str(t.get("date") or ""), reverse=True):
+        if t.get("event_type") != "RESULTS" or t.get("news_id") == filing.news_id:
+            continue
+        try:
+            when = datetime.fromisoformat(str(t.get("date")))
+        except ValueError:
+            continue
+        if when > at or at - when > timedelta(days=COMPANION_DAYS):
+            continue
+        periods = [m["period"] for m in metrics if reported_by(m, t["news_id"]) and re.fullmatch(r"Q[1-4]FY\d{2}", str(m["period"]))]
+        if periods:
+            return max(periods, key=lambda p: quarter_index(p) or -1)
+    return None
+
+
 def carries_results(event_type: str, text: str, tagged=None) -> bool:
     """A filing typed OTHER, GOVERNANCE or CORPORATE_ACTION that carries the company's results statement (a board
     outcome with the results and a stock split): it is the results filing, before pass 2 as after it."""
     return event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
         (tagged is not None and tagged.kind == "RESULTS") or bool(_RESULTS_STATEMENT.search(text[:20000]))
         or results_cover(text))
+
+
+_DECK_NAME = re.compile(r"presentation|investor[_\s-]*(?:ppt|deck)|(?<![a-z])ppt(?![a-z])|transcript|earnings[_\s-]*call", re.I)
+_RESULTS_NAME = re.compile(r"(?<![a-z])(?:results?|outcome)(?![a-z])", re.I)   # in the file name: "_Result.pdf", "_outcome."
+
+
+def is_deck_or_transcript(filing: Filing) -> bool:
+    """An investor presentation or a call transcript by its own file name or headline (COALINDIA_29102026183725_Presentation.pdf),
+    and not a results statement by the same words (a file named "Results_and_Presentation" stays results)."""
+    name = (filing.pdf_url or "").rsplit("/", 1)[-1]
+    words = f"{name} {filing.headline} {filing.subject or ''}"
+    return bool(_DECK_NAME.search(words)) and not _RESULTS_NAME.search(name)
 
 
 def results_cover(text: str) -> bool:
@@ -3376,6 +3417,13 @@ class Pipeline:
             if now_rule.action == "FAST_TRACK":
                 filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": now_rule.event_type or filing.event_type})
                 event_type = filing.event_type or "OTHER"
+        if event_type == "RESULTS" and is_deck_or_transcript(filing):
+            # an investor presentation or call transcript filed under a results heading is no results filing: Coal India's
+            # deck (nse-106835008, 29 Oct 2026) took a second results card for H1FY27 beside the statement's, and its AI
+            # figures went into memory as the quarter's. It is read as a deck: no D20 quarter, no results table
+            log.info("%s is a deck or transcript filed as results; read as CONCALL_PRESENTATION", filing.news_id)
+            filing = filing.model_copy(update={"event_type": "CONCALL_PRESENTATION"})
+            event_type = "CONCALL_PRESENTATION"
         if filing.route == "PASS1":
             first_page = doc.first_page_text()
             _ocr_check(doc)
@@ -3496,8 +3544,8 @@ class Pipeline:
             # those are the filing's own words, and what its quotes answer to.
             text = "\n".join(t for t in (filing.headline, filing.subject) if t)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
-            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text, filing.filed_at),
-                                                 basis=getattr(tagged, "basis", None))
+            quarter = results_quarter(tagged, text, filing.filed_at) or companion_quarter(filing, dossier)
+            earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None))
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1

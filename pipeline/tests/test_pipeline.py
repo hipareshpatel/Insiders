@@ -520,6 +520,32 @@ def test_a_consolidated_file_takes_the_quarter_from_a_standalone_card_and_never_
     assert pipeline._superseding["q-cons"] == (["q-sa2"], "Q2FY27")
 
 
+def test_a_press_release_naming_no_quarter_is_the_duplicate_of_the_results_card_before_it(settings):
+    """28-29 Oct 2026: 13 companies had two results cards for Q2FY27, the statement's and a press release's minutes later
+    (eClerx 18:58 and 19:09): "Q2 FY27" is no "quarter ended", so D20 had no quarter and never ran. Within three days of
+    a results card a results filing that names no quarter takes that card's quarter."""
+    from dataclasses import replace
+
+    from bse_intel.pipeline import companion_quarter
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1)
+    now = now_ist() - timedelta(hours=3)
+    first = _filing("q-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    release = _filing("q-pr", "Press Release", now + timedelta(minutes=11), "Result")
+    text = "Press release. eClerx Q2 FY27 revenue rose 17.1% YoY; profit grew 9.8% QoQ. " * 3
+    pipeline, sink, fake = build(settings, [first, release], {first.pdf_url: _pdf(RESULT_TEXT), release.pdf_url: _pdf(text)},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 2})
+    pipeline._commit([pipeline.analyze(first.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))])
+    pipeline._results_quarters.clear()   # a later run: only memory knows the quarter has its card
+    assert companion_quarter(release, sink.get_dossier(first.scrip_code)) == "Q2FY27"
+    two = pipeline.analyze(release.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
+    assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of q-1 (same results quarter Q2FY27, D20)"
+    assert len(fake.calls) == 1, "no AI call for the duplicate"
+    # a week later the same words are a new filing, not a companion
+    late = _filing("q-late", "Press Release", now + timedelta(days=8), "Result")
+    assert companion_quarter(late, sink.get_dossier(first.scrip_code)) is None
+
+
 def test_a_board_outcome_typed_as_a_corporate_action_still_takes_part_in_d20(settings):
     """Kapston filed its Q2FY27 board outcome (results and a 5:1 stock split) twice, four minutes apart (O3, 2026-10-20).
     The copy typed CORPORATE_ACTION was made RESULTS only after pass 2, so it skipped the quarter's claim and the
@@ -1238,3 +1264,20 @@ def test_after_three_cap_deferrals_the_cap_is_lifted_and_the_filing_is_written(s
     assert outcome.update["status"] != "FAILED" and outcome.update["status"] != "PENDING", outcome.update
     assert any(c["model"] == "nvidia/nemotron-3.5-super-vl:free" for c in fake.calls)
     assert sum("cap lifted for n-lift after 3 deferrals" in r.message for r in caplog.records) == 1
+
+
+def test_a_deck_or_transcript_filed_under_a_results_heading_is_read_as_one():
+    """Coal India's investor presentation (COALINDIA_29102026183725_Presentation.pdf) was filed as a financial result
+    update and took a second results card for H1FY27; its results statement (…_Result.pdf) is the results filing."""
+    from bse_intel.pipeline import is_deck_or_transcript
+
+    def f(name, headline="Financial Result Updates"):
+        return _filing("d", headline, now_ist()).model_copy(update={"pdf_url": f"https://nsearchives.invalid/{name}"})
+
+    assert is_deck_or_transcript(f("COALINDIA_29102026183725_Presentation.pdf"))
+    assert is_deck_or_transcript(f("GATEWAY_28102026140102_Investor_Presentations_Oct26.pdf"))
+    assert is_deck_or_transcript(f("Infosys_28102026173824_SE_filing_Earnings_call_transcript.pdf", "Analysts Meet"))
+    assert not is_deck_or_transcript(f("COALINDIA_29102026181236_Result.pdf"))
+    assert not is_deck_or_transcript(f("ABC_Results_and_Presentation.pdf", "Financial Results"))
+    assert not is_deck_or_transcript(f("XYZ_outcome.pdf", "Outcome of board meeting and investor presentation"))
+    assert not is_deck_or_transcript(f("ROUTE_28102026000940_Upload_.pdf"))

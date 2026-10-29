@@ -3,6 +3,8 @@ against the LocalSink (real SQLite running the same SQL files as D1)."""
 
 from __future__ import annotations
 
+import pytest
+
 import json
 import time
 from datetime import timedelta
@@ -265,6 +267,7 @@ def test_retriage_queues_what_a_narrowed_rule_no_longer_drops(settings):
     assert pipeline.retriage_company("999001", when.date(), when.date()) == []
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_card_with_wrong_math_is_held_for_review(settings):
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-q", "Unaudited Financial Results for the quarter", now, "Result")
@@ -357,6 +360,7 @@ def test_live_filing_waits_for_its_company_history(settings):
     assert cards["new"]["memory_complete"] == 1
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_second_opinion_from_another_provider_corrects_the_card(settings):
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-q2", "Unaudited Financial Results for the quarter", now, "Result")
@@ -378,6 +382,7 @@ def test_second_opinion_from_another_provider_corrects_the_card(settings):
     assert body["model"] == "openrouter/nvidia/nemotron-3.5-super-vl:free" and len(body["review"]["fixed"]) == 2
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_one_unmatched_amount_gets_a_second_opinion_even_above_the_review_threshold(settings):
     """Ahluwalia's card had EBITDA ₹756 Cr for ₹75.6 Cr (a lakh table): 76% of its numbers matched,
     above the review threshold, so it went out unchecked. Any unmatched amount now asks a second provider."""
@@ -504,6 +509,7 @@ def test_a_board_outcome_typed_as_a_corporate_action_still_takes_part_in_d20(set
     assert two.update["status"] == "DUPLICATE" and two.update["reason"] == "duplicate of k-1 (same results quarter Q2FY27, D20)"
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_a_card_the_second_opinion_cannot_fix_is_held_back(settings):
     """A card that failed its checks, went to a second provider and still failed used to be published with
     an "Unverified" mark, so that a material filing was never hidden. On the rebuild that was 117 of 456

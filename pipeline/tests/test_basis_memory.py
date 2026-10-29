@@ -1,5 +1,7 @@
 """T5 (laptop, 2026-10-20): memory keeps one basis per figure, and a quarter's P&L is the results filing's."""
 
+import pytest
+
 from bse_intel.dossier import merge, new_dossier
 from bse_intel.models import Filing, Pass2Output
 
@@ -68,6 +70,7 @@ def test_one_open_target_per_metric_and_period_and_not_reported_once_the_window_
     assert d["predictions"][0]["status"] == "NOT_REPORTED"
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_guidance_said_twice_is_one_and_past_its_deadline_is_never_on_track():
     g = {"statement": "Revenue of Rs 6,000 Cr in FY27", "metric": "revenue", "target": "6,000 Cr", "due": "FY27"}
     d = new_dossier(_filing("a", "2025-05-21T10:00:00+05:30"))

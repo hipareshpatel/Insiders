@@ -434,6 +434,7 @@ def test_a_card_amount_is_compared_in_crore_whatever_digits_it_shares():
     assert gate.numbers_in_quote("₹52.99 per share", "Basic EPS 52.99 4.87", 10) == []
 
 
+@pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
 def test_a_hold_is_kept_on_the_card_when_a_second_opinion_ran(settings):
     """The second opinion's review block replaced the hold reasons, so an owner's hold or a garbled scan left no trace
     on a card that also went to a second model (audit of discard paths, 2026-10-18)."""

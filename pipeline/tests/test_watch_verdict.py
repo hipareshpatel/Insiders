@@ -284,6 +284,7 @@ def _types(found):
     return [(s.type, s.severity, s.text.split(":")[0]) for s in found]
 
 
+@pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
 def test_signals_switch_off_keeps_the_models_verdict_and_on_the_code_decides(monkeypatch):
     before = {"watchlist": [W("GNPA ratio", "at or below 1.45%")]}
     after = {**before, "financial_metrics": GNPA}

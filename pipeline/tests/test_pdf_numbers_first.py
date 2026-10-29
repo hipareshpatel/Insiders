@@ -1226,3 +1226,14 @@ def test_a_row_equal_to_the_revenue_row_above_in_all_but_one_column_is_no_subtot
                      (["Total income"], cols_sum(interest, OTHER))] + rows[3:])
     r = read(pdf, "revenue")
     assert r.status != "ok" or r.value == pytest.approx(crore(1000.00))
+
+
+def test_a_subtotal_that_takes_in_an_other_income_row_is_not_the_revenue():
+    # twenty-eighth review: "Revenue from operations" + "Other income" = "Total revenues", then "Other income", "Total income"
+    rows, want = pl()
+    first_oi = [20.0, 18.0, 16.0, 70.0]
+    rev = [round(v - o, 2) for v, o in zip(REVENUE, first_oi)]
+    pdf = statement([(["Revenue from operations"], rev), (["Other income"], first_oi), (["Total revenues"], REVENUE),
+                     (["Other income"], OTHER), (["Total income"], cols_sum(REVENUE, OTHER))] + rows[3:])
+    r = read(pdf, "revenue")
+    assert r.status != "ok" or r.value == pytest.approx(crore(rev[0]))

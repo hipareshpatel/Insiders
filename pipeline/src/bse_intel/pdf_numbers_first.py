@@ -1195,8 +1195,9 @@ class Solver:
                 return self.valid(proof) and False not in self.mask(proof)
             subtotal = self.cls[rows[0]] == "REV" and any(
                 strict((rows[0], tuple((r, 1) for r in range(above - size + 1, above + 1)))) for size in range(1, 7)
-                if above - size + 1 >= 0)
-            if above >= 0 and self.cls[above] == "REV" and not subtotal:
+                if above - size + 1 >= 0 and all(self.cls[r] != "OI" for r in range(above - size + 1, above + 1)))
+            # (an other-income row right above is the same doubt: "Total revenues" may take it in, 28th review)
+            if above >= 0 and self.cls[above] in ("REV", "OI") and not subtotal:
                 rows_rev_ok = False
             rev_named = self.label_ok(rows[0], {"REV"}) and rows_rev_ok
             if rev_named:

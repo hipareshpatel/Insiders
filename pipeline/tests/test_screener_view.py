@@ -28,7 +28,7 @@ def doc(facts, kind="annual", template="MCA-INDAS", year=2026):
         contexts[f"D{y}"] = {"s": f"{y - 1}-04-01", "e": f"{y}-03-31", "m": 12}
         contexts[f"Q{y}"] = {"s": f"{y}-01-01", "e": f"{y}-03-31", "m": 3}
         contexts[f"I{y}"] = {"i": f"{y}-03-31"}
-        for member in ("M1", "M2", "M3", "M4"):
+        for member in ("M1", "M2", "M3", "M4", "M5", "M6", "M8", "M9"):
             # an annual report: a row's description on the duration, its amount on the instant, the same (typed) member
             contexts[f"D{y}_{member}"] = {"s": f"{y - 1}-04-01", "e": f"{y}-03-31", "m": 12, "d": {"RowAxis": member}}
             contexts[f"I{y}_{member}"] = {"i": f"{y}-03-31", "d": {"RowAxis": member}}
@@ -580,3 +580,15 @@ def test_an_nbfc_has_every_row_of_a_lenders_and_a_holding_companys_page():
     got = values(sv.nbfc_pl(sv._Reader(facts, end=END, months=3)))
     assert got["Expenses"] == 25.0 and got["Operating Profit"] == 75.0 and got["Financing Profit"] == 35.0
     assert got["Sales"] == got["Revenue"] == 100.0 and got["Other Income"] == 35 + 5 + 40 - 75
+
+
+def test_a_row_apart_by_two_filed_lines_names_the_pair_and_exceptional_losses_are_summed():
+    extra = [("DescriptionOfOtherExpenses", "D2026_M8", "Freight outward"), ("OtherExpenses", "D2026_M8", 13.0),
+             ("DescriptionOfOtherExpenses", "D2026_M9", "Commission to selling agents"), ("OtherExpenses", "D2026_M9", 29.0),
+             ("DescriptionOfExceptionalItems", "D2026_M5", "Gain on remeasurement"), ("ExceptionalItems", "D2026_M5", 300.0),
+             ("DescriptionOfExceptionalItems", "D2026_M6", "Impairment of goodwill"), ("ExceptionalItems", "D2026_M6", -211.0)]
+    r = sv._Reader(annual_facts(extra), end=END, months=12)
+    assert any("[Freight outward] + OtherExpenses [Commission to selling agents]" in p or
+               "[Commission to selling agents] + OtherExpenses [Freight outward]" in p for p in sv.gap_pairs(r, 42.2))
+    assert any(p.startswith("exceptional losses") for p in sv.gap_pairs(r, 211.4))
+    assert sv.gap_pairs(r, 1.5) == []

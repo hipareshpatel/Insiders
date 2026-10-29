@@ -62,6 +62,7 @@ remuneration moved into employee cost (Employee Cost is not a website row)."""
 
 from __future__ import annotations
 
+import bisect
 import csv
 import io
 import json
@@ -196,6 +197,54 @@ def _fmt(v: float) -> str:
 
 def _sum_rows(rows: list[tuple[str, str, float]]) -> float:
     return sum(r[2] for r in rows)
+
+
+# the lines a two-line gap match may use: the statement's own lines and the breakdown rows of other expenses and exceptional items
+# (an outside review's subset-sum idea, 29 Oct 2026); cash-flow, OCI, segment and related-party facts equal a gap by chance too often
+PAIR_NOISE = re.compile(r"Adjustments|CashFlow|Classified|IncreaseDecrease|Comprehensive|Segment|RelatedParty|Reclassified|"
+                        r"Disposals|Additions|Payments|Proceeds|Received|Paid|Dividend|Equity|Shares|PerShare|CashEquivalents|Tax(?!es)", re.I)
+PAIR_PARENTS = ("OtherExpenses", "Expenses", "ExceptionalItems", "ExceptionalItemsBeforeTax")
+
+
+def gap_pairs(r: _Reader, gap: float, limit: int = 3) -> list[str]:
+    """Two filed lines whose sum (or difference) equals a row's gap within ₹1 Cr, where no single line does; and, when the
+    exceptional items are filed as a breakdown, the sum of their losses and of their gains on their own. A lead only."""
+    if abs(gap) < GAP_HINT_MIN:
+        return []
+    cand = getattr(r, "_pair_lines", None)
+    if cand is None:
+        facts = r.facts
+        cand = [(el, v) for el, v in facts.find(".", **r.at) if v and not PAIR_NOISE.search(el)]
+        rows = [(el, t, v) for el, t, v in facts.described(PAIR_PARENTS, ".", joined=True, **r.at)
+                if v and len(re.sub(r"[^A-Za-z]", "", t)) >= 4]
+        cand += [(f"{el} [{t.strip()[:40]}]", v) for el, t, v in rows]
+        exc = [v for el, t, v in rows if el.startswith("ExceptionalItems")]
+        if len(exc) >= 2:
+            if (loss := sum(v for v in exc if v < 0)):
+                cand.append(("exceptional losses (sum of the breakdown)", loss))
+            if (gain := sum(v for v in exc if v > 0)):
+                cand.append(("exceptional gains (sum of the breakdown)", gain))
+        cand = sorted(set(cand), key=lambda x: -abs(x[1]))[:120]
+        r._pair_lines = cand
+    g = abs(gap)
+    singles = [(abs(abs(v) - g), f"{label} {_fmt(v)}") for label, v in cand
+               if label.startswith("exceptional ") and abs(abs(v) - g) <= ABS_TOL]
+    if any(abs(abs(v) - g) <= ABS_TOL for label, v in cand if not label.startswith("exceptional ")):
+        return [x for _, x in sorted(singles)][:limit]       # a single line already says it (gap_hints)
+    sizes = sorted((abs(v), i) for i, (_, v) in enumerate(cand))
+    keys = [x for x, _ in sizes]
+    hits = []
+    for i, (a, va) in enumerate(cand):
+        # the other line's size for a sum (g - |a|) or a difference (|a| - g, |a| + g)
+        for sign, want in (("+", g - abs(va)), ("-", abs(va) - g), ("-", abs(va) + g)):
+            if want <= 0:
+                continue
+            for k in range(bisect.bisect_left(keys, want - ABS_TOL), bisect.bisect_right(keys, want + ABS_TOL)):
+                j = sizes[k][1]
+                if j != i and (sign == "-" or j > i):
+                    b, vb = cand[j]
+                    hits.append((abs(abs(keys[k]) - want), f"{a} {sign} {b}"))
+    return [x for _, x in sorted(singles + hits)][:limit]
 
 
 def _levies(r: _Reader) -> tuple[dict[str, float], list[str]]:
@@ -767,6 +816,7 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                         reader = memo.get(("reader", (table, period)))
                         if rec["status"] == "apart" and row not in PCT_ROWS and reader is not None:
                             rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
+                            rec["pairs"] = "; ".join(gap_pairs(reader, theirs - got.value))
                 out.append(rec)
     return out
 
@@ -872,13 +922,19 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
             label = label[label.index("[") + 1:-1].lower() if label.endswith("]") and "[" in label else label
             by_hint.setdefault((f"{r['table']}: {r['row']}", label), set()).add(r["company"])
     hints = sorted(([k[0], k[1], sorted(v)] for k, v in by_hint.items() if len(v) >= 2), key=lambda h: (-len(h[2]), h[0], h[1]))
+    by_pair: dict[tuple[str, str], set[str]] = {}
+    for r in rows:
+        for pair in filter(None, (r.get("pairs") or "").split("; ")):
+            label = re.sub(r"\s*\[[^\]]*\]", "", re.sub(r" -?[\d,]+\.\d\d$", "", pair)).lower()
+            by_pair.setdefault((f"{r['table']}: {r['row']}", label), set()).add(r["company"])
+    pairs = sorted(([k[0], k[1], sorted(v)] for k, v in by_pair.items() if len(v) >= 3), key=lambda h: (-len(h[2]), h[0], h[1]))
     total = {s: sum(1 for r in rows if r["status"] == s) for s in STATUSES}
     return {"pages_day": pages_day, "companies": len(results), "pairs": len(rows), "by_status": total, "by_row": by_row,
-            "per_company": companies, "by_sector_row": by_sector_row, "gap_hints": hints, "rows": rows}
+            "per_company": companies, "by_sector_row": by_sector_row, "gap_hints": hints, "gap_pairs": pairs, "rows": rows}
 
 
 CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
-              "gap matches")
+              "gap matches", "gap pairs")
 
 
 def to_csv(summary: dict) -> str:
@@ -888,7 +944,7 @@ def to_csv(summary: dict) -> str:
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
-                    r.get("hints", "")])
+                    r.get("hints", ""), r.get("pairs", "")])
     return buf.getvalue()
 
 

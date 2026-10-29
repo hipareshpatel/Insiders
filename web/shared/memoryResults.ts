@@ -14,6 +14,9 @@ export const RESULT_METRICS = ["revenue", "interest_earned", "gross_premium", "e
 
 const QUARTER = /^Q([1-4])FY(\d{2})$/;
 
+/** A quarter ("Q2FY27"), not a half year, nine months or a year ("H1FY27", "FY26"). */
+export const isQuarter = (period: string | null | undefined) => QUARTER.test(period ?? "");
+
 export function priorYear(period: string): string | null {
   const m = QUARTER.exec(period);
   return m ? `Q${m[1]}FY${String(Number(m[2]) - 1).padStart(2, "0")}` : null;

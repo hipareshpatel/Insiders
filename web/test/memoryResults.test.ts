@@ -1,7 +1,7 @@
 // The Results table read from memory (shared/memoryResults.ts). Run: npm test.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { figureOf, memoryTable, priorYear, resultRows, type MemoryRow } from "../shared/memoryResults.ts";
+import { figureOf, isQuarter, memoryTable, priorYear, resultRows, type MemoryRow } from "../shared/memoryResults.ts";
 
 const row = (metric: string, period: string, ...candidates: [number, string | null][]): MemoryRow =>
   ({ metric, period, candidates: candidates.map(([value, basis]) => ({ value, basis })) });
@@ -67,4 +67,12 @@ test("prior year of a quarter", () => {
   assert.equal(priorYear("Q2FY27"), "Q2FY26");
   assert.equal(priorYear("Q1FY10"), "Q1FY09");
   assert.equal(priorYear("H1FY27"), null);
+});
+
+test("only quarters are listed: a half year, nine months or a year is not", () => {
+  assert.ok(isQuarter("Q2FY27"));
+  assert.ok(!isQuarter("H1FY27"));
+  assert.ok(!isQuarter("9MFY27"));
+  assert.ok(!isQuarter("FY26"));
+  assert.ok(!isQuarter(null));
 });

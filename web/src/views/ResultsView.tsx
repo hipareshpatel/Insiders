@@ -16,7 +16,7 @@ import { SIZES, TONE_BORDER, TONE_CHIP, verdict, type Tone } from "../lib/taxono
 import { periodEnd } from "../lib/periods";
 import { useQueryState } from "../lib/url";
 import { TURN, turnOf } from "../lib/results";
-import { memoryTable, type MemoryByScrip } from "../../shared/memoryResults";
+import { isQuarter, memoryTable, type MemoryByScrip } from "../../shared/memoryResults";
 import { Empty, Loading } from "./FeedView";
 
 export { turnOf };
@@ -51,7 +51,7 @@ export function ResultsView() {
   });
   const rows = useMemo(() => (query.data?.pages.flatMap((p) => p.cards) ?? [])
     .map((row) => ({ row, card: parseCard(row) }))
-    .filter((r): r is { row: CardRow; card: CardBody } => !!r.card), [query.data]);
+    .filter((r): r is { row: CardRow; card: CardBody } => !!r.card && isQuarter(r.card.results?.period)), [query.data]);
   const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])]
     .sort((a, b) => periodEnd(b).localeCompare(periodEnd(a)));
   const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));

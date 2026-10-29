@@ -28,7 +28,7 @@ from .memory_gaps import quarter_end
 from .periods import quarter_from_index, quarter_index
 
 PREFIX = "raw/bse-results-xbrl/"
-QUARTERS = 13                 # screener's quarterly table: Q2FY24 to Q2FY27 on 29 Oct 2026
+QUARTERS = 13                 # screener's quarterly table: Q2FY24 to Q2FY27 on 29 Oct 2026; only those from FIRST_QUARTER are filled
 LIST_FRESH_DAYS = 7
 DUE_DAYS, MARCH_DUE_DAYS = 45, 60     # SEBI LODR Reg 33: a quarter's results within 45 days of its end, the year's (March) within 60
 BASES = ("CONSOLIDATED", "STANDALONE")
@@ -42,13 +42,17 @@ def list_key(scrip: str) -> str:
     return f"{PREFIX}{scrip}/list.json"
 
 
-def window(today: date) -> list[str]:
-    """The last QUARTERS quarters ended by ``today``, newest first."""
+def window(today: date, first: str | None = None) -> list[str]:
+    """The last QUARTERS quarters ended by ``today`` and not before ``first`` (default the comparison's first quarter,
+    screener_view.FIRST_QUARTER), newest first."""
+    from .screener_view import FIRST_QUARTER
+
+    first = first or FIRST_QUARTER
     fy = today.year % 100 + (1 if today.month >= 4 else 0)
     q = {4: 1, 5: 1, 6: 1, 7: 2, 8: 2, 9: 2, 10: 3, 11: 3, 12: 3, 1: 4, 2: 4, 3: 4}[today.month]
     index = quarter_index(f"Q{q}FY{fy:02d}")
     out = []
-    while len(out) < QUARTERS:
+    while len(out) < QUARTERS and index >= quarter_index(first):
         period = quarter_from_index(index)
         end = quarter_end(period)
         if end is not None and end <= today:
@@ -84,14 +88,14 @@ def _links(bse, sink, scrip: str, stored: set[str], today: date, totals: dict) -
 
 
 def run(sink, companies: list[tuple[str, str]], bse, time_budget: float = 17400.0, today: date | None = None,
-        clock=time.monotonic) -> dict:
+        clock=time.monotonic, first: str | None = None) -> dict:
     """For each (scrip, symbol): the window's quarters with no facts doc, from BSE's archive. Stops on the file cap (``more``)
     or the time budget; a refusal propagates (what is stored stays). ``bse.keep`` must be the sink, so files go to the store."""
     from .nse import FileCapReached
     from .bse import AttachmentError
 
     today = today or date.today()
-    periods = window(today)
+    periods = window(today, first)
     bse.keep = sink
     totals = {"companies": 0, "not_on_bse": 0, "complete": 0, "lists_asked": 0, "lists_reused": 0, "quarters_missing": 0,
               "quarters_on_bse": 0, "files_wanted": 0, "files_failed": 0, "files_not_results": 0, "period_mismatch": 0,

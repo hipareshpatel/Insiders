@@ -80,7 +80,11 @@ from .screener_fill import _section_table, _basis_of, cash_year_of, period_of
 ABS_TOL, REL_TOL = 1.0, 0.0005          # a pair is exact within 1 Cr or 0.05% of screener's figure
 PCT_TOL = 0.51                           # screener prints whole percent
 PCT_ROWS = ("OPM %", "Financing Margin %", "Tax %")
-STATUSES = ("ok", "apart", "no_facts", "no_recipe")
+STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff")
+# the quarters compared start here (owner, 29 Oct 2026: "quarters from FY26"): every FY26 quarter is NSE's integrated filing, and the
+# older ones carry screener's merger restatements and the older file format; a quarter before it is listed as before_cutoff, never
+# counted in the exact share. Years and balance sheets are compared as before.
+FIRST_QUARTER = "Q1FY26"
 
 PL_ROWS = ("Sales", "Revenue", "Expenses", "Operating Profit", "Financing Profit", "OPM %", "Financing Margin %", "Other Income",
            "Interest", "Depreciation", "Profit before tax", "Tax %", "Net Profit")
@@ -893,9 +897,13 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
     for _, table, _ in TABLES:
         for row, by_period in (page.get("tables") or {}).get(table, {}).items():
             for period, theirs in by_period.items():
-                ours_rows, why = _ours(cf, fam, basis, table, period, memo)
                 rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": fam, "period": period, "table": table,
                        "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "", "hints": ""}
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(FIRST_QUARTER):
+                    rec.update(status="before_cutoff", note=f"before {FIRST_QUARTER}: not compared")
+                    out.append(rec)
+                    continue
+                ours_rows, why = _ours(cf, fam, basis, table, period, memo)
                 if ours_rows is None:
                     rec.update(status="no_facts", note=why)
                 elif row not in ours_rows:

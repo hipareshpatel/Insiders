@@ -14,6 +14,7 @@ from bse_intel.nse import FileCapReached, SourceBlockedError
 from test_screener_download import Sink
 
 TODAY = date(2026, 10, 29)
+OLD = "Q2FY24"           # the fixtures are FY25 files: these tests open the window before the comparison's first quarter
 FIX = Path(__file__).parent / "fixtures"
 Q2 = (FIX / "bse_main_ind_as_532811_q2fy25.xml").read_bytes()     # Q2FY25 standalone
 Q3 = (FIX / "bse_main_ind_as_532811_q3fy25.xml").read_bytes()     # Q3FY25 standalone
@@ -48,24 +49,25 @@ FILES = {URL.format("q2old"): Q3, URL.format("q2rev"): Q2, URL.format("q3"): Q3,
          URL.format("q1fy27"): Q3}
 
 
-def test_the_window_is_the_last_13_quarters_ended():
+def test_the_window_is_the_quarters_ended_since_the_comparisons_first():
     w = br.window(TODAY)
-    assert w[0] == "Q2FY27" and w[-1] == "Q2FY24" and len(w) == 13
+    assert w == ["Q2FY27", "Q1FY27", "Q4FY26", "Q3FY26", "Q2FY26", "Q1FY26"]     # quarters from FY26 (owner, 29 Oct 2026)
+    assert len(br.window(date(2030, 1, 1))) == br.QUARTERS
 
 
 def test_missing_quarters_are_filled_from_bse_and_the_next_run_asks_for_nothing():
     sink = Sink()
-    for p in br.window(TODAY):
+    for p in br.window(TODAY, OLD):
         if p not in ("Q2FY25", "Q3FY25", "Q4FY25"):
             sink.put_object(xf.key("532811", p, "STANDALONE"), b"x")      # NSE gave every other quarter
     bse = Bse(LINKS, FILES)
-    out = br.run(sink, [("532811", "ABC"), ("NSEONLY", "NSEONLY")], bse, today=TODAY)
+    out = br.run(sink, [("532811", "ABC"), ("NSEONLY", "NSEONLY")], bse, today=TODAY, first=OLD)
     assert bse.got == [URL.format("q2rev"), URL.format("q3"), URL.format("q4wrong")]
     assert out["facts_saved"] == 2 and out["period_mismatch"] == 1 and out["not_on_bse"] == 1 and not out["more"]
     doc = xf.loads(sink.get_object(xf.key("532811", "Q2FY25", "STANDALONE")))
     assert doc["exchange"] == "BSE" and doc["period"] == "Q2FY25"
     again = Bse(LINKS, FILES)
-    second = br.run(sink, [("532811", "ABC")], again, today=TODAY)
+    second = br.run(sink, [("532811", "ABC")], again, today=TODAY, first=OLD)
     assert again.lists == 0 and second["lists_reused"] == 1
     assert again.got == [URL.format("q4wrong")]      # only the quarter still missing; its file is read from the store in life
 
@@ -81,16 +83,16 @@ def test_a_company_with_every_quarter_stored_is_not_listed():
 
 def test_the_file_cap_ends_the_run_with_more_left_and_a_refusal_stops_it():
     capped = Bse(LINKS, FILES, cap=1)
-    out = br.run(Sink(), [("532811", "ABC")], capped, today=TODAY)
+    out = br.run(Sink(), [("532811", "ABC")], capped, today=TODAY, first=OLD)
     assert out["more"] and len(capped.got) == 1
     with pytest.raises(SourceBlockedError):
-        br.run(Sink(), [("532811", "ABC")], Bse(LINKS, FILES, refuse=True), today=TODAY)
+        br.run(Sink(), [("532811", "ABC")], Bse(LINKS, FILES, refuse=True), today=TODAY, first=OLD)
 
 
 def test_a_file_the_store_did_not_keep_stops_the_run():
     bse = Bse(LINKS, FILES)
     bse.files["downloaded"] = 1                      # the client downloaded a file and the store kept none
-    out = br.run(Sink(), [("532811", "ABC")], bse, today=TODAY)
+    out = br.run(Sink(), [("532811", "ABC")], bse, today=TODAY, first=OLD)
     assert out["store_full"] and out["more"] and out["facts_saved"] == 0
 
 

@@ -22,6 +22,11 @@ an exceptional item, a finance lease): the line's presence is the trigger, on an
 (holding company, a lender inside a group, associates kept outside PBT) is kept rare and needs a signal read from the filing
 itself, never a list of names. An event seen at one company only, with no line to trigger on, stays a recorded exception.
 
+**Quarters compared (owner, 29 Oct 2026: "quarters from FY26"):** from Q1FY26 (June 2025) to the latest filed. Every such quarter is
+NSE's integrated filing; older quarters carry screener's merger restatements and the older file format, so they are listed as
+`before_cutoff` and never counted. Years and balance sheets are compared as before. The BSE fill (`bse-results-xbrl`) fills only
+these quarters.
+
 Source of a quarter: its own results file. NSE's results XBRL has no comparative column (measured 28 Oct 2026, Hindustan
 Unilever Q1FY27: only the quarter's own contexts), so screener's restated quarters (a merger, a demerger) cannot be read from
 XBRL; they are Event exceptions below.

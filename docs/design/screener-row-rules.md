@@ -123,6 +123,15 @@ Liabilities 59.6 %, Borrowings 65.4 %, yearly Operating Profit 72.1 %, Expenses 
   Q4 file carries no breakdown rows (levies, bank charges, the financing arm's cost, lease lines), so the fix is data: the FY24
   annual reports, whose comparative column holds FY23. The same holds for Borrowings: 468 of its 1,045 misses are FY23 years
   read from a results file with no lease breakdown at all (80 % of FY23 columns apart, 21–27 % of FY24–FY26).
+- **Where a FY24 or older annual report could come from (measured 29 Oct 2026, owner's request, 4 NSE and 6 BSE requests, no
+  refusal):** NSE's annual-report XBRL list (`annual-reports-xbrl`) holds FY25 and FY26 only (Maruti, Mankind, Vedanta; a date
+  range changes nothing; 10 more companies the same day: 36 files listed, all stored); NSE's annual-report list
+  (`annual-reports`) goes back to FY10, FY15–FY23 as zips, and the FY23 zip holds the PDF alone; BSE's annual-report list
+  (`AnnualReport_New`) is PDF only from FY15; BSE's announcement rows carry an `XML_NAME` on every filing alike (a press release
+  too), so it is the announcement's own XBRL, not the statements. The XBRL mandate for annual reports dates from FY2018-19
+  (BSE and NSE circulars of 2019), but neither exchange serves those files through these lists. MCA's AOC-4 XBRL (every
+  listed company since 2011, lenders excepted) is the full archive, paid per document: not a $0 source. FY23 years therefore
+  stay on the Q4 results file (or the PDF).
 - **Screener's year is not the sum of its own quarters** in 83 % of the yearly misses (31 % of the exact rows): the year
   carries a reclassification of the annual report. Summing quarters would fix 29 rows and break 377: rejected.
 - **The deferred tax offset on Total Assets has no single rule.** Consolidated years offset (465 annual-report rows exact with

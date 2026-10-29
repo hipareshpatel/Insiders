@@ -697,3 +697,9 @@ def test_keep_pdfs_writes_each_download_under_the_collect_name_and_survives_a_st
     assert second["file_cap_reached"] and [p.name for p in (tmp_path / "k2").iterdir()] == [kept.name]
     # no keep_dir: nothing is written
     assert not (tmp_path / "none").exists()
+
+
+def test_the_csv_keeps_every_digit_of_a_figure():
+    # the pdf-oos key is built from this CSV: 58187.57 crore written as 58187.6 scored M&M's right reading wrong
+    row = xk.result_row(xk.Result(xk.Expected("n", "M&M", "STANDALONE", "Q1FY27", "revenue", 58187.57), "found_unique"))
+    assert xk.load_csv(xk.to_csv([row]))[0]["xbrl_value"] == 58187.57

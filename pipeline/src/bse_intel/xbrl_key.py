@@ -1259,7 +1259,9 @@ CSV_HEADER = ("news_id,symbol,basis,period,metric,xbrl_value,status,reason,page,
 
 
 def _cell(v) -> str:
-    return "" if v is None else f"{v:g}" if isinstance(v, float) else str(v)
+    """A CSV cell; a float keeps every digit (``{:g}`` kept six: 58187.57 crore was written 58187.6, so a key built from the CSV
+    scored a right reading wrong)."""
+    return "" if v is None else repr(v) if isinstance(v, float) else str(v)
 
 
 def result_row(r: Result, extra: dict | None = None) -> dict:

@@ -164,6 +164,26 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 - Report each change as a right / wrong / no answer table per metric for both keys, plus which filings moved. The one rule: a change that
   adds any wrong answer, or loses right ones on the other key, is not kept as it is.
 
+### 4a. The out-of-sample test (owner, 29 Oct 2026)
+
+- Owner, 29 Oct 2026 (~23:50 IST): "Instead of 10 you will do 100 pdf", then "No gate of 576, you can start now". The 576 bench gate is
+  dropped. The test runs on 100 fresh filings in one read-only dispatch: Maintenance `pdf-oos`, `file_cap` = 100, `limit` = 100,
+  `ids` = the shuffle seed (default 29; seed 28 was used by the earlier xbrl-key runs, so its companies are not fresh). The run stops at
+  once on any NSE refusal.
+- The filings are the newest results filing of companies in a seeded shuffle, minus every company in either hand key
+  (`xbrl-key --exclude-bench`). Every PDF is kept (`--keep-pdfs`, artifact `pdf-oos-pdfs`, 90 days).
+- The key is the exchange's XBRL figure in memory, for every row with a PDF, whatever the locator found (`pdf_bench --key-from-xbrl`).
+  Only revenue, total income, PBT and PAT are in it. Both readers are scored with the options on and off. The score is right / wrong /
+  no answer, by groups of 10 filings with a running total (artifact `pdf-oos-scores`).
+- Every wrong answer is sorted by hand: **reader** (we misread the page), **file** (the XBRL figure and the printed page differ) or
+  **definition** (the two name different things, such as revenue with or without other income).
+- The result is reported beside held-out. It is never merged into the bench totals.
+- The batch rules:
+  - The first read of all 100 is the honest score, by group of 10 with a running total. Scores after a fix are reported apart.
+  - A fix needs a named cause seen in 2+ filings.
+  - A group's filings join no fix's test set until the next group's first read is recorded.
+  - No fix from this test goes in before #218 (item 123) and the score PR.
+
 ## 5. Ideas agreed with the outside reviews (adopted)
 
 | # | idea | from | status |

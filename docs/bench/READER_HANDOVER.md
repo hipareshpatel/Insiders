@@ -197,7 +197,9 @@ it and an independent review: normal **260 / 0 / 77** (from 253), hard **264 / 0
 - Tried and dropped (0 gain, 0 wrong): a cell-by-cell merge of the scanner's text and our OCR (the blockers on its targets come
   earlier: a 12-column page with both bases, garbled dates, a statement split over two pages); a basis from the auditor's report
   (survey of the 66 titled statements: the only rules with 0 wrong fixed nothing, and the review reports of SBICARD and AYE name no
-  basis); a second OCR engine (Tesseract sees 0 of the 15 figures in no text).
+  basis); a second OCR engine (Tesseract sees 0 of the 15 figures in no text). Page OCR at 300 dpi instead of 200 (owner's idea, 29 Oct; fresh OCR, 8 scanned
+  filings with the most unanswered figures, 120 figures): right 5 -> 6 (GERMAN +2, NEWGEN -1), 0 wrong either way, 437 s -> 746 s
+  (+71%); not worth it page-wide. High resolution pays only on single cells (the crop re-read).
 
 **Checker baselines, measured 29 Oct 2026 ~07:00-08:00 IST (frozen 3940f00, numbers-first only, scripts in the session scratchpad:
 `check_bench.py`, `where_lost.py`, `check_joint.py`).** The checker is given the true figure (must confirm) and plausible wrong

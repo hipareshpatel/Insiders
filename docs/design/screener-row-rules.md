@@ -41,7 +41,13 @@ annual-report XBRL for banks, NBFCs or insurers). Consolidated by default; stand
 
 Breakdown-row patterns (Wording; `screener_view.py` / `screener_parts.py` constants):
 - `FINANCE_MEMBER`: "Finance cost(s) of / relating to / in respect of ... financial services | NBFC | HFC | lending | housing finance".
-- `INVESTMENT_LOSS`: "(Net) loss / impairment ... investment(s)" in OtherExpenses (M&M Q4FY26 410.2 Cr = its Expenses gap).
+- `INVESTMENT_LOSS`: "(Net) loss ... investment(s)" in OtherExpenses (M&M Q4FY26 410.2 Cr = its Expenses gap); an "Impairment of
+  investments" row stays in Expenses (Tech Mahindra standalone Q4FY24–Q4FY26, Cipla Q4FY26, Purvankara, Kolte-Patil, Jagran).
+- a net regulatory expense (a negative movement in the regulatory deferral balances) is in Expenses, a net regulatory income in
+  Other Income: NHPC Q4FY26 −559.22 = the Expenses gap, Tata Power Q1FY27 −153.09 and Q1FY26 −570.76 (the owner's NHPC and Tata
+  Power sheets, 29 Oct 2026); about 62 quarters and 18 years of 11 utilities in the every-company run (Power Grid, SJVN, Adani
+  Energy Solutions, NLC, NTPC).
+- an owners' share filed as 0 with a minority of 0 (Paradeep Q2FY26–Q1FY27) is the whole profit.
 - levies: "Excise duty", "Sales tax", "VAT", "GST", discounts / rebates.
 
 ## Profit and loss (lenders: BANKING template)
@@ -99,6 +105,9 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Reliance, Sun Pharma, L&T | PBT, Other Income, Expenses (quarters and years) | screener leaves the associates' share out of every row: not in PBT (37 quarters with a profit, 22 with a loss), and a loss not in Expenses (the 39 rows the loss rule broke in run 40737252219 are all these three) | the XBRL cannot tell them apart: Reliance's results file has the share outside the filed PBT exactly as Coal India's does (checked 28 Oct 2026); its printed results put it after tax. If the larger batch shows more, read the P&L layout from the PDF |
 | Sundaram Finance, Shriram Finance, Cholamandalam (and its holding company), Nippon AMC, Motilal Oswal, LIC Housing | an NBFC's PBT | the associates' share left out, as at Reliance (40 rows; the rule fixed 143 at Bajaj Holdings, M&M Finance, Tata Investment, Jio Financial, TVS Holdings, Nuvama and others) | the same company-layout class: not in the XBRL |
 | M&M, JSW Steel, Asian Paints, Eicher, TVS, Solar | standalone FY23 Total Assets | the filed Assets, no deferred tax offset (FY23 from the Q4 results file) | lead only |
+| Tata Consumer | Borrowings, Total Assets, Other Assets (FY24–FY26) | its cash and cash equivalents net an "Others" amount (−1,147.98, −1,348.21, −1,633.78 Cr; an overdraft or cash pool, assumption) that screener shows gross, as borrowing | one company: the "Others" member names nothing |
+| DPS (DPSCLTD) standalone | Q1FY26, FY26 | a negative regulatory movement kept in Other Income | the one exact case against the rule |
+| Vedanta, Tata Motors PV, Ambuja | restated quarters (Vedanta Q4FY25–Q3FY26 after the demerger, Sales 16,686 against 40,455 filed; TMPV Q4FY25–Q1FY26 after the CV demerger; Ambuja's depreciation after its acquisitions) | the demerger class | PDF only |
 | Grasim | Investments | about 38,000–40,000 Cr short (insurance business investments, assumption) | to check |
 
 ## Open sector patterns (measured, not yet a rule)

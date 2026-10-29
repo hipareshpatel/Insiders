@@ -534,3 +534,29 @@ def test_lease_rows_under_non_financial_liabilities_and_misspelt_count_once():
             row += [("DescriptionOfOtherCurrentLiabilities", "D2026_M4", words), ("OtherCurrentLiabilities", "I2026_M4", 5.0)]
         facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3", "D2026_M4", "I2026_M4")] + row))
         assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + (5 if counted else 0), words
+
+
+def test_a_net_regulatory_expense_is_an_expense_and_a_net_regulatory_income_other_income():
+    """NHPC Q4FY26 -559.22 = screener's Expenses gap; a positive movement stays in Other Income (the owner's NHPC sheet)."""
+    base = values(sv.corporate_pl(sv._Reader(annual_facts(), end=END, months=12)))
+    neg = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.REGULATORY_DEFERRAL, "D2026", -6.0)]), end=END, months=12)))
+    pos = values(sv.corporate_pl(sv._Reader(annual_facts([(sv.REGULATORY_DEFERRAL, "D2026", 6.0)]), end=END, months=12)))
+    assert neg["Expenses"] == base["Expenses"] + 6 and neg["Other Income"] == base["Other Income"]
+    assert pos["Expenses"] == base["Expenses"] and pos["Other Income"] == base["Other Income"] + 6
+    assert neg["Profit before tax"] == base["Profit before tax"] - 6
+
+
+def test_an_impairment_of_investments_stays_in_expenses():
+    """Tech Mahindra standalone Q4FY24-Q4FY26: screener keeps "Impairment of investments" in Expenses; a loss moves out."""
+    assert not __import__("re").search(sv.INVESTMENT_LOSS, "Impairment of investments", __import__("re").I)
+    assert __import__("re").search(sv.INVESTMENT_LOSS, "Loss from investments related to subsidiaries", __import__("re").I)
+
+
+def test_a_filler_zero_owners_share_is_the_whole_profit():
+    """Paradeep Q2FY26-Q1FY27 files 0 for the owners' share and 0 for the minority."""
+    facts = annual_facts([("ProfitOrLossAttributableToOwnersOfParent", "D2026", 0.0), ("ProfitOrLossAttributableToNonControllingInterests", "D2026", 0.0)])
+    got = values(sv.corporate_pl(sv._Reader(xf.Facts(doc([r for r in ANNUAL if r[0] not in (
+        "ProfitOrLossAttributableToOwnersOfParent", "ProfitOrLossAttributableToNonControllingInterests")]
+        + [("ProfitOrLossAttributableToOwnersOfParent", "D2026", 0.0), ("ProfitOrLossAttributableToNonControllingInterests", "D2026", 0.0)])),
+        end=END, months=12)))
+    assert got["Net Profit (owners)"] == 200.0

@@ -123,7 +123,9 @@ LEASE_ROW = r"lease\w*\s*(lia|lib|obl)|liab\w*\s+for\s+leas"
 LEASE_PARENTS = ("OtherNoncurrentLiabilitiesOthers", "OtherCurrentLiabilitiesOthers", "OtherNoncurrentLiabilities",
                  "OtherCurrentLiabilities")
 BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(supplier|buyer)'?s'? credit"
-INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|impairment)\b.{0,25}\binvestments?\b"
+# a loss on investments only: an impairment of investments stays in Expenses (Tech Mahindra standalone Q4FY24-Q4FY26, Cipla
+# Q4FY26, Purvankara, Kolte-Patil, Jagran: about 11 rows apart by exactly the impairment row, none exact by it; run 40793194881)
+INVESTMENT_LOSS = r"^\s*(net\s+)?loss\b.{0,25}\binvestments?\b"
 DISCONTINUED = "ProfitLossFromDiscontinuedOperationsAfterTax"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
@@ -284,6 +286,11 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # Income were both apart by the share, PBT exact, had a loss (JSW Steel 8, Power Grid 7, Nestle 7, TVS 7, Adani Ports 5,
     # Bajaj Auto 3: Q2FY25 580 Cr, KTM; run 40735344929)
     assoc_loss = -share if share is not None and share < 0 else 0.0
+    regulatory = r.cr(REGULATORY_DEFERRAL)
+    # a net regulatory EXPENSE (a negative movement in the regulatory deferral balances) is an expense for screener, a net
+    # regulatory income other income: NHPC Q4FY26 -559.22 = the Expenses gap, Tata Power Q1FY27 -153.09, Power Grid FY26 cons
+    # -2,774 (with its rows; the owner's NHPC and Tata Power sheets, 29 Oct 2026; 62 quarters and about 18 years of 11 utilities)
+    reg_expense = -regulatory if regulatory is not None and regulatory < 0 else 0.0
     sales = None if rev is None else rev - lev
     out["Sales"] = Row(sales, ("RevenueFromOperations" + (" less " + ", ".join(levy_notes) if levy_notes else "")
                                if rev is not None else "missing RevenueFromOperations") + src)
@@ -295,13 +302,14 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
                                     else "missing DepreciationDepletionAndAmortisationExpense") + src)
     expenses = None
     if None not in (exp, fc, dep):
-        expenses = exp - fc - dep - lev - fin - loss - bank + assoc_loss
+        expenses = exp - fc - dep - lev - fin - loss - bank + assoc_loss + reg_expense
         parts = ["FinanceCosts", "depreciation"] + (["levies"] if lev else []) + (["financial-services finance cost"] if fin else []) \
             + (["bank charges"] if bank else []) \
             + ([f"loss on disposal of PPE {_fmt(loss - inv_loss)}"] if loss - inv_loss else []) \
             + ([f"loss on investments {_fmt(inv_loss)}"] if inv_loss else [])
         out["Expenses"] = Row(expenses, "Expenses less " + ", ".join(parts)
-                              + (f", plus the associates' loss {_fmt(assoc_loss)}" if assoc_loss else "") + src)
+                              + (f", plus the associates' loss {_fmt(assoc_loss)}" if assoc_loss else "")
+                              + (f", plus the net regulatory expense {_fmt(reg_expense)}" if reg_expense else "") + src)
     else:
         out["Expenses"] = Row(None, "missing " + ", ".join(n for n, v in (("Expenses", exp), ("FinanceCosts", fc),
                                                                             ("DepreciationDepletionAndAmortisationExpense", dep)) if v is None) + src)
@@ -309,7 +317,6 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     out["Operating Profit"] = Row(op, "Sales - Expenses" + src)
     out["OPM %"] = Row(_pct(op, sales), "Operating Profit / Sales" + src)
     oi_parts, exc = r.cr("OtherIncome"), r.cr("ExceptionalItemsBeforeTax")
-    regulatory = r.cr(REGULATORY_DEFERRAL)
     # screener has no line for discontinued operations: their profit after tax is in its PBT (Hindustan Unilever FY26 13,812 +
     # 4,407 = 18,219, the ice-cream demerger; Q3FY26 2,919 + 4,485 = 7,404; ITC Q3FY25 + 203.44, the hotels; run 40735344929)
     discontinued = r.cr(DISCONTINUED)
@@ -321,7 +328,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     filed_pbt = pbt
     if pbt is not None:
         pbt = pbt + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0)
-    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + assoc_loss + (regulatory or 0.0) \
+    parts = None if oi_parts is None else oi_parts + (exc or 0.0) + (share or 0.0) + assoc_loss + (regulatory or 0.0) + reg_expense \
         + (discontinued or 0.0) - loss
     if None not in (pbt, dep, interest, op):
         oi = pbt + dep + interest - op
@@ -342,6 +349,8 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     out["Tax"] = Row(tax, "TaxExpense" + src)
     out["Tax %"] = Row(_tax_pct(tax, pbt), "TaxExpense / |Profit before tax|" + src)
     whole, owners = r.cr("ProfitLossForPeriod"), r.cr("ProfitOrLossAttributableToOwnersOfParent")
+    if not owners and whole and not r.cr("ProfitOrLossAttributableToNonControllingInterests"):
+        owners = whole      # a filler zero (Paradeep Q2FY26-Q1FY27: owners 0 and minority 0): the owners' share is the whole profit
     out["Net Profit"] = Row(whole, ("ProfitLossForPeriod (whole profit)" if whole is not None else "missing ProfitLossForPeriod") + src
                             + (f"; owners' share {_fmt(owners)}" if owners is not None else ""))
     if owners is not None:

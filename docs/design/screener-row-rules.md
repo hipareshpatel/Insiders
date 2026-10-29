@@ -113,6 +113,31 @@ the rest is reported `no_recipe` (Bajaj Finance within 233 Cr on Interest; LIC n
 | Operating / Financing / Net | CashFlowsFromUsedIn...Activities; IncreaseDecreaseInCashAndCashEquivalents | 93–96 % |
 | Investing | CashFlowsFromUsedInInvestingActivities + EffectOfExchangeRateChangesOnCashAndCashEquivalents | Infosys 1,946 + 1,600; HDFC 1,114; ICICI 1,306; SBI 9,931 |
 
+## Cause known or numbers only (TODO 115, owner 29 Oct 2026)
+
+A rule with a known cause (screener's own documented treatment, or how the statement is laid out) should keep holding. A rule
+that only wins on the counts can stop holding when filers or screener change: each "numbers only" rule is re-checked every
+results season (TODO 116) and dropped once it stops winning.
+
+| Rule | Kind | Why |
+|---|---|---|
+| Sales less excise, GST, sales tax, discounts | cause known | screener shows net sales (support article 4) |
+| Discounting charges as a sales deduction | **numbers only** | 151 fixed, 106 broken (hotels and realty); no screener statement |
+| A loss on disposal of PPE out of Expenses | cause known | screener: profit or loss on asset sales is exceptional, so in Other Income (docs); 29 rows agree, 8 not |
+| A loss, or a fair-value change, on investments out of Expenses | cause known | same docs: profit from the sale of investments is exceptional (M&M Q4FY26 410 Cr; TMCV FY26 quarters) |
+| A loss from associates in Expenses (a profit in Other Income) | **numbers only** | 43 of 43 quarters fit; screener says nothing about a loss |
+| Bank charges in Interest, out of Expenses | **numbers only** | HAL, IndiGo, IOC fit every year; no screener statement |
+| A financing arm's finance cost in Interest | cause known | it is interest on the arm's borrowing (Sector) |
+| The associates' share in PBT | cause known | screener: "profit from associates is always other ordinary income"; the companies that leave it out are a recorded list (no signal) |
+| Profit from discontinued operations in PBT | cause known | screener has no discontinued line |
+| The regulatory deferral movement in PBT (utilities) | cause known for PBT; **numbers only** in Expenses | quarters 61 fixed / 10 broken, years 2 / 8 |
+| Net Profit = the whole profit, minority included | **numbers only** | measured, and it contradicts screener's own help page |
+| Tax % on the size of PBT | **numbers only** | 92 % of quarters, 95 % of years |
+| A bank's PBT as filed | cause known | the exceptional item is in the statement's PBT; adding it back fitted one bank (removed 29 Oct) |
+| Lease liabilities in Borrowings (any wording, any parent) | cause known | Ind AS 116 lease liabilities are debt for screener; 290 fixed, 2 broken |
+| The standalone deferred-tax total (offset only on consolidated sheets) | **numbers only** | 620 fixed, 141 broken (TCS, Infosys, Wipro and 12 more) |
+| Quarters from FY26, pre-listing periods not counted | owner's scope | not a rule of screener's |
+
 ## Known exceptions (Event: recorded, not coded)
 
 | Company | Row | What | Why it stays apart |

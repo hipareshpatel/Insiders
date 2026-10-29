@@ -149,6 +149,21 @@ companies, the three rules of 34f7274 fixed 896 rows and broke 56 (90.65 % → 9
 (Sundaram Finance 14, Shriram Finance 10, Cholamandalam 8, Nippon AMC 3, Motilal Oswal 3, LIC Housing 2: the same
 company-layout class as Reliance's, recorded below); the lease wordings and parents 290 fixed, 2 broken.
 
+### The next run (40797693366, 29 Oct 2026, eebadb4: regulatory expense, investment impairment, filler zero)
+
+Against run 40793194881: 299 rows fixed, 56 broken; 92.74 % → 92.78 % exact (FY25–FY27 94.25 % → 94.30 %). The negative
+regulatory-deferral movement in Expenses: quarters 61 fixed, 10 broken; years 2 fixed, 8 broken (SJVN FY24–FY26 both bases and
+NLC India standalone FY23 are exact without it, Adani Energy Solutions FY24–FY25 exact with it). Kept: the quarters carry it.
+Seven companies outside power file the element with small amounts (Narayana Hrudayalaya 4 quarters fixed; Atul, Indoco-type
+filers, Rentomojo, Venus Remedies, ADSL 9 rows broken, all under 9 Cr).
+
+**Looked at, not a rule:** Borrowings below screener's by exactly OtherNoncurrentFinancialLiabilities in 189 balance sheets
+(Other Liabilities above by the same), against 20 the other way. 100 of them are FY23 years read from the Q4 results file with
+no lease line at all: the lease liability sits inside "other financial liabilities" there, and the element equals it only
+where the company has nothing else in that line. Tata Power, NHPC, Ambuja, DLF, BEL, Maruti and the Tata Motors companies file
+the element (54 to 11,007 Cr) and are exact without it (the owner's 15 companies' stored files). It is the FY23 data gap
+above, not a recipe.
+
 ### What the four parallel reviews of the 500 found (29 Oct 2026)
 
 - **The year's source decides most of the yearly misses.** Years read from the annual report: Expenses 82.4 % exact, Interest

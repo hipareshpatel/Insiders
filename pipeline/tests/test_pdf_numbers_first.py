@@ -2075,3 +2075,18 @@ def test_a_month_line_cut_by_nearest_column_keeps_a_damaged_month_word():
     line = list(_MONTH_LINE)
     line[3] = (912, 1048, "Septemher")
     assert _header_dates(line, _DAY_LINE) == _header_dates(_MONTH_LINE, _DAY_LINE)
+
+
+def test_words_of_one_line_are_one_line_however_their_heights_round():
+    # 11.9 and 12.1 at a text height of 8 round to two different bands of height (1 and 2) but are one printed line
+    got = nf.merge_brackets([nf.Word(10.0, 14.0, 12.1, 8.0, "("), nf.Word(15.0, 30.0, 11.9, 8.0, "12.5"),
+                             nf.Word(31.0, 34.0, 12.1, 8.0, ")")], 8.0)
+    assert [w.text for w in got] == ["(12.5)"]
+    got = nf.merge_space_groups([nf.Word(10.0, 20.0, 12.1, 8.0, "23"), nf.Word(21.0, 40.0, 11.9, 8.0, "909.66")], 8.0)
+    assert [w.text for w in got] == ["23909.66"]
+    assert nf.date_parts([nf.Word(10.0, 30.0, 12.1, 8.0, "Sept"), nf.Word(32.0, 40.0, 11.9, 8.0, "30")], 8.0) != set()
+    # a row's label in reading order: 7.6 and 7.0 at a text height of 8 fall in two bands of 0.6 x 8 (2 and 1)
+    cols = [nf.Column(400.0, 440.0, 420.0, 0), nf.Column(460.0, 500.0, 480.0, 1)]
+    rows = [nf.NRow(7.3, 3.0, 11.0, "", [None, None])]
+    nf.stitch_labels(rows, [nf.Word(10.0, 40.0, 7.6, 8.0, "Other"), nf.Word(45.0, 80.0, 7.0, 8.0, "income")], cols, set(), 8.0, 0.0)
+    assert rows[0].label == "Other income"

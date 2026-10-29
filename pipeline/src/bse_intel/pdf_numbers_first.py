@@ -125,7 +125,7 @@ _BRACKET_CLOSE = ")]}"
 def merge_brackets(words: list[Word], height: float) -> list[Word]:
     """A bracket printed apart from its figure ("(" "12.5" ")") is joined to it, when it touches it."""
     out: list[Word] = []
-    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    ordered = [w for line in lines_of(words, height) for w in line]
     for w in ordered:
         prev = out[-1] if out else None
         same_line = prev is not None and abs(prev.y - w.y) <= 0.5 * height
@@ -155,7 +155,7 @@ def merge_space_groups(words: list[Word], height: float) -> list[Word]:
     (western), and the last has exactly three digits before its decimals. Any other run is left as it is, every piece. A
     piece with a comma is never joined: "24 1,245.60" stays a note number and a figure."""
     out: list[Word] = []
-    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    ordered = [w for line in lines_of(words, height) for w in line]
 
     def touches(a: Word, b: Word) -> bool:
         return abs(b.y - a.y) <= 0.5 * height and 0 <= b.x0 - a.x1 <= SPACE_GROUP_GAP * height
@@ -514,13 +514,12 @@ _CONFLICT = Cell(0.0, 0, False, False, None, "conflict")        # type: ignore[a
 def stitch_labels(rows: list[NRow], words: list[Word], columns: list[Column], used: set[int], height: float,
                   header_bottom: float | None) -> None:
     """Each row's label: the words left of the first column whose height is after the previous numeric row and up to this row's
-    own band, in reading order."""
+    own band, in reading order (``lines_of``)."""
     left = min(c.x0 for c in columns)
     label_words = [w for w in words if id(w) not in used and w.x1 <= left + 0.5 * height]
     for i, r in enumerate(rows):
         lower = rows[i - 1].bottom if i else (header_bottom if header_bottom is not None else r.top - 3 * height)
-        picked = [w for w in label_words if lower < w.y <= r.bottom + 0.0]
-        picked.sort(key=lambda w: (round(w.y / (0.6 * height)), w.x0))
+        picked = [w for line in lines_of([w for w in label_words if lower < w.y <= r.bottom + 0.0], height) for w in line]
         r.words_left = picked
         r.label = " ".join(w.text for w in picked).strip()
 
@@ -829,7 +828,7 @@ def date_parts(words: list[Word], height: float) -> set[int]:
     a month word on its line ("Sept 30" over "2026" in KIRLPNU Q2FY27, whose days made a row of 30s that cut the header
     off the table)."""
     out: set[int] = set()
-    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    ordered = [w for line in lines_of(words, height) for w in line]
     for prev, w in zip(ordered, ordered[1:]):
         if re.fullmatch(r"\d{1,2},?", w.text) and month_word(prev.text) and abs(prev.y - w.y) <= 0.5 * height \
                 and 0 <= w.x0 - prev.x1 <= height:
@@ -840,11 +839,12 @@ TWIN_MIN_FIGURES = 3
 
 
 def drop_twin_rows(rows: list) -> list:
-    """The rows without the second reading of a line: a row with no label whose every cell is the row just above's (the same
-    figures in the same columns, at least ``TWIN_MIN_FIGURES`` of them, none missing on one side only) is the same printed line
-    read twice (CREDITACC Q2FY27: OCR gave "II Other income" 1.06 0.92 ... and, as a second row with no label, the same six
-    figures, which put a row between the two sections and so cut the sums that name total income). A line is never printed
-    twice without its own label, and the row above is kept, so no figure is lost or made up."""
+    """The rows without an unlabelled copy of the row just above: a row with no label whose every cell is the row above's (the
+    same figures in the same columns, at least ``TWIN_MIN_FIGURES`` of them, none missing on one side only). It is no misreading
+    (``build_rows`` gives each printed line one row): the statement prints the line twice, its one item and then, ruled off
+    in bold and with no label, that item's own subtotal (CREDITACC Q2FY27, text layer and OCR alike: "II Other income" 1.06
+    0.92 ... and below it the same six figures). The copy put a row between the two sections and so cut the sums that name
+    total income. The labelled row is kept, so no figure is lost or made up."""
     out: list = []
     for r in rows:
         prev = out[-1] if out else None
@@ -1858,8 +1858,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                         continue
                     # the row's own line and, for a wrapped label, the lines above it down from the row before
                     top = t.rows[i - 1].y + 0.5 * height if i else r.y - 0.5 * height
-                    own = sorted((w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
-                                  and parse_figure(w.text) is None), key=lambda w: (round(w.y / height), w.x0))
+                    own = [w for line in lines_of([w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
+                                                   and parse_figure(w.text) is None], height) for w in line]
                     labels.append(" ".join(w.text for w in own))
                 if sum(bool(lb.strip()) for lb in labels) >= OCR_LABELS_SHARE * len(t.rows):
                     for r, lb in zip(t.rows, labels):

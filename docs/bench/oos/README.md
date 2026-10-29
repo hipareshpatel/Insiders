@@ -23,6 +23,10 @@ text files.
 
 The native reader got 78 / 3 / 419 on both reads.
 
+GitHub's own scoring in the same run, scored against the exact key, matches the local first read figure for figure, with the
+options both on and off. Numbers-first gives 205 / 9 / 286 either way. The native reader gives 78 / 3 / 419 with the options
+on and 60 / 2 / 438 with them off.
+
 **The two fixes.** Each has a named cause seen in at least 2 filings of groups 1-3, a test that fails without it, a blind
 review and four frozen bench re-scores with 0 new wrong answers.
 

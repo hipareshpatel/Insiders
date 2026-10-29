@@ -139,9 +139,7 @@ LEASE_PARENTS = ("OtherNoncurrentLiabilitiesOthers", "OtherCurrentLiabilitiesOth
 BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(supplier|buyer)'?s'? credit"
 # a loss on investments only: an impairment of investments stays in Expenses (Tech Mahindra standalone Q4FY24-Q4FY26, Cipla
 # Q4FY26, Purvankara, Kolte-Patil, Jagran: about 11 rows apart by exactly the impairment row, none exact by it; run 40793194881)
-# a fair-value change on investments too, gain or loss (TMCV "Fair value (gain)/loss on equity investments measured at FVTPL",
-# Q2FY26-Q2FY27: Expenses apart by exactly the row, both signs, 5 quarters; FY26 quarters audit, run 40837941625)
-INVESTMENT_LOSS = r"^\s*(net\s+)?(loss|fair\s*valu\w*)\b.{0,40}\binvestments?\b"
+INVESTMENT_LOSS = r"^\s*(net\s+)?loss\b.{0,25}\binvestments?\b"
 DISCONTINUED = "ProfitLossFromDiscontinuedOperationsAfterTax"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 

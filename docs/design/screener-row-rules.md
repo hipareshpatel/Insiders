@@ -124,7 +124,7 @@ results season (TODO 116) and dropped once it stops winning.
 | Sales less excise, GST, sales tax, discounts | cause known | screener shows net sales (support article 4) |
 | Discounting charges as a sales deduction | **numbers only** | 151 fixed, 106 broken (hotels and realty); no screener statement |
 | A loss on disposal of PPE out of Expenses | cause known | screener: profit or loss on asset sales is exceptional, so in Other Income (docs); 29 rows agree, 8 not |
-| A loss, or a fair-value change, on investments out of Expenses | cause known | same docs: profit from the sale of investments is exceptional (M&M Q4FY26 410 Cr; TMCV FY26 quarters) |
+| A loss on investments out of Expenses | cause known | same docs: profit from the sale of investments is exceptional (M&M Q4FY26 410 Cr). A fair-value change was tried and dropped (29 Oct, run 40874998205: 5 pairs fixed, all TMCV; 10 broken at Lumax, Waaree, Gujarat Fluorochemicals, Arvind, Nelco) |
 | A loss from associates in Expenses (a profit in Other Income) | **numbers only** | 43 of 43 quarters fit; screener says nothing about a loss |
 | Bank charges in Interest, out of Expenses | **numbers only** | HAL, IndiGo, IOC fit every year; no screener statement |
 | A financing arm's finance cost in Interest | cause known | it is interest on the arm's borrowing (Sector) |
@@ -142,6 +142,7 @@ results season (TODO 116) and dropped once it stops winning.
 
 | Company | Row | What | Why it stays apart |
 |---|---|---|---|
+| TMCV | Expenses, Other Income | FY26 quarters: the fair-value change on equity investments (both signs) is out of Expenses | the same rule breaks five other companies (29 Oct) |
 | Reliance | Sales, Expenses | sales tax / VAT 1,439 (FY26), 1,873 (FY25) is a line of the PDF's other-expenses note only | not in either XBRL file |
 | L&T | Interest; Power and fuel | bank charges 211.78 and the split of power and fuel by note are PDF-only | |
 | Airtel | Expenses | FY26 regulatory levy 3,160.7 put into Expenses, the labour-code charge into Other Income (note 32) | screener splits one-offs by nature; PDF note only |
@@ -301,6 +302,14 @@ the new results, which a company may restate; we keep the original filing. The r
 no comparative column (checked 29 Oct 2026, HDFC Bank and Bajaj Finance Q2FY27, Dolphin Q4FY24: only the quarter's own and the
 year-to-date contexts). Only the PDF prints it, so this class waits for the PDF reader (TODO 112) to read the comparative column.
 Both numbers are right; ours is the figure as first filed.
+
+**Re-run with the BSE FY26 fill, before-listing and the two rules (run 40874998205, 29 Oct 2026, 18:08–18:50 IST), against
+run 40837941625:** the six main rows of the FY26 quarters 96.7 % exact on 94,251 pairs (from 89,079: 5,172 more pairs, the BSE
+files); every table from FY25 94.3 %. 8,530 pairs are now "before listing" instead of "no facts". Bank PBT as filed: 13 pairs
+fixed at 8 banks, 6 broken, all HDFC Bank (a known exception): kept. The fair-value change on investments: 5 fixed, all TMCV, 10
+broken at five companies: dropped (TMCV a known exception). The BSE annual-report files changed another 1,185 pairs of years and
+balance sheets: 946 to exact, 239 away, to sort. The 96.7 % is flat because the new pairs match at the same rate; the gap to 98 %
+is still the classes in the table above.
 
 ## How a pattern is found
 

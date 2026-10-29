@@ -183,6 +183,19 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 | A13 | **One layout per company, reused each quarter**; pages sorted first by type | owner and lead, STATUS item 3 | not built |
 | A14 | **Vision fallback that points, never types**: the model is shown numbered marks on the page (Set-of-Marks) and picks a mark's id; the digits always come from the text or OCR | Gemini (its answer was cut off at this point), ChatGPT, the long Claude answer | **last**, only for the one or two pages a filing fails on (see W3) |
 
+**Measured 29 Oct 2026, ~09:00 IST (frozen 29b51f1, same flags), after the morning's fixes, each with a test that fails without
+it and an independent review: normal **260 / 0 / 77** (from 253), hard **264 / 0 / 76** (from 227).**
+- Bank chain (RBI format, 86c9dcd): KARURVYSYA 10, RBLBANK 12, UNIONBANK 12, ICICIBANK 1. The key's bank "revenue" is interest
+  earned (checked on four banks' printed rows). J&K Bank still none (no unit read); consolidated bank profit held back where the
+  label speaks of the minority's share.
+- A numbered associates' share ("04. Share of net profit of associates") is no longer a profit row (84c604b): ATUL 2, BFINVEST 3.
+- "Not required to prepare consolidated financial results" with no subsidiary, associate or joint venture (f1b2c43, f8f6635,
+  29b51f1): SBICARD 4. SBICARD was a held-out company; it was looked at to build this, so it no longer counts as held out.
+- Tried and dropped (0 gain, 0 wrong): a cell-by-cell merge of the scanner's text and our OCR (the blockers on its targets come
+  earlier: a 12-column page with both bases, garbled dates, a statement split over two pages); a basis from the auditor's report
+  (survey of the 66 titled statements: the only rules with 0 wrong fixed nothing, and the review reports of SBICARD and AYE name no
+  basis); a second OCR engine (Tesseract sees 0 of the 15 figures in no text).
+
 **Checker baselines, measured 29 Oct 2026 ~07:00-08:00 IST (frozen 3940f00, numbers-first only, scripts in the session scratchpad:
 `check_bench.py`, `where_lost.py`, `check_joint.py`).** The checker is given the true figure (must confirm) and plausible wrong
 ones (must never confirm): x100, /100, x10, the same line's other period, another line, the other basis.

@@ -80,16 +80,26 @@ _GROUP_WORDS = re.compile(r"subsidiar|\bgroup\b|results|financial|statements?\b|
 _NO_SUBSIDIARY = re.compile(r"(?:does\s+not\s+have|has\s+no|have\s+no|not\s+having)\s+(?:any\s+)?subsidiar", re.I)
 # said of the consolidated results themselves: "consolidated financial results is not applicable" (at most three words between)
 _NOT_APPLICABLE = re.compile(r"[ \t]+(?:[\w-]+[ \t]+){0,3}?(?:is|are)[ \t]+not[ \t]+applicable", re.I)
+# "the Company is not required to prepare consolidated financial results" (SBICARD Q2FY27), only where the page also says the
+# company has no subsidiary, associate or joint venture (one sentence naming all three: a company with associates alone may still
+# publish consolidated results)
+_NOT_REQUIRED_BEFORE = re.compile(r"(?:is|are)\s+not\s+required\s+to\s+(?:prepare|present|publish|submit|draw\s+up)\s+(?:the\s+)?$", re.I)
+_NO_SUB_ASSOC_JV = re.compile(r"(?:does\s*not\s+have|has\s+no|have\s+no)\s+(?:any\s+)?subsidiar\w*\s*[/,]?\s*(?:or\s+)?associate\w*"
+                              r"\s*[/,]?\s*(?:or\s+)?joint\s+venture", re.I)
 
 
-def names_consolidated(text: str) -> bool:
+def names_consolidated(text: str, not_required: bool = False) -> bool:
     """Whether ``text`` says "consolidated" of the accounts: every use counts but a verb in prose with no group word within about
     eight words either side, and, on a page that says the company has no subsidiary, a use that the same sentence calls not
     applicable ("...does not have any subsidiary ... Accordingly, preparation of consolidated financial results is not
-    applicable", ORIENTCEM Q2FY27)."""
+    applicable", ORIENTCEM Q2FY27). ``not_required`` (numbers-first only): also a use the same sentence says the company is not
+    required to prepare, on a page that says it has no subsidiary, associate or joint venture (SBICARD Q2FY27)."""
     no_subsidiary = bool(_NO_SUBSIDIARY.search(text))
+    none_of_three = not_required and bool(_NO_SUB_ASSOC_JV.search(text))
     for m in _CONS_WORD.finditer(text):
         if no_subsidiary and _NOT_APPLICABLE.match(text, m.end()):
+            continue
+        if none_of_three and _NOT_REQUIRED_BEFORE.search(text[max(0, m.start() - 60):m.start()]):
             continue
         verb = _CONS_VERB.search(text, max(0, m.start() - 12), m.end())
         if not verb or verb.end() != m.end():

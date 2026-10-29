@@ -1395,3 +1395,28 @@ def test_a_banks_provisions_that_include_the_tax_never_make_its_net_profit_the_p
     assert got.status != "ok" or got.value != pytest.approx(crore(net[0])), got
     got = read(pdf, "pat")
     assert got.status != "ok" or got.value == pytest.approx(crore(net[0])), got
+
+
+@pytest.mark.parametrize("letter,standalone", [
+    ("The Company does not have any subsidiary, associate or joint venture. Accordingly, the Company is not required to "
+     "prepare consolidated financial results. Standalone results enclosed.", True),
+    # one of the three missing: a company with associates may still publish consolidated results
+    ("The Company does not have any subsidiary. Accordingly, the Company is not required to prepare consolidated financial "
+     "results. Standalone results enclosed.", False),
+    # the exemption said, but a consolidated statement named elsewhere on the page
+    ("The Company does not have any subsidiary, associate or joint venture. Statement of Consolidated Financial Results "
+     "attached. Standalone results enclosed.", False),
+])
+def test_a_company_not_required_to_prepare_consolidated_results_files_standalone(monkeypatch, letter, standalone):
+    # SBICARD Q2FY27: the statement is a scan with no title; the filing says the company has no subsidiary, associate or joint
+    # venture and is not required to prepare consolidated financial results, which no longer counts as naming them
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    rows, want = pl()
+    page = statement(rows, title="Statement of Unaudited Financial Results")
+    got = nf.reading_from_tables(nf.analyse(scanned(page, letter), ocr_boxes=lambda png: as_ocr_boxes(page)), "Q2FY27", "pat",
+                                 "STANDALONE")
+    if standalone:
+        assert got.status == "ok" and got.value == pytest.approx(crore(want["pat"][0]))
+    else:
+        assert got.status == "none"

@@ -1527,7 +1527,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     # read from those pages themselves: a blank page cannot switch it on for the typed pages
     no_layer = [p for p, layer in layers.items() if not layer.has_layer]
     if anywhere and no_layer and all(p in ocr_texts for p in no_layer) \
-            and not any(names_consolidated(layer.text) for layer in layers.values()) \
+            and not any(names_consolidated(layer.text, not_required=True) for layer in layers.values()) \
             and not any(_LOOSE_CONSOLIDATED.search(ocr_texts[p]) for p in no_layer):
         from .metrics import STANDALONE
         alone = re.compile(r"stand[- ]?alone", re.I)

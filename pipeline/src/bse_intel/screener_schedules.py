@@ -11,7 +11,7 @@ Each stored page (``raw/screener/<day>/<SYMBOL>_<c|s>.html.gz``, screener_downlo
 
     GET https://www.screener.in/api/company/<id>/schedules/?parent=<head>&section=<section>[&consolidated=]
 
-at screener_download's pace (3.2 s a runner, at most 2 runners, a 403, 429 or 503 stops the run), and the answers of a page are
+at 2.5 s a runner (owner: 2-3 s), at most 2 runners; a 403, 429 or 503 stops the run, and the answers of a page are
 stored together, gzipped JSON ``{"<section>|<head>": <answer>}``, at
 
     raw/screener-schedules/<day of the page>/<SYMBOL>_<c|s>.json.gz
@@ -29,6 +29,7 @@ from urllib.parse import urlencode
 
 from .metrics import CONSOLIDATED
 
+PAUSE_SECONDS = 2.5      # between two requests of one runner (owner, 29 Oct 2026: "2-3 seconds between request"); 2 runners
 PREFIX = "raw/screener-schedules/"
 API = "https://www.screener.in/api/company/{cid}/schedules/"
 XHR_HEADERS = {"Accept": "application/json, text/plain, */*", "X-Requested-With": "XMLHttpRequest"}

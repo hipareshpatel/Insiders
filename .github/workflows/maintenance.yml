@@ -66,8 +66,8 @@
 #   screener.in refusing (403, 429, 503: exit 75) fails the shard. Its own concurrency group `screener`, so it runs beside the
 #   NSE memory jobs: it touches no NSE call and no memory. Summary: artifacts `screener-download-0` and `screener-download-1`.
 # - screener-schedules (owner, 29 Oct 2026: "Feel free to even get everything"): the sub-rows behind each "+" head of the stored
-#   screener pages (screener_schedules.py): one request a head to /api/company/<id>/schedules/ (robots.txt allows it), at the
-#   same pace and stop rule, the largest companies first, two runners; stored at raw/screener-schedules/<day>/<SYMBOL>_<c|s>.json.gz,
+#   screener pages (screener_schedules.py): one request a head to /api/company/<id>/schedules/ (robots.txt allows it), 2.5 s
+#   apart a runner (owner: 2-3 s), the same stop rule, the largest companies first, two runners; stored at raw/screener-schedules/<day>/<SYMBOL>_<c|s>.json.gz,
 #   a stored page is not asked again; `file_cap` = at most that many requests a runner (the first run: 50 each, 100 in all);
 #   exit 124 resumes. Artifacts `screener-schedules-0` and `-1`.
 # - tijori-download: the download of every company's financials page from Tijori Finance (owner request 26 Oct 2026; F189, TODO 92),

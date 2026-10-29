@@ -1388,7 +1388,7 @@ def cmd_screener_download(args, settings, sink) -> int:
 
 def cmd_screener_schedules(args, settings, sink) -> int:
     """The sub-rows behind each "+" head of the stored screener.in pages, into R2 (screener_schedules.py; owner, 29 Oct 2026):
-    one request a head at screener_download's pace (3.2 s a runner, at most 2 runners), the largest companies first; a 403,
+    one request a head, 2.5 s apart a runner (owner: 2-3 s), at most 2 runners, the largest companies first; a 403,
     429 or 503 stops the run (exit 75). Resumable (a stored page is not asked again); exit 124 when the time budget or
     --max-requests ends it with pages left. No AI, no NSE, no memory."""
     from . import screener_download as sd
@@ -1414,7 +1414,7 @@ def cmd_screener_schedules(args, settings, sink) -> int:
     print(f"screener schedules: {len(symbols)} companies with stored pages (newest day {newest}), largest first"
           + (f", shard {args.shard}" if shard else "") + (f", at most {args.max_requests} requests" if args.max_requests else ""))
     refused = False
-    with sd.ScreenerClient(headers=ss.XHR_HEADERS) as client:
+    with sd.ScreenerClient(pause=ss.PAUSE_SECONDS, headers=ss.XHR_HEADERS) as client:
         try:
             outcome = ss.run(sink, symbols, pages, client, shard, args.time_budget, args.max_requests)
         except sd.ScreenerRefused as exc:

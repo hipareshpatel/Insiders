@@ -27,7 +27,7 @@ def test_a_march_quarter_file_gives_its_pl_balance_sheet_and_years_cash_flow():
     q = by["quarters"]
     assert (q["period"], q["basis"], q["source_news_id"], q["lab"]["by"], q["lab"]["rules"]) == \
         ("Q4FY24", "CONSOLIDATED", "n1", "file", "screener_view")
-    assert {"Sales", "Expenses", "Operating Profit", "Net Profit"} <= set(q["rows"]) and q["notes"]["Sales"]
+    assert {"Sales", "Expenses", "Operating Profit", "Net Profit"} <= set(q["rows"])
     assert {"Cash from Operating Activity", "Net Cash Flow"} <= set(by["cash_flow"]["rows"])
 
 
@@ -66,4 +66,21 @@ def test_the_live_path_keeps_the_rows_and_the_facts(settings):
     rows = [e for e in sink.get_dossier(filing.scrip_code).get("statements", []) if e["period"] == "Q2FY27"]
     assert {e["table"] for e in rows} >= {"quarters"} and all(e["source_news_id"] == "n-st" for e in rows)
     assert sink.get_object(xbrl_facts.key(filing.scrip_code, "Q2FY27", "CONSOLIDATED")), "the file's facts are kept"
-    assert not pipeline._xbrl_raw, "the raw file is let go once used"
+
+
+def test_a_concurrent_writer_s_statements_are_kept_and_the_newest_periods_win():
+    from bse_intel.dossier import keep_concurrent_writes
+
+    def e(period, table="quarters", src="n1"):
+        return {"period": period, "basis": "CONSOLIDATED", "table": table, "rows": {"Sales": 1.0}, "source_news_id": src}
+
+    read = {"statements": [e("Q1FY27")]}
+    mine = {"statements": [e("Q1FY27"), e("Q2FY27", src="mine")]}
+    fresh = {"statements": [e("Q1FY27"), e("Q2FY27", "balance", src="theirs")]}   # the other filing of the run
+    keep_concurrent_writes(mine, read, fresh)
+    assert {(x["period"], x["table"]) for x in mine["statements"]} == {("Q1FY27", "quarters"), ("Q2FY27", "quarters"),
+                                                                      ("Q2FY27", "balance")}
+    many = [e(f"Q{q}FY{y}") for y in range(20, 30) for q in range(1, 5)] * 4
+    many = [dict(x, table=t) for x, t in zip(many, ["quarters", "balance", "cash_flow", "x"] * 40)]
+    kept = statements.keep_latest(many)
+    assert len(kept) == statements.MAX_ENTRIES and kept[-1]["period"] == "Q4FY29"

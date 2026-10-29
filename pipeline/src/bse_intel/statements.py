@@ -19,11 +19,17 @@ import logging
 from . import screener_view as sv
 from . import xbrl_facts
 from .memory_gaps import quarter_end
+from .periods import quarter_index
 
 log = logging.getLogger(__name__)
 
 KEY = "statements"
 MAX_ENTRIES = 120      # about 12 quarters x 2 bases x 3 tables, plus room; the oldest go first
+
+
+def keep_latest(entries: list[dict]) -> list[dict]:
+    """The newest MAX_ENTRIES entries by period (a revision of an old quarter does not push out a newer one)."""
+    return sorted(entries, key=lambda e: quarter_index(str(e.get("period") or "")) or 0)[-MAX_ENTRIES:]
 
 
 def rows_of(doc: dict, source: str = "") -> list[tuple[str, dict[str, sv.Row]]]:
@@ -57,12 +63,12 @@ def remember(dossier: dict, doc: dict, news_id: str, as_of: str, at: str) -> int
             continue
         entries = [e for e in entries if (e.get("period"), e.get("basis"), e.get("table")) != (period, basis, table)]
         entries.append({"period": period, "basis": basis, "table": table, "family": sv.family(doc.get("template")),
-                        "rows": values, "notes": {name: row.note for name, row in rows.items()},
+                        "rows": values,   # the recipe behind each row is screener_view's, by family; not stored a row
                         "source_news_id": news_id, "as_of": as_of,
                         "lab": {"by": "file", "doc": "results", "basis": basis, "at": at, "rules": "screener_view"}})
         written += 1
     if written:
-        dossier[KEY] = entries[-MAX_ENTRIES:]
+        dossier[KEY] = keep_latest(entries)
     return written
 
 

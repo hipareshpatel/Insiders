@@ -7,6 +7,11 @@ it down, and why.
 
 ## 1. The goal, and what the owner decided
 
+- **Owner, 29 Oct 2026, ~06:20 IST: the reader is a checker.** "Don't measure the XBRL timing first, it's minute in most cases, and
+  30 minutes for rare times." So the reader's main job is to confirm the XBRL figure on the PDF (row, column, basis, unit) or say the
+  PDF prints another figure; reading a page blind is the fallback. The handover is a reference, not a script ("if you have better
+  solutions apply it"). The checker bench: given the printed figure (must be confirmed) and plausible wrong figures (x100, /100,
+  x10, another period's, another line's, the other basis's: must never be confirmed).
 - **The reader's job may be changing from "read everything" to "check, and never be wrong".**
   - The owner said on 28 Oct: "PDF and XBRL almost come together or might be a few minutes delay. Once we get XBRL and Screener
     matching, we will use XBRL only for cards."
@@ -52,6 +57,26 @@ Every row carries its `pdf_url` and tags (`scanned_no_text_layer`, `lender`, `tw
 | `numfirst` (numbers-first, bench only) | 125 / 0 / 212 | 71 / 0 / 269 |
 | combined (native first, numfirst where native gives none) | **150 / 0 / 187** | **168 / 0 / 172** |
 
+**Measured 29 Oct 2026, ~06:00 IST (session branch `ccr-d86d5b66-tvxfy0`, frozen code 3940f00, the same flags):**
+
+| reader | normal key (337) | hard key (340) |
+|---|---|---|
+| `native` | 44 / 0 / 293 | 156 / 0 / 184 |
+| `numfirst` | 243 / 0 / 94 | 143 / 0 / 197 |
+| combined | **253 / 0 / 84** | **219 / 0 / 121** |
+
+- Held-out companies (`docs/bench/heldout.csv`, never tuned on): normal 36 -> 48 of 71 right, hard 10 -> 12 of 44.
+- Still far from the normal key's pass marks (98% right, at most 5% no answer): 75% right, 25% no answer.
+- What is left, by numfirst's own reason (normal / hard): no named table 45 / 66 (banks, garbled scans, two bases in one table);
+  the period's column not found 3 / 27; no row named for the metric 10 / 14; one basis only 16 / 14; basis not told 8 / 2.
+- The night's fixes, each with a test that fails without it and an independent review: NEWGEN (OCR month spellings, "Amount in
+  Rupees lakhs"), PRIMESECU (other income printed as parts and a subtotal), BFINVEST (revenue printed only as its parts),
+  SUNDARMFIN (a title glued into one garbled word), BAJAJHLDNG (a "Total revenue from operations" line over a lost part), ABCAPITAL
+  (A5: the undated same-quarter-last-year column of a SEBI layout). The reviews also found about a dozen layouts that gave a wrong
+  figure, several in the code before that night (part (a) of a revenue list taken as the revenue; "Non-Consolidated" read as
+  consolidated; a revenue row with an unnamed row above it); all are closed with tests.
+- **Open for the owner:** `pdf_referee._words_basis`, which the live reader uses, reads "Non-Consolidated" as consolidated. Numbers-first
+  guards it on its own side; the live path was not changed.
 - Zero wrong in 677 figures bounds the true wrong rate at about 3/677, so about 0.45% (rule of three, below).
 - On the normal key, native has no rows for total income or PBT at all, and 29 of 50 filings get no answer.
 - Numfirst is worse on the hard key. That key is mostly lender layouts, where the chain total income - total expenses = PBT does not
@@ -129,6 +154,13 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 
 - From GitHub, the hard key is also scored by Maintenance `pdf-referee-ensemble` with `ids` = `hardset`.
 - Cache OCR boxes by the page image's sha1 while iterating. A full OCR pass over both keys is slow.
+- **Held-out companies** (`docs/bench/heldout.csv`, drawn 28 Oct 2026 ~16:20 IST before any reproduced score was seen: seed 114,
+  a fifth of each page type, 10 of the normal key's 50 companies and 3 of the hard key's 21). They are scored on every run, but no
+  fix is ever designed, debugged or tuned on their PDFs: never open them to find a bug. Report the held-out figures as their own
+  line; a change that helps the rest but not them is suspected of being tuned to the rest.
+- Maintenance `pdf-bench` (read only) downloads both keys' PDFs on a runner, keeps them as the artifact `pdf-bench-pdfs` (90 days)
+  and scores `native,numfirst` on both keys; the scorer also gives the first answer in reader order (the "combined"), per metric,
+  per filing and every wrong reading.
 - Report each change as a right / wrong / no answer table per metric for both keys, plus which filings moved. The one rule: a change that
   adds any wrong answer, or loses right ones on the other key, is not kept as it is.
 
@@ -140,7 +172,7 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 | A2 | **A "Note" column is label text**: in "Revenue from operations 24 1,245.60", the 24 is not revenue | Gemini | built in `numfirst` |
 | A3 | **Our own OCR replaces a bad scanner layer**: re-read only the bad parts of the page; keep the layer where its numbers are sound; when the two disagree on a digit, give no answer | ChatGPT, XBRL-key finding | partly: numfirst OCRs no-text pages and scans with no named row; the digit-level gate is not built |
 | A4 | **Offline OCR relabel of the answer key**: the XBRL key finds figures by searching the text, so pages with no text never get a key row, and anything tuned on it learns only the easy pages. Read those pages offline with OCR at the slowest, best settings, then search for the known figures there | the long Claude answer | not built; do it before tuning on the XBRL key |
-| A5 | **Date-candidate matching**: we know which dates a quarter's columns should show, so a garbled "30.09.202S" only has to match one of about five expected dates | the long Claude answer | not built; it targets the biggest loss (garbled label or date, 128 / 151 figures) |
+| A5 | **Date-candidate matching**: we know which dates a quarter's columns should show, so a garbled "30.09.202S" only has to match one of about five expected dates | the long Claude answer | started 29 Oct: OCR month spellings, reordered dates, the SEBI layout's undated third column (`fill_corresponding_quarter`); matching a garbled date to the expected set is not built |
 | A6 | **More sum checks**: half year = this quarter + last quarter (most filings arriving now are Q2), nine months = H1 + Q3, year = 9M + Q4, last quarter's own column equals this filing's previous-quarter column; a match in every column at once is hard to get by luck | the long Claude answer, STATUS item 3 | partly (numfirst checks vertical identities, not across periods) |
 | A7 | **Fill empty cells with two OCR engines**: re-read only the empty cell with two different free engines and accept a figure only when both agree | the long Claude answer | not built |
 | A8 | **Never publish a computed figure**: a figure the arithmetic implies but the page does not print is never an answer | the long Claude answer | numfirst answers only printed cells (check that the review confirms it) |
@@ -150,6 +182,42 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 | A12 | **Measure the page finder on its own**: is the right statement page in the top 3, 5 or 8 picked? Include the next page, since statements often run onto a second page | ChatGPT | not built |
 | A13 | **One layout per company, reused each quarter**; pages sorted first by type | owner and lead, STATUS item 3 | not built |
 | A14 | **Vision fallback that points, never types**: the model is shown numbered marks on the page (Set-of-Marks) and picks a mark's id; the digits always come from the text or OCR | Gemini (its answer was cut off at this point), ChatGPT, the long Claude answer | **last**, only for the one or two pages a filing fails on (see W3) |
+
+**Measured 29 Oct 2026, ~09:00 IST (frozen 29b51f1, same flags), after the morning's fixes, each with a test that fails without
+it and an independent review: normal **260 / 0 / 77** (from 253), hard **264 / 0 / 76** (from 227).**
+- Bank chain (RBI format, 86c9dcd): KARURVYSYA 10, RBLBANK 12, UNIONBANK 12, ICICIBANK 1. The key's bank "revenue" is interest
+  earned (checked on four banks' printed rows). J&K Bank still none (no unit read); consolidated bank profit held back where the
+  label speaks of the minority's share.
+- A numbered associates' share ("04. Share of net profit of associates") is no longer a profit row (84c604b): ATUL 2, BFINVEST 3.
+- "Not required to prepare consolidated financial results" with no subsidiary, associate or joint venture (f1b2c43, f8f6635,
+  29b51f1): SBICARD 4. SBICARD was a held-out company; it was looked at to build this, so it no longer counts as held out.
+- Empty-cell re-read from crops (0b30926, 1fcb1ae), behind `PDF_CROP_REREAD=1`, off by default: normal 262 / 0 / 75, hard 266 / 0 / 74
+  with it on (JSWCEMENT 2, 360ONE 1, BFINVEST 1). The review made re-read cells answer-only (they never help name a row), which
+  cost CROMPTON's 2 from the small test. About 12-17 s a filing against 9 s, so it stays off until the runner-time measurement.
+- Tried and dropped (0 gain, 0 wrong): a cell-by-cell merge of the scanner's text and our OCR (the blockers on its targets come
+  earlier: a 12-column page with both bases, garbled dates, a statement split over two pages); a basis from the auditor's report
+  (survey of the 66 titled statements: the only rules with 0 wrong fixed nothing, and the review reports of SBICARD and AYE name no
+  basis); a second OCR engine (Tesseract sees 0 of the 15 figures in no text). Page OCR at 300 dpi instead of 200 (owner's idea, 29 Oct; fresh OCR, 8 scanned
+  filings with the most unanswered figures, 120 figures): right 5 -> 6 (GERMAN +2, NEWGEN -1), 0 wrong either way, 437 s -> 746 s
+  (+71%); not worth it page-wide. High resolution pays only on single cells (the crop re-read).
+
+**Checker baselines, measured 29 Oct 2026 ~07:00-08:00 IST (frozen 3940f00, numbers-first only, scripts in the session scratchpad:
+`check_bench.py`, `where_lost.py`, `check_joint.py`).** The checker is given the true figure (must confirm) and plausible wrong
+ones (must never confirm): x100, /100, x10, the same line's other period, another line, the other basis.
+
+| | normal key (337 true / 1,618 wrong) | hard key (340 true / 1,994 wrong) |
+|---|---|---|
+| confirmed by arithmetic | 243 | 166 |
+| confirmed by label (period's column, basis, row label) | 15 | 21 |
+| wrong figures confirmed | 0 (3 rows are a true 0, where x100 is the same 0) | 0 |
+| contradicted by arithmetic | 1,170 of the wrong | 988 of the wrong |
+
+- Checker mode as built adds little over reading (normal 258 against 253 read): it fails where reading fails, on finding the row
+  and the column. The hard key's 187 counts numbers-first alone; reading there (219-227) also has `native`.
+- Where the unanswered figures are lost (normal 84 / hard 113): the digits are in no text and no OCR, 9 / 6 (so a second OCR engine
+  can win back at most 15); in the text but on a page with no table, 18 / 22; in a table cell but no row named, 38 / 57; a row named
+  but the period's column or basis not found, 19 / 28. Banks are 58 of the hard key's 113 (RBLBANK, J&KBANK, UNIONBANK, KARURVYSYA);
+  REPCOHOME 16 more.
 
 ## 6. Ideas weakened or turned down
 
@@ -163,6 +231,13 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 - **W4. Claims in the outside answers with no source, so do not repeat them**: "quarterly XBRL has about 37% / 63% errors" (measured:
   0 differences in 2,780 figures for 5 companies; one bad file, IMPAL, in 73 filings) and "35% of pages sideways". Their idea of not
   trusting the XBRL as the production answer is turned down for now: the XBRL is the daily source and the PDF is the judge.
+- **W6. The official figures as the column key (joint match), measured 29 Oct 2026 and turned down.** Idea: in checker mode all
+  four figures of a period are known, so a column holding three or four of them on their own labelled rows must be the period's,
+  even with its date or the table's basis unread. Normal key: 266 of 337 true figures, 21 more than arithmetic. But given the PDF's
+  own other columns as the "official" figures (the realistic wrong-period error), it confirmed 244 of them in 20 filings, and
+  KFINTECH's consolidated figures as standalone: the undated column and the untitled table are exactly where another period's or the
+  other basis's figures sit. With the column's date and the basis required, it adds almost nothing. The hard key has two metrics
+  a period, so it could not be tested there. Do not retry without the PDF-column swap test.
 - **W5.** Gemini's points that annual-report PDFs are digital and bookmarked, and that annual XBRL arrives in Sep-Oct, are only partly
   true. ITC FY26 came on 20 Aug and L&T FY26 on 4 Jul, but L&T FY25 only on 13 Jan 2026. Annual work waits anyway (section 1).
 
@@ -203,6 +278,6 @@ Record the owner's answer to this order in `docs/TODO.md` (batch rule).
 
 ## 9. Open questions for the owner
 
-- The order in section 7: Yes / No / Later.
-- The size of the "zero wrong" bar: the lead proposed at least 3,000 figures across companies.
+- The order in section 7: **answered, Yes as proposed** (owner, 28 Oct 2026, ~15:45 IST; `docs/TODO.md` item 119).
+- The size of the "zero wrong" bar: **answered, 1,000 figures** across companies (owner, 28 Oct 2026; the lead had proposed 3,000).
 - Whether `numfirst` (combined with native) goes behind a live switch once it passes on the XBRL key. It is bench only today.

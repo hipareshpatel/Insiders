@@ -101,3 +101,13 @@ Run 40474143469 (`memory-gaps-fill-bse`, dry run, `file_cap` 100): BSE answered 
 then the companies' own statements: 9 of 9 differences settled, BSE right in all 9. Report:
 `docs/bench/bse-fill-2026-10-27.md`. The full run waits for the owner. (Run 40471967773 before it stopped at the start: the
 step did not install `requests`; fixed in #179.)
+
+## 29 Oct 2026: PDF shadow check built (TODO 121), off until the owner switches it on
+
+`pdf-shadow.yml` reads the PDF of each results card filed in the last 3 hours with the numbers-first reader and logs, per
+headline figure, agrees / disagrees / unknown against the card (R2 `meta/pdf-shadow/<day>.csv`, artifact `pdf-shadow`). Read only:
+no card, memory or site change, no AI. **To switch it on (owner):** set the repository variable `PDF_SHADOW` to `on`
+(Settings > Secrets and variables > Actions > Variables); the schedule then runs hourly at :41. Off: remove the variable or set it
+to anything else. A manual dispatch (`limit`, `since_hours`) runs whatever the variable says. The first run measures seconds a PDF
+on the runner (column `pdf_seconds`); the disagreements are set beside the daily audit after a few days. Assumption: a card that
+does not store its basis is read on CONSOLIDATED first, then STANDALONE (the reason says so).

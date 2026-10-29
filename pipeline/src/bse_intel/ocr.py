@@ -19,8 +19,10 @@ Benefits Expense Finance Costs 31.7 1.2 48.1 3.6 ...", a wrong column on every f
 from __future__ import annotations
 
 import difflib
+import json
 import logging
 import math
+import os
 import re
 import statistics
 import threading
@@ -40,6 +42,7 @@ SETTINGS = {
 }
 
 _engine = None
+_cell_engine = None
 _lock = threading.Lock()  # one page at a time: OCR is rare, and the CPU is shared with the workers
 
 
@@ -52,10 +55,62 @@ def available() -> bool:
     return True
 
 
-def _new_engine():
-    from rapidocr import ModelType, RapidOCR
+def bench_cache_dir() -> str:
+    """The bench's OCR cache folder (env ``PDF_OCR_CACHE_DIR``), taken only together with ``PDF_BENCH=1`` (``pdf_bench`` sets it
+    itself), so a stray folder variable can never feed old boxes to the live path. "" when the cache is off."""
+    if os.environ.get("PDF_BENCH") != "1":
+        return ""
+    return os.environ.get("PDF_OCR_CACHE_DIR", "")
 
-    return RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
+
+def _new_engine():
+    def real():
+        from rapidocr import ModelType, RapidOCR
+        return RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
+
+    cache_dir = bench_cache_dir()
+    return CachedEngine(real, cache_dir) if cache_dir else real()
+
+
+class CachedEngine:
+    """Bench only (env ``PDF_OCR_CACHE_DIR`` with ``PDF_BENCH=1``): the engine's boxes for an image are kept on disk under the sha1 of the image's
+    pixels (and the settings), so a re-score of the answer keys reads each page once. The boxes come back as plain lists in
+    the ``_boxes`` form, which every caller reads point by point, so a cached reading equals a fresh one. The engine itself is
+    loaded on the first page not in the cache."""
+
+    def __init__(self, factory, cache_dir: str):
+        self._factory, self._real, self.dir = factory, None, cache_dir
+        os.makedirs(cache_dir, exist_ok=True)
+        self.hits = self.misses = 0
+
+    def _key(self, image) -> str:
+        import hashlib
+        h = hashlib.sha1(json.dumps(SETTINGS, sort_keys=True).encode())
+        if isinstance(image, (bytes, bytearray)):
+            h.update(b"bytes:" + bytes(image))
+        else:
+            h.update(f"array:{image.shape}:{image.dtype}:".encode() + image.tobytes())
+        return h.hexdigest()
+
+    def __call__(self, image):
+        path = os.path.join(self.dir, self._key(image) + ".json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                boxes = json.load(fh)
+            self.hits += 1
+            return [(box, text, score) for box, text, score in boxes]
+        except (OSError, ValueError, TypeError):    # no file, or a damaged one: read the page again
+            pass
+        if self._real is None:
+            self._real = self._factory()
+        boxes = [([[float(p[0]), float(p[1])] for p in box], str(text), float(score))
+                 for box, text, score in _boxes(self._real(image))]
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(boxes, fh)
+        os.replace(tmp, path)
+        self.misses += 1
+        return boxes
 
 
 def _boxes(output) -> list[tuple]:
@@ -382,3 +437,62 @@ def page_reader(vision: Callable[[bytes], str] | None) -> Callable[[bytes], str]
         return text
 
     return read
+
+
+def ink_cut(image) -> bool:
+    """Whether a cell crop (a BGR array) shows a glyph cut by its edge: dark pixels touching the left or right edge, or the top or
+    bottom edge outside the middle, that are not a table rule (a rule runs the whole edge). A cell's box that sits a little off, or
+    a neighbour's digit inside it, shows here; the detector is not used for this: on a crop it resizes the image up to its minimum
+    side and takes seconds."""
+    import cv2
+    import numpy as np
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    ink = (gray < 140).astype(np.uint8)
+    h, w = ink.shape
+    if h < 8 or w < 8:
+        return True
+    edge = max(3, w // 40)
+    band = ink[int(h * 0.3):int(h * 0.7)]     # the rows of the figure itself: the cell's top and bottom rules run across the edges
+    for strip in (band[:, :edge], band[:, w - edge:]):
+        col = strip.sum(axis=0)
+        if (col >= 0.8 * band.shape[0]).any():     # a vertical rule on the edge
+            continue
+        if int(strip.max(axis=1).sum()) > 1:
+            return True
+    return False
+
+
+def read_cell(image) -> tuple[str, bool]:
+    """One table cell's crop (a BGR array): (the recogniser's text for the whole crop, whether a glyph is cut by the crop's edge).
+    Recognition alone, no detector: it reads a lone figure better than detection plus recognition (which cut "1,912.15" to
+    "1,912 15" in a measured case) and takes 0.05 s where the detector takes seconds on a crop. Bench only
+    (``PDF_OCR_CACHE_DIR`` with ``PDF_BENCH=1``): the answer is kept on disk under the sha1 of the crop's pixels. Without the OCR
+    extra it answers ("", True): no text, so no figure is taken from the crop."""
+    cache = bench_cache_dir()
+    path = ""
+    if cache:
+        import hashlib
+        path = os.path.join(cache, "cell3-" + hashlib.sha1(f"{image.shape}:{image.dtype}:".encode() + image.tobytes()).hexdigest() + ".json")
+        try:
+            with open(path, encoding="utf-8") as fh:
+                text, cut = json.load(fh)
+            return str(text), bool(cut)
+        except (OSError, ValueError, TypeError):
+            pass
+    if not available():               # after the bench cache, so a bench machine without the OCR extra still replays it
+        return "", True
+    global _cell_engine
+    with _lock:
+        if _cell_engine is None:       # its own engine: a call with use_det=False leaves the engine in that mode for the next call
+            from rapidocr import ModelType, RapidOCR
+            _cell_engine = RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})
+        rec = _cell_engine(image, use_det=False, use_cls=False, use_rec=True)
+        text = (list(getattr(rec, "txts", None) or ("",)) or [""])[0]
+    cut = ink_cut(image)
+    if path:
+        try:
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump([str(text), cut], fh)
+        except OSError:
+            pass
+    return str(text), cut

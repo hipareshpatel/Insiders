@@ -13,13 +13,19 @@ The PDF is fetched only when a slip is found, so the normal path makes no extra 
 from __future__ import annotations
 
 import logging
+import time
 
 from . import pdf_referee
 from .nse import SourceBlockedError
+from .settings import slip_check_numfirst, slip_check_numfirst_seconds
 
 log = logging.getLogger(__name__)
 
 _XBRL_ROUNDING = 0.0051   # the file's crore figures are rounded to two decimals
+# The numbers-first reader first (switch SLIP_CHECK_NUMFIRST, owner 29 Oct 2026, step 1): it reads scans too and has given no
+# wrong figure on the two answer keys; where it gives no answer the text-layer reader below decides, as before
+_NUMFIRST_METRICS = {"revenue": "revenue", "interest_earned": "revenue", "total_income": "total_income", "pbt": "pbt",
+                     "pat": "pat"}
 
 
 class PdfCheck:
@@ -29,6 +35,7 @@ class PdfCheck:
         self.nse, self.symbol = nse, (symbol or "").strip().upper()
         self.pdf_url, self.pdf_period = pdf_url, pdf_period   # a PDF known to be the period's (the filing's own)
         self._sources = None
+        self.numfirst_timeouts = 0       # filings whose numbers-first read ran past its time cap and gave no answer
 
     @property
     def sources(self):
@@ -46,10 +53,59 @@ class PdfCheck:
             return listed
         return [f.pdf_url for f in listed[:pdf_referee.MAX_CANDIDATES]]
 
+    def numbers_first(self, period: str, basis: str, metric: str, corrected: float) -> tuple[bool, str] | None:
+        """The check by the numbers-first reader: True / False when it proves the period's figure on the basis, None to leave
+        the decision to the text-layer reader (no answer, no PDF, a metric it does not read)."""
+        name = _NUMFIRST_METRICS.get(metric)
+        if name is None:
+            return None
+        from . import pdf_numbers_first as nf
+        urls = self._urls(period)
+        if isinstance(urls, str):
+            return None
+        refused: tuple[bool, str] | None = None
+        deadline = time.monotonic() + slip_check_numfirst_seconds()   # one cap for the filing, all its candidate files
+        for url in urls:
+            data, why = self.sources.payload(url)
+            if not data:
+                # the text-layer reader, if it decides, must not download the file again (review of eb2474a)
+                self.sources.docs.setdefault(url, (None, why or "NSE serves no file (404)"))
+                continue
+            if url not in self.sources.docs:     # the text-layer reader, if it decides, reads these bytes: no second download
+                try:
+                    self.sources.docs[url] = pdf_referee.read_document(data, ocr=self.sources.ocr)
+                except Exception as exc:   # noqa: BLE001
+                    self.sources.docs[url] = (None, f"unreadable ({type(exc).__name__})")
+            try:
+                got = nf.reading_from_tables(nf.analyse(data, ocr_garbled=True, deadline=deadline), period, name, basis)
+            except nf.OutOfTime:
+                # a scan can hold the one OCR lock for minutes: no answer, the text-layer reader decides (it needs no OCR)
+                self.numfirst_timeouts += 1
+                log.warning("slip check: numbers-first ran past %gs on %s; the text-layer reader decides",
+                            slip_check_numfirst_seconds(), url)
+                return None
+            if got.status != "ok":
+                continue
+            if abs(got.value - corrected) <= _XBRL_ROUNDING + got.tol:
+                return True, f"PDF p{got.page} prints {got.value:g} Cr ({got.label}; numbers-first)"
+            # a False removes stored figures: a later candidate (the right filing, a restated one) may still prove it
+            refused = refused or (False, f"PDF prints {got.value:g} Cr, not the corrected {corrected:g} Cr (numbers-first)")
+        return refused
+
     def __call__(self, result, metric: str, corrected: float) -> tuple[bool, str]:
         if self.sources is None:
             return None, "no NSE client to fetch the PDF"
         period, basis = result.period, result.basis
+        if slip_check_numfirst():
+            try:
+                proved = self.numbers_first(period, basis, metric, corrected)
+            except SourceBlockedError:
+                raise
+            except Exception as exc:   # noqa: BLE001 - the text-layer reader still decides
+                log.warning("slip check: numbers-first failed (%s); the text-layer reader decides", type(exc).__name__)
+                proved = None
+            if proved is not None:
+                return proved
         top_line = metric == "revenue"   # revenue from operations: a "Total income" line is not it
         metric = "revenue" if metric in ("revenue", "total_income", "interest_earned") else metric
         try:

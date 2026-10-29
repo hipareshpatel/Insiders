@@ -54,12 +54,13 @@ def pairs_of(key: list[dict], limit: int | None = None) -> list[dict]:
 
 BATCH_SIZE = 10               # filings in a batch of the out-of-sample key
 SKIP_STATUSES = ("fetch_failed", "locate_error")
+KEY_METRICS = ("revenue", "total_income", "pbt", "pat")     # the metrics the readers answer and the hand keys hold
 KEY_HEADER = "symbol,scrip,period_end,period,basis,metric,expected_cr,unit_printed,pdf_url,tags".split(",")
 
 
 def key_from_xbrl(rows: list[dict]) -> list[dict]:
     """Key rows (the bench's format) from ``xbrl_key`` rows: every row with a pdf_url and a numeric xbrl_value, whatever its status
-    but fetch_failed and locate_error; ``expected_cr`` is the exchange's figure. Tags: ``xbrl:<status>`` and ``batch:<n>``, n = 1 +
+    but fetch_failed and locate_error, of a metric the readers answer (``KEY_METRICS``: no EPS, other income or tax); ``expected_cr`` is the exchange's figure. Tags: ``xbrl:<status>`` and ``batch:<n>``, n = 1 +
     (the filing's place among the filings that give key rows, in the order the rows first show them, // 10)."""
     from .memory_gaps import quarter_end
 
@@ -70,7 +71,7 @@ def key_from_xbrl(rows: list[dict]) -> list[dict]:
             value = float(value)
         except (TypeError, ValueError):
             continue
-        if r.get("status") in SKIP_STATUSES or not r.get("pdf_url") or value != value:
+        if r.get("status") in SKIP_STATUSES or r.get("metric") not in KEY_METRICS or not r.get("pdf_url") or value != value:
             continue
         filing = (r.get("symbol"), r.get("filing_period") or "", r["pdf_url"])
         batch = 1 + filings.setdefault(filing, len(filings)) // BATCH_SIZE

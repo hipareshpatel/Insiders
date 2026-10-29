@@ -131,7 +131,8 @@ def test_key_from_xbrl_keeps_every_status_but_the_two_failures_and_tags_status_a
         rows.append(xrow(f"S{i}", i, "found_unique"))
         rows.append(xrow(f"S{i}", i, "not_found", "pat", "12"))
     rows += [xrow("F", 0, "fetch_failed"), xrow("E", 0, "locate_error"), xrow("N", 0, "not_found", value=""),
-             xrow("P", 0, "not_found", pdf="")]
+             xrow("P", 0, "not_found", pdf=""), xrow("Q", 0, "found_unique", "eps", "3.1"),
+             xrow("R", 0, "found_unique", "other_income", "4")]       # metrics the readers never answer: no key row
     key = pb.key_from_xbrl(xk.load_csv(xk.to_csv([{**r, "news_id": "n"} for r in rows])))
     assert len(key) == 24 and {r["symbol"] for r in key} == {f"S{i}" for i in range(12)}
     assert key[0]["tags"] == "xbrl:found_unique|batch:1" and key[1]["tags"] == "xbrl:not_found|batch:1"

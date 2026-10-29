@@ -106,3 +106,9 @@ def test_a_quarter_before_its_filing_deadline_is_not_missing():
     bse = Bse(LINKS, FILES)
     out = br.run(sink, [("532811", "ABC")], bse, today=TODAY)
     assert bse.lists == 0 and out["complete"] == 1                           # no list asked in vain
+
+
+def test_an_empty_bse_answer_is_not_kept():
+    sink = Sink()
+    br.run(sink, [("532811", "ABC")], Bse([], FILES), today=TODAY)
+    assert sink.get_object(br.list_key("532811")) is None

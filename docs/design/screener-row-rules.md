@@ -28,8 +28,9 @@ NSE's integrated filing; older quarters carry screener's merger restatements and
 these quarters.
 
 **Before listing (owner, 29 Oct 2026: "we don't need it at all"):** screener shows quarters and years from before a company's IPO (its
-prospectus, or the year-ago column of its first results). A period with no facts, earlier than the first results file we hold, on a
-company whose BSE list was asked and does not hold it, is `before_listing` and never counted. Run 40837941625: 1,253 of the 1,458 FY26
+prospectus, or the year-ago column of its first results). A period from Q1FY24 with no facts, earlier than every results file we hold and every
+quarter on the company's BSE results list (non-empty), is `before_listing` and never counted (a blind review found the first version
+would hide a long-listed company's early years, a hole at the start of NSE's quarters, and a failed BSE answer kept as empty). Run 40837941625: 1,253 of the 1,458 FY26
 quarters with no figure from us end before the company's NSE listing date; some of those are on BSE (listed there first), which the
 BSE fill takes, so the rule waits for BSE's list.
 

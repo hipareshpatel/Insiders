@@ -83,7 +83,8 @@ def _links(bse, sink, scrip: str, stored: set[str], today: date, totals: dict) -
             return kept.get("links") or []
     links = [{"period": x.period, "basis": x.basis, "url": x.url, "filed_at": x.filed_at} for x in bse.results_xbrl(scrip)]
     totals["lists_asked"] += 1
-    sink.put_object(key, json.dumps({"asked": today.isoformat(), "links": links}).encode("utf-8"), content_type="application/json")
+    if links:       # an empty answer (no archive, or a call that came back with nothing) is not kept: the next run asks again
+        sink.put_object(key, json.dumps({"asked": today.isoformat(), "links": links}).encode("utf-8"), content_type="application/json")
     return links
 
 

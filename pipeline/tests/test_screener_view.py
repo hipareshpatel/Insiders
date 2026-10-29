@@ -270,6 +270,13 @@ def test_a_quarter_before_the_first_results_on_either_exchange_is_before_listing
     assert statuses({"Q4FY26"})["Q3FY26"] == "before_listing"
     assert statuses(None)["Q1FY26"] == "no_facts"                             # BSE not asked yet: it may have the quarter
     assert statuses({"Q4FY26", "Q1FY26"})["Q1FY26"] == "no_facts"           # on BSE's list: a gap to fill, not a pre-listing quarter
+    assert statuses({"Q4FY26", "Q4FY24"})["Q1FY26"] == "no_facts"           # BSE has older results: listed long ago, a real gap
+    assert statuses(set())["Q1FY26"] == "no_facts"                            # an empty BSE answer decides nothing
+    years = sv.parse_page(section("profit-loss", {"Sales&nbsp;+": [9, 8]}, ["Mar 2025", "Mar 2022"]))
+    cf = _store({xf.key("1", "Q4FY26", "CONSOLIDATED"): q4})
+    cf.bse_periods = {"Q4FY26"}
+    got = {r["period"]: r["status"] for r in sv.compare(years, cf, "1", "NEWCO")}
+    assert got["FY25"] == "before_listing" and got["FY22"] == "no_facts"    # older than LISTING_FROM: never called pre-listing
 
 
 def test_compare_marks_each_pair_ok_apart_no_facts_or_no_recipe():

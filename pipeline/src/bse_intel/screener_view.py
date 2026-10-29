@@ -85,6 +85,7 @@ STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff", "before_lis
 # older ones carry screener's merger restatements and the older file format; a quarter before it is listed as before_cutoff, never
 # counted in the exact share. Years and balance sheets are compared as before.
 FIRST_QUARTER = "Q1FY26"
+LISTING_FROM = "Q1FY24"       # before_listing is decided only from here: the years and quarters screener shows for a recent listing
 # a period screener shows from before the company's first results on any exchange (its prospectus, or the year-ago column of its first
 # results) is before_listing, never counted (owner, 29 Oct 2026: "we don't need it at all"): no facts for it, earlier than the first
 # results file we hold, and not on BSE's results list for the company (raw/bse-results-xbrl/<scrip>/list.json, so only once the BSE
@@ -772,13 +773,17 @@ class CompanyFacts:
         self.bse_periods: set[str] | None = None     # the quarters BSE's results list holds; None: BSE not asked yet
 
     def before_listing(self, period: str) -> bool:
-        """Whether ``period`` (a quarter, or a year "FY25": its March quarter) is before the company's first results we hold, on a
-        company whose BSE list was asked and does not hold it either."""
+        """Whether ``period`` (a quarter, or a year "FY25": its March quarter) is before the company's first results on either
+        exchange: earlier than every results doc we hold AND than every quarter on BSE's list for it (which reaches back years, so a
+        hole at the start of what NSE gave us is not taken for a listing). Only from LISTING_FROM: an older year of a long-listed
+        company may be older than BSE's list reaches. No BSE list, or an empty one (a failed answer is kept as one), decides nothing."""
         quarter = f"Q4{period}" if period.startswith("FY") else period
         index = quarter_index(quarter)
+        if index is None or index < quarter_index(LISTING_FROM) or not self.bse_periods:
+            return False
         held = [i for i in (quarter_index(p) for p, _ in self.results) if i is not None]
-        return (index is not None and bool(held) and index < min(held) and self.bse_periods is not None
-                and quarter not in self.bse_periods)
+        on_bse = [i for i in (quarter_index(p) for p in self.bse_periods) if i is not None]
+        return bool(held) and bool(on_bse) and index < min(held) and index < min(on_bse)
 
     def _load(self, key: str | None) -> xbrl_facts.Facts | None:
         if key is None:

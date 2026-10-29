@@ -77,7 +77,7 @@ from dataclasses import dataclass, field, replace
 from datetime import date
 
 from .grounding import _DECLARED_UNIT, _PER_CRORE
-from .pdf_referee import (_BARE_UNIT, _DATE_LOOSE_2, _GARBLED_UNIT, _MARCH_YEAR, _PAT_NAME_LETTERED,
+from .pdf_referee import (_BARE_UNIT, names_other_currency, _DATE_LOOSE_2, _GARBLED_UNIT, _MARCH_YEAR, _PAT_NAME_LETTERED,
                           _PAT_NOT, _TOTAL_INCOME, MAX_CANDIDATES, _basis_above_boxed, _date_of, _names, _pattern_kinds,
                           _revenue_rank, target_column)
 from .metrics import CONSOLIDATED, STANDALONE
@@ -730,6 +730,8 @@ def _declared_unit(text: str) -> float | None:
         word = next((g for g in m.groups() if g), None)
         if word:
             return _PER_CRORE.get(word.lower().rstrip("s"))
+    if names_other_currency(text):
+        return None
     probe = re.sub(r"^[^\w]+|[^\w.)]+$", "", text.strip())
     if len(probe) <= 40 and (m := _BARE_UNIT.match(probe)):
         return _PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s"))

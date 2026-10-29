@@ -752,11 +752,13 @@ _AMOUNT_IN_RUPEES = re.compile(r"^[(\[{]?\s*am[a-z]{1,5}\s+in\s+r[a-z]{3,6}\s+(c
 def scan_units(lines: list[str]) -> set:
     """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
     data)"), as ``pdf_referee`` reads them; a unit it does not know is None."""
-    from .pdf_referee import _BARE_UNIT, _GARBLED_UNIT
+    from .pdf_referee import _BARE_UNIT, _GARBLED_UNIT, names_other_currency
     from .grounding import _PER_CRORE
     found = set()
     for line in lines:
         probe = line.strip()
+        if names_other_currency(probe):        # "(US$ in million)": another currency's unit is no rupee unit
+            continue
         if len(probe) <= 70 and (m := _GARBLED_UNIT.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
         clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)

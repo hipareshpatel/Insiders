@@ -65,6 +65,7 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from .bse import AttachmentError, AttachmentTooLarge
+from .currency import names_other_currency
 from .extract import _MUPDF, Document, upright_text
 from .grounding import _PER_CRORE, unit_before
 from .memory_gaps import quarter_end
@@ -349,7 +350,7 @@ def _bare_unit(lines: list[str], header: int) -> float | None:
     found = set()
     for line in lines[max(0, header - 8): header + 2]:
         probe = re.sub(r"^[^\w]+|[^\w.)]+$", "", line.strip())
-        if len(probe) <= 40 and (m := _BARE_UNIT.match(probe)):
+        if len(probe) <= 40 and not names_other_currency(line) and (m := _BARE_UNIT.match(probe)):
             found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
     return found.pop() if len(found) == 1 and None not in found else None
 
@@ -367,6 +368,8 @@ def _garbled_units(lines: list[str], header: int) -> tuple[set, set]:
     garbled, bare = set(), set()
     for line in lines[max(0, header - 8): header + 2]:
         probe = line.strip()
+        if names_other_currency(probe):
+            continue
         if len(probe) <= 70 and (m := _GARBLED_UNIT.match(probe)):
             garbled.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
         clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)

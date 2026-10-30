@@ -220,6 +220,14 @@ def memory_call_v2() -> bool:
     return _switch("MEMORY_CALL_V2")
 
 
+def call_memory_geometry() -> bool:
+    """CALL_MEMORY_GEOMETRY (default off; TODO 144): a call-memory point on a deck slide is kept only when the word boxes of
+    its page tie its figure to the label its quote names (slide_geometry.py): same row, same column, or a list in order. A
+    figure that stands by another label, or by none that can be read, is dropped with the reason "label". Needs the page's
+    boxes (the PDF), so it judges only where the reader hands them to call_memory.check_points. Read at the call."""
+    return _switch("CALL_MEMORY_GEOMETRY")
+
+
 def card_ground_all_fields() -> bool:
     """CARD_GROUND_ALL_FIELDS (on in config/switches.toml; TODO 105, F204): the figures in the timeline entry, the core catalyst and the
     track-next lists (milestones, pending approvals, catalysts, risks, KPI targets) go through the same grounding as the

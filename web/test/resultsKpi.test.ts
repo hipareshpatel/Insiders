@@ -1,5 +1,6 @@
 // The Results KPI report's query building and period rules (shared/resultsKpi.ts). Run: npm test.
 import { strict as assert } from "node:assert";
+import { RESULTS_SORTS } from "../shared/resultsTypes.ts";
 import { test } from "node:test";
 import { KPI_SORTS, companyRows, kpiRowsSql, kpiSummaryRowsSql, kpiWhere, momentumClass, momentumPts, parseKpiQuery, periodsBack, prevPeriod,
   quarterDay, quarterIndex, seriesFor, toKpiRow, type DbKpiRow } from "../shared/resultsKpi.ts";
@@ -98,7 +99,7 @@ test("the sort names a listed column, puts a missing figure last and breaks ties
     const col = KPI_SORTS[sort as keyof typeof KPI_SORTS];
     assert.ok(kpiRowsSql(parseKpiQuery({ sort, dir: "asc" }), "FROM results_kpi k").includes(`ORDER BY (${col}) IS NULL, ${col} ASC, k.scrip_code`), sort);
   }
-  assert.equal(Object.keys(KPI_SORTS).length, 13);
+  assert.deepEqual(Object.keys(KPI_SORTS).sort(), [...RESULTS_SORTS].sort());   // the Worker accepts exactly the shared list the page sends from
   assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_yoy" }), "FROM x"), /k\.pat_key DESC/);   // growth ranks a turn across a loss beside the per cents
   assert.match(kpiRowsSql(parseKpiQuery({ sort: "ebitda_yoy" }), "FROM x"), /k\.ebitda_key DESC/);
   assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_momentum" }), "FROM x"), /\(k\.pat_yoy - pk\.pat_yoy\) DESC/);

@@ -18,6 +18,10 @@ export const INDICES: { id: string; label: string }[] = [
   { id: "MIDCAP150", label: "Nifty Midcap 150" }, { id: "MIDSMALLCAP400", label: "Nifty MidSmallcap 400" },
   { id: "SMALLCAP250", label: "Nifty Smallcap 250" }, { id: "MICROCAP250", label: "Nifty Microcap 250" }, { id: "TOTALMARKET", label: "Nifty Total Market" },
 ];
+/** The columns a sort may name (the page sends one as `sort`, the Worker accepts exactly these): one list for both sides. */
+export const RESULTS_SORTS = ["company", "mcap", "revenue_yoy", "ebitda_yoy", "pat_yoy", "opm_yoy_bps", "revenue_qoq", "ebitda_qoq", "pat_qoq",
+  "opm_qoq_bps", "pat_momentum", "revenue_momentum", "ebitda_momentum", "filed"] as const;
+export type ResultsSort = (typeof RESULTS_SORTS)[number];
 /** "Market cap at least" steps, in rupees crore. */
 export const MARKET_CAP_STEPS = [500, 1000, 5000, 10000, 50000, 100000] as const;
 
@@ -123,7 +127,7 @@ export interface KpiQuery {
   turnaround: boolean;
   nfo: boolean;
   spread: "below_0" | "from_0_to_10" | "from_10_to_20" | "above_20" | null;
-  sort: string;
+  sort: ResultsSort;
   dir: "asc" | "desc";
   page: number;
 }

@@ -3,7 +3,7 @@
  * `results_kpi` (pipeline results_table.py): one per company and quarter, worked out from the saved statements. Every filter value is a
  * bound parameter; sort and direction come from whitelists; LIKE patterns are escaped. */
 import { INDICES, MOMENTUM_POINTS } from "./resultsTypes.ts";
-import type { KpiQuery, KpiRow, Kind, Momentum, Turn } from "./resultsTypes.ts";
+import type { KpiQuery, KpiRow, Kind, Momentum, ResultsSort, Turn } from "./resultsTypes.ts";
 
 export type { KpiQuery, KpiResponse, KpiRow } from "./resultsTypes.ts";
 
@@ -25,11 +25,12 @@ export const KPI_SORTS = {
   revenue_qoq: "k.revenue_qoq",
   ebitda_qoq: "k.ebitda_qoq",
   pat_qoq: "k.pat_qoq",
+  opm_qoq_bps: "k.opm_qoq_bps",
   pat_momentum: "(k.pat_yoy - pk.pat_yoy)",
   revenue_momentum: "(k.revenue_yoy - pk.revenue_yoy)",
   ebitda_momentum: "(k.ebitda_yoy - pk.ebitda_yoy)",
   filed: "f.filed_at",
-} as const;
+} as const satisfies Record<ResultsSort, string>;
 export type KpiSort = keyof typeof KPI_SORTS;
 
 const INDEX_IDS: readonly string[] = INDICES.map((i) => i.id);

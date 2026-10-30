@@ -220,6 +220,14 @@ def memory_call_v2() -> bool:
     return _switch("MEMORY_CALL_V2")
 
 
+def results_press_release() -> bool:
+    """RESULTS_PRESS_RELEASE (default off; TODO 135, owner Yes 30 Oct 2026): a results press release or investor release filed
+    beside a quarter's statement is not simply dropped as a D20 duplicate. Its text is added to the quarter's one results card
+    when that card is read again (words only: management lines, one-offs, segment notes, order wins, guidance; the table stays
+    the exchange file's), and call memory reads the release like a deck. Still no second card. Read at the call."""
+    return _switch("RESULTS_PRESS_RELEASE")
+
+
 def call_memory_geometry() -> bool:
     """CALL_MEMORY_GEOMETRY (default off; TODO 144): a call-memory point on a deck slide is kept only when the word boxes of
     its page tie its figure to the label its quote names (slide_geometry.py): same row, same column, or a list in order. A

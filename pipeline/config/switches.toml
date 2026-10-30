@@ -62,3 +62,6 @@ NUMFIRST_STOP_EARLY = true       # pdf_numbers_first: stop early on scanned page
 # TODO 144 (owner approved the build, 30 Oct 2026): a deck slide's figure tied to its label by the page's word boxes; off until
 # measured on the stored deck PDFs (pipeline/scripts/measure_slide_geometry.py, a maintenance run) and the owner says on.
 CALL_MEMORY_GEOMETRY = false     # slide_geometry.py: a slide point whose figure stands by another label is dropped ("label")
+# TODO 135 (owner approved the build, 30 Oct 2026): a results press release filed beside the statement joins the quarter's one
+# results card (its words only) and is read by call memory like a deck; off until measured on live cards.
+RESULTS_PRESS_RELEASE = false    # pipeline._fold_release, event_catchup.release_catch_up

@@ -110,6 +110,36 @@ def results_due(row: dict, links: list) -> bool:
     return any(-2 <= (_date.fromisoformat(l.filed_at[:10]) - day).days <= 45 for l in links if l.url not in seen)
 
 
+def release_catch_up(pipeline, deadline: float) -> dict:
+    """RESULTS_PRESS_RELEASE (TODO 135): read again the results cards whose press release this run folded in (pipeline._fold_release),
+    so the release's words join the quarter's one card. Reuses the results re-run path: the filing goes back to PENDING and
+    is processed alone; the release text waits in pipeline._release_extra and is added to the card's text there."""
+    report = {"rerun": {}}
+    with pipeline._lock:
+        ids = [i for i in pipeline._release_extra if pipeline._release_extra[i]]
+    if not ids or time.monotonic() >= deadline:
+        return report
+    from .pipeline import DEADLINE_GRACE_S
+
+    pipeline._exec("filings_update", [{"news_id": i, "status": "PENDING", "attempts": 0, "updated_at": now_iso()} for i in ids])
+    pipeline.gateway.deadline = deadline + DEADLINE_GRACE_S
+    with pipeline._lock:
+        pipeline._tried.difference_update(ids)
+        pipeline._results_quarters = {k: v for k, v in pipeline._results_quarters.items() if v not in ids}
+    # the results filing is at most COMPANION_DAYS before its release (pipeline.companion_quarter)
+    from datetime import date, timedelta
+    from .pipeline import COMPANION_DAYS
+
+    with pipeline._lock:
+        released = [d for i in ids for _, _, d in pipeline._release_extra.get(i, [])]
+    last = max(released) if released else today_ist().isoformat()
+    first = (date.fromisoformat(min(released)) - timedelta(days=COMPANION_DAYS)).isoformat() if released else last
+    days = [first, last]
+    outcomes = {o.update["news_id"]: o for o in pipeline.process(min(days), max(days), deadline, bulk=False, only=set(ids))}
+    report["rerun"] = {i: (outcomes[i].update.get("status") if i in outcomes else "left in the queue") for i in ids}
+    return report
+
+
 def results_catch_up(pipeline, deadline: float, max_reruns: int = MAX_RERUNS) -> dict:
     """Read again the NSE results cards whose XBRL has landed, or been revised, since they were made."""
     report = {"cards": 0, "rerun": {}, "stopped": None}

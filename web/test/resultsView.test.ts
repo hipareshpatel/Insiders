@@ -3,7 +3,7 @@ import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import {
   activeChips, arrowOf, barHeight, bestInEight, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
-  medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
+  medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, progressText, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
   seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, type Seg,
 } from "../src/lib/resultsView.ts";
 import { EMPTY_SUMMARY, groupsResponse, ROWS, SUMMARY } from "./fixtures/resultsFixture.ts";
@@ -156,4 +156,11 @@ test("each view ranks by its own column until a column is picked", async () => {
   assert.deepEqual(VIEW_SORT, { yoy: "pat_yoy", momentum: "pat_momentum", qoq: "pat_qoq" });
   for (const s of Object.values(VIEW_SORT)) assert.ok((SORTS as readonly string[]).includes(s), s);
   assert.equal(VIEW_SORT.yoy, DEFAULT_SORT);
+});
+
+test("the progress box says how many members are not covered yet", () => {
+  const p = { index_id: "NIFTY500", reported: 185, of: 497, members: 500, quarter_reported: 236, still_to_come: null };
+  assert.equal(progressText(p).note, "500 members; 3 not covered yet (REITs, which report in their own format)");
+  assert.match(progressText({ ...p, members: 498 }).note!, /^498 members; 1 not covered yet \(a REIT/);
+  assert.equal(progressText({ ...p, members: 497 }).note, null);
 });

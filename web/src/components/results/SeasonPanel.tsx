@@ -104,6 +104,7 @@ function Progress({ progress }: { progress: KpiProgress | null | undefined }) {
           <i className="block h-full rounded-full bg-accent" style={{ width: `${pctDone}%` }} />
         </div>
         <div className="text-[13px] text-ink-3">{t.done}</div>
+        {t.note && <div className="mt-1 text-[12.5px] text-ink-3">{t.note}</div>}
       </div>
       <div className="mt-3.5 flex items-center justify-between gap-2 border-t border-line pt-3.5 text-[14px]">
         <span className="text-ink-2">Still to come</span>

@@ -204,9 +204,12 @@ export function bestInEight(rows: GroupRow[]): number {
 }
 
 /** The reporting-progress panel's lines. */
-export function progressText(p: KpiProgress): { done: string; next: string | null } {
+export function progressText(p: KpiProgress): { done: string; next: string | null; note: string | null } {
   const done = `${pctOf(p.reported, p.of)}% done · ${p.quarter_reported} ${p.quarter_reported === 1 ? "company has" : "companies have"} reported in all`;
-  return { done, next: p.still_to_come ? `${p.still_to_come.companies} ${p.still_to_come.companies === 1 ? "company" : "companies"}` : null };
+  const gap = p.members - p.of;
+  // REITs and InvITs report in their own format and are not read yet (STATUS.md, open work)
+  const note = gap > 0 ? `${p.members} members; ${gap} not covered yet (${gap === 1 ? "a REIT" : "REITs"}, which report in their own format)` : null;
+  return { done, next: p.still_to_come ? `${p.still_to_come.companies} ${p.still_to_come.companies === 1 ? "company" : "companies"}` : null, note };
 }
 
 export const indexLabel = (id: string | null | undefined) => INDICES.find((x) => x.id === id)?.label ?? id ?? "";

@@ -1250,6 +1250,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                      field, snapshot.get("period"), snapshot[field], news_id)
             snapshot.pop(field)
         fields = [k for k in snapshot if k != "period"]
+    else:
+        fields = []
+    # every figure refused leaves the date alone: such a snapshot would hide the last real one (SBI "Jun-2026", 30 Oct 2026)
+    if fields:
         from_file = set(delta.balance_sheet.file_fields or [])
         sheet_by = "file" if news_id.startswith(XBRL_SOURCE) or (fields and all(k in from_file for k in fields)) else "ai"
         lab = label(sheet_by, "results" if sheet_by == "file" else doc, updated_at, basis=basis, ok=True)
@@ -1816,7 +1820,8 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
                       "use the filing's own columns"] if withheld else None,
             "business_summary": summary["text"] if summary and before(summary) else None,
             "metrics": lines,
-            "balance_sheet": {k: v for k, v in balance[-1].items() if k in VIEW_BALANCE and v is not None} if balance else None,
+            "balance_sheet": next(({k: v for k, v in b.items() if k in VIEW_BALANCE and v is not None} for b in reversed(balance)
+                                   if any(k.endswith("_cr") and isinstance(v, (int, float)) for k, v in b.items())), None),
             "previous_calls": previous_calls[:max(4, guidance_n)],
             "guidance": [g for g in guidance if g["status"] in ("OPEN", "ON_TRACK", "DELAYED", "REVISED")][-guidance_n:],
             "watchlist": watch[-guidance_n:],

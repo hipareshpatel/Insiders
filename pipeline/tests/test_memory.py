@@ -666,6 +666,10 @@ def test_a_balance_sheet_figure_out_of_scale_with_the_other_sources_is_refused()
     assert next(b for b in d["balance_sheet"] if b["source_news_id"] == "n3")["net_worth_cr"] == 5794.25
     d = merge(d, output(balance_sheet={"period": "Q4FY25", "net_worth_cr": 9000.0}), filing("xbrl:res:999001:Q4FY25b", Q2), "LOW", "now")
     assert any(b.get("net_worth_cr") == 9000.0 for b in d["balance_sheet"])
+    # every figure refused: no snapshot of its date alone, which would hide the last real one (SBI "Jun-2026", 30 Oct 2026)
+    n = len(d["balance_sheet"])
+    d = merge(d, output(balance_sheet={"period": "Mar-2025", "net_worth_cr": 60122.0}), filing("agm2", AGM), "LOW", "now")
+    assert len(d["balance_sheet"]) == n and not any(b["source_news_id"] == "agm2" for b in d["balance_sheet"])
 
 
 @pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests

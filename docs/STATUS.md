@@ -92,6 +92,11 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Owner's decisions, 30 Oct 2026 ~14:30 IST** (TODO 101, 128, 136, 140, 141): (1) call memory prompt v2: read ~150 points of new
+live calls apart, blind-judge, switch only at or under 2% wrong; (2) a late file's results card keeps no table until the file
+(option A); (3) empty balance-sheet entries removed by code (backup, 50 a run, dry run first); (4) the card design is already
+given (TODO 128 example, the Gemini APAR write-up, TODO 136): build from it, ask nothing more.
+
 **Open work, in order (30 Oct 2026, 12:55 IST; the one list, kept current after every step).**
 | # | Item | State | Next |
 |---|---|---|---|

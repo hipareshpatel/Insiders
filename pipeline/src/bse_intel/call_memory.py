@@ -35,6 +35,17 @@ CONTEXT_CHARS = 600      # around a quote, on its page, where its period may be 
 # One request reads this much of the document (whole pages); a longer one is read in parts. The first measured run's
 # 6,000-token replies were too short for a whole document's points; Gemini Flash's 32,000-token reply is not (run 2, 26 Oct)
 PART_CHARS = 60_000
+
+
+def part_chars() -> int:
+    """PART_CHARS, or CALL_MEMORY_PART_CHARS for a measured test run (maintenance `call-memory`, part_chars input; owner,
+    30 Oct 2026: test smaller parts on one locked model). Scheduled runs never set it."""
+    import os
+
+    try:
+        return max(2_000, int(os.environ["CALL_MEMORY_PART_CHARS"])) if os.environ.get("CALL_MEMORY_PART_CHARS") else PART_CHARS
+    except ValueError:
+        return PART_CHARS
 RETRY_WAIT_S = 20.0      # the shortest wait before a failed part is asked again (run 5, F180)
 # F203 (27 Oct 2026): about half the documents of the measured runs 6-8 failed on free-provider capacity (5xx, 429, "paced").
 # A part that failed only for capacity is asked again, up to MAX_PART_ATTEMPTS in all, after these waits: the gateway pauses a
@@ -118,7 +129,7 @@ def read(gateway, prompts, filing, kind: str, industry: str | None, text: str, b
     is not. Every model at its daily ceiling raises DayQuotaExhausted; every part failed raises CallReadFailed."""
     route = next((r for r in ("call_memory", "pass2_long", "pass2_bulk") if gateway.has_route(r)), "pass2_bulk")
     scope = getattr(gateway, "card_scope", None)
-    chunks = parts(text, PART_CHARS)
+    chunks = parts(text, part_chars())
     points: dict[int, list] = {}
     models, chars, reasons, errors = [], 0, [], {}
     news_id = getattr(filing, "news_id", "?")

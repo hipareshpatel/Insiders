@@ -116,7 +116,7 @@ given (TODO 128 example, the Gemini APAR write-up, TODO 136): build from it, ask
 | 8 | Call memory v2 (TODO 101) | Not under the bar (6 of 146 wrong); live way 1 of 66 wrong with 75 points kept against 293 | Waits on item 7 |
 | 9 | Press release into the results card and memory (TODO 135; owner Yes) | Not started | After items 2 and 5 |
 | 10 | Deck and call cards lead with what changed (TODO 136; owner Yes) | Waits for call memory | The owner's 34 example cards are in docs/design/card-examples/ (never ask again) |
-| 11 | Smaller: PBT definition for numbers-first (TODO 143, later: no live path uses it); stock-page items (Q1FY24 gap, stale standalone, bank/insurer tables TODO 129, overdue guidance); the 47 companies with no stored facts; XBRL extras' second group; raw XBRL expiry check (TODO 139, before ~Apr 2027) | Open | In turn |
+| 11 | Smaller: PBT definition for numbers-first (TODO 143, later: no live path uses it); stock-page items (Q1FY24 gap, stale standalone, bank/insurer tables TODO 129, overdue guidance); the 47 companies with no stored facts; XBRL extras' second group; raw XBRL expiry check (TODO 139: built 30 Oct, Maintenance > xbrl-expiry-check, read only; first run to read) | Open | In turn |
 
 **Summary for the owner, 30 Oct 2026, 07:00 IST.**
 - Done: the live path saves every result by screener's rules (3); one results card a quarter (6); late exchange file fetched

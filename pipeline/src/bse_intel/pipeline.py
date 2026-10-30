@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import call_memory, call_queue, card_support, gate, two_parts
+from . import call_memory, call_queue, release_fold, card_support, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_press_release
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -1105,6 +1105,9 @@ def period_mixups(out: Pass2Output, tagged: "xbrl_fast_path.XbrlResult | None", 
     return list(dict.fromkeys(issues))
 
 
+# the headline of a company's press, media, investor or earnings release (RESULTS_PRESS_RELEASE)
+_PRESS_RELEASE = re.compile(r"\b(?:press|media|investor|earnings|results)\s+release\b", re.I)
+RELEASE_TEXT_CHARS = 12000   # how much of a release is added to its results card's text
 _RESULTS_STATEMENT = re.compile(r"statement of (?:standalone |consolidated )?(?:un-?)?audited\b.{0,80}?financial results", re.I | re.S)
 # A board outcome whose covering letter submits the results, the statement itself far down the file: Atul's outcome put
 # the buyback's terms first and its statement at character 34,452, with the XBRL filed separately, so it was a
@@ -3031,6 +3034,20 @@ class Pipeline:
                 self._superseding[filing.news_id] = (later, quarter)
         return None
 
+    def _fold_release(self, filing: Filing, results_id: str, text: str, tagged, doc) -> bool:
+        """RESULTS_PRESS_RELEASE (TODO 135): a press or investor release of a quarter whose results card exists is no second card,
+        but its words are not lost: the text waits here for the card's re-run (event_catchup.release_catch_up adds it to that
+        card's text) and the release is queued for call memory, which reads it like a deck. False (nothing kept, today's
+        duplicate) with the switch off, for a filing that is not a release, or for one that carries a statement or a file."""
+        if not results_press_release() or tagged or not _PRESS_RELEASE.search(f"{filing.headline or ''} {filing.subject or ''}") \
+                or _RESULTS_STATEMENT.search(text[:20000]) or not text.strip():
+            return False
+        release_fold.add(self.sink, results_id, {"news_id": filing.news_id, "date": str(filing.filing_date)[:10],
+                                                 "text": text[:RELEASE_TEXT_CHARS]})
+        log.info("%s is a results press release; its text joins the card of %s (TODO 135)", filing.news_id, results_id)
+        self._call_memory_step(filing, None, {}, text, "")
+        return True
+
     def _supersede(self, filing: Filing, outcome: Outcome) -> list[Outcome]:
         """The later documents of a results quarter that had its card, made duplicates of this earlier filing (D20).
         Only once this filing's card is published: a quarter never loses its only card to a failed or held one."""
@@ -3568,8 +3585,10 @@ class Pipeline:
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1
+                folded = self._fold_release(filing, earlier[0], text, tagged, doc)
                 return Outcome({"news_id": filing.news_id, "status": "DUPLICATE", "event_type": "RESULTS",
-                                "reason": f"duplicate of {earlier[0]} (same results quarter {earlier[1]}, D20)",
+                                "reason": (f"press release folded into the card of {earlier[0]} (same results quarter {earlier[1]}, D20)"
+                                           if folded else f"duplicate of {earlier[0]} (same results quarter {earlier[1]}, D20)"),
                                 "updated_at": now_iso()})
         filed_text = text  # the document alone, before the XBRL table goes in front of it
         if tagged:
@@ -3601,6 +3620,14 @@ class Pipeline:
         # The event's own structured filing: amounts, parties, dates and stage as exact fields (PLAN 18 part 3)
         if events_table:
             text = events_table + "\n\n" + text
+        if event_type == "RESULTS":
+            # kept until the card is re-made (event_catchup.release_catch_up then clears it)
+            releases = release_fold.pending(self.sink).get(filing.news_id, []) if results_press_release() else []
+            if releases:
+                # RESULTS_PRESS_RELEASE: the company's release of this quarter, for its words only; the figures stay the file's
+                text += ("\n\nCompany press release filed with these results (use it only for management commentary, one-offs, "
+                         "segment notes, order wins and guidance; the results figures come from the exchange file above):\n"
+                         + "\n\n".join(r["text"] for r in releases)[:release_fold.MAX_CHARS])
         # Memory as the model sees it: the periods this filing prints withheld (its own columns win, restated or not)
         # and the items that are probably this same event marked. Code reads memory's figures from `full_view`.
         printed = set()
@@ -4548,6 +4575,9 @@ class Pipeline:
                     caught = event_catchup.results_catch_up(
                         self, min(deadline, max(live_deadline, time.monotonic() + RESULTS_CATCH_UP_S)))
                     log.info("results XBRL catch-up: %s", json.dumps(caught))
+                    if results_press_release():   # RESULTS_PRESS_RELEASE (TODO 135)
+                        log.info("press releases joined to their results cards: %s",
+                                 json.dumps(event_catchup.release_catch_up(self, min(deadline, live_deadline + RESULTS_CATCH_UP_S))))
                     fresh()
                 if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
                     caught = event_catchup.catch_up(self, live_deadline)

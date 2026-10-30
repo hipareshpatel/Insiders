@@ -1311,3 +1311,99 @@ def test_d20_finds_a_cards_quarter_from_its_timeline_when_memory_holds_none_of_i
     pipeline._results_quarters.clear()   # a later run: only memory knows the quarter has its card
     two = pipeline.analyze(again.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert two.update["status"] == "DUPLICATE" and "q-1" in two.update["reason"]
+
+
+RELEASE_TEXT = "Press release: Q2 FY27 highlights. The CEO said the new Kolkata plant order of Rs 40 crore was won in October."
+
+
+def _release_setup(settings):
+    from dataclasses import replace
+
+    settings = replace(settings, one_card_per_results_quarter=True, workers=1, second_opinion=False)
+    now = now_ist() - timedelta(hours=3)
+    statement = _filing("r-1", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    release = _filing("r-2", "Press release on the results", now + timedelta(minutes=20), "Result")
+    pdfs = {statement.pdf_url: _pdf(RESULT_TEXT), release.pdf_url: _pdf(RELEASE_TEXT)}
+    pipeline, sink, fake = build(settings, [statement, release], pdfs,
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)] * 4, "glm-4.5-flash": [json.dumps(PASS2)] * 4})
+    tag = lambda f: f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"})  # noqa: E731
+    return pipeline, sink, fake, tag(statement), tag(release)
+
+
+def test_a_press_release_beside_the_statement_joins_its_card_with_the_switch_on(settings, monkeypatch):
+    """RESULTS_PRESS_RELEASE (TODO 135): the release is no second card; its text goes into the quarter's card when read again."""
+    monkeypatch.setenv("RESULTS_PRESS_RELEASE", "1")
+    pipeline, sink, fake, statement, release = _release_setup(settings)
+    pipeline._commit([pipeline.analyze(statement)])
+    out = pipeline.analyze(release)
+    assert out.update["status"] == "DUPLICATE" and "press release folded into the card of r-1" in out.update["reason"]
+    from bse_intel import release_fold
+    assert "Kolkata plant order" in release_fold.pending(sink)["r-1"][0]["text"]
+    pipeline._results_quarters.clear()
+    fake.calls.clear()
+    again = pipeline.analyze(statement)   # the card's re-run (event_catchup.release_catch_up processes it the same way)
+    assert again.update["status"] == "ANALYZED" and "r-1" in release_fold.pending(sink)   # kept until the card is re-made and committed
+    assert any("Kolkata plant order" in json.dumps(c["messages"]) for c in fake.calls)
+    pipeline._commit([out, again])
+    assert [r[0] for r in sink._db.execute("SELECT news_id FROM cards")] == ["r-1"]
+
+
+def test_a_press_release_is_a_plain_duplicate_with_the_switch_off(settings, monkeypatch):
+    from bse_intel import release_fold
+    monkeypatch.delenv("RESULTS_PRESS_RELEASE", raising=False)
+    pipeline, sink, fake, statement, release = _release_setup(settings)
+    pipeline._commit([pipeline.analyze(statement)])
+    out = pipeline.analyze(release)
+    assert out.update["status"] == "DUPLICATE" and out.update["reason"] == "duplicate of r-1 (same results quarter Q2FY27, D20)"
+    assert not release_fold.pending(sink)
+
+
+def test_a_press_release_for_a_quarter_with_no_card_is_read_as_today(settings, monkeypatch):
+    from bse_intel import release_fold
+    monkeypatch.setenv("RESULTS_PRESS_RELEASE", "1")
+    pipeline, sink, fake, statement, release = _release_setup(settings)
+    out = pipeline.analyze(release)
+    assert out.update["status"] != "DUPLICATE" and not release_fold.pending(sink)
+
+
+def test_release_catch_up_re_makes_the_card_with_the_release_and_clears_the_entry(settings, monkeypatch):
+    """TODO 135 end to end: the fold is in the kv store; release_catch_up flips the card to PENDING, processes it alone, and
+    clears the entry only once the card is re-made. The entry survives a run that never gets to it."""
+    from bse_intel import event_catchup, release_fold
+
+    monkeypatch.setenv("RESULTS_PRESS_RELEASE", "1")
+    pipeline, sink, fake, statement, release = _release_setup(settings)
+    pipeline.bse.filings = [pipeline.bse.filings[0]]   # discovery sees the statement only
+    pipeline.discover(now_ist().date())
+    pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 60, bulk=False)
+    assert rows(sink, "select status from filings where news_id = 'r-1'")[0]["status"] == "ANALYZED"
+    out = pipeline.analyze(release)
+    pipeline._commit([out])
+    assert release_fold.pending(sink).keys() == {"r-1"}
+    # a run with no time left leaves the entry for the next one
+    assert event_catchup.release_catch_up(pipeline, time.monotonic() - 1) == {"rerun": {}}
+    assert release_fold.pending(sink).keys() == {"r-1"}
+    # the next run: a new pipeline over the same store applies it
+    pipeline._results_quarters.clear()
+    fake.calls.clear()
+    report = event_catchup.release_catch_up(pipeline, time.monotonic() + 60)
+    assert report["rerun"] == {"r-1": "ANALYZED"}
+    assert any("Kolkata plant order" in json.dumps(c["messages"]) for c in fake.calls)
+    assert release_fold.pending(sink) == {}
+    assert [r[0] for r in sink._db.execute("SELECT news_id FROM cards")] == ["r-1"]
+
+
+def test_a_folded_release_is_given_up_after_three_unfinished_re_runs_and_never_added_again(settings):
+    """Review of TODO 135: a card whose re-run never ends ANALYZED must not be re-run every 15 minutes for ever, and a
+    release already settled is not folded in again when it is requeued."""
+    from bse_intel import release_fold
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    release_fold.add(sink, "r-1", {"news_id": "p-1", "date": "2026-10-30", "text": "x"})
+    assert release_fold.tried(sink, ["r-1"]) == [] and release_fold.tried(sink, ["r-1"]) == []
+    assert release_fold.tried(sink, ["r-1"]) == ["r-1"]
+    release_fold.clear(sink, ["r-1"])
+    assert release_fold.pending(sink) == {}
+    release_fold.add(sink, "r-1", {"news_id": "p-1", "date": "2026-10-30", "text": "x"})
+    assert release_fold.pending(sink) == {}

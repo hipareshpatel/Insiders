@@ -628,7 +628,8 @@ def test_a_store_that_fails_or_holds_a_damaged_file_still_downloads_and_locates(
         nse = FakeNse([filing(url)], {url: make_pdf()})
         out = xk.run(nse, sink, [("1", "X")], limit=1)
         assert nse.fetches == [url] and out["statuses"]["found_unique"] == 8
-        assert sink.tried == [("get", _store_key(url)), ("put", _store_key(url))]
+        # a store whose get fails is not asked again this run (its put is skipped); one whose put fails is tried once
+        assert sink.tried == ([("get", _store_key(url))] if fail_get else [("get", _store_key(url)), ("put", _store_key(url))])
     sink = Broken({"1": full_dossier()}, False, False)
     sink.saved[_store_key(url)] = b"not a gzip"                            # a damaged copy is downloaded again and replaced
     nse = FakeNse([filing(url)], {url: make_pdf()})
@@ -913,3 +914,18 @@ def test_store_kept_pdfs_stores_the_new_ones_and_skips_the_held_ones(tmp_path):
     sink.saved[_store_key(held_url)] = b"already there"
     sink.fail = True
     assert xk.store_kept_pdfs(sink, str(tmp_path)) == {"stored": 0, "already_held": 1, "failed": 1, "skipped": 2}
+
+
+def test_an_error_page_served_as_the_pdf_is_never_kept_and_a_stored_non_pdf_is_downloaded_again():
+    # review of the PDF store: an HTML page (an Akamai answer) or a ZIP served with 200 must not become the stored "PDF"
+    import gzip
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    sink = FakeSink({"1": full_dossier()})
+    nse = FakeNse([filing(url)], {url: b"<html>Access Denied</html>"})
+    xk.run(nse, sink, [("1", "X")], limit=1)
+    assert _store_key(url) not in sink.saved
+    sink.saved[_store_key(url)] = gzip.compress(b"<html>old error page</html>")    # kept by an older run: a miss
+    nse = FakeNse([filing(url)], {url: make_pdf()})
+    out = xk.run(nse, sink, [("1", "X")], limit=1)
+    assert nse.fetches == [url] and out["statuses"]["found_unique"] == 8
+    assert gzip.decompress(sink.saved[_store_key(url)]).startswith(b"%PDF")

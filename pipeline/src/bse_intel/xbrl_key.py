@@ -1501,29 +1501,35 @@ def stored_payload(src, store, url: str) -> tuple[bytes | None, str]:
     import gzip
 
     from .pdf_readers import pdf_key
-    if store is None:
+    if store is None or _STORE_DOWN.get(id(store)):
         return src.payload(url)
     key = f"{PDF_STORE}{pdf_key(url)}.pdf.gz"
     try:
         held = store.get_object(key)
     except Exception as exc:   # noqa: BLE001
-        log.warning("xbrl-key: the PDF store did not answer for %s (%s); downloading", key, type(exc).__name__)
-        held = None
+        log.warning("xbrl-key: the PDF store did not answer for %s (%s); downloading, and the store is not asked again this "
+                    "run", key, type(exc).__name__)
+        _STORE_DOWN[id(store)] = True      # a store that is down costs its retries once a run, not twice a PDF (review)
+        return src.payload(url)
     if held:
         try:
             data = gzip.decompress(held)
         except Exception:   # noqa: BLE001 - not gzip (OSError), cut short (EOFError) or damaged (zlib.error)
-            log.warning("xbrl-key: %s in the store is not a whole gzip; downloading again", key)
             data = b""
-        if data:
+        if data.startswith(b"%PDF"):
             return data, ""
+        log.warning("xbrl-key: %s in the store is not a whole PDF; downloading again", key)
     data, why = src.payload(url)
-    if data:
+    if data and data.startswith(b"%PDF"):  # an error page or a ZIP served as the file is never kept as the PDF (review)
         try:
             store.put_object(key, gzip.compress(data), "application/gzip")
         except Exception as exc:   # noqa: BLE001
-            log.warning("xbrl-key: the PDF store did not keep %s (%s)", key, type(exc).__name__)
+            log.warning("xbrl-key: the PDF store did not keep %s (%s); not asked again this run", key, type(exc).__name__)
+            _STORE_DOWN[id(store)] = True
     return data, why
+
+
+_STORE_DOWN: dict[int, bool] = {}       # stores that failed this run (by object id), asked no more
 
 
 _KEPT_NAME = re.compile(r"^[0-9a-f]{16}\.pdf$")
@@ -1699,6 +1705,7 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
     from .pdf_referee import Sources
 
     src = src or Sources(nse, ocr=False)
+    _STORE_DOWN.clear()                  # a store that failed in an earlier run in this process is asked again
     kept, stale = drop_stale(saved or [])
     if stale:
         log.warning("xbrl-key: %d saved rows of another locator version (not %s) dropped; their filings are read again",

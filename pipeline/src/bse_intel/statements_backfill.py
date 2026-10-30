@@ -148,6 +148,55 @@ def drop_empty_balance(dossier: dict) -> int:
     return dropped
 
 
+_MONTHS = {m: i for i, m in enumerate(("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"), 1)}
+
+
+def _balance_end(period) -> str | None:
+    """A snapshot's date: Q4FY26 -> 2026-03-31 (the file's periods), "Mar-2026" -> 2026-03 (an AI reading's)."""
+    if not isinstance(period, str):
+        return None
+    if (end := quarter_end(period)) is not None:
+        return end.isoformat()[:7]
+    m = re.fullmatch(r"([A-Za-z]{3})[a-z]*[- ](\d{4})", period.strip())
+    if m and m.group(1).lower() in _MONTHS:
+        return f"{m.group(2)}-{_MONTHS[m.group(1).lower()]:02d}"
+    return None
+
+
+def _from_file(e: dict) -> bool:
+    lab = e.get("lab") if isinstance(e.get("lab"), dict) else {}
+    return lab.get("by") == "file" or str(e.get("source_news_id") or "").startswith("xbrl:")
+
+
+def drop_file_covered_balance(dossier: dict) -> tuple[int, int]:
+    """Balance-sheet snapshots an AI reading wrote for a date the exchange file also covers, out of memory (main and
+    standalone lists, in place): SBI's "Mar-2026" net worth 4,72,895 Cr (results PDF) and 5,43,519 Cr (call) beside the file's
+    Q4FY26 6,14,899 Cr (owner, 30 Oct 2026: yes). Dropped only when the file's snapshot of that month holds every figure the
+    reading holds, so no figure is lost; (dropped, kept because the reading has a figure the file lacks)."""
+    def figures(e) -> set[str]:
+        return {k for k, v in e.items() if k.endswith("_cr") and isinstance(v, (int, float)) and not isinstance(v, bool)}
+    dropped = kept_extra = 0
+    for holder in (dossier, dossier.get("standalone") if isinstance(dossier.get("standalone"), dict) else None):
+        if holder is None or not isinstance(holder.get("balance_sheet"), list):
+            continue
+        filed: dict[str, set[str]] = {}
+        for e in holder["balance_sheet"]:
+            if isinstance(e, dict) and _from_file(e) and (end := _balance_end(e.get("period"))):
+                filed.setdefault(end, set()).update(figures(e))
+        kept = []
+        for e in holder["balance_sheet"]:
+            end = _balance_end(e.get("period")) if isinstance(e, dict) and not _from_file(e) else None
+            if end in filed:
+                if figures(e) <= filed[end]:
+                    dropped += 1
+                    continue
+                kept_extra += 1
+            kept.append(e)
+        if len(kept) != len(holder["balance_sheet"]):
+            holder["balance_sheet"] = kept
+    return dropped, kept_extra
+
+
 def fill(dossier: dict, entries: list[dict]) -> int:
     """Add the entries memory does not hold yet (in place); the number added."""
     have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
@@ -172,7 +221,8 @@ def _prepare(sink, scrip: str, at: str):
     entries, left = company_entries(cf, merged, at)
     segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
     stubs = drop_empty_balance(merged)
-    return read, merged, entries, left, segments_added, stubs
+    covered, extra = drop_file_covered_balance(merged)
+    return read, merged, entries, left, segments_added, stubs, covered, extra
 
 
 def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exception | None]:
@@ -204,7 +254,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
     todo = [s for s in sorted(scrips) if s > after][:limit]
     backup = RunBackup(sink, "statements-backfill") if apply else None
     out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
-           "no_facts": 0, "segments": 0, "balance_stubs": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
+           "no_facts": 0, "segments": 0, "balance_stubs": 0, "balance_covered": 0, "balance_kept_extra": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
 
@@ -226,8 +276,10 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
             out["no_facts"] += 1
             plan.append((scrip, 0, None))
             continue
-        read, merged, entries, left, segments_added, stubs = ready
+        read, merged, entries, left, segments_added, stubs, covered, extra = ready
         out["balance_stubs"] += stubs
+        out["balance_covered"] += covered
+        out["balance_kept_extra"] += extra
         out["left_out"] += [f"{scrip} {x}" for x in left]
         have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
         for e in entries:
@@ -270,7 +322,9 @@ def render(o: dict) -> str:
              f" in {o['written'] if o['apply'] else '-'} dossiers; {o['no_facts']} without stored facts; last {o['last']};"
              f" more left: {o['more']}",
              "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows and extras (audit, cash-flow detail, related parties, ratios) {o['segments']}"
-             f"; empty balance-sheet snapshots dropped {o.get('balance_stubs', 0)}",
+             f"; empty balance-sheet snapshots dropped {o.get('balance_stubs', 0)}"
+             f"; AI balance-sheet snapshots the file covers dropped {o.get('balance_covered', 0)}"
+             f" (kept, a figure the file lacks: {o.get('balance_kept_extra', 0)})",
              f"  left out ({len(o['left_out'])}):"] + [f"    {x}" for x in o["left_out"][:60]]
     if o["backup"]:
         lines.append(f"backup: {o['backup']['prefix']} ({o['backup']['dossiers']} dossiers); undo with restore --backup "

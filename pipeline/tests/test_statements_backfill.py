@@ -136,3 +136,24 @@ def test_empty_balance_snapshots_are_dropped_and_counted_in_a_dry_run(settings):
     sb.run(sink, ["500001", "522261"], apply=True)
     after = sink.get_dossier("522261")
     assert [e["period"] for e in after["balance_sheet"]] == ["Q4FY24"] and after["standalone"]["balance_sheet"] == []
+
+
+def test_ai_balance_snapshots_the_file_covers_are_dropped_unless_they_hold_a_figure_the_file_lacks(settings):
+    """Owner, 30 Oct 2026: yes. SBI's "Mar-2026" net worth from its results PDF and its call beside the file's Q4FY26."""
+    sink = _sink(settings)
+    d = sink.get_dossier("522261")
+    filed = {"period": "Q4FY26", "net_worth_cr": 614899.15, "deposits_cr": 5.0, "source_news_id": "xbrl:res:522261:Q4FY26",
+             "lab": {"by": "file"}}
+    d["balance_sheet"] = [
+        {"period": "Mar-2026", "net_worth_cr": 472894.5, "source_news_id": "nse-1", "lab": {"by": "unknown"}},
+        {"period": "Mar-2026", "net_worth_cr": 543519.0, "source_news_id": "nse-2", "lab": {"by": "ai", "doc": "call"}},
+        {"period": "Mar-2026", "net_worth_cr": 1.0, "gold_cr": 2.0, "source_news_id": "nse-3", "lab": {"by": "ai"}},
+        {"period": "Sep-2026", "net_worth_cr": 1.0, "source_news_id": "nse-4", "lab": {"by": "ai"}},   # no file snapshot yet
+        filed]
+    sink.put_dossier("522261", d)
+    dry = sb.run(sink, ["500001", "522261"])
+    assert (dry["balance_covered"], dry["balance_kept_extra"]) == (2, 1)
+    assert len(sink.get_dossier("522261")["balance_sheet"]) == 5
+    sb.run(sink, ["500001", "522261"], apply=True)
+    assert [e["source_news_id"] for e in sink.get_dossier("522261")["balance_sheet"]] == ["nse-3", "nse-4", filed["source_news_id"]]
+    assert sb._balance_end("Q4FY26") == sb._balance_end("Mar-2026") == "2026-03" and sb._balance_end("FY26") is None

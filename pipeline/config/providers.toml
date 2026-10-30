@@ -729,6 +729,47 @@ extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
 
+# Listed on our keys on 30 Oct 2026 (providers check 41059917128), owner: "which can we use?". Kimi K2.6 answered 404 on
+# NVIDIA on 19 Oct; MiniMax M3.1 Flash gave 16 empty answers through OpenRouter in round 6; Qwen 3.8 27B is a Groq preview.
+# Trial only: one tiny request each first, then the TODO 142 card grid on stored filings, blind-scored.
+[[routes.trial_new]]
+provider = "nvidia"
+model = "moonshotai/kimi-k2.6"
+spare = true
+timeout_s = 150
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "minimaxai/minimax-m3.1-flash"
+spare = true
+timeout_s = 150
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "groq"
+model = "qwen/qwen3.8-27b"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 30, tpm = 6000 }
+
+[[routes.trial_new]]
+provider = "groq"
+model = "openai/gpt-oss-120b"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 30, tpm = 8000 }
+
 # Mistral Medium: 20k tokens/min and 1 request/s (Limits page, 22 Oct 2026). With no tpm set the gateway sent prompts
 # over 20k and every one came back 429; now a prompt that cannot fit goes straight to the next entry.
 [[routes.trial_new]]

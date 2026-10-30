@@ -25,6 +25,30 @@ audit key), a revised file replacing the same period and basis, the newest ``MAX
     shareholders' fund NPAs, and the ones xbrl.RATIO_TAGS reads for cards. Values are AS FILED: fractions stay fractions (0.1973 is
     19.73%), the solvency ratio is as the filer wrote it (1.8 is 180%; filers disagree on its scale), money is in crore.
 
+The second group (owner, 30 Oct 2026: yes), the same way (one entry per period and basis, a template's all-zero filler never stored):
+
+``oci`` (quarter): ``oci_net_cr`` (OtherComprehensiveIncomeNetOfTaxes, else OtherComprehensiveIncome), ``not_reclassified_cr`` /
+    ``reclassified_cr`` (AmountOfItemThatWill[Not]BeReclassifiedToProfitAndLoss) and their tax (IncomeTaxRelatingToIt[em]sThatWill[Not]
+    BeReclassifiedToProfitOrLoss; older taxonomies misspell it "Itmes"), ``profit_cr`` (ProfitLossForPeriod), ``total_comprehensive_cr``
+    (ComprehensiveIncomeForThePeriod) with the owners' and minorities' parts, and ``items`` one per ItemsThat[Will|WillNot]BeReclassified
+    ToProfitAndLossAxis member (group, description, amount_cr).
+``discontinued`` (quarter): ProfitLossFromDiscontinuedOperationsBeforeTax, TaxExpenseOfDiscontinuedOperations,
+    ProfitLossFromDiscontinuedOperationsAfterTax, with ProfitLossForPeriodFromContinuingOperations (continuing PAT) and ProfitLossForPeriod;
+    stored only when a discontinued figure is not 0.
+``segment_balance`` (quarter): the segment note's assets and liabilities, one row per ReportableSegmentAssetsAxis /
+    ReportableSegmentLiabilitiesAxis member (SegmentAssets, SegmentLiabilities, named by its DescriptionOfReportableSegment, so the row
+    matches segments.py's revenue rows by name), and the file's totals (SegmentAssets, SegmentLiabilities, NetSegmentAssets,
+    NetSegmentLiabilities).
+``dividends`` (quarter): ``face_value`` (FaceValueOfEquityShareCapital, rupees a share) and the amounts of FinalDividend and InterimDividend
+    (crore) where a filer tags them (an insurer's template; the fixtures hold them as 0, which is never stored).
+``kmp_pay`` (annual report): one row per KeyManagerialPersonnelsAndDirectorsAxis member: name, designation, pay_cr
+    (KeyManagerialPersonnelOrDirectorRemuneration, else GrossSalaryToKeyManagerialPersonnelOrDirector); the totals ManagerialRemuneration
+    and RemunerationToDirectors when not 0 (Kanoria files them as 0 beside real rows).
+``contingent_liabilities`` (annual report): ``has_contingent`` (WhetherThereAreAnyContingentLiabilities), ``total_cr`` (ContingentLiabilities,
+    when not 0) and ``classes`` one per ClassesOfContingentLiabilitiesAxis member with a description and an amount at the year end
+    (DescriptionOfNatureOfObligationContingentLiabilities, EstimatedFinancialEffectOfContingentLiabilities); a class with no description
+    of its own is a subtotal, as annual_xbrl reads it, and is left out.
+
 Nothing here changes a figure the cards read. A failure never fails a filing (statements.from_file)."""
 
 from __future__ import annotations
@@ -40,12 +64,15 @@ from .periods import quarter_index
 log = logging.getLogger(__name__)
 
 AUDIT, CASH_FLOW, RELATED, RATIOS = "audit", "cash_flow_detail", "related_parties", "fin_ratios"
-KEYS = (AUDIT, CASH_FLOW, RELATED, RATIOS)
-MAX_ENTRIES = {AUDIT: 60, CASH_FLOW: 16, RELATED: 24, RATIOS: 60}   # cash flow ~6 KB an entry: 8 years of half and full years, one basis
+OCI, DISCONTINUED, SEGMENT_BALANCE, DIVIDENDS, KMP_PAY, CONTINGENT = (
+    "oci", "discontinued", "segment_balance", "dividends", "kmp_pay", "contingent_liabilities")
+KEYS = (AUDIT, CASH_FLOW, RELATED, RATIOS, OCI, DISCONTINUED, SEGMENT_BALANCE, DIVIDENDS, KMP_PAY, CONTINGENT)
+MAX_ENTRIES = {AUDIT: 60, CASH_FLOW: 16, RELATED: 24, RATIOS: 60, OCI: 60, DISCONTINUED: 60, SEGMENT_BALANCE: 60, DIVIDENDS: 60,
+               KMP_PAY: 16, CONTINGENT: 16}   # cash flow ~6 KB an entry: 8 years of half and full years, one basis
 MAX_ITEMS = 60          # related-party transactions of one quarter; the largest first
 MAX_PARTIES = 80        # related parties of one annual report
 CLAUSE_MAX = 3000       # characters of an auditor's clause kept in the dossier (the facts doc holds up to xbrl_facts.FULL_TEXT_MAX)
-MONEY_KEYS = (CASH_FLOW, RELATED, RATIOS)     # a quarter memory holds as unit-slipped (scale_held) gets none of these
+MONEY_KEYS = (CASH_FLOW, RELATED, RATIOS, OCI, DISCONTINUED, SEGMENT_BALANCE, DIVIDENDS, KMP_PAY, CONTINGENT)    # a quarter memory holds as unit-slipped (scale_held) gets none of these
 
 # a line of the cash-flow statement, by how the taxonomies name it (Ind AS results, banks, insurers; the annual report's file)
 CASH_FLOW_NAME = re.compile(
@@ -304,6 +331,224 @@ def _ratios(doc: dict, end: date) -> dict | None:
     return {"values": values} if values else None
 
 
+# --- the second group: OCI, discontinued operations, segment balances, dividends, KMP pay, contingent liabilities ----------
+
+OCI_ELEMENTS = {
+    "OtherComprehensiveIncomeNetOfTaxes": "oci_net_cr", "OtherComprehensiveIncome": "oci_net_alt_cr",
+    "AmountOfItemThatWillNotBeReclassifiedToProfitAndLoss": "not_reclassified_cr",
+    "AmountOfItemThatWillBeReclassifiedToProfitAndLoss": "reclassified_cr",
+    "IncomeTaxRelatingToItemsThatWillNotBeReclassifiedToProfitOrLoss": "tax_not_reclassified_cr",
+    "IncomeTaxRelatingToItmesThatWillNotBeReclassifiedToProfitOrLoss": "tax_not_reclassified_cr",
+    "IncomeTaxRelatingToItemsThatWillBeReclassifiedToProfitOrLoss": "tax_reclassified_cr",
+    "IncomeTaxRelatingToItmesThatWillBeReclassifiedToProfitOrLoss": "tax_reclassified_cr",
+    "ProfitLossForPeriod": "profit_cr", "ComprehensiveIncomeForThePeriod": "total_comprehensive_cr",
+    "ComprehensiveIncomeForThePeriodAttributableToOwnersOfParent": "total_comprehensive_owners_cr",
+    "ComprehensiveIncomeForThePeriodAttributableToOwnersOfParentNonControllingInterests": "total_comprehensive_nci_cr"}
+DISCONTINUED_ELEMENTS = {
+    "ProfitLossFromDiscontinuedOperationsBeforeTax": "before_tax_cr", "TaxExpenseOfDiscontinuedOperations": "tax_cr",
+    "ProfitLossFromDiscontinuedOperationsAfterTax": "after_tax_cr", "ProfitLossForPeriodFromContinuingOperations": "continuing_profit_cr",
+    "ProfitLossForPeriod": "profit_cr"}
+DIVIDEND_ELEMENTS = {"FaceValueOfEquityShareCapital": "face_value", "FinalDividend": "final_cr", "InterimDividend": "interim_cr"}
+SEGMENT_TOTALS = {"SegmentAssets": "assets_cr", "SegmentLiabilities": "liabilities_cr", "NetSegmentAssets": "net_assets_cr",
+                  "NetSegmentLiabilities": "net_liabilities_cr"}
+MAX_OCI_ITEMS = 20
+MAX_SEGMENTS = 40
+MAX_KMP = 40
+MAX_CLASSES = 40
+
+
+def _quarter_values(facts, names: dict, end: date) -> dict:
+    """The undimensioned numbers of ``names`` (element -> key) for the quarter ending ``end``: its 3-month fact, else (a half-yearly
+    filer) the one ending then. Money in crore; other numbers (a face value) as filed."""
+    quarter: dict[str, float] = {}
+    other: dict[str, float] = {}
+    for el, ctx_id, unit, value, _ in facts.rows:
+        if el not in names or isinstance(value, str):
+            continue
+        ctx = facts.contexts.get(ctx_id) or {}
+        if ctx.get("d") or ctx.get("e") != end.isoformat():
+            continue
+        (quarter if ctx.get("m") == 3 else other).setdefault(names[el], _cr(value) if facts._is_money(unit) else value)
+    return {**other, **quarter}
+
+
+def _current(members) -> set:
+    """The members of the file's own column. A legacy results file (Titan Q2FY24) files a segment or an OCI item once for the quarter
+    (member "OneReportableSegmentAssets01Member") and again under a "Four" prefix with another figure (the year-ago column) in a context
+    of the same end date; the "One" members are the quarter's. A taxonomy with no such prefix keeps every member."""
+    members = set(members)
+    ones = {m for m in members if m.startswith("One")}
+    return ones or members
+
+
+def _oci(doc: dict, end: date) -> dict | None:
+    facts = xbrl_facts.Facts(doc)
+    values = _quarter_values(facts, OCI_ELEMENTS, end)
+    alt = values.pop("oci_net_alt_cr", None)
+    if "oci_net_cr" not in values and alt is not None:
+        values["oci_net_cr"] = alt
+    if not values.get("total_comprehensive_owners_cr"):    # a 0 beside a real total is the template's filler (Q3FY24): both parts go
+        values.pop("total_comprehensive_owners_cr", None)
+        values.pop("total_comprehensive_nci_cr", None)
+    items: dict[str, dict] = {}
+    for el, ctx_id, unit, value, _ in facts.rows:
+        ctx = facts.contexts.get(ctx_id) or {}
+        dims = ctx.get("d") or {}
+        if len(dims) != 1 or ctx.get("e") != end.isoformat() or ctx.get("m") != 3:
+            continue
+        (axis, member), = dims.items()
+        axis = axis.rsplit(":", 1)[-1]
+        if axis == "ItemsThatWillNotBeReclassifiedToProfitAndLossAxis":
+            group = "not_reclassified"
+        elif axis == "ItemsThatWillBeReclassifiedToProfitAndLossAxis":
+            group = "reclassified"
+        else:
+            continue
+        row = items.setdefault(f"{group}:{member}", {"group": group})
+        if el.startswith("DescriptionOfItemThatWill") and isinstance(value, str) and value.strip():
+            row.setdefault("description", value.strip()[:RPT_TEXT_MAX])
+        elif el.startswith("AmountOfItemThatWill") and not isinstance(value, str) and facts._is_money(unit):
+            row.setdefault("amount_cr", _cr(value))
+    keep = _current(k.split(":", 1)[1] for k in items)
+    rows = [r for k, r in items.items() if r.get("amount_cr") and k.split(":", 1)[1] in keep]
+    if not any(values.values()) and not rows:
+        return None            # every figure 0: the template's filler
+    out: dict = {"values": values}
+    if rows:
+        out["items"] = rows[:MAX_OCI_ITEMS]
+    return out
+
+
+def _discontinued(doc: dict, end: date) -> dict | None:
+    values = _quarter_values(xbrl_facts.Facts(doc), DISCONTINUED_ELEMENTS, end)
+    if not any(values.get(k) for k in ("before_tax_cr", "tax_cr", "after_tax_cr")):
+        return None            # no discontinued operation: the template's 0 in every file
+    return {"values": values}
+
+
+def _segment_balance(doc: dict, end: date) -> dict | None:
+    facts = xbrl_facts.Facts(doc)
+    iso = end.isoformat()
+    names: dict[str, str] = {}
+    amounts: dict[tuple[str, str], float] = {}      # (side, member) -> crore
+    for el, ctx_id, unit, value, _ in facts.rows:
+        ctx = facts.contexts.get(ctx_id) or {}
+        dims = ctx.get("d") or {}
+        if len(dims) != 1 or iso not in (ctx.get("i"), ctx.get("e")):
+            continue
+        (axis, member), = dims.items()
+        axis = axis.rsplit(":", 1)[-1]
+        side = "assets" if axis.endswith("ReportableSegmentAssetsAxis") else "liabilities" if axis.endswith("ReportableSegmentLiabilitiesAxis") else None
+        if side is None:
+            continue
+        if el == "DescriptionOfReportableSegment" and isinstance(value, str) and value.strip():
+            names.setdefault(f"{side}:{member}", value.strip())
+        elif el == ("SegmentAssets" if side == "assets" else "SegmentLiabilities") and not isinstance(value, str) and facts._is_money(unit):
+            amounts.setdefault((side, member), _cr(value))
+    rows: dict[str, dict] = {}
+    for side in ("assets", "liabilities"):
+        keep = _current(m for s, m in amounts if s == side)
+        amounts = {k: v for k, v in amounts.items() if k[0] != side or k[1] in keep}
+    for (side, member), amount in amounts.items():
+        name = names.get(f"{side}:{member}") or "Segment " + ("".join(ch for ch in member if ch.isdigit()) or "?")
+        rows.setdefault(name, {"segment": name})[f"{side}_cr"] = amount
+    rows = {n: r for n, r in rows.items() if r.get("assets_cr") or r.get("liabilities_cr")}
+    totals: dict[str, float] = {}
+    for el, ctx_id, unit, value, _ in facts.rows:
+        ctx = facts.contexts.get(ctx_id) or {}
+        if el in SEGMENT_TOTALS and not ctx.get("d") and not isinstance(value, str) and facts._is_money(unit) \
+                and iso in (ctx.get("i"), ctx.get("e")):
+            totals.setdefault(SEGMENT_TOTALS[el], _cr(value))
+    if not rows and not any(totals.values()):
+        return None
+    out: dict = {"n_segments": len(rows), "segments": sorted(rows.values(), key=lambda r: -(r.get("assets_cr") or 0))[:MAX_SEGMENTS]}
+    if any(totals.values()):
+        out["totals"] = totals
+    return out
+
+
+def _dividends(doc: dict, end: date) -> dict | None:
+    values = _quarter_values(xbrl_facts.Facts(doc), DIVIDEND_ELEMENTS, end)
+    return {"values": values} if any(values.values()) else None
+
+
+def _kmp_pay(doc: dict, end: date) -> dict | None:
+    facts = xbrl_facts.Facts(doc)
+    people: dict[str, dict] = {}
+    totals: dict[str, float] = {}
+    for el, ctx_id, unit, value, _ in facts.rows:
+        ctx = facts.contexts.get(ctx_id) or {}
+        if ctx.get("e") != end.isoformat() or ctx.get("m") != 12:
+            continue
+        dims = ctx.get("d") or {}
+        if not dims:
+            if el in ("ManagerialRemuneration", "RemunerationToDirectors") and not isinstance(value, str) and facts._is_money(unit) and value:
+                totals.setdefault(el, _cr(value))
+            continue
+        if len(dims) != 1 or not next(iter(dims)).endswith("KeyManagerialPersonnelsAndDirectorsAxis"):
+            continue
+        row = people.setdefault(next(iter(dims.values())), {})
+        if isinstance(value, str):
+            if el == "NameOfKeyManagerialPersonnelOrDirector" and value.strip():
+                row.setdefault("name", value.strip()[:RPT_TEXT_MAX])
+            elif el == "DesignationOfKeyManagerialPersonnelOrDirector" and value.strip():
+                row.setdefault("designation", value.strip()[:RPT_TEXT_MAX])
+        elif facts._is_money(unit) and value:
+            if el == "KeyManagerialPersonnelOrDirectorRemuneration":
+                row["pay_cr"] = _cr(value)
+            elif el == "GrossSalaryToKeyManagerialPersonnelOrDirector":
+                row.setdefault("gross_salary_cr", _cr(value))
+    rows = []
+    for member, row in people.items():
+        pay = row.get("pay_cr") or row.get("gross_salary_cr")
+        if pay:
+            rows.append({"name": row.get("name") or member, "designation": row.get("designation"), "pay_cr": pay})
+    if not rows and not totals:
+        return None
+    rows.sort(key=lambda r: -r["pay_cr"])
+    out: dict = {"n_people": len(rows), "people": rows[:MAX_KMP]}
+    if totals:
+        out["totals"] = totals
+    return out
+
+
+def _contingent(doc: dict, end: date) -> dict | None:
+    facts = xbrl_facts.Facts(doc)
+    iso = end.isoformat()
+    flag = total = None
+    described: dict[str, str] = {}
+    amounts: dict[str, float] = {}
+    for el, ctx_id, unit, value, _ in facts.rows:
+        ctx = facts.contexts.get(ctx_id) or {}
+        dims = ctx.get("d") or {}
+        if not dims:
+            if el == "WhetherThereAreAnyContingentLiabilities" and _live(facts, ctx_id, end, 12):
+                flag = _bool(value)
+            elif el == "ContingentLiabilities" and ctx.get("i") == iso and not isinstance(value, str) and facts._is_money(unit) and value:
+                total = _cr(value)
+            continue
+        if len(dims) != 1 or not next(iter(dims)).endswith("ClassesOfContingentLiabilitiesAxis"):
+            continue
+        member = next(iter(dims.values()))
+        if el == "DescriptionOfNatureOfObligationContingentLiabilities" and isinstance(value, str) and ctx.get("e") == iso:
+            described.setdefault(member, value.strip())
+        elif el == "EstimatedFinancialEffectOfContingentLiabilities" and not isinstance(value, str) and facts._is_money(unit) \
+                and ctx.get("i") == iso and value:
+            amounts.setdefault(member, _cr(value))
+    rows = [{"class": re.sub(r"Member$", "", m), "description": described[m][:RPT_TEXT_MAX], "amount_cr": a}
+            for m, a in amounts.items()
+            if described.get(m) and not re.match(r"(refer\b|na$|nil$|-)", described[m], re.I)]
+    if flag is None and total is None and not rows:
+        return None
+    rows.sort(key=lambda r: -abs(r["amount_cr"]))
+    out: dict = {"n_classes": len(rows), "classes": rows[:MAX_CLASSES]}
+    if flag is not None:
+        out["has_contingent"] = flag
+    if total is not None:
+        out["total_cr"] = total
+    return out
+
+
 # --- the dossier ----------------------------------------------------------------------------------------------------
 
 def read(doc: dict) -> dict[str, tuple[str, dict]]:
@@ -327,6 +572,12 @@ def read(doc: dict) -> dict[str, tuple[str, dict]]:
     ratios = None if annual else _ratios(doc, end)
     if ratios:
         out[RATIOS] = (period, ratios)
+    readers = ((KMP_PAY, _kmp_pay), (CONTINGENT, _contingent)) if annual else \
+        ((OCI, _oci), (DISCONTINUED, _discontinued), (SEGMENT_BALANCE, _segment_balance), (DIVIDENDS, _dividends))
+    for key, reader in readers:
+        found = reader(doc, end)
+        if found:
+            out[key] = (period, {"kind": "annual" if annual else "results", **found})
     return out
 
 

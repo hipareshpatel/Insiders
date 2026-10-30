@@ -261,6 +261,13 @@ def card_consolidated_only() -> bool:
     return _switch("CARD_CONSOLIDATED_ONLY")
 
 
+def memory_file_only() -> bool:
+    """MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using cards
+    data"): a statement line (dossier.STATEMENT_FIGURES) enters memory only from the exchange's own file; a model's reading of
+    a PDF, deck or call is kept on its card and never becomes the company's figure. Read at the call."""
+    return _switch("MEMORY_FILE_ONLY")
+
+
 def card_footer_plausible() -> bool:
     """CARD_FOOTER_PLAUSIBLE (on in config/switches.toml; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
     why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest of the company's own

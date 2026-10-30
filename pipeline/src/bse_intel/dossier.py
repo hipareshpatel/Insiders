@@ -24,7 +24,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from .scoring import calibration
-from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2,
+from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2, memory_file_only,
                        memory_restated, memory_screener, memory_year_check)
 from . import footer_plausible, known_wrong
 from .models import _PER_OTHER, Filing, Pass2Output
@@ -527,6 +527,10 @@ FLOW_METRICS = frozenset({
 # what a results filing owns for its quarter: the flows, and the per-share figures, which a presentation often gives
 # annualised (deep audit F-02: CSB Bank's Q1FY27 EPS 35.00 from its concall presentation over the results' 8.65)
 QUARTER_OWNED = FLOW_METRICS | {"eps", "basic_eps", "diluted_eps", "eps_total", "eps_continuing"}
+# the statement lines memory takes from the exchange's file alone under MEMORY_FILE_ONLY: the flows, the per-share figures, the
+# cash flows and capex (a sector figure such as volumes or order book is no statement line and still comes from a filing)
+STATEMENT_FIGURES = QUARTER_OWNED | {"investing_cash_flow", "financing_cash_flow", "net_cash_flow", "capex", "capex_intangible",
+                                     "capex_intangible_wip", "ebitda_margin", "share_associates", "pat_discontinued", "pat_minority"}
 RECONCILE_TOLERANCE = 0.02  # a filing's own crore figures are rounded
 
 
@@ -1189,6 +1193,13 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         # the label: a figure the XBRL reader built is file (or calc, from its inputs); a synthetic xbrl: id is file;
         # anything else a model read from the PDF is ai. A figure only reaches here after trust.for_memory.
         m_by = getattr(m, "by", None) or item_by
+        if m_by not in ("file", "calc") and key[0] in STATEMENT_FIGURES and memory_file_only():
+            # MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using
+            # cards data"): a statement line comes into memory only from the exchange's file; a model's reading of a PDF,
+            # deck or call stays on its card. A quarter whose file is late waits for it (event_catchup.results_catch_up)
+            log.info("memory: %s %s %s from %s left to its card: statement figures come from the exchange's file only",
+                     key[0], key[1], m.value, news_id)
+            continue
         if m_by not in ("file", "calc") and key[0] == "eps":
             # EPS_BASE_CHECK (F208): a standalone EPS an AI read stored as consolidated is dropped, not moved (moving a figure
             # worked out from a ratio would write a second guess into the standalone block, which only files fill)

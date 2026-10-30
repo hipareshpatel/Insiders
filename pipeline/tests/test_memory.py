@@ -798,3 +798,23 @@ def test_review_cases_of_the_unit_check():
     # another measure (the dry run's Prism Johnson and Schneider)
     assert other_measure("RMC segment EBITDA", "ebitda") and other_measure("Gross margin recovery", "ebitda_margin")
     assert not other_measure("EBITDA margin 18%", "ebitda_margin") and not other_measure("Q2FY27 volume", "volumes")
+
+
+def test_memory_file_only_keeps_a_models_statement_figure_on_its_card(monkeypatch):
+    """MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using cards
+    data"): a figure a model read goes to the card, not memory; the file's figure goes to memory; a sector figure stays."""
+    from bse_intel.models import FinancialMetric
+
+    monkeypatch.setenv("MEMORY_FILE_ONLY", "1")
+    when = "2026-10-29T18:12:00+05:30"
+    d = new_dossier(filing("r1", when))
+    out = output(event_type="RESULTS")
+    out.dossier_delta.financial_metrics = [
+        FinancialMetric(metric="revenue", period="Q2FY27", value=44178.74, unit="INR_CR"),            # read by the model
+        FinancialMetric(metric="pat", period="Q2FY27", value=6547.43, unit="INR_CR", by="file"),     # the exchange file's
+        FinancialMetric(metric="volumes", period="Q2FY27", value=10.5, unit="MT")]                    # a sector figure
+    m = {(e["metric"], e["period"]): e["value"] for e in merge(d, out, filing("r1", when), "HIGH", when)["financial_metrics"]}
+    assert ("revenue", "Q2FY27") not in m and m[("pat", "Q2FY27")] == 6547.43 and m[("volumes", "Q2FY27")] == 10.5
+    monkeypatch.setenv("MEMORY_FILE_ONLY", "0")
+    m = {(e["metric"], e["period"]) for e in merge(d, out, filing("r1", when), "HIGH", when)["financial_metrics"]}
+    assert ("revenue", "Q2FY27") in m

@@ -80,6 +80,7 @@ Every maintenance run stays here until its result is read and acted on; the 15-m
 | 40393302149 | pdf-referee "explained" | Done (5 h budget). 1,982 open pairs: PDF = ours 130, PDF = screener 9, = NSE file 1, none 9, unsure 151, unreadable 178, not run 1,504 | Run the rest after the PDF date/page fix (F215) and the file cap |
 | 40935230306 | memory-rerank --apply (run 1 of 3, TODO 118 B; owner's Yes 29 Oct) | 50 figures corrected in 18 companies (limit 50), 34 companies wait; backup backup/memory-rerank-20261029T185515Z/ (18 dossiers); undo with restore | Run 2 dispatched 30 Oct ~01:00 IST |
 | 40940399601 | memory-rerank --apply (run 2) | 49 figures corrected in 16 companies, backup backup/memory-rerank-20261029T192903Z/; then stopped cleanly at 543322 on a Worker read timeout (nothing half-written; exit 1) | Run 3 dispatched 30 Oct ~01:30 IST to finish |
+| 40944819944 | memory-rerank --apply (run 3) | 39 figures corrected in 15 companies, 0 companies wait: done. Backup backup/memory-rerank-20261029T201703Z/. In all 138 figures in 49 companies (128 measured on 29 Oct plus the filings since) | TODO 118 B closed |
 | not run | memory-gaps-fill-bse dry run, text-backfill | Never ran (skipped in the chain) | Dispatch |
 | not found | seed signs APARINDS Q1FY27, PVRINOX Q1FY25, GLENMARK Q4FY26 | No run re-read them | seed-memory with ids |
 

@@ -92,6 +92,51 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Owner's list, night of 29-30 Oct 2026 (every instruction of the session, in the owner's order; state at 02:45 IST).**
+The order: correct memory first, from the exchange's files by screener's rules; then cards read memory.
+1. **Memory's financial figures from the exchange's XBRL only, by screener's rules, never from cards or AI readings.**
+   Built: `MEMORY_FILE_ONLY` (dossier.STATEMENT_FIGURES from file/calc sources only), OFF until D20 (one card a quarter)
+   no longer finds a quarter's card through the figures it left in memory (32 tests rely on that). Next: D20 from the
+   timeline's own quarter, then the switch on (owner's word).
+2. **The stock page's statements as screener shows them, row by row, for every past quarter and year.** Built (PR #224):
+   `statements-backfill` turns the stored facts (raw/xbrl-facts/, no download) into `dossier["statements"]` by the
+   screener_view recipes (quarters, years, balance sheets, cash flows, both bases; a unit-slipped quarter or one 1.5x off
+   memory's checked revenue left out); the stock page shows those tables. Next: dry run read (run 40954730816), then
+   apply runs of 50 for ~1,900 dossiers.
+3. **Every future result saved by screener's rules at filing time.** Live (PR #220, #222): the live path keeps each
+   results file's statements, consolidated and standalone; the seed too (PR #224).
+4. **The last 3 days' results from the exchange files, missing quarters into memory.** Next: `seed-memory` for the 223
+   companies with results cards 27-29 Oct (scratchpad/cm2/recent_results_scrips.json), runs of 50; 42 of 143 recent filers
+   had their latest quarter from the AI only (Coal India among them).
+5. **Every results filing of the last 2 days processed?** Not yet known: the queue shows 1,000 pending (its cap) and 33
+   failed. failed-report (run 40953576322) to read; a breakdown by date and type.
+6. **One results card a quarter; consolidated when it exists, else standalone.** Live (PR #220). A press release naming no
+   quarter and a deck filed as results no longer take a second card (PR #224; 13 companies had two on 28-29 Oct).
+7. **The late exchange file fetched for a card made from the PDF.** PR #224: the catch-up reads the PDF-only cards first.
+8. **Balance-sheet and cash-flow rules too.** Rules exist for all three statements; where they still differ from screener
+   (Borrowings 77%, Other liabilities 74%, no insurer balance sheet): TODO 129.
+9. **Cards take their figures from memory (the fact sheet), the AI only the words.** Planned; after items 1-4. The card's
+   PBT is screener's: the filed ProfitBeforeTax + the associates' and JVs' share + regulatory deferral + discontinued profit
+   (docs/design/screener-row-rules.md; 2,302 PBT rows exact), read from memory's statements; the plain file PBT the card
+   shows today is before the share (M&M Q1FY27 7,260.60 against the printed 7,628.09). The ~20 companies screener keeps the
+   share out for (Reliance, Sun Pharma, L&T, DLF, BEL, some NBFCs) stay as they are (owner, 30 Oct 2026, ~02:50 IST: "Let
+   those 20 companies stay as they are right now"): the general rule, no named list (docs/design/screener-associates-outside-pbt.md).
+10. **Transcripts and presentations into memory on the third Gemini key (call-only).** Second blind check running
+    (call-memory run 40934802754 against 10 blind keys); `MEMORY_CALL_V2` stays off for the owner's word (TODO 101).
+11. **Richer cards: what moved and why, from memory** (TODO 128), and the other card improvements, after memory.
+12. **The four card switches on** (consolidated only, company EBITDA first, two parts, dated guidance): live (PR #219).
+13. **Memory gaps checked against listing dates** (TODO 130): 1,445 before listing, 26 missed by the count, 50 truly absent
+    in 37 companies; the 28 NSE-listed re-read (run 40944604129).
+14. **PDF reader:** tested in its own session. Out-of-sample result (docs/bench/oos/README.md on #218): 60 filings, 500 figures
+    against the exact XBRL key, numbers-first 243 right / 11 wrong / 246 none after two fixes (the 60 never opened while fixing:
+    126/6/124); all 11 wrongs hand-sorted, 0 misreadings: 10 are the PBT definition (the XBRL tag is before the associates' and
+    JVs' share, the printed PBT after it: M&M Q1FY27 7,260.60 against 7,628.09), 1 a file's own unit. #218 waits for the lead's
+    line-by-line review. **Owner, 30 Oct ~02:55 IST: Yes** to switching the new reader on (SLIP_CHECK_NUMFIRST) once the
+    review is clean; the old reader stays as the fallback. Next build (off, measured, owner decides): the new reader fills a
+    results quarter whose file is late, instead of the AI's figures. The PBT finding matters for memory and cards: which PBT a card shows.
+15. **Annual-report extras into memory** (related parties, contingent liabilities, auditor remarks, pay): TODO, owner's Yes.
+
+
 **29 Oct 2026, 18:37 IST: where the financial work stands (the blocks below are the record they came from).**
 - Done today:
   - The Screener rows compare quarters from Q1FY26 only (owner); a period before a company's listing is "before listing",

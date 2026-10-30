@@ -1755,6 +1755,26 @@ def _measured(fn):
     return run
 
 
+SCAN_IMAGE_SHARE = 0.5        # of the page's area one image covers: a scanned page, not a logo or a signature
+
+
+def may_hold_statement(page, layer, ranked: bool) -> bool:
+    """Whether a page with a text layer whose layer gave no named table is worth an OCR read: the page is a scan (one image
+    covers at least ``SCAN_IMAGE_SHARE`` of it, so its layer is the scanner's and may be garbled), or its layer prints a page
+    of figures (``extract.FIGURE_PAGE_AMOUNTS``), or it is among the filing's likely statement pages. Every page is judged
+    on its own, wherever it is in the file. Not worth it: a page of prose whose only image is a logo or a signature (the
+    out-of-sample test, 30 Oct 2026: an AGM outcome of 25 such pages had 16 of them OCR'd, 59 s for no table)."""
+    from .extract import FIGURE_PAGE_AMOUNTS
+    if ranked or sum(bool(re.search(r"\d", w[4])) for w in layer.words) >= FIGURE_PAGE_AMOUNTS:
+        return True
+    area = abs(page.rect) or 1.0
+    try:
+        shares = [abs(type(page.rect)(info["bbox"]) & page.rect) / area for info in page.get_image_info()]
+    except Exception:   # noqa: BLE001 - the images cannot be measured: read it, as before
+        return True
+    return max(shares, default=0.0) >= SCAN_IMAGE_SHARE
+
+
 @_measured
 def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pages: int = MAX_TEXT_PAGES,
             keep_unnamed: bool = False, deadline: float | None = None) -> list[Table]:
@@ -1878,7 +1898,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                     except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
                         log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
                 if page.get_images(full=False) and (not any(t.named for t in by_page[p])
-                                                     or dated(by_page[p]) < max(len(t.columns) for t in by_page[p] if t.named)):
+                                                     or dated(by_page[p]) < max(len(t.columns) for t in by_page[p] if t.named)) \
+                        and may_hold_statement(page, layers[p], p in ranked):
                     # a scan's layer gave no named table, or named tables whose column dates it garbled ("30-Seo-26", TBZ
                     # Q2FY27): the page is read with OCR as well
                     unnamed.append(p)

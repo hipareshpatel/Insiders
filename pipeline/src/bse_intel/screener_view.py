@@ -11,10 +11,10 @@ after the fact with alternatives; this module does not extend that approach.
 Sources (screener's own docs, read by the lead 28 Oct 2026: "annual data is imported from the annual extract in the quarterly (Q4)
 filings until the annual report is published ... we revise old numbers when the company revises them in new annual reports"):
 
-- a year (FYxx, March year end): the NEWEST stored annual-report facts doc that holds that year, of that year's report and the
-  next one only (its prior-year comparative counts: FY25 from the FY26 report when stored; a report two years later only carries
-  stray facts at that date), else the Q4 results file's 12-month context. Lenders file no annual-report XBRL on NSE:
-  always the Q4 file. A balance sheet at a March year end is read the same way (the instant at the year end);
+- a year (FYxx, March year end): the next year's annual-report facts doc (its prior-year comparative: FY25 from the FY26 report)
+  or the year's own, whichever holds the year, then the Q4 results file when it holds it, then the nearest later report (a report
+  two years later can carry stray facts at that date; CompanyFacts.year), else the Q4 file as it is. A Q4 file is read in its
+  12-month context. Lenders file no annual-report XBRL on NSE: always the Q4 file. A balance sheet at a March year end is read the same way (the instant at the year end);
 - a quarter: that quarter's own results file, its 3-month context; a half-year balance sheet (Sep): that quarter's file's instant.
 
 Every row carries a note naming the elements used and the source ("annual report FY26", "results file Q4FY26").

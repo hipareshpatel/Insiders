@@ -192,6 +192,11 @@
 #   (actions/download-artifact, the job's token with actions: read); no exchange is read. A key the store holds is skipped; the
 #   counts (stored, already held, failed, skipped) go up as the artifact `store-kept-pdfs`. Its own group `maint-pdf-store`.
 #   Writes nothing else.
+# - mistral-ocr-hardset (lead, 30 Oct 2026): Mistral's Document OCR API scored as one more reader on the hard set
+#   (docs/bench/hardpdf/key.csv), from the PDFs run 40414799620 kept (artifact pdf-ensemble-pdfs; `ids` = another run id that kept
+#   them): no exchange is read. Only the statement pages go out (the other readers' pages), MISTRAL_OCR_PAGE_CAP = 300 pages a
+#   run. Writes hardset-score.json / .md, hardset-readings.json and every raw OCR answer to the artifact `mistral-ocr-hardset`.
+#   Writes nothing else; never a live path.
 # - xbrl-key: read only (owner 28 Oct 2026). The exchange's XBRL figures that memory holds (revenue, other income, total income,
 #   total expenses, exceptional items, PBT, tax, PAT, EPS, interest earned; both bases; every period of the filing's file) as a free
 #   answer key for the PDF reader: each figure is located on its filing's PDF page by word position (pipeline/src/bse_intel/xbrl_key.py),
@@ -284,7 +289,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, mistral-ocr-hardset, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -395,7 +400,7 @@ concurrency:
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","mistral-ocr-hardset"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -410,7 +415,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'mistral-ocr-hardset' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -2210,9 +2215,68 @@ jobs:
           path: ${{ runner.temp }}/store-kept/
           if-no-files-found: ignore
 
+  mistral-ocr-hardset:
+    permissions:
+      contents: read
+      actions: read   # download another run's artifact
+    if: inputs.command == 'mistral-ocr-hardset'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - name: Check the run id
+        working-directory: .
+        run: |
+          case "$RUN_ID" in *[!0-9]*) echo "::error::ids is the run id whose artifact holds the hard set's PDFs (a number)"; exit 1 ;; esac
+        env:
+          RUN_ID: ${{ inputs.ids }}
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - name: Download the hard set's kept PDFs (GitHub only, no exchange)
+        uses: actions/download-artifact@v4
+        with:
+          name: pdf-ensemble-pdfs
+          run-id: ${{ inputs.ids || '40414799620' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/pdfs
+      - name: Score Mistral OCR against the answer key
+        env:
+          PDF_READERS: mistral
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          MISTRAL_OCR_PAGE_CAP: "300"
+          MISTRAL_OCR_RAW_DIR: ${{ runner.temp }}/out/raw
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          ls "$RUNNER_TEMP/pdfs" | wc -l
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/out" ${LIMIT}
+          "$RUNNER_TEMP/venv/bin/python" - "$RUNNER_TEMP/out/raw" <<'PY'
+          import json, os, sys
+          files = [os.path.join(sys.argv[1], f) for f in os.listdir(sys.argv[1])] if os.path.isdir(sys.argv[1]) else []
+          answers = [json.load(open(f)) for f in files]
+          pages = sum(int((a.get("usage_info") or {}).get("pages_processed") or 0) for a in answers)
+          blocks = sum(len(p.get("blocks") or []) for a in answers for p in a.get("pages") or [])
+          models = sorted({a.get("model") or "" for a in answers})
+          print(f"mistral ocr: {len(answers)} calls, {pages} pages processed, {blocks} blocks with boxes, models {models}")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mistral-ocr-hardset
+          path: ${{ runner.temp }}/out/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, mistral-ocr-hardset]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

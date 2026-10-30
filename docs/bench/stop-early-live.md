@@ -56,7 +56,17 @@ basis is wanted whenever the filing names one).
 No consolidated answer was lost to the stop. Both wrongs are PBT, are the same with the switch off, and are the
 definition gap above.
 
+## What the two PBT gaps are
+
+Both are the joint ventures' or associates' share. The file tags PBT before the share, and the statement prints the
+line before the share too. Numbers-first answers the "Profit before tax" line after the share:
+
+- ERIS: 179.89 before the share; the JV share is a 0.40 loss; 179.49 after it.
+- YUKEN: 724.60 lakh before the share; the associates' share is -30.34 lakh; 694.26 lakh after it.
+
+Neither filing prints any exceptional items.
+
 ## Decision (lead, 30 Oct 2026)
 
-NUMFIRST_STOP_EARLY stays off until the slip check no longer acts on the PBT definition gap: either numbers-first PBT
-is skipped in the slip check, or its PBT follows the definition the corrected figure uses.
+Option (b): numbers-first's PBT follows the definition of the slip check's corrected figure (TODO 143). Until that
+lands, NUMFIRST_STOP_EARLY stays off. Then all 140 stored PDFs are re-timed with one copy running.

@@ -1,0 +1,28 @@
+24f5e52 Numbers-first: side-by-side bases with heading words ("Consolidated results   Standalone results") are split
+1cefbed Numbers-first: a first half year (H1FY27) is read from its column, only when the table's two quarters add up to it
+b399de0 xbrl-key: the CSV keeps every digit of a figure
+groups 1-3   native    all          right   43  wrong   2  none  199  of  244  (18% right, 4.4% of answers wrong)
+groups 1-3   numfirst  results_pdf  right  117  wrong   5  none   70  of  192  (61% right, 4.1% of answers wrong)
+groups 1-3   native    results_pdf  right   43  wrong   2  none  147  of  192  (22% right, 4.4% of answers wrong)
+groups 4-6   numfirst  all          right  126  wrong   6  none  124  of  256  (49% right, 4.5% of answers wrong)
+groups 4-6   native    all          right   35  wrong   1  none  220  of  256  (14% right, 2.8% of answers wrong)
+groups 4-6   numfirst  results_pdf  right  126  wrong   6  none  124  of  256  (49% right, 4.5% of answers wrong)
+groups 4-6   native    results_pdf  right   35  wrong   1  none  220  of  256  (14% right, 2.8% of answers wrong)
+all          numfirst  all          right  243  wrong  11  none  246  of  500  (49% right, 4.3% of answers wrong)
+all          native    all          right   78  wrong   3  none  419  of  500  (16% right, 3.7% of answers wrong)
+all          numfirst  results_pdf  right  243  wrong  11  none  194  of  448  (54% right, 4.3% of answers wrong)
+all          native    results_pdf  right   78  wrong   3  none  367  of  448  (17% right, 3.7% of answers wrong)
+groups 1-3, numfirst not right, sorted: {'definition: PBT before associates': 5, 'reader: none': 70, 'file: not a results PDF': 52}
+numfirst wrong readings:
+   (1, 'YUKEN', 'CONSOLIDATED', 'Q1FY27', 'pbt', 7.25, 6.9426)
+   (1, 'M&M', 'CONSOLIDATED', 'Q1FY27', 'pbt', 7260.6, 7628.09)
+   (2, 'GRASIM', 'CONSOLIDATED', 'Q1FY27', 'pbt', 5156.98, 5183.12)
+   (3, 'MAHLOG', 'CONSOLIDATED', 'H1FY27', 'pbt', 79.47, 79.36)
+   (3, 'MAHLOG', 'CONSOLIDATED', 'Q2FY27', 'pbt', 40.36, 40.3)
+   (4, 'ERIS', 'CONSOLIDATED', 'Q1FY27', 'pbt', 179.89, 179.49)
+   (5, 'UNOMINDA', 'CONSOLIDATED', 'Q1FY27', 'pbt', 355.3, 402.85)
+   (5, 'DABUR', 'CONSOLIDATED', 'Q1FY27', 'pbt', 756.15, 755.65)
+   (5, 'RATEGAIN', 'STANDALONE', 'Q1FY27', 'pat', 4.22, 4.2090000000000005)
+   (6, 'MRPL', 'CONSOLIDATED', 'Q2FY27', 'pbt', 2518.93, 2538.8)
+   (6, 'MRPL', 'CONSOLIDATED', 'H1FY27', 'pbt', 3733.74, 3784.47)
+

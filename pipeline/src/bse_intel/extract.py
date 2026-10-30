@@ -92,16 +92,26 @@ def upright_text(page) -> str | None:
     benchmark's AOC-1 kept none of its 16 rows. Its words, turned a quarter so the text runs left to right,
     are put into lines the way OCR's boxes are (ocr.lines_from_boxes), and every row comes back whole, nils
     included (2026-10-17)."""
+    words = upright_words(page)
+    if words is None:
+        return None
+    boxes = [([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], word, 1.0) for x0, y0, x1, y1, word in words]
+    return lines_from_boxes(boxes)
+
+
+def upright_words(page) -> list[tuple] | None:
+    """The words of a page printed sideways as (x0, y0, x1, y1, word), turned a quarter so the text runs left to right (see
+    ``upright_text``); None for an upright page."""
     lines = [line for block in page.get_text("dict", flags=0)["blocks"] for line in block.get("lines", [])]
     vertical = [line for line in lines if abs(line["dir"][1]) > 0.9]
     if not lines or len(vertical) < 0.6 * len(lines):
         return None
     up = sum(line["dir"][1] for line in vertical) < 0       # the text runs up the page: turn it clockwise
-    boxes = []
+    out = []
     for x0, y0, x1, y1, word, *_ in page.get_text("words"):
         nx0, nx1, ny0, ny1 = (-y1, -y0, x0, x1) if up else (y0, y1, -x1, -x0)
-        boxes.append(([[nx0, ny0], [nx1, ny0], [nx1, ny1], [nx0, ny1]], word, 1.0))
-    return lines_from_boxes(boxes)
+        out.append((nx0, ny0, nx1, ny1, word))
+    return out
 
 
 def cache_needs_ocr(data: dict, local_ocr: bool = False, max_ocr_pages: int | None = None) -> bool:

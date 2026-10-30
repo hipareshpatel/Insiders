@@ -46,6 +46,32 @@ _cell_engine = None
 _lock = threading.Lock()  # one page at a time: OCR is rare, and the CPU is shared with the workers
 
 
+class OutOfTime(BaseException):
+    """A caller's ``deadline`` (a ``time.monotonic()`` value) has passed. A BaseException on purpose: page loops catch
+    ``Exception`` so one bad page leaves the rest, and a late deadline must not be swallowed there. ``pdf_numbers_first``
+    raises the same class."""
+
+
+class _held:
+    """``_lock`` held for one OCR call; with a ``deadline`` the wait for it ends there (``OutOfTime``), so a caller with a time
+    cap never waits past it behind another thread's pages (lead's review of TODO 123: one page can hold the lock for three
+    engine calls)."""
+
+    def __init__(self, deadline: float | None):
+        self.deadline = deadline
+
+    def __enter__(self):
+        import time
+        if self.deadline is None:
+            _lock.acquire()
+        elif not _lock.acquire(timeout=max(0.0, self.deadline - time.monotonic())):
+            raise OutOfTime
+        return self
+
+    def __exit__(self, *exc):
+        _lock.release()
+
+
 def available() -> bool:
     try:
         import rapidocr  # noqa: F401
@@ -234,12 +260,18 @@ def recognise(png: bytes) -> str:
     benchmark's rotated AOC-1 came back as 17 transposed "rows" (2026-10-17). So when most boxes stand on
     end, the page is read again turned a quarter each way, and the reading whose boxes lie flat is kept.
     """
+    return lines_from_boxes(page_boxes(png))
+
+
+def page_boxes(png: bytes, deadline: float | None = None) -> list[tuple]:
+    """RapidOCR's boxes of the page image (``_boxes`` form), turned upright as ``recognise`` describes. With a ``deadline``,
+    ``OutOfTime`` when the OCR lock is not free before it."""
     global _engine
     import cv2
     import numpy as np
 
     image = cv2.imdecode(np.frombuffer(png, np.uint8), cv2.IMREAD_COLOR)
-    with _lock:
+    with _held(deadline):
         if _engine is None:
             _engine = _new_engine()
         result = _boxes(_engine(image if image is not None else png))
@@ -251,7 +283,7 @@ def recognise(png: bytes) -> str:
                     best = turned
             if best is not None:
                 result = best
-    return lines_from_boxes(result)
+    return result
 
 
 _NILS = {"-", "nil", "na", "n.a.", "n/a"}
@@ -462,7 +494,7 @@ def ink_cut(image) -> bool:
     return False
 
 
-def read_cell(image) -> tuple[str, bool]:
+def read_cell(image, deadline: float | None = None) -> tuple[str, bool]:
     """One table cell's crop (a BGR array): (the recogniser's text for the whole crop, whether a glyph is cut by the crop's edge).
     Recognition alone, no detector: it reads a lone figure better than detection plus recognition (which cut "1,912.15" to
     "1,912 15" in a measured case) and takes 0.05 s where the detector takes seconds on a crop. Bench only
@@ -482,7 +514,7 @@ def read_cell(image) -> tuple[str, bool]:
     if not available():               # after the bench cache, so a bench machine without the OCR extra still replays it
         return "", True
     global _cell_engine
-    with _lock:
+    with _held(deadline):
         if _cell_engine is None:       # its own engine: a call with use_det=False leaves the engine in that mode for the next call
             from rapidocr import ModelType, RapidOCR
             _cell_engine = RapidOCR(params={**SETTINGS, "Det.model_type": ModelType("small"), "Rec.model_type": ModelType("small")})

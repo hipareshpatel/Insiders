@@ -70,11 +70,13 @@ import csv
 import io
 import json
 import logging
+import os
 import re
 import time
 from collections import Counter
 from dataclasses import dataclass, field, replace
 from datetime import date
+from pathlib import Path
 
 from .grounding import _DECLARED_UNIT, _PER_CRORE
 from .pdf_referee import (_BARE_UNIT, names_other_currency, _DATE_LOOSE_2, _GARBLED_UNIT, _MARCH_YEAR, _PAT_NAME_LETTERED,
@@ -1257,7 +1259,9 @@ CSV_HEADER = ("news_id,symbol,basis,period,metric,xbrl_value,status,reason,page,
 
 
 def _cell(v) -> str:
-    return "" if v is None else f"{v:g}" if isinstance(v, float) else str(v)
+    """A CSV cell; a float keeps every digit (``{:g}`` kept six: 58187.57 crore was written 58187.6, so a key built from the CSV
+    scored a right reading wrong)."""
+    return "" if v is None else repr(v) if isinstance(v, float) else str(v)
 
 
 def result_row(r: Result, extra: dict | None = None) -> dict:
@@ -1412,7 +1416,37 @@ def is_transport_error(exc: BaseException) -> bool:
 _TRANSIENT = re.compile(r"^(?:announcement list unavailable|download failed)")
 
 
-def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tuple[list[dict], str, bool]:
+def keep_pdf(keep_dir: str, url: str, data: bytes) -> str:
+    """Write a downloaded PDF into ``keep_dir`` under the name ``pdf_bench --collect`` gives it (``<pdf_key(url)>.pdf``), so that
+    ``pdf_bench --run`` finds it by its url; at once, and whole or not at all (a run stopped on the way keeps what it got)."""
+    from .pdf_readers import pdf_key
+
+    os.makedirs(keep_dir, exist_ok=True)
+    path = os.path.join(keep_dir, f"{pdf_key(url)}.pdf")
+    tmp = path + ".part"
+    with open(tmp, "wb") as fh:
+        fh.write(data)
+    os.replace(tmp, path)
+    return path
+
+
+def bench_symbols(docs_dir: str | None = None) -> set[str]:
+    """The symbols of the two hand answer keys (``docs/bench/normalpdf/key.csv``, ``docs/bench/hardpdf/key.csv``): the companies
+    the readers were built and tuned on. A missing key file is an error, never an empty set (a test would then not be out of sample)."""
+    base = Path(docs_dir) if docs_dir else Path(__file__).resolve().parents[3] / "docs"
+    symbols: set[str] = set()
+    for name in ("normalpdf", "hardpdf"):
+        path = base / "bench" / name / "key.csv"
+        if not path.is_file():
+            raise FileNotFoundError(f"--exclude-bench: the answer key {path} is missing")
+        with open(path, encoding="utf-8", newline="") as fh:
+            symbols |= {r["symbol"].strip().upper() for r in csv.DictReader(fh) if r.get("symbol", "").strip()}
+    if not symbols:
+        raise ValueError("--exclude-bench: the answer keys name no company")
+    return symbols
+
+
+def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most
     ``MAX_CANDIDATES``); the first PDF that gives any figure a row or a placement is the filing's, the best answer of each
     figure across the PDFs tried is kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
@@ -1431,6 +1465,8 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected]) -> tu
             reasons.append(why)
             transient = transient or bool(_TRANSIENT.match(why))
             continue
+        if keep_dir:
+            keep_pdf(keep_dir, f.pdf_url, data)
         extra = {"pdf_url": f.pdf_url, "pdf_news_id": f.news_id, "filing_period": period}
         try:
             results = locate(data, expected)
@@ -1483,10 +1519,12 @@ def save_progress(sink, name: str, rows: list[dict]) -> bool:
         return False
 
 
-def plan(sink, companies: list[tuple[str, str]], limit: int | None, per_company: int, seed: int, floor: int = 8):
+def plan(sink, companies: list[tuple[str, str]], limit: int | None, per_company: int, seed: int, floor: int = 8,
+         exclude: set[str] | None = None):
     """The filings to read, one at a time (a dossier is read when its turn comes, so the first filing is read at once): companies in
     a seeded shuffle (a spread over the universe), for each its newest ``per_company`` quarter filings that have at least ``floor``
-    XBRL figures of the listed metrics; at most ``limit`` filings. Yields (scrip, symbol, period, expected figures)."""
+    XBRL figures of the listed metrics; at most ``limit`` filings. A company whose symbol is in ``exclude`` is left out (the shuffle
+    is made first, so the others keep their order). Yields (scrip, symbol, period, expected figures)."""
     import random
 
     from .memory_gaps import quarter_end
@@ -1494,7 +1532,10 @@ def plan(sink, companies: list[tuple[str, str]], limit: int | None, per_company:
     order = sorted(companies)
     random.Random(seed).shuffle(order)
     given = 0
+    skip = {x.upper() for x in exclude or ()}
     for scrip, symbol in order:
+        if symbol.upper() in skip:
+            continue
         try:
             dossier = sink.get_dossier(scrip)
         except Exception as exc:   # noqa: BLE001
@@ -1511,7 +1552,8 @@ def plan(sink, companies: list[tuple[str, str]], limit: int | None, per_company:
 
 def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, per_company: int = 1, seed: int = 28,
         time_budget: float | None = None, clock=time.monotonic, progress=None, saved: list[dict] | None = None,
-        every: int = SAVE_EVERY_FILINGS, every_seconds: float = SAVE_EVERY_SECONDS, src=None) -> dict:
+        every: int = SAVE_EVERY_FILINGS, every_seconds: float = SAVE_EVERY_SECONDS, src=None,
+        exclude: set[str] | None = None, keep_dir: str | None = None) -> dict:
     """Read the planned filings one after the other; ``progress(rows, summary)`` gets everything so far every ``every`` filings or
     ``every_seconds``, so a run stopped by its time budget, the file cap or a lost runner keeps what it did. ``saved`` are the
     rows of an earlier run of the same name: a filing already in them (its id and period) is kept and not read again."""
@@ -1527,14 +1569,14 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
     done = {(r["symbol"], r.get("filing_period", "")) for r in rows}
     started, last_save, since = clock(), clock(), 0
     blocked = out_of_time = capped = False
-    for scrip, symbol, period, expected in plan(sink, companies, limit, per_company, seed):
+    for scrip, symbol, period, expected in plan(sink, companies, limit, per_company, seed, exclude=exclude):
         if (symbol, period) in done:
             continue
         if time_budget is not None and clock() - started > time_budget:
             out_of_time = True
             break
         try:
-            got, why, transient = locate_filing(src, symbol, period, expected)
+            got, why, transient = locate_filing(src, symbol, period, expected, **({"keep_dir": keep_dir} if keep_dir else {}))
         except FileCapReached as exc:
             capped = True
             log.warning("file cap reached (%s): stopping the XBRL key; the rest waits for the next run", exc)

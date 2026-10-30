@@ -631,6 +631,25 @@ def test_a_scan_whose_layer_garbled_the_dates_is_read_with_ocr(monkeypatch):
     assert kept.status == "ok" and kept.source == "textlayer"
 
 
+def test_a_page_is_ocrd_once_in_one_analyse(monkeypatch):
+    # a scan's layer with no unit and garbled dates: the unit fill and the garbled-page read both want the page's OCR, and
+    # the page is rendered and OCR'd once, the boxes shared (item 123)
+    from bse_intel import ocr
+    monkeypatch.setattr(ocr, "available", lambda: True)
+    monkeypatch.setenv("PDF_DATES_2DIGIT", "1")
+    rows, want = pl()
+    garbled = with_image(statement(rows, unit="", dates=["30-Seo-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    clean = as_ocr_boxes(statement(rows, dates=["30-Sep-26", "30-Jun-26", "30-Seo-25", "31-Mar-26"]))
+    calls = []
+
+    def ocr_boxes(png):
+        calls.append(png)
+        return clean
+
+    nf.analyse(garbled, ocr_boxes=ocr_boxes, ocr_garbled=True)
+    assert len(calls) == 1
+
+
 def test_a_date_with_the_comma_glued_to_the_year_is_read():
     # LOTUSDEV Q2FY27: "Sep 30,2026" over every column
     from datetime import date
@@ -648,8 +667,8 @@ def test_day_numbers_of_stacked_header_dates_are_not_a_row_of_figures():
     line = words((289, 319, "Sept"), (321, 330, "30"), (359, 376, "Jun"), (378, 387, "30,"), (500, 510, "30"),
                  (600, 640, "Margin"), (641, 650, "12"), (700, 720, "May"), (740, 749, "15"))
     parts = sorted((w.x0, w.text) for w in line if id(w) in nf.date_parts(line, 8.0))
-    assert parts == [(321, "30"), (378, "30,"), (641, "12")]   # "30" alone (x 500) is a figure; "15" stands apart from "May"
-    # "Margin 12" is taken out too (the month pattern matches "mar..."): that only ever removes a cell, never adds a figure
+    assert parts == [(321, "30"), (378, "30,")]   # "30" alone (x 500) is a figure; "15" stands apart from "May"
+    # "Margin 12" stays a figure since the one month rule (TODO 123 part 5): the old prefix rule read "Margin" as "mar..."
 
 
 # --- fix set 6 (ORIENTCEM) -----------------------------------------------------------------------------------------------
@@ -1259,7 +1278,7 @@ def test_an_undated_third_column_of_a_sebi_layout_is_the_same_quarter_a_year_bef
         return out
     good = cols([("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31)),
                  ("year", date(2023, 3, 31))])
-    nf.fill_corresponding_quarter(good)
+    nf.fill_quarter_slot(good)
     assert (good[2].kind, good[2].date) == ("quarter", date(2023, 3, 31))
     # the second column not the quarter before, a column after it undated, or no column a year before: nothing is filled
     for bad in ([("quarter", date(2024, 3, 31)), ("quarter", date(2023, 3, 31)), (None, None), ("year", date(2024, 3, 31)),
@@ -1273,7 +1292,7 @@ def test_an_undated_third_column_of_a_sebi_layout_is_the_same_quarter_a_year_bef
                 [("quarter", date(2023, 12, 31)), ("quarter", date(2023, 9, 30)), (None, None), ("nine", date(2022, 12, 31)),
                  ("year", date(2023, 3, 31))]):
         c = cols(bad)
-        nf.fill_corresponding_quarter(c)
+        nf.fill_quarter_slot(c)
         assert c[2].date is None
 
 
@@ -1283,7 +1302,7 @@ def test_a_date_given_by_the_layout_does_not_make_a_page_look_dated():
     for c, (k, d) in zip(cols, [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None),
                                 ("year", date(2024, 3, 31)), ("year", date(2023, 3, 31))]):
         c.kind, c.date = k, d
-    nf.fill_corresponding_quarter(cols)
+    nf.fill_quarter_slot(cols)
     table = nf.Table(1, "CONSOLIDATED", 1, cols, [], "textlayer")
     table.named = {"revenue": []}
     assert cols[2].date == date(2023, 3, 31) and nf.usable_dates([table]) == 4
@@ -1586,19 +1605,19 @@ def test_the_one_damaged_quarter_of_a_sebi_layout_is_given_by_its_slot(damaged, 
     spec = list(SEP)
     spec[damaged] = (None, None)
     cols = _layout(spec)
-    nf.fill_damaged_quarter(cols)
+    nf.fill_quarter_slot(cols)
     assert (cols[damaged].kind, cols[damaged].date, cols[damaged].inferred) == (*expect, True)
     # a date read as the slot's own but with no kind (SUNDARMFIN Q4FY23) gets its kind
     spec[damaged] = (None, SEP[damaged][1])
     cols = _layout(spec)
-    nf.fill_damaged_quarter(cols)
+    nf.fill_quarter_slot(cols)
     assert (cols[damaged].kind, cols[damaged].date) == expect
 
 
 def test_a_damaged_quarter_is_not_given_when_the_layout_leaves_room_for_doubt():
     def damaged(spec):
         cols = _layout(spec)
-        nf.fill_damaged_quarter(cols)
+        nf.fill_quarter_slot(cols)
         return [(c.kind, c.date) for c in cols] != [(k, d) for k, d in spec]
     assert damaged([(None, None)] + SEP[1:])                                  # control: this one is filled
     assert not damaged([(None, None), (None, None)] + SEP[2:])                # two columns damaged
@@ -1645,12 +1664,12 @@ def test_a_bracketed_unit_ending_a_line_that_holds_other_header_words_is_read(un
     "Total assets (as per the balance sheet of the in lakhs)",
     "In Crores"])                                             # no bracket
 def test_a_bracketed_unit_is_taken_only_at_the_end_of_a_line(line):
-    assert nf.tail_units([line]) == set()
+    assert nf.scan_units([line], only="tail") == set()
 
 
 def test_two_bracketed_units_on_one_line_name_no_unit():
-    assert nf.tail_units(["Revenue (Rs. in crores) and costs (Rs. in lakhs)"]) == {None}
-    assert nf.tail_units(["(Ks. in Lacs)", "CIN: L1 ( In Crores)"]) == {100, 1}      # two lines: unit_of then sees two units
+    assert nf.scan_units(["Revenue (Rs. in crores) and costs (Rs. in lakhs)"], only="tail") == {None}
+    assert nf.scan_units(["(Ks. in Lacs)", "CIN: L1 ( In Crores)"], only="tail") == {100, 1}      # two lines: unit_of then sees two units
 
 
 def test_trap_tail_unit_share_count_is_not_table_unit():
@@ -1839,7 +1858,7 @@ HALF_KINDS = ["Quarter ended"] * 3 + ["Half year ended"] * 2 + ["Year ended"]
 EDGES = [150 + 40 * i for i in range(12)]
 
 
-def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2):
+def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2, xs=None):
     rows, want = pl()
     wide = []
     for lines, cells in rows:
@@ -1855,8 +1874,8 @@ def _two_bases(words=("Standalone", "Consolidated"), second_dates=None, scale=2)
     doc = pymupdf.open(stream=pdf, filetype="pdf")
     page = doc[0]
     centre = lambda a, b: (EDGES[a] + EDGES[b]) / 2 - 20
-    page.insert_text((centre(0, 5) - 25, 66), words[0], fontsize=8)
-    page.insert_text((centre(6, 11) - 25, 66), words[1], fontsize=8)
+    for text, x in zip(words, xs or (centre(0, 5) - 25, centre(6, 11) - 25)):
+        page.insert_text((x, 66), text, fontsize=8)
     out = doc.tobytes()
     doc.close()
     return out, want
@@ -1879,6 +1898,35 @@ def test_a_header_of_one_phrase_or_two_equal_ones_or_halves_dated_differently_is
             got = read(pdf, "pat", basis=basis)
             assert got.status != "ok" or got.value in (pytest.approx(crore(want["pat"][0])), pytest.approx(crore(2 * want["pat"][0]))), got
             assert not (got.status == "ok" and basis == "STANDALONE" and got.value == pytest.approx(crore(2 * want["pat"][0]))), got
+
+
+def test_two_side_by_side_headings_with_heading_words_are_read_each_on_its_own_basis():
+    # CYIENT Q2FY27: "Consolidated results" over the first six columns, "Standalone results" over the last six; HITECHGEAR
+    # Q1FY27: "Standalone Results" first, "Consolidated Results" second
+    for words, left, right_basis in ((("Consolidated results", "Standalone results"), "CONSOLIDATED", "STANDALONE"),
+                                     (("Standalone Financial Results", "Consolidated Financial Results"), "STANDALONE", "CONSOLIDATED")):
+        pdf, want = _two_bases(words=words)
+        for metric in ("pbt", "pat"):
+            a, b = read(pdf, metric, basis=left), read(pdf, metric, basis=right_basis)
+            assert a.status == "ok" and a.value == pytest.approx(crore(want[metric][0])), (words, metric, a)
+            assert b.status == "ok" and b.value == pytest.approx(crore(2 * want[metric][0])), (words, metric, b)
+
+
+def test_trap_side_by_side_headings_that_are_not_two_headings_each_over_its_own_columns_give_no_basis():
+    centre = lambda a, b: (EDGES[a] + EDGES[b]) / 2 - 20
+    for kwargs in (
+        dict(words=("Standalone results", "Quarter ended")),                    # one heading only
+        dict(words=("Standalone results", "Standalone results")),               # the same basis twice
+        dict(words=("Standalone results", "Consolidated results"), xs=(EDGES[0] - 20, EDGES[2])),    # both over the first half
+        dict(words=("Standalone Financial Results", "Consolidated results"), xs=(centre(4, 6) - 40, centre(6, 11) + 30)),
+        # ^ the first heading runs on across the second half's columns
+        dict(words=("Standalone results for", "Consolidated results")),         # a word that is not a heading word
+        dict(words=("Unaudited Standalone results", "Consolidated results")),   # the line does not open on a basis word
+    ):
+        pdf, want = _two_bases(**kwargs)
+        for basis in ("STANDALONE", "CONSOLIDATED"):
+            got = read(pdf, "pat", basis=basis)
+            assert got.status != "ok", (kwargs, basis, got)
 
 
 def test_swapped_phrases_name_the_bases_the_other_way_round():
@@ -1917,18 +1965,18 @@ def _merged(items):
 def test_a_month_line_is_not_cut_when_the_cut_is_not_certain():
     xs = [float(x) for x in _XS]
     whole = _merged(_MONTH_LINE)
-    assert len(nf.month_cut(whole, xs, 170.0)) == 6                       # control: cut
+    assert len(nf.column_pieces(whole, xs, 170.0)) == 6                       # control: cut
     moved = list(_MONTH_LINE)
     moved[3] = (760, 896, "September")                                    # two pieces nearest the same column
-    assert nf.month_cut(_merged(moved), xs, 170.0) == _merged(moved)
+    assert nf.column_pieces(_merged(moved), xs, 170.0) == _merged(moved)
     wide = list(_MONTH_LINE)
     wide[0] = (400, 710, "September")                                     # a piece wider than a column
-    assert nf.month_cut(_merged(wide), xs, 170.0) == _merged(wide)
-    assert nf.month_cut(_merged(_MONTH_LINE[:3]), xs, 170.0) == _merged(_MONTH_LINE[:3])         # fewer than three month words
+    assert nf.column_pieces(_merged(wide), xs, 170.0) == _merged(wide)
+    assert nf.column_pieces(_merged(_MONTH_LINE[:3]), xs, 170.0) == _merged(_MONTH_LINE[:3])         # fewer than three month words
     lead = [(540, 570, "Of")] + list(_MONTH_LINE)
-    assert nf.month_cut(_merged(lead), xs, 170.0) == _merged(lead)                                # the phrase does not open on a month
+    assert nf.column_pieces(_merged(lead), xs, 170.0) == _merged(lead)                                # the phrase does not open on a month
     short = [(573, 640, "Sep"), (650, 700, "Jun"), (710, 760, "Mar")]                           # already narrower than a column
-    assert nf.month_cut(_merged(short), xs, 170.0) == _merged(short)
+    assert nf.column_pieces(_merged(short), xs, 170.0) == _merged(short)
     # and a header read with a wrong cut never carries a wrong date: every date read is the right one for its column
     right = _header_dates(_MONTH_LINE, _DAY_LINE)
     assert all(d in (None, r) for d, r in zip(_header_dates(moved, _DAY_LINE), right))
@@ -1950,22 +1998,22 @@ def test_trap_title_names_other_basis():
 @pytest.mark.parametrize("line", ["Figures (US$ in million)", "x ($ in million)", "Margins (% in lakhs)", "x (# in crores)",
                                   "x (€ in million)", "x (£ in million)"])
 def test_a_bracketed_unit_after_another_currency_or_a_symbol_is_not_a_rupee_unit(line):
-    assert nf.tail_units([line]) == set()
+    assert nf.scan_units([line], only="tail") == set()
 
 
 def test_a_bracketed_unit_after_a_rupee_sign_is_read():
-    assert nf.tail_units(["CIN: L1 (₹ in Crores)"]) == {1}
+    assert nf.scan_units(["CIN: L1 (₹ in Crores)"], only="tail") == {1}
 
 
 def test_a_quarter_date_read_but_disputed_by_the_header_words_is_never_revived():
     spec = [(None, None)] + SEP[1:]
     cols = _layout(spec)
     cols[0].read_date = date(2026, 6, 30)        # column_kinds read a date the header words disputed: date and kind set to None
-    nf.fill_damaged_quarter(cols)
+    nf.fill_quarter_slot(cols)
     assert (cols[0].kind, cols[0].date) == (None, None)
     cols = _layout(spec)
     cols[0].read_date = date(2026, 9, 30)        # the date read is the slot's own: the column is given
-    nf.fill_damaged_quarter(cols)
+    nf.fill_quarter_slot(cols)
     assert (cols[0].kind, cols[0].date) == (Q, date(2026, 9, 30))
 
 
@@ -2011,3 +2059,111 @@ def test_a_unit_in_a_note_below_the_only_table_never_sets_its_unit():
     pdf = doc.tobytes()
     doc.close()
     assert read(pdf, "revenue").status != "ok"
+
+
+# --- TODO 123: causes in place of patches --------------------------------------------------------------------------------
+
+def test_an_undated_third_column_whose_date_was_read_but_disputed_is_never_revived():
+    # one function, one set of guards (TODO 123 part 6): the ABCAPITAL layout's undated third column is filled, but not when
+    # column_kinds read a date there that the header words disputed, and not when a column after the three is the quarter before
+    def cols(read_date=None, extra=None):
+        spec = [("quarter", date(2024, 3, 31)), ("quarter", date(2023, 12, 31)), (None, None), ("year", date(2024, 3, 31)),
+                ("year", date(2023, 3, 31))] + ([extra] if extra else [])
+        out = [nf.Column(0, 1, 0.5, i) for i in range(len(spec))]
+        for c, (k, d) in zip(out, spec):
+            c.kind, c.date, c.read_date = k, d, d
+        out[2].read_date = read_date
+        return out
+    good = cols()
+    nf.fill_quarter_slot(good)
+    assert (good[2].kind, good[2].date) == ("quarter", date(2023, 3, 31))          # control
+    disputed = cols(read_date=date(2023, 6, 30))
+    nf.fill_quarter_slot(disputed)
+    assert (disputed[2].kind, disputed[2].date) == (None, None)
+    previous = cols(extra=("nine", date(2023, 12, 31)))
+    nf.fill_quarter_slot(previous)
+    assert previous[2].date is None
+
+
+def test_a_label_word_damaged_by_one_letter_is_put_back_from_the_statements_vocabulary():
+    # TODO 123 part 4: one repair in place of the spelling-variant rules ("beforc", MOREPENLAB)
+    assert nf.mend_label("5. Profit beforc Tax (3+4)") == "5. Profit before Tax (3+4)"
+    assert nf.label_class("Proft bcfore tax") == "PBT"                 # two damaged words: the old rule needed "profit" whole
+    assert nf.label_class("Share of 0xceptional items") == "EXC"
+    assert nf.label_class("V. Profit beforc exceptional items and tax (III-IV)") == "PBEI"
+
+
+@pytest.mark.parametrize("word", ["after", "loss", "less", "basis", "referred", "point", "owned", "continue", "scontinued",
+                                  "ontinued", "deterred", "otter", "Lose"])
+def test_trap_a_real_word_is_never_mended_into_another(word):
+    # "after" is never "before", "basis" never "basic", "referred" never "deferred" (both printed in the answer keys' PDFs),
+    # and "discontinued" with its start lost is never "continued"
+    assert nf.mend_label(word) == word
+
+
+def test_a_word_one_letter_from_two_vocabulary_words_is_not_mended():
+    assert nf._one_edit("lass", "loss") and nf._one_edit("lass", "less")
+    assert nf.mend_label("tota") == "tota"                              # shorter than five letters
+
+
+def test_a_bracketed_unit_ending_a_page_line_above_the_header_is_the_page_unit():
+    # TODO 123 part 5: the tail family is one of scan_units' families, so the page's lines above the table are read by it too
+    assert nf.unit_of(["Particulars"], ["CIN: L1 ( In Crores)"]) == 1
+    assert nf.unit_of(["Particulars"], ["Revenue (Rs. in crores) and costs (Rs. in lakhs)"]) is None
+
+
+def test_a_month_word_is_never_another_word_that_starts_like_one():
+    # TODO 123 part 5: one month rule; OCR's spelling of a month is read through mend_months
+    assert nf.month_word("Sept.") and nf.month_word("June,") and nf.month_word("Septemher")
+    assert not nf.month_word("Market") and not nf.month_word("Decrease") and not nf.month_word("Marketing")
+
+
+def test_a_month_line_cut_by_nearest_column_keeps_a_damaged_month_word():
+    # TODO 123 part 2: the words go to their nearest columns; a month OCR misspelt ("Septemher") still opens its piece
+    line = list(_MONTH_LINE)
+    line[3] = (912, 1048, "Septemher")
+    assert _header_dates(line, _DAY_LINE) == _header_dates(_MONTH_LINE, _DAY_LINE)
+
+
+def test_words_of_one_line_are_one_line_however_their_heights_round():
+    # 11.9 and 12.1 at a text height of 8 round to two different bands of height (1 and 2) but are one printed line
+    got = nf.merge_brackets([nf.Word(10.0, 14.0, 12.1, 8.0, "("), nf.Word(15.0, 30.0, 11.9, 8.0, "12.5"),
+                             nf.Word(31.0, 34.0, 12.1, 8.0, ")")], 8.0)
+    assert [w.text for w in got] == ["(12.5)"]
+    got = nf.merge_space_groups([nf.Word(10.0, 20.0, 12.1, 8.0, "23"), nf.Word(21.0, 40.0, 11.9, 8.0, "909.66")], 8.0)
+    assert [w.text for w in got] == ["23909.66"]
+    assert nf.date_parts([nf.Word(10.0, 30.0, 12.1, 8.0, "Sept"), nf.Word(32.0, 40.0, 11.9, 8.0, "30")], 8.0) != set()
+    # a row's label in reading order: 7.6 and 7.0 at a text height of 8 fall in two bands of 0.6 x 8 (2 and 1)
+    cols = [nf.Column(400.0, 440.0, 420.0, 0), nf.Column(460.0, 500.0, 480.0, 1)]
+    rows = [nf.NRow(7.3, 3.0, 11.0, "", [None, None])]
+    nf.stitch_labels(rows, [nf.Word(10.0, 40.0, 7.6, 8.0, "Other"), nf.Word(45.0, 80.0, 7.0, 8.0, "income")], cols, set(), 8.0, 0.0)
+    assert rows[0].label == "Other income"
+
+
+def test_trap_a_bracketed_unit_after_a_figure_is_that_figure_s_unit_never_the_page_s():
+    # review of TODO 123 part 5: "Paid up capital Rs. 5,000 (in lakhs)" above a table with no unit of its own never sets the
+    # table's unit (a 100x slip); a header line that ends in the unit ("CIN: L65110JK1938SGC000048 ( In Crores)") still does
+    page = ["Registered office: Mumbai", "Paid up capital Rs. 5,000 (in lakhs)", "Statement of Standalone Results"]
+    assert nf.unit_of(["Statement of Standalone Results"], page) is None
+    assert nf.unit_of(["Particulars"], ["CIN: L65110JK1938SGC000048 ( In Crores)"]) == 1
+
+
+@pytest.mark.parametrize("word", ["alter", "scales", "faxes", "shape", "taxis", "revenge", "warning", "learnings", "learned", "joins"])
+def test_trap_a_real_word_one_letter_from_a_statement_word_is_kept(word):
+    # review of TODO 123 part 4: "Provision for alter tax" is never "after tax", "warning" never "earning"
+    assert nf.mend_label(word) == word
+
+
+def test_a_half_year_is_read_only_when_its_two_quarters_add_up_to_it(monkeypatch):
+    # out-of-sample test, 30 Oct 2026: every H1 figure of a Q2 statement was "no pbt for H1FY27" (5PAISA, ADOR, CYIENT, MAHLOG)
+    assert nf.half_year_column("H1FY27") == ("half", date(2026, 9, 30))
+    assert nf.half_year_column("Q2FY27") is None and nf.half_year_column("FY27") is None
+    def cells(q1, q2):
+        got = {date(2026, 6, 30): q1, date(2026, 9, 30): q2}
+        return lambda table, metric, kind, when: (got[when], 0.005, "Revenue", "") if kind == "quarter" else (None, 0, "", "")
+    monkeypatch.setattr(nf, "table_figure", cells(1500.25, 1600.5))
+    assert nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3100.75, 0.005) == (3100.75, "")
+    value, why = nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3050.0, 0.005)      # a column that is not the half year
+    assert value is None and "not its two quarters' sum" in why
+    monkeypatch.setattr(nf, "table_figure", cells(None, 1600.5))
+    assert nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3100.75, 0.005)[0] is None   # one quarter unread: unproven

@@ -1875,6 +1875,10 @@ def cmd_xbrl_key(args, settings, sink) -> int:
     if companies is None:
         print("No NSE universe file yet: run `sync-companies` (or `sync-universe`) first.")
         return 2
+    exclude = None
+    if args.exclude_bench:
+        exclude = xk.bench_symbols()      # raises when a key file is missing: the test would not be out of sample
+        print(f"xbrl-key: --exclude-bench: {len(exclude)} companies of the hand answer keys are left out")
     saved = xk.load_progress(sink, args.progress) if args.progress and not args.restart else None
     if args.restart and args.progress:
         print(f"xbrl-key: --restart: the rows saved under '{args.progress}' are ignored and replaced as this run goes")
@@ -1897,7 +1901,8 @@ def cmd_xbrl_key(args, settings, sink) -> int:
                 logging.getLogger("bse_intel.xbrl_key").exception("xbrl-key: the %s could not be written", name)
 
     with NseClient() as nse:
-        outcome = xk.run(nse, sink, companies, args.limit, args.per_company, args.seed, args.time_budget, progress=write, saved=saved)
+        outcome = xk.run(nse, sink, companies, args.limit, args.per_company, args.seed, args.time_budget, progress=write, saved=saved,
+                         exclude=exclude, keep_dir=args.keep_pdfs)
     rows = outcome.pop("rows")
     print(f"xbrl-key: {outcome['figures']} figures of {outcome['filings']} filings, {outcome['calls']['lists']} announcement lists, "
           f"{outcome['calls']['pdfs']} PDFs")
@@ -2813,6 +2818,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--md", help="write the short markdown report to this file")
     p.add_argument("--progress", metavar="NAME", help="save the rows to R2 (meta/xbrl-key/NAME.csv) as the run goes, and skip the filings an earlier run of NAME did (a filing whose fetch failed is read again)")
     p.add_argument("--restart", action="store_true", help="with --progress: ignore what an earlier run of NAME saved and start clean")
+    p.add_argument("--exclude-bench", action="store_true", help="leave out every company in docs/bench/normalpdf/key.csv or docs/bench/hardpdf/key.csv (an out-of-sample test); fails if a key file is missing")
+    p.add_argument("--keep-pdfs", metavar="DIR", help="write every PDF the run downloads to DIR, named as `pdf_bench --collect` names them (<sha1(url)[:16]>.pdf), as soon as it is downloaded")
     p.set_defaults(func=cmd_xbrl_key)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")

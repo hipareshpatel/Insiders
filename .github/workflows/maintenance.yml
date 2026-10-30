@@ -176,6 +176,16 @@
 #   per reader, the first answer in reader order (native, then numfirst), per metric, per filing and every wrong reading
 #   (artifact `pdf-bench-scores`, saved as it goes). `limit` = the first N PDFs of each key. Writes nothing to memory, cards or
 #   the branch. No AI.
+# - pdf-oos: read only (29 Oct 2026). The out-of-sample test of the PDF readers: `limit` fresh filings (default 100) that were never used
+#   to build or tune them, the exchange's XBRL figures in memory as the answer key. Needs `file_cap` (refused without it; the test is on
+#   100 files). `ids` = the seed of the company shuffle (default 29; seed 28 is the one earlier xbrl-key runs used, so those companies are
+#   not fresh). It runs `xbrl-key --exclude-bench` (no company of docs/bench/normalpdf/key.csv or docs/bench/hardpdf/key.csv) with
+#   `--keep-pdfs`, progress name `pdf-oos-<seed>`, and uploads every PDF at once (artifact `pdf-oos-pdfs`, 90 days) and the xbrl-key
+#   csv / json / md (artifact `pdf-oos-key`). `pdf_bench --key-from-xbrl` turns the rows into a key (every status but fetch_failed and
+#   locate_error; tags `xbrl:<status>` and `batch:<n>`, ten filings a batch), and `pdf_bench --run` scores `native` and `numfirst` twice:
+#   the F215 options on (PDF_DATES_2DIGIT, PDF_PAGE_RANK, PDF_ROW_FIXES = 1) into scores/on, and off (= 0) into scores/off (artifact
+#   `pdf-oos-scores`): per reader, per metric, per filing, per batch of ten with a running total, and every wrong reading. Writes
+#   nothing to memory, cards or the branch. No AI.
 # - xbrl-key: read only (owner 28 Oct 2026). The exchange's XBRL figures that memory holds (revenue, other income, total income,
 #   total expenses, exceptional items, PBT, tax, PAT, EPS, interest earned; both bases; every period of the filing's file) as a free
 #   answer key for the PDF reader: each figure is located on its filing's PDF page by word position (pipeline/src/bse_intel/xbrl_key.py),
@@ -241,7 +251,7 @@
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
-#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-rows (R2 only; writes nothing), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2; a run with `apply` downloads NSE files and is in the NSE memory group), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), xbrl-key (R2, memory and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
+#                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-rows (R2 only; writes nothing), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2; a run with `apply` downloads NSE files and is in the NSE memory group), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), xbrl-key (R2, memory and NSE; writes nothing), pdf-oos (R2, memory and NSE; writes nothing), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing)
 # A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
@@ -262,7 +272,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, restore]
         default: both
       backup:
         description: restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -278,7 +288,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -294,7 +304,7 @@ on:
         type: string
         default: '110'
       limit:
-        description: screener-crosscheck and xbrl-facts - only the N largest companies by market cap (of `ids`, else of the universe); text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); xbrl-key - at most N filings read (empty = all); pdf-bench - the first N PDFs of each key (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies; screener-rows - the N largest by market cap (empty = 50)
+        description: screener-crosscheck and xbrl-facts - only the N largest companies by market cap (of `ids`, else of the universe); text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); xbrl-key - at most N filings read (empty = all); pdf-oos - filings read and scored (empty = 100); pdf-bench - the first N PDFs of each key (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies; screener-rows - the N largest by market cap (empty = 50)
         type: string
         default: ''
       no_ocr:
@@ -356,7 +366,7 @@ concurrency:
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -371,7 +381,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -1995,9 +2005,100 @@ jobs:
           path: ${{ runner.temp }}/scores/
           if-no-files-found: ignore
 
+  pdf-oos:
+    permissions:
+      contents: read
+    if: inputs.command == 'pdf-oos'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    defaults:
+      run:
+        working-directory: pipeline
+    env:
+      FILE_CAP_MARKER_DIR: /tmp/file-cap-capped-${{ github.run_id }}-${{ github.run_attempt }}   # F213
+      FILE_CAP: ${{ inputs.file_cap || '0' }}   # F218: the input caps a test run (e.g. 100); 0 is no cap
+      BSE_INTEL_SINK: platform
+      D1_PLAN: ${{ vars.D1_PLAN }}   # paid (Workers Paid, the default) or free: settings.d1_plan
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
+      DISCOVERY_SOURCE: nse
+    steps:
+      - name: Refuse to start without file_cap (the first test of a fetch is 100 files)
+        working-directory: .
+        run: |
+          if [ -z "$FILE_CAP_INPUT" ] || [ "$FILE_CAP_INPUT" = 0 ]; then
+            echo "::error::pdf-oos downloads NSE files: give file_cap (the test is on 100 files, owner 27 Oct 2026)"
+            exit 1
+          fi
+        env:
+          FILE_CAP_INPUT: ${{ inputs.file_cap }}
+      - name: Runner resources
+        working-directory: .
+        run: 'echo "cpus: $(nproc)"; free -h; df -h /'
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - name: XBRL key on fresh companies, every PDF kept as it is downloaded (reads NSE and memory)
+        timeout-minutes: 200   # a step that overruns ends here, so the upload steps below still run
+        env:
+          PLATFORM_TIMEOUT_S: "30"
+          PLATFORM_ATTEMPTS: "3"
+          NSE_ARCHIVE_PAUSE_SECONDS: "0,0"   # as xbrl-key and pdf-referee: the archive host only
+          LIMIT: ${{ inputs.limit || '100' }}
+          SEED: ${{ inputs.ids || '29' }}
+        run: |
+          code=0
+          case "$SEED" in ''|*[!0-9]*) echo "::error::ids is the seed of the shuffle: a number (default 29)"; exit 1 ;; esac
+          mkdir -p "$RUNNER_TEMP/oos/key" "$RUNNER_TEMP/oos/pdfs"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-key --exclude-bench --seed "$SEED" --limit "$LIMIT" --keep-pdfs "$RUNNER_TEMP/oos/pdfs" --progress "pdf-oos-$SEED" --restart --time-budget 11000 --json "$RUNNER_TEMP/oos/key/summary.json" --out-csv "$RUNNER_TEMP/oos/key/xbrl-key.csv" --md "$RUNNER_TEMP/oos/key/xbrl-key.md" || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::time budget ended with filings left (the rows so far are kept); run again"; code=0; fi
+          ls "$RUNNER_TEMP/oos/pdfs" | wc -l
+          exit "$code"
+      - name: Keep every downloaded PDF
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-oos-pdfs
+          path: ${{ runner.temp }}/oos/pdfs/
+          if-no-files-found: ignore
+          retention-days: 90
+      - name: Build the answer key from the XBRL rows
+        if: always()
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --key-from-xbrl "$RUNNER_TEMP/oos/key/xbrl-key.csv" "$RUNNER_TEMP/oos/key.csv"
+          cp "$RUNNER_TEMP/oos/key.csv" "$RUNNER_TEMP/oos/key/key.csv"
+      - name: Keep the XBRL key
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-oos-key
+          path: ${{ runner.temp }}/oos/key/
+          if-no-files-found: ignore
+      - name: Score native and numfirst, the F215 options on and off
+        if: always()   # a read step stopped by its budget, the cap or a refusal still scores the filings it kept
+        env:
+          PDF_READERS: native,numfirst
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/scores/on" "$RUNNER_TEMP/scores/off"
+          PDF_DATES_2DIGIT=1 PDF_PAGE_RANK=1 PDF_ROW_FIXES=1 "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run "$RUNNER_TEMP/oos/key.csv" "$RUNNER_TEMP/oos/pdfs" "$RUNNER_TEMP/scores/on" || code=$?
+          PDF_DATES_2DIGIT=0 PDF_PAGE_RANK=0 PDF_ROW_FIXES=0 "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run "$RUNNER_TEMP/oos/key.csv" "$RUNNER_TEMP/oos/pdfs" "$RUNNER_TEMP/scores/off" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pdf-oos-scores
+          path: ${{ runner.temp }}/scores/
+          if-no-files-found: ignore
+
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

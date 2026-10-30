@@ -644,3 +644,62 @@ def test_only_transport_errors_are_fetch_failed(monkeypatch):
         out = xk.run(FakeNse([], {}), sink, [("1", "A")], limit=1)
         assert {r["status"] for r in out["rows"]} == {status}, (exc, status)
     assert xk.is_transport_error(OSError()) and not xk.is_transport_error(ValueError())
+
+
+# --- the out-of-sample options: --exclude-bench and --keep-pdfs --------------------------------------------------------
+
+def test_plan_skips_a_company_whose_symbol_is_in_the_exclude_set():
+    sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
+    companies = [("1", "AAA"), ("2", "BBB")]
+    assert {s for _, s, _, _ in xk.plan(sink, companies, None, 1, 1)} == {"AAA", "BBB"}
+    assert [s for _, s, _, _ in xk.plan(sink, companies, None, 1, 1, exclude={"aaa"})] == ["BBB"]     # case does not matter
+
+
+def test_bench_symbols_read_both_keys_and_fail_loudly_when_one_is_missing(tmp_path):
+    for name, symbol in (("normalpdf", "ICICIBANK"), ("hardpdf", "ABCAPITAL")):
+        (tmp_path / "bench" / name).mkdir(parents=True)
+        (tmp_path / "bench" / name / "key.csv").write_text(f"symbol,metric\n{symbol},revenue\n{symbol},pat\n", encoding="utf-8")
+    assert xk.bench_symbols(str(tmp_path)) == {"ICICIBANK", "ABCAPITAL"}
+    (tmp_path / "bench" / "hardpdf" / "key.csv").unlink()
+    with pytest.raises(FileNotFoundError):
+        xk.bench_symbols(str(tmp_path))
+    real = xk.bench_symbols()          # the committed keys
+    assert "ICICIBANK" in real and "ABCAPITAL" in real
+
+
+def test_keep_pdfs_writes_each_download_under_the_collect_name_and_survives_a_stopped_run(tmp_path):
+    from bse_intel import pdf_readers
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    pdf = make_pdf()
+    nse = FakeNse([filing()], {url: pdf})
+    out = xk.run(nse, FakeSink({"1": full_dossier("1")}), [("1", "X")], limit=1, keep_dir=str(tmp_path / "kept"))
+    kept = tmp_path / "kept" / f"{pdf_readers.pdf_key(url)}.pdf"
+    assert kept.read_bytes() == pdf and len(out["rows"]) == 8 and not list((tmp_path / "kept").glob("*.part"))
+    # the pdf_bench run finds it by its url, with no NSE session
+    from bse_intel.pdf_referee import Sources
+    import os
+    os.environ["PDF_CACHE_DIR"] = str(tmp_path / "kept")
+    try:
+        assert Sources(None, ocr=False).payload(url) == (pdf, "")
+    finally:
+        del os.environ["PDF_CACHE_DIR"]
+
+    # a run stopped by the file cap on the second filing keeps the first one's PDF
+    class Capped(FakeNse):
+        def fetch(self, url, max_bytes=0):
+            self.fetches.append(url)
+            if len(self.fetches) > 1:
+                raise FileCapReached("file cap reached (1 of 1 files)")
+            return self.pdfs.get(url)
+
+    sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
+    second = xk.run(Capped([filing()], {url: pdf}), sink, [("1", "A"), ("2", "B")], limit=5, seed=1, keep_dir=str(tmp_path / "k2"))
+    assert second["file_cap_reached"] and [p.name for p in (tmp_path / "k2").iterdir()] == [kept.name]
+    # no keep_dir: nothing is written
+    assert not (tmp_path / "none").exists()
+
+
+def test_the_csv_keeps_every_digit_of_a_figure():
+    # the pdf-oos key is built from this CSV: 58187.57 crore written as 58187.6 scored M&M's right reading wrong
+    row = xk.result_row(xk.Result(xk.Expected("n", "M&M", "STANDALONE", "Q1FY27", "revenue", 58187.57), "found_unique"))
+    assert xk.load_csv(xk.to_csv([row]))[0]["xbrl_value"] == 58187.57

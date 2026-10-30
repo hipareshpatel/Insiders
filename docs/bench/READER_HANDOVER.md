@@ -164,6 +164,26 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 - Report each change as a right / wrong / no answer table per metric for both keys, plus which filings moved. The one rule: a change that
   adds any wrong answer, or loses right ones on the other key, is not kept as it is.
 
+### 4a. The out-of-sample test (owner, 29 Oct 2026)
+
+- Owner, 29 Oct 2026 (~23:50 IST): "Instead of 10 you will do 100 pdf", then "No gate of 576, you can start now". The 576 bench gate is
+  dropped. The test runs on 100 fresh filings in one read-only dispatch: Maintenance `pdf-oos`, `file_cap` = 100, `limit` = 100,
+  `ids` = the shuffle seed (default 29; seed 28 was used by the earlier xbrl-key runs, so its companies are not fresh). The run stops at
+  once on any NSE refusal.
+- The filings are the newest results filing of companies in a seeded shuffle, minus every company in either hand key
+  (`xbrl-key --exclude-bench`). Every PDF is kept (`--keep-pdfs`, artifact `pdf-oos-pdfs`, 90 days).
+- The key is the exchange's XBRL figure in memory, for every row with a PDF, whatever the locator found (`pdf_bench --key-from-xbrl`).
+  Only revenue, total income, PBT and PAT are in it. Both readers are scored with the options on and off. The score is right / wrong /
+  no answer, by groups of 10 filings with a running total (artifact `pdf-oos-scores`).
+- Every wrong answer is sorted by hand: **reader** (we misread the page), **file** (the XBRL figure and the printed page differ) or
+  **definition** (the two name different things, such as revenue with or without other income).
+- The result is reported beside held-out. It is never merged into the bench totals.
+- The batch rules:
+  - The first read of all 100 is the honest score, by group of 10 with a running total. Scores after a fix are reported apart.
+  - A fix needs a named cause seen in 2+ filings.
+  - A group's filings join no fix's test set until the next group's first read is recorded.
+  - No fix from this test goes in before #218 (item 123) and the score PR.
+
 ## 5. Ideas agreed with the outside reviews (adopted)
 
 | # | idea | from | status |
@@ -172,7 +192,7 @@ PDF_READERS=native,numfirst python -m bse_intel.pdf_bench --run ../docs/bench/no
 | A2 | **A "Note" column is label text**: in "Revenue from operations 24 1,245.60", the 24 is not revenue | Gemini | built in `numfirst` |
 | A3 | **Our own OCR replaces a bad scanner layer**: re-read only the bad parts of the page; keep the layer where its numbers are sound; when the two disagree on a digit, give no answer | ChatGPT, XBRL-key finding | partly: numfirst OCRs no-text pages and scans with no named row; the digit-level gate is not built |
 | A4 | **Offline OCR relabel of the answer key**: the XBRL key finds figures by searching the text, so pages with no text never get a key row, and anything tuned on it learns only the easy pages. Read those pages offline with OCR at the slowest, best settings, then search for the known figures there | the long Claude answer | not built; do it before tuning on the XBRL key |
-| A5 | **Date-candidate matching**: we know which dates a quarter's columns should show, so a garbled "30.09.202S" only has to match one of about five expected dates | the long Claude answer | started 29 Oct: OCR month spellings, reordered dates, the SEBI layout's undated third column (`fill_corresponding_quarter`); matching a garbled date to the expected set is not built |
+| A5 | **Date-candidate matching**: we know which dates a quarter's columns should show, so a garbled "30.09.202S" only has to match one of about five expected dates | the long Claude answer | started 29 Oct: OCR month spellings, reordered dates, the SEBI layout's undated third column (`fill_quarter_slot`, which since 29 Oct also fills any one damaged quarter of the three); matching a garbled date to the expected set is not built |
 | A6 | **More sum checks**: half year = this quarter + last quarter (most filings arriving now are Q2), nine months = H1 + Q3, year = 9M + Q4, last quarter's own column equals this filing's previous-quarter column; a match in every column at once is hard to get by luck | the long Claude answer, STATUS item 3 | partly (numfirst checks vertical identities, not across periods) |
 | A7 | **Fill empty cells with two OCR engines**: re-read only the empty cell with two different free engines and accept a figure only when both agree | the long Claude answer | not built |
 | A8 | **Never publish a computed figure**: a figure the arithmetic implies but the page does not print is never an answer | the long Claude answer | numfirst answers only printed cells (check that the review confirms it) |

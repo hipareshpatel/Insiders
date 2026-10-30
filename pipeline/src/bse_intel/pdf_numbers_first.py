@@ -35,6 +35,7 @@ that runs over two pages, a scan that is also tilted by more than a few degrees,
 
 from __future__ import annotations
 
+import functools
 import itertools
 import logging
 import os
@@ -44,15 +45,11 @@ import time
 from dataclasses import dataclass, field
 from datetime import date
 
+from .ocr import OutOfTime   # the caller's deadline has passed (raised only when a caller passes one; the bench passes none)
+
 log = logging.getLogger(__name__)
 
 NAME = "numfirst"
-
-
-class OutOfTime(BaseException):
-    """The caller's ``deadline`` (a ``time.monotonic()`` value) has passed. A BaseException on purpose: the page loops below
-    catch ``Exception`` so one bad page leaves the rest, and a late deadline must not be swallowed there. Raised only when a
-    caller passes a deadline; the bench and every other caller pass none."""
 
 
 def check_deadline(deadline: float | None) -> None:
@@ -87,19 +84,12 @@ class Word:
 
 def upright_words(page) -> list[tuple[float, float, float, float, str]]:
     """The page's words as (x0, y0, x1, y1, text) with the text running left to right: a page printed sideways is turned a
-    quarter, as ``extract.upright_text`` turns it."""
-    lines = [line for block in page.get_text("dict", flags=0)["blocks"] for line in block.get("lines", [])]
-    vertical = [line for line in lines if abs(line["dir"][1]) > 0.9]
-    sideways = bool(lines) and len(vertical) >= 0.6 * len(lines)
-    up = sideways and sum(line["dir"][1] for line in vertical) < 0
-    out = []
-    for x0, y0, x1, y1, text, *_ in page.get_text("words"):
-        if not str(text).strip():
-            continue
-        if sideways:
-            x0, x1, y0, y1 = (-y1, -y0, x0, x1) if up else (y0, y1, -x1, -x0)
-        out.append((x0, y0, x1, y1, str(text)))
-    return out
+    quarter (``extract.upright_words``)."""
+    from .extract import upright_words as turned
+    words = turned(page)
+    if words is None:
+        words = [(x0, y0, x1, y1, text) for x0, y0, x1, y1, text, *_ in page.get_text("words")]
+    return [(x0, y0, x1, y1, str(text)) for x0, y0, x1, y1, text in words if str(text).strip()]
 
 
 def tilt(raw: list[tuple[float, float, float, float, str]]) -> float:
@@ -124,7 +114,7 @@ _BRACKET_CLOSE = ")]}"
 def merge_brackets(words: list[Word], height: float) -> list[Word]:
     """A bracket printed apart from its figure ("(" "12.5" ")") is joined to it, when it touches it."""
     out: list[Word] = []
-    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    ordered = [w for line in lines_of(words, height) for w in line]
     for w in ordered:
         prev = out[-1] if out else None
         same_line = prev is not None and abs(prev.y - w.y) <= 0.5 * height
@@ -154,7 +144,7 @@ def merge_space_groups(words: list[Word], height: float) -> list[Word]:
     (western), and the last has exactly three digits before its decimals. Any other run is left as it is, every piece. A
     piece with a comma is never joined: "24 1,245.60" stays a note number and a figure."""
     out: list[Word] = []
-    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    ordered = [w for line in lines_of(words, height) for w in line]
 
     def touches(a: Word, b: Word) -> bool:
         return abs(b.y - a.y) <= 0.5 * height and 0 <= b.x0 - a.x1 <= SPACE_GROUP_GAP * height
@@ -175,28 +165,15 @@ def merge_space_groups(words: list[Word], height: float) -> list[Word]:
     return out
 
 
-def ocr_page_boxes(png: bytes):
-    """RapidOCR's boxes of a page image (``ocr._boxes`` form), with the sideways turn ``ocr.recognise`` makes; [] when OCR is not
-    installed. Kept apart so the bench can cache it."""
+def ocr_page_boxes(png: bytes, deadline: float | None = None):
+    """RapidOCR's boxes of a page image (``ocr.page_boxes``: turned upright as ``ocr.recognise`` reads it) as plain lists; []
+    when OCR is not installed. Kept apart so the bench can cache it. ``OutOfTime`` when the OCR lock is not free before a
+    ``deadline``."""
     from . import ocr
     if not ocr.available():
         return []
-    import cv2
-    import numpy as np
-    image = cv2.imdecode(np.frombuffer(png, np.uint8), cv2.IMREAD_COLOR)
-    with ocr._lock:
-        if ocr._engine is None:
-            ocr._engine = ocr._new_engine()
-        result = ocr._boxes(ocr._engine(image if image is not None else png))
-        if len(result) >= 8 and ocr.lying_flat(result) < 0.5 and image is not None:
-            best = None
-            for turn in (cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_90_COUNTERCLOCKWISE):
-                turned = ocr._boxes(ocr._engine(cv2.rotate(image, turn)))
-                if turned and ocr.lying_flat(turned) >= 0.5 and (best is None or ocr._mean_score(turned) > ocr._mean_score(best)):
-                    best = turned
-            if best is not None:
-                result = best
-    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score)) for box, text, score in result]
+    return [([[float(p[0]), float(p[1])] for p in box], str(text), float(score))
+            for box, text, score in ocr.page_boxes(png, deadline)]
 
 
 
@@ -303,7 +280,7 @@ class Column:
     kind: str | None = None        # quarter, half, nine, year (None: not told)
     kind_confident: bool = False
     whole: bool = False            # a column of small whole figures found by ``whole_number_columns``
-    inferred: bool = False         # its date was not read but given by the layout (``fill_corresponding_quarter``)
+    inferred: bool = False         # its date was not read but given by the layout (``fill_quarter_slot``)
     read_date: date | None = None  # the header's date as read, kept when the kinds disagree (only the half-year sum uses it)
 
 
@@ -513,20 +490,27 @@ _CONFLICT = Cell(0.0, 0, False, False, None, "conflict")        # type: ignore[a
 def stitch_labels(rows: list[NRow], words: list[Word], columns: list[Column], used: set[int], height: float,
                   header_bottom: float | None) -> None:
     """Each row's label: the words left of the first column whose height is after the previous numeric row and up to this row's
-    own band, in reading order."""
+    own band, in reading order (``lines_of``)."""
     left = min(c.x0 for c in columns)
     label_words = [w for w in words if id(w) not in used and w.x1 <= left + 0.5 * height]
     for i, r in enumerate(rows):
         lower = rows[i - 1].bottom if i else (header_bottom if header_bottom is not None else r.top - 3 * height)
-        picked = [w for w in label_words if lower < w.y <= r.bottom + 0.0]
-        picked.sort(key=lambda w: (round(w.y / (0.6 * height)), w.x0))
+        picked = [w for line in lines_of([w for w in label_words if lower < w.y <= r.bottom + 0.0], height) for w in line]
         r.words_left = picked
         r.label = " ".join(w.text for w in picked).strip()
 
 
 # --- header: dates, kinds, title, unit ------------------------------------------------------------------------------------
 
-_MONTH_WORD = re.compile(r"^(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?$", re.I)
+# a month as printed in a header, full or in its usual short form ("Sept", "Jun."): never another word that starts like one
+# ("Market", "Decrease"); OCR's spelling of one ("Septemher") is read through ``mend_months``
+_MONTH = re.compile(r"^(?:january|february|march|april|may|june|july|august|september|sept|october|november|december|"
+                    r"jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)\.?,?$", re.I)
+
+
+@functools.lru_cache(maxsize=4096)
+def month_word(text: str) -> bool:
+    return bool(_MONTH.match(text)) or (len(text) >= 5 and bool(_MONTH.match(mend_months(text))))
 
 
 def lines_of(words: list[Word], height: float) -> list[list[Word]]:
@@ -625,31 +609,32 @@ def phrases_of(line: list[Word], gap: float) -> list[list[Word]]:
 
 _BORDER_MARKS = {"I", "l", "|", "!", "¦"}
 
-# a month as printed in a header, full or in its usual short form ("Sept", "Jun."): never another word that starts like one ("Market")
-_CUT_MONTH = re.compile(r"^(?:january|february|march|april|may|june|july|august|september|sept|october|november|december|"
-                        r"jan|feb|mar|apr|jun|jul|aug|sep|oct|nov|dec)\.?,?$", re.I)
-
-
-def month_cut(phrases: list[list[Word]], xs: list[float], spacing: float) -> list[list[Word]]:
-    """A header line of month words that run into one phrase ("September June 30, September September September March 31,",
-    the day and year on the lines below, ICICIBANK Q2FY27) cut before each month word, so each piece can go to its column. Only
-    when the cut is certain: the phrase is wider than a column, holds at least three month words, each piece fits a column's
-    width, and the pieces' centres are nearest to different columns, every one within three quarters of the spacing and in the
-    columns' own order. Otherwise the phrase is left whole."""
+def column_pieces(phrases: list[list[Word]], xs: list[float], spacing: float) -> list[list[Word]]:
+    """A header phrase wider than a column given to the columns word by word: each word goes to the column nearest its centre
+    and the phrase is cut where that column changes. A month line whose words run into one phrase ("September June 30,
+    September September September March 31,", the day and year on the lines below, ICICIBANK Q2FY27) is so read column by
+    column. The cut is kept only when it is certain: at least three pieces, each opening on a month word and holding no other,
+    each fitting a column's width with its centre within half the spacing of its column, the pieces' columns in the columns'
+    own order. Otherwise the phrase is left whole (and so, wider than a column, is a title and dates no column)."""
     out: list[list[Word]] = []
     for ph in phrases:
-        starts = [i for i, w in enumerate(ph) if _CUT_MONTH.match(w.text)]
-        if ph[-1].x1 - ph[0].x0 <= 1.3 * spacing or len(starts) < 3 or starts[0] != 0:
+        if ph[-1].x1 - ph[0].x0 <= 1.3 * spacing:
             out.append(ph)
             continue
-        pieces = [ph[a:b] for a, b in zip(starts, starts[1:] + [len(ph)])]
-        near = [min(range(len(xs)), key=lambda k: abs(xs[k] - (p[0].x0 + p[-1].x1) / 2)) for p in pieces]
-        fits = all(p[-1].x1 - p[0].x0 <= 1.3 * spacing and abs(xs[j] - (p[0].x0 + p[-1].x1) / 2) <= 0.5 * spacing
-                   for p, j in zip(pieces, near))
-        if fits and near == sorted(set(near)):
-            out.extend(pieces)
-        else:
-            out.append(ph)
+        near = [min(range(len(xs)), key=lambda k: abs(xs[k] - w.xc)) for w in ph]
+        pieces: list[list[Word]] = []
+        cols: list[int] = []
+        for w, j in zip(ph, near):
+            if cols and cols[-1] == j:
+                pieces[-1].append(w)
+            else:
+                pieces.append([w])
+                cols.append(j)
+        certain = len(pieces) >= 3 and cols == sorted(set(cols)) and all(
+            month_word(p[0].text) and not any(month_word(w.text) for w in p[1:])
+            and p[-1].x1 - p[0].x0 <= 1.3 * spacing and abs(xs[j] - (p[0].x0 + p[-1].x1) / 2) <= 0.5 * spacing
+            for p, j in zip(pieces, cols))
+        out.extend(pieces if certain else [ph])
     return out
 
 
@@ -665,7 +650,7 @@ def column_dates(gap_words: list[Word], columns: list[Column], height: float, se
     # a table's border drawn as a letter ("I" between "September 30," and "2026" in ATUL Q2FY27) is never part of a date
     gap_words = [w for w in gap_words if w.text.strip() not in _BORDER_MARKS]
     for line in lines_of(gap_words, height):
-        for ph in month_cut(phrases_of(line, sep), xs, spacing):
+        for ph in column_pieces(phrases_of(line, sep), xs, spacing):
             width = ph[-1].x1 - ph[0].x0
             centre = (ph[0].x0 + ph[-1].x1) / 2
             j = min(range(len(columns)), key=lambda k: abs(xs[k] - centre))
@@ -684,7 +669,7 @@ def group_phrases(gap: list[Word], columns: list[Column], height: float) -> list
     group words read them (``pdf_referee._GROUP``), kept to the lines near the header's dates."""
     from .pdf_referee import _GROUP
     lines = lines_of(gap, height)
-    in_bands = [w for w in gap if _MONTH_WORD.match(w.text) or _dates_in_text(w.text)]
+    in_bands = [w for w in gap if month_word(w.text) or _dates_in_text(w.text)]
     top = min((w.y for w in in_bands), default=None)
     found: list[tuple[float, str]] = []
     for line in lines:
@@ -749,30 +734,6 @@ _FIGURES_IN_UNIT = re.compile(r"^[(\[]?\s*(?:all\s+)?(?:figures|amounts?)\s+(?:a
 _AMOUNT_IN_RUPEES = re.compile(r"^[(\[{]?\s*am[a-z]{1,5}\s+in\s+r[a-z]{3,6}\s+(crores?|lakhs?|lacs?|millions?)\s*[)\]}]?$", re.I)
 
 
-def scan_units(lines: list[str]) -> set:
-    """The units named by short unit lines (a lost rupee sign, a garbled word: "t in crore", "({ in Lakh except per Share
-    data)"), as ``pdf_referee`` reads them; a unit it does not know is None."""
-    from .pdf_referee import _BARE_UNIT, _GARBLED_UNIT, names_other_currency
-    from .grounding import _PER_CRORE
-    found = set()
-    for line in lines:
-        probe = line.strip()
-        if names_other_currency(probe):        # "(US$ in million)": another currency's unit is no rupee unit
-            continue
-        if len(probe) <= 70 and (m := _GARBLED_UNIT.match(probe)):
-            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
-        clean = re.sub(r"^[^\w]+|[^\w.)]+$", "", probe)
-        if len(clean) <= 40 and (m := _BARE_UNIT.match(clean)):
-            found.add(_PER_CRORE.get(m[1].lower().rstrip("s.").rstrip("s")))
-        elif len(probe) <= 16 and (m := _GLUED_UNIT.match(probe)):
-            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
-        elif len(probe) <= 100 and (m := _FIGURES_IN_UNIT.match(probe)):
-            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
-        elif len(probe) <= 40 and (m := _AMOUNT_IN_RUPEES.match(probe)):
-            found.add(_PER_CRORE.get(m[1].lower().rstrip("s")))
-    return found
-
-
 # A unit in brackets that ends a header line which also holds other words of the page's top (J&KBANK: "CIN: L6511... ( In Crores)",
 # the rupee sign lost; PARIN: "[ J (Ks. in Lacs)"): the bracket must close the line, hold nothing but a rupee sign or one rupee word
 # ("Rs", its garble "Ks", "INR") before "in" and the unit word itself; never a count's word ("No. in Lakhs": a share count) and never
@@ -780,21 +741,43 @@ def scan_units(lines: list[str]) -> set:
 _TAIL_UNIT = re.compile(r"(?:^|\s)\(\s*[₹₨]?\s*(?:(?:[RK][s5]|INR)\.?\s*)?in\s+(crores?|lakhs?|lacs?|millions?)\s*\)\s*$", re.I)
 
 
+_FIGURE_BEFORE = re.compile(r"(?:^|\s)[\d,.]*\d[\d,.]*\s*$")     # a bare figure just before a tail unit's bracket ("5,000 (in lakhs)")
 _ANY_UNIT_BRACKET = re.compile(r"\([^()]{0,12}\bin\s+(?:crores?|lakhs?|lacs?|millions?)\s*\)", re.I)
 
 
-def tail_units(lines: list[str]) -> set:
-    """The units of ``_TAIL_UNIT``; a line with two bracketed units names None (two units: no unit)."""
+def _unit_rules():
+    """Each family of unit line: (its name, the longest line it reads, the rule, how the line is cut first, whether the rule may
+    start inside the line). ``pdf_referee``'s own short-line rules come first: a lost rupee sign or a garbled word ("t in crore",
+    "({ in Lakh except per Share data)"), a bare unit line."""
+    from .pdf_referee import _BARE_UNIT, _GARBLED_UNIT
+    bare = lambda line: re.sub(r"^[^\w]+|[^\w.)]+$", "", line)
+    return (("garbled", 70, _GARBLED_UNIT, None, False), ("bare", 40, _BARE_UNIT, bare, False),
+            ("glued", 16, _GLUED_UNIT, None, False), ("figures", 100, _FIGURES_IN_UNIT, None, False),
+            ("rupees", 40, _AMOUNT_IN_RUPEES, None, False), ("tail", 200, _TAIL_UNIT, None, True))
+
+
+def scan_units(lines: list[str], only: str | None = None) -> set:
+    """The units the unit lines of ``lines`` name, by every family of ``_unit_rules`` (``only``: one family, by name); a unit
+    not known is None, and so is a line with two bracketed units (two units: no unit)."""
+    from .currency import names_other_currency
+    from .grounding import _PER_CRORE
     found = set()
     for line in lines:
-        if len(line) <= 200 and (m := _TAIL_UNIT.search(line)):
-            found.add(None if len(_ANY_UNIT_BRACKET.findall(line)) > 1 else _PER_CRORE_UNIT().get(m[1].lower().rstrip("s")))
+        probe = line.strip()
+        if names_other_currency(probe):        # "(US$ in million)": another currency's unit is no rupee unit
+            continue
+        for name, longest, rule, cut, inside in _unit_rules():
+            if only not in (None, name):
+                continue
+            text = cut(probe) if cut else probe
+            m = (rule.search if inside else rule.match)(text) if len(text) <= longest else None
+            if m is None:
+                continue
+            if name == "tail" and _FIGURE_BEFORE.search(text[:m.start()]):
+                continue                       # "Paid up capital Rs. 5,000 (in lakhs)": the bracket is that figure's unit, not the page's
+            two = name == "tail" and len(_ANY_UNIT_BRACKET.findall(probe)) > 1
+            found.add(None if two else _PER_CRORE.get(m[1].lower().rstrip(".").rstrip("s")))
     return found
-
-
-def _PER_CRORE_UNIT():
-    from .grounding import _PER_CRORE
-    return _PER_CRORE
 
 
 def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
@@ -807,7 +790,7 @@ def unit_of(lines: list[str], page_lines: list[str]) -> float | None:
     u = unit_before(text, len(text))
     if u is not None:
         return u
-    units = scan_units(lines) | tail_units(lines)
+    units = scan_units(lines)
     if len(units) == 1 and None not in units:
         return units.pop()
     page_text = "\n".join(page_lines)
@@ -824,9 +807,9 @@ def date_parts(words: list[Word], height: float) -> set[int]:
     a month word on its line ("Sept 30" over "2026" in KIRLPNU Q2FY27, whose days made a row of 30s that cut the header
     off the table)."""
     out: set[int] = set()
-    ordered = sorted(words, key=lambda w: (round(w.y / max(height, 1.0)), w.x0))
+    ordered = [w for line in lines_of(words, height) for w in line]
     for prev, w in zip(ordered, ordered[1:]):
-        if re.fullmatch(r"\d{1,2},?", w.text) and _MONTH_WORD.match(prev.text) and abs(prev.y - w.y) <= 0.5 * height \
+        if re.fullmatch(r"\d{1,2},?", w.text) and month_word(prev.text) and abs(prev.y - w.y) <= 0.5 * height \
                 and 0 <= w.x0 - prev.x1 <= height:
             out.add(id(w))
     return out
@@ -835,11 +818,12 @@ TWIN_MIN_FIGURES = 3
 
 
 def drop_twin_rows(rows: list) -> list:
-    """The rows without the second reading of a line: a row with no label whose every cell is the row just above's (the same
-    figures in the same columns, at least ``TWIN_MIN_FIGURES`` of them, none missing on one side only) is the same printed line
-    read twice (CREDITACC Q2FY27: OCR gave "II Other income" 1.06 0.92 ... and, as a second row with no label, the same six
-    figures, which put a row between the two sections and so cut the sums that name total income). A line is never printed
-    twice without its own label, and the row above is kept, so no figure is lost or made up."""
+    """The rows without an unlabelled copy of the row just above: a row with no label whose every cell is the row above's (the
+    same figures in the same columns, at least ``TWIN_MIN_FIGURES`` of them, none missing on one side only). It is no misreading
+    (``build_rows`` gives each printed line one row): the statement prints the line twice, its one item and then, ruled off
+    in bold and with no label, that item's own subtotal (CREDITACC Q2FY27, text layer and OCR alike: "II Other income" 1.06
+    0.92 ... and below it the same six figures). The copy put a row between the two sections and so cut the sums that name
+    total income. The labelled row is kept, so no figure is lost or made up."""
     out: list = []
     for r in rows:
         prev = out[-1] if out else None
@@ -929,14 +913,12 @@ def tables_of_page(page_no: int, words: list[Word], anywhere: bool, source: str 
                 half_dates = [d if d is None or not any(o is not None and o != d for o in (dates[i + k] if lo == 0 else dates[i],))
                               else None for i, d in enumerate(dates[lo:hi])]       # a position whose halves disagree is dated in neither
                 column_kinds(half_cols, half_dates, [p for p in phrases if span[0] <= p[0] <= span[1]], march)
-                fill_corresponding_quarter(half_cols)
-                fill_damaged_quarter(half_cols)
+                fill_quarter_slot(half_cols)
                 half_rows = [NRow(r.y, r.top, r.bottom, r.label, r.cells[lo:hi], r.words_left) for r in rows_all]
                 tables.append(Table(page_no, half_basis, unit, half_cols, half_rows, source, header_lines=texts))
             continue
         column_kinds(cols, dates, group_phrases(gap, cols, height), march)
-        fill_corresponding_quarter(cols)
-        fill_damaged_quarter(cols)
+        fill_quarter_slot(cols)
         basis, contested = _basis_above_boxed(texts, len(texts))
         if basis and any(_NON_CONSOLIDATED.search(x) for x in [" ".join(texts)] + texts):
             basis, contested = None, True     # "Non-Consolidated Financial Results" names neither as a word (22nd review)
@@ -968,6 +950,10 @@ def _basis_word(text: str) -> str | None:
     return (STANDALONE, CONSOLIDATED)[best]
 
 
+# the words a side-by-side heading may carry after its basis word ("Consolidated results", "Standalone Financial Results")
+_HEADING_FILLER = re.compile(r"^\W*(?:financial|results?|statements?|figures)\W*$", re.I)
+
+
 def side_by_side(gap: list[Word], cols: list[Column], dates: list, height: float):
     """(k, basis of the first k columns, basis of the rest) when one printed grid holds the standalone and the consolidated figures
     side by side (SPLPETRO Q2FY27: 12 columns). Every condition must hold, else None: an even number of columns, eight or more; a
@@ -979,13 +965,21 @@ def side_by_side(gap: list[Word], cols: list[Column], dates: list, height: float
     k = n // 2
     margin = 2 * height
     for line in lines_of(gap, height):
-        if len(line) != 2:
+        # the line is two headings and nothing else: each a basis word, optionally followed by heading words ("Consolidated
+        # results   Standalone results", CYIENT Q2FY27; "Standalone Results   Consolidated Results", HITECHGEAR Q1FY27)
+        named = [i for i, w in enumerate(line) if _basis_word(w.text) is not None]
+        if len(named) != 2 or named[0] != 0 or not all(i in named or _HEADING_FILLER.match(w.text) for i, w in enumerate(line)):
             continue
-        b1, b2 = _basis_word(line[0].text), _basis_word(line[1].text)
+        first, second = line[:named[1]], line[named[1]:]
+        b1, b2 = _basis_word(first[0].text), _basis_word(second[0].text)
         if b1 is None or b2 is None or b1 == b2:
             continue
-        if not (cols[0].x0 - margin <= line[0].xc <= cols[k - 1].x1 + margin and cols[k].x0 - margin <= line[1].xc <= cols[-1].x1 + margin):
+        c1, c2 = (first[0].x0 + first[-1].x1) / 2, (second[0].x0 + second[-1].x1) / 2
+        if not (cols[0].x0 - margin <= c1 <= cols[k - 1].x1 + margin and cols[k].x0 - margin <= c2 <= cols[-1].x1 + margin):
             continue
+        if not (first[0].x0 >= cols[0].x0 - margin and first[-1].x1 < cols[k].x0 and second[0].x0 > cols[k - 1].x1
+                and second[-1].x1 <= cols[-1].x1 + margin):
+            continue                      # each whole heading stands over its own half, never across the other's columns
         pairs = [(x, y) for x, y in zip(dates[:k], dates[k:]) if x is not None and y is not None]
         if sum(x == y for x, y in pairs) >= 3 and sum(x != y for x, y in pairs) <= 1:
             return k, b1, b2
@@ -1009,9 +1003,6 @@ _CLASS_RULES: list[tuple[str, re.Pattern]] = [
     ("DISC", re.compile(r"discontinu", re.I)),
     ("PBEI", re.compile(r"before\b.*\b(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?)", re.I)),
     ("PBT", re.compile(r"before\s+(?:\w+\s+){0,3}tax|\bpbt\b", re.I)),
-    # OCR's "beforc" / "bcfore" for "before" in a line that names a profit and a tax ("5. Profit beforc Tax (3+4)", MOREPENLAB): without
-    # this it fell to the tax rule below and a tax line was never a profit before tax
-    ("PBT", re.compile(r"^(?!.*(?:exceptional|extraordinary|share\s+of|associates?|joint\s+ventures?))(?=.*\b(?:profit|loss)\b).*?\b(?:profit|loss)\b.{0,20}?\b(?:\wefore|b\wfore|be\wore|bef\wre|befo\we|befor\w)\s+(?:\w+\s+){0,3}tax", re.I)),
     ("TAX", re.compile(r"^(?!.*\b(?:profit|loss|surplus)\b).*\btax", re.I)),      # a tax line: no profit or loss in its words
     ("CONT", re.compile(r"continuing", re.I)),
     ("PAT", re.compile(r"(?:profit|loss|surplus)\b.*\b(?:for\s+the\s+(?:period|year|quarter)|after\s+tax)|\bpat\b|net\s+profit", re.I)),
@@ -1025,6 +1016,56 @@ _CLASS_RULES: list[tuple[str, re.Pattern]] = [
 ]
 
 
+# The words of a results statement's row labels. OCR damages one letter of a word ("Profit beforc Tax", MOREPENLAB; "Proft",
+# "0xceptional"): ``mend_label`` puts back the one word of this list the damaged word is a letter away from. The list holds the
+# words the class rules name and their forms; ``_PLAIN_WORDS`` the real words a letter away from them that a page prints
+# ("basis" beside "basic", "referred" beside "deferred", "point" beside "joint": all three found in the answer keys' PDFs),
+# never mended and never a mend's answer, so a real word is never turned into another.
+_LABEL_VOCAB = frozenset("""
+    profit profits loss losses less before after tax taxes taxation taxed exceptional extraordinary item items share shares
+    associate associates joint venture ventures income incomes revenue revenues operation operations expense expenses
+    expenditure total totals other others comprehensive period periods year years quarter quarters continuing continued
+    discontinued discontinuing attributable owner owners controlling interest interests minority earning earnings equity
+    holder holders basic diluted sales sale turnover earned surplus deficit credit credits current deferred including excluding
+    """.split())
+_PLAIN_WORDS = frozenset("""
+    basis referred owned continue continues point points sharp scale stems spare shore shores aster dilute lass loose lose
+    lost posts takes tactics sharer shared shaper earner learning yearn yearns quartet ventured venue venues totally otter deterred
+    alter scales faxes shape taxis revenge warning learnings learned joins
+    """.split())
+MEND_MIN_LETTERS = 5           # a shorter word is never mended: one letter of four is too much to guess
+
+
+def _one_edit(a: str, b: str) -> bool:
+    """a and b differ by exactly one letter changed, added or left out."""
+    if a == b or abs(len(a) - len(b)) > 1:
+        return False
+    if len(a) == len(b):
+        return sum(x != y for x, y in zip(a, b)) == 1
+    short, long_ = (a, b) if len(a) < len(b) else (b, a)
+    i = next((k for k, (x, y) in enumerate(zip(short, long_)) if x != y), len(short))
+    return short[i:] == long_[i + 1:]
+
+
+def mend_label(text: str) -> str:
+    """A label with each OCR-damaged word put back: a word of five letters or more (a digit may stand for a letter) that is not
+    in ``_LABEL_VOCAB`` and is one edit from exactly one word of it is that word. A word of the list itself is never changed, so
+    "after" is never "before" and "loss" never "less"; nor is a word of ``_PLAIN_WORDS``; nor the end of a longer word of the
+    list mended into a shorter one ("scontinued", "discontinued" with its start lost, is never "continued")."""
+    def one(m: re.Match) -> str:
+        word = m.group(0)
+        low = word.lower()
+        if low in _LABEL_VOCAB or low in _PLAIN_WORDS or len(low) < MEND_MIN_LETTERS \
+                or sum(ch.isalpha() for ch in low) < MEND_MIN_LETTERS - 1:
+            return word
+        near = [v for v in _LABEL_VOCAB if _one_edit(low, v)]
+        if len(near) != 1 or any(v != near[0] and len(v) > len(near[0]) and v.endswith(near[0]) and v.endswith(low[1:])
+                                 for v in _LABEL_VOCAB):
+            return word
+        return near[0]
+    return re.sub(r"(?<![A-Za-z0-9])[A-Za-z0-9]*[A-Za-z][A-Za-z0-9]*", one, text)
+
+
 def label_class(label: str) -> str | None:
     """The landmark a stitched label names: TI total income, TE total expenses, REV revenue, OI other income, PBEI profit before
     exceptional items (or associates) and tax, PBT profit before tax, EXC exceptional items, ASSOC share of associates, TAX a tax
@@ -1033,6 +1074,7 @@ def label_class(label: str) -> str | None:
     text = re.sub(r"\s+", " ", label or "").strip()
     if not re.search(r"[A-Za-z]{3,}", text):
         return None
+    text = mend_label(text)
     for name, rule in _CLASS_RULES:
         if rule.search(text):
             return name
@@ -1725,7 +1767,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     between pages, before each OCR read and between crop re-reads once it has passed (one OCR call in flight finishes)."""
     from . import ocr
     from .pdf_readers import _pymupdf, consolidated_anywhere, names_consolidated, page_layers, statement_pages
-    ocr_boxes = ocr_boxes or ocr_page_boxes
+    ocr_boxes = ocr_boxes or functools.partial(ocr_page_boxes, deadline=deadline)
     layers = page_layers(pdf_bytes, max_pages)
     anywhere = consolidated_anywhere(layers, not_required=True, numbers_first=True)    # SBICARD: "not required to prepare consolidated"
     ranked = statement_pages(layers, MAX_STATEMENT_PAGES)
@@ -1736,6 +1778,12 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
     fill_used = 0
     ocr_texts: dict[int, str] = {}     # the OCR text of the pages with no text layer
     crops = [MAX_REREAD_FILING]
+    page_boxes: dict[int, list] = {}   # each page's OCR boxes, read once whichever path asks first
+
+    def boxes_of(page, p: int) -> list:
+        if p not in page_boxes:
+            page_boxes[p] = ocr_boxes(page.get_pixmap(dpi=ocr.DPI).tobytes("png"))
+        return page_boxes[p]
 
     def crop_pass(page, p: int, tables: list[Table], raw, k: float) -> None:
         """Empty cells of the page's tables read again from crops (``reread_empty_cells``; env ``PDF_CROP_REREAD=1``)."""
@@ -1754,8 +1802,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
 
     def read_ocr(page, p: int) -> list[Table]:
         check_deadline(deadline)
-        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
-        raw = words_from_boxes(ocr_boxes(png))
+        raw = words_from_boxes(boxes_of(page, p))
         if not layers[p].has_layer:
             ocr_texts[p] = " ".join(w[4] for w in raw)
         found = [Table_solved(t) for t in tables_of_page(p, straighten(raw, True), anywhere, "ocr")]
@@ -1769,7 +1816,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
 
     dated = usable_dates
 
-    def fill_from_ocr(page, tables: list[Table], layer_text: str) -> None:
+    def fill_from_ocr(page, p: int, tables: list[Table], layer_text: str) -> None:
         """What a page's text layer leaves out, from OCR, for its named tables (NESTLEIND Q2FY27: the title, "(₹ in million)"
         and every row label are drawn without text). Nothing is taken unless OCR is proved to see the same page as the layer:
         the page is not rotated, and OCR reads nearly every figure of the table at the layer's own place (``ocr_aligned``).
@@ -1782,9 +1829,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
         if page.rotation:
             return
         check_deadline(deadline)
-        png = page.get_pixmap(dpi=ocr.DPI).tobytes("png")
         k = 72.0 / ocr.DPI
-        words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(ocr_boxes(png))], True)
+        words = straighten([(x0 * k, y0 * k, x1 * k, y1 * k, t) for x0, y0, x1, y1, t in words_from_boxes(boxes_of(page, p))], True)
         if not words:
             return
         height = text_height(words)
@@ -1808,8 +1854,8 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                         continue
                     # the row's own line and, for a wrapped label, the lines above it down from the row before
                     top = t.rows[i - 1].y + 0.5 * height if i else r.y - 0.5 * height
-                    own = sorted((w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
-                                  and parse_figure(w.text) is None), key=lambda w: (round(w.y / height), w.x0))
+                    own = [w for line in lines_of([w for w in words if top < w.y <= r.y + 0.5 * height and not in_column(w)
+                                                   and parse_figure(w.text) is None], height) for w in line]
                     labels.append(" ".join(w.text for w in own))
                 if sum(bool(lb.strip()) for lb in labels) >= OCR_LABELS_SHARE * len(t.rows):
                     for r, lb in zip(t.rows, labels):
@@ -1828,7 +1874,7 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
                 if wanting and fill_used < MAX_FILL_OCR_PAGES and ocr.available():
                     fill_used += 1          # its own budget: the scanned statement pages keep all of MAX_OCR_PAGES (TBZ)
                     try:
-                        fill_from_ocr(page, by_page[p], layers[p].text)
+                        fill_from_ocr(page, p, by_page[p], layers[p].text)
                     except Exception as exc:    # noqa: BLE001 - the table keeps what its layer gave (no unit: no answer)
                         log.warning("numbers-first: OCR of a page's unit or labels failed on page %d (%s)", p, type(exc).__name__)
                 if page.get_images(full=False) and (not any(t.named for t in by_page[p])
@@ -2002,7 +2048,7 @@ def reread_empty_cells(page, table: Table, theta: float, k: float, budget: list[
         if image is None:
             return None
         budget[0] -= 1
-        return ocr.read_cell(image)
+        return ocr.read_cell(image, deadline)
 
     def read(i: int, j: int) -> Cell | None:
         """The cell's figure when two renders of the box (300 and 400 dpi) both show no cut glyph and read with the same
@@ -2079,48 +2125,23 @@ HALF_SUM_METRICS = ("revenue", "other_income", "total_income", "expenses", "pbt_
 HALF_SUM_MIN_ROWS = 4
 
 
-def fill_corresponding_quarter(columns: list[Column]) -> None:
-    """The one date a SEBI results layout allows in an undated third column (A5, date-candidate matching; ABCAPITAL Q4FY24:
-    "31.03.2024" quarter, "31.12.2023" quarter, an unreadable date, "31.03.2024" year, "31.03.2023" year): when the first two
-    columns are quarters dated the current quarter and the one before it, the third has no date and no kind, every column after
-    it is dated and is a half year, nine months or year, and one of those is dated a year before the current quarter, the third
-    is the same quarter a year before. Nothing else is filled."""
-    if len(columns) < 4:
-        return
-    a, b, c, rest = columns[0], columns[1], columns[2], columns[3:]
-    if not (a.kind == b.kind == "quarter" and a.date and b.date and c.date is None and c.kind is None):
-        return
-    if b.date != previous_quarter_end(a.date):
-        return
-    if not all(x.date and x.kind in ("half", "nine", "year") for x in rest):
-        return
-    try:
-        year_before = a.date.replace(year=a.date.year - 1)
-    except ValueError:          # 29 February
-        return
-    if not any(x.date == year_before for x in rest):
-        return
-    # and the current year to date is printed and dated after it: otherwise the undated third column may itself be the
-    # current half year, nine months or year of a layout that leaves the same quarter last year out (31st review)
-    if not any(x.date == a.date and x.kind in ("half", "nine", "year") for x in rest):
-        return
-    c.date, c.kind, c.inferred = year_before, "quarter", True
-
-
 def next_quarter_end(d: date) -> date:
     import calendar
     y, m = (d.year, d.month + 3) if d.month <= 9 else (d.year + 1, d.month - 9)
     return date(y, m, calendar.monthrange(y, m)[1])
 
 
-def fill_damaged_quarter(columns: list[Column]) -> None:
-    """The one quarter column of a SEBI layout whose date or kind was lost, when its two neighbours are read: the first three
-    columns are the current quarter X, the quarter before it, the same quarter a year before, and every column after them is a
-    dated half year, nine months or year, one dated X (the year to date) and one dated a year before X. Exactly one of the three
-    is damaged (no date and no kind, or a date that is exactly its slot's and no kind); the other two are quarters whose dates
-    are exactly their slots' for one X. Nothing is filled when two are damaged, when a read date is not its slot's, or when X
-    could be two dates (ANGELONE Q2FY27: the current quarter undated; ARMANFIN Q3FY24: the previous quarter undated; SUNDARMFIN
-    Q4FY23: the year-ago quarter dated but with no kind)."""
+def fill_quarter_slot(columns: list[Column]) -> None:
+    """The one quarter column of a SEBI results layout whose date or kind was lost, given by its slot (A5, date-candidate
+    matching). The first three columns are the current quarter X, the quarter before it and the same quarter a year before;
+    every column after them is a dated half year, nine months or year, one dated X (the year to date) and one dated a year
+    before X. Exactly one of the three is damaged (no date and no kind, or a date that is exactly its slot's and no kind); the
+    other two are quarters whose dates are exactly their slots' for one X. Nothing is filled when two are damaged, when a read
+    date is not its slot's (a date read but disputed by the header words is never revived), when X could be two dates, or when
+    a column after the three is dated the quarter before X. ABCAPITAL Q4FY24: the year-ago quarter's date unreadable; ANGELONE
+    Q2FY27: the current quarter undated; ARMANFIN Q3FY24: the previous quarter undated; SUNDARMFIN Q4FY23: the year-ago quarter
+    dated but with no kind. Without the year to date dated X after the three, the undated third column may itself be the
+    current half year, nine months or year of a layout that leaves the same quarter last year out (31st review)."""
     if len(columns) < 5:
         return
     first, rest = columns[:3], columns[3:]
@@ -2141,7 +2162,7 @@ def fill_damaged_quarter(columns: list[Column]) -> None:
     x = next(iter(xs))
     try:
         slots = [x, previous_quarter_end(x), x.replace(year=x.year - 1)]
-    except ValueError:
+    except ValueError:                   # 29 February
         return
     damaged = [i for i, c in enumerate(first) if not (c.kind == "quarter" and c.date == slots[i])]
     if len(damaged) != 1:
@@ -2239,6 +2260,25 @@ def table_figure(table: Table, metric: str, kind: str, when: date):
     return first[0] / table.unit, first[1] / table.unit, first[2], ""
 
 
+def half_year_column(period: str) -> tuple[str, date] | None:
+    """("half", its end) for a first half year ("H1FY27": April to September 2026, the half-year column of a Q2 results
+    statement); None for any other period."""
+    m = re.fullmatch(r"H1FY(\d\d)", period)
+    return ("half", date(1999 + int(m[1]), 9, 30)) if m else None
+
+
+def half_year_proved(table: Table, metric: str, when: date, value: float, tol: float) -> tuple[float | None, str]:
+    """The half year's figure only when the same table's two quarters add up to it (Q1 + Q2 = H1, each column read on its own
+    date): a column taken for the half year that is not one (a year-ago quarter, a year) never gives an answer."""
+    q2, t2, _, _ = table_figure(table, metric, "quarter", when)
+    q1, t1, _, _ = table_figure(table, metric, "quarter", date(when.year, 6, 30))
+    if q1 is None or q2 is None:
+        return None, "the half year's two quarters are not both read, so its column is not proven"
+    if abs(q1 + q2 - value) > tol + t1 + t2 + 1e-9:
+        return None, f"the half year's column ({value:g}) is not its two quarters' sum ({q1 + q2:g})"
+    return value, ""
+
+
 @_measured
 def reading_from_tables(tables: list[Table], period: str, metric: str, basis: str | None, reader: str = NAME):
     """A ``pdf_readers.Reading`` from the solved tables: the figure when every table of the basis that names it agrees."""
@@ -2246,7 +2286,7 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
     from .pdf_readers import Reading, same_value
     from .pdf_referee import target_column
     family = "numbers-first"
-    target = target_column(period)
+    target = target_column(period) or half_year_column(period)
     if target is None or metric not in ("revenue", "other_income", "total_income", "expenses", "pbt", "tax", "pat"):
         return Reading(reader, family, "none", note=f"no {metric} for {period}")
     kind, when = target
@@ -2259,6 +2299,8 @@ def reading_from_tables(tables: list[Table], period: str, metric: str, basis: st
             notes.append(f"p{t.page}: the table's basis is not told")
             continue
         value, tol, label, why = table_figure(t, metric, kind, when)
+        if value is not None and kind == "half":
+            value, why = half_year_proved(t, metric, when, value, tol)
         if metric == "pat" and (t.basis == basis or not basis) and getattr(getattr(t, "solver", None), "pat_unsure", False):
             # one table of the basis whose profit is carried on by arithmetic alone vetoes the others (twelfth review: a
             # second table of the basis that stops at the profit after tax would give the profit before the share)

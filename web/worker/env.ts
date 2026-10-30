@@ -5,6 +5,7 @@ export interface Env {
   ASSETS: Fetcher;
   INGEST_TOKEN: string;
   OWNER_TOKEN?: string;
+  SHADOW_TOKEN?: string;   // the PDF shadow job's token: read queries and meta/pdf-shadow/ only (shared/shadowToken.ts)
 }
 
 export type AppEnv = { Bindings: Env };

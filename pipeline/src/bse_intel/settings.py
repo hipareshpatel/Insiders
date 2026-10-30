@@ -229,6 +229,17 @@ def card_ground_all_fields() -> bool:
     return _switch("CARD_GROUND_ALL_FIELDS")
 
 
+def card_text_support() -> bool:
+    """CARD_TEXT_SUPPORT (default off, not in config/switches.toml; TODO 142, prompt audit of 30 Oct 2026): the free text the
+    grounding never read (track-next risks, catalysts, milestones and approvals, the core catalyst, a change's "why", SECTOR
+    and memory-less MEMORY insights) must have its names and content words in the filing, memory or scale block, and a
+    whole number of 31 or less beside a noun or a day-month date must be printed there; an item with two or more words
+    missing, or one such number or date, is dropped. A "net profit", "to shareholders", "discontinued" or "total
+    comprehensive income" claim on a figure needs that label in its quote or on the figure's own line. The pass-2 prompt
+    adds the sources-only rule. Read at the call."""
+    return _switch("CARD_TEXT_SUPPORT")
+
+
 def card_grounded_figures() -> bool:
     """CARD_GROUNDED_FIGURES (on in config/switches.toml; 26 Oct 2026 live audit): three places where our own code damaged a right figure
     are refused. (1) An event-XBRL order amount that rounds to 0 Cr (the file gave it in crore, not rupees) is not put on

@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import call_memory, call_queue, gate, two_parts
+from . import call_memory, call_queue, card_support, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -3742,6 +3742,8 @@ class Pipeline:
                 derived = (derived_figures(candidate.card, check_quant(candidate.card.quantified_impact, *sources), sources)
                            if candidate.card is not None else [])
                 changes += ground_all_fields(candidate, sources, derived)
+            if card_text_support():   # CARD_TEXT_SUPPORT: names, words, small counts, dates and labels the sources do not print (off: nothing)
+                changes += card_support.apply(candidate, sources, filed_text)   # labels against the document alone, not our XBRL table's own labels
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)

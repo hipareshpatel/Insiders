@@ -44,3 +44,8 @@ MEMORY_CALL_V2 = true            # F180: the 15-minute run queues transcripts an
 # reads with the F215 options on, as the bench scored it (hard key 156 right / 0 wrong on, 65 / 10 off; out of sample,
 # numbers-first then this fallback 267 right / 12 wrong of 500, against 262 / 12 off).
 SLIP_CHECK_READER_OPTIONS = true # slip_check.PdfCheck: the fallback reader with PDF_DATES_2DIGIT, PDF_PAGE_RANK, PDF_ROW_FIXES
+# On 30 Oct 2026 (owner: Yes): memory's statement figures (dossier.STATEMENT_FIGURES) enter memory only from the exchange's
+# file or code computed on it (lab.by "file" / "calc"), never from a card's AI reading ("memory must be filled using exchange
+# data and screener rules not using cards data"). A late file is waited for (event_catchup.results_catch_up). A repository
+# variable MEMORY_FILE_ONLY = 0 turns it off in every job.
+MEMORY_FILE_ONLY = true          # dossier merge: a card's reading of a statement figure stays on its card

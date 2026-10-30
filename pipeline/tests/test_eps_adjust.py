@@ -373,6 +373,8 @@ def test_the_store_refuses_the_misbased_eps_only_when_on(monkeypatch):
         merged = merge(d, out, f, None, "now")
         return [m for m in merged["financial_metrics"] if m["metric"] == "eps" and m["period"] == "Q2FY26"]
 
+    # the base check is the wall behind MEMORY_FILE_ONLY (owner, 30 Oct 2026), which already keeps a card's EPS out: tested with it off
+    monkeypatch.setenv("MEMORY_FILE_ONLY", "0")
     monkeypatch.delenv("EPS_BASE_CHECK", raising=False)
     assert [m["value"] for m in run()] == [2.5]       # off: stored as before
     monkeypatch.setenv("EPS_BASE_CHECK", "1")

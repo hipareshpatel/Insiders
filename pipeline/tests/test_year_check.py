@@ -230,13 +230,19 @@ def _year_prediction_case():
     return d, output(financial_metrics=metrics), filing("q4", "2027-05-20T17:00:00+05:30")
 
 
+def year_merge(*args, **kw):
+    """set-up: with MEMORY_FILE_ONLY (owner, 30 Oct 2026) a statement figure is stored only as the file's"""
+    from bse_intel.dossier import merge
+    return merge(*args, by="file", **kw)
+
+
 def test_a_held_year_figure_does_not_resolve_a_prediction(monkeypatch):
     from bse_intel.dossier import merge
     d, out, f = _year_prediction_case()
-    off = merge(d, out, f, "HIGH", "now")
+    off = year_merge(d, out, f, "HIGH", "now")
     assert off["predictions"][0]["status"] == "MET"          # switch off: no change
     monkeypatch.setenv("MEMORY_YEAR_CHECK", "1")
-    on = merge(d, out, f, "HIGH", "now")
+    on = year_merge(d, out, f, "HIGH", "now")
     assert on["predictions"][0]["status"] == "OPEN" and "actual" not in on["predictions"][0]   # held: no MET / MISSED
 
 
@@ -244,7 +250,7 @@ def test_a_held_year_figure_triggers_no_signal(monkeypatch):
     from bse_intel.dossier import merge
     from bse_intel.signals import compute
     d, out, f = _year_prediction_case()
-    after = merge(d, out, f, "HIGH", "now")                  # stored with the switch off, so the year is in memory
+    after = year_merge(d, out, f, "HIGH", "now")                  # stored with the switch off, so the year is in memory
     kinds = ("METRIC_SHIFT", "PREDICTION_RESOLVED")
     off = [s for s in compute(d, after, out, f, {}, every=True) if s["type"] in kinds and ("(FY27)" in s["text"] or s["type"] == "PREDICTION_RESOLVED")]
     assert off

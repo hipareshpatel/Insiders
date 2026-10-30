@@ -25,7 +25,7 @@ def _pat(d: dict, period: str = "Q4FY25") -> float:
 
 def test_a_standalone_xbrl_file_does_not_outrank_consolidated_cards():
     d = new_dossier(_filing("a", "2025-05-20T10:00:00+05:30"))
-    d = merge(d, _out(38.17), _filing("card-1", "2025-05-20T10:00:00+05:30"), None, "now")
+    d = merge(d, _out(38.17), _filing("card-1", "2025-05-20T10:00:00+05:30"), None, "now", by="file")   # set-up: the consolidated figure is the file's
     seed = Pass2Output(is_material=False, timeline_entry="")
     seed.dossier_delta.financial_metrics = _out(20.51).dossier_delta.financial_metrics
     d = merge(d, seed, _filing("xbrl:res:519552:Q4FY25", "2025-06-12T18:00:00+05:30"), None, "now", basis="STANDALONE")
@@ -35,17 +35,19 @@ def test_a_standalone_xbrl_file_does_not_outrank_consolidated_cards():
     assert _pat(d) == 20.51
 
 
-def test_a_non_results_card_fills_a_missing_quarter_but_never_adds_to_a_stated_one():
+@pytest.mark.switches_on("MEMORY_FILE_ONLY")
+def test_a_non_results_card_neither_fills_a_missing_quarter_nor_adds_to_a_stated_one():
     d = new_dossier(_filing("a", "2025-05-20T10:00:00+05:30"))
-    d = merge(d, _out(38.17), _filing("card-1", "2025-05-20T10:00:00+05:30"), None, "now")
+    d = merge(d, _out(38.17), _filing("card-1", "2025-05-20T10:00:00+05:30"), None, "now", by="file")   # set-up: the file's figure
     d = merge(d, _out(20.51, "M_AND_A", None), _filing("ma-1", "2025-06-01T10:00:00+05:30", "M_AND_A"), None, "now")
     assert _pat(d) == 38.17
     entry = next(m for m in d["financial_metrics"] if m["metric"] == "pat")
     assert entry.get("source_news_id") == "card-1" and "sources" not in entry
-    # a quarter no results filing has stated yet: the rights-issue card's figure is all there is
+    # a quarter no results filing has stated yet: the rights-issue card's figure does NOT fill it any more (MEMORY_FILE_ONLY,
+    # owner 30 Oct 2026: statement figures enter memory only from the exchange's file); the quarter waits for its file
     d = merge(d, _out(20.48, "RIGHTS_ISSUE", None, "Q1FY27"), _filing("ri-1", "2026-10-08T10:00:00+05:30", "RIGHTS_ISSUE"),
               None, "now")
-    assert _pat(d, "Q1FY27") == 20.48
+    assert not [m for m in d["financial_metrics"] if m["period"] == "Q1FY27"]
 
 
 def _card_out(event_type: str = "RESULTS", kpis=(), guidance=(), updates=(), metrics=()) -> Pass2Output:
@@ -124,7 +126,7 @@ def test_a_presentations_annualised_eps_never_replaces_the_results_quarter():
     results = _out(150.04, period="Q1FY27")
     results.dossier_delta.financial_metrics[0].metric = "eps"
     results.dossier_delta.financial_metrics[0].value = 8.65
-    d = merge(d, results, _filing("r-1", "2026-07-22T12:52:52+05:30"), None, "now")
+    d = merge(d, results, _filing("r-1", "2026-07-22T12:52:52+05:30"), None, "now", by="file")   # set-up: the results quarter is the file's
     deck = _out(35.0, "CONCALL_PRESENTATION", None, period="Q1FY27")
     deck.dossier_delta.financial_metrics[0].metric = "eps"
     d = merge(d, deck, _filing("p-1", "2026-07-29T20:15:49+05:30", "CONCALL_PRESENTATION"), None, "now")

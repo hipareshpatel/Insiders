@@ -5,6 +5,7 @@
 import { dedupeEvents } from "../shared/events";
 import { isCompanyKey } from "../shared/companyKey";
 import type { CallQuarter, PublicSystemResponse } from "../shared/types";
+import { PAGE_SIZE, kpiRowsSql, kpiSummarySql, kpiWhere, parseKpiQuery, quarterIndex, type KpiResponse, type KpiRow } from "../shared/resultsKpi";
 import { Hono } from "hono";
 import type { Context } from "hono";
 import type { AppEnv } from "./env";
@@ -128,38 +129,6 @@ async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
   });
 }
 
-const RESULTS_TABLE_PREFIX = "raw/results-table/";
-
-/** The results page's figures come from the saved statements (the company page's Results tab source), never from a card: the
- * pipeline's `results-table` job writes a small file per company to R2 (results_table.py), and a page reads only the companies of its
- * rows. A row's table is the one for its company and quarter; a quarter the statements do not hold keeps its quarter and no
- * figures; a company with no file yet (the job has not reached it) is left as it is. */
-async function withStatementTables<T extends { scrip_code: string; card_json: string }>(c: Context<AppEnv>, cards: T[]): Promise<T[]> {
-  const scrips = [...new Set(cards.map((card) => card.scrip_code))];
-  const files = new Map(await Promise.all(scrips.map(async (scrip) => {
-    const rows = await memoised(`results-table:${scrip}`, 60_000, async () => {
-      const object = await c.env.VAULT.get(`${RESULTS_TABLE_PREFIX}${scrip}.json`);
-      return object ? ((await object.json()) as { rows: Record<string, unknown> }).rows : null;
-    });
-    return [scrip, rows] as const;
-  })));
-  return cards.map((card) => {
-    const rows = files.get(card.scrip_code);
-    if (!rows) return card;
-    try {
-      const body = JSON.parse(card.card_json) as { results?: { period?: string; revenue?: unknown } | null; xbrl?: { period?: string } | null;
-        had_table?: boolean };
-      const period = body.results?.period ?? body.xbrl?.period;
-      if (!period) return card;
-      body.had_table = !!body.results?.revenue;   // the page keeps, of two rows for one company and quarter, the one that was a results card
-      body.results = (rows[period] as { period?: string } | undefined) ?? ({ lens: "company", period } as never);
-      return { ...card, card_json: JSON.stringify(body) };
-    } catch {
-      return card;
-    }
-  });
-}
-
 // withHeld: the owner's private view (/api/owner/feed, behind OWNER_TOKEN and outside the edge cache) also
 // lists the cards held back from the public feed, so the owner can review them (owner, 2026-10-19).
 export async function feed(c: Context<AppEnv>, withHeld = false) {
@@ -230,8 +199,7 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   // The first page of an unfiltered view is what most visitors load.
   const result = !cursorAt && !fts && (page ?? 1) === 1 ? await memoised(`feed:${sql}:${page}:${JSON.stringify(params)}`, 20_000, run) : await run();
   const more = result.rows.length > limit;
-  const rows = result.rows.slice(0, limit) as { filed_at: string; news_id: string; scrip_code: string; card_json: string }[];
-  const cards = q.category === "RESULTS" ? await withStatementTables(c, rows) : rows;
+  const cards = result.rows.slice(0, limit) as { filed_at: string; news_id: string }[];
   const last = cards[cards.length - 1];
   return c.json({
     cards,
@@ -242,6 +210,30 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
 }
 
 api.get("/feed", (c) => feed(c));
+
+// The Results page as a KPI report: one row per company for a quarter, revenue / EBITDA / PAT growth worked out from the saved
+// statements (results_kpi, pipeline results_table.py; no card), filtered and sorted here in the database (shared/resultsKpi.ts).
+api.get("/results-kpi", async (c) => {
+  const query = parseKpiQuery(c.req.query());
+  const quarters = await memoised("results-kpi:quarters", 60_000, async () => {
+    const { results } = await c.env.DB.prepare("SELECT period, count(*) AS n FROM results_kpi GROUP BY period").all<{ period: string; n: number }>();
+    return results.sort((a, b) => (quarterIndex(b.period) ?? 0) - (quarterIndex(a.period) ?? 0));
+  });
+  const quarter = query.quarter && quarters.some((x) => x.period === query.quarter) ? query.quarter : (quarters[0]?.period ?? null);
+  const empty: KpiResponse = { quarter, quarters, rows: [], summary: { n: 0, revenue_up: 0, ebitda_up: 0, pat_up: 0, turnarounds: 0 }, page: 1, pages: 1 };
+  if (!quarter) return c.json(empty);
+  const { from, params } = kpiWhere(query, quarter);
+  const body = await memoised(`results-kpi:${JSON.stringify([query, quarter])}`, 20_000, async () => {
+    const [rows, summary] = await c.env.DB.batch([
+      c.env.DB.prepare(kpiRowsSql(query, from)).bind(...params),
+      c.env.DB.prepare(kpiSummarySql(from)).bind(...params),
+    ]);
+    const n = (summary.results[0] as KpiResponse["summary"] | undefined) ?? empty.summary;
+    return { quarter, quarters, rows: (rows.results as unknown as KpiRow[]).slice(0, PAGE_SIZE), summary: n, page: query.page,
+      pages: Math.max(1, Math.ceil(n.n / PAGE_SIZE)) } satisfies KpiResponse;
+  });
+  return c.json(body);
+});
 
 const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 

@@ -14,6 +14,7 @@ import filingsDiscover from "../../db/statements/filings_discover.sql?raw";
 import filingsImport from "../../db/statements/filings_import.sql?raw";
 import filingsUpdate from "../../db/statements/filings_update.sql?raw";
 import kvAdd from "../../db/statements/kv_add.sql?raw";
+import resultsKpiUpsert from "../../db/statements/results_kpi_upsert.sql?raw";
 import kvSet from "../../db/statements/kv_set.sql?raw";
 import runsUpsert from "../../db/statements/runs_upsert.sql?raw";
 import usageAdd from "../../db/statements/usage_add.sql?raw";
@@ -73,6 +74,7 @@ export const STATEMENTS: Record<string, string> = {
   usage_add: usageAdd,
   kv_set: kvSet,
   kv_add: kvAdd,
+  results_kpi_upsert: resultsKpiUpsert,
 };
 
 /** Read queries with positional parameters. */

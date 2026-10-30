@@ -1,6 +1,4 @@
-"""The results page's figures from the saved statements only (results_table.py): the company page's source, no card."""
-import json
-
+"""The Results page's KPI rows from the saved statements only (results_table.py): the company page's source, no card."""
 from test_fact_sheet import _entry, _memory, _rows
 
 from bse_intel import results_table as rt
@@ -8,7 +6,7 @@ from bse_intel import results_table as rt
 
 class _Sink:
     def __init__(self, dossiers):
-        self.dossiers, self.objects = dossiers, {}
+        self.dossiers, self.sent = dossiers, []
 
     def list_dossiers(self):
         return sorted(self.dossiers)
@@ -16,11 +14,10 @@ class _Sink:
     def get_dossier(self, scrip):
         return self.dossiers[scrip]
 
-    def put_object(self, key, body, content_type="application/json"):
-        self.objects[key] = body
-
-    def get_object(self, key):
-        return self.objects.get(key)
+    def execute(self, statement, rows):
+        assert statement == "results_kpi_upsert"
+        self.sent += rows
+        return len(rows)
 
     def query(self, name, params):
         assert name == "results_cards_recent"   # the query the results catch-up already uses
@@ -28,8 +25,7 @@ class _Sink:
 
 
 def test_a_quarter_table_is_the_statements_rows_with_changes_worked_out_by_code():
-    tables = rt.company_tables(_memory())
-    table = tables["Q2FY27"]
+    table = rt.company_tables(_memory())["Q2FY27"]
     assert (table["lens"], table["period"], table["basis"]) == ("company", "Q2FY27", "CONSOLIDATED")
     assert table["revenue"]["value"] == 1200.0 and table["revenue"]["prev_year"] == 1000.0 and table["revenue"]["yoy_pct"] == 20.0
     assert table["pat"]["value"] == 148.0   # the profit to shareholders, as the card's PAT line
@@ -52,33 +48,59 @@ def test_only_the_latest_quarters_are_kept():
     assert len(rt.company_tables(memory)) == rt.QUARTERS_KEPT
 
 
-def _file(sink, scrip):
-    return json.loads(sink.objects[f"{rt.PREFIX}{scrip}.json"])
-
-
-def test_the_full_rebuild_is_a_small_file_per_company_and_a_bad_company_is_skipped():
-    sink = _Sink({"500001": _memory(), "500002": {"statements": []}, "500003": None})
-    count = rt.write(sink, "2026-10-30T20:00:00+05:30")
-    assert count == len(_file(sink, "500001")["rows"]) > 0
-    assert "Q2FY27" in _file(sink, "500001")["rows"] and _file(sink, "500001")["built_at"].startswith("2026-10-30")
-    assert _file(sink, "500002")["rows"] == {}   # a company with no table is marked by an empty file
-    assert f"{rt.PREFIX}500003.json" in sink.objects   # no dossier: nothing in it, an empty file
-
-
-def test_a_run_writes_only_the_live_windows_companies():
-    sink = _Sink({"500001": _memory(), "500002": _memory()})
-    rt.write(sink, "t1")
-    before = sink.objects[f"{rt.PREFIX}500002.json"]
-    sink.dossiers["500001"] = {"statements": [_entry("Q2FY27", _rows(2400.0, 480.0, 400.0, 300.0))]}   # a revised file
-    sink.dossiers["500002"] = {"statements": []}   # not in the window: not read again
-    assert rt.recent_scrips(sink) == ["500001"]
-    rt.write(sink, "t2", rt.recent_scrips(sink))
-    assert _file(sink, "500001")["rows"]["Q2FY27"]["revenue"]["value"] == 2400.0 and list(_file(sink, "500001")["rows"]) == ["Q2FY27"]
-    assert sink.objects[f"{rt.PREFIX}500002.json"] == before
-
-
 def test_consolidated_over_standalone_and_standalone_only_when_there_is_no_consolidated():
     both = rt.company_tables(_memory())["Q2FY27"]
     assert both["basis"] == "CONSOLIDATED" and both["revenue"]["value"] == 1200.0   # not the standalone 5.0
     alone = {"statements": [_entry("Q2FY27", _rows(5.0, 1.0, 1.0, 1.0), basis="STANDALONE")]}
     assert rt.company_tables(alone)["Q2FY27"]["basis"] == "STANDALONE"
+
+
+def test_a_kpi_row_has_the_growth_figures_and_a_digest_that_changes_with_them():
+    row = next(r for r in rt.company_rows("500001", _memory(), "t1") if r["period"] == "Q2FY27")
+    assert (row["revenue"], row["revenue_yoy"], row["pat"], row["pat_yoy"]) == (1200.0, 20.0, 148.0, 25.0)
+    assert row["opm"] == 20.0 and row["opm_yoy_bps"] == 0 and row["ebitda_yoy"] == 20.0
+    assert row["pat_turn"] is None and row["pat_key"] == 25.0
+    again = next(r for r in rt.company_rows("500001", _memory(), "t2") if r["period"] == "Q2FY27")
+    assert again["digest"] == row["digest"] and again["updated_at"] == "t2"   # the time is not part of the digest
+    changed = _memory()
+    changed["statements"][0]["rows"]["Sales"] = 1300.0
+    assert next(r for r in rt.company_rows("500001", changed, "t3") if r["period"] == "Q2FY27")["digest"] != row["digest"]
+
+
+def test_a_loss_turned_to_profit_is_a_named_turn_with_a_sort_key_beside_the_per_cents():
+    memory = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 50.0)), _entry("Q2FY26", _rows(1000.0, 200.0, 160.0, -20.0))]}
+    row = rt.company_rows("500009", memory, "t")[0]
+    assert row["pat_turn"] == "LOSS_TO_PROFIT" and row["pat_yoy"] is None and row["pat_key"] == rt.TURN_KEY["LOSS_TO_PROFIT"] > 1000
+
+
+def test_the_full_rebuild_sends_every_company_and_a_bad_one_is_skipped():
+    sink = _Sink({"500001": _memory(), "500002": {"statements": []}, "500003": None})
+    assert rt.write(sink, "t") == len(sink.sent) > 0
+    assert {r["scrip_code"] for r in sink.sent} == {"500001"}
+
+
+def test_a_run_sends_only_the_live_windows_companies():
+    sink = _Sink({"500001": _memory(), "500002": _memory()})
+    assert rt.recent_scrips(sink) == ["500001"]
+    rt.write(sink, "t", rt.recent_scrips(sink))
+    assert {r["scrip_code"] for r in sink.sent} == {"500001"}
+
+
+def test_nothing_is_sent_when_there_is_nothing():
+    sink = _Sink({"500002": {"statements": []}})
+    assert rt.write(sink, "t") == 0 and sink.sent == []
+
+
+def test_the_upsert_writes_the_table_and_an_unchanged_row_is_not_rewritten(settings):
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    rows = rt.company_rows("500001", _memory(), "t1")
+    assert sink.execute("results_kpi_upsert", rows) == len(rows)
+    assert sink.execute("results_kpi_upsert", rt.company_rows("500001", _memory(), "t2")) == 0   # same figures: no D1 row write
+    stored = sink._db.execute("SELECT revenue, revenue_yoy, pat_key, updated_at FROM results_kpi WHERE scrip_code = '500001' AND period = 'Q2FY27'").fetchone()
+    assert tuple(stored) == (1200.0, 20.0, 25.0, "t1")
+    changed = _memory()
+    changed["statements"][0]["rows"]["Sales"] = 1300.0
+    assert sink.execute("results_kpi_upsert", rt.company_rows("500001", changed, "t3")) == 1
+    assert sink._db.execute("SELECT revenue, updated_at FROM results_kpi WHERE period = 'Q2FY27'").fetchone()[:] == (1300.0, "t3")

@@ -29,6 +29,7 @@ STATEMENTS = (
     "cards_delete",
     "cards_apply_verdicts",
     "cards_release_pruned",
+    "results_kpi_upsert",
 )
 
 QUERIES = (

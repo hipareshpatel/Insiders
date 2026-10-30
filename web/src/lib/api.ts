@@ -1,3 +1,4 @@
+import type { KpiResponse } from "../../shared/resultsKpi";
 import type { BriefResponse, CardRow, Catalyst, CompaniesResponse, CompanyDetail, FeedResponse, NoiseRow, OverduePromise, RadarCompany, ReviewCard, PublicSystemResponse, SearchResponse } from "../../shared/types";
 
 export class ApiError extends Error {
@@ -42,6 +43,8 @@ export const api = {
     get<FeedResponse>("/api/feed", { ...filters, cursor, limit }),
   feedPage: (filters: FeedFilters, page: number, limit = 50) =>
     get<FeedResponse>("/api/feed", { ...filters, page, limit }),
+  /** The Results KPI report: filters and sort as shared/resultsKpi.ts parses them. */
+  resultsKpi: (params: Record<string, string | number | null | undefined>) => get<KpiResponse>("/api/results-kpi", params),
   signals: (params: { from?: string; from_at?: string }) => get<{ cards: CardRow[] }>("/api/signals", params),
   brief: (fromAt: string) => get<BriefResponse>("/api/brief", { from_at: fromAt }),
   card: (id: string) => get<CardRow>(`/api/cards/${encodeURIComponent(id)}`),

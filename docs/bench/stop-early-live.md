@@ -32,8 +32,8 @@ Re-time all 140 with one copy once the PBT question below is settled.
 
   ERIS Q1FY27 consolidated PBT: the reader gives 179.49 against the XBRL key's 179.89. The switch off reads the same,
   so the stop does not cause it. It is the known PBT definition gap (STATUS §3 item 14: the XBRL tag and the printed
-  PBT differ by the associates' share). On live today this filing runs past the cap and the text layer decides. With
-  the switch on, numbers-first decides, and a 0.4 Cr gap is a "False" from the slip check, which removes stored figures.
+  PBT differ by the associates' share). **Correction (30 Oct, later):** the slip check is never asked for PBT, so this
+  gap cannot reach it (see the end of this page).
 
 ## Group filers (the lead's case)
 
@@ -70,3 +70,12 @@ Neither filing prints any exceptional items.
 
 Option (b): numbers-first's PBT follows the definition of the slip check's corrected figure (TODO 143). Until that
 lands, NUMFIRST_STOP_EARLY stays off. Then all 140 stored PDFs are re-timed with one copy running.
+
+## Correction (30 Oct 2026, after #253 merged)
+
+The live slip check never asks the reader for PBT. All three callers (pipeline.py ~3091 and ~3581, seed.py ~200) go
+through `xbrl.fix_scale`. It checks one figure: the first of `_SCALE_REFERENCE` = revenue, total income, interest earned
+(xbrl.py 1179 and 1319). So the PBT definition gap above cannot produce a slip-check False, on live today or with the
+switch on. The figures that matter are revenue and total income. On the 66 PDFs none of them changed, and the 6 filings
+that cross the cap have no wrong revenue or total income figure (their only wrong is ERIS's PBT). So TODO 143 is not
+what blocks NUMFIRST_STOP_EARLY. The switch-on call goes back to the lead on these figures.

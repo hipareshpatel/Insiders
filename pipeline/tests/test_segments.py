@@ -91,6 +91,8 @@ def test_the_backfill_fills_past_quarters_from_stored_facts_and_keeps_what_a_fil
     assert added > 0 and periods == {"Q2FY25", "Q3FY25"}
     assert [r["segment"] for r in d["segment_mix"] if r["period"] == "Q3FY25"] == ["Live"]      # a filing's own rows stay
     assert all(r["lab"]["from"] == "stored facts" for r in d["segment_mix"] if r["period"] == "Q2FY25")
+    # stamped with the quarter's own end: the merge keeps the newest rows by stamp, so an old quarter never outranks a live one
+    assert {r["as_of"] for r in d["segment_mix"] if r["period"] == "Q2FY25"} == {"2024-09-30"}
 
 
 def test_a_quarter_memory_holds_as_unit_slipped_gets_no_mix_from_its_file():
@@ -98,3 +100,12 @@ def test_a_quarter_memory_holds_as_unit_slipped_gets_no_mix_from_its_file():
     amounts would be a tenth too."""
     d = {"scale_held": [{"period": "Q3FY25"}], "segment_mix": []}
     assert segments.remember(d, _doc("bse_main_ind_as_532811_q3fy25.xml"), "n1", AS_OF, AT) == 0 and d["segment_mix"] == []
+
+
+def test_a_line_is_no_business_only_by_how_it_begins():
+    """Blind review: "Power Adjustment Services" is a segment; "Less: Inter-segment revenue" and "Unallocated" are not."""
+    for name in ("Unallocated", "Less: Inter-segment revenue", "Eliminations", "Reconciling items", "Adjustments",
+                 "Un-allocated expenses"):
+        assert segments.NOT_BUSINESS.search(name), name
+    for name in ("Power Adjustment Services", "Bank Reconciliation Software", "Retail Banking"):
+        assert not segments.NOT_BUSINESS.search(name), name

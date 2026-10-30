@@ -28,6 +28,7 @@ from . import screener_view as sv
 from . import segments
 from . import xbrl_facts
 from .dossier import keep_concurrent_writes
+from .memory_gaps import quarter_end
 from .statements import KEY, keep_latest
 from .timeutil import now_iso
 
@@ -102,8 +103,11 @@ def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
     for period, basis in sorted(cf.results, key=lambda pb: (pb[1] != "CONSOLIDATED", -(sv.quarter_index(pb[0]) or 0))):
         facts = cf.result(period, basis) if _QUARTER.fullmatch(period) else None
         if facts is not None:
-            added += segments.remember(dossier, facts.doc, f"xbrl-facts:{period}:{basis.lower()}", at, at, replace=False,
-                                       source="stored facts")
+            # stamped with the quarter's own end, not today: the dossier merge keeps the newest rows by stamp, and a
+            # backfilled old quarter stamped today would push out the live quarters (blind review)
+            end = quarter_end(period)
+            added += segments.remember(dossier, facts.doc, f"xbrl-facts:{period}:{basis.lower()}",
+                                       end.isoformat() if end else at, at, replace=False, source="stored facts")
     return added
 
 

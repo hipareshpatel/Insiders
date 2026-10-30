@@ -32,7 +32,9 @@ MAX_ROWS = 240       # about 12 quarters of up to 20 segments; the oldest quarte
 CONSOLIDATED = "CONSOLIDATED"
 REVENUE = ("SegmentRevenueFromOperations", "SegmentRevenue")      # the tag of one segment's revenue, the external one first
 RESULT = "SegmentProfitLossBeforeTaxAndFinanceCosts"
-NOT_BUSINESS = re.compile(r"unallocat|unallocab|eliminat|inter.?segment|reconcil|adjustment|not allocated", re.I)
+# a line that is no business: by how it begins ("Unallocated", "Less: Inter-segment revenue", "Eliminations", "Reconciling
+# items", "Adjustments"), so a real segment with such a word inside ("Power Adjustment Services") is kept (blind review)
+NOT_BUSINESS = re.compile(r"^\W*(less\W+)?(un-?allocat|unallocab|eliminat|inter.?segment|reconcil|adjustment|not allocated|others? un)", re.I)
 
 
 def _member(ctx: dict) -> str | None:
@@ -80,10 +82,14 @@ def segment_rows(doc: dict) -> dict | None:
             elif el == RESULT:
                 result.setdefault(member, value / xbrl_facts.CRORE)
     rows = []
+    # one revenue tag for every segment of the quarter when they all carry it, so the shares are on one basis (blind review)
+    common = next((t for t in REVENUE if revenue and all(t in by_tag for by_tag in revenue.values())), None)
     for member, by_tag in revenue.items():
-        name = names.get(member)
-        rev = next((by_tag[t] for t in REVENUE if t in by_tag), None)
-        if not name or NOT_BUSINESS.search(name) or rev is None or rev <= 0:
+        # a segment whose name is not filed in the quarter's contexts is kept under its member's number, so the shares
+        # of the others do not add up to 100% without it (blind review)
+        name = names.get(member) or ("Segment " + ("".join(ch for ch in member if ch.isdigit()) or "?"))
+        rev = by_tag[common] if common else next((by_tag[t] for t in REVENUE if t in by_tag), None)
+        if NOT_BUSINESS.search(name) or rev is None or rev <= 0:
             continue
         rows.append({"segment": name, "revenue_cr": round(rev, 2),
                      "pbit_cr": round(result[member], 2) if member in result else None})

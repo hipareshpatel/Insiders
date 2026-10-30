@@ -1313,8 +1313,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if gid in guidance or third_party_view(f"{item.statement} {item.target or ''}"):
             continue
         deadline = due_date(item.due, d.get("fy_end_month"))
-        if deadline and deadline.isoformat() < as_of[:10]:
-            deadline = None   # a deadline before the day it was said is a misread period, not a date (audit 137, B3)
+        if deadline and judged_on(item.due, deadline.isoformat(), d.get("fy_end_month")) < as_of[:10]:
+            deadline = None   # judged before the day it was said: a misread period, not a date (audit 137, B3). H1FY27
+            # said on 16 Oct ended on 30 Sep but is judged on 14 Nov, so it stays
         # the same target said again in other words (Heritage's ₹6,000 Cr FY27 revenue, May 2025 and May 2026): one
         # commitment, said twice, not two (T5, 2026-10-20)
         same = next((g for g in guidance.values() if item.metric and item.target and deadline

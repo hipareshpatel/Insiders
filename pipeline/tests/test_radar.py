@@ -98,3 +98,26 @@ def test_deadline_before_it_was_said_is_dropped_and_a_december_year_is_read():
     old = {"guidance": [{"id": "o", "statement": "s", "due": "FY26", "due_date": "2026-03-31", "given_on": "2026-08-10T10:00:00",
                          "status": "OPEN", "status_history": []}], "fy_end_month": 12}
     assert open_promises(old)[0]["due_date"] == "2026-12-31"
+
+
+def test_judged_date_not_period_end_decides_a_deadline_said_after_its_period():
+    """Review fix: H1FY27 said on 16 Oct ends 30 Sep but is judged 14 Nov, so it keeps its date; Q4FY26 said in May too."""
+    from bse_intel.dossier import merge, new_dossier
+    from bse_intel.models import Filing, Pass2Output
+    from bse_intel.radar import open_promises
+
+    def run(filed, due, text):
+        f = Filing(news_id="n1", scrip_code="500001", company_name="Prism Co Ltd", headline="Call", filed_at=f"{filed}T10:00:00",
+                   filing_date=filed)
+        out = Pass2Output.model_validate({"is_material": True, "event_type": "EARNINGS_CALL", "card": {
+            "impact_level": "LOW", "headline": "Prism call guidance", "what_happened": ["x"]},
+            "dossier_delta": {"guidance": [{"statement": text, "due": due}]}})
+        return merge(new_dossier(f), out, f, "LOW", f"{filed}T10:00:00")["guidance"][0]
+
+    assert run("2026-10-16", "H1FY27", "Margin of 18% in H1FY27")["due_date"] == "2026-09-30"
+    assert run("2026-05-15", "Q4FY26", "Capex done in Q4FY26")["due_date"] == "2026-03-31"
+    assert run("2026-06-15", "Q4FY26", "Capex done in Q4FY26")["due_date"] is None   # results were due 30 May: misread
+    g = {"id": "h", "statement": "s", "due": "H1FY27", "due_date": "2026-09-30", "given_on": "2026-10-16T10:00:00",
+         "status": "OPEN", "status_history": []}
+    got = open_promises({"guidance": [g]})[0]
+    assert got["due_date"] == "2026-09-30" and got["overdue_from"] == "2026-11-14"

@@ -184,3 +184,12 @@ test("screener's tables come from memory's statements, by basis, latest periods 
   assert.deepEqual(screenerTable(entries, "STANDALONE", "quarters", 12).columns, ["Q2FY27"]);
   assert.equal(screenerTable(undefined, "CONSOLIDATED", "quarters", 12).columns.length, 0);
 });
+
+test("a consolidated company's many standalone-only KPIs do not make its page Standalone", async () => {
+  const { mainBasis } = await import("../src/components/company/statements.ts");
+  const own = (metric: string, basis: string) => ({ ...m(metric, "Q2FY27", 1), basis });
+  const metrics = [own("revenue", "CONSOLIDATED"), own("pat", "CONSOLIDATED"),
+    ...["plant_utilisation", "stores", "solvency_ratio", "roe", "volume"].map((k) => own(k, "STANDALONE"))];
+  assert.equal(mainBasis(metrics), "CONSOLIDATED");
+  assert.equal(mainBasis([own("revenue", "STANDALONE"), own("pat", "STANDALONE"), own("roe", "CONSOLIDATED")]), "STANDALONE");
+});

@@ -55,10 +55,10 @@ def open_promises(dossier: dict) -> list[dict]:
         deadline = due_date(g.get("due"), fy_end)
         due_iso = deadline.isoformat() if deadline else g.get("due_date")
         given = _day(g.get("given_on"))
-        if due_iso and given and due_iso < given:
-            due_iso = None   # a deadline before the day it was said is a misread period (audit 137, B3)
         # overdue only once the period's results are due, not at its end (audit 137, B1; periods.results_due, O12)
         judged = judged_on(g.get("due"), due_iso, fy_end) if due_iso else None
+        if judged and given and judged < given:
+            due_iso = judged = None   # judged before the day it was said: a misread period (audit 137, B3)
         out.append({"id": g["id"], "statement": g["statement"][:200], "due": g.get("due"),
                     "due_date": due_iso, "overdue_from": judged, "given_on": given,
                     "status": _status(g), "source_news_id": g.get("source_news_id")})

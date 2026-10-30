@@ -32,3 +32,15 @@ test("Q2FY27 guidance is not overdue on 30 Oct 2026, is on 15 Nov; the stored ov
   assert.equal(overdue([{ ...g, ...p }], "2026-10-30").length, 0);
   assert.equal(overdue([{ ...g, ...p }], "2026-11-15").length, 1);
 });
+
+test("the same rule as the pipeline: words that start with a month name, ranges, written-out dates", () => {
+  // outputs of periods.results_due for these texts
+  assert.equal(judgedOn("Q3FY27 margin target", "2026-12-31"), "2027-02-14");
+  assert.equal(judgedOn("declining margin in Q2FY27", "2026-09-30"), "2026-11-14");
+  assert.equal(judgedOn("H2 FY27 (Mar 2027)", "2027-03-31"), "2027-05-30");
+  assert.equal(judgedOn("Q4FY27 and Q2FY27", "2027-03-31"), "2027-05-30");
+  assert.equal(judgedOn("Q2FY27 and Q4FY27", "2027-03-31"), "2027-05-30");
+  assert.equal(judgedOn("FY2026-27", "2027-03-31"), "2027-05-30");
+  assert.equal(judgedOn("Q2 FY27 by 30 Sep 2026", "2026-09-30"), "2026-09-30");
+  assert.equal(judgedOn("by Mar 2027", "2027-03-31"), "2027-03-31");
+});

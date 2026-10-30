@@ -791,8 +791,8 @@ class CompanyFacts:
         if key is None:
             return None
         if key not in self._cache:
+            body = self.loader(key)   # a failed read raises: an unread file must not pass for a missing one (blind review)
             try:
-                body = self.loader(key)
                 self._cache[key] = xbrl_facts.Facts(xbrl_facts.loads(body)) if body else None
             except Exception:   # noqa: BLE001 - a damaged object is no facts
                 self._cache[key] = None

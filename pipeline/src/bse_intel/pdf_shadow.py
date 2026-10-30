@@ -16,10 +16,12 @@ PBT is compared like with like (``pbt_verdict``). The card's PBT is memory's ``p
 today the file's ProfitBeforeTax (xbrl.py, before the associates' share as the taxonomy defines it), or that plus the share where
 the statement prints the sum (``xbrl.settle_pbt``); STATUS item 9 makes it screener's PBT (ProfitBeforeTax + the associates' share +
 regulatory deferral + discontinued profit, docs/design/screener-row-rules.md). The reader gives the printed "Profit before tax"
-line, which holds the share when the statement prints the share above it. So the printed line is taken to each definition with
-the quarter's own parts from memory's screener-rule statements (``statements.py``: "Profit before tax", "PBT as filed",
-"Associates' share", read once a card from the dossier, no NSE call), and the card agrees when it is one of them. Without those
-parts a PBT that differs from the printed line is "unknown", never "disagrees".
+line, which holds the share when the statement prints the share above it. Where the two differ, the check anchors on memory's own
+values of the quarter and basis (``statements.py``: F "PBT as filed", A = F + the associates' share, S screener's "Profit before
+tax"): it agrees only when the printed line is one of F, A, S and the card is one of them too (blind review of 868980b: free
+shifts of the printed line accepted a sign error and a loss counted twice). The dossier is read only for a PBT the plain
+comparison does not settle, once a company a run. Without those values a gap the size of an associates' share (same sign, within
+``SHARE_GAP`` of the printed line) is "unknown"; a slip, a flipped sign or a wild figure stays "disagrees".
 """
 from __future__ import annotations
 
@@ -42,6 +44,7 @@ SAVE_EVERY_SECONDS = 120.0
 FLOOR = 0.005                      # crore: half a unit of two printed decimals
 PAGE = 100
 DEFAULT_PROFIT_LABELS = ("Net profit", "PAT", "Net loss")
+SHARE_GAP = 0.25                   # of the printed PBT: the most an associates' share can explain when memory has no parts
 _TRANSIENT = re.compile(r"^(?:download failed)")
 
 
@@ -97,9 +100,9 @@ def verdict(card_value: float, reading) -> tuple[str, str]:
 
 
 def pbt_parts(dossier: dict | None, period: str, basis: str | None) -> dict | None:
-    """The parts that take a printed PBT to the card's definitions, from memory's screener-rule statements of the quarter and
-    basis (``statements.py``, table "quarters"): ``share`` the associates' and JVs' share screener adds, ``add`` all screener adds
-    to the filed ProfitBeforeTax (the share, regulatory deferral, discontinued profit). None when memory holds no such entry."""
+    """Memory's own PBT values of the quarter and basis, from its screener-rule statements (``statements.py``, table "quarters"):
+    ``filed`` F (ProfitBeforeTax as filed), ``with_share`` A (F + the associates' share), ``screener`` S (screener's PBT). None when
+    memory holds no such entry."""
     from . import screener_view as sv
 
     for e in (dossier or {}).get("statements") or []:
@@ -107,50 +110,48 @@ def pbt_parts(dossier: dict | None, period: str, basis: str | None) -> dict | No
             continue
         rows = e.get("rows") or {}
         screener = rows.get("Profit before tax")
-        if not isinstance(screener, (int, float)):
+        if not isinstance(screener, (int, float)) or isinstance(screener, bool):
             return None
-        filed = rows.get("PBT as filed", screener)
-        add = float(screener) - float(filed)
+        filed = float(rows.get("PBT as filed", screener))
         family = e.get("family")
-        # what of ``add`` is the share: the corporate recipe has its own row; the NBFC recipe adds the share alone; a lender's
-        # and an insurer's PBT stay as filed
-        share = float(rows.get("Associates' share") or 0.0) if family in (None, sv.CORPORATE) else add if family == sv.NBFC else 0.0
-        return {"share": share, "add": add, "screener": float(screener), "filed": float(filed)}
+        # the share: the corporate recipe has its own row; the NBFC recipe adds the share alone; a lender's and an insurer's PBT
+        # stay as filed (their share is below PBT for screener too)
+        share = float(rows.get("Associates' share") or 0.0) if family in (None, sv.CORPORATE) \
+            else float(screener) - filed if family == sv.NBFC else 0.0
+        return {"filed": filed, "with_share": filed + share, "screener": float(screener)}
     return None
 
 
-def pbt_definitions(parts: dict) -> list[tuple[str, float]]:
-    """(definition, what to add to the printed PBT line) for each definition a card's PBT may be on: as printed; the filed PBT
-    where the statement prints the line after the share; screener's PBT from a line printed before the share, or after it."""
-    share, add = parts["share"], parts["add"]
-    out = [("as printed", 0.0)]
-    if share:
-        out.append(("the filed PBT before the associates' share (the PDF's line is after it)", -share))
-    if add:
-        out.append(("screener's PBT (the PDF's line before the associates' share)", add))
-        if share:
-            out.append(("screener's PBT (the PDF's line after the associates' share)", add - share))
-    seen: set[float] = set()
-    return [(name, d) for name, d in out if round(d, 6) not in seen and not seen.add(round(d, 6))]
+PBT_NAMES = {"filed": "the filed PBT", "with_share": "the filed PBT + the associates' share", "screener": "screener's PBT"}
+
+
+def _near(card_value: float, anchor: float) -> bool:
+    return abs(card_value - anchor) <= FLOOR + 0.5 * 10 ** -decimals_of(card_value)
 
 
 def pbt_verdict(card_value: float, reading, parts: dict | None) -> tuple[str, str]:
-    """The PBT verdict like with like: agrees when the card is the printed line taken to one of ``pbt_definitions``; unknown when
-    it is not the printed line and memory has no parts to build the other definitions."""
+    """The PBT verdict like with like. The plain verdict first; where it disagrees and memory has the quarter's values (``pbt_parts``),
+    agrees only when the printed line is one of them AND the card is one of them; else disagrees. Without them the plain verdict
+    stands (``check_card`` softens a share-sized gap afterwards)."""
     word, why = verdict(card_value, reading)
-    if word != "disagrees":
+    if word != "disagrees" or parts is None:
         return word, why
-    if parts is None:
-        return "unknown", f"the card's PBT may be another definition (associates' share, screener's additions) and memory holds no parts for it; {why}"[:300]
-    from dataclasses import replace
+    printed = [k for k, v in parts.items() if verdict(v, reading)[0] == "agrees"]
+    card = [k for k, v in parts.items() if _near(card_value, v)]
+    values = ", ".join(f"{k} {v:g}" for k, v in parts.items())
+    if printed and card:
+        return "agrees", (f"the card is {PBT_NAMES[card[0]]} and the PDF p{reading.page} prints {reading.value:g} Cr, "
+                          f"{PBT_NAMES[printed[0]]} (memory: {values}; {reading.label})")[:300]
+    side = "the card" if printed else "the PDF's line" if card else "neither the card nor the PDF's line"
+    return "disagrees", f"{side} is none of memory's PBT values ({values}); {why}"[:300]
 
-    for name, delta in pbt_definitions(parts)[1:]:
-        shifted = replace(reading, value=reading.value + delta)
-        if verdict(card_value, shifted)[0] == "agrees":
-            return "agrees", (f"on {name}: PDF p{reading.page} prints {reading.value:g} Cr ({reading.label}; {reading.source}), "
-                              f"{delta:+g} from memory's parts = {shifted.value:g}")[:300]
-    tried = ", ".join(f"{reading.value + d:g}" for _, d in pbt_definitions(parts))
-    return "disagrees", f"no PBT definition fits (tried {tried}); {why}"[:300]
+
+def share_sized(card_value: float, pdf_value: float | None) -> bool:
+    """A gap an associates' share could explain: the same sign, within SHARE_GAP of the printed PBT (never a x10 slip or a flipped
+    sign)."""
+    if pdf_value is None or not pdf_value or card_value * pdf_value <= 0:
+        return False
+    return abs(card_value - pdf_value) <= SHARE_GAP * abs(pdf_value)
 
 
 def figures_of(card_json: dict) -> tuple[str | None, str | None, list[tuple[str, float, str]]]:
@@ -179,15 +180,25 @@ def _read(tables, period: str, metric: str, basis: str | None):
     return nf.reading_from_tables(tables, period, metric, basis)
 
 
-def check_card(tables, period: str, basis: str | None, figures, dossier: dict | None = None) -> list[dict]:
+def check_card(tables, period: str, basis: str | None, figures, dossier=None) -> list[dict]:
     """One result per figure: metric, card value, verdict, reason, PDF value, page, the basis used. ``dossier`` is the company's
-    memory, whose statements give the parts PBT is compared with (``pbt_verdict``)."""
+    memory (or a function giving it, called only for a PBT the plain comparison does not settle), whose statements give the
+    values PBT is compared with (``pbt_verdict``)."""
     from .metrics import CONSOLIDATED, STANDALONE
+
+    def memory():
+        return dossier() if callable(dossier) else dossier
+
+    def parts(b):
+        return pbt_parts(memory(), period, b)
 
     out = []
     for metric, value, label in figures:
         def judge(reading, b, metric=metric, value=value):
-            return pbt_verdict(value, reading, pbt_parts(dossier, period, b)) if metric == "pbt" else verdict(value, reading)
+            word, why = verdict(value, reading)
+            if metric == "pbt" and word == "disagrees":
+                word, why = pbt_verdict(value, reading, parts(b))
+            return word, why
 
         used = basis or CONSOLIDATED
         reading = _read(tables, period, metric, used)
@@ -206,6 +217,11 @@ def check_card(tables, period: str, basis: str | None, figures, dossier: dict | 
                 word, why = "basis_mismatch", f"agrees with the {alt} figure, not the stored {basis} basis; {why}"
         if not basis:
             why = f"basis assumed, the card does not store it; {why}"
+        if word == "disagrees" and metric == "pbt" and parts(used) is None and share_sized(value, reading.value):
+            # no memory values to anchor on (a card filed before statements.py stored rows): a gap the size of an associates'
+            # share may be the definition, so it is no alarm; a slip, a flipped sign or a wild figure stays a disagreement
+            word, why = "unknown", (f"the gap may be the associates' share (the card's PBT on another definition) and memory holds "
+                                    f"no PBT values for {period} {used}; {why}")[:300]
         if word == "disagrees" and metric == "pat" and label and label not in DEFAULT_PROFIT_LABELS:
             word, why = "unknown", f"the card's profit line is '{label}' (not necessarily the total profit the reader gives); {why}"
         if word == "disagrees" and metric == "pat" and used == CONSOLIDATED:
@@ -224,16 +240,21 @@ def check_card(tables, period: str, basis: str | None, figures, dossier: dict | 
     return out
 
 
-def _memory(sink, card: dict) -> dict | None:
-    """The company's memory (the PBT parts), or None when it cannot be read: PBT is then unknown rather than disagrees."""
-    get = getattr(sink, "get_dossier", None)
-    if get is None or not card.get("scrip_code"):
-        return None
-    try:
-        return get(str(card["scrip_code"]))
-    except Exception as exc:   # noqa: BLE001 - a failed read only costs the PBT parts
-        log.info("pdf-shadow: memory of %s not read (%s)", card.get("scrip_code"), type(exc).__name__)
-        return None
+def _memory(sink, card: dict, cache: dict):
+    """A function giving the company's memory (the PBT values), read at most once a company a run (``cache``, by scrip; a failed
+    read is cached as None too, so a store answering 5xx costs its retries once). None when it cannot be read."""
+    scrip = str(card.get("scrip_code") or "")
+
+    def load():
+        if scrip not in cache:
+            get = getattr(sink, "get_dossier", None)
+            try:
+                cache[scrip] = get(scrip) if get is not None and scrip else None
+            except Exception as exc:   # noqa: BLE001 - a failed read only costs the PBT values
+                log.info("pdf-shadow: memory of %s not read (%s)", scrip, type(exc).__name__)
+                cache[scrip] = None
+        return cache[scrip]
+    return load
 
 
 def cards_since(sink, since_iso: str):
@@ -314,6 +335,7 @@ def run(nse, sink, since_hours: float = 3.0, limit: int | None = None, time_budg
     done = {r["card_id"] for r in rows} | {r["card_id"] for r in previous}
     stats = {"cards_read": 0, "skipped_done": 0, "no_results_table": 0, "fetch_failed": 0, "blocked": False, "out_of_time": False}
     started, last_save, since = clock(), clock(), 0
+    memories: dict[str, dict | None] = {}       # scrip -> memory, read once a run and only when a PBT needs it
 
     def save() -> None:
         nonlocal last_save, since
@@ -359,7 +381,7 @@ def run(nse, sink, since_hours: float = 3.0, limit: int | None = None, time_budg
                         "pdf_value": None, "pdf_page": None} for m, v, _ in figures]
         else:
             try:
-                results = check_card(analyse(data), period, basis, figures, dossier=_memory(sink, card))
+                results = check_card(analyse(data), period, basis, figures, dossier=_memory(sink, card, memories))
             except SourceBlockedError:
                 raise
             except Exception as exc:   # noqa: BLE001 - one PDF failing is a reason, not a stop

@@ -192,6 +192,11 @@
 #   (actions/download-artifact, the job's token with actions: read); no exchange is read. A key the store holds is skipped; the
 #   counts (stored, already held, failed, skipped) go up as the artifact `store-kept-pdfs`. Its own group `maint-pdf-store`.
 #   Writes nothing else.
+# - api-reader-oos (lead, 30 Oct 2026): the out-of-sample check before any live use of an API reader. numbers-first and
+#   nemotron-parse (`backup` = the readers, default numfirst,nemotron) scored on docs/bench/oos/key-union.csv (552 figures in
+#   67 PDFs, both out-of-sample runs' keys), from the PDFs runs 40933340958 and 40991728993 kept (artifacts pdf-oos-pdfs);
+#   no exchange is read. 800 pages a run; the scoring stops cleanly at 300 minutes and what it read is kept
+#   (hardset-readings.json is saved every 10 figures). Artifact `api-reader-oos`. Writes nothing else; never a live path.
 # - api-reader-hardset (lead, 30 Oct 2026): document-parsing APIs scored as more readers on the hard set
 #   (docs/bench/hardpdf/key.csv): Mistral's Document OCR (`mistral`, MISTRAL_API_KEY) and NVIDIA's nemotron-parse and
 #   nemotron-parse-2.0 and nemotron-3.5-parse (`nemotron`, `nemotron2`, `nemotron35`, NVIDIA_API_KEY); `backup` = the readers
@@ -291,7 +296,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -417,7 +422,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'deck-pdfs' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'api-reader-oos' && inputs.command != 'deck-pdfs' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -2330,6 +2335,65 @@ jobs:
         if: always()
         with:
           name: api-reader-hardset
+          path: ${{ runner.temp }}/out/
+          if-no-files-found: ignore
+
+  api-reader-oos:
+    permissions:
+      contents: read
+      actions: read   # download other runs' artifacts
+    if: inputs.command == 'api-reader-oos'
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e ".[ocr]"
+      - name: Download the out-of-sample PDFs, first run (GitHub only, no exchange)
+        uses: actions/download-artifact@v4
+        with:
+          name: pdf-oos-pdfs
+          run-id: 40933340958
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/pdfs
+      - name: Download the out-of-sample PDFs, third run (GitHub only, no exchange)
+        uses: actions/download-artifact@v4
+        with:
+          name: pdf-oos-pdfs
+          run-id: 40991728993
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/pdfs
+      - name: Score the readers against the out-of-sample key (stops at 300 minutes and keeps what it read)
+        env:
+          PDF_READERS: ${{ inputs.backup || 'numfirst,nemotron' }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          NEMOTRON_PARSE_PAGE_CAP: "800"
+          NEMOTRON_PARSE_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron
+          NEMOTRON_PARSE2_PAGE_CAP: "800"
+          NEMOTRON_PARSE2_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron2
+          MISTRAL_OCR_PAGE_CAP: "800"
+          MISTRAL_OCR_RAW_DIR: ${{ runner.temp }}/out/raw-mistral
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          ls "$RUNNER_TEMP/pdfs" | wc -l
+          code=0
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/oos/key-union.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/out" ${LIMIT} || code=$?
+          if [ "$code" = 124 ]; then echo "::warning::stopped at 300 minutes; hardset-readings.json holds what was read"; elif [ "$code" != 0 ]; then exit "$code"; fi
+          ls "$RUNNER_TEMP/out/raw-nemotron" 2>/dev/null | wc -l
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-reader-oos
           path: ${{ runner.temp }}/out/
           if-no-files-found: ignore
 

@@ -824,13 +824,15 @@ class CompanyFacts:
         return CORPORATE
 
     def year(self, fy: str, basis: str, fam: str, instant: bool = False):
-        """(facts, label, Q4 facts) of a March year: the newest annual-report doc holding the year (a later report's comparative
-        counts), else the Q4 results file. A lender: always the Q4 file."""
+        """(facts, label, Q4 facts) of a March year: the newest annual-report doc holding the year (the next year's report, whose
+        comparative it is, counts), else the Q4 results file. A lender: always the Q4 file. A report is read only for its own year
+        and the year before: a report two or more years later can carry a stray fact at that date (UltraTech's FY26 report tags
+        Assets at 31 Mar 2024 in a note, with no balance sheet there), which made Borrowings 0 (TODO 129, 113 pairs)."""
         end = _fy_end(fy)
         q4 = self.result(f"Q4{fy}", basis)
         if fam == CORPORATE and end is not None:
             for (afy, b), key in sorted(self.annual.items(), key=lambda kv: _fy_num(kv[0][0]), reverse=True):
-                if b != basis or _fy_num(afy) < _fy_num(fy):
+                if b != basis or not 0 <= _fy_num(afy) - _fy_num(fy) <= 1:
                     continue
                 f = self._load(key)
                 if f is None:

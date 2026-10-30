@@ -91,7 +91,7 @@ log = logging.getLogger(__name__)
 STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text", "fetch_failed", "locate_error")
 # Bump whenever placement logic changes (what counts as a column, a row, a basis, a unit, a statement table, a status): saved rows
 # of another version are dropped on resume and their filings are read again.
-LOCATOR_VERSION = "2026-10-28.4"
+LOCATOR_VERSION = "2026-10-30.1"
 METRICS = ("revenue", "other_income", "total_income", "total_expenses", "exceptional_items", "pbt", "tax_expense", "pat", "eps",
            "interest_earned")
 TOL_CR = 0.006              # memory keeps crore to two decimals: half a hundredth, with a little to spare
@@ -1446,9 +1446,36 @@ def bench_symbols(docs_dir: str | None = None) -> set[str]:
     return symbols
 
 
+_STATEMENT_WORDS = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|total\s+(?:income|revenue)|net\s+sales|"
+                             r"interest\s+earned|profit\s+before\s+tax", re.I)
+
+
+def holds_results(source, max_pages: int = MAX_PAGES) -> bool:
+    """Whether a PDF (bytes) may hold a results statement: a page of its text layer names a statement line (revenue from
+    operations, total income, profit before tax...), or a page is a scan (few words, an image), which only OCR can read. NSE's
+    "results" announcements also carry AGM proceedings, postal ballot results, Reg 30 letters and asset cover certificates (30
+    Oct 2026: 76 of 500 key figures paired with such a PDF, where a stray number could be "placed"); those have neither. A file
+    pymupdf cannot open is left to the locator, as before."""
+    import pymupdf
+
+    try:
+        doc = pymupdf.open(stream=source, filetype="pdf")
+    except Exception:   # noqa: BLE001
+        return True
+    try:
+        for i in range(min(doc.page_count, max_pages)):
+            page = doc[i]
+            text = page.get_text()
+            if _STATEMENT_WORDS.search(text) or (len(text.split()) < 30 and page.get_images()):
+                return True
+        return doc.page_count == 0
+    finally:
+        doc.close()
+
+
 def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most
-    ``MAX_CANDIDATES``); the first PDF that gives any figure a row or a placement is the filing's, the best answer of each
+    ``MAX_CANDIDATES``), a PDF with no results statement in it (``holds_results``) skipped; the first PDF that gives any figure a row or a placement is the filing's, the best answer of each
     figure across the PDFs tried is kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
     because a list or a download failed on the way (a timeout, a refused call), which a later run may get; a filing NSE has no
     results PDF for, or a PDF it serves empty or too large, is a settled answer, not a failure."""
@@ -1467,6 +1494,9 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_
             continue
         if keep_dir:
             keep_pdf(keep_dir, f.pdf_url, data)
+        if not holds_results(data):
+            reasons.append("not a results statement: " + f.pdf_url.rsplit("/", 1)[-1][:40])
+            continue
         extra = {"pdf_url": f.pdf_url, "pdf_news_id": f.news_id, "filing_period": period}
         try:
             results = locate(data, expected)

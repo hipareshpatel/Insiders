@@ -472,6 +472,48 @@ def test_a_filing_with_no_pdf_gets_not_found_rows_with_the_reason():
     assert "no results filing" in out["rows"][0]["note"]
 
 
+def letter_pdf(*lines: str) -> bytes:
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    for i, line in enumerate(lines):
+        page.insert_text((40, 60 + 14 * i), line, fontsize=9)
+    return doc.tobytes()
+
+
+AGM_LINES = ("Sub: Outcome of the 40th Annual General Meeting and voting results under Regulation 44",
+             "Resolution 1: adoption of the audited financial statements for the year ended 31 March 2026",
+             "Votes in favour 1,23,456 (99.10%)  Votes against 1,111 (0.90%)", "Scrutinizer's report enclosed.")
+
+
+def scan_pdf() -> bytes:
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 40), False)
+    pix.clear_with(200)
+    page.insert_image(page.rect, pixmap=pix)
+    return doc.tobytes()
+
+
+def test_holds_results_tells_a_statement_or_a_scan_from_an_agm_letter():
+    assert xk.holds_results(make_pdf())                                   # a statement in the text layer
+    assert xk.holds_results(scan_pdf())                                   # a scanned results PDF: no text layer, kept for OCR
+    assert not xk.holds_results(letter_pdf(*AGM_LINES))                   # AGM proceedings, voting results
+    assert not xk.holds_results(letter_pdf("Sub: Intimation under Regulation 30 of SEBI (LODR) Regulations, 2015",
+                                           "Asset cover certificate as on 30 September 2026 for the listed debentures"))
+
+
+def test_a_non_results_pdf_listed_as_results_gives_no_rows_and_the_next_pdf_is_read():
+    agm, res = "https://nsearchives.nseindia.com/corporate/AGM.pdf", "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    agm_filing = filing(agm, subject="Financial Results", headline="Outcome of AGM and voting results")
+    alone = xk.run(FakeNse([agm_filing], {agm: letter_pdf(*AGM_LINES)}), FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert len(alone["rows"]) == 8 and not any(r.get("pdf_url") for r in alone["rows"])      # no figure paired with the AGM letter
+    assert "not a results statement" in alone["rows"][0]["note"]
+    nse = FakeNse([agm_filing, filing(res)], {agm: letter_pdf(*AGM_LINES), res: make_pdf()})
+    both = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert nse.fetches == [agm, res] and {r["pdf_url"] for r in both["rows"]} == {res}
+    assert both["statuses"]["found_unique"] == 8
+
+
 def test_the_summary_counts_the_failure_stages_and_lists_the_other_values():
     rows = [xk.result_row(r) for r in xk.locate(make_pdf(), [exp("revenue", 100.0), exp("revenue", 999.0), exp("pat", 380.0),
                                                               exp("other_income", 1234.0, period="Q9FY99")])]

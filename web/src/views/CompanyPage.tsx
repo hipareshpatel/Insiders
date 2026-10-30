@@ -19,6 +19,7 @@ import { IMPACT_DOT } from "../components/PriceChart";
 import { Badge } from "../components/ui/badge";
 import { api } from "../lib/api";
 import { cn } from "../lib/cn";
+import { industryLine } from "../../shared/industry";
 import { cr, istDate, listing, num, pct, signClass, titleCase, todayIST, companyPath } from "../lib/format";
 import { periodEnd, periodKind } from "../lib/periods";
 import { EVENT_LABELS, SECTORS, TONE_CHIP, TONE_LABEL, verdict, type Tone } from "../lib/taxonomy";
@@ -93,8 +94,7 @@ export function CompanyPage() {
             <h1 className="font-display text-[23px] font-extrabold leading-tight tracking-tight text-ink sm:text-[28px]">{name}</h1>
             <p className="mt-0.5 text-[13.5px] font-semibold text-ink-3">
               <span className="num">{listing(symbol, scrip)}</span>
-              {company?.sector ? ` · ${SECTORS[company.sector] ?? titleCase(company.sector)}` : ""}
-              {company?.industry ? ` › ${company.industry.split(">").pop()?.trim()}` : ""}
+              {company ? ` · ${industryLine(company.industry) ?? "Unclassified"}` : ""}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {company?.size_category && <Badge className="rounded-full bg-accent-soft px-2.5 py-1 font-bold text-accent">{titleCase(company.size_category)} cap</Badge>}

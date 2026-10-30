@@ -1491,8 +1491,43 @@ def holds_results(source, max_pages: int = MAX_PAGES) -> bool:
 
 _PLACED = ("found_unique", "found_ambiguous", "row_found_other_value")
 
+PDF_STORE = "raw/results-pdf/"     # every results PDF this module downloads, gzip, by ``pdf_key(url)``: read first, never fetched twice
 
-def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None) -> tuple[list[dict], str, bool]:
+
+def stored_payload(src, store, url: str) -> tuple[bytes | None, str]:
+    """A candidate PDF read from our store first (``PDF_STORE``), downloaded only if we do not hold it, and every download kept
+    there at once (owner, 29 Oct 2026: reuse test files, never download twice). ``store`` is the sink (``get_object`` /
+    ``put_object``); None reads NSE as before. A store that fails to answer or to keep is logged and never stops the filing."""
+    import gzip
+
+    from .pdf_readers import pdf_key
+    if store is None:
+        return src.payload(url)
+    key = f"{PDF_STORE}{pdf_key(url)}.pdf.gz"
+    try:
+        held = store.get_object(key)
+    except Exception as exc:   # noqa: BLE001
+        log.warning("xbrl-key: the PDF store did not answer for %s (%s); downloading", key, type(exc).__name__)
+        held = None
+    if held:
+        try:
+            data = gzip.decompress(held)
+        except Exception:   # noqa: BLE001 - not gzip (OSError), cut short (EOFError) or damaged (zlib.error)
+            log.warning("xbrl-key: %s in the store is not a whole gzip; downloading again", key)
+            data = b""
+        if data:
+            return data, ""
+    data, why = src.payload(url)
+    if data:
+        try:
+            store.put_object(key, gzip.compress(data), "application/gzip")
+        except Exception as exc:   # noqa: BLE001
+            log.warning("xbrl-key: the PDF store did not keep %s (%s)", key, type(exc).__name__)
+    return data, why
+
+
+def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None,
+                  store=None) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most
     ``MAX_CANDIDATES``), a PDF with no results statement in it (``holds_results``) skipped. Every candidate is read; the filing's
     rows are those of the ONE PDF with most ``found_unique`` figures (then most placements, then list order), the others' rows
@@ -1511,7 +1546,7 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_
     transient = False
     error = None
     for f in listed[:MAX_CANDIDATES]:
-        data, why = src.payload(f.pdf_url)
+        data, why = stored_payload(src, store, f.pdf_url)
         if data is None:
             reasons.append(why)
             transient = transient or bool(_TRANSIENT.match(why))
@@ -1643,7 +1678,8 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
             out_of_time = True
             break
         try:
-            got, why, transient = locate_filing(src, symbol, period, expected, **({"keep_dir": keep_dir} if keep_dir else {}))
+            got, why, transient = locate_filing(src, symbol, period, expected, store=sink,
+                                                **({"keep_dir": keep_dir} if keep_dir else {}))
         except FileCapReached as exc:
             capped = True
             log.warning("file cap reached (%s): stopping the XBRL key; the rest waits for the next run", exc)

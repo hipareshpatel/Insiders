@@ -793,3 +793,27 @@ def test_the_scope_ends_the_cap_and_uncapped_suspends_it(make_gateway):
             gw.complete_json("r", "s", "u", Pass1Result)
         assert gw._cap_reached()
     assert gw._cap_left() is None
+
+
+def test_a_provider_whose_list_leaves_out_served_models_reports_them_unlisted_not_missing(monkeypatch, capsys):
+    """Z.AI's /models leaves out its free Flash models that still answer (owner, 30 Oct 2026: "don't discard any models
+    without testing"): with unlisted_models_served they are listed for ai-check, and the check does not fail on them."""
+    import json as _json
+    from types import SimpleNamespace
+
+    from bse_intel import cli
+    from bse_intel.ai.gateway import AIGateway
+
+    def config(flag):
+        return {"providers": {"z": {"base_url": "https://z.invalid/v1", "api_key_env": "Z_KEY", **flag},
+                              "z_2": {"same_as": "z", "api_key_env": "Z_KEY_2"}},
+                "routes": {"pass1": [{"provider": "z", "model": "free-flash"}]}}
+    monkeypatch.setenv("Z_KEY", "k")
+    monkeypatch.setattr(AIGateway, "_client", lambda self, t: SimpleNamespace(models=SimpleNamespace(list=lambda: [])))
+    for flag, code in (({}, 1), ({"unlisted_models_served": True}, 0)):
+        settings = SimpleNamespace(load_toml=lambda name, c=config(flag): c)
+        args = SimpleNamespace(provider=None, filter=None, all=False)
+        assert cli.cmd_models(args, settings, None) == code
+        report = _json.loads(capsys.readouterr().out)
+        assert report["z"]["configured_missing"] == ([] if code == 0 else ["free-flash"])
+        assert report["z"].get("configured_unlisted", []) == (["free-flash"] if code == 0 else [])

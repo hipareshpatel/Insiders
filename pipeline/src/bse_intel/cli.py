@@ -2324,7 +2324,13 @@ def cmd_models(args, settings, sink) -> int:
         except Exception as exc:  # some providers do not serve /models; report and move on
             report[provider] = {"error": f"{type(exc).__name__}: {exc}"[:300], "configured": sorted(entry["models"])}
             continue
-        report[provider] = {"configured_missing": sorted(m for m in entry["models"] if m not in available),
+        missing = sorted(m for m in entry["models"] if m not in available)
+        # a provider whose list leaves out models it still serves (Z.AI's free Flash models, owner 30 Oct 2026: "don't
+        # discard any models without testing"): those are reported as unlisted, for ai-check to try, not as missing
+        conf = config.get("providers", {}).get(provider, {})
+        unlisted = bool({**config.get("providers", {}).get(conf.get("same_as"), {}), **conf}.get("unlisted_models_served"))
+        report[provider] = {"configured_missing": [] if unlisted else missing,
+                            **({"configured_unlisted": missing} if unlisted and missing else {}),
                             "configured_ok": sorted(m for m in entry["models"] if m in available),
                             "available": available if args.all else [m for m in available if not args.filter or args.filter in m.lower()]}
     print(json.dumps(report, indent=2))

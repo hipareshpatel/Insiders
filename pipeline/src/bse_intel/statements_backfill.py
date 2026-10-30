@@ -25,8 +25,10 @@ import logging
 import re
 
 from . import screener_view as sv
+from . import segments
 from . import xbrl_facts
 from .dossier import keep_concurrent_writes
+from .memory_gaps import quarter_end
 from .statements import KEY, keep_latest
 from .timeutil import now_iso
 
@@ -94,6 +96,21 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
     return entries, left
 
 
+def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
+    """The business mix of each stored quarter's file into ``dossier["segment_mix"]`` (in place), where no file row of that basis
+    holds the period (segments.py); the number of rows added. Consolidated files go first, so a standalone file finds them."""
+    added = 0
+    for period, basis in sorted(cf.results, key=lambda pb: (pb[1] != "CONSOLIDATED", -(sv.quarter_index(pb[0]) or 0))):
+        facts = cf.result(period, basis) if _QUARTER.fullmatch(period) else None
+        if facts is not None:
+            # stamped with the quarter's own end, not today: the dossier merge keeps the newest rows by stamp, and a
+            # backfilled old quarter stamped today would push out the live quarters (blind review)
+            end = quarter_end(period)
+            added += segments.remember(dossier, facts.doc, f"xbrl-facts:{period}:{basis.lower()}",
+                                       end.isoformat() if end else at, at, replace=False, source="stored facts")
+    return added
+
+
 def fill(dossier: dict, entries: list[dict]) -> int:
     """Add the entries memory does not hold yet (in place); the number added."""
     have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
@@ -108,7 +125,7 @@ WORKERS = 24  # companies read at once: each reads its stored facts documents on
 
 
 def _prepare(sink, scrip: str, at: str):
-    """One company read and worked out (no write): (read, merged, entries, left) or None when it has no dossier or facts."""
+    """One company read and worked out (no write): (read, merged, entries, left, segment rows added) or None when it has no dossier or facts."""
     read = sink.get_dossier(scrip)
     keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
     if read is None or not keys:
@@ -116,7 +133,8 @@ def _prepare(sink, scrip: str, at: str):
     cf = sv.CompanyFacts(keys, sink.get_object)
     merged = json.loads(json.dumps(read))
     entries, left = company_entries(cf, merged, at)
-    return read, merged, entries, left
+    segments_added = fill_segments(cf, merged, at)
+    return read, merged, entries, left, segments_added
 
 
 def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exception | None]:
@@ -148,7 +166,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
     todo = [s for s in sorted(scrips) if s > after][:limit]
     backup = RunBackup(sink, "statements-backfill") if apply else None
     out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
-           "no_facts": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
+           "no_facts": 0, "segments": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
 
@@ -170,14 +188,15 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
             out["no_facts"] += 1
             plan.append((scrip, 0, None))
             continue
-        read, merged, entries, left = ready
+        read, merged, entries, left, segments_added = ready
         out["left_out"] += [f"{scrip} {x}" for x in left]
         have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
         for e in entries:
             if (e["period"], e["basis"], e["table"]) not in have:
                 out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
         added = fill(merged, entries)
-        plan.append((scrip, added, (read, merged) if added and apply else None))
+        out["segments"] += segments_added
+        plan.append((scrip, added, (read, merged) if (added or segments_added) and apply else None))
     writes = [(scrip, job) for scrip, _, job in plan if job is not None]
     results: dict[str, tuple[str, Exception | None]] = {}
     if writes:
@@ -209,7 +228,7 @@ def render(o: dict) -> str:
              f"{o['companies']} companies after '{o['after']}', {o['entries']} entries {'added' if o['apply'] else 'to add'}"
              f" in {o['written'] if o['apply'] else '-'} dossiers; {o['no_facts']} without stored facts; last {o['last']};"
              f" more left: {o['more']}",
-             "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())),
+             "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows {o['segments']}",
              f"  left out ({len(o['left_out'])}):"] + [f"    {x}" for x in o["left_out"][:60]]
     if o["backup"]:
         lines.append(f"backup: {o['backup']['prefix']} ({o['backup']['dossiers']} dossiers); undo with restore --backup "

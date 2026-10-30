@@ -79,6 +79,10 @@ limits = { tpmo = 1_000_000_000 }
 # Z.AI global platform. (open.bigmodel.cn is Zhipu's separate mainland-China
 # platform with its own accounts and keys.)
 base_url = "https://api.z.ai/api/paas/v4"
+# Z.AI's /models list leaves out the free Flash models it still serves (providers check 40989964286/40989967178, 30 Oct
+# 2026: GLM-4.5-Flash answered on both keys, GLM-4.7-Flash on the second, 4.7-Flash and 4.6V-Flash 429 = busy, not gone).
+# Owner, 30 Oct 2026: "don't discard any models without testing". `models` lists them as unlisted, never as missing.
+unlisted_models_served = true
 # Only the Flash models are free (Z.AI pricing page, read 22 Oct 2026: GLM-4.5-Flash, GLM-4.7-Flash, GLM-4.6V-Flash; every
 # other GLM, GLM-5.3 included, is paid, so none of them goes on a route here; GLM-5.3 runs free through NVIDIA instead).
 # Concurrency per account (Rate Limits page, 22 Oct): GLM-4.5-Flash 2, GLM-4.7-Flash 1, GLM-4.6V-Flash 1. Each route keeps

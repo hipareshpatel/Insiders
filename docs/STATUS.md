@@ -92,6 +92,19 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Summary for the owner, 30 Oct 2026, 07:00 IST.**
+- Done: the live path saves every result by screener's rules (3); one results card a quarter (6); late exchange file fetched
+  for PDF-only cards first (7); every filing of 28-30 Oct read, none waiting, none failed but one audio file (5); four card
+  switches on (12); new PDF reader on for the unit-slip check (14); call memory on (10, owner 06:45 IST).
+- Running: past statements into memory (2): 850 of ~1,900 companies, 40,221 entries, about 2 minutes a run of 50, ends
+  about 07:45 IST. Then the re-read of the 223 recent results companies (4), runs of 50.
+- Waiting for the owner: MEMORY_FILE_ONLY (1: memory's figures from the exchange file only; 28 tests feed AI figures on
+  purpose and change); the PDF reader's speed gate (PR #232, being measured); the call-memory prompt and the Flash-Lite
+  tests (10: lock the model, smaller parts, thinking; plan agreed in chat); the card's PBT is screener's (9, decided:
+  the general rule, the ~20 exceptions stay).
+- After memory: cards read their figures from memory (9, TODO 131); richer cards borrowing the good parts of the Gemini
+  write-up (11, TODO 128); balance-sheet gaps (8, TODO 129); annual-report extras (15).
+
 **Owner's list, night of 29-30 Oct 2026 (every instruction of the session, in the owner's order; state at 06:35 IST).**
 The order: correct memory first, from the exchange's files by screener's rules; then cards read memory.
 1. **Memory's financial figures from the exchange's XBRL only, by screener's rules, never from cards or AI readings.**

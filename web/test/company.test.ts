@@ -2,7 +2,7 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import {
-  callQuarters, chartTags, cleanText, composeStory, dayChange, goodAndBad, impossible, metricLabel, nextResults, overdue, peTtm, short,
+  callQuarters, chartTags, cleanText, composeStory, dayChange, goodAndBad, impossible, latestBalance, metricLabel, nextResults, overdue, peTtm, short,
   trackTiles, yearRange,
 } from "../src/components/company/companyText.ts";
 
@@ -118,4 +118,13 @@ test("baseline units in words and filler lines out", async () => {
   assert.equal(unitValue("1,078", "USD_MN"), "$1,078 mn");
   assert.equal(unitValue("84", "DAYS"), "84 days");
   assert.ok(allZero([{ value: 0 }, { value: 0 }]) && !allZero([{ value: 0 }, { value: 4.2 }]));
+});
+
+test("the balance tiles take the newest snapshot that holds figures", () => {
+  // SBI's tiles were empty: an AI reading's "Jun-2026" snapshot after the file's Q4FY26 one held only its date (audit, 30 Oct 2026)
+  const real = { period: "Q4FY26", as_of: "2026-05-08", total_assets_cr: 8321568.57, net_worth_cr: 614899.15 };
+  const stub = { period: "Jun-2026", as_of: "2026-08-13", source_news_id: "nse-1" };
+  assert.equal(latestBalance([real, stub] as never), real);
+  assert.equal(latestBalance([stub] as never), undefined);
+  assert.equal(latestBalance(undefined), undefined);
 });

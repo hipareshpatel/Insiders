@@ -1,8 +1,11 @@
 # Card examples (owner, 30 Oct 2026)
 
-The owner's reference cards, sent 30 Oct 2026 ~14:35 IST: "Already shared multiple times, check history". They are the design for
-every card type, with TODO 128 (the 10-plant example), the Gemini APAR write-up and TODO 136. **Build from these; ask for no
-further examples.** Where an example and an owner rule disagree, the rule wins (marked below).
+The owner's reference cards, sent 30 Oct 2026 ~14:35 IST. **They are examples for reference, not templates to copy** (owner, 30 Oct
+2026: "examples are examples for reference"): they show the kind of content, depth and tone wanted (movers with their size, links
+to memory, what decides the outcome, what to watch), not a fixed layout, wording or set of fields. Our cards keep their own design
+(owner, 30 Oct 2026 ~06:00 IST: "not new design") and take what is good from these, as from the Gemini APAR write-up and TODO 128.
+Each card's content follows its own filing: "each company and announcement has different takeaways". Owner rules win over any
+example (no EPS on cards). Not to be asked for again.
 
 | File | Company | Type | Its source filing |
 |---|---|---|---|

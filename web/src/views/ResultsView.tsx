@@ -14,7 +14,7 @@ import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { TURN, turnOf } from "../lib/results";
 import {
-  activeChips, csvName, DEFAULT_SORT, firstDir, VIEW_SORT, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
+  activeChips, csvName, firstDir, VIEW_SORT, viewOf, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
   toCsv, type Sort, type SpreadKey,
 } from "../lib/resultsView";
 import { useQueryState } from "../lib/url";
@@ -44,7 +44,7 @@ export function ResultsView() {
   const [params, setParams] = useQueryState();
   const query = useMemo(() => readQuery(params), [params]);
   const tab = params.get("tab") === "groups" ? "groups" : "companies";
-  const view: View = params.get("view") === "momentum" ? "momentum" : params.get("view") === "qoq" ? "qoq" : "yoy";
+  const view: View = viewOf(params);
   const by: GroupBy = params.get("by") === "sector" ? "sector" : params.get("by") === "industry" ? "industry" : "index";
   const cut: Cut = params.get("cut") === "ex_financials" ? "ex_financials" : params.get("cut") === "financials" ? "financials" : "all";
   const peekKey = params.get("peek");
@@ -84,9 +84,9 @@ export function ResultsView() {
 
   const onSort = (s: Sort) => {
     const dir = s === query.sort ? (query.dir === "desc" ? "asc" : "desc") : firstDir(s);
-    setParams({ sort: s === DEFAULT_SORT && dir === "desc" ? null : s, dir: dir === firstDir(s) ? null : dir });
+    setParams({ sort: s === VIEW_SORT[view] ? null : s, dir: dir === firstDir(s) ? null : dir });
   };
-  const onView = (v: View) => setParams({ view: v === "yoy" ? null : v, sort: VIEW_SORT[v] === DEFAULT_SORT ? null : VIEW_SORT[v], dir: null });
+  const onView = (v: View) => setParams({ view: v === "yoy" ? null : v, sort: null, dir: null });
   const onPickGroup = (r: GroupRow, groupBy: GroupBy) =>
     setParams(groupBy === "index" ? { tab: null, index: r.id, class: null, spread: null } : { tab: null, class: r.id, index: null, spread: null });
 

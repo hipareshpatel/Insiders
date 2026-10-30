@@ -19,6 +19,8 @@ export const DEFAULT_SORT: Sort = "pat_yoy";
  *  growth against last quarter (the three lists lead with different companies). */
 export const VIEW_SORT: Record<View, Sort> = { yoy: "pat_yoy", momentum: "pat_momentum", qoq: "pat_qoq" };
 /** A name sorts A to Z first; every figure highest first. */
+/** The view a URL names (year-on-year when it names none or an unknown one). */
+export const viewOf = (p: URLSearchParams): View => (p.get("view") === "momentum" ? "momentum" : p.get("view") === "qoq" ? "qoq" : "yoy");
 export const firstDir = (sort: string): "asc" | "desc" => (sort === "company" ? "asc" : "desc");
 
 // ---------- quarters ----------
@@ -365,7 +367,8 @@ export type PageQuery = KpiQuery;
 
 /** The page's URL as the API's query: anything not on the lists is dropped (the Worker checks again). */
 export function readQuery(p: URLSearchParams): PageQuery {
-  const sort = (SORTS as readonly string[]).includes(p.get("sort") ?? "") ? (p.get("sort") as Sort) : DEFAULT_SORT;
+  const view = viewOf(p);
+  const sort = (SORTS as readonly string[]).includes(p.get("sort") ?? "") ? (p.get("sort") as Sort) : VIEW_SORT[view];   // no column picked: the view's own
   const dirRaw = p.get("dir");
   const momentum = p.get("momentum");
   const spread = p.get("spread");

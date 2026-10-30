@@ -108,3 +108,16 @@ def test_a_failed_write_stops_the_resume_point_before_it_and_later_writes_add_no
     sink.put_dossier = real
     again = sb.run(sink, ["500001", "522261", "522262", "522263"], apply=True)
     assert again["error"] is None and again["written"] == 1 and sink.kv_get(sb.RESUME_KEY) == "522263"
+
+
+def test_a_clean_up_with_nothing_added_is_written_and_an_unchanged_company_is_not(settings):
+    """30 Oct 2026: the filler-zero ratios xbrl_extras.remember drops were never saved, the run writing only where it added."""
+    sink = _sink(settings)
+    sb.run(sink, ["500001", "522261"], apply=True)
+    d = sink.get_dossier("522261")
+    d["fin_ratios"] = [{"period": "Q2FY24", "basis": "CONSOLIDATED", "values": {"CET1Ratio": 0.0}}]
+    sink.put_dossier("522261", d)
+    out = sb.run(sink, ["500001", "522261"], apply=True, restart=True)
+    assert out["written"] == 1 and out["entries"] == 0
+    assert not sink.get_dossier("522261").get("fin_ratios")
+    assert sb.run(sink, ["500001", "522261"], apply=True, restart=True)["written"] == 0

@@ -30,8 +30,8 @@ def _rows(sales, op, pbt, net, owners=None, opm=None):
 def _memory():
     return {"statements": [
         _entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 150.0, owners=148.0)),
-        _entry("Q2FY26", _rows(1000.0, 200.0, 160.0, 120.0)),
-        _entry("Q1FY27", _rows(1100.0, 200.0, 150.0, 100.0)),
+        _entry("Q2FY26", _rows(1000.0, 200.0, 160.0, 120.0, owners=118.4)),
+        _entry("Q1FY27", _rows(1100.0, 200.0, 150.0, 100.0, owners=98.67)),
         _entry("Q2FY27", _rows(5.0, 1.0, 1.0, 1.0), basis="STANDALONE"),
     ]}
 
@@ -43,7 +43,8 @@ def test_the_sheet_is_the_files_rows_with_changes_worked_out_by_code():
     rev, ebitda, pat = (sheet["lines"][k] for k in ("revenue", "ebitda", "pat"))
     assert (rev["value"], rev["prev_year"], rev["prev_quarter"], rev["yoy_pct"], rev["qoq_pct"]) == (1200.0, 1000.0, 1100.0, 20.0, 9.1)
     assert (ebitda["value"], ebitda["yoy_pct"], ebitda["qoq_pct"]) == (240.0, 20.0, 20.0)
-    assert (pat["value"], pat["owners"], pat["yoy_pct"], pat["qoq_pct"]) == (150.0, 148.0, 25.0, 50.0)
+    # PAT is the profit to shareholders, compared with the same line a year and a quarter before; the total beside it
+    assert (pat["value"], pat["with_minority"], pat["prev_year"], pat["yoy_pct"], pat["qoq_pct"]) == (148.0, 150.0, 118.4, 25.0, 50.0)
     assert sheet["lines"]["pbt"]["yoy_pct"] == 25.0
     assert sheet["lines"]["ebitda_margin"]["value"] == 20.0 and sheet["lines"]["ebitda_margin"]["yoy_bps"] == 0
     assert "eps" not in json.dumps(sheet).lower()   # owner rule 26 Oct 2026: no EPS on a card
@@ -249,3 +250,10 @@ def test_the_ab_takes_the_results_file_link_from_the_stored_card():
     filing = SimpleNamespace(news_id="n-ab", filed_at="2026-10-29T16:21:40+05:30")
     assert cli._stored_card_xbrl(sink, filing) == card["xbrl"]["url"]
     assert cli._stored_card_xbrl(sink, SimpleNamespace(news_id="n-0", filed_at="2026-10-29T16:21:40")) is None
+
+
+def test_a_comparative_without_the_shareholders_line_gives_no_change_on_another_footing():
+    memory = _memory()
+    memory["statements"][1]["rows"].pop("Net Profit (owners)")     # the year-ago quarter states only the total
+    pat = fs.fact_sheet(memory, "Q2FY27")["lines"]["pat"]
+    assert pat["value"] == 148.0 and "prev_year" not in pat and "yoy_pct" not in pat and pat["qoq_pct"] == 50.0

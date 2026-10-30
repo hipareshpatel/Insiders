@@ -73,6 +73,10 @@ def fact_sheet(dossier: dict, period: str | None, basis: str | None = None) -> d
         sheet: dict = {"period": period, "basis": b, "unit": "₹ crore", "prev_year_period": prior["prev_year"],
                        "prev_quarter_period": prior["prev_quarter"], "source_news_id": now.get("source_news_id"), "lines": {}}
         for key, row, label in LINES:
+            if key == "pat" and (now.get("rows") or {}).get(OWNERS) is not None:
+                # the profit to shareholders, the line a card calls PAT; its comparatives on the same footing only (A/B of 30 Oct
+                # 2026: the total with minority interest went out as "profit to shareholders", Grindwell 133.17 for 132.70)
+                row = OWNERS
             value = (now.get("rows") or {}).get(row)
             if value is None:
                 continue
@@ -87,8 +91,8 @@ def fact_sheet(dossier: dict, period: str | None, basis: str | None = None) -> d
                     line[f"{tag}_pct"] = change["pct"]
                 elif "turn" in change:
                     line[f"{tag}_turn"] = change["turn"]
-            if key == "pat" and (now.get("rows") or {}).get(OWNERS) is not None:
-                line["owners"] = round(now["rows"][OWNERS], 2)
+            if key == "pat" and row == OWNERS and (now.get("rows") or {}).get("Net Profit") is not None:
+                line["with_minority"] = round(now["rows"]["Net Profit"], 2)
             sheet["lines"][key] = line
         margin = (now.get("rows") or {}).get(MARGIN)
         if margin is not None:
@@ -228,7 +232,7 @@ def disagreements(text: str, sheet: dict) -> list[tuple[str, str]]:
         if len(named) != 1 or named[0] not in sheet["lines"]:
             continue
         line = sheet["lines"][named[0]]
-        amounts = [line.get(k) for k in ("value", "prev_year", "prev_quarter", "owners")]
+        amounts = [line.get(k) for k in ("value", "prev_year", "prev_quarter", "with_minority")]
         for value, decimals, pos, kind, raw in _tokens(sentence):
             after = sentence[pos + len(raw):pos + len(raw) + 40]
             if kind not in ("pct", "bps", "pp", "x") and _CR.match(after):

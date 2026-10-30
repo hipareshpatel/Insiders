@@ -15,6 +15,12 @@ def filing(news_id: str, filed_at: str, scrip: str = "999001") -> Filing:
                   filed_at=filed_at, filing_date=filed_at[:10])
 
 
+def file_merge(*args, **kw):
+    """merge() as the exchange's file writes it: with MEMORY_FILE_ONLY (owner, 30 Oct 2026) a statement figure enters memory
+    only labelled file or calc, so a test that needs figures in memory only as set-up gets them as the file's."""
+    return merge(*args, by="file", **kw)
+
+
 def shp(news_id: str, filed_at: str) -> Filing:
     """A shareholding-pattern filing: the only kind whose card may set memory's ownership."""
     return filing(news_id, filed_at).model_copy(update={"headline": "Shareholding Pattern for the quarter"})
@@ -92,21 +98,21 @@ def test_a_projected_or_impossible_shareholding_is_not_stored():
 def test_merge_stamps_provenance_and_is_idempotent():
     d0 = new_dossier(filing("n1", Q1))
     out = output(financial_metrics=[{"metric": "Revenue", "period": "Q1 FY27", "value": "₹1,10.5 Cr"}])
-    d1 = merge(d0, out, filing("n1", Q1), "HIGH", "now")
+    d1 = file_merge(d0, out, filing("n1", Q1), "HIGH", "now")
     (metric,) = d1["financial_metrics"]
     assert metric == {"metric": "revenue", "period": "Q1FY27", "value": 110.5, "unit": "INR_CR", "yoy_pct": None,
                       "qoq_pct": None, "as_of": Q1, "source_news_id": "n1",
-                      "lab": {"by": "ai", "doc": "results", "unit": "INR_CR", "at": "now", "ok": True}}
+                      "lab": {"by": "file", "doc": "results", "unit": "INR_CR", "at": "now", "ok": True}}
     assert d1["timeline"][0]["news_id"] == "n1"
     assert d0["financial_metrics"] == []  # input not mutated
-    d2 = merge(d1, out, filing("n1", Q1), "HIGH", "now")
+    d2 = file_merge(d1, out, filing("n1", Q1), "HIGH", "now")
     assert d2["financial_metrics"] == d1["financial_metrics"] and len(d2["timeline"]) == 1
 
 
 def test_older_filing_never_overrides_a_later_restatement():
-    d = merge(new_dossier(filing("n2", Q2)), output(financial_metrics=[{"metric": "pat", "period": "Q1FY27", "value": 9}]),
+    d = file_merge(new_dossier(filing("n2", Q2)), output(financial_metrics=[{"metric": "pat", "period": "Q1FY27", "value": 9}]),
               filing("n2", Q2), "HIGH", "now")
-    d = merge(d, output(financial_metrics=[{"metric": "pat", "period": "Q1FY27", "value": 10}]),
+    d = file_merge(d, output(financial_metrics=[{"metric": "pat", "period": "Q1FY27", "value": 10}]),
               filing("n1", Q1), "HIGH", "now")
     (pat,) = [m for m in d["financial_metrics"] if m["metric"] == "pat"]
     # The value is the later restatement; the figure counts as known since the first filing (bi-temporal).
@@ -132,9 +138,9 @@ def test_guidance_promise_tracking_and_hallucinated_ids():
 
 
 def test_view_as_of_hides_future_facts():
-    d = merge(new_dossier(filing("n1", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q1FY27", "value": 110}]),
+    d = file_merge(new_dossier(filing("n1", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q1FY27", "value": 110}]),
               filing("n1", Q1), "HIGH", "now")
-    d = merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 120}],
+    d = file_merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 120}],
                         guidance=[{"statement": "Margins to reach 20%", "due": "FY27"}]),
               filing("n2", Q2), "HIGH", "now")
     early = view_as_of(d, "2026-09-01T00:00:00+05:30")
@@ -175,7 +181,7 @@ def test_dilution_signal_is_computed_not_guessed():
 
 
 def test_working_capital_strain_and_generic_metric_shift():
-    d = merge(new_dossier(filing("n0", Q1)), output(financial_metrics=[
+    d = file_merge(new_dossier(filing("n0", Q1)), output(financial_metrics=[
         {"metric": "revenue", "period": "H1FY26", "value": 100},
         {"metric": "trade_receivables", "period": "H1FY26", "value": 40},
         {"metric": "gross_debt", "period": "H1FY26", "value": 50},
@@ -188,7 +194,7 @@ def test_working_capital_strain_and_generic_metric_shift():
         {"metric": "ebitda_margin", "period": "H1FY27", "value": 14.5, "unit": "PCT"},
         {"metric": "revenue", "period": "Q2FY27", "value": 70},  # no comparable quarter: must not be compared to H1
     ])
-    after = merge(d, out, filing("n2", Q2), "HIGH", "now")
+    after = file_merge(d, out, filing("n2", Q2), "HIGH", "now")
     signals = compute(d, after, out, filing("n2", Q2), {}, every=True)
     by_type = {}
     for s in signals:
@@ -297,9 +303,9 @@ def test_footer_shows_the_sector_metric_only_in_the_unit_its_label_promises():
 def test_comparatives_do_not_move_known_since_and_backfill_sees_no_future():
     from bse_intel.dossier import dossier_as_of, latest_fundamentals
 
-    d = merge(new_dossier(filing("q1", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q1FY27", "value": 100}]),
+    d = file_merge(new_dossier(filing("q1", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q1FY27", "value": 100}]),
               filing("q1", Q1), "HIGH", "now")
-    d = merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 130},
+    d = file_merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 130},
                                             {"metric": "revenue", "period": "Q1FY27", "value": 101}]),
               filing("q2", Q2), "HIGH", "now")
     (q1,) = [m for m in d["financial_metrics"] if m["period"] == "Q1FY27"]
@@ -309,7 +315,7 @@ def test_comparatives_do_not_move_known_since_and_backfill_sees_no_future():
     assert [(m["period"], m["value"]) for m in then["financial_metrics"]] == [("Q1FY27", 100)]
     assert latest_fundamentals(then)["revenue"] == {"period": "Q1FY27", "value": 100}
     # Re-analysing Q2 keeps Q1's first value.
-    d = merge(d, output(financial_metrics=[]), filing("q2", Q2), "HIGH", "now")
+    d = file_merge(d, output(financial_metrics=[]), filing("q2", Q2), "HIGH", "now")
     assert [(m["period"], m["value"], m["source_news_id"]) for m in d["financial_metrics"]] == [("Q1FY27", 100, "q1")]
 
 
@@ -319,8 +325,8 @@ def test_a_long_annual_table_does_not_push_out_recent_quarters():
     quarters = [{"metric": "revenue", "period": f"Q{q}FY27", "value": 100 + q} for q in (1, 2)]
     years = [{"metric": "revenue", "period": f"FY{y}", "value": 300 + y} for y in range(10, 27)]
     # filed after both quarters ended: a figure for a quarter not yet over is refused (F155)
-    d = merge(new_dossier(filing("n1", Q2)), output(financial_metrics=quarters), filing("n1", Q2), "HIGH", "now")
-    d = merge(d, output(financial_metrics=years), filing("ppt", Q2), "LOW", "now")
+    d = file_merge(new_dossier(filing("n1", Q2)), output(financial_metrics=quarters), filing("n1", Q2), "HIGH", "now")
+    d = file_merge(d, output(financial_metrics=years), filing("ppt", Q2), "LOW", "now")
     kinds = [m["period"] for m in d["financial_metrics"]]
     assert "Q1FY27" in kinds and "Q2FY27" in kinds and sum(p.startswith("FY") for p in kinds) == 6
     lines = view_as_of(d, "2027-01-01T00:00:00+05:30")["metrics"]["revenue"]
@@ -356,7 +362,7 @@ def test_metric_shift_ignores_comparative_columns():
 def test_predictions_resolve_against_reported_figures_and_feed_credibility():
     from bse_intel.scoring import credibility
 
-    d = merge(new_dossier(filing("call", Q1)), Pass2Output.model_validate({
+    d = file_merge(new_dossier(filing("call", Q1)), Pass2Output.model_validate({
         "is_material": True, "event_type": "CONCALL_PRESENTATION",
         "card": {"impact_level": "MODERATE", "headline": "Demo Cement guides lower interest after rights issue", "what_happened": ["x"],
                  "track_next": {"kpis_to_verify": [{"kpi": "Quarterly interest below ₹16 Cr", "metric": "finance_cost",
@@ -364,14 +370,14 @@ def test_predictions_resolve_against_reported_figures_and_feed_credibility():
         filing("call", Q1), "MODERATE", "now")
     assert d["predictions"][0]["status"] == "OPEN" and d["predictions"][0]["comparison"] == "<="
     out = output(financial_metrics=[{"metric": "finance_cost", "period": "Q2FY27", "value": 14.2}])
-    after = merge(d, out, filing("q2", Q2), "HIGH", "now")
+    after = file_merge(d, out, filing("q2", Q2), "HIGH", "now")
     (p,) = after["predictions"]
     assert p["status"] == "MET" and p["actual"] == 14.2
     signals = compute(d, after, out, filing("q2", Q2), {}, every=True)
     assert any(s["type"] == "PREDICTION_RESOLVED" and s["severity"] == "POSITIVE" for s in signals)
     assert credibility(after)[0] == 100.0
     # re-analysing the results filing reopens it
-    again = merge(after, output(financial_metrics=[]), filing("q2", Q2), "HIGH", "now")
+    again = file_merge(after, output(financial_metrics=[]), filing("q2", Q2), "HIGH", "now")
     assert again["predictions"][0]["status"] == "OPEN"
 
 
@@ -410,9 +416,9 @@ def test_rights_entitlement_ratio_gives_dilution_without_a_share_count():
 def test_period_spellings_land_on_one_dossier_row():
     from bse_intel.periods import due_date
 
-    d = merge(new_dossier(filing("a", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q2 FY 2026-27", "value": 1}]),
+    d = file_merge(new_dossier(filing("a", Q1)), output(financial_metrics=[{"metric": "revenue", "period": "Q2 FY 2026-27", "value": 1}]),
               filing("a", Q1), "LOW", "now")
-    d = merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY2027", "value": 2}]), filing("b", Q2), "LOW", "now")
+    d = file_merge(d, output(financial_metrics=[{"metric": "revenue", "period": "Q2FY2027", "value": 2}]), filing("b", Q2), "LOW", "now")
     assert [(m["period"], m["value"]) for m in d["financial_metrics"]] == [("Q2FY27", 2)]
     assert str(due_date("FY2026-27")) == "2027-03-31" and str(due_date("November 15, 2026")) == "2026-11-15"
     assert str(due_date("30-09-2026")) == "2026-09-30" and str(due_date("Q2-FY27")) == "2026-09-30"
@@ -660,6 +666,10 @@ def test_a_balance_sheet_figure_out_of_scale_with_the_other_sources_is_refused()
     assert next(b for b in d["balance_sheet"] if b["source_news_id"] == "n3")["net_worth_cr"] == 5794.25
     d = merge(d, output(balance_sheet={"period": "Q4FY25", "net_worth_cr": 9000.0}), filing("xbrl:res:999001:Q4FY25b", Q2), "LOW", "now")
     assert any(b.get("net_worth_cr") == 9000.0 for b in d["balance_sheet"])
+    # every figure refused: no snapshot of its date alone, which would hide the last real one (SBI "Jun-2026", 30 Oct 2026)
+    n = len(d["balance_sheet"])
+    d = merge(d, output(balance_sheet={"period": "Mar-2025", "net_worth_cr": 60122.0}), filing("agm2", AGM), "LOW", "now")
+    assert len(d["balance_sheet"]) == n and not any(b["source_news_id"] == "agm2" for b in d["balance_sheet"])
 
 
 @pytest.mark.switches_off("CARD_GUIDANCE_DATED")   # the behaviour before the switch; the switch has its own tests
@@ -667,13 +677,13 @@ def test_jindal_period_guidance_waits_for_its_results():
     """44c7bf29: Jindal's H1FY27 EBITDA/tonne guidance read "Deadline passed" on 16 October 2026, a month before the
     H1 results; a period is judged on its results, filed up to 60 days after it ends."""
     given = "2026-05-15T18:00:00+05:30"
-    d = merge(new_dossier(filing("g", given)),
+    d = file_merge(new_dossier(filing("g", given)),
               output(guidance=[{"statement": "EBITDA per tonne of ₹18,000-20,000 for H1FY27", "due": "H1FY27"}]),
               filing("g", given), "LOW", "now")
 
     def breach(when):
         out = output()
-        return [s for s in compute(d, merge(d, out, filing("n", when), "LOW", "now"), out, filing("n", when), {}, every=True)
+        return [s for s in compute(d, file_merge(d, out, filing("n", when), "LOW", "now"), out, filing("n", when), {}, every=True)
                 if s["type"] == "GUIDANCE_BREACH"]
 
     assert breach("2026-10-16T18:00:00+05:30") == []
@@ -682,10 +692,10 @@ def test_jindal_period_guidance_waits_for_its_results():
     # the H1 results card itself is the first to hold the period: judged there
     when = "2026-12-05T18:00:00+05:30"
     results = output(financial_metrics=[{"metric": "revenue", "period": "Q2FY27", "value": 10000}])
-    assert [s for s in compute(d, merge(d, results, filing("q2", when), "LOW", "now"), results, filing("q2", when), {}, every=True)
+    assert [s for s in compute(d, file_merge(d, results, filing("q2", when), "LOW", "now"), results, filing("q2", when), {}, every=True)
             if s["type"] == "GUIDANCE_BREACH"]
     # no results four months after the deadline: judged without them
-    d = merge(new_dossier(filing("g", given)),
+    d = file_merge(new_dossier(filing("g", given)),
               output(guidance=[{"statement": "EBITDA per tonne of ₹18,000-20,000 for H1FY27", "due": "H1FY27"}]),
               filing("g", given), "LOW", "now")
     assert breach("2027-02-05T18:00:00+05:30")

@@ -281,6 +281,7 @@ def test_live_filing_of_a_company_with_a_long_backlog_is_not_held_back(settings,
 
 
 @pytest.mark.switches_off("CARD_TWO_PARTS")   # the behaviour before the switch; the switch has its own tests
+@pytest.mark.switches_on("MEMORY_FILE_ONLY")
 def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     now = now_ist() - timedelta(minutes=10)
     f = _filing("n-q3", "Unaudited Financial Results for the quarter", now, "Result")
@@ -293,7 +294,11 @@ def test_second_opinion_reply_with_only_a_card_keeps_the_memory(settings):
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card["card"]["review"]["status"] == "CORRECTED"
     pipeline._commit([outcome])   # memory is written with the card's row (owner, 25 Oct 2026)
-    assert {m["period"] for m in sink.get_dossier("999001")["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
+    # the first pass's other memory facts are kept; its statement figures are not (MEMORY_FILE_ONLY, owner 30 Oct 2026:
+    # a card's reading never becomes the company's figure), so memory holds no revenue here and waits for the file
+    dossier = sink.get_dossier("999001")
+    assert [g["statement"] for g in dossier["guidance"]] == ["Commission 2 MTPA grinding unit"]
+    assert {m["period"] for m in dossier["financial_metrics"]} == set()
     assert outcome.card["event_category"] == "RESULTS"
 
 

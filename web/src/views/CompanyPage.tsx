@@ -10,7 +10,7 @@ import { PriceChart } from "../components/PriceChart";
 import { formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard } from "../components/FilingCard";
 import { CardList, RailTime, railDate } from "../components/company/CardList";
-import { chartTags, dayChange, allZero, inStatementOrder, metricLabel, nextResults, overdue, peTtm, quarterly, quarterLabel, short, statementPlace, unitValue, yearRange } from "../components/company/companyText";
+import { chartTags, dayChange, allZero, inStatementOrder, latestBalance, metricLabel, nextResults, overdue, peTtm, quarterly, quarterLabel, short, statementPlace, unitValue, yearRange } from "../components/company/companyText";
 import { dayMonth, GoodAndBad, StorySoFar, WhatToTrack, type Parsed } from "../components/company/OverviewPanels";
 import { CapitalAndCalibration, parseRoiic } from "../components/company/Execution";
 import { Financials } from "../components/company/Financials";
@@ -559,7 +559,7 @@ export function MetricsPanel({ dossier, balance: showBalance = true, periods = 8
   }, [dossier.financial_metrics]);
   const [kind, setKind] = useState<string | null>(null);
   const active = groups.find(([k]) => k === kind) ?? groups.find(([k]) => k === "Quarter") ?? groups[0];
-  const balance = showBalance ? dossier.balance_sheet[dossier.balance_sheet.length - 1] : null;
+  const balance = showBalance ? latestBalance(dossier.balance_sheet) ?? null : null;
   const rows = inStatementOrder(active ? [...active[1].metrics.entries()].filter(([, v]) => !allZero(v.values())) : []);
   const shown = active ? active[1].periods.slice(-periods) : [];
 
@@ -723,9 +723,10 @@ function KeyFigures({ company, dossier, cards, chart, today }: { company: Compan
 
 /** The latest balance sheet in memory as tiles. */
 function BalanceTiles({ dossier }: { dossier: Dossier }) {
-  const balance = dossier.balance_sheet[dossier.balance_sheet.length - 1];
+  const balance = latestBalance(dossier.balance_sheet);
   if (!balance) return null;
-  const items = Object.entries(balance).filter(([k, v]) => v !== null && !["as_of", "source_news_id", "period"].includes(k));
+  // the label (lab) is memory's provenance, an object: never a tile
+  const items = Object.entries(balance).filter(([k, v]) => v !== null && typeof v !== "object" && !["as_of", "source_news_id", "period"].includes(k));
   if (!items.length) return null;
   return (
     <Panel title="Balance sheet" sub={balance.period ? `${balance.period} · filed ${istDate(String(balance.as_of))}` : `as of ${istDate(String(balance.as_of))}`}>

@@ -26,6 +26,7 @@ import re
 
 from . import screener_view as sv
 from . import segments
+from . import xbrl_extras
 from . import xbrl_facts
 from .dossier import keep_concurrent_writes
 from .memory_gaps import quarter_end
@@ -111,6 +112,42 @@ def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
     return added
 
 
+def fill_extras(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
+    """What the stored quarters' and annual reports' files say beyond the statements (xbrl_extras.py: audit status and auditors,
+    cash-flow detail, related parties, ratios) into the dossier's own keys (in place), where the period and basis hold none yet;
+    the number of entries added. Stamped with the period's own end, as fill_segments does. A file that fails is skipped."""
+    added = 0
+    docs = [(period, basis, cf.result(period, basis)) for period, basis in cf.results if _QUARTER.fullmatch(period)]
+    docs += [(fy, basis, cf._load(key)) for (fy, basis), key in cf.annual.items()]
+    for period, basis, facts in sorted(docs, key=lambda d: (d[1] != "CONSOLIDATED", d[0])):
+        if facts is None:
+            continue
+        try:
+            end = xbrl_extras._end(facts.doc)
+            added += xbrl_extras.remember(dossier, facts.doc, f"xbrl-facts:{period}:{basis.lower()}",
+                                          end.isoformat() if end else at, at, replace=False, source="stored facts")
+        except Exception as exc:  # noqa: BLE001 - an addition: one file's failure leaves the rest
+            log.warning("statements-backfill: extras of %s %s not built: %s", period, basis, exc)
+    return added
+
+
+def drop_empty_balance(dossier: dict) -> int:
+    """Balance-sheet snapshots holding no figure (an AI reading's dated stub: SBI's "Jun-2026" after the file's Q4FY26; stock-page
+    audit, 30 Oct 2026) out of memory, the main and the standalone list (in place); the number dropped. Owner, 30 Oct 2026: yes."""
+    def real(e) -> bool:
+        return isinstance(e, dict) and any(k.endswith("_cr") and isinstance(v, (int, float)) and not isinstance(v, bool)
+                                           for k, v in e.items())
+    dropped = 0
+    for holder in (dossier, dossier.get("standalone") if isinstance(dossier.get("standalone"), dict) else None):
+        if holder is None or not isinstance(holder.get("balance_sheet"), list):
+            continue
+        kept = [e for e in holder["balance_sheet"] if real(e)]
+        dropped += len(holder["balance_sheet"]) - len(kept)
+        if len(kept) != len(holder["balance_sheet"]):
+            holder["balance_sheet"] = kept
+    return dropped
+
+
 def fill(dossier: dict, entries: list[dict]) -> int:
     """Add the entries memory does not hold yet (in place); the number added."""
     have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
@@ -133,8 +170,9 @@ def _prepare(sink, scrip: str, at: str):
     cf = sv.CompanyFacts(keys, sink.get_object)
     merged = json.loads(json.dumps(read))
     entries, left = company_entries(cf, merged, at)
-    segments_added = fill_segments(cf, merged, at)
-    return read, merged, entries, left, segments_added
+    segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
+    stubs = drop_empty_balance(merged)
+    return read, merged, entries, left, segments_added, stubs
 
 
 def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exception | None]:
@@ -166,7 +204,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
     todo = [s for s in sorted(scrips) if s > after][:limit]
     backup = RunBackup(sink, "statements-backfill") if apply else None
     out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
-           "no_facts": 0, "segments": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
+           "no_facts": 0, "segments": 0, "balance_stubs": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
 
@@ -188,7 +226,8 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
             out["no_facts"] += 1
             plan.append((scrip, 0, None))
             continue
-        read, merged, entries, left, segments_added = ready
+        read, merged, entries, left, segments_added, stubs = ready
+        out["balance_stubs"] += stubs
         out["left_out"] += [f"{scrip} {x}" for x in left]
         have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
         for e in entries:
@@ -196,7 +235,9 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
                 out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
         added = fill(merged, entries)
         out["segments"] += segments_added
-        plan.append((scrip, added, (read, merged) if (added or segments_added) and apply else None))
+        # written when anything changed, a clean-up with nothing added too (30 Oct 2026: filler-zero ratios dropped by
+        # xbrl_extras.remember were never saved, the run writing only where entries were added)
+        plan.append((scrip, added, (read, merged) if (added or segments_added or merged != read) and apply else None))
     writes = [(scrip, job) for scrip, _, job in plan if job is not None]
     results: dict[str, tuple[str, Exception | None]] = {}
     if writes:
@@ -228,7 +269,8 @@ def render(o: dict) -> str:
              f"{o['companies']} companies after '{o['after']}', {o['entries']} entries {'added' if o['apply'] else 'to add'}"
              f" in {o['written'] if o['apply'] else '-'} dossiers; {o['no_facts']} without stored facts; last {o['last']};"
              f" more left: {o['more']}",
-             "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows {o['segments']}",
+             "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows and extras (audit, cash-flow detail, related parties, ratios) {o['segments']}"
+             f"; empty balance-sheet snapshots dropped {o.get('balance_stubs', 0)}",
              f"  left out ({len(o['left_out'])}):"] + [f"    {x}" for x in o["left_out"][:60]]
     if o["backup"]:
         lines.append(f"backup: {o['backup']['prefix']} ({o['backup']['dossiers']} dossiers); undo with restore --backup "

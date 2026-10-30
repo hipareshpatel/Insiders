@@ -37,13 +37,19 @@ def _ebitda(period: str, value: float) -> Pass2Output:
         "dossier_delta": {"financial_metrics": [{"metric": "ebitda", "period": period, "value": value}]}})
 
 
+def f155_merge(*args, **kw):
+    """set-up: with MEMORY_FILE_ONLY (owner, 30 Oct 2026) a statement figure is stored only as the file's; the quarter-not-ended
+    rule is checked on a figure labelled so"""
+    return merge(*args, by="file", **kw)
+
+
 def test_a_figure_for_a_quarter_that_had_not_ended_is_not_kept():
     """CIE India's presentation of 27 Jul 2026 called its April-June quarter "Q2" (calendar year): its EBITDA ₹420 Cr was
     stored as Q2FY27, a quarter that ends on 30 Sep 2026, and showed on the September card as "calculated"."""
-    d = merge(new_dossier(_filing("a", "2026-07-27T14:56:38+05:30"), {}), _ebitda("Q2FY27", 420.0),
+    d = f155_merge(new_dossier(_filing("a", "2026-07-27T14:56:38+05:30"), {}), _ebitda("Q2FY27", 420.0),
               _filing("nse-106711820", "2026-07-27T14:56:38+05:30"), None, "now")
     assert not [m for m in d["financial_metrics"] if m["period"] == "Q2FY27"]
-    d = merge(d, _ebitda("Q1FY27", 389.66), _filing("nse-1", "2026-07-27T14:56:38+05:30"), None, "now")
+    d = f155_merge(d, _ebitda("Q1FY27", 389.66), _filing("nse-1", "2026-07-27T14:56:38+05:30"), None, "now")
     assert [m["value"] for m in d["financial_metrics"] if m["period"] == "Q1FY27"] == [389.66]   # an ended quarter is kept
 
 

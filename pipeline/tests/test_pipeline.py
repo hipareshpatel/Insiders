@@ -96,6 +96,7 @@ def rows(sink, sql, *params):
     return [dict(r) for r in sink._db.execute(sql, params).fetchall()]
 
 
+@pytest.mark.switches_on("MEMORY_FILE_ONLY")
 def test_live_run_end_to_end(settings):
     now = now_ist() - timedelta(minutes=30)
     filings = [
@@ -141,8 +142,9 @@ def test_live_run_end_to_end(settings):
     assert "Demo Cement Q2 revenue up 32% YoY" in reply["raw"] and reply["chars"] == len(reply["raw"])
 
     dossier = sink.get_dossier("999001")
-    assert {m["period"] for m in dossier["financial_metrics"]} == {"Q2FY27", "Q2FY26"}
-    assert all(m["source_news_id"] == "n-res" for m in dossier["financial_metrics"])
+    # a card's reading of its statement figures stays on the card (MEMORY_FILE_ONLY, owner 30 Oct 2026): memory waits for the file
+    assert dossier["financial_metrics"] == []
+    assert dossier["guidance"][0]["source_news_id"] == "n-res"
     assert dossier["timeline"][0]["summary"].startswith("Q2FY27 revenue")
 
     archived = json.loads(sink.get_object(f"daily_feed/{now.date().isoformat()}.json"))
@@ -935,7 +937,9 @@ def test_a_filing_read_again_as_not_material_takes_its_facts_out_of_memory(setti
     pipeline._commit([first])
     from bse_intel.dossier import _sources
 
-    sources = lambda: {s["news_id"] for m in sink.get_dossier("999001")["financial_metrics"] for s in _sources(m)}  # noqa: E731
+    # the card's guidance stands for its facts (its statement figures no longer enter memory: MEMORY_FILE_ONLY, owner 30 Oct 2026)
+    sources = lambda: {s["news_id"] for m in sink.get_dossier("999001")["financial_metrics"] for s in _sources(m)} | {  # noqa: E731
+        g["source_news_id"] for g in sink.get_dossier("999001")["guidance"]}
     assert "n-again" in sources()
     pipeline, sink, _ = build(settings, [f], {f.pdf_url: _pdf(RESULT_TEXT)},   # the same store, read again
                               {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(not_material)],
@@ -1112,6 +1116,7 @@ def test_the_critic_reads_the_filing_on_a_card_with_warrants(settings):
     assert "18-month warrant conversion deadline" not in job["opening"]
 
 
+@pytest.mark.switches_on("MEMORY_FILE_ONLY")
 def test_memory_a_job_writes_while_the_card_is_being_written_is_kept(settings):
     """A live card reads its company's memory, spends minutes on the AI and writes the memory back whole: a pledge event
     (or deals, insider trades, a seed's figures) stored meanwhile by a memory job outside the nightly pause was lost."""
@@ -1137,7 +1142,8 @@ def test_memory_a_job_writes_while_the_card_is_being_written_is_kept(settings):
     memory = sink.get_dossier("999001")
     assert memory["pledges"]["events"][0]["seq_id"] == "p1"                     # the job's part, kept
     periods = {m["period"] for m in memory["financial_metrics"]}
-    assert {"Q1FY27", "Q2FY27"} <= periods                                      # its figure beside the card's own
+    assert periods == {"Q1FY27"}   # its figure kept; the card's own revenue stays off memory (MEMORY_FILE_ONLY, owner 30 Oct 2026)
+    assert [g["source_news_id"] for g in memory["guidance"]] == ["n-race"]       # the card's other facts reach memory
     assert any(t.get("news_id") == "n-race" for t in memory["timeline"])        # and the card's own line
 
 
@@ -1178,7 +1184,7 @@ def test_a_cards_memory_is_written_with_its_row_and_not_before(settings):
     outcome = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     assert outcome.card is not None and sink.get_dossier(f.scrip_code) is None          # nothing before the row
     pending = pipeline._memory(f.scrip_code)                                              # the next filing sees it
-    assert any(m.get("source_news_id") == "n-mem" or m.get("value_news_id") == "n-mem" for m in pending["financial_metrics"])
+    assert any(g.get("source_news_id") == "n-mem" for g in pending["guidance"])   # (figures stay off memory: MEMORY_FILE_ONLY)
 
     def refuse(outcomes):
         raise SinkRejected("row too large")
@@ -1190,7 +1196,7 @@ def test_a_cards_memory_is_written_with_its_row_and_not_before(settings):
     again = pipeline.analyze(f.model_copy(update={"route": "FAST_TRACK", "event_type": "RESULTS"}))
     pipeline._commit([again])
     memory = sink.get_dossier(f.scrip_code)
-    assert any(m.get("source_news_id") == "n-mem" or m.get("value_news_id") == "n-mem" for m in memory["financial_metrics"])
+    assert any(g.get("source_news_id") == "n-mem" for g in memory["guidance"])
 
 
 def test_card_writing_cap_defers_without_waiting_or_an_attempt(settings):

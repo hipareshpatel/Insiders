@@ -99,6 +99,16 @@ export function unitValue(text: string, unit: string): string {
 /** A line whose every stored figure is zero is the XBRL's filler (an IT company's raw-material cost), not a fact. */
 export const allZero = (values: Iterable<{ value: number }>) => [...values].every((v) => v.value === 0);
 
+/** The newest balance-sheet snapshot that holds figures: a later entry with none (an AI reading's "Jun-2026" stub holding only its
+ * date; stock-page audit, 30 Oct 2026: 10 of 20 companies' tiles were empty) never hides the last real one. */
+export function latestBalance(sheets: Dossier["balance_sheet"] | undefined): Dossier["balance_sheet"][number] | undefined {
+  const list = sheets ?? [];
+  for (let i = list.length - 1; i >= 0; i--) {
+    if (Object.entries(list[i]).some(([k, v]) => k.endsWith("_cr") && typeof v === "number")) return list[i];
+  }
+  return undefined;
+}
+
 /** The metrics in statement order (a stable sort: unknown lines keep memory's order). */
 export function inStatementOrder<T>(rows: [string, T][]): [string, T][] {
   return rows.map((r, k) => ({ r, k, p: statementPlace(r[0]) }))

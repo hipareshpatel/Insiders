@@ -27,6 +27,11 @@ def output(**delta) -> Pass2Output:
     })
 
 
+def file_merge(*args, **kw):
+    """set-up: with MEMORY_FILE_ONLY (owner, 30 Oct 2026) statement figures enter memory only as the exchange file's"""
+    return merge(*args, by="file", **kw)
+
+
 def metrics(*rows):
     return [{"metric": m, "period": p, "value": v} for m, p, v in rows]
 
@@ -34,13 +39,13 @@ def metrics(*rows):
 def demo() -> dict:
     """Consolidated revenue for three quarters, a standalone-only revenue quarter, and Q1FY26 restated in Q1FY27."""
     d = new_dossier(filing("n0", "2025-08-01T17:00:00+05:30"))
-    d = merge(d, output(financial_metrics=metrics(("revenue", "Q4FY25", 90.0))), filing("n00", "2025-05-10T17:00:00+05:30"),
+    d = file_merge(d, output(financial_metrics=metrics(("revenue", "Q4FY25", 90.0))), filing("n00", "2025-05-10T17:00:00+05:30"),
               "HIGH", "now", basis="STANDALONE")
-    d = merge(d, output(financial_metrics=metrics(("revenue", "Q1FY26", 100.0), ("pat", "Q1FY26", 9.0))),
+    d = file_merge(d, output(financial_metrics=metrics(("revenue", "Q1FY26", 100.0), ("pat", "Q1FY26", 9.0))),
               filing("n0", "2025-08-01T17:00:00+05:30"), "HIGH", "now", basis="CONSOLIDATED")
-    d = merge(d, output(financial_metrics=metrics(("revenue", "Q2FY26", 104.0))),
+    d = file_merge(d, output(financial_metrics=metrics(("revenue", "Q2FY26", 104.0))),
               filing("n1", "2025-11-01T17:00:00+05:30"), "HIGH", "now", basis="CONSOLIDATED")
-    d = merge(d, output(financial_metrics=metrics(("revenue", "Q1FY27", 110.0), ("revenue", "Q1FY26", 96.5))),
+    d = file_merge(d, output(financial_metrics=metrics(("revenue", "Q1FY27", 110.0), ("revenue", "Q1FY26", 96.5))),
               filing("n2", Q1), "HIGH", "now", basis="CONSOLIDATED")
     return d
 
@@ -59,10 +64,10 @@ def test_memory_figures_carry_their_basis_and_restatement_and_one_basis_only():
 
 def test_mixed_bases_tag_each_line():
     d = new_dossier(filing("n0", Q1))
-    d = merge(d, output(financial_metrics=metrics(("pat", "Q4FY26", 5.0))), filing("a", "2026-05-10T17:00:00+05:30"),
+    d = file_merge(d, output(financial_metrics=metrics(("pat", "Q4FY26", 5.0))), filing("a", "2026-05-10T17:00:00+05:30"),
               "HIGH", "now", basis="STANDALONE")
-    d = merge(d, output(financial_metrics=metrics(("pat", "Q1FY27", 6.0))), filing("b", Q1), "HIGH", "now")
-    d = merge(d, output(financial_metrics=metrics(("revenue", "Q1FY27", 60.0))), filing("c", Q1), "HIGH", "now",
+    d = file_merge(d, output(financial_metrics=metrics(("pat", "Q1FY27", 6.0))), filing("b", Q1), "HIGH", "now")
+    d = file_merge(d, output(financial_metrics=metrics(("revenue", "Q1FY27", 60.0))), filing("c", Q1), "HIGH", "now",
               basis="CONSOLIDATED")
     view = view_as_of(d, Q2)
     assert "metrics_basis" not in view

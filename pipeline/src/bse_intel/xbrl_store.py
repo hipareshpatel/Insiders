@@ -32,7 +32,9 @@ def key(url: str) -> str:
 
 
 def enabled(sink) -> bool:
-    return isinstance(sink, PlatformSink)
+    """The platform's R2 behind the sink, also through a read-only wrapper (cli._ReadOnlySink: `read_through`), so a test run
+    reads our stored copies instead of downloading them again."""
+    return isinstance(getattr(sink, "read_through", sink), PlatformSink)
 
 
 def _max_bytes() -> int:

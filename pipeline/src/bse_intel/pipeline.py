@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import call_memory, call_queue, gate, two_parts
+from . import call_memory, call_queue, card_support, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_footer_plausible, card_ground_all_fields, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -68,7 +68,7 @@ from .sinks.platform import PlatformSink
 from .sinks.base import Sink, SinkRejected, SinkUnavailable
 from . import universe
 from . import eps_adjust, no_eps, restated_pdf
-from . import annual_xbrl
+from . import annual_xbrl, fact_sheet
 from . import xbrl_store
 from . import statements
 from . import directions
@@ -3323,7 +3323,7 @@ class Pipeline:
 
     def _durable_text(self) -> bool:
         """True when texts also live in the platform's R2 (F147); local and laptop sinks keep the local cache alone."""
-        return isinstance(self.sink, PlatformSink) and self.settings.text_cache_dir is not None
+        return isinstance(getattr(self.sink, "read_through", self.sink), PlatformSink) and self.settings.text_cache_dir is not None
 
     def _cached_text(self, news_id: str) -> dict | None:
         path = self._cache_path(news_id)
@@ -3632,6 +3632,13 @@ class Pipeline:
             # in front of the text, as the XBRL table is: the model reads them as the filing's own figures, and a
             # card line quoting one is found (results_card.build puts them on a rich card)
             text = code_facts.block(found_facts, "Consolidated" if consolidated_only else None) + "\n\n" + text
+        # CARD_FACT_SHEET (off: nothing): the quarter's figures from the exchange file by screener's rules, as the card's results
+        # figures; None (the card is made as before) when the file is not a corporate filer's results, or on any failure
+        results_sheet = (fact_sheet.for_filing(dossier, getattr(tagged, "raw", None), filing.scrip_code, filing.xbrl_url or "",
+                                               filing.news_id, filing.filed_at, now)
+                       if card_fact_sheet() and event_type == "RESULTS" and tagged else None)
+        if results_sheet:
+            text = fact_sheet.block(results_sheet) + "\n\n" + text
         system, user = self.prompts.pass2(filing, event_type, industry, view, text, peers, scale=scale,
                                           examples=self._owner_examples(sector, event_type),
                                           lessons=[x["lesson"] for x in learned["lessons"].get(f"{sector}|{event_type}", [])][-3:],
@@ -3694,6 +3701,8 @@ class Pipeline:
             that had been thrown away (2026-10-17: Novartis FY25 was published at the right Rs 356.27 Cr
             with a note saying it had been changed to Rs 83.88 Cr, which was the discarded card).
             """
+            # CARD_FACT_SHEET: a results amount or change the model writes that the exchange file's sheet contradicts is taken out first
+            sheet_cuts = fact_sheet.removed(candidate, results_sheet)
             # a results card with its XBRL file: code writes the figures, the model's words are cut to a line or two
             built = (results_card.build(candidate, tagged, filing.company_name,
                                         results_card.history_from_view(full_view), filed_text, found_facts,
@@ -3702,7 +3711,7 @@ class Pipeline:
             units = fix_unit_slips(candidate, sources)
             foreign_fixes = fix_foreign_crore(candidate, filed_text)
             counts = fix_count_millions(candidate, sources)
-            changes = built + fix_change_percentages(candidate, sources) + counts + foreign_fixes
+            changes = sheet_cuts + built + fix_change_percentages(candidate, sources) + counts + foreign_fixes
             changes += apply_deal_guards(candidate, filing, history, dossier.get("balance_sheet", []), text)
             changes += deal_echo_slips(candidate, filed_text)
             changes += continued_deal(candidate, view, filed_text)
@@ -3733,6 +3742,8 @@ class Pipeline:
                 derived = (derived_figures(candidate.card, check_quant(candidate.card.quantified_impact, *sources), sources)
                            if candidate.card is not None else [])
                 changes += ground_all_fields(candidate, sources, derived)
+            if card_text_support():   # CARD_TEXT_SUPPORT: names, words, small counts, dates and labels the sources do not print (off: nothing)
+                changes += card_support.apply(candidate, sources, filed_text)   # labels against the document alone, not our XBRL table's own labels
             found = check_card_all(candidate, view, sources, history)
             found.scale += period_mixups(candidate, tagged, filed_text)
             found.scale += basis_mixups(candidate, tagged, standalone_file)
@@ -3942,6 +3953,11 @@ class Pipeline:
         # each results row on one statement line, a figure on another basis labelled (CARD_RESULTS_ONE_LINE; off: nothing)
         if one_line_notes := results_one_line.apply_card_json(card_json):
             card_json.setdefault("grounding", {})["one_line"] = one_line_notes
+        # the results table's rows are the exchange file's sheet (CARD_FACT_SHEET; off or no sheet: nothing); the card keeps what changed
+        if results_sheet:
+            card_json.setdefault("grounding", {})["fact_sheet"] = {
+                "period": results_sheet["period"], "basis": results_sheet["basis"], "source_news_id": results_sheet.get("source_news_id"),
+                "table_changed": fact_sheet.apply_to_results(card_json.get("results"), results_sheet) or None}
         # a footer figure that cannot be right is left off the card (CARD_FOOTER_PLAUSIBLE; off: nothing); the card keeps why
         if card_footer_plausible() and (footer_notes := footer_plausible.card_notes(card_json)):
             card_json.setdefault("grounding", {})["footer_hidden"] = footer_notes

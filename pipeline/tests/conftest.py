@@ -14,6 +14,7 @@ from bse_intel.settings import Settings
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "switches_off(*names): run the test with these switches off, live run or not")
+    config.addinivalue_line("markers", "switches_on(*names): run the test with these switches on, live run or not")
 
 
 @pytest.fixture(autouse=True)
@@ -39,6 +40,10 @@ def _switches(monkeypatch, request):
     for mark in request.node.iter_markers("switches_off"):
         for name in mark.args:
             monkeypatch.delenv(name, raising=False)
+    # a test of a switch's on behaviour names it: @pytest.mark.switches_on("MEMORY_FILE_ONLY"), on in the default run too
+    for mark in request.node.iter_markers("switches_on"):
+        for name in mark.args:
+            monkeypatch.setenv(name, "1")
 
 
 @pytest.fixture(autouse=True)

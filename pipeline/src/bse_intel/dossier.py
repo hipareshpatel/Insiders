@@ -729,6 +729,8 @@ _KEYED_LISTS = {
     "ownership": lambda e: e.get("period"),
     "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
     "statements": lambda e: (e.get("period"), e.get("basis"), e.get("table")),   # statements.py: one entry a period, basis, table
+    # xbrl_extras.py: one entry a period, basis and kind in each of its four keys
+    **{key: (lambda e: (e.get("period"), e.get("basis"), e.get("kind"))) for key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios")},
 }
 
 
@@ -772,6 +774,9 @@ def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) 
                 elif key == "statements":
                     from .statements import keep_latest
                     rows = keep_latest(rows)
+                elif key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios"):
+                    from .xbrl_extras import MAX_ENTRIES, _order
+                    rows = sorted(rows, key=lambda e: _order(e.get("period")))[-MAX_ENTRIES[key]:]
                 elif key == "ownership":
                     rows = sorted(rows, key=lambda o: (str(due_date(o.get("period")) or ""), str(o.get("as_of") or "")))[-8:]
                 else:
@@ -1245,6 +1250,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                      field, snapshot.get("period"), snapshot[field], news_id)
             snapshot.pop(field)
         fields = [k for k in snapshot if k != "period"]
+    else:
+        fields = []
+    # every figure refused leaves the date alone: such a snapshot would hide the last real one (SBI "Jun-2026", 30 Oct 2026)
+    if fields:
         from_file = set(delta.balance_sheet.file_fields or [])
         sheet_by = "file" if news_id.startswith(XBRL_SOURCE) or (fields and all(k in from_file for k in fields)) else "ai"
         lab = label(sheet_by, "results" if sheet_by == "file" else doc, updated_at, basis=basis, ok=True)
@@ -1811,7 +1820,8 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
                       "use the filing's own columns"] if withheld else None,
             "business_summary": summary["text"] if summary and before(summary) else None,
             "metrics": lines,
-            "balance_sheet": {k: v for k, v in balance[-1].items() if k in VIEW_BALANCE and v is not None} if balance else None,
+            "balance_sheet": next(({k: v for k, v in b.items() if k in VIEW_BALANCE and v is not None} for b in reversed(balance)
+                                   if any(k.endswith("_cr") and isinstance(v, (int, float)) for k, v in b.items())), None),
             "previous_calls": previous_calls[:max(4, guidance_n)],
             "guidance": [g for g in guidance if g["status"] in ("OPEN", "ON_TRACK", "DELAYED", "REVISED")][-guidance_n:],
             "watchlist": watch[-guidance_n:],

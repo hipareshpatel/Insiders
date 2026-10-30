@@ -9,7 +9,8 @@ from string import Template
 
 from ..grounding import UNIT_NAMES, declared_unit, explicit_units
 from ..models import EVENT_TYPES, Filing, event_definitions
-from ..settings import Settings
+from ..card_support import strict_prompt
+from ..settings import Settings, card_text_support
 
 PASS2_SCHEMA = {
     "is_material": True,
@@ -473,6 +474,8 @@ class PromptEngine:
             ) or "None.",
             text=_unit_note(text) + (text or "(attachment had no extractable text; rely on the headline)"),
         )
+        if card_text_support():   # CARD_TEXT_SUPPORT: the sources-only rule (off, the prompt is byte for byte as before)
+            system = strict_prompt(system, short)
         if consolidated_only:   # CARD_CONSOLIDATED_ONLY (F154); off, the prompt is byte for byte as before
             system += "\n\n" + self._consolidated_only
         shown = _examples_text(examples or {})

@@ -108,3 +108,31 @@ def test_a_failed_write_stops_the_resume_point_before_it_and_later_writes_add_no
     sink.put_dossier = real
     again = sb.run(sink, ["500001", "522261", "522262", "522263"], apply=True)
     assert again["error"] is None and again["written"] == 1 and sink.kv_get(sb.RESUME_KEY) == "522263"
+
+
+def test_a_clean_up_with_nothing_added_is_written_and_an_unchanged_company_is_not(settings):
+    """30 Oct 2026: the filler-zero ratios xbrl_extras.remember drops were never saved, the run writing only where it added."""
+    sink = _sink(settings)
+    sb.run(sink, ["500001", "522261"], apply=True)
+    d = sink.get_dossier("522261")
+    d["fin_ratios"] = [{"period": "Q2FY24", "basis": "CONSOLIDATED", "values": {"CET1Ratio": 0.0}}]
+    sink.put_dossier("522261", d)
+    out = sb.run(sink, ["500001", "522261"], apply=True, restart=True)
+    assert out["written"] == 1 and out["entries"] == 0
+    assert not sink.get_dossier("522261").get("fin_ratios")
+    assert sb.run(sink, ["500001", "522261"], apply=True, restart=True)["written"] == 0
+
+
+def test_empty_balance_snapshots_are_dropped_and_counted_in_a_dry_run(settings):
+    """Owner, 30 Oct 2026: yes to removing an AI reading's dated stub (SBI "Jun-2026") by code; the dry run gives the count."""
+    sink = _sink(settings)
+    d = sink.get_dossier("522261")
+    d["balance_sheet"] = [{"period": "Q4FY24", "as_of": "2024-05-01", "net_worth_cr": 120.5},
+                          {"period": "Jun-2024", "as_of": "2024-08-13", "source_news_id": "nse-1"}]
+    d["standalone"] = {"metrics": [], "balance_sheet": [{"period": "Jun-2024", "as_of": "2024-08-13"}]}
+    sink.put_dossier("522261", d)
+    dry = sb.run(sink, ["500001", "522261"])
+    assert dry["balance_stubs"] == 2 and len(sink.get_dossier("522261")["balance_sheet"]) == 2
+    sb.run(sink, ["500001", "522261"], apply=True)
+    after = sink.get_dossier("522261")
+    assert [e["period"] for e in after["balance_sheet"]] == ["Q4FY24"] and after["standalone"]["balance_sheet"] == []

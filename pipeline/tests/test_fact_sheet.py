@@ -225,4 +225,14 @@ def test_the_ab_never_calls_an_exchange_and_the_on_card_reads_memory_as_stored(s
     assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-ab2", out=str(tmp_path)), settings, sink) == 1
     summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
     assert "no exchange call here" in summary["rows"][0]["error"] and not fake.calls
-    assert not pipeline._pending_memory
+    assert not pipeline._pending_memory and summary["not_like_for_like"] == 0   # an error, not a warning
+
+
+def test_the_no_exchange_stub_counts_every_refused_call():
+    from bse_intel import cli
+    from bse_intel.bse import AttachmentError
+
+    stub = cli._NoExchange()
+    with pytest.raises(AttachmentError):
+        stub.results_xbrl("500001")
+    assert stub.calls == ["results_xbrl"]

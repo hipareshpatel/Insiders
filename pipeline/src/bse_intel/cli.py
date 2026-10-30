@@ -1003,7 +1003,7 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
     holds from it and its card (memory_recall_export.py, TODO row 82). Read only: no NSE, no AI, no write."""
     from . import memory_recall_export as mre
 
-    ids = [i.strip() for i in (args.ids or "").split(",") if i.strip()]
+    ids = [i.strip() for i in (args.ids or "").replace("\n", ",").split(",") if i.strip()]
     index = mre.export(sink, Path(args.out), args.limit, args.seed, args.days, ids=ids or None)
     print(mre.render(index))
     return 0 if index["sampled"] else 1
@@ -1232,12 +1232,17 @@ def _card_of(outcome) -> dict | None:
 
 
 class _NoExchange:
-    """Stands in for the NSE and BSE clients where a command must not call either: every use raises AttachmentError."""
+    """Stands in for the NSE and BSE clients where a command must not call either: every use raises AttachmentError and is
+    counted in ``calls`` (a caller that catches the error, e.g. the XBRL lookups, would otherwise go on silently without it)."""
+
+    def __init__(self):
+        self.calls: list[str] = []
 
     def __getattr__(self, name):
         from .bse import AttachmentError
 
         def refuse(*args, **kwargs):
+            self.calls.append(name)
             raise AttachmentError(f"no exchange call here ({name}): only stored copies are read")
         return refuse
 
@@ -1259,12 +1264,13 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
     quiet = _ReadOnlySink(sink)
     pipeline = _pipeline(settings, quiet)
     # never a call to NSE or BSE: a filing whose text or file is not stored fails here, it is not downloaded twice (owner rule)
-    pipeline.nse = pipeline.bse = _NoExchange()
+    stub = pipeline.nse = pipeline.bse = _NoExchange()
     was = os.environ.get("CARD_FACT_SHEET")
     report: list[dict] = []
     try:
         for news_id in ids:
             row: dict = {"news_id": news_id}
+            asked = len(getattr(stub, "calls", []))
             try:
                 filing = call_memory.find_filing(sink, news_id)
                 if filing is None:
@@ -1283,12 +1289,15 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 row |= {"off_status": made["off"]["status"], "on_status": made["on"]["status"], "changed_fields": changed,
                         "fact_sheet": (on.get("grounding") or {}).get("fact_sheet"),
                         "text_removed": [n for n in ((on.get("grounding") or {}).get("change_fixes") or []) if "exchange file" in str(n)]}
+                missed = getattr(stub, "calls", [])[asked:]
+                if missed:   # a stored copy was missing and its reader went on without it: this filing's A/B is not like for like
+                    row["warning"] = "not stored, so read without: " + ", ".join(dict.fromkeys(missed))
                 (out_dir / f"{news_id}.json").write_text(json.dumps({**row, "off": made["off"], "on": made["on"]}, ensure_ascii=False,
                                                                     indent=1, default=str) + "\n", encoding="utf-8")
             except Exception as exc:  # noqa: BLE001 - one filing never stops the rest
                 row["error"] = f"{type(exc).__name__}: {exc}"[:300]
             report.append(row)
-            print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "off_status", "on_status", "changed_fields", "error")}, ensure_ascii=False, default=str))
+            print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "off_status", "on_status", "changed_fields", "warning", "error")}, ensure_ascii=False, default=str))
     finally:
         if was is None:
             os.environ.pop("CARD_FACT_SHEET", None)
@@ -1296,7 +1305,8 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
             os.environ["CARD_FACT_SHEET"] = was
     done = [r for r in report if "error" not in r]
     summary = {"filings": len(ids), "made": len(done), "failed": len(report) - len(done),
-               "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "blocked_writes": quiet.blocked, "rows": report}
+               "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
+               "blocked_writes": quiet.blocked, "rows": report}
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False))
     return 0 if done else 1

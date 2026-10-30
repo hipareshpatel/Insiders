@@ -219,4 +219,5 @@ def test_ids_export_exactly_those_filings(tmp_path):
     sink = FakeSink(cards, texts, dossiers, caps)
     want = sorted(c["news_id"] for c in cards)[:3]
     ix = mre.export(sink, tmp_path / "ids", limit=1, today=TODAY, ids=want)
-    assert sorted(s["news_id"] for s in ix["sample"]) == want
+    assert sorted(s["news_id"] for s in ix["sample"]) == want and ix["missing"] == []
+    assert mre.export(sink, tmp_path / "gone", today=TODAY, ids=[want[0], "nse-nothere"])["missing"] == ["nse-nothere"]

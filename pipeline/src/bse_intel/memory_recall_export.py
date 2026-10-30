@@ -335,6 +335,8 @@ def export(sink, out: Path, limit: int = 20, seed: int = 26, days: int = DAYS, t
              "sampled": len(sample), "by_kind": {k: sum(s["kind"] == k for s in sample) for k in kinds[:2]},
              "companies": len({s["symbol"] for s in sample}), "sectors": len({s["sector"] for s in sample}),
              "sample": sample}
+    if ids:   # a requested filing not exported: older than `days`, not a call or deck, no stored text, or an invitation
+        index |= {"requested": len(ids), "missing": sorted(set(ids) - {s["news_id"] for s in sample})}
     (out / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     (out / "README.md").write_text(README, encoding="utf-8")
     return index

@@ -30,6 +30,7 @@ STATEMENTS = (
     "cards_apply_verdicts",
     "cards_release_pruned",
     "results_kpi_upsert",
+    "results_kpi_prune",
     "index_members_add",
     "index_members_close",
 )

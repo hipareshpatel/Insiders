@@ -22,6 +22,8 @@ from .periods import prior_quarter_period, prior_year_period
 log = logging.getLogger(__name__)
 
 STATEMENT = "results_kpi_upsert"
+PRUNE_STATEMENT = "results_kpi_prune"
+PRUNE_BATCH = 200
 QUARTERS_KEPT = 10   # the latest quarters a company keeps: the page's eight-quarter trend, and last quarter's growth for momentum
 # A change across a loss is a named turn, not a per cent; as a sort key it ranks beside the per cents (a loss turned to profit
 # first, a profit turned to loss last)
@@ -57,6 +59,8 @@ def _line(key: str, row: str, now: dict, before: dict) -> dict | None:
             continue
         line[slot] = round(base, 2)
         change = fact_sheet._change(value, base, key)
+        if base == 0 and value < 0 and change.get("turn") == "PROFIT_TO_LOSS":
+            change = {"turn": "LOSS_WIDENED"}   # from nothing to a loss is a loss that appeared, not a profit that turned (a zero is no profit)
         if "pct" in change:
             line[f"{tag}_pct"] = change["pct"]
         elif "turn" in change:
@@ -162,11 +166,18 @@ def write(sink, at: str, scrips: list[str] | None = None) -> int:
     rebuild); a list: only those (each pipeline run does the live window's companies, so a run reads a few hundred memory files, not
     all of them). A company whose read fails is logged and keeps its old rows. Returns the number of rows sent."""
     rows: list[dict] = []
+    kept: list[dict] = []
     for scrip in (sink.list_dossiers() if scrips is None else scrips):
         try:
-            rows += company_rows(scrip, sink.get_dossier(scrip) or {}, at)
+            found = company_rows(scrip, sink.get_dossier(scrip) or {}, at)
         except Exception as exc:  # noqa: BLE001 - one company's bad file must not stop the rest
             log.warning("results-table: %s not read: %s", scrip, exc)
+            continue
+        rows += found
+        if found:   # a company with no rows now is left alone: an empty read is not proof its old rows are wrong
+            kept.append({"scrip_code": scrip, "periods": [r["period"] for r in found]})
     if rows:
         sink.execute(STATEMENT, rows)
+        for at_ in range(0, len(kept), PRUNE_BATCH):
+            sink.execute(PRUNE_STATEMENT, kept[at_:at_ + PRUNE_BATCH])
     return len(rows)

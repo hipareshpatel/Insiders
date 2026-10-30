@@ -15,7 +15,10 @@ class _Sink:
         return self.dossiers[scrip]
 
     def execute(self, statement, rows):
-        assert statement == "results_kpi_upsert"
+        assert statement in ("results_kpi_upsert", "results_kpi_prune")
+        if statement == "results_kpi_prune":
+            self.pruned = getattr(self, "pruned", []) + rows
+            return len(rows)
         self.sent += rows
         return len(rows)
 
@@ -197,3 +200,31 @@ def test_the_upsert_writes_the_table_and_an_unchanged_row_is_not_rewritten(setti
     changed["statements"][0]["rows"]["Sales"] = 1300.0
     assert sink.execute("results_kpi_upsert", rt.company_rows("500001", changed, "t3")) == 1
     assert sink._db.execute("SELECT revenue, updated_at FROM results_kpi WHERE period = 'Q2FY27'").fetchone()[:] == (1300.0, "t3")
+
+
+def test_a_quarter_the_statements_no_longer_hold_is_removed_from_the_database(settings):
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    sink.execute("results_kpi_upsert", rt.company_rows("500001", _memory(), "t1") + rt.company_rows("500002", _memory(), "t1"))
+    before = sink._db.execute("SELECT count(*) FROM results_kpi WHERE scrip_code = '500001'").fetchone()[0]
+    assert before >= 2
+    memory = _memory()
+    memory["statements"] = [e for e in memory["statements"] if e["period"] != "Q2FY26"]   # a quarter the statements no longer hold
+    now = rt.company_rows("500001", memory, "t2")
+    kept = [{"scrip_code": "500001", "periods": [r["period"] for r in now]}]
+    sink.execute("results_kpi_prune", kept)
+    left = {r[0] for r in sink._db.execute("SELECT period FROM results_kpi WHERE scrip_code = '500001'")}
+    assert left == {r["period"] for r in now} and "Q2FY26" not in left
+    assert sink._db.execute("SELECT count(*) FROM results_kpi WHERE scrip_code = '500002'").fetchone()[0] == before   # another company untouched
+
+
+def test_write_prunes_only_companies_that_have_rows_now():
+    sink = _Sink({"500001": _memory(), "500002": {"statements": []}})
+    assert rt.write(sink, "t", ["500001", "500002"]) == len(sink.sent)
+    assert [k["scrip_code"] for k in sink.pruned] == ["500001"]   # an empty read is no proof that old rows are wrong
+
+
+def test_a_zero_base_going_to_a_loss_is_a_loss_that_appeared_not_a_profit_turned():
+    memory = {"statements": [_entry("Q2FY27", _rows(1200.0, -5.0, 200.0, 150.0)), _entry("Q2FY26", _rows(1000.0, 0.0, 160.0, 100.0))]}
+    assert rt.company_tables(memory)["Q2FY27"]["ebitda"]["yoy_turn"] == "LOSS_WIDENED"

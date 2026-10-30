@@ -14,6 +14,7 @@ import filingsDiscover from "../../db/statements/filings_discover.sql?raw";
 import filingsImport from "../../db/statements/filings_import.sql?raw";
 import filingsUpdate from "../../db/statements/filings_update.sql?raw";
 import kvAdd from "../../db/statements/kv_add.sql?raw";
+import resultsKpiPrune from "../../db/statements/results_kpi_prune.sql?raw";
 import resultsKpiUpsert from "../../db/statements/results_kpi_upsert.sql?raw";
 import indexMembersAdd from "../../db/statements/index_members_add.sql?raw";
 import indexMembersClose from "../../db/statements/index_members_close.sql?raw";
@@ -78,6 +79,7 @@ export const STATEMENTS: Record<string, string> = {
   kv_set: kvSet,
   kv_add: kvAdd,
   results_kpi_upsert: resultsKpiUpsert,
+  results_kpi_prune: resultsKpiPrune,
   index_members_add: indexMembersAdd,
   index_members_close: indexMembersClose,
 };

@@ -151,3 +151,14 @@ test("a company's rows: the latest eight, oldest first, last quarter's growth ta
   assert.equal(out[7].series_pat[6], 24);
   assert.equal(out[0].pat_prev_yoy, 3);          // Q2FY25 is dropped from the eight but still gives Q3FY25 its last quarter
 });
+
+test("momentum compares only quarters on the same basis", () => {
+  assert.match(kpiWhere(parseKpiQuery({}), "Q2FY27").from, /pk\.period = \?1 AND pk\.basis = k\.basis/);
+  const row = (period: string, basis: "CONSOLIDATED" | "STANDALONE", pat_yoy: number) =>
+    ({ scrip_code: "1", period, basis, kind: "company", pat_yoy, revenue_yoy: 1, ebitda_yoy: 1 }) as unknown as Omit<DbKpiRow, "prev_revenue_yoy" | "prev_ebitda_yoy" | "prev_pat_yoy" | "prev_pat_turn">;
+  const same = companyRows([row("Q1FY27", "CONSOLIDATED", 10), row("Q2FY27", "CONSOLIDATED", 15)]).at(-1)!;
+  const switched = companyRows([row("Q1FY27", "STANDALONE", 10), row("Q2FY27", "CONSOLIDATED", 15)]).at(-1)!;
+  assert.equal(same.pat_momentum_pts, 5);
+  assert.equal(switched.pat_momentum_pts, null);
+  assert.equal(switched.momentum, "not_comparable");
+});

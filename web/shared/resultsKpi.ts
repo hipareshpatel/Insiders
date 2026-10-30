@@ -137,7 +137,7 @@ export function kpiWhere(query: KpiQuery, quarter: string): { from: string; para
   const params: unknown[] = [];
   const p = (v: unknown) => (params.push(v), `?${params.length}`);
   const prev = p(prevPeriod(quarter));
-  const joins = `${FROM_SQL}${prev} LEFT JOIN filings f ON f.news_id = k.source_news_id`;
+  const joins = `${FROM_SQL}${prev} AND pk.basis = k.basis LEFT JOIN filings f ON f.news_id = k.source_news_id`;
   const where = [`k.period = ${p(quarter)}`];
   if (query.index) {
     const day = quarterDay(quarter) ?? "1900-01-01";
@@ -177,7 +177,8 @@ export const kpiCompanySql = `SELECT ${KPI_BASE} FROM results_kpi k LEFT JOIN co
 export function companyRows(rows: Omit<DbKpiRow, "prev_revenue_yoy" | "prev_ebitda_yoy" | "prev_pat_yoy" | "prev_pat_turn">[]): KpiRow[] {
   const by = new Map(rows.map((r) => [r.period, r]));
   return [...rows].sort((a, b) => (quarterIndex(a.period) ?? 0) - (quarterIndex(b.period) ?? 0)).slice(-SERIES_QUARTERS).map((r) => {
-    const prev = by.get(prevPeriod(r.period) ?? "");
+    const before = by.get(prevPeriod(r.period) ?? "");
+    const prev = before?.basis === r.basis ? before : undefined;   // growth on another basis is no pace
     return toKpiRow({ ...r, prev_revenue_yoy: prev?.revenue_yoy ?? null, prev_ebitda_yoy: prev?.ebitda_yoy ?? null,
       prev_pat_yoy: prev?.pat_yoy ?? null, prev_pat_turn: prev?.pat_turn ?? null }, seriesFor(by, r.period));
   });

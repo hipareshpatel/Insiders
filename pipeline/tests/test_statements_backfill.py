@@ -1,5 +1,6 @@
 """statements-backfill (owner, 30 Oct 2026): every company's past statements by screener's rules from the stored facts into
 memory, with a backup first, a limit a run, and two checks against memory."""
+import json
 from pathlib import Path
 
 from bse_intel import restore, statements_backfill as sb, xbrl_facts
@@ -157,3 +158,32 @@ def test_ai_balance_snapshots_the_file_covers_are_dropped_unless_they_hold_a_fig
     sb.run(sink, ["500001", "522261"], apply=True)
     assert [e["source_news_id"] for e in sink.get_dossier("522261")["balance_sheet"]] == ["nse-3", "nse-4", filed["source_news_id"]]
     assert sb._balance_end("Q4FY26") == sb._balance_end("Mar-2026") == "2026-03" and sb._balance_end("FY26") is None
+
+
+def test_rating_snapshots_are_not_empty_and_are_put_back_from_the_backups(settings):
+    """Review of PR #256: a rating filing's snapshot holds a rating and no figure; the clean-up of 30 Oct read it as empty.
+    The cards read the last rating from memory (card_context.rating_change), so the backups' copies go back."""
+    sink = _sink(settings)
+    rating = {"period": "Jun-2026", "as_of": "2026-07-01", "credit_rating": "CRISIL AA+", "rating_agency": "CRISIL",
+              "source_news_id": "nse-9"}
+    d = sink.get_dossier("522261")
+    d["balance_sheet"] = [rating, {"period": "Q4FY26", "as_of": "2026-05-01", "net_worth_cr": 1.0, "lab": {"by": "file"}},
+                          {"period": "Mar-2026", "as_of": "2026-05-02", "net_worth_cr": 2.0, "rating_outlook": "Stable",
+                           "lab": {"by": "ai"}}]
+    assert sb.drop_empty_balance(d) == 0
+    assert sb.drop_file_covered_balance(d) == (0, 1)   # the reading's outlook is not in the file's snapshot
+    # what the clean-up of 30 Oct did: the rating snapshot gone, the dossier backed up first
+    from bse_intel.backup import RunBackup
+    sink.put_dossier("522261", d)
+    RunBackup(sink, "statements-backfill", at="20261030T110000Z").dossier("522261")
+    gone = json.loads(json.dumps(d))
+    gone["balance_sheet"] = gone["balance_sheet"][1:]
+    sink.put_dossier("522261", gone)
+    lost = sb.lost_ratings(sink)
+    assert lost == {"522261": {"main": [rating]}}
+    dry = sb.run(sink, sorted(lost), ratings=lost)
+    assert dry["ratings_put_back"] == 1 and len(sink.get_dossier("522261")["balance_sheet"]) == 2
+    sb.run(sink, sorted(lost), apply=True, restart=True, ratings=lost)
+    back = sink.get_dossier("522261")["balance_sheet"]
+    assert [e["period"] for e in back] == ["Q4FY26", "Mar-2026", "Jun-2026"] and back[-1] == rating
+    assert sb.run(sink, sorted(lost), apply=True, restart=True, ratings=lost)["ratings_put_back"] == 0

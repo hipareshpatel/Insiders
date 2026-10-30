@@ -131,12 +131,22 @@ def fill_extras(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
     return added
 
 
+RATING_FIELDS = ("credit_rating", "rating_agency", "rating_outlook")
+_SNAPSHOT_META = {"period", "as_of", "source_news_id", "lab", "file_fields", "basis"}
+
+
+def _held(e: dict) -> set[str]:
+    """What a balance-sheet snapshot holds: its figures (``*_cr`` numbers) and its rating fields (a rating filing's snapshot
+    has no figure at all: review of PR #256, 30 Oct 2026; the cards read the last rating from here, card_context)."""
+    return ({k for k, v in e.items() if k.endswith("_cr") and isinstance(v, (int, float)) and not isinstance(v, bool)}
+            | {k for k in RATING_FIELDS if isinstance(e.get(k), str) and e[k].strip()})
+
+
 def drop_empty_balance(dossier: dict) -> int:
     """Balance-sheet snapshots holding no figure (an AI reading's dated stub: SBI's "Jun-2026" after the file's Q4FY26; stock-page
     audit, 30 Oct 2026) out of memory, the main and the standalone list (in place); the number dropped. Owner, 30 Oct 2026: yes."""
     def real(e) -> bool:
-        return isinstance(e, dict) and any(k.endswith("_cr") and isinstance(v, (int, float)) and not isinstance(v, bool)
-                                           for k, v in e.items())
+        return isinstance(e, dict) and bool(_held(e))
     dropped = 0
     for holder in (dossier, dossier.get("standalone") if isinstance(dossier.get("standalone"), dict) else None):
         if holder is None or not isinstance(holder.get("balance_sheet"), list):
@@ -171,10 +181,10 @@ def _from_file(e: dict) -> bool:
 def drop_file_covered_balance(dossier: dict) -> tuple[int, int]:
     """Balance-sheet snapshots an AI reading wrote for a date the exchange file also covers, out of memory (main and
     standalone lists, in place): SBI's "Mar-2026" net worth 4,72,895 Cr (results PDF) and 5,43,519 Cr (call) beside the file's
-    Q4FY26 6,14,899 Cr (owner, 30 Oct 2026: yes). Dropped only when the file's snapshot of that month holds every figure the
-    reading holds, so no figure is lost; (dropped, kept because the reading has a figure the file lacks)."""
+    Q4FY26 6,14,899 Cr (owner, 30 Oct 2026: yes). Dropped only when the file's snapshot of that month holds every field the
+    reading holds (a figure, a rating), so nothing is lost; (dropped, kept because the reading has a figure the file lacks)."""
     def figures(e) -> set[str]:
-        return {k for k, v in e.items() if k.endswith("_cr") and isinstance(v, (int, float)) and not isinstance(v, bool)}
+        return _held(e) | {k for k, v in e.items() if k not in _SNAPSHOT_META and v not in (None, "", [], {})}
     dropped = kept_extra = 0
     for holder in (dossier, dossier.get("standalone") if isinstance(dossier.get("standalone"), dict) else None):
         if holder is None or not isinstance(holder.get("balance_sheet"), list):
@@ -197,6 +207,54 @@ def drop_file_covered_balance(dossier: dict) -> tuple[int, int]:
     return dropped, kept_extra
 
 
+RATINGS_SINCE = "20261030T"   # the runs whose empty-snapshot clean-up (PR #250) also took out rating snapshots
+
+
+def lost_ratings(sink, since: str = RATINGS_SINCE) -> dict[str, dict[str, list[dict]]]:
+    """The rating snapshots (a rating, no figure) the backups of statements-backfill runs since ``since`` held before the run:
+    scrip -> {"main": [...], "standalone": [...]}. ``drop_empty_balance`` read them as empty until the review of PR #256."""
+    from .backup import PREFIX
+    out: dict[str, dict[str, list[dict]]] = {}
+    seen: set[str] = set()
+    for key in sink.list_objects(f"{PREFIX}statements-backfill-"):
+        folder, _, rest = key[len(PREFIX):].partition("/")
+        if folder[len("statements-backfill-"):] < since or not rest.startswith("memory/") or not rest.endswith(".json"):
+            continue
+        body = sink.get_object(key)
+        dossier = json.loads(body) if body else None
+        if not isinstance(dossier, dict):
+            continue
+        scrip = rest[len("memory/"):-len(".json")]
+        standalone = dossier.get("standalone") if isinstance(dossier.get("standalone"), dict) else {}
+        for part, sheets in (("main", dossier.get("balance_sheet")), ("standalone", standalone.get("balance_sheet"))):
+            for e in sheets if isinstance(sheets, list) else []:
+                if isinstance(e, dict) and _held(e) and _held(e) <= set(RATING_FIELDS):
+                    mark = json.dumps([scrip, part, e], sort_keys=True)
+                    if mark not in seen:
+                        seen.add(mark)
+                        out.setdefault(scrip, {}).setdefault(part, []).append(e)
+    return out
+
+
+def put_back(dossier: dict, lost: dict[str, list[dict]]) -> int:
+    """The lost rating snapshots memory no longer holds, back in date order (in place); the number put back."""
+    added = 0
+    for part, entries in lost.items():
+        if part == "main":
+            holder = dossier
+        else:
+            holder = dossier.setdefault("standalone", {"metrics": [], "balance_sheet": []})
+            if not isinstance(holder, dict):
+                continue
+        sheets = holder.get("balance_sheet") if isinstance(holder.get("balance_sheet"), list) else []
+        have = {json.dumps(e, sort_keys=True) for e in sheets if isinstance(e, dict)}
+        new = [e for e in entries if json.dumps(e, sort_keys=True) not in have]
+        if new:
+            holder["balance_sheet"] = sorted(sheets + new, key=lambda e: str(e.get("as_of") or "") if isinstance(e, dict) else "")
+            added += len(new)
+    return added
+
+
 def fill(dossier: dict, entries: list[dict]) -> int:
     """Add the entries memory does not hold yet (in place); the number added."""
     have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
@@ -210,7 +268,7 @@ WRITE_WORKERS = 8   # companies written at once (each its own dossier and backup
 WORKERS = 24  # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone; run 2 at 8: 8.7 min)
 
 
-def _prepare(sink, scrip: str, at: str):
+def _prepare(sink, scrip: str, at: str, lost: dict | None = None):
     """One company read and worked out (no write): (read, merged, entries, left, segment rows added) or None when it has no dossier or facts."""
     read = sink.get_dossier(scrip)
     keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
@@ -222,7 +280,8 @@ def _prepare(sink, scrip: str, at: str):
     segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
     stubs = drop_empty_balance(merged)
     covered, extra = drop_file_covered_balance(merged)
-    return read, merged, entries, left, segments_added, stubs, covered, extra
+    restored = put_back(merged, lost.get(scrip, {})) if lost else 0
+    return read, merged, entries, left, segments_added, stubs, covered, extra, restored
 
 
 def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exception | None]:
@@ -239,8 +298,8 @@ def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exc
 
 
 def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False,
-        workers: int = WORKERS, write_workers: int = WRITE_WORKERS) -> dict:
-    """``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review). The companies
+        workers: int = WORKERS, write_workers: int = WRITE_WORKERS, ratings: dict | None = None) -> dict:
+    """``ratings`` (lost_ratings): the rating snapshots to put back, company by company. ``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review). The companies
     are read ``workers`` at a time and written ``write_workers`` at a time (each company's dossier and backup are its own
     objects; the first write goes alone, as it opens the backup folder). Results are taken in scrip order: the first failure
     stops the run there, and the resume point is the last company of the unbroken run before it, set once at the end (run 4:
@@ -254,13 +313,13 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
     todo = [s for s in sorted(scrips) if s > after][:limit]
     backup = RunBackup(sink, "statements-backfill") if apply else None
     out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
-           "no_facts": 0, "segments": 0, "balance_stubs": 0, "balance_covered": 0, "balance_kept_extra": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
+           "no_facts": 0, "segments": 0, "balance_stubs": 0, "balance_covered": 0, "balance_kept_extra": 0, "ratings_put_back": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
 
     def safe(scrip):
         try:
-            return _prepare(sink, scrip, at), None
+            return _prepare(sink, scrip, at, ratings), None
         except Exception as exc:  # noqa: BLE001 - reported in order below, where it stops the run
             return None, exc
 
@@ -276,7 +335,8 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
             out["no_facts"] += 1
             plan.append((scrip, 0, None))
             continue
-        read, merged, entries, left, segments_added, stubs, covered, extra = ready
+        read, merged, entries, left, segments_added, stubs, covered, extra, restored = ready
+        out["ratings_put_back"] += restored
         out["balance_stubs"] += stubs
         out["balance_covered"] += covered
         out["balance_kept_extra"] += extra
@@ -324,7 +384,7 @@ def render(o: dict) -> str:
              "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows and extras (audit, cash-flow detail, related parties, ratios) {o['segments']}"
              f"; empty balance-sheet snapshots dropped {o.get('balance_stubs', 0)}"
              f"; AI balance-sheet snapshots the file covers dropped {o.get('balance_covered', 0)}"
-             f" (kept, a figure the file lacks: {o.get('balance_kept_extra', 0)})",
+             f" (kept, a figure the file lacks: {o.get('balance_kept_extra', 0)}); rating snapshots put back {o.get('ratings_put_back', 0)}",
              f"  left out ({len(o['left_out'])}):"] + [f"    {x}" for x in o["left_out"][:60]]
     if o["backup"]:
         lines.append(f"backup: {o['backup']['prefix']} ({o['backup']['dossiers']} dossiers); undo with restore --backup "

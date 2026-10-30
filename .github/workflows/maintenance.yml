@@ -305,7 +305,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -652,7 +652,8 @@ jobs:
           [ "$APPLY" = "true" ] && args+=(--apply)
           [ "$RESTART" = "true" ] && args+=(--restart)
           if [ -n "$LIMIT" ]; then args+=(--limit "$LIMIT"); fi
-          if [ -n "$IDS" ]; then args+=(--scrips "$IDS"); fi
+          if [ "$IDS" = "put-back-ratings" ]; then args+=(--put-back-ratings)
+          elif [ -n "$IDS" ]; then args+=(--scrips "$IDS"); fi
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel statements-backfill "${args[@]}" | tee "$RUNNER_TEMP/stmts/statements-backfill.txt" || code=$?
           if [ "$code" -eq 124 ]; then exit 0; fi   # companies left: the next run resumes
           exit "$code"

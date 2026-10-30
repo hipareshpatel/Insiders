@@ -177,3 +177,44 @@ def test_nemotron_header_off_and_unit_rule(monkeypatch):
     assert len(nemotron_grids(_answer(elements))) == 1                       # the unit rule is off by default
     monkeypatch.setenv("NEMOTRON_NEED_UNIT", "1")
     assert nemotron_grids(_answer(elements)) == []                          # on: a table with no unit word anywhere is dropped
+
+
+@respx.mock
+def test_nemotron2_names_its_tool_and_v1_does_not(monkeypatch):
+    from bse_intel.pdf_readers import NemotronParse2Reader
+    monkeypatch.setenv("NVIDIA_API_KEY", "k")
+    monkeypatch.setattr(NemotronParse2Reader, "pages_used", 0)
+    monkeypatch.setattr(NemotronParseReader, "pages_used", 0)
+    route = respx.post("https://integrate.api.nvidia.com/v1/chat/completions").mock(return_value=httpx.Response(200, json=NEMO))
+    NemotronParse2Reader().extract(_pdf(1))
+    NemotronParseReader().extract(_pdf(1))
+    first, second = (json.loads(c.request.content) for c in route.calls)
+    assert first["tool_choice"] == {"type": "function", "function": {"name": "markdown_bbox"}}
+    assert "tool_choice" not in second       # v1 answered without it (run 41063175585): left as it was measured
+
+
+@respx.mock
+def test_mistral_retries_a_429(monkeypatch):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    route = respx.post("https://api.mistral.ai/v1/ocr").mock(
+        side_effect=[httpx.Response(429, text="Rate limit exceeded"), httpx.Response(200, json=ANSWER)])
+    assert len(MistralOcrReader().extract(_pdf(2))) == 2 and route.call_count == 2
+
+
+def test_garbled_figure_spares_dates_and_sees_through_marks():
+    from bse_intel.pdf_readers import garbled_figure
+    assert all(garbled_figure(x) for x in ["18.370.88", "18.370.88*", "1.8.370.88", "−18.370.88", "(18.370.88)", "18.370.88 (1)"])
+    assert not any(garbled_figure(x) for x in ["30.06.2023", "1.6.24", "18,370.88", "12.5", "2023.24", ""])
+
+
+def test_nemotron_header_skips_notes_list_items_and_long_text(monkeypatch):
+    monkeypatch.delenv("NEMOTRON_HEADER", raising=False)
+    box = lambda y: {"xmin": 0.1, "ymin": y, "xmax": 0.9, "ymax": y + 0.05}
+    elements = [{"type": "Section-header", "text": "Statement of standalone results", "bbox": box(0.1)},
+                {"type": "List-item", "text": "1 The consolidated figures of the Group", "bbox": box(0.3)},
+                {"type": "Text", "text": "Notes: " + "the Group consolidated its figures " * 6, "bbox": box(0.35)},
+                {"type": "Table", "text": TABLE, "bbox": box(0.5)}]
+    (grid,) = nemotron_grids(_answer(elements))
+    assert grid[0] == ["Statement of standalone results"] and grid[1][0] == "Particulars"

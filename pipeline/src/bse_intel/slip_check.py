@@ -17,7 +17,7 @@ import time
 
 from . import pdf_referee
 from .nse import SourceBlockedError
-from .settings import slip_check_numfirst, slip_check_numfirst_seconds
+from .settings import pdf_reader_options, slip_check_numfirst, slip_check_numfirst_seconds, slip_check_reader_options
 
 log = logging.getLogger(__name__)
 
@@ -93,6 +93,12 @@ class PdfCheck:
         return refused
 
     def __call__(self, result, metric: str, corrected: float) -> tuple[bool, str]:
+        if not slip_check_reader_options():
+            return self._check(result, metric, corrected)
+        with pdf_reader_options():         # the text-layer reader as the bench scored it (SLIP_CHECK_READER_OPTIONS)
+            return self._check(result, metric, corrected)
+
+    def _check(self, result, metric: str, corrected: float) -> tuple[bool, str]:
         if self.sources is None:
             return None, "no NSE client to fetch the PDF"
         period, basis = result.period, result.basis

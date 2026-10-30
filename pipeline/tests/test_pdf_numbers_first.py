@@ -2167,3 +2167,35 @@ def test_a_half_year_is_read_only_when_its_two_quarters_add_up_to_it(monkeypatch
     assert value is None and "not its two quarters' sum" in why
     monkeypatch.setattr(nf, "table_figure", cells(None, 1600.5))
     assert nf.half_year_proved(None, "revenue", date(2026, 9, 30), 3100.75, 0.005)[0] is None   # one quarter unread: unproven
+
+
+def _image_page(doc, rect=None, text=""):
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 20, 20), 0)
+    pix.clear_with(200)
+    page = doc.new_page()
+    page.insert_image(rect or page.rect, pixmap=pix)
+    if text:
+        page.insert_text((60, 120), text, fontsize=9)
+    return page
+
+
+def test_a_prose_page_with_a_logo_is_never_ocrd_and_a_scanned_page_is_wherever_it_is():
+    # out-of-sample test, 30 Oct 2026: an AGM outcome of 25 prose pages, each with a logo, had 16 of them OCR'd (59 s, no
+    # table); each page is judged on its own, so a scanned page late in the file is still read
+    doc = pymupdf.open()
+    for n in range(9):
+        _image_page(doc, pymupdf.Rect(20, 20, 80, 50), f"Resolution {n} passed with the requisite majority by the members.")
+    _image_page(doc, None, "Statement of Unaudited Financial Results")            # page 10: a full-page scan
+    calls = []
+
+    def boxes(png):
+        calls.append(png)
+        return []
+    nf.analyse(doc.tobytes(), boxes, ocr_garbled=True)
+    assert len(calls) == 1                         # the scan on page 10 only, never the nine logo pages
+    L = type("Layer", (), {"words": []})()
+    assert not nf.may_hold_statement(doc[0], L, False)
+    assert nf.may_hold_statement(doc[9], L, False)
+    assert nf.may_hold_statement(doc[0], L, True)                                  # a likely statement page
+    figures = type("Layer", (), {"words": [(0, 0, 1, 1, f"{n}.00") for n in range(15)]})()
+    assert nf.may_hold_statement(doc[0], figures, False)                           # a page of figures

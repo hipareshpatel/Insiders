@@ -50,7 +50,7 @@ export function NfoFlag({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-1.5 whitespace-nowrap text-[13px] text-ink", className)}
       title="Profit rose while EBITDA fell: check other income or one-offs">
-      <AlertTriangle aria-hidden className="h-3.5 w-3.5 text-warn" />Profit not from operations
+      <AlertTriangle aria-hidden className="h-3.5 w-3.5 text-warn" />Profit up, EBITDA down
     </span>
   );
 }

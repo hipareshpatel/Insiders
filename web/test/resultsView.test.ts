@@ -57,16 +57,16 @@ test("momentum: +2 points speeds up, -2 slows, between is steady", () => {
 });
 
 test("the season's headline and lines are templates over the summary", () => {
-  assert.equal(text(seasonHeadline(SUMMARY)), "Of 236 companies that have reported, 175 grew profit; the middle company grew +13.9%.");
+  assert.equal(text(seasonHeadline(SUMMARY)), "Of 236 companies that have reported, 175 grew profit; median profit growth +13.9%.");
   assert.equal(text(seasonHeadline(EMPTY_SUMMARY)), "No company has reported for this quarter yet.");
   assert.equal(text(seasonHeadline({ ...SUMMARY, median_pat_yoy: null })), "Of 236 companies that have reported, 175 grew profit.");
   assert.match(text(seasonHeadline({ ...SUMMARY, n: 12 }, true)), /^Of 12 companies in this list/);
   const idx = groupsResponse("index").rows;
   const lines = seasonLines(SUMMARY, idx).map(text);
   assert.deepEqual(lines, [
-    "Profit grew faster than sales: the middle company's revenue +11.8%, EBITDA +14.6%.",
+    "Profit grew faster than sales: median revenue growth +11.8%, EBITDA +14.6%.",
     "118 are speeding up, growing profit faster than last quarter; 98 are slowing.",
-    "Nifty Midcap 150 leads: its middle company grew profit +19.4%, against +12.1% in the Nifty 50.",
+    "Nifty Midcap 150 leads: its median profit growth is +19.4%, against +12.1% in the Nifty 50.",
     "61 companies (26%) earned less than a year ago; 7 of 8 indices show their best median in 8 quarters.",
   ]);
   // without the groups, the index parts are left out, not guessed
@@ -77,7 +77,7 @@ test("the season's headline and lines are templates over the summary", () => {
 test("groups in words", () => {
   const idx = groupsResponse("index").rows;
   assert.equal(bestInEight(idx), 7);   // every index but Nifty Next 50 is at its 8-quarter high this quarter
-  assert.equal(text(groupsLead(idx, "index")), "Nifty Midcap 150 leads the season: its middle company grew profit +19.4%, the Nifty 50's +12.1%.");
+  assert.equal(text(groupsLead(idx, "index")), "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%.");
   assert.equal(groupsBullets(idx, "index")[0],
     "Banks and other financials hold the Nifty 50 back: they make 38% of its profit and grew +8.4% in total, the rest +9.9%.");
   assert.equal(groupsBullets(idx, "index")[2], "In every index, total profit grew faster than total revenue.");
@@ -149,4 +149,11 @@ test("every avatar colour keeps its white initials at 4.5:1 or better", async ()
   const lum = (h: string) => { const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
   assert.equal(colours.length, 10);
   for (const c of colours) assert.ok(1.05 / (lum(c) + 0.05) >= 4.5, c);
+});
+
+test("each view ranks by its own column until a column is picked", async () => {
+  const { VIEW_SORT, SORTS, DEFAULT_SORT } = await import("../src/lib/resultsView.ts");
+  assert.deepEqual(VIEW_SORT, { yoy: "pat_yoy", momentum: "pat_momentum", qoq: "pat_qoq" });
+  for (const s of Object.values(VIEW_SORT)) assert.ok((SORTS as readonly string[]).includes(s), s);
+  assert.equal(VIEW_SORT.yoy, DEFAULT_SORT);
 });

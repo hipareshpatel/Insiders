@@ -83,7 +83,7 @@ function SheetBody({ query, indices, onApply }: { query: KpiQuery; indices: { id
           <Steps big label="Momentum" options={MOMENTUM_STEPS} value={d.momentum} onChange={(v) => set({ momentum: v })} />
           <div className="mt-2">{row("Revenue, EBITDA, margin", more || "Any", "more")}</div>
           <CheckRow big checked={d.turnaround} onChange={(v) => set({ turnaround: v })} label="Turned loss to profit" />
-          <CheckRow big checked={d.nfo} onChange={(v) => set({ nfo: v })} label="Profit not from operations" />
+          <CheckRow big checked={d.nfo} onChange={(v) => set({ nfo: v })} label="Profit up, EBITDA down" />
           {cta}
         </>
       )}

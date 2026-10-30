@@ -69,7 +69,7 @@ export function Histogram({ summary, active, onPick, turnaround, onTurnaround, h
             <span className="absolute top-6 flex -translate-x-1/2 flex-col items-center whitespace-nowrap text-[12.5px] text-ink"
               style={{ left: `${((slot.bin + slot.frac) / 4) * 100}%` }}>
               <span aria-hidden className="text-[10px] leading-none">▲</span>
-              <span>Middle company <b className="num">{fmtPct(summary.median_pat_yoy)}</b></span>
+              <span>Median <b className="num">{fmtPct(summary.median_pat_yoy)}</b></span>
             </span>
           )}
         </div>

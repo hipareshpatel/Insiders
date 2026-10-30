@@ -290,7 +290,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, api-reader-hardset, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -401,7 +401,7 @@ concurrency:
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset","deck-pdfs"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -416,7 +416,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'deck-pdfs' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -2217,6 +2217,40 @@ jobs:
           path: ${{ runner.temp }}/store-kept/
           if-no-files-found: ignore
 
+  deck-pdfs:
+    # The 9 investor decks of the call-memory 150-point test (docs/bench/geometry/decks.csv), downloaded once more through
+    # the NSE client and kept 90 days (owner, 30 Oct 2026: "A. Download"; TODO 144): their word boxes measure the
+    # chart-label rule. Reads NSE (9 files); writes nothing but the artifact.
+    permissions:
+      contents: read
+    if: inputs.command == 'deck-pdfs'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e .
+      - name: Download the decks (reads NSE)
+        run: |
+          mkdir -p "$RUNNER_TEMP/decks"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --collect ../docs/bench/geometry/decks.csv "$RUNNER_TEMP/decks"
+          ls "$RUNNER_TEMP/decks" | wc -l
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deck-pdfs
+          path: ${{ runner.temp }}/decks/
+          retention-days: 90
+          if-no-files-found: ignore
+
   api-reader-hardset:
     permissions:
       contents: read
@@ -2291,7 +2325,7 @@ jobs:
 
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, api-reader-hardset]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, api-reader-hardset, deck-pdfs]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

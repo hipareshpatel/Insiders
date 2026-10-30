@@ -20,8 +20,9 @@ line, which holds the share when the statement prints the share above it. Where 
 values of the quarter and basis (``statements.py``: F "PBT as filed", A = F + the associates' share, S screener's "Profit before
 tax"): it agrees only when the printed line is one of F, A, S and the card is one of them too (blind review of 868980b: free
 shifts of the printed line accepted a sign error and a loss counted twice). The dossier is read only for a PBT the plain
-comparison does not settle, once a company a run. Without those values a gap the size of an associates' share (same sign, within
-``SHARE_GAP`` of the printed line) is "unknown"; a slip, a flipped sign or a wild figure stays "disagrees".
+comparison does not settle, once a company a run. Without those values (cards filed before statements.py stored rows) the gap is
+"unknown" only when it is exactly the associates' share the same PDF table prints and proves by its arithmetic
+(``printed_share``); any other gap stays "disagrees" (re-review of ecb6a79: a 25% band hid ordinary errors).
 """
 from __future__ import annotations
 
@@ -44,7 +45,6 @@ SAVE_EVERY_SECONDS = 120.0
 FLOOR = 0.005                      # crore: half a unit of two printed decimals
 PAGE = 100
 DEFAULT_PROFIT_LABELS = ("Net profit", "PAT", "Net loss")
-SHARE_GAP = 0.25                   # of the printed PBT: the most an associates' share can explain when memory has no parts
 _TRANSIENT = re.compile(r"^(?:download failed)")
 
 
@@ -146,12 +146,48 @@ def pbt_verdict(card_value: float, reading, parts: dict | None) -> tuple[str, st
     return "disagrees", f"{side} is none of memory's PBT values ({values}); {why}"[:300]
 
 
-def share_sized(card_value: float, pdf_value: float | None) -> bool:
-    """A gap an associates' share could explain: the same sign, within SHARE_GAP of the printed PBT (never a x10 slip or a flipped
-    sign)."""
-    if pdf_value is None or not pdf_value or card_value * pdf_value <= 0:
-        return False
-    return abs(card_value - pdf_value) <= SHARE_GAP * abs(pdf_value)
+def printed_share(tables, period: str, basis: str | None, page: int):
+    """(value in crore, tolerance in crore, page, inside) of the associates' share printed on the table that gave the PBT: the row
+    the solver classes ASSOC, read in the period's one column, and only where an identity of the table that holds in that column
+    takes it in (a hop to the profit before tax, or the profit carried on after tax). ``inside``: the row is above the PBT line,
+    so the printed PBT holds it. None when there is no such row or the rows found do not give one value and one side."""
+    from . import pdf_numbers_first as nf
+    from .pdf_referee import target_column
+
+    target = target_column(period) or nf.half_year_column(period)
+    if target is None:
+        return None
+    kind, when = target
+    found: list[tuple[float, float, int]] = []
+    for t in tables:
+        if t.basis != basis or t.page != page or not t.unit or nf.table_figure(t, "pbt", kind, when)[0] is None:
+            continue
+        solver = getattr(t, "solver", None) or nf.Solver(t).solve()
+        cols = nf.target_columns(t, kind, when)
+        if not cols and kind == "quarter":
+            cols = nf.quarter_by_half_sum(t, solver, when)
+        if len(cols) != 1:
+            continue
+        j = cols[0].index
+        pbt_rows = {rows[0] for rows, _ in solver.explanations.get("pbt", [])}
+        if len(pbt_rows) != 1:
+            continue
+        pbt_row = pbt_rows.pop()
+        assoc = {r for r in range(solver.n) if solver.cls[r] == "ASSOC"}
+        proven: set[int] = set()
+        for readings in solver.explanations.values():
+            for _, proofs in readings:
+                for proof in proofs:
+                    rows = {proof[0]} | {r for r, _ in proof[1]}
+                    if rows & assoc and solver.mask(proof)[j] is True:
+                        proven |= rows & assoc
+        for r in sorted(proven):
+            cell = solver.cell(r, j)
+            if cell is not None:
+                found.append((cell.value / t.unit, cell.tol / t.unit, t.page, r < pbt_row))
+    if not found or len({(round(v, 6), inside) for v, _, _, inside in found}) != 1:
+        return None
+    return found[0]
 
 
 def figures_of(card_json: dict) -> tuple[str | None, str | None, list[tuple[str, float, str]]]:
@@ -217,11 +253,18 @@ def check_card(tables, period: str, basis: str | None, figures, dossier=None) ->
                 word, why = "basis_mismatch", f"agrees with the {alt} figure, not the stored {basis} basis; {why}"
         if not basis:
             why = f"basis assumed, the card does not store it; {why}"
-        if word == "disagrees" and metric == "pbt" and parts(used) is None and share_sized(value, reading.value):
-            # no memory values to anchor on (a card filed before statements.py stored rows): a gap the size of an associates'
-            # share may be the definition, so it is no alarm; a slip, a flipped sign or a wild figure stays a disagreement
-            word, why = "unknown", (f"the gap may be the associates' share (the card's PBT on another definition) and memory holds "
-                                    f"no PBT values for {period} {used}; {why}")[:300]
+        if word == "disagrees" and metric == "pbt" and parts(used) is None:
+            # no memory values to anchor on (a card filed before statements.py stored rows): the gap is no alarm only when it is
+            # exactly the associates' share the same table prints (the card on the other side of the share); any other gap stays
+            share = printed_share(tables, period, used, reading.page)
+            if share is not None:
+                # the card on the other side of the share: the printed PBT less a share printed above it, or plus one below it
+                other_side = reading.value - share[0] if share[3] else reading.value + share[0]
+                allowed = float(reading.tol or 0) + share[1] + FLOOR + 0.5 * 10 ** -decimals_of(value)
+                if abs(value - other_side) <= allowed:
+                    word, why = "unknown", (f"the gap is the associates' share printed on p{share[2]} ({share[0]:g} Cr): the card's "
+                                            f"PBT is on the other side of it and memory holds no PBT values for {period} {used}; "
+                                            f"{why}")[:300]
         if word == "disagrees" and metric == "pat" and label and label not in DEFAULT_PROFIT_LABELS:
             word, why = "unknown", f"the card's profit line is '{label}' (not necessarily the total profit the reader gives); {why}"
         if word == "disagrees" and metric == "pat" and used == CONSOLIDATED:

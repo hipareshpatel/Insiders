@@ -208,13 +208,14 @@ def test_the_summary_separates_held_out_companies_and_counts_the_runner_minutes(
 SHARE = [50.0, 30.0, 20.0, 80.0]              # lakh: the associates' share, printed above the PBT line
 
 
-def associates_pdf():
+def associates_pdf(share_lakh=None):
     """A consolidated statement printing the associates' share above "Profit before tax" (ATUL Q2FY27's layout): the printed
     PBT holds the share. Returns (pdf, printed PBT in crore, the filed PBT before the share in crore, the share in crore)."""
-    rows, want = pl(exceptional=[-v for v in SHARE])
-    rows[9] = (["Share of net profit of associates and joint ventures"], SHARE)
+    share = share_lakh or SHARE
+    rows, want = pl(exceptional=[-v for v in share])
+    rows[9] = (["Share of net profit of associates and joint ventures"], share)
     printed = crore(want["pbt"][0])
-    return statement(rows, title="Statement of Consolidated Financial Results"), printed, round(printed - crore(SHARE[0]), 2), crore(SHARE[0])
+    return statement(rows, title="Statement of Consolidated Financial Results"), printed, round(printed - crore(share[0]), 2), crore(share[0])
 
 
 def memory(filed, share, screener, basis="CONSOLIDATED", family="corporate"):
@@ -269,7 +270,7 @@ def test_a_pbt_off_the_printed_line_with_no_parts_in_memory_is_unknown():
     tables = nf.analyse(data)
     for mem in (None, {"statements": []}, memory(filed, share, filed + share, basis="STANDALONE")):   # none, empty, other basis
         row = ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", filed, "")], dossier=mem)[0]
-        assert row["verdict"] == "unknown" and "associates' share" in row["reason"], row
+        assert row["verdict"] == "unknown" and "the gap is the associates' share printed on p1" in row["reason"], row
     # the printed line itself needs no parts
     assert ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", printed, "")])[0]["verdict"] == "agrees"
 
@@ -300,11 +301,10 @@ def fixed_pdf(values):
 
 def test_with_no_memory_values_a_slip_or_a_flipped_sign_still_disagrees(monkeypatch):
     monkeypatch.setattr(ps, "_read", fixed_pdf({"CONSOLIDATED": 100.0, "STANDALONE": 100.0}))
-    for card_value in (1000.0, 10000.0, 10.0, -100.0, 200.0):          # x10, x100, x0.1, a flipped sign, wildly different
+    # x10, x100, x0.1, a flipped sign, wildly different, and ordinary errors within a quarter of the figure (re-review of ecb6a79)
+    for card_value in (1000.0, 10000.0, 10.0, -100.0, 200.0, 90.0, 80.0, 125.0, 75.0, 85.0):
         row = ps.check_card([], "Q2FY27", "CONSOLIDATED", [("pbt", card_value, "")], dossier=None)[0]
         assert row["verdict"] == "disagrees", (card_value, row)
-    # a gap the size of an associates' share stays no alarm
-    assert ps.check_card([], "Q2FY27", "CONSOLIDATED", [("pbt", 85.0, "")], dossier=None)[0]["verdict"] == "unknown"
 
 
 def test_with_no_memory_values_the_other_basis_pbt_is_a_basis_mismatch(monkeypatch):
@@ -361,3 +361,41 @@ def test_memory_is_read_only_for_a_pbt_that_needs_it_and_once_a_company(monkeypa
     ps.run(None, Counting([cards[2]]), 3, src=Src({"https://x/2.pdf": b"x"}), analyse=lambda data: [],
            now=datetime(2026, 10, 31, 12, 0, tzinfo=IST))
     assert Counting.reads == 0                                          # the PBT agrees plainly: memory is never read
+
+
+# re-review of ecb6a79: with no memory values, "unknown" only for a gap that is exactly the share the same table prints
+
+
+def test_no_memory_values_and_no_share_row_a_ten_percent_gap_disagrees():
+    plain, want = pdf()
+    printed = crore(want["pbt"][0])
+    row = ps.check_card(nf.analyse(plain), "Q2FY27", "STANDALONE", [("pbt", round(printed * 0.9, 2), "")], dossier=None)[0]
+    assert row["verdict"] == "disagrees", row
+
+
+def test_no_memory_values_a_gap_that_is_the_printed_share_is_unknown():
+    data, printed, filed, share = associates_pdf()
+    assert share == pytest.approx(0.5)
+    tables = nf.analyse(data)
+    row = ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", filed, "")], dossier=None)[0]
+    assert row["verdict"] == "unknown" and "the gap is the associates' share printed on p1 (0.5 Cr)" in row["reason"], row
+    assert ps.printed_share(tables, "Q2FY27", "CONSOLIDATED", 1)[0] == pytest.approx(0.5)
+
+
+def test_no_memory_values_a_gap_that_is_not_the_printed_share_disagrees():
+    # the table prints a share of 0.35 Cr; the card is 0.5 Cr off: the gap is something else
+    data, printed, filed, share = associates_pdf([35.0, 21.0, 14.0, 56.0])
+    row = ps.check_card(nf.analyse(data), "Q2FY27", "CONSOLIDATED", [("pbt", round(printed - 0.5, 2), "")], dossier=None)[0]
+    assert row["verdict"] == "disagrees", row
+
+
+def test_no_memory_values_a_loss_share_gap_is_unknown_and_its_double_disagrees():
+    data, printed, filed, share = associates_pdf([-50.0, -30.0, -20.0, -80.0])
+    assert share == pytest.approx(-0.5) and filed > printed
+    tables = nf.analyse(data)
+    row = ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", filed, "")], dossier=None)[0]
+    assert row["verdict"] == "unknown" and "-0.5 Cr" in row["reason"], row
+    row = ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", round(printed - 0.5, 2), "")], dossier=None)[0]
+    assert row["verdict"] == "disagrees", row        # the loss counted twice: a gap of the share's size on the wrong side
+    row = ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", round(printed + 1.0, 2), "")], dossier=None)[0]
+    assert row["verdict"] == "disagrees", row

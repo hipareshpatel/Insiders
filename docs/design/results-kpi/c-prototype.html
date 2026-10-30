@@ -1,0 +1,1580 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Results Q2FY27</title>
+<style>
+:root{
+  --bg:#0B0E13; --surface:#12161D; --raised:#181D26; --hover:#1C222C; --line:#232A35; --line-2:#2C3441;
+  --text:#E7EBF0; --text-2:#AEB7C3; --text-3:#8D97A6;
+  --accent:#8AA8FF; --accent-ink:#0B0E13; --accent-soft:rgba(138,168,255,.13);
+  --up:#46D08F; --down:#FF7F77; --warn:#F2B35B;
+  --d-neg:#E0655C; --d-neg-ink:#0B0E13;
+  --d-1:#2D5A45; --d-1-ink:#E7EBF0;
+  --d-2:#2E8A5E; --d-2-ink:#06100B;
+  --d-3:#46D08F; --d-3-ink:#06100B;
+  --grid:#202733;
+  --radius:16px; --radius-s:10px; --sheet:#12161D; --tile:#181D26;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#FFFFFF; --surface:#F4F5F7; --raised:#FFFFFF; --hover:#F7F8FA; --line:#E6E9EE; --line-2:#D3D9E0;
+  --sheet:#FFFFFF; --tile:#F4F5F7;
+  --text:#11151B; --text-2:#46505D; --text-3:#5B6573;
+  --accent:#3550C8; --accent-ink:#FFFFFF; --accent-soft:rgba(53,80,200,.08);
+  --up:#0B7A43; --down:#C2352B; --warn:#9A5B00;
+  --d-neg:#C0392F; --d-neg-ink:#FFFFFF;
+  --d-1:#579A76; --d-1-ink:#0B1A12;
+  --d-2:#2A7A51; --d-2-ink:#FFFFFF;
+  --d-3:#0E5A35; --d-3-ink:#FFFFFF;
+  --grid:#ECEEF2;
+  color-scheme:light;
+}
+:root[data-theme="light"] .seg .on{background:#FFFFFF;box-shadow:inset 0 0 0 1px var(--line-2)}
+:root[data-theme="light"] .tabs{border-color:var(--line)}
+:root[data-theme="light"] .sig .u{background:color-mix(in srgb,var(--up) 10%,#fff)}
+:root[data-theme="light"] .sig .d{background:color-mix(in srgb,var(--down) 10%,#fff)}
+:root[data-theme="light"] .tbl tbody tr.sel td{background:#F1F4FD}
+:root[data-theme="light"] .callout{background:#FBF5EA}
+:root[data-theme="light"] .btn.primary{background:var(--accent)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1}
+a{color:var(--accent);text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1360px;margin:0 auto;padding:0 40px}
+.muted{color:var(--text-2)} .faint{color:var(--text-3)}
+.up{color:var(--up)} .down{color:var(--down)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- top ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0 0}
+.crumbs{display:flex;gap:22px;align-items:center;color:var(--text-2);font-size:14px}
+.crumbs b{color:var(--text);font-weight:650;letter-spacing:-.01em}
+.crumbs a{color:var(--text-2)}
+.preview{font-size:12px;color:var(--text-3);border:1px dashed var(--line-2);border-radius:999px;padding:3px 10px}
+.head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:34px 0 0}
+h1{font-size:40px;line-height:1.05;letter-spacing:-.025em;margin:0;font-weight:700}
+h1 .q{color:var(--text-2);font-weight:500}
+.sub{margin-top:8px;color:var(--text-2);font-size:14px}
+.head-right{display:flex;gap:10px;align-items:center}
+.seg{display:inline-flex;background:var(--surface);border-radius:12px;padding:4px;gap:2px}
+.seg button,.seg a{padding:7px 12px;border-radius:9px;color:var(--text-2);font-weight:550;font-size:13.5px;white-space:nowrap}
+.seg .on{background:var(--raised);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-2)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:11px;background:var(--surface);color:var(--text);font-weight:600;font-size:13.5px}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.tabs{display:flex;gap:28px;margin-top:26px;border-bottom:1px solid var(--line)}
+.tabs a{padding:10px 0 12px;color:var(--text-2);font-weight:600;font-size:15px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs a.on{color:var(--text);border-color:var(--accent)}
+.tabs .fresh{margin-left:auto;align-self:center;color:var(--text-3);font-size:13px}
+
+/* ---------- season ---------- */
+.season{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:28px}
+.panel{background:var(--surface);border-radius:var(--radius);padding:22px 24px}
+.eyebrow{font-size:13px;color:var(--text-2);font-weight:600;margin:0 0 12px}
+.headline{grid-column:span 9;padding:26px 28px}
+.headline p.lead{font-size:26px;line-height:1.28;letter-spacing:-.015em;margin:0;font-weight:600;max-width:820px}
+.headline p.lead em{font-style:normal;color:var(--up)}
+.headline ul{list-style:none;padding:0;margin:18px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px}
+.headline li{color:var(--text-2);font-size:14.5px;padding-left:16px;position:relative}
+.headline li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:2px;background:var(--line-2)}
+.headline li b{color:var(--text);font-weight:600}
+.progress{grid-column:span 3;display:flex;flex-direction:column;justify-content:space-between}
+.bignum{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:14px 0 10px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.next{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.dist{grid-column:span 5}
+.medians{grid-column:span 3;display:flex;flex-direction:column;gap:18px}
+.med .v{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.med.big .v{font-size:44px}
+.med .l{color:var(--text-2);font-size:13.5px;margin-top:4px}
+.idx{grid-column:span 4}
+.multiples{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.mult .n{font-size:12.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mult .row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.mult .v{font-size:19px;font-weight:650;letter-spacing:-.01em}
+.mult.lead .v{color:var(--up)}
+.note{font-size:12.5px;color:var(--text-3);margin-top:12px}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;align-items:center;gap:8px;margin:36px 0 0;position:relative;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;background:var(--surface);color:var(--text-3);width:260px}
+.search svg{flex:none}
+.fbtn{height:40px;padding:0 12px;border-radius:11px;color:var(--text-2);display:inline-flex;align-items:center;gap:6px;font-weight:550}
+.fbtn:hover,.fbtn.open{background:var(--surface);color:var(--text)}
+.fbtn b{color:var(--text);font-weight:600}
+.fbtn .count{background:var(--accent);color:var(--accent-ink);border-radius:99px;font-size:12px;padding:0 7px;line-height:20px}
+.toolbar .sp{flex:1}
+.chips{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 6px 0 12px;border-radius:99px;background:var(--accent-soft);color:var(--text);font-size:13px}
+.chip button{width:22px;height:22px;border-radius:99px;color:var(--text-2)}
+.chips .clear{color:var(--text-2);font-size:13px;padding:0 8px}
+
+.pop{position:absolute;top:48px;z-index:20;background:var(--sheet);border-radius:18px;padding:22px;box-shadow:0 0 0 1px var(--line-2),0 24px 60px -20px rgba(0,0,0,.55);display:none}
+:root[data-theme="light"] .pop{box-shadow:0 0 0 1px var(--line-2),0 24px 60px -24px rgba(20,30,50,.25)}
+.pop.show{display:block}
+.pop h4{margin:0 0 4px;font-size:15px}
+.pop .fg{padding:14px 0;border-bottom:1px solid var(--line)}
+.pop .fg:last-of-type{border-bottom:0}
+.pop .fl{display:flex;justify-content:space-between;color:var(--text-2);font-size:13.5px;margin-bottom:8px}
+.steps{display:flex;gap:4px;flex-wrap:wrap}
+.steps button{height:34px;min-width:52px;padding:0 10px;border-radius:9px;background:var(--tile);color:var(--text-2);font-size:13.5px;font-weight:550}
+.steps button.on{background:var(--accent);color:var(--accent-ink)}
+.toggle{display:flex;align-items:flex-start;gap:12px;padding:8px 0}
+.box{width:20px;height:20px;border-radius:6px;box-shadow:inset 0 0 0 1.5px var(--text-3);flex:none;margin-top:1px;display:grid;place-items:center}
+.box.on{background:var(--accent);box-shadow:none;color:var(--accent-ink)}
+.pop .foot{display:flex;justify-content:space-between;align-items:center;padding-top:16px}
+.cascade{display:grid;grid-template-columns:repeat(4,200px);gap:0}
+.cascade .col{border-right:1px solid var(--line);padding:0 8px}
+.cascade .col:last-child{border:0}
+.cascade .ch{font-size:12.5px;color:var(--text-3);padding:4px 10px 8px}
+.cascade .it{display:flex;justify-content:space-between;padding:8px 10px;border-radius:9px;color:var(--text-2);font-size:13.5px}
+.cascade .it.on{background:var(--accent-soft);color:var(--text)}
+.bc{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--text-2);margin-bottom:14px}
+.bc b{color:var(--text)}
+
+/* ---------- table ---------- */
+.tablehead{display:flex;align-items:flex-end;justify-content:space-between;margin:26px 0 8px;gap:20px}
+.tablehead h2{font-size:20px;margin:0;letter-spacing:-.01em}
+.tablehead .muted{font-size:13.5px}
+table{width:100%;border-collapse:collapse}
+.tbl th{white-space:normal;font-weight:550;color:var(--text-2);font-size:13px;text-align:right;padding:10px 10px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:bottom}
+.tbl th:first-child{text-align:left;padding-left:12px}
+.tbl th.sorted{color:var(--text)}
+.tbl th .hint{display:block;font-weight:400;color:var(--text-3);font-size:12px}
+.tbl td{padding:14px 10px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}
+.tbl td:first-child{text-align:left;padding-left:12px}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover td{background:var(--hover)}
+.tbl tbody tr.sel td{background:var(--accent-soft)}
+.tbl tbody tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+.co{display:flex;gap:12px;align-items:flex-start}
+.av{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;flex:none}
+.co .nm{font-weight:650;font-size:15px}
+.co .nm .kind{font-weight:500;color:var(--text-3);font-size:12.5px;margin-left:6px}
+.co .path{color:var(--text-3);font-size:13px;margin-top:1px}
+.g{font-size:15px;font-weight:600;white-space:nowrap}
+.ar{font-size:.62em;margin-right:4px;position:relative;top:-.12em}
+.trio>div{min-width:0}
+.g.pat{font-size:16.5px;font-weight:700}
+.sm{font-size:13px;color:var(--text-3);margin-top:2px;white-space:nowrap}
+.na{color:var(--text-3);font-weight:500}
+.sm.lab{font-style:italic}
+.tbl.co-t{table-layout:fixed}
+.flag{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text);margin-top:6px;white-space:nowrap}
+.flag svg{color:var(--warn)}
+.mom{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--raised);font-size:13px;color:var(--text);font-weight:700;margin-left:6px;vertical-align:1px}
+.mom{background:var(--tile)}
+.sig{display:inline-flex;gap:4px}
+.sig span{width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:10px;font-weight:700}
+.sig .u{background:color-mix(in srgb,var(--up) 16%,transparent);color:var(--up)}
+.sig .d{background:color-mix(in srgb,var(--down) 18%,transparent);color:var(--down)}
+.sig .n{color:var(--text-3);box-shadow:inset 0 0 0 1px var(--line-2)}
+.mcap{color:var(--text-2);font-size:14px;white-space:nowrap}
+.filed{white-space:nowrap}
+.filed a{font-size:13px;font-weight:600}
+.tfoot{display:flex;justify-content:space-between;align-items:center;padding:16px 12px;color:var(--text-3);font-size:13px}
+.empty{padding:56px 24px;text-align:center;color:var(--text-2)}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:6px}
+
+/* ---------- peek ---------- */
+.peek{position:fixed;top:0;right:0;bottom:0;width:480px;background:var(--sheet);z-index:30;padding:26px 28px;overflow:auto;display:none;
+  box-shadow:-1px 0 0 var(--line-2),-40px 0 80px -40px rgba(0,0,0,.6)}
+:root[data-theme="light"] .peek{box-shadow:-1px 0 0 var(--line-2),-30px 0 60px -40px rgba(20,30,50,.25)}
+.peek.show{display:block}
+.peek .ph{display:flex;align-items:center;gap:12px}
+.peek .ph .x{margin-left:auto;width:36px;height:36px;border-radius:10px;background:var(--tile);color:var(--text-2);font-size:18px}
+.peek h3{margin:0;font-size:20px;letter-spacing:-.01em}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0 0}
+.trio div{background:var(--tile);border-radius:12px;padding:10px 14px}
+.trio .l{color:var(--text-2);font-size:13px}
+.trio .v{font-size:22px;font-weight:700;letter-spacing:-.01em;margin-top:2px}
+.callout{margin-top:14px;background:color-mix(in srgb,var(--warn) 10%,transparent);border-radius:12px;padding:14px 16px;font-size:14px;color:var(--text);display:flex;gap:12px}
+.callout svg{color:var(--warn);flex:none;margin-top:2px}
+.peek section{margin-top:26px}
+.peek .legend{display:flex;gap:16px;font-size:13px;color:var(--text-2);margin-bottom:6px}
+.sw{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:10px 16px;font-size:14px}
+.kv dt{color:var(--text-2)} .kv dd{margin:0;text-align:right}
+.peek .actions{display:flex;gap:10px;margin:26px -28px -26px;padding:16px 28px;position:sticky;bottom:-26px;background:var(--sheet);border-top:1px solid var(--line)}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:25;display:none}
+.scrim.show{display:block}
+
+/* ---------- groups ---------- */
+.ghero{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-top:28px}
+.ghero .side{display:flex;flex-direction:column;gap:16px}
+.explain{font-size:15px;color:var(--text-2)}
+.explain b{color:var(--text)}
+.gt th,.gt td{padding:13px 12px}
+.gt td{vertical-align:middle}
+.gt .ix{font-weight:650;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gt .grp{text-align:center !important;color:var(--text-2);border-bottom:0;padding-bottom:0}
+.gt .act{color:var(--text);font-weight:700}
+.gt .actcol{box-shadow:inset 0 -2px 0 var(--accent)}
+.gt .q{font-size:15px;font-weight:600}
+.gt .qq{color:var(--text-2);font-weight:500}
+.rep{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.rep .mini{width:56px;height:5px;border-radius:9px;background:var(--tile);overflow:hidden}
+.rep .mini i{display:block;height:100%;background:var(--text-3)}
+.stack{display:flex;height:22px;gap:2px;width:100%;max-width:160px;margin-left:auto}
+.stack span{display:grid;place-items:center;font-size:11px;font-weight:650;border-radius:3px}
+.stack span:first-child{border-radius:6px 3px 3px 6px}
+.stack span:last-child{border-radius:3px 6px 6px 3px}
+.key{display:flex;gap:14px;font-size:12.5px;color:var(--text-2);flex-wrap:wrap}
+.key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.foot-notes{color:var(--text-3);font-size:13px;margin:18px 0 60px;display:grid;grid-template-columns:1fr 1fr;gap:10px 40px}
+.foot-notes b{color:var(--text-2);font-weight:600}
+
+/* ---------- phone ---------- */
+.plist{display:none}
+.fab{display:none}
+.sheet{display:none}
+@media (max-width:640px){
+  body{font-size:15px}
+  .wrap{padding:0 16px}
+  .top{padding-top:12px}
+  .crumbs a{display:none}
+  .head{display:block;padding-top:18px}
+  h1{font-size:30px}
+  .head-right{margin-top:14px;overflow-x:auto;scrollbar-width:none}
+  .head-right .btn{display:none}
+  .seg button,.seg a{padding:0 14px;height:40px;display:inline-flex;align-items:center}
+  .tabs{gap:22px;margin-top:16px}
+  .tabs a{padding:12px 0 12px;min-height:44px}
+  .tabs .fresh{display:none}
+  .fresh-m{display:block !important;color:var(--text-3);font-size:13px;margin-top:10px}
+  .season{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+  .panel{padding:18px}
+  .headline{padding:20px 18px}
+  .headline p.lead{font-size:21px}
+  .headline ul{grid-template-columns:1fr;gap:8px}
+  .medians{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+  .medians .eyebrow{grid-column:1/-1}
+  .med .v,.med.big .v{font-size:22px}
+  .hist-d{display:none}.hist-m{display:block !important}
+  .headline li:nth-child(n+3){display:none}
+  .multiples{gap:10px 14px}
+  .mult .v{font-size:17px}
+  .med .l{font-size:13px}
+  .multiples{grid-template-columns:1fr 1fr}
+  .toolbar,.chips,.tablehead,.tbl,.tfoot.desk{display:none}
+  .plist{display:block;margin-top:22px}
+  .pl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:5}
+  .pl-head h2{font-size:19px;margin:0}
+  .pl-tools{display:flex;gap:8px}
+  .pl-tools .btn{height:44px;padding:0 14px}
+  .prow{display:block;padding:14px 0;border-bottom:1px solid var(--line);min-height:44px;color:inherit}
+  .prow .r1{display:flex;gap:12px;align-items:flex-start}
+  .prow .who{flex:1;min-width:0}
+  .prow .nm{font-weight:650;font-size:16px}
+  .prow .path{color:var(--text-3);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .prow .pat{text-align:right}
+  .prow .pat .g{font-size:19px}
+  .prow .pat .sm{font-size:12.5px}
+  .prow .r2{display:flex;align-items:center;gap:12px;margin-top:10px;padding-left:44px;font-size:13.5px;color:var(--text-2);flex-wrap:wrap}
+  .prow .r2 b{font-weight:600}
+  .prow .flag{margin:8px 0 0 44px}
+  .peek{width:100%}
+  .foot-notes{grid-template-columns:1fr}
+  .sheet.show{display:block;position:fixed;left:0;right:0;bottom:0;max-height:88vh;overflow:auto;background:var(--sheet);box-shadow:0 -1px 0 var(--line-2);border-radius:22px 22px 0 0;z-index:40;padding:10px 16px 18px}
+  .sheet .grab{width:40px;height:5px;border-radius:9px;background:var(--line-2);margin:0 auto 12px}
+  .sheet .row{display:flex;justify-content:space-between;align-items:center;min-height:52px;border-bottom:1px solid var(--line);font-size:15px}
+  .sheet .row span{color:var(--text-2)}
+  .sheet .steps button{height:44px;min-width:56px}
+  .sheet .toggle{min-height:48px;align-items:center}
+  .sheet .cta{display:flex;gap:10px;position:sticky;bottom:0;background:var(--sheet);padding-top:14px}
+  .sheet .cta .btn{height:48px;flex:1;justify-content:center}
+}
+.fresh-m{display:none}
+@media (max-width:640px){.dk{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="crumbs"><b>Results</b><a href="#companies">Feed</a><a href="#companies">Watchlist</a></div>
+    <span class="preview">Design preview · sample data</span>
+  </div>
+
+  <div class="head">
+    <div>
+      <h1>Results <span class="q">Q2 FY27</span></h1>
+      <div class="sub">July–September 2026 · growth is against the same quarter a year ago</div>
+    </div>
+    <div class="head-right">
+      <div class="seg" id="qseg"></div>
+      <button class="btn" title="Download the filtered list as a CSV file">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 2v8m0 0-3-3m3 3 3-3M3 13h10"/></svg>Export CSV</button>
+    </div>
+  </div>
+  <div class="fresh-m" id="freshm"></div>
+
+  <nav class="tabs">
+    <a href="#companies" id="tab-co" class="on">Companies</a>
+    <a href="#groups" id="tab-gr">By group</a>
+    <span class="fresh" id="fresh"></span>
+  </nav>
+
+  <!-- ===================== COMPANIES ===================== -->
+  <div id="view-co">
+    <div class="season">
+      <div class="panel headline">
+        <p class="eyebrow">What the season says so far</p>
+        <p class="lead" id="lead"></p>
+        <ul id="bullets"></ul>
+      </div>
+      <div class="panel progress">
+        <div>
+          <p class="eyebrow">Nifty 500 reporting progress</p>
+          <div><span class="bignum num" id="pg-n"></span><span class="faint" style="font-size:20px;font-weight:600"> / <span id="pg-of"></span></span></div><div class="muted" style="margin-top:6px">Nifty 500 companies have reported</div>
+          <div class="bar"><i id="pg-bar"></i></div>
+          <div class="faint" id="pg-all" style="font-size:13px"></div>
+        </div>
+        <div class="next"><span class="muted">Still to come</span><span id="pg-next"></span></div>
+      </div>
+
+      <div class="panel dist">
+        <p class="eyebrow">How much did profit grow? <span class="faint" style="font-weight:400">· companies by profit growth vs a year ago</span></p>
+        <div id="hist"></div>
+      </div>
+      <div class="panel medians" id="medians"></div>
+      <div class="panel idx">
+        <p class="eyebrow">Middle company's profit growth, by index</p>
+        <div class="multiples" id="mults"></div>
+        <div class="note">Lines: last 8 quarters, Q3 FY25 to Q2 FY27, same scale for all.</div>
+      </div>
+    </div>
+
+    <div class="toolbar" id="toolbar">
+      <label class="search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="7" cy="7" r="5"/><path d="m11 11 3.5 3.5" stroke-linecap="round"/></svg><span>Search company or symbol</span></label>
+      <button class="fbtn" id="fb-index">Index <b>All indices</b> ▾</button>
+      <button class="fbtn">Market cap <b>Any</b> ▾</button>
+      <button class="fbtn" id="fb-sector">Sector <b>All</b> ▾</button>
+      <button class="fbtn" id="fb-growth">Growth &amp; signals ▾</button>
+      <span class="sp"></span>
+      <div class="seg" id="vseg">
+        <a href="#companies" data-v="yoy">Year-on-year</a>
+        <a href="#momentum" data-v="momentum">Momentum</a>
+        <a href="#qoq" data-v="qoq">Quarter-on-quarter</a>
+      </div>
+
+      <div class="pop" id="pop-growth" style="left:690px;width:540px">
+        <h4>Growth &amp; signals</h4>
+        <div class="faint" style="font-size:13px">All growth is against the same quarter a year ago.</div>
+        <div class="fg"><div class="fl"><span>Profit growth at least</span><span class="faint">Profit = PAT, as filed</span></div>
+          <div class="steps"><button>Any</button><button>0%</button><button>10%</button><button class="on">20%</button><button>30%</button><button>50%</button><button>100%</button></div></div>
+        <div class="fg"><div class="fl"><span>Revenue growth at least</span></div>
+          <div class="steps"><button class="on">Any</button><button>0%</button><button>10%</button><button>20%</button><button>30%</button><button>50%</button><button>100%</button></div></div>
+        <div class="fg"><div class="fl"><span>EBITDA growth at least</span><span class="faint">not for banks and insurers</span></div>
+          <div class="steps"><button class="on">Any</button><button>0%</button><button>10%</button><button>20%</button><button>30%</button><button>50%</button><button>100%</button></div></div>
+        <div class="fg"><div class="fl"><span>Margin change at least</span><span class="faint">100 bp = 1 percentage point</span></div>
+          <div class="steps"><button class="on">Any</button><button>0 bp</button><button>+100</button><button>+200</button><button>+300</button><button>+500</button></div></div>
+        <div class="fg"><div class="fl"><span>Momentum</span><span class="faint">profit growth this quarter vs last quarter's</span></div>
+          <div class="steps"><button>Any</button><button class="on">Speeding up</button><button>Slowing</button></div></div>
+        <div class="fg">
+          <div class="toggle"><span class="box"></span><div>Turned loss to profit<div class="faint" style="font-size:13px">a loss a year ago, a profit now</div></div></div>
+          <div class="toggle"><span class="box"></span><div>Profit not from operations<div class="faint" style="font-size:13px">profit rose while EBITDA fell: check other income or one-offs</div></div></div>
+        </div>
+        <div class="foot"><button class="fbtn">Reset</button><button class="btn primary">Apply 2 filters</button></div>
+      </div>
+
+      <div class="pop" id="pop-sector" style="left:560px">
+        <div class="bc"><span>Sector</span><span class="faint">›</span><b>Healthcare</b><span class="faint">›</span><b>Pharmaceuticals &amp; Biotechnology</b><span class="faint">›</span><b>Pharmaceuticals</b></div>
+        <div class="cascade">
+          <div class="col"><div class="ch">Sector · 20</div>
+            <div class="it">All sectors</div><div class="it">Energy</div><div class="it">Financial Services</div><div class="it on">Healthcare ›</div><div class="it">Industrials</div><div class="it">Services</div><div class="it">Utilities</div><div class="it faint">+ 14 more</div><div class="it">Unclassified <span class="faint">142</span></div></div>
+          <div class="col"><div class="ch">Industry group</div><div class="it">All in Healthcare</div><div class="it on">Pharmaceuticals &amp; Biotechnology ›</div></div>
+          <div class="col"><div class="ch">Industry</div><div class="it">All in this group</div><div class="it on">Pharmaceuticals ›</div></div>
+          <div class="col"><div class="ch">Basic industry</div><div class="it">All in Pharmaceuticals</div></div>
+        </div>
+        <div class="foot"><span class="faint" style="font-size:13px">NSE's own classification, as stored. Pick any level.</span><button class="btn primary">Show Pharmaceuticals</button></div>
+      </div>
+    </div>
+    <div class="chips" id="chips"></div>
+
+    <div class="tablehead">
+      <div><h2 id="tt">Companies</h2><div class="muted" id="ts"></div></div>
+      <div class="muted" style="text-align:right" id="tr"></div>
+    </div>
+    <div id="tablebox"></div>
+
+    <div class="plist" id="plist"></div>
+  </div>
+
+  <!-- ===================== GROUPS ===================== -->
+  <div id="view-gr" style="display:none">
+    <div class="toolbar" style="margin-top:28px">
+      <span class="muted" style="margin-right:4px">Group by</span>
+      <div class="seg"><button class="on">Index</button><button title="Not in this sample">Sector</button><button title="Not in this sample">Industry</button></div>
+      <span style="width:16px"></span>
+      <span class="muted" style="margin-right:4px">Companies</span>
+      <div class="seg" id="cutseg"><button data-c="all" class="on">All</button><button data-c="ex">Ex-financials</button><button data-c="fin">Financials</button></div>
+      <span class="sp"></span>
+      <span class="faint" style="font-size:13px">Financials = banks, NBFCs and insurers</span>
+    </div>
+    <div class="ghero">
+      <div class="panel">
+        <p class="eyebrow" id="rk-title"></p>
+        <div id="ranked"></div>
+      </div>
+      <div class="side">
+        <div class="panel">
+          <p class="eyebrow">What it says</p>
+          <p class="lead" style="font-size:21px;line-height:1.32;font-weight:600;margin:0;letter-spacing:-.01em" id="glead"></p>
+          <ul style="list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px;color:var(--text-2)" id="gbul"></ul>
+        </div>
+        <div class="panel explain">
+          <p class="eyebrow">Median or total?</p>
+          <b>Median</b> is the middle company: every company counts the same. <b>Total</b> adds up all their profits: the biggest companies count most. Companies that turned a loss into a profit have no % and sit out of medians; totals include them.
+        </div>
+      </div>
+    </div>
+
+    <div class="tablehead" style="margin-top:34px">
+      <div><h2>All indices</h2><div class="muted">Growth vs the same quarter a year ago · sorted by the middle company's profit growth</div></div>
+      <div class="key">
+        <span><i style="background:var(--d-neg)"></i>Below 0%</span><span><i style="background:var(--d-1)"></i>0–10%</span><span><i style="background:var(--d-2)"></i>10–20%</span><span><i style="background:var(--d-3)"></i>Above 20%</span>
+      </div>
+    </div>
+    <div id="gtable"></div>
+    <div class="foot-notes">
+      <div><b>Index members</b> are tracked every week since 30 Oct 2026. Quarters before that use the member list as first read, so a company that left an index earlier may be missing.</div>
+      <div><b>EBITDA</b> totals leave out banks, NBFCs and insurers. Banks' revenue is interest income; insurers count in profit only. Profit is as filed, not adjusted; consolidated where filed.</div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="peek" id="peek" aria-label="Company detail"></aside>
+<div class="sheet" id="sheet"></div>
+
+<script>
+const D = {
+ "_about": "SAMPLE DATA for a design exercise. Every number is made up except: the growth figures for DELHIVERY/IOC/GAIL/NTPCGREEN (from the owner's screenshot) and the industry paths of those four (as stored). Show a 'design preview, sample data' note. Do not invent other numbers; derive anything else from these.",
+ "page": {
+  "title": "Results",
+  "quarter": "Q2FY27",
+  "quarters": [
+   "Q2FY27",
+   "Q1FY27",
+   "Q4FY26",
+   "Q3FY26"
+  ],
+  "statements_saved_up_to": "30 Oct 2026, 3:35 pm IST",
+  "index_members_tracked_since": "30 Oct 2026 (weekly, Sundays 9 am IST)",
+  "companies_reported": 236,
+  "nifty500_reported": 185,
+  "nifty500_of": 497,
+  "still_to_come": {
+   "next": "Tue 3 Nov",
+   "companies": 14
+  }
+ },
+ "summary": {
+  "revenue_up": 196,
+  "ebitda_up": 182,
+  "pat_up": 175,
+  "loss_to_profit": 11,
+  "of": 236,
+  "median_revenue_growth": 11.8,
+  "median_ebitda_growth": 14.6,
+  "median_pat_growth": 13.9,
+  "spread_pat_growth": {
+   "below_0": 61,
+   "0_to_10": 38,
+   "10_to_20": 41,
+   "above_20": 85,
+   "loss_to_profit_outside_bars": 11
+  },
+  "pat_growth_speeding_up": 118,
+  "slowing": 98,
+  "steady_or_not_comparable": 20
+ },
+ "companies_sorted_by_pat_growth_desc": [
+  {
+   "symbol": "DELHIVERY",
+   "name": "Delhivery Limited",
+   "industry_path": "Services › Logistics Solution Provider",
+   "kind": "company",
+   "market_cap": "₹28,857 Cr",
+   "market_cap_cr": 28857,
+   "filed": "30 Oct",
+   "avatar_letter": "D",
+   "avatar_color": "#c2417f",
+   "revenue": {
+    "growth_yoy": "+19.8%",
+    "amount": "₹2,900 Cr",
+    "growth_yoy_prev_quarter": "+17.1%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+199.1%",
+    "amount": "₹193 Cr",
+    "growth_yoy_prev_quarter": "+120.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+399bp",
+    "level": "6.7%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "turn": "LOSS_TO_PROFIT",
+    "amount": "₹95 Cr",
+    "prev_quarter": "loss narrowed"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "LP"
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    12.0,
+    13.5,
+    14.8,
+    15.9,
+    16.2,
+    17.0,
+    17.1,
+    19.8
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "IOC",
+   "name": "Indian Oil Corporation",
+   "industry_path": "Energy › Refineries & Marketing",
+   "kind": "company",
+   "market_cap": "₹1.84 lakh Cr",
+   "market_cap_cr": 184000,
+   "filed": "30 Oct",
+   "avatar_letter": "I",
+   "avatar_color": "#d46a14",
+   "revenue": {
+    "growth_yoy": "+42.2%",
+    "amount": "₹2,41,300 Cr",
+    "growth_yoy_prev_quarter": "+31.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+108.0%",
+    "amount": "₹32,100 Cr",
+    "growth_yoy_prev_quarter": "+64.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+421bp",
+    "level": "13.3%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+173.8%",
+    "amount": "₹9,100 Cr",
+    "growth_yoy_prev_quarter": "+92.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    -60.0,
+    -35.0,
+    -10.0,
+    12.0,
+    30.0,
+    55.0,
+    92.0,
+    173.8
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    -4.0,
+    2.0,
+    8.0,
+    14.0,
+    20.0,
+    26.0,
+    31.0,
+    42.2
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "GAIL",
+   "name": "GAIL (India) Limited",
+   "industry_path": "Energy › Gas Transmission/Marketing",
+   "kind": "company",
+   "market_cap": "₹1.08 lakh Cr",
+   "market_cap_cr": 108000,
+   "filed": "30 Oct",
+   "avatar_letter": "G",
+   "avatar_color": "#0a8a5a",
+   "revenue": {
+    "growth_yoy": "+32.6%",
+    "amount": "₹35,400 Cr",
+    "growth_yoy_prev_quarter": "+35.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+102.0%",
+    "amount": "₹5,240 Cr",
+    "growth_yoy_prev_quarter": "+88.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+509bp",
+    "level": "14.8%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+139.3%",
+    "amount": "₹3,300 Cr",
+    "growth_yoy_prev_quarter": "+120.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    20.0,
+    28.0,
+    44.0,
+    62.0,
+    80.0,
+    101.0,
+    120.0,
+    139.3
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    10.0,
+    14.0,
+    19.0,
+    24.0,
+    28.0,
+    31.0,
+    35.0,
+    32.6
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "NORTHGATE",
+   "name": "Northgate Bank",
+   "industry_path": "Financial Services › Private Sector Bank",
+   "kind": "bank",
+   "market_cap": "₹62,400 Cr",
+   "market_cap_cr": 62400,
+   "filed": "29 Oct",
+   "avatar_letter": "N",
+   "avatar_color": "#3a5fd0",
+   "revenue": {
+    "growth_yoy": "+16.4%",
+    "amount": "₹11,800 Cr",
+    "growth_yoy_prev_quarter": "+18.2%",
+    "label": "Interest income"
+   },
+   "ebitda": null,
+   "margin": null,
+   "pat": {
+    "growth_yoy": "+61.0%",
+    "amount": "₹2,150 Cr",
+    "growth_yoy_prev_quarter": "+72.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    24.0,
+    30.0,
+    38.0,
+    45.0,
+    55.0,
+    64.0,
+    72.0,
+    61.0
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    15.0,
+    16.0,
+    17.5,
+    18.0,
+    18.4,
+    18.0,
+    18.2,
+    16.4
+   ],
+   "is_financial": true,
+   "note": "Banks: no operating-expense line is saved, so no EBITDA or margin; revenue is interest income."
+  },
+  {
+   "symbol": "NTPCGREEN",
+   "name": "NTPC Green Energy",
+   "industry_path": "Utilities › Power Generation",
+   "kind": "company",
+   "market_cap": "₹70,124 Cr",
+   "market_cap_cr": 70124,
+   "filed": "30 Oct",
+   "avatar_letter": "N",
+   "avatar_color": "#2f6fb3",
+   "revenue": {
+    "growth_yoy": "+53.2%",
+    "amount": "₹1,150 Cr",
+    "growth_yoy_prev_quarter": "+48.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "+56.7%",
+    "amount": "₹998 Cr",
+    "growth_yoy_prev_quarter": "+52.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "+194bp",
+    "level": "86.8%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+57.0%",
+    "amount": "₹310 Cr",
+    "growth_yoy_prev_quarter": "+60.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    30.0,
+    36.0,
+    41.0,
+    47.0,
+    52.0,
+    56.0,
+    60.0,
+    57.0
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    38.0,
+    40.0,
+    43.0,
+    45.0,
+    46.0,
+    47.0,
+    48.0,
+    53.2
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "KESTREL",
+   "name": "Kestrel Industries",
+   "industry_path": "Industrials › Industrial Machinery",
+   "kind": "company",
+   "market_cap": "₹6,310 Cr",
+   "market_cap_cr": 6310,
+   "filed": "30 Oct",
+   "avatar_letter": "K",
+   "avatar_color": "#7a4fd6",
+   "revenue": {
+    "growth_yoy": "+6.1%",
+    "amount": "₹980 Cr",
+    "growth_yoy_prev_quarter": "+7.0%",
+    "label": "Revenue"
+   },
+   "ebitda": {
+    "growth_yoy": "−5.2%",
+    "amount": "₹120 Cr",
+    "growth_yoy_prev_quarter": "+4.0%",
+    "label": "EBITDA"
+   },
+   "margin": {
+    "change_bp": "−145bp",
+    "level": "12.2%",
+    "label": "EBITDA margin"
+   },
+   "pat": {
+    "growth_yoy": "+48.0%",
+    "amount": "₹96 Cr",
+    "growth_yoy_prev_quarter": "+9.0%"
+   },
+   "flag_profit_not_from_operations": true,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    6.0,
+    4.0,
+    2.0,
+    -3.0,
+    1.0,
+    5.0,
+    9.0,
+    48.0
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    9.0,
+    8.0,
+    8.5,
+    7.5,
+    7.0,
+    7.2,
+    7.0,
+    6.1
+   ],
+   "is_financial": false,
+   "note": null
+  },
+  {
+   "symbol": "SUNRISE",
+   "name": "Sunrise Finance",
+   "industry_path": "Financial Services › NBFC",
+   "kind": "nbfc",
+   "market_cap": "₹21,900 Cr",
+   "market_cap_cr": 21900,
+   "filed": "28 Oct",
+   "avatar_letter": "S",
+   "avatar_color": "#1a8aa6",
+   "revenue": {
+    "growth_yoy": "+22.8%",
+    "amount": "₹3,200 Cr",
+    "growth_yoy_prev_quarter": "+20.1%",
+    "label": "Income"
+   },
+   "ebitda": {
+    "growth_yoy": "+30.4%",
+    "amount": "₹2,050 Cr",
+    "growth_yoy_prev_quarter": "+33.0%",
+    "label": "Financing profit"
+   },
+   "margin": {
+    "change_bp": "+370bp",
+    "level": "64.1%",
+    "label": "Financing margin"
+   },
+   "pat": {
+    "growth_yoy": "+41.5%",
+    "amount": "₹880 Cr",
+    "growth_yoy_prev_quarter": "+36.0%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    28.0,
+    30.0,
+    31.0,
+    33.0,
+    34.0,
+    35.0,
+    36.0,
+    41.5
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    17.0,
+    18.0,
+    19.0,
+    19.5,
+    20.0,
+    20.0,
+    20.1,
+    22.8
+   ],
+   "is_financial": true,
+   "note": "NBFCs: financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians/totals."
+  },
+  {
+   "symbol": "EVERGREEN",
+   "name": "Evergreen Life",
+   "industry_path": "Financial Services › Life Insurance",
+   "kind": "insurer",
+   "market_cap": "₹48,200 Cr",
+   "market_cap_cr": 48200,
+   "filed": "29 Oct",
+   "avatar_letter": "E",
+   "avatar_color": "#0c8f5a",
+   "revenue": null,
+   "ebitda": null,
+   "margin": null,
+   "pat": {
+    "growth_yoy": "+36.8%",
+    "amount": "₹740 Cr",
+    "growth_yoy_prev_quarter": "+30.2%"
+   },
+   "flag_profit_not_from_operations": false,
+   "series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27": [
+    18.0,
+    20.0,
+    22.0,
+    24.0,
+    26.0,
+    28.0,
+    30.2,
+    36.8
+   ],
+   "series_revenue_growth_yoy_last_8_quarters": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "is_financial": true,
+   "note": "Insurers: only profit is saved (no revenue, no EBITDA)."
+  }
+ ],
+ "showing": "8 of 236",
+ "groups_index_table": [
+  {
+   "group": "Nifty 50",
+   "reported": 31,
+   "of": 50,
+   "pat_median": 12.1,
+   "pat_total_all": 9.3,
+   "pat_total_ex_financials": 9.9,
+   "pat_total_financials": 8.4,
+   "financials_share_of_profit_pct": 38,
+   "revenue_total_all": 8.7,
+   "revenue_total_ex_financials": 8.5,
+   "revenue_total_financials": 9.4,
+   "ebitda_total_ex_financials": 12.4,
+   "spread_pct_below0_0to10_10to20_above20": [
+    14,
+    28,
+    38,
+    20
+   ],
+   "share_speeding_up_pct": 52,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    8.4,
+    9.8,
+    7.1,
+    10.9,
+    9.2,
+    11.0,
+    10.4,
+    12.1
+   ]
+  },
+  {
+   "group": "Nifty Next 50",
+   "reported": 22,
+   "of": 50,
+   "pat_median": 11.0,
+   "pat_total_all": 11.6,
+   "pat_total_ex_financials": 12.5,
+   "pat_total_financials": 9.1,
+   "financials_share_of_profit_pct": 27,
+   "revenue_total_all": 9.9,
+   "revenue_total_ex_financials": 9.8,
+   "revenue_total_financials": 10.2,
+   "ebitda_total_ex_financials": 14.1,
+   "spread_pct_below0_0to10_10to20_above20": [
+    16,
+    30,
+    40,
+    14
+   ],
+   "share_speeding_up_pct": 49,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    14.0,
+    12.2,
+    9.5,
+    11.8,
+    13.1,
+    10.2,
+    9.8,
+    11.0
+   ]
+  },
+  {
+   "group": "Nifty 100",
+   "reported": 53,
+   "of": 100,
+   "pat_median": 11.8,
+   "pat_total_all": 10.0,
+   "pat_total_ex_financials": 10.7,
+   "pat_total_financials": 8.6,
+   "financials_share_of_profit_pct": 34,
+   "revenue_total_all": 9.1,
+   "revenue_total_ex_financials": 9.0,
+   "revenue_total_financials": 9.7,
+   "ebitda_total_ex_financials": 12.9,
+   "spread_pct_below0_0to10_10to20_above20": [
+    15,
+    29,
+    33,
+    23
+   ],
+   "share_speeding_up_pct": 51,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    9.9,
+    10.8,
+    8.2,
+    11.3,
+    10.4,
+    10.9,
+    10.2,
+    11.8
+   ]
+  },
+  {
+   "group": "Nifty 200",
+   "reported": 91,
+   "of": 200,
+   "pat_median": 13.6,
+   "pat_total_all": 11.6,
+   "pat_total_ex_financials": 12.4,
+   "pat_total_financials": 9.8,
+   "financials_share_of_profit_pct": 31,
+   "revenue_total_all": 10.5,
+   "revenue_total_ex_financials": 10.4,
+   "revenue_total_financials": 11.1,
+   "ebitda_total_ex_financials": 15.0,
+   "spread_pct_below0_0to10_10to20_above20": [
+    13,
+    24,
+    36,
+    27
+   ],
+   "share_speeding_up_pct": 53,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    11.2,
+    12.0,
+    10.1,
+    12.7,
+    12.9,
+    13.8,
+    12.5,
+    13.6
+   ]
+  },
+  {
+   "group": "Nifty 500",
+   "reported": 185,
+   "of": 497,
+   "pat_median": 14.6,
+   "pat_total_all": 12.4,
+   "pat_total_ex_financials": 12.9,
+   "pat_total_financials": 11.2,
+   "financials_share_of_profit_pct": 28,
+   "revenue_total_all": 10.5,
+   "revenue_total_ex_financials": 10.3,
+   "revenue_total_financials": 11.4,
+   "ebitda_total_ex_financials": 14.5,
+   "spread_pct_below0_0to10_10to20_above20": [
+    14,
+    20,
+    35,
+    31
+   ],
+   "share_speeding_up_pct": 54,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    12.0,
+    13.1,
+    11.4,
+    13.9,
+    13.5,
+    14.0,
+    13.2,
+    14.6
+   ]
+  },
+  {
+   "group": "Nifty Midcap 150",
+   "reported": 62,
+   "of": 149,
+   "pat_median": 19.4,
+   "pat_total_all": 17.4,
+   "pat_total_ex_financials": 18.2,
+   "pat_total_financials": 14.9,
+   "financials_share_of_profit_pct": 24,
+   "revenue_total_all": 14.0,
+   "revenue_total_ex_financials": 13.9,
+   "revenue_total_financials": 14.8,
+   "ebitda_total_ex_financials": 20.1,
+   "spread_pct_below0_0to10_10to20_above20": [
+    10,
+    12,
+    30,
+    48
+   ],
+   "share_speeding_up_pct": 58,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    15.0,
+    16.8,
+    14.2,
+    17.9,
+    18.4,
+    17.1,
+    18.8,
+    19.4
+   ]
+  },
+  {
+   "group": "Nifty Smallcap 250",
+   "reported": 70,
+   "of": 248,
+   "pat_median": 16.8,
+   "pat_total_all": 18.0,
+   "pat_total_ex_financials": 17.5,
+   "pat_total_financials": 21.0,
+   "financials_share_of_profit_pct": 14,
+   "revenue_total_all": 13.0,
+   "revenue_total_ex_financials": 12.8,
+   "revenue_total_financials": 15.9,
+   "ebitda_total_ex_financials": 15.3,
+   "spread_pct_below0_0to10_10to20_above20": [
+    14,
+    17,
+    28,
+    41
+   ],
+   "share_speeding_up_pct": 55,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    10.5,
+    12.8,
+    13.9,
+    15.1,
+    14.2,
+    16.0,
+    15.4,
+    16.8
+   ]
+  },
+  {
+   "group": "Nifty Microcap 250",
+   "reported": 51,
+   "of": 250,
+   "pat_median": 10.5,
+   "pat_total_all": 9.5,
+   "pat_total_ex_financials": 9.2,
+   "pat_total_financials": 12.4,
+   "financials_share_of_profit_pct": 9,
+   "revenue_total_all": 8.2,
+   "revenue_total_ex_financials": 7.9,
+   "revenue_total_financials": 13.0,
+   "ebitda_total_ex_financials": 9.8,
+   "spread_pct_below0_0to10_10to20_above20": [
+    22,
+    26,
+    40,
+    12
+   ],
+   "share_speeding_up_pct": 47,
+   "pat_median_last_8_quarters_Q3FY25_to_Q2FY27": [
+    6.1,
+    7.9,
+    9.0,
+    8.2,
+    9.8,
+    9.1,
+    10.0,
+    10.5
+   ]
+  }
+ ],
+ "filters": {
+  "quarter": "tabs",
+  "index": [
+   "All indices",
+   "Nifty 50",
+   "Nifty Next 50",
+   "Nifty 100",
+   "Nifty 200",
+   "Nifty 500",
+   "Nifty Midcap 150",
+   "Nifty Smallcap 250",
+   "Nifty Microcap 250",
+   "Nifty LargeMidcap 250",
+   "Nifty MidSmallcap 400",
+   "Nifty Total Market"
+  ],
+  "market_cap": [
+   "any",
+   ">= ₹500 Cr",
+   ">= ₹1,000 Cr",
+   ">= ₹5,000 Cr",
+   ">= ₹10,000 Cr",
+   ">= ₹50,000 Cr",
+   ">= ₹1 lakh Cr"
+  ],
+  "classification": "stored NSE path, up to 4 levels: Sector (20) > Industry group (39) > Industry (117) > Basic industry; e.g. Healthcare > Pharmaceuticals & Biotechnology > Pharmaceuticals; 142 companies are 'Unclassified'",
+  "growth": [
+   "Revenue growth >= 0/10/20/30/50/100%",
+   "EBITDA growth >= ...",
+   "PAT growth >= ...",
+   "Margin change >= 0/100/200/300/500bp",
+   "Momentum: speeding up / slowing",
+   "Loss to profit",
+   "Profit not from operations (PAT up while EBITDA down)"
+  ],
+  "views": [
+   "Year-on-year",
+   "Momentum (this quarter's yoy growth vs last quarter's)",
+   "Quarter-on-quarter"
+  ],
+  "group_by": [
+   "Index",
+   "Sector",
+   "Industry"
+  ],
+  "group_tabs": [
+   "Totals",
+   "Trend & spread"
+  ],
+  "cuts": [
+   "All",
+   "Ex-financials",
+   "Financials"
+  ]
+ },
+ "rules": [
+  "Consolidated over standalone.",
+  "Totals include loss-making companies, as NSE counts index earnings; medians leave out companies that moved from loss to profit (no % exists).",
+  "EBITDA medians/totals exclude banks, NBFCs and insurers.",
+  "Reported PAT as filed, not adjusted.",
+  "Growth is against the same quarter a year ago.",
+  "Row opens to the company's Results tab; each row links to the NSE filing.",
+  "Export CSV of the filtered list."
+ ]
+};
+const $ = s => document.querySelector(s);
+const P = D.page, S = D.summary, C = D.companies_sorted_by_pat_growth_desc, G = D.groups_index_table;
+const QL = ["Q3 FY25","Q4 FY25","Q1 FY26","Q2 FY26","Q3 FY26","Q4 FY26","Q1 FY27","Q2 FY27"];
+const num = s => s==null ? null : parseFloat(String(s).replace('−','-').replace('+','').replace('%','').replace('bp',''));
+const fp = (v,d=1) => (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(d)+'%';
+const fpts = v => (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1)+' pts';
+const pct = (a,b) => Math.round(a/b*100);
+const arrow = v => v>0 ? '<span class="ar" aria-hidden="true">▲</span>' : v<0 ? '<span class="ar" aria-hidden="true">▼</span>' : '';
+const arrowC = v => `<span class="${v>=0?'up':'down'}" style="font-size:.42em;vertical-align:.5em;margin-right:6px" aria-hidden="true">${v>=0?'▲':'▼'}</span>`;
+const g = (s,cls='') => { const v=num(s); return `<span class="g ${cls} ${v>0?'up':v<0?'down':''}">${arrow(v)}${s.replace('bp',' bp')}</span>`; };
+const warnIcon = '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Zm-.8 4.5v4h1.6V6H7.2Zm0 5.2v1.6h1.6v-1.6H7.2Z"/></svg>';
+const momGlyph = d => d>0 ? `<span class="mom" title="Speeding up: faster than last quarter's growth" aria-label="speeding up">⇡</span>` : d<0 ? `<span class="mom" title="Slowing: slower than last quarter's growth" aria-label="slowing">⇣</span>` : '';
+
+/* ---------- header ---------- */
+$('#qseg').innerHTML = P.quarters.map((q,i)=>`<button class="${i?'':'on'}">${q}</button>`).join('') + '<button>Older ▾</button>';
+const fresh = `Statements saved up to ${P.statements_saved_up_to}`;
+$('#fresh').textContent = fresh; $('#freshm').textContent = fresh;
+
+/* ---------- season ---------- */
+const pos = S.spread_pat_growth, withPct = pos.below_0+pos['0_to_10']+pos['10_to_20']+pos.above_20;
+$('#lead').innerHTML = `Of <span class="num">${S.of}</span> companies that have reported, <em class="num">${S.pat_up}</em> grew profit; the middle company grew <em class="num">${fp(S.median_pat_growth)}</em>.`;
+const bestIdx = [...G].sort((a,b)=>b.pat_median-a.pat_median)[0];
+const n50 = G.find(x=>x.group==='Nifty 50');
+const atHigh = G.filter(x=>{const s=x.pat_median_last_8_quarters_Q3FY25_to_Q2FY27; return s[7]===Math.max(...s);}).length;
+$('#bullets').innerHTML = [
+  `Profit grew faster than sales: the middle company's revenue <b>${fp(S.median_revenue_growth)}</b>, EBITDA <b>${fp(S.median_ebitda_growth)}</b>.`,
+  `<b>${S.pat_growth_speeding_up}</b> are speeding up, growing profit faster than last quarter; <b>${S.slowing}</b> are slowing.`,
+  `<b>${bestIdx.group.replace('Nifty ','Nifty ')}</b> leads: its middle company grew profit <b>${fp(bestIdx.pat_median)}</b>, against ${fp(n50.pat_median)} in the Nifty 50.`,
+  `<b>${pos.below_0}</b> companies (${pct(pos.below_0,S.of)}%) earned less than a year ago; <b>${atHigh} of ${G.length}</b> indices show their best median in 8 quarters.`
+].map(t=>`<li>${t}</li>`).join('');
+$('#pg-n').textContent = P.nifty500_reported;
+$('#pg-of').textContent = P.nifty500_of;
+$('#pg-bar').style.width = (P.nifty500_reported/P.nifty500_of*100).toFixed(1)+'%';
+$('#pg-all').textContent = `${pct(P.nifty500_reported,P.nifty500_of)}% done · ${P.companies_reported} companies have reported in all`;
+$('#pg-next').innerHTML = `<b>${P.still_to_come.next}</b> <span class="muted">· ${P.still_to_come.companies} companies</span>`;
+
+function histogram(w,h){
+  const bins=[['Below 0%',pos.below_0,'neg'],['0–10%',pos['0_to_10'],'1'],['10–20%',pos['10_to_20'],'2'],['Above 20%',pos.above_20,'3']];
+  const lp=pos.loss_to_profit_outside_bars, max=Math.max(...bins.map(b=>b[1]));
+  const top=34, base=h-64, gap=4, lpW=58, sep=34, bw=(w-lpW-sep-gap*3)/4;
+  let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Companies by profit growth: ${bins.map(b=>b[0]+' '+b[1]).join(', ')}, loss to profit ${lp}">`;
+  bins.forEach((b,i)=>{
+    const x=i*(bw+gap), bh=(base-top)*b[1]/max, y=base-bh;
+    s+=`<g><title>${b[0]}: ${b[1]} companies</title><rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="5" fill="var(--d-${b[2]})"/>
+      <text x="${x+bw/2}" y="${y-10}" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${b[1]}</text>
+      <text x="${x+bw/2}" y="${base+20}" text-anchor="middle" font-size="12.5" fill="var(--text-2)">${b[0]}</text></g>`;
+  });
+  // median marker inside 10–20 bin
+  const mx = 2*(bw+gap) + bw*((S.median_pat_growth-10)/10);
+  s+=`<path d="M${mx} ${base+30} l-5 8 h10 z" fill="var(--text)"/><line x1="${mx}" x2="${mx}" y1="${base-6}" y2="${base}" stroke="var(--text)" stroke-width="2"/>
+      <text x="${mx}" y="${base+54}" text-anchor="middle" font-size="12.5" fill="var(--text)">Middle company <tspan font-weight="700">${fp(S.median_pat_growth)}</tspan></text>`;
+  const lx=w-lpW, lh=(base-top)*lp/max;
+  s+=`<line x1="${lx-sep/2}" x2="${lx-sep/2}" y1="${top}" y2="${base+28}" stroke="var(--line-2)"/>
+      <g><title>Loss to profit: ${lp} companies (no % exists)</title><rect x="${lx+4}" y="${base-lh}" width="${lpW-8}" height="${lh}" rx="5" fill="none" stroke="var(--up)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="${lx+lpW/2}" y="${base-lh-10}" text-anchor="middle" font-size="18" font-weight="700" fill="var(--text)">${lp}</text>
+      <text x="${lx+lpW/2}" y="${base+20}" text-anchor="middle" font-size="12.5" fill="var(--text-2)">Loss →</text>
+      <text x="${lx+lpW/2}" y="${base+35}" text-anchor="middle" font-size="12.5" fill="var(--text-2)">profit</text></g>`;
+  s+=`<line x1="0" x2="${w-lpW-sep}" y1="${base}" y2="${base}" stroke="var(--line-2)"/></svg>`;
+  return s;
+}
+$('#hist').innerHTML = `<div class="hist-d">${histogram(520,270)}</div><div class="hist-m" style="display:none">${histogram(354,250)}</div>` + `<div class="note">${withPct} companies with a % change, plus ${pos.loss_to_profit_outside_bars} that turned a loss into a profit (no % exists, so kept apart). Bars are counts.</div>`;
+
+$('#medians').innerHTML = `<p class="eyebrow" style="margin:0">Middle company's growth</p>
+ <div class="med big"><div class="v num">${arrowC(S.median_pat_growth)}${fp(S.median_pat_growth)}</div><div class="l">Profit · <b style="color:var(--text)">${S.pat_up}</b> grew<span class="dk">, ${S.loss_to_profit} of them from a loss</span></div></div>
+ <div class="med"><div class="v num">${arrowC(S.median_ebitda_growth)}${fp(S.median_ebitda_growth)}</div><div class="l">EBITDA · <b style="color:var(--text)">${S.ebitda_up}</b> grew</div></div>
+ <div class="med"><div class="v num">${arrowC(S.median_revenue_growth)}${fp(S.median_revenue_growth)}</div><div class="l">Revenue · <b style="color:var(--text)">${S.revenue_up}</b> grew</div></div>`;
+
+function spark(vals,w,h,lo,hi,opts={}){
+  const xs=i=>3+i*(w-10)/(vals.length-1), ys=v=>h-3-(v-lo)/(hi-lo)*(h-6);
+  const pts=vals.map((v,i)=>v==null?null:[xs(i),ys(v)]);
+  let d='',on=false; pts.forEach(p=>{ if(!p){on=false;return;} d+=(on?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)+' '; on=true; });
+  const last=pts[pts.length-1];
+  const zero = (lo<0&&hi>0)?`<line x1="0" x2="${w}" y1="${ys(0)}" y2="${ys(0)}" stroke="var(--line-2)" stroke-dasharray="2 3"/>`:'';
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${zero}<path d="${d}" fill="none" stroke="${opts.c||'var(--text-2)'}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>${last?`<circle cx="${last[0]}" cy="${last[1]}" r="3" fill="${opts.c||'var(--text)'}"/>`:''}</svg>`;
+}
+const allMed = G.flatMap(x=>x.pat_median_last_8_quarters_Q3FY25_to_Q2FY27);
+const mLo=Math.floor(Math.min(...allMed)), mHi=Math.ceil(Math.max(...allMed));
+$('#mults').innerHTML = G.map(x=>{const s=x.pat_median_last_8_quarters_Q3FY25_to_Q2FY27;
+  return `<div class="mult ${x===bestIdx?'lead':''}" title="${x.group}: ${s.map((v,i)=>QL[i]+' '+fp(v)).join(', ')}"><div class="n">${x.group}</div><div class="row"><span class="v num">${fp(x.pat_median)}</span>${spark(s,84,30,mLo,mHi)}</div></div>`;}).join('');
+
+/* ---------- table ---------- */
+const sig = c => {
+  const m = (part, label) => {
+    let cls='n', t='–', tip=label+': not shown for this kind of company';
+    if(part==='LP'){cls='u';t='▲';tip='Profit: turned from loss to profit';}
+    else if(part){const v=num(part.growth_yoy); cls=v>=0?'u':'d'; t=v>=0?'▲':'▼'; tip=`${label}: ${part.growth_yoy}`;}
+    return `<span class="${cls}" title="${tip}" aria-label="${tip}">${t}</span>`;
+  };
+  return `<span class="sig">${m(c.revenue,'Revenue')}${m(c.ebitda,c.ebitda?c.ebitda.label:'EBITDA')}${m(c.pat.turn?'LP':c.pat,'Profit')}</span>`;
+};
+const kindLabel = {bank:'Bank',nbfc:'NBFC',insurer:'Insurer',company:''};
+const coCell = c => `<div class="co"><span class="av" style="background:${c.avatar_color}">${c.avatar_letter}</span><div><div class="nm">${c.symbol}<span class="kind">${kindLabel[c.kind]}</span></div><div class="path">${c.industry_path}</div></div></div>`;
+const amtCell = (p, naText) => {
+  if(!p) return `<span class="na">—</span>${naText?`<div class="sm">${naText}</div>`:''}`;
+  const lab = (p.label && !['Revenue','EBITDA'].includes(p.label)) ? `<div class="sm lab">${p.label}</div>` : '';
+  return `${g(p.growth_yoy)}<div class="sm">${p.amount} · was ${p.growth_yoy_prev_quarter}</div>${lab}`;
+};
+const patMom = c => c.pat.turn ? null : num(c.pat.growth_yoy)-num(c.pat.growth_yoy_prev_quarter);
+const patCell = c => {
+  let h;
+  if(c.pat.turn) h = `<span class="g pat up"><span class="ar" aria-hidden="true">▲</span>Loss → profit</span><div class="sm">${c.pat.amount} profit · last qtr ${c.pat.prev_quarter}</div>`;
+  else h = `${g(c.pat.growth_yoy,'pat')}${momGlyph(patMom(c))}<div class="sm">${c.pat.amount} · was ${c.pat.growth_yoy_prev_quarter}</div>`;
+  if(c.flag_profit_not_from_operations) h += `<div class="flag">${warnIcon}Profit not from operations</div>`;
+  return h;
+};
+const naRev = {insurer:'Insurers: profit only'};
+function yoyTable(){
+  return `<table class="tbl co-t"><colgroup><col style="width:23%"><col style="width:7.5%"><col style="width:15%"><col style="width:15%"><col style="width:10.5%"><col style="width:15%"><col style="width:8%"><col style="width:6%"></colgroup><thead><tr>
+    <th>Company<span class="hint">Sector › industry</span></th>
+    <th style="text-align:left">Signals<span class="hint">Rev · EBITDA · Profit</span></th>
+    <th>Revenue</th><th>EBITDA</th><th>Margin change<span class="hint">EBITDA margin</span></th>
+    <th class="sorted">Profit (PAT) ↓<span class="hint">⇡ faster / ⇣ slower than last qtr</span></th>
+    <th>Market cap</th><th>Filed</th></tr></thead><tbody>
+  ${C.map((c,i)=>`<tr data-i="${i}" id="r-${c.symbol}">
+    <td>${coCell(c)}</td>
+    <td style="text-align:left">${sig(c)}</td>
+    <td>${amtCell(c.revenue, naRev[c.kind]||'')}</td>
+    <td>${amtCell(c.ebitda, c.kind==='bank'?'Not shown for banks':'')}</td>
+    <td>${c.margin?`${g(c.margin.change_bp)}<div class="sm">${c.kind==='nbfc'?'financing margin':'now'} ${c.margin.level}</div>`:`<span class="na" title="No EBITDA margin for this kind of company">—</span>`}</td>
+    <td>${patCell(c)}</td>
+    <td><span class="mcap num">${c.market_cap}</span></td>
+    <td class="filed">${c.filed}<div><a href="#" title="Open the filing on NSE">NSE ↗</a></div></td>
+  </tr>`).join('')}</tbody></table>
+  <div class="tfoot desk"><span>Showing ${D.showing} · small grey line: amount this quarter · “was” = last quarter's growth vs a year ago</span><button class="btn">Show all ${S.of}</button></div>`;
+}
+/* momentum */
+const pace = p => (!p||p.growth_yoy==null) ? null : {now:num(p.growth_yoy), was:num(p.growth_yoy_prev_quarter)};
+const paceCell = (p) => {
+  const x = pace(p); if(!x) return `<span class="na">—</span>`;
+  const d = x.now-x.was;
+  return `<span class="g ${d>0?'':''}" style="color:var(--text)">${d>0?'⇡':d<0?'⇣':''} ${fpts(d)}</span><div class="sm">${fp(x.was)} → ${fp(x.now)}</div>`;
+};
+function dumbbell(was,now,w=230,h=28,lo=0,hi=180){
+  const x=v=>8+(Math.max(lo,Math.min(hi,v))-lo)/(hi-lo)*(w-16);
+  const a=x(was), b=x(now), up=now>=was;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-label="Profit growth ${fp(was)} last quarter, ${fp(now)} this quarter">
+    <line x1="8" x2="${w-8}" y1="${h/2}" y2="${h/2}" stroke="var(--grid)" stroke-width="1"/>
+    <line x1="${a}" x2="${b}" y1="${h/2}" y2="${h/2}" stroke="var(--text-3)" stroke-width="2"/>
+    <circle cx="${a}" cy="${h/2}" r="4.5" fill="var(--surface)" stroke="var(--text-2)" stroke-width="1.5"/>
+    <circle cx="${b}" cy="${h/2}" r="5" fill="var(--accent)" stroke="var(--bg)" stroke-width="2"/></svg>`;
+}
+function momTable(){
+  return `<table class="tbl" style="table-layout:fixed"><colgroup><col style="width:22%"><col style="width:20%"><col style="width:13%"><col style="width:12%"><col style="width:13%"><col style="width:12%"><col style="width:8%"></colgroup><thead><tr>
+    <th>Company<span class="hint">Sector › industry</span></th>
+    <th style="text-align:left">Profit growth: last quarter → this quarter
+      <span class="hint" style="display:flex;justify-content:space-between"><span><span style="display:inline-block;width:9px;height:9px;border-radius:9px;box-shadow:inset 0 0 0 1.5px var(--text-2);vertical-align:-1px"></span> last quarter &nbsp;<span style="display:inline-block;width:9px;height:9px;border-radius:9px;background:var(--accent);vertical-align:-1px"></span> this quarter</span><span>0% · 180%</span></span></th>
+    <th class="sorted">Profit pace<span class="hint">change in growth, points</span></th>
+    <th>Revenue pace</th><th>EBITDA pace</th><th>Verdict</th><th>Filed</th></tr></thead><tbody>
+  ${C.map((c,i)=>{ const x=pace(c.pat); const d=x?x.now-x.was:null;
+    return `<tr data-i="${i}">
+    <td>${coCell(c)}</td>
+    <td style="text-align:left">${x?dumbbell(x.was,x.now):`<span class="sm" style="margin:0;white-space:normal;display:block">Loss a year ago: no % to compare. Last quarter the loss narrowed.</span>`}</td>
+    <td>${x?`<span class="g pat" style="color:var(--text)">${d>0?'⇡':'⇣'} ${fpts(d)}</span><div class="sm">${fp(x.was)} → ${fp(x.now)}</div>`:'<span class="g up"><span class="ar">▲</span>Loss → profit</span>'}</td>
+    <td>${paceCell(c.revenue)}</td><td>${paceCell(c.ebitda)}</td>
+    <td style="white-space:nowrap">${x?(d>0?'<b>Speeding up</b>':'<b>Slowing</b>'):'<span class="muted">Not comparable</span>'}</td>
+    <td class="filed">${c.filed}<div><a href="#">NSE ↗</a></div></td></tr>`;}).join('')}
+  </tbody></table>
+  <div class="tfoot desk"><span>Same 8 of ${S.of} as the main list, same order · points = this quarter's growth vs a year ago minus last quarter's</span><button class="btn">Show all ${S.of}</button></div>`;
+}
+function qoqTable(){
+  return `<div class="panel empty"><b>Quarter-on-quarter figures are not in this sample</b>This view compares Q2 FY27 with Q1 FY27 (Jul–Sep vs Apr–Jun 2026) with the same columns as the main list. It needs each company's previous-quarter amounts, which the sample data does not include.</div>`;
+}
+
+/* phone list */
+function phoneList(){
+  return `<div class="pl-head"><h2>Companies</h2><div class="pl-tools"><a class="btn" href="#sheet">Filters</a><button class="btn">Sort ↓</button></div></div>
+  <div class="faint" style="font-size:13px;margin-bottom:4px">${D.showing} · profit growth vs a year ago, highest first</div>
+  ${C.map(c=>{
+    const p = c.pat.turn ? `<span class="g up"><span class="ar">▲</span>Loss → profit</span>` : g(c.pat.growth_yoy,'pat');
+    const sub = c.pat.turn ? `${c.pat.amount} profit` : `${c.pat.amount} · was ${c.pat.growth_yoy_prev_quarter}`;
+    const r = c.revenue?`${c.revenue.label==='Revenue'?'Rev':c.revenue.label} <b class="${num(c.revenue.growth_yoy)>=0?'up':'down'}">${c.revenue.growth_yoy}</b>`:'<span class="faint">No revenue (insurer)</span>';
+    const e = c.ebitda?`${c.ebitda.label==='EBITDA'?'EBITDA':'Fin. profit'} <b class="${num(c.ebitda.growth_yoy)>=0?'up':'down'}">${c.ebitda.growth_yoy}</b>`:(c.kind==='bank'?'<span class="faint">No EBITDA (bank)</span>':'');
+    return `<a class="prow" href="#peek">
+      <div class="r1"><span class="av" style="background:${c.avatar_color}">${c.avatar_letter}</span>
+        <div class="who"><div class="nm">${c.symbol}</div><div class="path">${c.industry_path}</div></div>
+        <div class="pat">${p}<div class="sm">${sub}</div></div></div>
+      <div class="r2">${sig(c)}<span>${r}</span><span>${e}</span></div>
+      ${c.flag_profit_not_from_operations?`<div class="flag">${warnIcon}Profit not from operations</div>`:''}
+    </a>`;}).join('')}
+  <div style="padding:18px 0 40px"><button class="btn" style="width:100%;justify-content:center;height:48px">Show all ${S.of}</button></div>`;
+}
+$('#plist').innerHTML = phoneList();
+
+/* ---------- peek ---------- */
+function lineChart(series,w,h){
+  const all=series.flatMap(s=>s.v.filter(v=>v!=null));
+  let lo=Math.min(0,...all), hi=Math.max(...all); const pad=(hi-lo)*.12; lo-=lo<0?pad:0; hi+=pad;
+  const L=36,R=118,T=12,B=26, xs=i=>L+i*(w-L-R)/7, ys=v=>T+(hi-v)/(hi-lo)*(h-T-B);
+  let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Growth vs a year ago, last 8 quarters">`;
+  const step = hi-lo>80?50:hi-lo>30?20:10;
+  for(let t=Math.ceil(lo/step)*step;t<=hi;t+=step){ s+=` <line x1="${L}" x2="${w-R}" y1="${ys(t)}" y2="${ys(t)}" stroke="${t===0?'var(--line-2)':'var(--grid)'}" />
+    <text x="${L-8}" y="${ys(t)+4}" text-anchor="end" font-size="11" fill="var(--text-3)">${t}%</text>`; }
+  QL.forEach((q,i)=>{ if(i%2===1||i===7) s+=`<text x="${xs(i)}" y="${h-6}" text-anchor="middle" font-size="11" fill="var(--text-3)">${q}</text>`;});
+  const ends=[];
+  series.forEach(se=>{ let d='',on=false; se.v.forEach((v,i)=>{ if(v==null){on=false;return;} d+=(on?'L':'M')+xs(i).toFixed(1)+' '+ys(v).toFixed(1)+' '; on=true;});
+    s+=`<path d="${d}" fill="none" stroke="${se.c}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    se.v.forEach((v,i)=>{ if(v!=null) s+=`<circle cx="${xs(i)}" cy="${ys(v)}" r="${i===7?4:2.5}" fill="${se.c}" stroke="var(--surface)" stroke-width="1.5"><title>${se.n}, ${QL[i]}: ${fp(v)}</title></circle>`;});
+    const lv=se.v[7]; if(lv!=null) ends.push({y:ys(lv),t:fp(lv),n:se.n});
+  });
+  ends.sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<18) ends[i].y=ends[i-1].y+18;
+  // end labels placed left of the last point
+  ends.forEach(e=>{ s+=`<text x="${xs(7)+10}" y="${e.y+4}" text-anchor="start" font-size="12.5" font-weight="700" fill="var(--text)">${e.t} <tspan font-weight="400" fill="var(--text-2)">${e.n.toLowerCase()}</tspan></text>`;});
+  return s+'</svg>';
+}
+function peekHTML(c){
+  const pv = c.series_pat_growth_yoy_last_8_quarters_Q3FY25_to_Q2FY27.map(v=>typeof v==='number'?v:null);
+  const rv = c.series_revenue_growth_yoy_last_8_quarters;
+  const x = pace(c.pat), d = x? x.now-x.was : null;
+  const tile=(l,p,na)=>`<div><div class="l">${l}</div><div class="v ${p?(num(p)>=0?'up':'down'):'na'}">${p?arrow(num(p))+p:'—'}</div>${na?`<div class="sm">${na}</div>`:''}</div>`;
+  return `<div class="ph"><span class="av" style="background:${c.avatar_color};width:40px;height:40px;border-radius:12px">${c.avatar_letter}</span>
+    <div><h3>${c.name}</h3><div class="faint" style="font-size:13px">${c.symbol} · ${c.industry_path}</div></div>
+    <button class="x" aria-label="Close">×</button></div>
+  <div class="trio">${tile(c.revenue?c.revenue.label:'Revenue',c.revenue&&c.revenue.growth_yoy,c.revenue&&c.revenue.amount)}${tile(c.ebitda?c.ebitda.label:'EBITDA',c.ebitda&&c.ebitda.growth_yoy,c.ebitda&&c.ebitda.amount)}${c.pat.turn?`<div><div class="l">Profit</div><div class="v up">Loss → profit</div><div class="sm">${c.pat.amount}</div></div>`:tile('Profit (PAT)',c.pat.growth_yoy,c.pat.amount)}</div>
+  <div class="faint" style="font-size:13px;margin-top:8px">Q2 FY27 vs the same quarter a year ago</div>
+  ${c.flag_profit_not_from_operations?`<div class="callout">${warnIcon}<div><b>Profit not from operations.</b> Profit rose ${c.pat.growth_yoy} while EBITDA fell ${c.ebitda.growth_yoy.replace('−','')}. The rise came from outside the core business, such as other income or a one-off. Read the filing before relying on it.</div></div>`:''}
+  <section><p class="eyebrow" style="margin-bottom:6px">Growth vs a year ago, last 8 quarters</p>
+    <div class="legend"><span><i class="sw" style="background:var(--accent)"></i>Profit</span><span><i class="sw" style="background:var(--text-3)"></i>Revenue</span></div>
+    ${lineChart([{n:'Revenue',v:rv,c:'var(--text-3)'},{n:'Profit',v:pv,c:'var(--accent)'}],424,230)}
+    <div class="note">${x?`Profit growth was ${fp(x.was)} last quarter and ${fp(x.now)} now: ${d>0?'speeding up':'slowing'} by ${fpts(Math.abs(d)).replace('+','')}.`:'Profit growth has no % in earlier quarters: the company made a loss.'}</div></section>
+  <section><dl class="kv">
+    <dt>Margin change</dt><dd>${c.margin?`${g(c.margin.change_bp)} <span class="faint">to ${c.margin.level}</span>`:'<span class="na">—</span>'}</dd>
+    <dt>Market cap</dt><dd>${c.market_cap}</dd>
+    <dt>Filed</dt><dd>${c.filed} 2026 · <a href="#">NSE filing ↗</a></dd></dl>
+    ${c.note?`<div class="note">${c.note}</div>`:''}</section>
+  <div class="actions"><a class="btn primary" href="#">Open company page →</a><a class="btn" href="#">Open NSE filing ↗</a></div>`;
+}
+
+/* ---------- groups ---------- */
+let cut='all';
+const cutKey={all:'pat_total_all',ex:'pat_total_ex_financials',fin:'pat_total_financials'};
+const revKey={all:'revenue_total_all',ex:'revenue_total_ex_financials',fin:'revenue_total_financials'};
+const cutName={all:'all companies',ex:'excluding financials',fin:'financials only'};
+function ranked(w){
+  const rows=[...G].sort((a,b)=> cut==='all' ? b.pat_median-a.pat_median : b[cutKey[cut]]-a[cutKey[cut]]);
+  const lab=170, R=70, rh=40, top=30, lo=5, hi=22.5, h=top+rows.length*rh+10;
+  const x=v=>lab+(v-lo)/(hi-lo)*(w-lab-R);
+  let s=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Profit growth by index">`;
+  for(let t=5;t<=hi;t+=2.5) s+=`<line x1="${x(t)}" x2="${x(t)}" y1="${top-6}" y2="${h-10}" stroke="var(--grid)"/><text x="${x(t)}" y="${top-12}" text-anchor="middle" font-size="11" fill="var(--text-3)">${t}%</text>`;
+  rows.forEach((r,i)=>{ const y=top+i*rh+rh/2, tv=r[cutKey[cut]], mv=r.pat_median;
+    s+=`<text x="0" y="${y+5}" font-size="14" font-weight="${i===0?700:500}" fill="var(--text)">${r.group}</text>`;
+    if(cut==='all'){
+      const a=x(Math.min(tv,mv)), b=x(Math.max(tv,mv));
+      s+=`<line x1="${a}" x2="${b}" y1="${y}" y2="${y}" stroke="var(--text-3)" stroke-width="2"/>`;
+      s+=`<circle cx="${x(mv)}" cy="${y}" r="6" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"><title>${r.group} median ${fp(mv)}</title></circle>`;
+      s+=`<circle cx="${x(tv)}" cy="${y}" r="5" fill="var(--surface)" stroke="var(--text-2)" stroke-width="1.8"><title>${r.group} total ${fp(tv)}</title></circle>`;
+      const mRight = mv>=tv;
+      s+=`<text x="${x(mv)+(mRight?12:-12)}" y="${y+4.5}" text-anchor="${mRight?'start':'end'}" font-size="13" font-weight="700" fill="var(--text)">${fp(mv)}</text>`;
+      s+=`<text x="${x(tv)+(mRight?-11:11)}" y="${y+4.5}" text-anchor="${mRight?'end':'start'}" font-size="12.5" fill="var(--text-2)">${fp(tv)}</text>`;
+    } else {
+      s+=`<circle cx="${x(tv)}" cy="${y}" r="5.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><text x="${x(tv)+12}" y="${y+4.5}" font-size="13" font-weight="700" fill="var(--text)">${fp(tv)}</text>`;
+    }
+  });
+  return s+'</svg>';
+}
+function gHero(){
+  $('#rk-title').innerHTML = cut==='all'
+   ? `Profit growth by index, Q2 FY27 <span style="font-weight:400" class="faint">· ranked by the middle company</span><span class="key" style="margin-top:8px;font-weight:400"><span><i style="background:var(--accent);border-radius:9px"></i>Median (middle company)</span><span><i style="box-shadow:inset 0 0 0 1.8px var(--text-2);border-radius:9px"></i>Total (all profits added up)</span></span>`
+   : `Total profit growth by index, ${cutName[cut]} <span style="font-weight:400" class="faint">· medians are for all companies only in this sample</span>`;
+  $('#ranked').innerHTML = ranked(720);
+  const mid=G.find(x=>x.group==='Nifty Midcap 150');
+  $('#glead').innerHTML = `Midcaps lead the season: the middle Nifty Midcap 150 company grew profit ${fp(mid.pat_median)}, the Nifty 50's ${fp(n50.pat_median)}.`;
+  $('#gbul').innerHTML = [
+    `Banks and other financials hold the Nifty 50 back: they make ${n50.financials_share_of_profit_pct}% of its profit and grew ${fp(n50.pat_total_financials)} in total, the rest ${fp(n50.pat_total_ex_financials)}.`,
+    `${atHigh} of ${G.length} indices show their best median in 8 quarters.`,
+    G.every(r=>r.pat_total_all>r.revenue_total_all)?`In every index, total profit grew faster than total revenue.`:`Total profit grew faster than total revenue in ${G.filter(r=>r.pat_total_all>r.revenue_total_all).length} of ${G.length} indices.`
+  ].map(t=>`<li>· ${t}</li>`).join('');
+}
+const segs = (sp) => { const cls=['neg','1','2','3']; return `<div class="stack" title="Below 0%: ${sp[0]}%, 0–10%: ${sp[1]}%, 10–20%: ${sp[2]}%, above 20%: ${sp[3]}%">${sp.map((v,i)=>`<span style="flex:${v};background:var(--d-${cls[i]});color:var(--d-${cls[i]}-ink)">${v>=15?v:''}</span>`).join('')}</div>`; };
+function gTable(){
+  const rows=[...G].sort((a,b)=>b.pat_median-a.pat_median);
+  const c3=(r,k)=>['all','ex','fin'].map(c=>`<td class="num ${c===cut?'act':'qq'}">${fp(r[k[c]])}</td>`).join('');
+  return `<table class="tbl gt" style="table-layout:fixed"><colgroup><col style="width:13%"><col style="width:7%"><col style="width:8.5%"><col style="width:6.5%"><col style="width:6.5%"><col style="width:7%"><col style="width:7.5%"><col style="width:8%"><col style="width:7.5%"><col style="width:11%"><col style="width:11%"><col style="width:6.5%"></colgroup><thead>
+   <tr><th></th><th></th><th></th><th colspan="3" class="grp">Profit, total growth</th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
+   <tr><th>Index</th><th>Reported</th><th class="sorted">Profit median ↓</th>
+   <th class="${cut==='all'?'actcol':''}">All</th><th class="${cut==='ex'?'actcol':''}">Ex-fin.</th><th class="${cut==='fin'?'actcol':''}">Financials</th>
+   <th>Financials'<span class="hint">share of profit</span></th><th>Revenue total<span class="hint">${cutName[cut]}</span></th><th>EBITDA total<span class="hint">ex-financials</span></th>
+   <th style="text-align:left;padding-left:16px">Median trend<span class="hint">8 quarters</span></th><th style="padding-right:18px">Profit growth spread<span class="hint">% of companies</span></th><th>Speeding<span class="hint">up</span></th></tr></thead><tbody>
+   ${rows.map(r=>`<tr>
+    <td class="ix">${r.group}</td>
+    <td><div class="num" style="white-space:nowrap">${r.reported}<span class="faint"> / ${r.of}</span></div><div class="rep" style="margin-top:6px"><span class="mini"><i style="width:${r.reported/r.of*100}%"></i></span></div></td>
+    <td><span class="q num up">${arrow(r.pat_median)}${fp(r.pat_median)}</span></td>
+    ${c3(r,cutKey)}
+    <td class="num">${r.financials_share_of_profit_pct}%</td>
+    <td class="num">${fp(r[revKey[cut]])}</td>
+    <td class="num">${fp(r.ebitda_total_ex_financials)}</td>
+    <td style="text-align:left;padding-left:16px"><span style="display:inline-flex;align-items:center;gap:8px" title="${r.pat_median_last_8_quarters_Q3FY25_to_Q2FY27.map((v,i)=>QL[i]+' '+fp(v)).join(', ')}">${spark(r.pat_median_last_8_quarters_Q3FY25_to_Q2FY27,104,30,mLo,mHi)}</span></td>
+    <td>${segs(r.spread_pct_below0_0to10_10to20_above20)}</td>
+    <td class="num">${r.share_speeding_up_pct}%</td></tr>`).join('')}
+   </tbody></table>`;
+}
+function renderGroups(){ gHero(); $('#gtable').innerHTML=gTable();
+  document.querySelectorAll('#cutseg button').forEach(b=>b.classList.toggle('on',b.dataset.c===cut)); }
+document.querySelectorAll('#cutseg button').forEach(b=>b.onclick=()=>{cut=b.dataset.c;renderGroups();});
+
+/* ---------- state by hash ---------- */
+function apply(){
+  const f=new Set(location.hash.slice(1).split(/[+&,]/).filter(Boolean));
+  document.documentElement.dataset.theme = f.has('dark')?'dark':'light';
+  const groups=f.has('groups');
+  $('#view-co').style.display=groups?'none':''; $('#view-gr').style.display=groups?'':'none';
+  $('#tab-co').classList.toggle('on',!groups); $('#tab-gr').classList.toggle('on',groups);
+  ['exfin','fin'].forEach(k=>{ if(f.has(k)) cut = k==='exfin'?'ex':'fin'; });
+  if(groups) renderGroups();
+  const v = f.has('momentum')?'momentum':f.has('qoq')?'qoq':'yoy';
+  document.querySelectorAll('#vseg a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  $('#tablebox').innerHTML = v==='momentum'?momTable():v==='qoq'?qoqTable():yoyTable();
+  $('#tt').textContent = v==='momentum'?'Momentum':v==='qoq'?'Quarter-on-quarter':'Companies';
+  $('#ts').textContent = v==='momentum'?`Is profit growth speeding up or slowing? ${S.pat_growth_speeding_up} speeding up · ${S.slowing} slowing · ${S.steady_or_not_comparable} steady or not comparable`
+    : v==='qoq' ? 'Q2 FY27 against the quarter just before it' : 'Growth vs the same quarter a year ago · sorted by profit growth';
+  $('#tr').innerHTML = f.has('filters') ? '' : `${S.of} companies · all indices`;
+  $('#pop-growth').classList.toggle('show',f.has('filters')); $('#fb-growth').classList.toggle('open',f.has('filters'));
+  $('#pop-sector').classList.toggle('show',f.has('sector')); $('#fb-sector').classList.toggle('open',f.has('sector'));
+  $('#chips').innerHTML = f.has('chips') ? `<span class="chip">Profit growth at least 20% <button aria-label="Remove">×</button></span><span class="chip">Speeding up <button aria-label="Remove">×</button></span><button class="clear">Clear all</button>` : '';
+  const pkTok=[...f].find(k=>k.startsWith('peek')); const pk=!!pkTok; const sym=pkTok&&pkTok.includes('-')?pkTok.split('-')[1]:'KESTREL'; const c=C.find(x=>x.symbol===sym)||C[5];
+  $('#peek').classList.toggle('show',pk); $('#scrim').classList.toggle('show',false);
+  if(pk) $('#peek').innerHTML=peekHTML(c);
+  document.querySelectorAll('.tbl tbody tr').forEach(r=>r.classList.toggle('sel',pk && r.id==='r-'+c.symbol));
+  $('#sheet').classList.toggle('show',f.has('sheet')); $('#scrim').classList.toggle('show',f.has('sheet'));
+  if(f.has('sheet')) $('#sheet').innerHTML = sheetHTML();
+}
+function sheetHTML(){
+  return `<div class="grab"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><h3 style="margin:0;font-size:19px">Filters</h3><button class="fbtn" style="height:44px">Reset</button></div>
+  <div class="row">Index<span>All indices ›</span></div>
+  <div class="row">Market cap<span>Any ›</span></div>
+  <div class="row">Sector › industry<span>All ›</span></div>
+  <div style="padding:14px 0 4px;color:var(--text-2);font-size:14px">Profit growth vs a year ago, at least</div>
+  <div class="steps"><button>Any</button><button>0%</button><button>10%</button><button class="on">20%</button><button>50%</button><button>100%</button></div>
+  <div style="padding:14px 0 4px;color:var(--text-2);font-size:14px">Momentum</div>
+  <div class="steps"><button>Any</button><button class="on">Speeding up</button><button>Slowing</button></div>
+  <div class="row">Revenue, EBITDA, margin<span>Any ›</span></div>
+  <div class="toggle"><span class="box"></span>Turned loss to profit</div>
+  <div class="toggle"><span class="box"></span>Profit not from operations</div>
+  <div class="cta"><a class="btn primary" href="#">Apply 2 filters</a></div>`;
+}
+window.addEventListener('hashchange',apply);
+document.addEventListener('click',e=>{ const tr=e.target.closest('.tbl tbody tr[data-i]'); if(tr && !location.hash.includes('groups')){ location.hash='peek-'+C[+tr.dataset.i].symbol; }
+  if(e.target.closest('.peek .x')) location.hash=''; });
+apply();
+</script>
+</body>
+</html>

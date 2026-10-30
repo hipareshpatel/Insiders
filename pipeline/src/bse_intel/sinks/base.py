@@ -29,6 +29,10 @@ STATEMENTS = (
     "cards_delete",
     "cards_apply_verdicts",
     "cards_release_pruned",
+    "results_kpi_upsert",
+    "results_kpi_prune",
+    "index_members_add",
+    "index_members_close",
 )
 
 QUERIES = (
@@ -68,6 +72,7 @@ QUERIES = (
     "feedback_examples",
     "cards_awaiting_reaction",
     "reaction_summary",
+    "index_members_open",
 )
 
 # Statements that add to what is stored: repeating one after an ambiguous failure (a timeout after

@@ -1,7 +1,8 @@
 import { cn } from "../lib/cn";
 import { listing } from "../lib/format";
 
-const PALETTE = ["#2563eb", "#7c3aed", "#db2777", "#ea580c", "#059669", "#0891b2", "#4f46e5", "#ca8a04", "#dc2626", "#0d9488"];
+// every colour is at least 4.5:1 against the white initials
+const PALETTE = ["#2563eb", "#7c3aed", "#db2777", "#c2410c", "#047857", "#0e7490", "#4f46e5", "#a16207", "#dc2626", "#0f766e"];
 
 function hue(text: string): string {
   let h = 0;

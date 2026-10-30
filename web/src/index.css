@@ -161,6 +161,40 @@
   --color-violet-soft: var(--violet-soft);
   --color-teal: var(--teal);
   --color-teal-soft: var(--teal-soft);
+  --color-d-neg: var(--d-neg);
+  --color-d-1: var(--d-1);
+  --color-d-2: var(--d-2);
+  --color-d-3: var(--d-3);
+}
+
+/* The Results page (Direction C, white theme; docs/design/results-kpi.md): a white page with grey panels, and the text colours
+   darkened so every word and figure reads at 4.5:1 or better on white (the site's --ink-3, --pos and --neg are lighter). The four
+   bands of profit growth are a diverging scale: red below 0, three greens from 0 to above 20%. */
+.results-c {
+  --ink-3: #5b6573;
+  --pos: #0b7a43;
+  --neg: #c2352b;
+  --warn: #9a5b00;
+  --surface-2: #f4f5f7;
+  --line: #e6e9ee;
+  --line-strong: #d3d9e0;
+  --accent: #3550c8;
+  --accent-soft: #eef1fb;
+  --d-neg: #c0392f;
+  --d-1: #579a76;
+  --d-2: #2a7a51;
+  --d-3: #0e5a35;
+  background: var(--surface);
+}
+:root[data-theme="dark"] .results-c {
+  --ink-3: #8d97a6; --pos: #46d08f; --neg: #ff7f77; --warn: #f2b35b; --surface-2: #181d26; --line: #232a35; --line-strong: #2c3441;
+  --accent: #8aa8ff; --accent-soft: #1c2347; --d-neg: #e0655c; --d-1: #2d5a45; --d-2: #2e8a5e; --d-3: #46d08f;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .results-c {
+    --ink-3: #8d97a6; --pos: #46d08f; --neg: #ff7f77; --warn: #f2b35b; --surface-2: #181d26; --line: #232a35; --line-strong: #2c3441;
+    --accent: #8aa8ff; --accent-soft: #1c2347; --d-neg: #e0655c; --d-1: #2d5a45; --d-2: #2e8a5e; --d-3: #46d08f;
+  }
 }
 
 html,

@@ -194,7 +194,8 @@
 #   Writes nothing else.
 # - api-reader-hardset (lead, 30 Oct 2026): document-parsing APIs scored as more readers on the hard set
 #   (docs/bench/hardpdf/key.csv): Mistral's Document OCR (`mistral`, MISTRAL_API_KEY) and NVIDIA's nemotron-parse and
-#   nemotron-parse-2.0 (`nemotron`, `nemotron2`, NVIDIA_API_KEY); `backup` = the readers (default mistral,nemotron,nemotron2). From the PDFs run 40414799620 kept (artifact
+#   nemotron-parse-2.0 and nemotron-3.5-parse (`nemotron`, `nemotron2`, `nemotron35`, NVIDIA_API_KEY); `backup` = the readers
+#   (default mistral,nemotron,nemotron2,nemotron35); `limit` = the first N key pairs (a probe). A refusal is kept as refused-<n>.json. From the PDFs run 40414799620 kept (artifact
 #   pdf-ensemble-pdfs; `ids` = another run id that kept them): no exchange is read. Only the statement pages go out (the
 #   other readers' pages), 300 pages a reader a run. Writes hardset-score.json / .md, hardset-readings.json and every raw
 #   answer (with its seconds) to the artifact `api-reader-hardset`. Writes nothing else; never a live path.
@@ -290,7 +291,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, results-table, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, api-reader-hardset, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, results-table, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -366,7 +367,7 @@ on:
         type: string
         default: '1'
       only_model:
-        description: call-memory only - a measured test locked on one model (provider:model, e.g. gemini_3:gemini-3.5-flash-lite); empty = the route as live
+        description: call-memory and fact-sheet-ab - a measured test locked on one model (provider:model, e.g. gemini_3:gemini-3.5-flash-lite; for fact-sheet-ab, nvidia:minimaxai/minimax-m3.1-flash, groq:qwen/qwen3.8-27b, groq:openai/gpt-oss-120b writes every card with it, switch on only); empty = the route as live
         type: string
         default: ''
       part_chars:
@@ -401,7 +402,7 @@ concurrency:
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset","deck-pdfs"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -416,7 +417,7 @@ env:
 
 jobs:
   run:
-    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
+    if: inputs.command != 'pdf-referee-ensemble' && inputs.command != 'pdf-bench' && inputs.command != 'pdf-oos' && inputs.command != 'store-kept-pdfs' && inputs.command != 'api-reader-hardset' && inputs.command != 'deck-pdfs' && inputs.command != 'seed-memory' && inputs.command != 'memory-gaps-fill' && inputs.command != 'screener-fill' && inputs.command != 'screener-fill-apply' && inputs.command != 'screener-download' && inputs.command != 'screener-schedules' && inputs.command != 'tijori-download' && inputs.command != 'text-backfill' && inputs.command != 'text-backfill-bse' && inputs.command != 'xbrl-facts'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 330   # fill-memory's long steps; every other command takes minutes
     defaults:
@@ -833,6 +834,9 @@ jobs:
           PLATFORM_TIMEOUT_S: "30"
           PLATFORM_ATTEMPTS: "3"
           IDS: ${{ inputs.ids }}
+          ONLY_MODEL: ${{ inputs.only_model }}   # a measured test only (TODO 142 step 4): cards written by this one model, switch on only
+          ONLY_MODEL_ON_ALL_ROUTES: ${{ inputs.only_model != '' && '1' || '' }}
+          FACT_SHEET_AB_ON_ONLY: ${{ inputs.only_model != '' && '1' || '' }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # the keys the card path uses (pipeline.yml)
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
@@ -2223,6 +2227,40 @@ jobs:
           path: ${{ runner.temp }}/store-kept/
           if-no-files-found: ignore
 
+  deck-pdfs:
+    # The 9 investor decks of the call-memory 150-point test (docs/bench/geometry/decks.csv), downloaded once more through
+    # the NSE client and kept 90 days (owner, 30 Oct 2026: "A. Download"; TODO 144): their word boxes measure the
+    # chart-label rule. Reads NSE (9 files); writes nothing but the artifact.
+    permissions:
+      contents: read
+    if: inputs.command == 'deck-pdfs'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install -q -e .
+      - name: Download the decks (reads NSE)
+        run: |
+          mkdir -p "$RUNNER_TEMP/decks"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --collect ../docs/bench/geometry/decks.csv "$RUNNER_TEMP/decks"
+          ls "$RUNNER_TEMP/decks" | wc -l
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deck-pdfs
+          path: ${{ runner.temp }}/decks/
+          retention-days: 90
+          if-no-files-found: ignore
+
   api-reader-hardset:
     permissions:
       contents: read
@@ -2257,7 +2295,7 @@ jobs:
           path: ${{ runner.temp }}/pdfs
       - name: Score the API readers against the answer key
         env:
-          PDF_READERS: ${{ inputs.backup || 'mistral,nemotron,nemotron2' }}
+          PDF_READERS: ${{ inputs.backup || 'mistral,nemotron,nemotron2,nemotron35' }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_OCR_PAGE_CAP: "300"
@@ -2266,6 +2304,8 @@ jobs:
           NEMOTRON_PARSE_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron
           NEMOTRON_PARSE2_PAGE_CAP: "300"
           NEMOTRON_PARSE2_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron2
+          NEMOTRON_PARSE35_PAGE_CAP: "300"
+          NEMOTRON_PARSE35_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron35
           LIMIT: ${{ inputs.limit }}
         run: |
           mkdir -p "$RUNNER_TEMP/out"
@@ -2273,9 +2313,13 @@ jobs:
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/out" ${LIMIT}
           "$RUNNER_TEMP/venv/bin/python" - "$RUNNER_TEMP/out" <<'PY'
           import json, os, sys
-          for reader in ("mistral", "nemotron", "nemotron2"):
+          for reader in ("mistral", "nemotron", "nemotron2", "nemotron35"):
               d = os.path.join(sys.argv[1], "raw-" + reader)
-              answers = [json.load(open(os.path.join(d, f))) for f in sorted(os.listdir(d))] if os.path.isdir(d) else []
+              names = sorted(os.listdir(d)) if os.path.isdir(d) else []
+              for f in names:
+                  if f.startswith("refused-"):
+                      print(f"{reader} refused: {open(os.path.join(d, f)).read()[:300]}")
+              answers = [json.load(open(os.path.join(d, f))) for f in names if not f.startswith("refused-")]
               if reader == "mistral":
                   pages = sum(int((a.get("usage_info") or {}).get("pages_processed") or 0) for a in answers)
                   boxes = sum(len(p.get("blocks") or []) for a in answers for p in a.get("pages") or [])
@@ -2297,7 +2341,7 @@ jobs:
 
   # The chain (F164): runs the next command of `then` once this run's work is done and succeeded (see the header).
   chain:
-    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, api-reader-hardset]
+    needs: [run, seed, seed-next, gaps, gaps-next, screener, tijori, textback, textback-bse, pdf-ensemble-fetch, pdf-ensemble-read, pdf-ensemble-settle, xbrl-facts-plan, xbrl-facts, pdf-bench, pdf-oos, store-kept-pdfs, api-reader-hardset, deck-pdfs]
     if: always() && inputs.then != '' && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     steps:

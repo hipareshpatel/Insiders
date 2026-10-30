@@ -122,3 +122,29 @@ def test_nemotron2_has_its_own_model_cap_and_count(monkeypatch):
     assert json.loads(route.calls[0].request.content)["model"] == "nvidia/nemotron-parse-2.0"
     assert NemotronParse2Reader.pages_used == 1 and NemotronParseReader.pages_used == 5
     assert "nemotron2" in pdf_readers.READERS
+
+
+@respx.mock
+def test_a_refusal_is_kept_with_its_status_and_body(monkeypatch, tmp_path):
+    from bse_intel.pdf_readers import NemotronParse35Reader
+    monkeypatch.setenv("NVIDIA_API_KEY", "k")
+    monkeypatch.setenv("NEMOTRON_PARSE35_RAW_DIR", str(tmp_path))
+    monkeypatch.setattr(NemotronParse35Reader, "pages_used", 0)
+    route = respx.post("https://integrate.api.nvidia.com/v1/chat/completions").mock(
+        return_value=httpx.Response(404, text='{"detail":"Function not found"}'))
+    with pytest.raises(RuntimeError, match="nvidia/nemotron-3.5-parse HTTP 404"):
+        NemotronParse35Reader().extract(_pdf(1))
+    assert json.loads(route.calls[0].request.content)["model"] == "nvidia/nemotron-3.5-parse"
+    kept = json.loads((tmp_path / "refused-0.json").read_text())
+    assert kept == {"status": 404, "body": '{"detail":"Function not found"}'}
+
+
+@respx.mock
+def test_mistral_refusal_is_kept(monkeypatch, tmp_path):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setenv("MISTRAL_OCR_RAW_DIR", str(tmp_path))
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    respx.post("https://api.mistral.ai/v1/ocr").mock(return_value=httpx.Response(403, text="not available in your tier"))
+    with pytest.raises(RuntimeError, match="HTTP 403"):
+        MistralOcrReader().extract(_pdf(1))
+    assert json.loads((tmp_path / "refused-0.json").read_text())["status"] == 403

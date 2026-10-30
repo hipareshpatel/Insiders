@@ -59,3 +59,6 @@ CARD_FACT_SHEET = true           # pipeline: the results card's figures from the
 # a filing; 5 filings come inside the slip check's 60 s cap only with it on, none of their revenue or total income wrong).
 # A repository variable NUMFIRST_STOP_EARLY = 0 turns it off; the next 20 live results filings are checked against the file.
 NUMFIRST_STOP_EARLY = true       # pdf_numbers_first: stop early on scanned pages
+# TODO 144 (owner approved the build, 30 Oct 2026): a deck slide's figure tied to its label by the page's word boxes; off until
+# measured on the stored deck PDFs (pipeline/scripts/measure_slide_geometry.py, a maintenance run) and the owner says on.
+CALL_MEMORY_GEOMETRY = false     # slide_geometry.py: a slide point whose figure stands by another label is dropped ("label")

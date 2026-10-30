@@ -1489,16 +1489,24 @@ def holds_results(source, max_pages: int = MAX_PAGES) -> bool:
         doc.close()
 
 
+_PLACED = ("found_unique", "found_ambiguous", "row_found_other_value")
+
+
 def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most
-    ``MAX_CANDIDATES``), a PDF with no results statement in it (``holds_results``) skipped; the first PDF that gives any figure a row or a placement is the filing's, the best answer of each
-    figure across the PDFs tried is kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
+    ``MAX_CANDIDATES``), a PDF with no results statement in it (``holds_results``) skipped. Every candidate is read; the filing's
+    rows are those of the ONE PDF with most ``found_unique`` figures (then most placements, then list order), the others' rows
+    dropped, so a letter that passed the filter with a few stray numbers placed cannot stand in for the statement (30 Oct
+    2026: the first PDF with any placement used to end the search before the results PDF was read). When no PDF has a
+    ``found_unique``, the first PDF that places any figure is the filing's, the best answer of each figure across the PDFs up
+    to it kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
     because a list or a download failed on the way (a timeout, a refused call), which a later run may get; a filing NSE has no
     results PDF for, or a PDF it serves empty or too large, is a settled answer, not a failure."""
     listed = src.filings(symbol, period)
     if isinstance(listed, str):
         return [], listed, bool(_TRANSIENT.match(listed))
     best: dict[int, tuple[Result, dict]] = {}
+    read: list[tuple[list[Result], dict]] = []       # (results, row extras) of each PDF located, in list order
     reasons = []
     transient = False
     error = None
@@ -1521,13 +1529,26 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_
             error = (exc, extra)
             reasons.append(f"{type(exc).__name__} while locating")
             continue
-        for k, r in enumerate(results):
-            if k not in best or BEST[r.status] < BEST[best[k][0].status]:
-                best[k] = (r, extra)
-        if any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r in results):
-            break
-        reasons.append("no figure placed in " + f.pdf_url.rsplit("/", 1)[-1][:40])
-    used = any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r, _ in best.values())
+        read.append((results, extra))
+        if not any(r.status in _PLACED for r in results):
+            reasons.append("no figure placed in " + f.pdf_url.rsplit("/", 1)[-1][:40])
+
+    def score(i: int) -> tuple[int, int, int]:
+        results = read[i][0]
+        return sum(r.status == "found_unique" for r in results), sum(r.status in _PLACED for r in results), -i
+
+    winner = max(range(len(read)), key=score, default=None)
+    if winner is not None and score(winner)[0]:
+        results, extra = read[winner]
+        best = {k: (r, extra) for k, r in enumerate(results)}
+    else:
+        for results, extra in read:
+            for k, r in enumerate(results):
+                if k not in best or BEST[r.status] < BEST[best[k][0].status]:
+                    best[k] = (r, extra)
+            if any(r.status in _PLACED for r in results):
+                break
+    used = any(r.status in _PLACED for r, _ in best.values())
     if transient and not used:
         return [], "; ".join(dict.fromkeys(reasons)), True      # a download failed and no other PDF gave a figure: not finished
     if not best and error is not None:

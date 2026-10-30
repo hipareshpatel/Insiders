@@ -550,6 +550,24 @@ def test_a_non_results_pdf_listed_as_results_gives_no_rows_and_the_next_pdf_is_r
     assert both["statuses"]["found_unique"] == 8
 
 
+def test_an_agm_pdf_with_stray_placements_listed_first_does_not_win_over_the_results_pdf():
+    agm, res = "https://nsearchives.nseindia.com/corporate/AGM.pdf", "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    stray = make_pdf(title="Outcome of the Annual General Meeting: voting results", pad=False,
+                     rows=[("1 Revenue from operations", ["100.00", "1.00", "1.00", "1.00"])])     # one figure lands in the letter
+    nse = FakeNse([filing(agm, headline="Outcome of AGM"), filing(res)], {agm: stray, res: make_pdf()})
+    out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert nse.fetches == [agm, res]                                       # every candidate is read
+    assert {r["pdf_url"] for r in out["rows"]} == {res} and out["statuses"]["found_unique"] == 8
+
+
+def test_of_two_results_pdfs_the_one_with_more_unique_placements_is_kept():
+    first, second = "https://nsearchives.nseindia.com/corporate/A.pdf", "https://nsearchives.nseindia.com/corporate/B.pdf"
+    partial = make_pdf(rows=ROWS[:2])                                      # a duplicate filing that carries part of the statement
+    nse = FakeNse([filing(first), filing(second)], {first: partial, second: make_pdf()})
+    out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert {r["pdf_url"] for r in out["rows"]} == {second} and out["statuses"]["found_unique"] == 8
+
+
 def test_the_summary_counts_the_failure_stages_and_lists_the_other_values():
     rows = [xk.result_row(r) for r in xk.locate(make_pdf(), [exp("revenue", 100.0), exp("revenue", 999.0), exp("pat", 380.0),
                                                               exp("other_income", 1234.0, period="Q9FY99")])]

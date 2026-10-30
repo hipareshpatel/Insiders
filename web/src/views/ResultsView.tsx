@@ -48,9 +48,22 @@ export function ResultsView() {
     initialPageParam: null as string | null,
     getNextPageParam: (last) => last.next_cursor,
   });
-  const rows = useMemo(() => (query.data?.pages.flatMap((p) => p.cards) ?? [])
-    .map((row) => ({ row, card: parseCard(row) }))
-    .filter((r): r is { row: CardRow; card: CardBody } => !!r.card), [query.data]);
+  const rows = useMemo(() => {
+    const all = (query.data?.pages.flatMap((p) => p.cards) ?? [])
+      .map((row) => ({ row, card: parseCard(row) }))
+      .filter((r): r is { row: CardRow; card: CardBody } => !!r.card);
+    // one row for a company and quarter (owner, 30 Oct 2026: "no company will get repeated"): of two filings for it, the one
+    // that was a results card, else the newest (the list is newest first)
+    const best = new Map<string, { row: CardRow; card: CardBody }>();
+    for (const r of all) {
+      const period = r.card.results?.period;
+      if (!period) continue;
+      const key = `${r.row.scrip_code}|${period}`;
+      const kept = best.get(key);
+      if (!kept || (r.card.had_table && !kept.card.had_table)) best.set(key, r);
+    }
+    return all.filter((r) => { const period = r.card.results?.period; return !period || best.get(`${r.row.scrip_code}|${period}`) === r; });
+  }, [query.data]);
   const quarters = [...new Set(rows.map((r) => r.card.results?.period).filter(Boolean) as string[])]
     .sort((a, b) => periodEnd(b).localeCompare(periodEnd(a)));
   const visible = rows.filter((r) => (!quarter || r.card.results?.period === quarter) && (!tone || (r.card.tone ?? "NEUTRAL") === tone));
@@ -59,7 +72,7 @@ export function ResultsView() {
     <div className="mx-auto w-full max-w-[1240px] px-4 py-6 sm:px-6">
       <header className="mb-4">
         <h1 className="font-display text-[30px] leading-tight text-ink">Results</h1>
-        <p className="mt-1 text-sm text-ink-2">Quarterly results with year-on-year changes, read against each company's memory. Click a row for the full card.</p>
+        <p className="mt-1 text-sm text-ink-2">Quarterly results with year-on-year changes, from each company's saved statements (the same ones as its Results tab). Click a row for the full card.</p>
       </header>
 
       <div className="flex flex-wrap items-center gap-2">

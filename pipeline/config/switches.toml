@@ -35,3 +35,8 @@ CARD_GUIDANCE_DATED = true       # F172: a guidance verdict only from a dated ta
 # (docs/bench/oos/README.md): 243 right / 11 wrong / 246 none of 500, the 11 a PBT definition and a file's own unit; the
 # read is capped at SLIP_CHECK_NUMFIRST_SECONDS (60) and never waits past it for the OCR lock (#218).
 SLIP_CHECK_NUMFIRST = true       # slip_check.PdfCheck: numbers-first reader first, the old reader the fallback
+# On 30 Oct 2026, ~06:45 IST (owner: "Switch it ON", TODO 101): each call transcript and deck gets its own memory reading on
+# the third Gemini key, every point checked by code before it is kept. Measured before: the second blind check of 10
+# documents found 59 of 123 important points (48%), 3 of 120 kept points wrong (2.5%; bar 2%). A repository variable
+# MEMORY_CALL_V2 = 0 turns it off in every job, the call-memory job included.
+MEMORY_CALL_V2 = true            # F180: the 15-minute run queues transcripts and decks; call-memory.yml reads them

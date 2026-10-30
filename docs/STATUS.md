@@ -59,7 +59,7 @@ blind review and a measurement; a switch then decides whether the rule acts on l
 
 | Switch (off today) | What it does, in one line | Lead's advice | Owner |
 |---|---|---|---|
-| MEMORY_CALL_V2 | Each call transcript and deck gets its own memory reading (Gemini key 3); its points are checked by code and kept | On after one more blind check of 10 new documents (TODO 101) | Yes / No / Later |
+| MEMORY_CALL_V2 | Each call transcript and deck gets its own memory reading (Gemini key 3); its points are checked by code and kept | **On** (owner, 30 Oct 2026 ~06:45 IST) | Yes |
 | MEMORY_YEAR_CHECK | A year or half-year figure its own quarters do not add up to is not used on a card | Measure on stored memory, then on | Yes / No / Later |
 | XBRL_FILER_CHECKS | Where the company's own file contradicts itself, the figure is held, not kept | Measure on stored memory, then on | Yes / No / Later |
 | MEMORY_RESTATED | A restated comparative is named as such on the card ("restated in Q2FY27, first filed X") | Later, with the card work | Yes / No / Later |
@@ -131,8 +131,8 @@ The order: correct memory first, from the exchange's files by screener's rules; 
     #227), so ~1,080 requests a day instead of ~80. A prompt that asks for every true point and names mix, policy backdrop
     and working capital (held, not merged): the same 10 documents re-read (run 40982123227) all 10 read (8 before), points
     kept 225 (120), important points found by the same matcher 88 of 153 = 58% (64 = 42% before; on the 8 read both
-    times 60% against 52%). In-sample and below the 85% bar, wrong points not yet counted; and 8 of the 10 were served by Flash-Lite (the Flash models' 20 a day were spent), so the gain is the prompt and the model together, not the prompt alone. Flash-Lite's quotes on a deck's figure slides are often bare numbers (Waaree: 21 of 40 points dropped by the quote check, rightly). `MEMORY_CALL_V2` stays off for
-    the owner's word (TODO 101).
+    times 60% against 52%). In-sample and below the 85% bar, wrong points not yet counted; and 8 of the 10 were served by Flash-Lite (the Flash models' 20 a day were spent), so the gain is the prompt and the model together, not the prompt alone. Flash-Lite's quotes on a deck's figure slides are often bare numbers (Waaree: 21 of 40 points dropped by the quote check, rightly). **`MEMORY_CALL_V2` ON since 30 Oct
+    ~06:45 IST (owner: "Switch it ON"; switches.toml, TODO 101).**
 11. **Richer cards: what moved and why, from memory** (TODO 128), and the other card improvements, after memory.
 12. **The four card switches on** (consolidated only, company EBITDA first, two parts, dated guidance): live (PR #219).
 13. **Memory gaps checked against listing dates** (TODO 130): 1,445 before listing, 26 missed by the count, 50 truly absent

@@ -513,7 +513,11 @@ def cmd_failed_report(args, settings, sink) -> int:
     """Every failed filing since a date, grouped by reason (requeue.report). Reads only; no AI."""
     from . import requeue
 
-    print(json.dumps(requeue.report(sink, args.since or settings.backfill_start), ensure_ascii=False, indent=1))
+    out = requeue.report(sink, args.since or settings.backfill_start)
+    end = today_ist()
+    out["waiting_last_days"] = requeue.waiting(sink, (end - timedelta(days=args.days - 1)).isoformat(), end.isoformat(),
+                                               settings.max_attempts)
+    print(json.dumps(out, ensure_ascii=False, indent=1))
     return 0
 
 
@@ -2498,6 +2502,7 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(func=cmd_requeue_failed)
     p = sub.add_parser("failed-report", help="every failed filing grouped by reason, with examples; reads only, no AI")
     p.add_argument("--since", help="filed on or after this date (YYYY-MM-DD); default the backfill start")
+    p.add_argument("--days", type=int, default=3, help="also count the filings of the last N days (IST) still to be read")
     p.set_defaults(func=cmd_failed_report)
     p = sub.add_parser("seed-calls", help="last two quarters of call transcripts / presentations into memory; no Gemini, no cards")
     p.add_argument("--scrips", help="only these companies (comma separated)")

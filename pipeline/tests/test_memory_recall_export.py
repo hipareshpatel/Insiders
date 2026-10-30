@@ -29,6 +29,8 @@ class FakeSink:
 
     def query(self, name, params):
         self.calls.append(name)
+        if name == "export_filings":   # call_memory.find_filing: the ledger, by id
+            return sorted((f for f in self.__dict__.get("ledger", []) if f["news_id"] > params[1]), key=lambda f: f["news_id"])[:params[2]]
         assert name == "export_cards"
         after = (params[0], params[1])
         rows = [c for c in self.cards if (c["filed_at"], c["news_id"]) > after]
@@ -221,3 +223,11 @@ def test_ids_export_exactly_those_filings(tmp_path):
     ix = mre.export(sink, tmp_path / "ids", limit=1, today=TODAY, ids=want)
     assert sorted(s["news_id"] for s in ix["sample"]) == want and ix["missing"] == []
     assert mre.export(sink, tmp_path / "gone", today=TODAY, ids=[want[0], "nse-nothere"])["missing"] == ["nse-nothere"]
+    # a call read for memory alone has no card: the ledger's row and its stored text are enough
+    card = next(c for c in cards if c["news_id"] == want[0])
+    sink.cards = [c for c in cards if c["news_id"] != want[0]]
+    sink.ledger = [{"news_id": want[0], "scrip_code": card["scrip_code"], "symbol": card.get("symbol") or "X", "company_name": "X Ltd",
+                    "filed_at": card["filed_at"], "filing_date": card["filed_at"][:10], "headline": card.get("headline") or "", "pdf_url": "https://nse.invalid/x.pdf",
+                    "event_type": "CONCALL_PRESENTATION"}]
+    alone = mre.export(sink, tmp_path / "alone", today=TODAY, ids=[want[0]])
+    assert [s["news_id"] for s in alone["sample"]] == [want[0]] and alone["missing"] == []

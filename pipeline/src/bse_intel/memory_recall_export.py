@@ -284,11 +284,27 @@ def _folder_name(news_id: str) -> str:
     return "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:80] or "unnamed"
 
 
+def _ledger_rows(sink, ids: list[str]) -> list[dict]:
+    """Rows for named filings with no published call or deck card (a call read for memory alone, a held or merged card): the
+    ledger's own fields, no card."""
+    from .call_memory import find_filing
+
+    out = []
+    for nid in ids:
+        f = find_filing(sink, nid)
+        if f is not None:
+            out.append({"news_id": nid, "scrip_code": f.scrip_code, "symbol": f.symbol, "company_name": f.company_name,
+                        "filed_at": f.filed_at, "headline": f.headline, "pdf_url": f.pdf_url, "event_category": f.event_type,
+                        "card_json": None})
+    return out
+
+
 def export(sink, out: Path, limit: int = 20, seed: int = 26, days: int = DAYS, today=None, ids: list[str] | None = None) -> dict:
     """Write the sample to ``out``; returns the index. Reads only. With ``ids`` the sample is those filings alone."""
     rows = candidates(sink, days, today, held=bool(ids))
     if ids:
         rows = [r for r in rows if r["news_id"] in set(ids)]
+        rows += _ledger_rows(sink, [i for i in ids if i not in {r["news_id"] for r in rows}])
         limit = len(rows)
     scrips = sorted({r["scrip_code"] for r in rows})
 

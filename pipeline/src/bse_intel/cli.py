@@ -2288,6 +2288,17 @@ def cmd_restore(args, settings, sink) -> int:
     return 0
 
 
+def cmd_results_table(args, settings, sink) -> int:
+    """The results page's figures from the saved statements (the company page's source): one snapshot file, raw/results-table/latest.json (results_table.py).
+    No card, no AI, no exchange call."""
+    from . import results_table
+    from .timeutil import now_ist
+
+    count = results_table.write(sink, now_ist().isoformat(timespec="seconds"))
+    print(f"results-table: {count} quarter tables written to {results_table.SNAPSHOT_KEY}")
+    return 0
+
+
 def cmd_statements_backfill(args, settings, sink) -> int:
     """Every company's past statements by screener's rules from the stored facts into memory (statements_backfill.py): a dry
     run by default, --apply backs each dossier up first; at most --limit companies a run, resuming. No NSE, BSE or AI."""
@@ -2679,6 +2690,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_drop_known_wrong)
+    p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), one snapshot file in R2 (no card, no AI, no NSE)")
+    p.set_defaults(func=cmd_results_table)
     p = sub.add_parser("statements-backfill", help="every company's past statements by screener's rules from the stored facts into memory: dry run (default) or --apply (backs each dossier up first; no NSE, no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")

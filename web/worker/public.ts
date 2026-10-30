@@ -128,6 +128,33 @@ async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
   });
 }
 
+const RESULTS_TABLE_KEY = "raw/results-table/latest.json";
+type ResultsTable = { rows: Record<string, unknown> };
+
+/** The results page's figures come from the saved statements (the company page's Results tab source), never from a card: the
+ * pipeline's `results-table` job writes one file of tables to R2 (results_table.py). A row's table is the one for its company and
+ * quarter; a quarter the statements do not hold keeps its quarter and no figures. With no file yet the rows are left as they are. */
+async function withStatementTables<T extends { scrip_code: string; card_json: string }>(c: Context<AppEnv>, cards: T[]): Promise<T[]> {
+  const table = await memoised("results-table", 60_000, async () => {
+    const object = await c.env.VAULT.get(RESULTS_TABLE_KEY);
+    return object ? ((await object.json()) as ResultsTable) : null;
+  });
+  if (!table) return cards;
+  return cards.map((card) => {
+    try {
+      const body = JSON.parse(card.card_json) as { results?: { period?: string; revenue?: unknown } | null; xbrl?: { period?: string } | null;
+        had_table?: boolean };
+      const period = body.results?.period ?? body.xbrl?.period;
+      if (!period) return card;
+      body.had_table = !!body.results?.revenue;   // the page keeps, of two rows for one company and quarter, the one that was a results card
+      body.results = (table.rows[`${card.scrip_code}|${period}`] as { period?: string } | undefined) ?? { lens: "company", period } as never;
+      return { ...card, card_json: JSON.stringify(body) };
+    } catch {
+      return card;
+    }
+  });
+}
+
 // withHeld: the owner's private view (/api/owner/feed, behind OWNER_TOKEN and outside the edge cache) also
 // lists the cards held back from the public feed, so the owner can review them (owner, 2026-10-19).
 export async function feed(c: Context<AppEnv>, withHeld = false) {
@@ -198,7 +225,8 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   // The first page of an unfiltered view is what most visitors load.
   const result = !cursorAt && !fts && (page ?? 1) === 1 ? await memoised(`feed:${sql}:${page}:${JSON.stringify(params)}`, 20_000, run) : await run();
   const more = result.rows.length > limit;
-  const cards = result.rows.slice(0, limit) as { filed_at: string; news_id: string }[];
+  const rows = result.rows.slice(0, limit) as { filed_at: string; news_id: string; scrip_code: string; card_json: string }[];
+  const cards = q.category === "RESULTS" ? await withStatementTables(c, rows) : rows;
   const last = cards[cards.length - 1];
   return c.json({
     cards,

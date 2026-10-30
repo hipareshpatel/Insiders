@@ -52,6 +52,9 @@
 #   F170) over every stored card, its text in R2 and its company's memory, no AI. Per switch: what changed (cards, lines
 #   added, removed, changed), a plain-text summary and a seeded blind sample of up to 20 changed cards with its key, all up
 #   as the artifact `release-check`. No writes.
+#   `ids` (check names, comma separated, e.g. `text_support`) runs only those checks (`--only`); empty runs every check. The
+#   `text_support` check (CARD_TEXT_SUPPORT, TODO 142) lists every item the switch would drop from the stored cards outside the
+#   34 in-sample ones, with a seeded blind sample of up to 60 of them.
 # - screener-fill: the one-time fill of the quarters memory lacks from screener.in (owner permission 26 Oct 2026; F161). A
 #   dry run: one page per company with a gap (the page on memory's basis), at least 3 s between requests per runner, two
 #   runners (job `screener`), a plain browser User-Agent, no login; nothing is written. The counts, the reasons skipped and
@@ -318,7 +321,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: release-check - only these checks (names, comma separated, e.g. text_support; empty = all); screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
         type: string
         default: ''
       since:
@@ -950,10 +953,12 @@ jobs:
         env:
           PLATFORM_TIMEOUT_S: "25"   # F216: one dead request ends in ~1 min, not minutes
           PLATFORM_ATTEMPTS: "2"
+          IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
         run: |
           code=0
           mkdir -p "$RUNNER_TEMP/release-check"
-          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/release_check.py "$RUNNER_TEMP/release-check" --platform --time-budget 15600 || code=$?
+          only=(); if [ -n "$IDS" ]; then only=(--only "$IDS"); fi   # check names, comma separated; empty = every check
+          "$RUNNER_TEMP/venv/bin/python" -I -X utf8 scripts/release_check.py "$RUNNER_TEMP/release-check" --platform --time-budget 15600 "${only[@]}" || code=$?
           exit "$code"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'release-check'

@@ -131,7 +131,7 @@ The order: correct memory first, from the exchange's files by screener's rules; 
     #227), so ~1,080 requests a day instead of ~80. A prompt that asks for every true point and names mix, policy backdrop
     and working capital (held, not merged): the same 10 documents re-read (run 40982123227) all 10 read (8 before), points
     kept 225 (120), important points found by the same matcher 88 of 153 = 58% (64 = 42% before; on the 8 read both
-    times 60% against 52%). In-sample and below the 85% bar, wrong points not yet counted. `MEMORY_CALL_V2` stays off for
+    times 60% against 52%). In-sample and below the 85% bar, wrong points not yet counted; and 8 of the 10 were served by Flash-Lite (the Flash models' 20 a day were spent), so the gain is the prompt and the model together, not the prompt alone. Flash-Lite's quotes on a deck's figure slides are often bare numbers (Waaree: 21 of 40 points dropped by the quote check, rightly). `MEMORY_CALL_V2` stays off for
     the owner's word (TODO 101).
 11. **Richer cards: what moved and why, from memory** (TODO 128), and the other card improvements, after memory.
 12. **The four card switches on** (consolidated only, company EBITDA first, two parts, dated guidance): live (PR #219).

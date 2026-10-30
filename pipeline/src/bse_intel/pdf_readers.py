@@ -1244,12 +1244,13 @@ class MistralOcrReader(Reader):
         t0 = time.perf_counter()
         reply = httpx.post("https://api.mistral.ai/v1/ocr", json=body, timeout=180,
                            headers={"Authorization": f"Bearer {os.environ['MISTRAL_API_KEY'].strip()}"})
+        raw_dir = os.environ.get("MISTRAL_OCR_RAW_DIR")
         if reply.status_code >= 400:     # the Free plan may refuse OCR (mistral-large-2512 answers 403 on our key): say why
+            _keep_refusal(raw_dir, reply)
             raise RuntimeError(f"mistral ocr HTTP {reply.status_code}: {reply.text[:200]}")
         answer = reply.json()
         answer["_seconds"] = round(time.perf_counter() - t0, 2)
         MistralOcrReader.pages_used += int((answer.get("usage_info") or {}).get("pages_processed") or count)
-        raw_dir = os.environ.get("MISTRAL_OCR_RAW_DIR")
         if raw_dir:
             os.makedirs(raw_dir, exist_ok=True)
             with open(os.path.join(raw_dir, hashlib.sha256(sub_pdf).hexdigest()[:16] + ".json"), "w", encoding="utf-8") as fh:
@@ -1301,7 +1302,8 @@ class NemotronParseReader(Reader):
                 type(self).seconds += time.perf_counter() - t0
                 type(self).pages_used += 1
                 if reply.status_code >= 400:
-                    raise RuntimeError(f"nemotron-parse HTTP {reply.status_code}: {reply.text[:200]}")
+                    _keep_refusal(raw_dir, reply)
+                    raise RuntimeError(f"{self.model} HTTP {reply.status_code}: {reply.text[:200]}")
                 answer = reply.json()
                 answer["_seconds"] = round(time.perf_counter() - t0, 2)
                 if raw_dir:
@@ -1320,6 +1322,27 @@ class NemotronParse2Reader(NemotronParseReader):
     env, model = "NEMOTRON_PARSE2", "nvidia/nemotron-parse-2.0"
     pages_used = 0
     seconds = 0.0
+
+
+class NemotronParse35Reader(NemotronParseReader):
+    """nemotron-3.5-parse (``NEMOTRON_PARSE35_MODEL``, default ``nvidia/nemotron-3.5-parse``), the same call and answer as
+    ``NemotronParseReader`` (lead, 30 Oct 2026: a free endpoint on the owner's NVIDIA catalogue; nemotron-parse-2.0 is
+    downloadable only); bench only, probed on one page first."""
+    name, ocr_engine = "nemotron35", "nemotron-3.5-parse"
+    env, model = "NEMOTRON_PARSE35", "nvidia/nemotron-3.5-parse"
+    pages_used = 0
+    seconds = 0.0
+
+
+def _keep_refusal(raw_dir: str | None, reply) -> None:
+    """An API reader's refusal kept beside its answers (``refused-<n>.json``: status and body), so a run's artifact says why;
+    the scorer keeps only the error's type."""
+    if not raw_dir:
+        return
+    os.makedirs(raw_dir, exist_ok=True)
+    n = len([f for f in os.listdir(raw_dir) if f.startswith("refused-")])
+    with open(os.path.join(raw_dir, f"refused-{n}.json"), "w", encoding="utf-8") as fh:
+        json.dump({"status": reply.status_code, "body": reply.text[:2000]}, fh)
 
 
 def nemotron_grids(answer: dict) -> list[list[list[str]]]:
@@ -1515,7 +1538,7 @@ def ocr_cell(image, box: tuple, numeric: bool = False) -> str:
 
 READERS: dict[str, Reader] = {r.name: r for r in (
     NativeReader(), CamelotReader(), PdfplumberReader(), TabulaReader(), DoclingReader(), MineruReader(), PaddleReader(),
-    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader(), NemotronParseReader(), NemotronParse2Reader())}
+    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader(), NemotronParseReader(), NemotronParse2Reader(), NemotronParse35Reader())}
 
 DEFAULT_READERS = "native"
 

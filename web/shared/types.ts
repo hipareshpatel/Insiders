@@ -452,7 +452,9 @@ export interface Dossier {
   // a consolidated filer's standalone figures, kept apart for the company page (dossier.put_standalone)
   standalone?: { metrics: { metric: string; period: string; value: number; unit: string; yoy_pct?: number | null; as_of: string; source_news_id: string }[];
     balance_sheet: (Record<string, string | number | null> & { as_of: string })[] };
-  segment_mix: { segment: string; period: string; revenue_cr?: number | null; share_pct?: number | null; as_of: string }[];
+  /** the quarter's segment note: from the results file (lab.by "file", segments.py: with the segment result and the basis, or one
+   *  row with `single` for a single-segment filer, its description in `segment`), else a model's reading */
+  segment_mix: { segment: string; period: string; revenue_cr?: number | null; share_pct?: number | null; pbit_cr?: number | null; single?: boolean; basis?: string | null; as_of: string }[];
   balance_sheet: (Record<string, string | number | null> & { as_of: string })[];
   /** screener.in's tables by its own rules (screener_view recipes), from the exchange's files (statements.py): one entry per
    *  period, basis and table ("quarters" | "annual" | "balance" | "cash_flow"); rows by screener's own row names */

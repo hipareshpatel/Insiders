@@ -822,6 +822,8 @@ function SegmentMix({ dossier }: { dossier: Dossier }) {
   if (!rows.length) return null;
   const latest = [...rows].sort((a, b) => periodEnd(b.period).localeCompare(periodEnd(a.period)))[0].period;
   const now = rows.filter((r) => r.period === latest);
+  const one = now.find((r) => r.single);
+  if (one) return <Panel title="Business mix" hint={`${latest} · from the results file`}><p className="text-[13.5px] text-ink-2">One segment{one.segment ? `: ${one.segment}` : ""}</p></Panel>;
   const total = now.reduce((a, r) => a + (r.revenue_cr ?? 0), 0);
   const parts = now.map((r) => ({ name: r.segment, share: r.share_pct ?? (total ? ((r.revenue_cr ?? 0) / total) * 100 : 0), cr: r.revenue_cr }))
     .filter((r) => r.share > 0).sort((a, b) => b.share - a.share).slice(0, 6);

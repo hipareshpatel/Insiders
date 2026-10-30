@@ -17,6 +17,7 @@ from __future__ import annotations
 import logging
 
 from . import screener_view as sv
+from . import segments
 from . import xbrl_facts
 from .memory_gaps import quarter_end
 from .periods import quarter_index
@@ -90,6 +91,10 @@ def from_file(sink, dossier: dict, data: bytes, scrip: str, url: str, news_id: s
             xbrl_facts.save(sink, scrip, doc["period"], doc.get("basis"), doc)
         except Exception as exc:  # noqa: BLE001 - R2 is best effort; the rows still go into memory
             log.warning("statements: facts of %s not kept: %s", url, exc)
+        try:
+            segments.remember(dossier, doc, news_id, as_of, at)      # the business mix from the same file (TODO 137)
+        except Exception as exc:  # noqa: BLE001 - likewise an addition
+            log.warning("statements: segments of %s not built: %s", url, exc)
         return remember(dossier, doc, news_id, as_of, at)
     except Exception as exc:  # noqa: BLE001 - an addition: a failure is logged, the filing goes on
         log.warning("statements: %s %s not built: %s", scrip, url, exc)

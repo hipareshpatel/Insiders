@@ -826,8 +826,8 @@ class CompanyFacts:
 
     def year(self, fy: str, basis: str, fam: str, instant: bool = False):
         """(facts, label, Q4 facts) of a March year, in this order: the newest of the year's own annual report and the next
-        year's (whose comparative it is) that holds the year; else the Q4 results file; else the nearest later report that holds
-        it. A lender: always the Q4 file. A report two or more years later is the last resort because it can carry a stray fact
+        year's (whose comparative it is) that holds the year; else the Q4 results file when it holds it; else the nearest later
+        report that holds it; else the Q4 file as it is. A lender: always the Q4 file. A report two or more years later is the last resort because it can carry a stray fact
         at that date (UltraTech's FY26 report tags Assets at 31 Mar 2024 in a note, with no balance sheet there, which made FY24's
         Borrowings 0: TODO 129, 113 pairs), yet for a year with no nearer source it often holds the full sheet (HCL Tech FY20
         from its FY22 report, 16 rows equal to screener's)."""
@@ -836,22 +836,24 @@ class CompanyFacts:
         if fam != CORPORATE or end is None:
             return q4, f"results file Q4{fy}", None
 
+        def holds(f) -> bool:
+            return f.cr("Assets", instant=end) is not None if instant else \
+                any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
+
         def holding(offsets) -> tuple | None:
             reports = [(afy, key) for (afy, b), key in self.annual.items() if b == basis and _fy_num(afy) - _fy_num(fy) in offsets]
             for afy, key in sorted(reports, key=lambda r: offsets.index(_fy_num(r[0]) - _fy_num(fy))):
                 f = self._load(key)
                 if f is None:
                     continue
-                holds = f.cr("Assets", instant=end) is not None if instant else \
-                    any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
-                if holds:
+                if holds(f):
                     return f, f"annual report {afy}", q4
             return None
 
         near = holding([1, 0])                              # the newest first, as before: the next year's report, then the year's own
         if near is not None:
             return near
-        if q4 is not None:
+        if q4 is not None and holds(q4):           # a Q4 file without the year's balance sheet (HAL, NTPC FY22) is no source for it
             return q4, f"results file Q4{fy}", None
         return holding(list(range(2, 100))) or (q4, f"results file Q4{fy}", None)   # the nearest later report first
 

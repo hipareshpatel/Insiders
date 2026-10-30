@@ -253,6 +253,11 @@ def test_a_report_two_years_later_never_gives_the_year_even_with_a_stray_fact_at
     # with no nearer report and no Q4 file, the later report is the last resort (HCL Tech FY20 from its FY22 report)
     cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26})
     assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
+    # a Q4 file with no balance sheet at the year end gives way to the later report (HAL, NTPC FY22)
+    q4_pl = doc([("RevenueFromOperations", "D2024", 4.0)], kind="results", template="INDAS", year=2024)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4_pl})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE)[1] == "results file Q4FY24"
 
 
 # --- the page and the comparison ------------------------------------------------------------------------------------------

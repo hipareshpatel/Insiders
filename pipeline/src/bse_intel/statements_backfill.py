@@ -103,8 +103,27 @@ def fill(dossier: dict, entries: list[dict]) -> int:
     return len(new)
 
 
-def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False) -> dict:
-    """``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review)."""
+WORKERS = 8   # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone)
+
+
+def _prepare(sink, scrip: str, at: str):
+    """One company read and worked out (no write): (read, merged, entries, left) or None when it has no dossier or facts."""
+    read = sink.get_dossier(scrip)
+    keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
+    if read is None or not keys:
+        return None
+    cf = sv.CompanyFacts(keys, sink.get_object)
+    merged = json.loads(json.dumps(read))
+    entries, left = company_entries(cf, merged, at)
+    return read, merged, entries, left
+
+
+def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False,
+        workers: int = WORKERS) -> dict:
+    """``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review). The companies
+    are read ``workers`` at a time; the writes go one by one in scrip order, so the resume point and a stop stay exact."""
+    from concurrent.futures import ThreadPoolExecutor
+
     from .backup import RunBackup
 
     after = "" if (restart or not apply or named) else (sink.kv_get(RESUME_KEY) or "")
@@ -114,18 +133,25 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
            "no_facts": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
-    for scrip in todo:
+
+    def safe(scrip):
+        try:
+            return _prepare(sink, scrip, at), None
+        except Exception as exc:  # noqa: BLE001 - reported in order below, where it stops the run
+            return None, exc
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        prepared = list(pool.map(safe, todo))
+    for scrip, (ready, failure) in zip(todo, prepared):
         stage = "reading"
         try:
-            read = sink.get_dossier(scrip)
-            keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
-            if read is None or not keys:
+            if failure is not None:
+                raise failure
+            if ready is None:
                 out["no_facts"] += 1
                 out["last"] = scrip
                 continue
-            cf = sv.CompanyFacts(keys, sink.get_object)
-            merged = json.loads(json.dumps(read))
-            entries, left = company_entries(cf, merged, at)
+            read, merged, entries, left = ready
             out["left_out"] += [f"{scrip} {x}" for x in left]
             have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
             for e in entries:

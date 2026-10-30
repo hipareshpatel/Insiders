@@ -45,6 +45,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import date
 
+from .settings import numfirst_stop_early
 from .ocr import OutOfTime   # the caller's deadline has passed (raised only when a caller passes one; the bench passes none)
 
 log = logging.getLogger(__name__)
@@ -1755,6 +1756,20 @@ def _measured(fn):
     return run
 
 
+def is_statement(table: Table) -> bool:
+    """A results statement, not any named table: its rows name revenue or total income, PBT and PAT."""
+    named = set(getattr(getattr(table, "solver", None), "cls", None) or [])
+    return bool(named & {"REV", "TI"}) and "PBT" in named and "PAT" in named
+
+
+def stated_bases(by_page: dict[int, list], untrusted: list[int]) -> set[str]:
+    """The bases that already have a statement the reader can use: a named statement read with OCR, or one from a page's text
+    layer when that page is not itself waiting for OCR (a page in ``untrusted`` has a layer that named no table or garbled its
+    column dates; ACI Q1FY27's page 2 named a standalone statement in such a layer, and only its OCR read gave the figures)."""
+    return {t.basis for p, ts in by_page.items() for t in ts
+            if t.named and t.basis and is_statement(t) and (t.source != "textlayer" or p not in untrusted)}
+
+
 SCAN_IMAGE_SHARE = 0.5        # of the page's area one image covers: a scanned page, not a logo or a signature
 
 
@@ -1917,9 +1932,13 @@ def analyse(pdf_bytes: bytes, ocr_boxes=None, ocr_garbled: bool = False, max_pag
             def figures(p: int) -> int:
                 return sum(bool(re.search(r"\d", w[4])) for w in layers[p].words)
             order = sorted(unnamed, key=lambda p: (p not in ranked, -figures(p)))
+            wanted = {"STANDALONE"} | ({"CONSOLIDATED"} if anywhere else set())
+            stop_early = numfirst_stop_early()
             for p in order:
                 check_deadline(deadline)
                 if ocr_used >= MAX_OCR_PAGES:
+                    break
+                if stop_early and wanted <= stated_bases(by_page, unnamed):
                     break
                 ocr_used += 1
                 try:

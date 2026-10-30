@@ -2199,3 +2199,42 @@ def test_a_prose_page_with_a_logo_is_never_ocrd_and_a_scanned_page_is_wherever_i
     assert nf.may_hold_statement(doc[0], L, True)                                  # a likely statement page
     figures = type("Layer", (), {"words": [(0, 0, 1, 1, f"{n}.00") for n in range(15)]})()
     assert nf.may_hold_statement(doc[0], figures, False)                           # a page of figures
+
+
+def test_a_statement_counts_only_with_revenue_pbt_and_pat_and_never_from_a_page_waiting_for_ocr():
+    # NUMFIRST_STOP_EARLY (lead, 30 Oct 2026): the scanned-page OCR stops once every basis has a usable statement; ACI Q1FY27's
+    # page 2 named a standalone statement in a garbled layer, and stopping on it lost the four standalone figures OCR gives
+    from types import SimpleNamespace as NS
+    def table(basis, cls, source="textlayer", named=True):
+        return NS(basis=basis, named=named, source=source, solver=NS(cls=cls))
+    statement = ["REV", "TE", "PBT", "TAX", "PAT"]
+    assert nf.is_statement(table("STANDALONE", statement))
+    assert nf.is_statement(table("STANDALONE", ["TI", "PBT", "PAT"]))
+    assert not nf.is_statement(table("STANDALONE", ["REV", "PBT"]))                 # a segment or summary table
+    pages = {2: [table("STANDALONE", statement)], 5: [table("CONSOLIDATED", statement, "ocr")]}
+    assert nf.stated_bases(pages, untrusted=[]) == {"STANDALONE", "CONSOLIDATED"}
+    assert nf.stated_bases(pages, untrusted=[2]) == {"CONSOLIDATED"}                # page 2's layer is waiting for OCR
+    pages[2].append(table("STANDALONE", statement, "ocr"))                          # its OCR read gave the statement
+    assert nf.stated_bases(pages, untrusted=[2]) == {"STANDALONE", "CONSOLIDATED"}
+
+
+def test_with_the_switch_on_the_scanned_page_ocr_stops_once_every_basis_has_a_statement(monkeypatch):
+    # ten full-page scans; once the OCR of the first names the one basis the filing needs, the rest are skipped (switch on) or
+    # all read (switch off, as before)
+    doc = pymupdf.open()
+    for n in range(10):
+        _image_page(doc, None, f"Page {n} of a scanned filing with enough words to have a text layer here")
+    stated = []
+    def read(png):
+        stated.append(png)
+        return []
+    monkeypatch.setattr(nf, "stated_bases", lambda by_page, untrusted: {"STANDALONE"} if stated else set())
+    from bse_intel import pdf_readers
+    monkeypatch.setattr(pdf_readers, "consolidated_anywhere", lambda *a, **k: False)
+    monkeypatch.setenv("NUMFIRST_STOP_EARLY", "1")
+    nf.analyse(doc.tobytes(), read, ocr_garbled=True)
+    on = len(stated)
+    stated.clear()
+    monkeypatch.setenv("NUMFIRST_STOP_EARLY", "0")
+    nf.analyse(doc.tobytes(), read, ocr_garbled=True)
+    assert on == 1 and len(stated) == 10

@@ -111,6 +111,7 @@ SLICE_S = 180            # older work between two looks for today's new filings 
 BACKFILL_SLICE_S = 600   # the backfill's slices: its filings share Gemini requests (packs wait up to 180 s), and a
                          # slice end sends the open packs part-full; shorter slices would spend more free requests
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
+RESULTS_CATCH_UP_S = 600  # the results XBRL catch-up's own window when the live share is used up (30 Oct 2026)
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
 MAX_REFUSALS = 3         # attachment 403s in a row that mean BSE is refusing this network
@@ -4538,16 +4539,20 @@ class Pipeline:
                 if near_cap:
                     log.warning("D1 writes near the free tier's daily %d: earlier days, catch-ups and memory syncs "
                                 "skipped this run", D1_FREE_DAILY_WRITES)
-                if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
+                if self._on_nse() and not near_cap:
                     from . import event_catchup   # cards made before their event XBRL landed
 
+                    # its own window (30 Oct 2026: on a results-heavy day today's filings used the whole live share, so
+                    # this never ran and 20 of 46 results cards stayed without their table and memory without the
+                    # quarter); the run's full budget still bounds it
+                    caught = event_catchup.results_catch_up(
+                        self, min(deadline, max(live_deadline, time.monotonic() + RESULTS_CATCH_UP_S)))
+                    log.info("results XBRL catch-up: %s", json.dumps(caught))
+                    fresh()
+                if self._on_nse() and time.monotonic() < live_deadline and not near_cap:
                     caught = event_catchup.catch_up(self, live_deadline)
                     if caught["rerun"] or caught["stopped"]:
                         log.info("event XBRL catch-up: %s", json.dumps(caught))
-                    fresh()
-                    caught = event_catchup.results_catch_up(self, live_deadline)
-                    if caught["rerun"] or caught["stopped"]:
-                        log.info("results XBRL catch-up: %s", json.dumps(caught))
                     fresh()
                     # at most hourly: the three sweeps took ~17 of a run's 24 live minutes and mostly filed nothing (25 Oct
                     # 2026: shareholding "filed": 5 of 1,069 companies looked at)

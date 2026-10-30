@@ -1146,3 +1146,37 @@ def test_a_filing_read_again_on_purpose_is_not_a_repeat_of_itself_and_a_later_ru
     pipeline2.run("live", time_budget_s=60)
     status = {r["news_id"]: (r["status"], r["reason"]) for r in rows(sink, "select news_id, status, reason from filings")}
     assert status["u2"] == ("DUPLICATE", "duplicate of u1 (same file)") and fake2.calls == []
+
+
+def test_the_results_catch_up_runs_even_when_todays_filings_used_the_live_share(settings, monkeypatch):
+    """30 Oct 2026: on a results-heavy day today's filings ran past the run's live share (60% of the budget), the results
+    XBRL catch-up never ran, and 20 of 46 results cards kept no table while memory missed the quarter. It now has its
+    own window inside the run's budget; the event catch-up still waits for the live share."""
+    from bse_intel import event_catchup
+    from bse_intel import pipeline as pl
+    from bse_intel.ai.gateway import AIGateway
+    from bse_intel.pipeline import Pipeline
+    from bse_intel.sinks.local import LocalSink
+    from conftest import FakeProvider
+
+    clock = [1000.0]
+    monkeypatch.setattr(pl.time, "monotonic", lambda: clock[0])
+    sink = LocalSink(settings)
+    gateway = AIGateway(settings.load_toml("providers.toml"), client_factory=lambda *a: FakeProvider({}), env={})
+    pipeline = Pipeline(settings, sink, gateway, bse=None, sleep=lambda s: None)
+    calls = []
+    monkeypatch.setattr(pipeline, "_on_nse", lambda: True)
+    monkeypatch.setattr(event_catchup, "catch_up", lambda *a: calls.append("event") or {"rerun": 0, "stopped": None})
+    monkeypatch.setattr(event_catchup, "results_catch_up",
+                        lambda p, deadline: calls.append(("results", deadline > clock[0])) or {"rerun": {}, "stopped": None})
+    pipeline._discover_safely = lambda day, full: 0
+
+    def busy(*a, **k):   # today's filings take 670 s of the 1,000 s budget: past the live share of 600
+        calls.append("process")
+        if calls.count("process") == 1:
+            clock[0] += 670
+        return []
+
+    pipeline.process = busy
+    pipeline.run(mode="all", time_budget_s=1000)
+    assert ("results", True) in calls and "event" not in calls

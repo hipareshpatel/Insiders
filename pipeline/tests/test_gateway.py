@@ -574,6 +574,36 @@ def test_a_model_trial_sends_routes_that_have_the_model_to_it_alone():
     assert [t.key for t in plain.routes["pass2"]] == ["a:m-a", "b:m-b"]
 
 
+def test_a_trial_model_can_write_on_every_card_route_only_when_asked_to():
+    """ONLY_MODEL_ON_ALL_ROUTES (TODO 142 step 4, owner 30 Oct 2026): a model that is only on trial_new becomes the sole target
+    of every route with a primary, with room for a whole card; without the flag nothing changes."""
+    from conftest import ENV
+
+    from bse_intel.ai.gateway import AIGateway
+
+    config = gateway_config({"pass2": [{"provider": "a", "model": "m-a", "max_tokens": 6000, "context_tokens": 200000},
+                                       {"provider": "c", "model": "m-c", "spare": True}],
+                             "pass2_long": [{"provider": "a", "model": "m-a", "max_tokens": 3000}],
+                             "spares_only": [{"provider": "c", "model": "m-c", "spare": True}],
+                             "vision": [{"provider": "a", "model": "m-v"}],
+                             "trial_new": [{"provider": "b", "model": "m-t", "spare": True, "max_tokens": 400,
+                                            "context_tokens": 120000, "json_mode": True, "limits": {"rpm": 30}}]})
+    env = {**ENV, "ONLY_MODEL": "b:m-t"}
+    assert [t.key for t in AIGateway(config, client_factory=lambda *a: None, env=env).routes["pass2"]] == ["a:m-a", "c:m-c"]
+    gw = AIGateway(config, client_factory=lambda *a: None, env={**env, "ONLY_MODEL_ON_ALL_ROUTES": "1"})
+    for name in ("pass2", "pass2_long"):
+        (t,) = gw.routes[name]
+        assert (t.key, t.spare, t.route, t.json_mode) == ("b:m-t", False, name, True)
+    assert [t.key for t in gw.routes["spares_only"]] == ["c:m-c"]
+    assert [t.key for t in gw.routes["vision"]] == ["a:m-v"]   # card routes only: a text model never takes vision's work
+    # the card's output room, the model's own window (the oversize guard still skips a prompt it cannot take)
+    assert [(t.max_tokens, t.context_tokens) for t in (gw.routes["pass2"][0], gw.routes["pass2_long"][0])] == [(6000, 120000), (3000, 120000)]
+    assert "b:m-t" in gw.limiters
+    # a model that is on the route already is left to ONLY_MODEL alone
+    both = AIGateway(config, client_factory=lambda *a: None, env={**ENV, "ONLY_MODEL": "a:m-a", "ONLY_MODEL_ON_ALL_ROUTES": "1"})
+    assert [t.key for t in both.routes["pass2"]] == ["a:m-a"]
+
+
 def test_a_call_memory_test_may_set_the_gemini_models_thinking_on_that_route_only():
     """CALL_MEMORY_REASONING (owner, 30 Oct 2026: test Flash-Lite with thinking on): only the call_memory route's Gemini
     targets change; unset, the configured extra_body stands."""

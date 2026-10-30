@@ -107,7 +107,7 @@ export function kpiResponse(page = 1, over: Partial<KpiResponse> = {}): KpiRespo
   return {
     quarter: PERIOD, quarters: QUARTERS, indices: INDICES.map((x) => ({ ...x, n: INDEX_N[x.id] ?? 0 })), index_tracking_since: "2026-10-30",
     rows: page === 1 ? ROWS : ROWS_PAGE_2, summary: SUMMARY,
-    progress: { index_id: "NIFTY500", reported: 185, of: 497, quarter_reported: 236, still_to_come: { date: "2026-11-03", companies: 14 } },
+    progress: { index_id: "NIFTY500", reported: 185, of: 497, members: 500, quarter_reported: 236, still_to_come: { date: "2026-11-03", companies: 14 } },
     page, pages: 2, ...over,
   };
 }

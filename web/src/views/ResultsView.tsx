@@ -14,7 +14,7 @@ import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { TURN, turnOf } from "../lib/results";
 import {
-  activeChips, csvName, DEFAULT_SORT, firstDir, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
+  activeChips, csvName, DEFAULT_SORT, firstDir, VIEW_SORT, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
   toCsv, type Sort, type SpreadKey,
 } from "../lib/resultsView";
 import { useQueryState } from "../lib/url";
@@ -86,6 +86,7 @@ export function ResultsView() {
     const dir = s === query.sort ? (query.dir === "desc" ? "asc" : "desc") : firstDir(s);
     setParams({ sort: s === DEFAULT_SORT && dir === "desc" ? null : s, dir: dir === firstDir(s) ? null : dir });
   };
+  const onView = (v: View) => setParams({ view: v === "yoy" ? null : v, sort: VIEW_SORT[v] === DEFAULT_SORT ? null : VIEW_SORT[v], dir: null });
   const onPickGroup = (r: GroupRow, groupBy: GroupBy) =>
     setParams(groupBy === "index" ? { tab: null, index: r.id, class: null, spread: null } : { tab: null, class: r.id, index: null, spread: null });
 
@@ -136,7 +137,7 @@ export function ResultsView() {
               spread={query.spread} turnaround={query.turnaround}
               onSpread={(k: SpreadKey | null) => setParams({ spread: k, turnaround: null })} onTurnaround={(on) => setParams({ turnaround: on ? "1" : null, spread: null })} />
 
-            <FilterBar query={query} view={view} indices={first?.indices ?? []} setParams={set} onView={(v) => setParams({ view: v === "yoy" ? null : v })} />
+            <FilterBar query={query} view={view} indices={first?.indices ?? []} setParams={set} onView={onView} />
 
             {/* phone: title, filters, sort, search and the view */}
             <div className="sticky top-0 z-20 -mx-4 mt-6 bg-surface px-4 pb-2 pt-2.5 sm:hidden">
@@ -158,7 +159,7 @@ export function ResultsView() {
             <div className="sm:hidden">
               <SearchBox q={query.q} setParams={set} className="h-11" />
               <SegControl className="mt-2.5 flex w-full" itemClass="min-h-11 flex-1 px-2" label="View" items={VIEWS.map((v) => ({ ...v, label: v.key === "qoq" ? "QoQ" : v.label }))}
-                value={view} onChange={(v) => setParams({ view: v === "yoy" ? null : v })} />
+                value={view} onChange={onView} />
               <Chips query={query} setParams={set} />
             </div>
 

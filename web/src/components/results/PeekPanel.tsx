@@ -68,7 +68,7 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
         {row.nfo && (
           <div className="mt-3.5 flex gap-3 rounded-xl bg-warn-soft px-4 py-3.5 text-[14px] text-ink">
             <AlertTriangle aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-warn" />
-            <p><b>Profit not from operations.</b> Profit {row.pat_turn === "LOSS_TO_PROFIT" ? "turned from a loss to a profit" : `rose ${fmtPct(row.pat_yoy)}`} while
+            <p><b>Profit up, EBITDA down.</b> Profit {row.pat_turn === "LOSS_TO_PROFIT" ? "turned from a loss to a profit" : `rose ${fmtPct(row.pat_yoy)}`} while
               EBITDA fell{row.ebitda_yoy != null ? ` ${fmtPct(Math.abs(row.ebitda_yoy)).replace("+", "")}` : ""}. The rise came from outside the core business, such as
               other income or a one-off. Read the filing before relying on it.</p>
           </div>

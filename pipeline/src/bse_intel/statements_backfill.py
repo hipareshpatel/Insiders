@@ -103,7 +103,7 @@ def fill(dossier: dict, entries: list[dict]) -> int:
     return len(new)
 
 
-WORKERS = 8   # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone)
+WORKERS = 24  # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone; run 2 at 8: 8.7 min)
 
 
 def _prepare(sink, scrip: str, at: str):

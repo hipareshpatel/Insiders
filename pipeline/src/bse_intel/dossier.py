@@ -724,13 +724,15 @@ MEMORY_ONLY_METRICS = frozenset({"pat_minority", "eps_total", "eps_continuing"})
 
 
 # Lists another writer may add entries to while the pipeline holds a dossier, and how an entry is told apart
+_EXTRAS_KEYS = ("audit", "cash_flow_detail", "related_parties", "fin_ratios", "oci", "discontinued", "segment_balance", "dividends",
+                "kmp_pay", "contingent_liabilities")      # = xbrl_extras.KEYS (a test holds them equal)
 _KEYED_LISTS = {
     "financial_metrics": lambda e: (e.get("metric"), e.get("period")),
     "ownership": lambda e: e.get("period"),
     "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
     "statements": lambda e: (e.get("period"), e.get("basis"), e.get("table")),   # statements.py: one entry a period, basis, table
-    # xbrl_extras.py: one entry a period, basis and kind in each of its four keys
-    **{key: (lambda e: (e.get("period"), e.get("basis"), e.get("kind"))) for key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios")},
+    # xbrl_extras.py: one entry a period, basis and kind in each of its keys
+    **{key: (lambda e: (e.get("period"), e.get("basis"), e.get("kind"))) for key in _EXTRAS_KEYS},
 }
 
 
@@ -774,7 +776,7 @@ def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) 
                 elif key == "statements":
                     from .statements import keep_latest
                     rows = keep_latest(rows)
-                elif key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios"):
+                elif key in _EXTRAS_KEYS:
                     from .xbrl_extras import MAX_ENTRIES, _order
                     rows = sorted(rows, key=lambda e: _order(e.get("period")))[-MAX_ENTRIES[key]:]
                 elif key == "ownership":

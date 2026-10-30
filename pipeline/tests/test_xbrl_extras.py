@@ -124,8 +124,8 @@ def test_remember_labels_replaces_a_revised_file_and_keeps_both_bases():
     doc = _doc("nse_hdfcbank_q2fy27_cons.xml")
     d = {}
     # audit and cash flow; the file's ratios are all the template's filler zeros (HDFC Bank's CET1 is not 0)
-    assert xbrl_extras.remember(d, doc, "n1", AS_OF, AT) == 2
-    assert set(d) == {"audit", "cash_flow_detail"}
+    assert xbrl_extras.remember(d, doc, "n1", AS_OF, AT) == 4     # + face value and segment assets (second group)
+    assert set(d) == {"audit", "cash_flow_detail", "dividends", "segment_balance"}
     e = d["audit"][0]
     assert (e["period"], e["basis"], e["lab"]["by"], e["source_news_id"]) == ("Q2FY27", "CONSOLIDATED", "file", "n1")
     revised = dict(doc, basis="STANDALONE")
@@ -167,7 +167,7 @@ def test_the_backfill_fills_from_stored_facts_without_a_download(settings):
     cf = sv.CompanyFacts(sink.list_objects(f"{xbrl_facts.PREFIX}1/"), sink.get_object)
     d = {}
     added = statements_backfill.fill_extras(cf, d, AT)
-    assert added == 7 and d["audit"][0]["lab"]["from"] == "stored facts"
+    assert added == 11 and d["audit"][0]["lab"]["from"] == "stored facts"
     assert {(e["period"], e["kind"]) for e in d["audit"]} == {("Q4FY26", "results"), ("FY25", "annual")}
     assert [e["period"] for e in d["cash_flow_detail"]] == ["FY25", "FY26"]
     assert statements_backfill.fill_extras(cf, d, AT) == 0, "nothing added twice"
@@ -179,3 +179,131 @@ def test_a_concurrent_writer_keeps_the_extras_of_both():
     fresh = {"audit": [{"period": "Q1FY27", "basis": "CONSOLIDATED", "kind": "results"}]}
     keep_concurrent_writes(merged, {"audit": [{"period": "Q4FY26", "basis": "CONSOLIDATED", "kind": "results"}]}, fresh)
     assert [e["period"] for e in merged["audit"]] == ["Q1FY27", "Q2FY27"] or len(merged["audit"]) == 2
+
+
+# --- the second group (TODO 138 / 132): OCI, discontinued operations, segment balances, dividends, KMP pay, contingent liabilities ---
+
+SECOND = ("oci", "discontinued", "segment_balance", "dividends", "kmp_pay", "contingent_liabilities")
+
+
+def test_the_second_group_keys_are_the_dossiers_keyed_lists():
+    from bse_intel import dossier
+    assert set(xbrl_extras.KEYS) == set(dossier._EXTRAS_KEYS) <= set(dossier._KEYED_LISTS)
+    assert set(SECOND) <= set(xbrl_extras.MAX_ENTRIES)
+
+
+def test_other_comprehensive_income_with_its_items_by_group():
+    col, o = xbrl_extras.read(_doc("nse_irfc_q4fy26_nbfc.xml"))["oci"]
+    v = o["values"]
+    assert col == "Q4FY26" and o["kind"] == "results"
+    assert (v["oci_net_cr"], v["total_comprehensive_cr"], v["profit_cr"]) == (-189.68, 1494.63, 1684.31)
+    assert (v["not_reclassified_cr"], v["reclassified_cr"]) == (-14.5, -175.18)
+    assert {i["group"] for i in o["items"]} == {"not_reclassified", "reclassified"} and len(o["items"]) == 5
+    # the legacy file's year-ago "Four" members are not the quarter's items
+    _, t = xbrl_extras.read(_doc("nse_old_titan_q2fy24.xml"))["oci"]
+    assert [i["amount_cr"] for i in t["items"]] == [-17.0, -1.0] and t["values"]["total_comprehensive_owners_cr"] == 902.0
+    # a zero owners' part beside a real total is filler (Q3FY24)
+    _, q = xbrl_extras.read(_doc("bse_main_ind_as_532811_q3fy24.xml"))["oci"]
+    assert q["values"]["total_comprehensive_cr"] == 70.9575 and "total_comprehensive_owners_cr" not in q["values"]
+
+
+def test_discontinued_operations_are_stored_only_when_there_is_one():
+    doc = _doc("nse_irfc_q4fy26_nbfc.xml")
+    assert "discontinued" not in xbrl_extras.read(doc), "every fixture files 0: the template's filler"
+    for row in doc["facts"]:
+        if row[0] == "ProfitLossFromDiscontinuedOperationsAfterTax" and (doc["contexts"][row[1]] or {}).get("m") == 3:
+            row[3] = -250000000
+    col, d = xbrl_extras.read(doc)["discontinued"]
+    assert col == "Q4FY26" and d["values"]["after_tax_cr"] == -25.0 and d["values"]["continuing_profit_cr"] == 1684.31
+
+
+def test_segment_assets_and_liabilities_by_segment_name():
+    col, s = xbrl_extras.read(_doc("nse_old_titan_q2fy24.xml"))["segment_balance"]
+    assert col == "Q2FY24" and s["n_segments"] == 5
+    jewellery = next(r for r in s["segments"] if r["segment"] == "Jewellery")
+    assert (jewellery["assets_cr"], jewellery["liabilities_cr"]) == (21250.0, 13375.0)
+    assert s["totals"]["assets_cr"] == 32932.0 and s["totals"]["net_liabilities_cr"] == 20467.0
+    _, b = xbrl_extras.read(_doc("nse_hdfcbank_q2fy27_cons.xml"))["segment_balance"]
+    assert b["n_segments"] == 7 and b["totals"]["assets_cr"] == 5165841.58
+    assert "segment_balance" not in xbrl_extras.read(_doc("nse_irfc_q4fy26_nbfc.xml"))
+
+
+def test_face_value_and_dividends_never_store_the_filler():
+    _, d = xbrl_extras.read(_doc("nse_irfc_q4fy26_nbfc.xml"))["dividends"]
+    assert d["values"] == {"face_value": 10}
+    assert xbrl_extras.read(_doc("nse_hdfclife_q2fy27_cons.xml")).get("dividends") is None, "FinalDividend and InterimDividend are 0 there"
+    doc = _doc("nse_hdfclife_q2fy27_cons.xml")
+    for row in doc["facts"]:
+        if row[0] == "FinalDividend":
+            row[3] = 1500000000
+    assert xbrl_extras.read(doc)["dividends"][1]["values"]["final_cr"] == 150.0
+
+
+def test_annual_kmp_pay_and_contingent_liabilities():
+    col, k = xbrl_extras.read(_doc("nse_ar_kanorichem_fy25_standalone.xml"))["kmp_pay"]
+    assert col == "FY25" and k["kind"] == "annual" and k["n_people"] == 13 and "totals" not in k, "the 0 totals are filler"
+    assert k["people"][0] == {"name": "Rajya Vardhan Kanoria", "designation": "Managing Director", "pay_cr": 3.15}
+    _, shivam = xbrl_extras.read(_doc("nse_ar_shivamauto_fy25_standalone.xml"))["kmp_pay"]
+    assert shivam["people"][0]["pay_cr"] == 2.2567
+    _, c = xbrl_extras.read(_doc("nse_ar_kanorichem_fy25_consolidated.xml"))["contingent_liabilities"]
+    assert c["has_contingent"] is True and "total_cr" not in c
+    assert [(r["class"], r["amount_cr"]) for r in c["classes"]] == [("ContingentLiabilityOnDisputedIncomeTax", 5.837), ("TaxContingentLiability", 0.982)]
+    _, none = xbrl_extras.read(_doc("nse_ar_shivamauto_fy25_standalone.xml"))["contingent_liabilities"]
+    assert none["has_contingent"] is False and none["classes"] == []
+    assert not set(SECOND[:4]) & set(xbrl_extras.read(_doc("nse_ar_kanorichem_fy25_standalone.xml")))
+    assert not set(SECOND[4:]) & set(xbrl_extras.read(_doc("nse_irfc_q4fy26_nbfc.xml")))
+
+
+def test_how_many_fixture_filings_fill_each_second_group_key():
+    got = {k: 0 for k in SECOND}
+    for path in sorted(FIXTURES.glob("*.xml")):
+        try:
+            doc = _doc(path.name)
+        except Exception:      # noqa: BLE001 - an event file or another is no results or annual file
+            continue
+        for k in (xbrl_extras.read(doc) if doc else {}):
+            if k in got:
+                got[k] += 1
+    assert got == {"oci": 9, "discontinued": 0, "segment_balance": 7, "dividends": 11, "kmp_pay": 2, "contingent_liabilities": 3}
+
+
+def test_the_second_group_is_remembered_replaced_capped_and_backfilled(settings):
+    d = {}
+    xbrl_extras.remember(d, _doc("nse_old_titan_q2fy24.xml"), "n1", AS_OF, AT)
+    xbrl_extras.remember(d, _doc("nse_ar_kanorichem_fy25_standalone.xml"), "n2", AS_OF, AT)
+    assert {"oci", "segment_balance", "dividends", "kmp_pay", "contingent_liabilities"} <= set(d) and "discontinued" not in d
+    assert d["kmp_pay"][0]["lab"]["by"] == "file" and d["oci"][0]["lab"]["rules"] == "xbrl_extras"
+    xbrl_extras.remember(d, _doc("nse_old_titan_q2fy24.xml"), "n3", AS_OF, AT)
+    assert len(d["oci"]) == 1 and d["oci"][0]["source_news_id"] == "n3", "a revised file takes the place of the same period and basis"
+    slipped = {"scale_held": [{"period": "Q2FY24"}]}
+    xbrl_extras.remember(slipped, _doc("nse_old_titan_q2fy24.xml"), "n1", AS_OF, AT)
+    assert not set(SECOND) & set(slipped)
+    full = {"oci": [{"period": f"Q{q}FY{y}", "basis": "CONSOLIDATED", "kind": "results"} for y in range(10, 26) for q in (1, 2, 3, 4)]}
+    xbrl_extras.remember(full, _doc("nse_irfc_q4fy26_nbfc.xml"), "n1", AS_OF, AT)
+    assert len(full["oci"]) == xbrl_extras.MAX_ENTRIES["oci"] and full["oci"][-1]["period"] == "Q4FY26"
+    from bse_intel.sinks.local import LocalSink
+    sink = LocalSink(settings)
+    xbrl_facts.save(sink, "1", "Q2FY24", "CONSOLIDATED", _doc("nse_old_titan_q2fy24.xml"))
+    xbrl_facts.save_annual(sink, "1", "FY25", "STANDALONE", _doc("nse_ar_kanorichem_fy25_standalone.xml"))
+    cf = sv.CompanyFacts(sink.list_objects(f"{xbrl_facts.PREFIX}1/"), sink.get_object)
+    filled = {}
+    statements_backfill.fill_extras(cf, filled, AT)
+    assert {"oci", "segment_balance", "kmp_pay", "contingent_liabilities", "dividends"} <= set(filled)
+
+
+def test_a_concurrent_writer_keeps_the_second_group_of_both():
+    mine = {"oci": [{"period": "Q2FY27", "basis": "CONSOLIDATED", "kind": "results"}]}
+    fresh = {"oci": [{"period": "Q1FY27", "basis": "CONSOLIDATED", "kind": "results"}]}
+    keep_concurrent_writes(mine, {"oci": []}, fresh)
+    assert [e["period"] for e in mine["oci"]] == ["Q1FY27", "Q2FY27"]
+
+
+def test_a_half_year_profit_is_not_an_oci_entry_and_one_failing_reader_keeps_the_others(monkeypatch):
+    """Review of the second group (30 Oct 2026): Vesuvius's half-yearly file has no OCI figure, only its 6-month profit, which was
+    stored as Q3FY26's OCI entry; and one reader raising lost every key of the file."""
+    doc = xbrl_facts.parse_facts((FIXTURES / "nse_vesuvius_halfyearly_dec_h2fy26.xml").read_bytes(), "520113", "u")
+    assert xbrl_extras.OCI not in xbrl_extras.read(doc)
+    hdfc = next(xbrl_facts.parse_facts(p.read_bytes(), "x", "u") for p in sorted(FIXTURES.glob("*.xml"))
+                if xbrl_extras.SEGMENT_BALANCE in xbrl_extras.read(xbrl_facts.parse_facts(p.read_bytes(), "x", "u")))
+    monkeypatch.setattr(xbrl_extras, "_oci", lambda *a: 1 / 0)
+    assert xbrl_extras.SEGMENT_BALANCE in xbrl_extras.read(hdfc)

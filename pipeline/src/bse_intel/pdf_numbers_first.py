@@ -1767,12 +1767,16 @@ def may_hold_statement(page, layer, ranked: bool) -> bool:
     from .extract import FIGURE_PAGE_AMOUNTS
     if ranked or sum(bool(re.search(r"\d", w[4])) for w in layer.words) >= FIGURE_PAGE_AMOUNTS:
         return True
-    area = abs(page.rect) or 1.0
     try:
-        shares = [abs(type(page.rect)(info["bbox"]) & page.rect) / area for info in page.get_image_info()]
+        return largest_image_share(page) >= SCAN_IMAGE_SHARE
     except Exception:   # noqa: BLE001 - the images cannot be measured: read it, as before
         return True
-    return max(shares, default=0.0) >= SCAN_IMAGE_SHARE
+
+
+def largest_image_share(page) -> float:
+    """The share of the page's area its largest image covers (0 for none); raises when the images cannot be measured."""
+    area = abs(page.rect) or 1.0
+    return max((abs(type(page.rect)(info["bbox"]) & page.rect) / area for info in page.get_image_info()), default=0.0)
 
 
 @_measured

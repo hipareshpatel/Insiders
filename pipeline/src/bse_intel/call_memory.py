@@ -19,11 +19,12 @@ import re
 import time
 from contextlib import nullcontext
 
-from . import gate
+from . import gate, slide_geometry
 from .call_summary import _figures, quarter_of
 from .dossier import _hash, _norm, label
 from .models import CallMemoryOutput, CallPoint
 from .periods import canonical_period
+from .settings import call_memory_geometry
 from .timeutil import now_iso
 
 log = logging.getLogger(__name__)
@@ -614,9 +615,12 @@ def point_id(scope: str, p: CallPoint) -> str:
 
 
 def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: list[tuple[int | None, str]] | None = None,
-                 scope: str = "") -> tuple[list[CallPoint], list[dict]]:
+                 scope: str = "", layouts: dict | None = None) -> tuple[list[CallPoint], list[dict]]:
     """Each point checked by code (spec section 3); returns (kept, dropped), a dropped one with its reason. `scope` (the
-    company and filing) makes the ids; `pages` defaults to the text's own page markers."""
+    company and filing) makes the ids; `pages` defaults to the text's own page markers. `layouts` ({page number: word boxes},
+    slide_geometry.page_words) lets a slide point's figure be tied to its label by position (TODO 144, switch
+    CALL_MEMORY_GEOMETRY); without it, or with the switch off, no point is judged by geometry."""
+    geometry = bool(layouts) and call_memory_geometry()
     pages = pages if pages is not None else split_pages(text)
     kept: list[CallPoint] = []
     dropped: list[dict] = []
@@ -678,6 +682,9 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
             continue
         if (issue := label_issue(p, quote)):
             drop(p, "figure", issue)
+            continue
+        if geometry and p.section == "SLIDE" and p.page in layouts and (issue := slide_geometry.geometry_issue(p, layouts[p.page])):
+            drop(p, "label", issue)   # the figure stands by another label on the slide (TODO 144)
             continue
         p.figure_beside_quote = figure_issue(p, quote) is not None   # kept, but the quote alone does not carry every figure
         if (issue := unit_issue(p, quote, context)):

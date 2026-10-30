@@ -164,3 +164,11 @@ test("the progress box says how many members are not covered yet", () => {
   assert.match(progressText({ ...p, members: 498 }).note!, /^498 members; 1 not covered yet \(a REIT/);
   assert.equal(progressText({ ...p, members: 497 }).note, null);
 });
+
+test("a link that names only a view ranks by that view's own column; a picked column wins", () => {
+  assert.equal(readQuery(new URLSearchParams("")).sort, "pat_yoy");
+  assert.equal(readQuery(new URLSearchParams("view=momentum")).sort, "pat_momentum");
+  assert.equal(readQuery(new URLSearchParams("view=qoq")).sort, "pat_qoq");
+  assert.equal(readQuery(new URLSearchParams("view=qoq&sort=mcap")).sort, "mcap");
+  assert.equal(readQuery(new URLSearchParams("view=nonsense")).sort, "pat_yoy");
+});

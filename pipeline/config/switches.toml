@@ -54,3 +54,8 @@ MEMORY_FILE_ONLY = true          # dossier merge: a card's reading of a statemen
 # the sheet contradicts is cut. Blind A/B round 2 (9 filings): WRONG 9 on against 14 off, better on 8 of 9, worse on none. A
 # repository variable CARD_FACT_SHEET = 0 turns it off; 20 live cards are blind-scored the next day.
 CARD_FACT_SHEET = true           # pipeline: the results card's figures from the exchange file in memory
+# On 30 Oct 2026, ~19:20 IST (owner: "Yes, switch on the faster PDF setting"): the numbers-first reader stops reading scanned
+# pages once both bases are stated (docs/bench/stop-early-live.md: 72 stored PDFs, 0 of 341 key figures changed, 11.3 s saved
+# a filing; 5 filings come inside the slip check's 60 s cap only with it on, none of their revenue or total income wrong).
+# A repository variable NUMFIRST_STOP_EARLY = 0 turns it off; the next 20 live results filings are checked against the file.
+NUMFIRST_STOP_EARLY = true       # pdf_numbers_first: stop early on scanned pages

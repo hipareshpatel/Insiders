@@ -92,19 +92,20 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
-**Open work, in order (30 Oct 2026, 07:40 IST; the one list, kept current after every step).**
+**Open work, in order (30 Oct 2026, 10:10 IST; the one list, kept current after every step).**
 | # | Item | State | Next |
 |---|---|---|---|
-| 1 | Past statements into memory (statements-backfill) | Running: ~1,550 of ~1,900 companies, runs of 50 a few minutes apart | OPS rows; look at the ~35 entries the profit check left out |
-| 2 | Re-read the 223 recent results companies from the exchange files (seed-memory) | Waiting for 1 (same memory jobs) | Runs of 50 |
-| 3 | Call memory tests on Flash-Lite, the same 10 documents (TODO 101) | A today's prompt 39%, B new prompt 49%; C smaller parts, D + thinking running | Independent wrong-point check; the best on 10 new documents; then ship the prompt |
-| 4 | Call memory live (on since 06:51 IST; the job's gate fixed, PR #234) | First queued readings from 07:41 IST | Count wrong points on the first readings |
-| 5 | Business mix from the results file's segment facts (TODO 137) | Being built (code, no AI) | Review, test, ship; then audit every stock-page section on ~20 companies |
+| 1 | Past statements into memory (statements-backfill) | **Done 07:35 IST**: ~73,100 entries in ~1,730 companies; 47 without stored facts; ~59 left out by the profit check (e.g. MTNL Q2FY24 file -7.93 Cr against memory -793) | OPS rows; the left-outs as a class; the 47 |
+| 2 | Re-read the 223 recent results companies (seed-memory, 5 runs of up to 50) | Runs 1-2 done (08:35, 09:34 IST), 3 running, 4-5 queued one after another | Then the statements-backfill re-run for past quarters' business mix (5) |
+| 3 | Call memory tests on Flash-Lite, the same 10 documents (TODO 101) | **Scored**: found A 39%, B 49%, C (small parts) 72%, D (C + thinking) 65%; wrong in a blind sample of 60 each: A 3.3%, B 1.7%, C 6.7%, D 5.0% (bar 2%); 6 of 10 wrong = a deck table's period misread | Checks merged (#240); C retest running. **Owner: switch live to C if the retest is at or under 2% wrong** |
+| 4 | Call memory live (on since 06:51 IST; job gate fixed, PR #234) | **Reading**: SAMHI, Thyrocare, Praj, Hikal, Greaves Cotton read and kept (runs 40996847766, 41002468519) | Count wrong points on the live readings |
+| 5 | Business mix from the results file's segment note (TODO 137) | **Live since PR #236 (07:59 IST)**: code from the file, no AI; single-segment filers say so | Past quarters: statements-backfill restart after 2; then audit every stock-page section on ~20 companies |
 | 6 | A/B of fact-sheet cards on 10 companies (TODO 134, owner asked) | Not started | Build the switch, run off/on, blind score |
-| 7 | PDF reader (its own session) | Decided 30 Oct 07:20 IST: #232 after its skipped-page list; measure where OCR time goes; native fallback with options on; pdf-shadow PBT by screener's rule; pdf-oos picker fix | Review each before main |
-| 8 | MEMORY_FILE_ONLY (memory's figures from the exchange file only) | Built, off | Owner's word; after 1 |
-| 9 | Card strategy: press release into the results card and memory (TODO 135); deck and call cards lead with what changed (TODO 136); Gemini's good parts (TODO 128) | Planned | Owner's Yes / No / Later, and examples |
-| 10 | Smaller: Z.ai keys lost their three free models (providers check red); balance-sheet gaps (TODO 129); annual-report extras (TODO 132) | Open | In turn |
+| 7 | PDF reader (its own session) | #232 merged (OCR only pages that may hold a statement; lost nothing); SLIP_CHECK_READER_OPTIONS on (#236). Two test runs downloaded PDFs again (store-first missing; logged in docs/bench/test-downloads.md), stopped; every file kept | Review #237: store-first for test PDFs, kept PDFs into R2, pdf-shadow PBT by screener's rule, pdf-oos picker |
+| 8 | MEMORY_FILE_ONLY (memory's figures from the exchange file only) | **Owner: Yes (30 Oct ~10:50 IST)**; built, off; ~22 tests change setup | Turn on with the tests reworked |
+| 9 | Card strategy: press release into the results card and memory (TODO 135); deck and call cards lead with what changed (TODO 136); Gemini's good parts (TODO 128) | **Owner: Yes to all three (30 Oct ~10:50 IST)** | Build 135 now; 136 after call memory passes its bar; owner's examples for 136 |
+| 10 | XBRL facts memory never reads (TODO 138); raw XBRL deleted at 180 days (TODO 139, rule exists since 27 Oct; facts copy survives, long text does not) | **Owner: Yes to every topic and to TODO 132 (30 Oct ~10:50 IST)** | Count how often each is filled; build audit flags, cash-flow detail, related parties, financials' ratios first; full text kept before the first deletion (~Apr 2027) |
+| 11 | Smaller: balance-sheet gaps (TODO 129); annual-report extras (TODO 132). Z.ai: all three free models still served (tested 30 Oct), kept | Open | In turn |
 
 **Summary for the owner, 30 Oct 2026, 07:00 IST.**
 - Done: the live path saves every result by screener's rules (3); one results card a quarter (6); late exchange file fetched

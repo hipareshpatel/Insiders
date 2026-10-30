@@ -1063,3 +1063,111 @@ def test_a_measured_test_may_read_with_the_held_prompt(monkeypatch, settings):
     monkeypatch.setenv("CALL_MEMORY_PROMPT", "v2")
     held = PromptEngine(settings)._call_memory.template
     assert "give fewer points rather than a loose one" not in held and "split by segment, product, channel" in held
+
+
+# ---- period column and speaker checks (blind review of 30 Oct 2026)
+WAAREE_P55 = """--- Page 55 of 60 ---
+Particulars
+CY2025
+CY2026
+Q1FY27
+Q2FY27
+Q3FY27
+USA (GW)
+43.1
+7.8
+11.4
+-
+India (GW)
+38.0
+14.5
+11.9
+8.9
+"""
+ROUTE_P14 = """--- Page 14 of 23 ---
+Strong Recurring Revenue
+90%
+89%
+93%
+FY 24-25
+FY 25-26
+LTM Sep 26
+"""
+
+
+def _slide(page_text: str, **kw):
+    page = int(page_text.split("Page ")[1].split()[0])
+    return cm.check_points([_point(section="SLIDE", page=page, **kw)], page_text)
+
+
+def test_figure_under_the_wrong_column_is_dropped():
+    # Waaree p55: 8.9 is Q3FY27 (the row has four figures under five headers, counted from the right); 11.9 is Q2FY27
+    kept, dropped = _slide(WAAREE_P55, statement="India installations were 8.9 GW in Q2FY27", metric="india_installations",
+                           topic="india_installations", value=8.9, unit="GW", period="Q2FY27",
+                           quote="India (GW) 38.0 14.5 11.9 8.9")
+    assert not kept and dropped[0]["reason"] == "period"
+    kept, dropped = _slide(WAAREE_P55, statement="India installations were 11.9 GW in Q2FY27", metric="india_installations",
+                           topic="india_installations", value=11.9, unit="GW", period="Q2FY27",
+                           quote="India (GW) 38.0 14.5 11.9 8.9")
+    assert kept and not dropped
+
+
+def test_column_check_on_headers_after_the_figures():
+    # Route p14: 90 / 89 / 93 under FY24-25 / FY25-26 / LTM Sep 26
+    point = lambda value, period: _point(period=period, value=value)
+    assert cm._column_verdict(point(93, "LTM Sep 26"), ROUTE_P14) is None
+    assert cm._column_verdict(point(90, "FY25"), ROUTE_P14) is None
+    assert cm._column_verdict(point(93, "FY25"), ROUTE_P14) is not None
+    assert cm._column_verdict(point(90, "LTM Sep 26"), ROUTE_P14) is not None
+
+
+def test_column_check_keeps_when_the_page_cannot_tell():
+    point = lambda value, period: _point(period=period, value=value)
+    assert cm._column_verdict(point(7, "Q2FY27"), "8.0\n7.0\nQ1FY27\nQ2FY27\n") is None   # two columns only
+    assert cm._column_verdict(point(7, "Q2FY27"), "no figures or headers here") is None
+    assert cm._column_verdict(point(7, "Q4FY27"), "6.0\n7.0\n8.0\nQ1FY27\nQ2FY27\nQ3FY27\n") is None   # period not a header
+    assert cm._column_verdict(point(7, "Q1FY27"), "5.0\n6.0\n7.0\n8.0\nQ1FY27\nQ2FY27\nQ3FY27\n") is None   # more figures than headers
+
+
+KEI_CALL = """--- Page 1 of 4 ---
+MANAGEMENT: MR. ANIL GUPTA - CMD
+MODERATOR: MR. ACHAL LOHADE
+--- Page 2 of 4 ---
+Moderator:
+Welcome to the call. We have the next question from the line of Kevin Shah from Aditya Birla Capital.
+Kevin Shah:
+So in the interview today morning you mentioned that volume for FY27 will be somewhere around 10%. So, and which is more conservative than your earlier guidance of 16% to 17%. Can you throw some light why?
+Rajeev Gupta:
+Sir, if you see the volume growth 16% to 17% and price has increased by 50%, this means you are talking of a 67% to 70% sales value growth. Is it right or wrong?
+Kevin Shah:
+Yes, I get it.
+Rajeev Gupta: Maintenance capex is INR100 crores to INR150 crores, not more than that.
+"""
+
+
+def _call_point(**kw):
+    base = dict(type="guidance", statement="Volume growth about 10% in FY27", metric="volume_growth", topic="fy27_volume_growth",
+                value=10, unit="PERCENT", period="FY27", section="QA", speaker="MANAGEMENT", page=2)
+    return _point(**{**base, **kw})
+
+
+def test_an_analysts_words_are_not_management_guidance():
+    kept, dropped = cm.check_points([_call_point(quote="you mentioned that volume for FY27 will be somewhere around 10%")], KEI_CALL)
+    assert not kept and dropped[0]["reason"] == "speaker"
+    # the answer's own words, the figure only in the question before it
+    kept, dropped = cm.check_points(
+        [_call_point(quote="Sir, if you see the volume growth 16% to 17% and price has increased by 50%")], KEI_CALL)
+    assert not kept and dropped[0]["reason"] == "speaker"
+    # management's own turn stating the figure is kept
+    kept, _ = cm.check_points([_call_point(statement="Maintenance capex INR100 to 150 crore", metric="maintenance_capex",
+                                           topic="maintenance_capex", value=100, unit="INR_CR", period=None, type="capex_capacity",
+                                           quote="Maintenance capex is INR100 crores to INR150 crores")], KEI_CALL)
+    assert len(kept) == 1
+
+
+def test_speaker_check_keeps_when_turns_cannot_be_told_apart():
+    point = _call_point(quote="you mentioned that volume for FY27 will be somewhere around 10%")
+    assert cm._speaker_issue(point, KEI_CALL.replace("Kevin Shah:\n", "").replace("Moderator:\n", "")) is None   # no turns
+    no_intro = KEI_CALL.replace("We have the next question from the line of Kevin Shah from Aditya Birla Capital.", "Please go ahead.")
+    assert cm._speaker_issue(point, no_intro) is None   # nobody introduced as an analyst
+    assert cm._speaker_issue(_call_point(quote="a quote that is nowhere in the call"), KEI_CALL) is None

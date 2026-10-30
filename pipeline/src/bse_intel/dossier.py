@@ -1224,8 +1224,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     d["financial_metrics"] = _cap_metrics(list(metrics.values()))
 
     segments = {(_norm(s["segment"]), _period(s["period"])): s for s in d.get("segment_mix", [])}
+    from_file = {e["period"] for e in d.get("segment_mix", []) if (e.get("lab") or {}).get("by") == "file"}
     for s in delta.segment_mix:
         key = (_norm(s.segment), _period(s.period))
+        if key[1] in from_file:
+            continue      # the exchange's own segment note (segments.py) outranks a model's reading of the period
         existing = segments.get(key)
         if existing and existing.get("as_of", "") > as_of:
             continue

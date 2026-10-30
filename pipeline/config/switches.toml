@@ -40,3 +40,7 @@ SLIP_CHECK_NUMFIRST = true       # slip_check.PdfCheck: numbers-first reader fir
 # documents found 59 of 123 important points (48%), 3 of 120 kept points wrong (2.5%; bar 2%). A repository variable
 # MEMORY_CALL_V2 = 0 turns it off in every job, the call-memory job included.
 MEMORY_CALL_V2 = true            # F180: the 15-minute run queues transcripts and decks; call-memory.yml reads them
+# On 30 Oct 2026, ~07:55 IST (lead, the owner's technical calls left to the lead): the unit-slip check's text-layer fallback
+# reads with the F215 options on, as the bench scored it (hard key 156 right / 0 wrong on, 65 / 10 off; out of sample,
+# numbers-first then this fallback 267 right / 12 wrong of 500, against 262 / 12 off).
+SLIP_CHECK_READER_OPTIONS = true # slip_check.PdfCheck: the fallback reader with PDF_DATES_2DIGIT, PDF_PAGE_RANK, PDF_ROW_FIXES

@@ -216,7 +216,9 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
                 out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
         added = fill(merged, entries)
         out["segments"] += segments_added
-        plan.append((scrip, added, (read, merged) if (added or segments_added) and apply else None))
+        # written when anything changed, a clean-up with nothing added too (30 Oct 2026: filler-zero ratios dropped by
+        # xbrl_extras.remember were never saved, the run writing only where entries were added)
+        plan.append((scrip, added, (read, merged) if (added or segments_added or merged != read) and apply else None))
     writes = [(scrip, job) for scrip, _, job in plan if job is not None]
     results: dict[str, tuple[str, Exception | None]] = {}
     if writes:

@@ -130,6 +130,14 @@ def slip_check_numfirst() -> bool:
     return _switch("SLIP_CHECK_NUMFIRST")
 
 
+def slip_check_reader_options() -> bool:
+    """SLIP_CHECK_READER_OPTIONS (default off; lead, 30 Oct 2026): the unit-slip check's text-layer reader (the fallback after
+    numbers-first) runs with the F215 options on (``pdf_reader_options``: PDF_DATES_2DIGIT, PDF_PAGE_RANK, PDF_ROW_FIXES), as the
+    bench scored it: hard key 156 right / 0 wrong on, 65 / 10 off; out of sample, numbers-first then this fallback 267 right /
+    12 wrong of 500 on, 262 / 12 off. Read at the call."""
+    return _switch("SLIP_CHECK_READER_OPTIONS")
+
+
 def slip_check_numfirst_seconds() -> float:
     """SLIP_CHECK_NUMFIRST_SECONDS (default 60): the wall-clock cap on the numbers-first read of one filing in the unit-slip check.
     A scan can cost 16 pages of OCR and 220 cell re-reads under the one OCR lock, so past the cap the reader gives no answer

@@ -15,8 +15,9 @@ import filingsImport from "../../db/statements/filings_import.sql?raw";
 import filingsUpdate from "../../db/statements/filings_update.sql?raw";
 import kvAdd from "../../db/statements/kv_add.sql?raw";
 import resultsKpiUpsert from "../../db/statements/results_kpi_upsert.sql?raw";
-import indexMembersUpsert from "../../db/statements/index_members_upsert.sql?raw";
-import indexMembersPrune from "../../db/statements/index_members_prune.sql?raw";
+import indexMembersAdd from "../../db/statements/index_members_add.sql?raw";
+import indexMembersClose from "../../db/statements/index_members_close.sql?raw";
+import indexMembersOpen from "../../db/queries/index_members_open.sql?raw";
 import kvSet from "../../db/statements/kv_set.sql?raw";
 import runsUpsert from "../../db/statements/runs_upsert.sql?raw";
 import usageAdd from "../../db/statements/usage_add.sql?raw";
@@ -77,8 +78,8 @@ export const STATEMENTS: Record<string, string> = {
   kv_set: kvSet,
   kv_add: kvAdd,
   results_kpi_upsert: resultsKpiUpsert,
-  index_members_upsert: indexMembersUpsert,
-  index_members_prune: indexMembersPrune,
+  index_members_add: indexMembersAdd,
+  index_members_close: indexMembersClose,
 };
 
 /** Read queries with positional parameters. */
@@ -119,5 +120,6 @@ export const QUERIES: Record<string, string> = {
   cards_held_recent: cardsHeldRecent,
   snapshot_count: snapshotCount,
   feedback_examples: feedbackExamples,
+  index_members_open: indexMembersOpen,
 };
 

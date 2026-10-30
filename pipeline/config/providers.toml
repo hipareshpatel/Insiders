@@ -84,7 +84,9 @@ base_url = "https://api.z.ai/api/paas/v4"
 # Owner, 30 Oct 2026: "don't discard any models without testing". `models` lists them as unlisted, never as missing.
 unlisted_models_served = true
 # Only the Flash models are free (Z.AI pricing page, read 22 Oct 2026: GLM-4.5-Flash, GLM-4.7-Flash, GLM-4.6V-Flash; every
-# other GLM, GLM-5.3 included, is paid, so none of them goes on a route here; GLM-5.3 runs free through NVIDIA instead).
+# other GLM, GLM-5.3 included, is paid, so none of them goes on a route here; GLM-5.3 ran free through NVIDIA instead
+# until NVIDIA retired it: 410 Gone, providers check 41060262784, 30 Oct 2026; taken off every route, as was Mistral's
+# mistral-large-2512, 403 "not available in your subscription tier" on the Free plan, run 41060254218).
 # Concurrency per account (Rate Limits page, 22 Oct): GLM-4.5-Flash 2, GLM-4.7-Flash 1, GLM-4.6V-Flash 1. Each route keeps
 # 1 in flight per process because the pipeline and the call seed run at the same time on the same key, which already
 # makes 2 for 4.5-Flash; the second key (zai_2) is its own account with its own slots. Today's failures are timeouts and
@@ -447,16 +449,6 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
-[[routes.pass2]]
-timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
-provider = "nvidia"
-model = "z-ai/glm-5.3"
-spare = true
-json_mode = true
-max_tokens = 6000
-context_tokens = 120000
-extra_body = { chat_template_kwargs = { enable_thinking = false } }
-limits = { rpm = 30 }
 
 [[routes.pass2]]
 provider = "zai"
@@ -478,14 +470,6 @@ max_tokens = 6000
 context_tokens = 200000
 limits = { rpm = 15 }
 
-[[routes.pass2]]
-provider = "mistral"
-model = "mistral-large-2512"   # the last resort (owner, 22 Oct). Free plan: 250k tokens/min, 1 request/s (Limits page, 22 Oct),
-spare = true                   # paid for from the plan's $10 a month that pass 1's ministral also uses; past it requests fail,
-json_mode = true               # nothing is billed (no payment method)
-max_tokens = 6000
-context_tokens = 120000
-limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.pass2_bulk]]
 provider = "zai"
@@ -588,16 +572,6 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
-[[routes.pass2_bulk]]
-timeout_s = 120   # 25 Oct 2026, TODO 34: a spare on one-filing card writing waits 120 s at most (13-18 min walks, run 40192588628)
-provider = "nvidia"
-model = "z-ai/glm-5.3"
-spare = true
-json_mode = true
-max_tokens = 6000
-context_tokens = 120000
-extra_body = { chat_template_kwargs = { enable_thinking = false } }
-limits = { rpm = 30 }
 
 [[routes.pass2_bulk]]
 provider = "zai"
@@ -619,14 +593,6 @@ max_tokens = 6000
 context_tokens = 200000
 limits = { rpm = 15 }
 
-[[routes.pass2_bulk]]
-provider = "mistral"
-model = "mistral-large-2512"   # the last resort (owner, 22 Oct). Free plan: 250k tokens/min, 1 request/s (Limits page, 22 Oct),
-spare = true                   # paid for from the plan's $10 a month that pass 1's ministral also uses; past it requests fail,
-json_mode = true               # nothing is billed (no payment method)
-max_tokens = 6000
-context_tokens = 120000
-limits = { rpm = 50, tpm = 250_000 }
 
 # First since 22 Oct: the one Flash model that answered every packed request on both keys that day (37 of 37);
 # 3.5-3.8 Flash were at their daily quotas by morning (owner: "go ahead with both bundling changes").
@@ -762,15 +728,39 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
+
+# Listed on our keys on 30 Oct 2026 (providers check 41059917128), owner: "which can we use?". Kimi K2.6 answered 404 on
+# NVIDIA on 19 Oct; MiniMax M3.1 Flash gave 16 empty answers through OpenRouter in round 6; Qwen 3.8 27B is a Groq preview.
+# Trial only: one tiny request each first, then the TODO 142 card grid on stored filings, blind-scored. Tiny requests
+# (run 41062958287): MiniMax M3.1 Flash OK on both NVIDIA keys, Qwen 3.8 27B and gpt-oss-120b OK on both Groq keys; Kimi K2.6
+# 404 "model name not found" on both NVIDIA keys though listed, so it is not here.
 [[routes.trial_new]]
 provider = "nvidia"
-model = "z-ai/glm-5.3"
+model = "minimaxai/minimax-m3.1-flash"
 spare = true
+timeout_s = 150
 json_mode = true
 max_tokens = 400
 context_tokens = 120000
-extra_body = { chat_template_kwargs = { enable_thinking = false } }
 limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "groq"
+model = "qwen/qwen3.8-27b"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 30, tpm = 6000 }
+
+[[routes.trial_new]]
+provider = "groq"
+model = "openai/gpt-oss-120b"
+spare = true
+json_mode = true
+max_tokens = 400
+context_tokens = 32000
+limits = { rpm = 30, tpm = 8000 }
 
 # Mistral Medium: 20k tokens/min and 1 request/s (Limits page, 22 Oct 2026). With no tpm set the gateway sent prompts
 # over 20k and every one came back 429; now a prompt that cannot fit goes straight to the next entry.
@@ -1000,15 +990,6 @@ context_tokens = 120000
 extra_body = { chat_template_kwargs = { thinking = false } }
 limits = { rpm = 30 }
 
-[[routes.pass2_long]]
-provider = "nvidia"
-model = "z-ai/glm-5.3"
-spare = true
-json_mode = true
-max_tokens = 6000
-context_tokens = 120000
-extra_body = { chat_template_kwargs = { enable_thinking = false } }
-limits = { rpm = 30 }
 
 [[routes.pass2_long]]
 provider = "zai"
@@ -1029,14 +1010,6 @@ max_tokens = 6000
 context_tokens = 200000
 limits = { rpm = 15 }
 
-[[routes.pass2_long]]
-provider = "mistral"
-model = "mistral-large-2512"   # the last resort (owner, 22 Oct). Free plan: 250k tokens/min, 1 request/s (Limits page, 22 Oct),
-spare = true                   # paid for from the plan's $10 a month that pass 1's ministral also uses; past it requests fail,
-json_mode = true               # nothing is billed (no payment method)
-max_tokens = 6000
-context_tokens = 120000
-limits = { rpm = 50, tpm = 250_000 }
 
 [[routes.vision]]
 provider = "gemini"

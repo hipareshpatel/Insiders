@@ -97,20 +97,24 @@ live calls apart, blind-judge, switch only at or under 2% wrong; (2) a late file
 (option A); (3) empty balance-sheet entries removed by code (backup, 50 a run, dry run first); (4) the card design is already
 given (TODO 128 example, the Gemini APAR write-up, TODO 136): build from it, ask nothing more.
 
-**Open work, in order (30 Oct 2026, 12:55 IST; the one list, kept current after every step).**
+**Owner's decisions, 30 Oct 2026 ~17:25-19:20 IST:** (1) remove AI balance-sheet snapshots the exchange file covers: Yes
+(TODO 141); (2) the chart-label rule for call memory: "Do it" (TODO 144); (3) NUMFIRST_STOP_EARLY on: Yes (PR #261, live
+~19:26 IST). The owner offered a second Mistral key; lead: not needed, Mistral's limits are per organisation (TODO 145).
+
+**Open work, in order (30 Oct 2026, 19:30 IST; the one list, kept current after every step).**
 | # | Item | State | Next |
 |---|---|---|---|
-| 1 | Past quarters' business mix and the new file data into memory (statements-backfill restart) | **Running**, runs of 50 from main, each backed up: about 1,550 of ~1,780 companies done (12:55 IST, at 544488). Stopped twice: one "409 Conflict" from the store (502090, did not repeat) and a division by zero on tiny segments (534328, fixed in PR #245) | Let it finish (~15 min); OPS rows; the left-outs as a class (unit slips such as MTNL, 533553 at a ten-millionth) |
-| 2 | A/B of fact-sheet cards on 10 companies (TODO 134) | Run 1 void (could not find the file without NSE; the warning caught it). **Run 2 running** (link from the stored card, PR #245) | Blind-score the 6 with a file; the owner decides the switch |
-| 3 | Call memory, prompt v2 + small parts (TODO 101) | **Not under the bar**: the owner's second sample of 150 points (30 Oct): 6 of 146 wrong (4.1%); both samples 9 of 293 (3.1%). Live keeps the current prompt | All 6 are a deck chart's or table's figure paired with the wrong label. A text-only rule cannot find them (TODO 144); a rule by the figure's position on the page is the owner's Yes / No / Later |
-| 4 | Call memory live (on since 06:51 IST) | Reading; label check live since PR #244 (11:54 IST). Same 9 documents read the live way (30 Oct): 1 of 66 sampled points wrong (1.5%, a Thyrocare slide's franchisee count read as its test menu), but 75 points kept against v2's 293 | Keeps running; the same chart-label class as v2 (TODO 144) |
-| 5 | MEMORY_FILE_ONLY (owner Yes) | **On since PR #242 (~11:37 IST)** | Watch: a PDF-only results card has no results table until its file arrives (about 1 in 6 at first, estimate); the catch-up fills it |
-| 6 | XBRL extras (TODO 138, 132; owner Yes) | First group live (#242); past quarters with item 1 | Second group: OCI, discontinued, segment assets, dividends; annual KMP pay and contingent liabilities |
-| 7 | Stock-page audit (TODO 137 step 1) | Not started | After item 1: every section on ~20 companies, blank / wrong / right with its source |
-| 8 | Press release into the results card and memory (TODO 135; owner Yes) | Not started | After the A/B (same code) |
-| 9 | Deck and call cards lead with what changed (TODO 136; owner Yes) | Waits for call memory to pass its bar | The owner's 34 example cards are in docs/design/card-examples/ (never ask again) |
-| 10 | PDF reader (its own session) | #237 merged (PDFs read from our store first; kept PDFs stored), #243 merged (NUMFIRST_STOP_EARLY, off: 178 of 547 scanned-page reads skipped, 0 of 500 figures changed); #253, #255 the live-path timing docs; #257, #258 bench-only API readers (Mistral OCR, nemotron-parse, nemotron-parse-2.0; run 41063175585) | Live-path timing done (docs/bench/stop-early-live.md): the clean sample is 72 stored PDFs, one copy: 11.3 s saved a filing, 0 of 341 figures changed, 5 filings drop under the slip check's 60 s cap only with the switch on (0 the other way), with no wrong revenue or total income figure on them. The slip check asks only revenue / total income / interest earned, never PBT. NUMFIRST_STOP_EARLY stays off; the lead takes the call to the owner |
-| 11 | Smaller: balance-sheet gaps (TODO 129); the 47 companies with no stored facts; raw XBRL expiry check (TODO 139, before ~Apr 2027) | Open | In turn |
+| 1 | Rating snapshots the 30 Oct empty-snapshot clean-up removed (found by the review of PR #256) | **Putting back**: 407 in 256 companies from the runs' backups (`statements-backfill --put-back-ratings`, 50 a run, backed up); run 1 of 6 put back 63 (19:24 IST). The same runs drop 115 AI balance snapshots the file covers on these companies (344 kept: a figure the file lacks) | Finish the chain; check one rating company's stock page; then the file-covered drop over all companies, dry run with the count first (TODO 141) |
+| 2 | 20 live results cards on the fact sheet (CARD_FACT_SHEET, on 16:00 IST) | Scheduled 31 Oct ~07:18 IST | Blind-score; off again if worse |
+| 3 | NUMFIRST_STOP_EARLY (on ~19:26 IST) | Live | 31 Oct ~11:30 IST: the first 20 live results filings it read, revenue and total income against the file; any wrong, off (repository variable = 0) |
+| 4 | API OCR readers on the hard set (Mistral OCR, NVIDIA nemotron-parse 1 and 2; #257, #258) | Run 41063175585 (GitHub; kept PDFs, no NSE; 65 pages a reader, caps) | Score against the 340-figure key (best of 11 readers today: 19% right); whether the boxes help TODO 144 |
+| 5 | Card model grid (TODO 142) | Trial route has MiniMax M3.1 Flash (NVIDIA), Qwen 3.8 27B and gpt-oss-120b (Groq), each answered a tiny request (run 41062958287); Kimi K2.6 404, Nemotron 3 Ultra out (53-58% WRONG measured) | Build the grid on stored filings (no NSE): a model named for a test runs on the card route; blind-score against today's writers |
+| 6 | Card text strictness (TODO 142, CARD_TEXT_SUPPORT, off) | In-sample 12 of 23 targeted WRONG dropped, 19 true items dropped too (2.7%) | Out-of-sample on/off over stored live cards with real memory; blind-judge the dropped items |
+| 7 | Chart-label rule for call memory (TODO 144, owner "Do it") | Built behind CALL_MEMORY_GEOMETRY (off), unit-tested; not measured: the decks' PDFs are not kept | Owner's A/B: A = fetch the 9 PDFs once more, B = keep deck PDFs / word positions from now on (lead: B) |
+| 8 | Call memory v2 (TODO 101) | Not under the bar (6 of 146 wrong); live way 1 of 66 wrong with 75 points kept against 293 | Waits on item 7 |
+| 9 | Press release into the results card and memory (TODO 135; owner Yes) | Not started | After items 2 and 5 |
+| 10 | Deck and call cards lead with what changed (TODO 136; owner Yes) | Waits for call memory | The owner's 34 example cards are in docs/design/card-examples/ (never ask again) |
+| 11 | Smaller: PBT definition for numbers-first (TODO 143, later: no live path uses it); stock-page items (Q1FY24 gap, stale standalone, bank/insurer tables TODO 129, overdue guidance); the 47 companies with no stored facts; XBRL extras' second group; raw XBRL expiry check (TODO 139, before ~Apr 2027) | Open | In turn |
 
 **Summary for the owner, 30 Oct 2026, 07:00 IST.**
 - Done: the live path saves every result by screener's rules (3); one results card a quarter (6); late exchange file fetched

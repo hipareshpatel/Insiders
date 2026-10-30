@@ -1446,16 +1446,32 @@ def bench_symbols(docs_dir: str | None = None) -> set[str]:
     return symbols
 
 
-_STATEMENT_WORDS = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|total\s+(?:income|revenue)|net\s+sales|"
-                             r"interest\s+earned|profit\s+before\s+tax", re.I)
+_STATEMENT_WORDS = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|total\s+(?:income|revenue)|net\s+sales|gross\s+sales|"
+                             r"interest\s+earned|profit\s*(?:/\s*\(?\s*loss\s*\)?\s*)?before\s+(?:exceptional\s+items\s+and\s+)?tax|"
+                             r"premiums?\s+earned|net\s+premium", re.I)
+
+
+def _scanned_or_drawn(page, text: str) -> bool:
+    """A page only OCR can read: one image covers at least ``SCAN_IMAGE_SHARE`` of it (its text layer, if any, is the scanner's
+    and may be garbled), or it has images or vector drawings and almost no words (a statement drawn as paths)."""
+    from .pdf_numbers_first import SCAN_IMAGE_SHARE, largest_image_share
+
+    try:
+        if largest_image_share(page) >= SCAN_IMAGE_SHARE:
+            return True
+    except Exception:   # noqa: BLE001 - the images cannot be measured: keep the PDF
+        return True
+    return len(text.split()) < 30 and bool(page.get_images() or page.get_drawings())
 
 
 def holds_results(source, max_pages: int = MAX_PAGES) -> bool:
     """Whether a PDF (bytes) may hold a results statement: a page of its text layer names a statement line (revenue from
-    operations, total income, profit before tax...), or a page is a scan (few words, an image), which only OCR can read. NSE's
-    "results" announcements also carry AGM proceedings, postal ballot results, Reg 30 letters and asset cover certificates (30
-    Oct 2026: 76 of 500 key figures paired with such a PDF, where a stray number could be "placed"); those have neither. A file
-    pymupdf cannot open is left to the locator, as before."""
+    operations, total income, profit (loss) before tax, premiums earned...), or a page is a scan or a drawing that only OCR can
+    read (``_scanned_or_drawn``). NSE's "results" announcements also carry AGM proceedings, postal ballot results, Reg 30
+    letters and asset cover certificates (30 Oct 2026: 76 of 500 key figures paired with such a PDF, where a stray number could
+    be "placed"); those have neither. Known and accepted: voting results or a scrutinizer's report with a scanned page still
+    pass, as without OCR a scanned letter cannot be told from a scanned statement. A file pymupdf cannot open is left to the
+    locator, as before."""
     import pymupdf
 
     try:
@@ -1466,7 +1482,7 @@ def holds_results(source, max_pages: int = MAX_PAGES) -> bool:
         for i in range(min(doc.page_count, max_pages)):
             page = doc[i]
             text = page.get_text()
-            if _STATEMENT_WORDS.search(text) or (len(text.split()) < 30 and page.get_images()):
+            if _STATEMENT_WORDS.search(text) or _scanned_or_drawn(page, text):
                 return True
         return doc.page_count == 0
     finally:

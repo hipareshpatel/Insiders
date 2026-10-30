@@ -502,6 +502,42 @@ def test_holds_results_tells_a_statement_or_a_scan_from_an_agm_letter():
                                            "Asset cover certificate as on 30 September 2026 for the listed debentures"))
 
 
+def _grey(side=40):
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, side, side), False)
+    pix.clear_with(200)
+    return pix
+
+
+def test_a_scan_with_a_garbled_ocr_layer_passes_but_a_logo_on_a_letter_does_not():
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    page.insert_image(page.rect, pixmap=_grey())                         # the scanned statement covers the page
+    for i in range(10):                                                   # the scanner's OCR layer: words, none of a statement line
+        page.insert_text((40, 60 + 14 * i), "Rcvcnuc frorn opcrations 1,234 5,678 9,012 Tota1 lncome", fontsize=9)
+    assert len(page.get_text().split()) >= 30 and xk.holds_results(doc.tobytes())
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    page.insert_image(pymupdf.Rect(40, 20, 120, 60), pixmap=_grey())      # a logo
+    for i, line in enumerate(AGM_LINES * 3):
+        page.insert_text((40, 80 + 14 * i), line, fontsize=9)
+    assert not xk.holds_results(doc.tobytes())
+
+
+def test_a_statement_drawn_as_paths_with_no_text_passes():
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    for i in range(20):
+        page.draw_line(pymupdf.Point(40, 60 + 14 * i), pymupdf.Point(500, 60 + 14 * i))
+    assert page.get_text().strip() == "" and not page.get_images()
+    assert xk.holds_results(doc.tobytes())
+
+
+@pytest.mark.parametrize("line", ["Profit / (Loss) before tax", "Profit/(Loss) before tax", "Profit before exceptional items and tax",
+                                  "Premiums earned (Net)", "Net premium", "Gross sales"])
+def test_more_statement_lines_count(line):
+    assert xk.holds_results(letter_pdf("Statement of unaudited results for the quarter ended 30 September 2026", f"5 {line} 12.34"))
+
+
 def test_a_non_results_pdf_listed_as_results_gives_no_rows_and_the_next_pdf_is_read():
     agm, res = "https://nsearchives.nseindia.com/corporate/AGM.pdf", "https://nsearchives.nseindia.com/corporate/RES.pdf"
     agm_filing = filing(agm, subject="Financial Results", headline="Outcome of AGM and voting results")

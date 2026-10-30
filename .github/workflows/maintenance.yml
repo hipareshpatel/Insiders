@@ -193,8 +193,8 @@
 #   counts (stored, already held, failed, skipped) go up as the artifact `store-kept-pdfs`. Its own group `maint-pdf-store`.
 #   Writes nothing else.
 # - api-reader-hardset (lead, 30 Oct 2026): document-parsing APIs scored as more readers on the hard set
-#   (docs/bench/hardpdf/key.csv): Mistral's Document OCR (`mistral`, MISTRAL_API_KEY) and NVIDIA's nemotron-parse (`nemotron`,
-#   NVIDIA_API_KEY); `backup` = the readers (default mistral,nemotron). From the PDFs run 40414799620 kept (artifact
+#   (docs/bench/hardpdf/key.csv): Mistral's Document OCR (`mistral`, MISTRAL_API_KEY) and NVIDIA's nemotron-parse and
+#   nemotron-parse-2.0 (`nemotron`, `nemotron2`, NVIDIA_API_KEY); `backup` = the readers (default mistral,nemotron,nemotron2). From the PDFs run 40414799620 kept (artifact
 #   pdf-ensemble-pdfs; `ids` = another run id that kept them): no exchange is read. Only the statement pages go out (the
 #   other readers' pages), 300 pages a reader a run. Writes hardset-score.json / .md, hardset-readings.json and every raw
 #   answer (with its seconds) to the artifact `api-reader-hardset`. Writes nothing else; never a live path.
@@ -2251,13 +2251,15 @@ jobs:
           path: ${{ runner.temp }}/pdfs
       - name: Score the API readers against the answer key
         env:
-          PDF_READERS: ${{ inputs.backup || 'mistral,nemotron' }}
+          PDF_READERS: ${{ inputs.backup || 'mistral,nemotron,nemotron2' }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_OCR_PAGE_CAP: "300"
           NEMOTRON_PARSE_PAGE_CAP: "300"
           MISTRAL_OCR_RAW_DIR: ${{ runner.temp }}/out/raw-mistral
           NEMOTRON_PARSE_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron
+          NEMOTRON_PARSE2_PAGE_CAP: "300"
+          NEMOTRON_PARSE2_RAW_DIR: ${{ runner.temp }}/out/raw-nemotron2
           LIMIT: ${{ inputs.limit }}
         run: |
           mkdir -p "$RUNNER_TEMP/out"
@@ -2265,7 +2267,7 @@ jobs:
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel.pdf_bench --run ../docs/bench/hardpdf/key.csv "$RUNNER_TEMP/pdfs" "$RUNNER_TEMP/out" ${LIMIT}
           "$RUNNER_TEMP/venv/bin/python" - "$RUNNER_TEMP/out" <<'PY'
           import json, os, sys
-          for reader in ("mistral", "nemotron"):
+          for reader in ("mistral", "nemotron", "nemotron2"):
               d = os.path.join(sys.argv[1], "raw-" + reader)
               answers = [json.load(open(os.path.join(d, f))) for f in sorted(os.listdir(d))] if os.path.isdir(d) else []
               if reader == "mistral":

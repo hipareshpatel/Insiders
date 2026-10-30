@@ -108,3 +108,17 @@ def test_nemotron_page_cap(monkeypatch):
     monkeypatch.setattr(NemotronParseReader, "pages_used", 1)
     with pytest.raises(RuntimeError, match="page cap 1"):
         NemotronParseReader().extract(_pdf(1))
+
+
+@respx.mock
+def test_nemotron2_has_its_own_model_cap_and_count(monkeypatch):
+    from bse_intel.pdf_readers import NemotronParse2Reader
+    monkeypatch.setenv("NVIDIA_API_KEY", "k")
+    monkeypatch.setattr(NemotronParseReader, "pages_used", 5)
+    monkeypatch.setattr(NemotronParse2Reader, "pages_used", 0)
+    monkeypatch.setenv("NEMOTRON_PARSE_PAGE_CAP", "5")   # the first model's cap is spent: the second still reads
+    route = respx.post("https://integrate.api.nvidia.com/v1/chat/completions").mock(return_value=httpx.Response(200, json=NEMO))
+    NemotronParse2Reader().extract(_pdf(1))
+    assert json.loads(route.calls[0].request.content)["model"] == "nvidia/nemotron-parse-2.0"
+    assert NemotronParse2Reader.pages_used == 1 and NemotronParseReader.pages_used == 5
+    assert "nemotron2" in pdf_readers.READERS

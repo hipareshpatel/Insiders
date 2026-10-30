@@ -1262,8 +1262,10 @@ class NemotronParseReader(Reader):
     30 Oct 2026): never in a live path. Each statement page goes as one PNG (fitted inside the model's 1648 x 2048) to the
     OpenAI-style chat endpoint with the ``markdown_bbox`` tool; the answer is a list of elements (normalised bbox, text, type),
     and a table element's text is turned into a grid (LaTeX tabular, HTML or pipe table). ``NEMOTRON_PARSE_PAGE_CAP`` (default
-    300) pages a process; ``NEMOTRON_PARSE_RAW_DIR`` keeps each answer; ``seconds`` sums the calls."""
+    300) pages a process; ``NEMOTRON_PARSE_RAW_DIR`` keeps each answer; ``seconds`` sums the calls. ``env`` names the switches,
+    so a second model (``NemotronParse2Reader``) keeps its own cap, folder and count."""
     name, family = "nemotron", "nemotron"
+    env, model = "NEMOTRON_PARSE", "nvidia/nemotron-parse"
     ocr_family, ocr_engine = "nemotron", "nemotron-parse"
     modules = ("httpx",)
     worker = False
@@ -1279,16 +1281,16 @@ class NemotronParseReader(Reader):
         import time
 
         import httpx
-        cap = int(os.environ.get("NEMOTRON_PARSE_PAGE_CAP", "300"))
-        raw_dir = os.environ.get("NEMOTRON_PARSE_RAW_DIR")
+        cap = int(os.environ.get(f"{self.env}_PAGE_CAP", "300"))
+        raw_dir = os.environ.get(f"{self.env}_RAW_DIR")
         out = []
         with _pymupdf().open(stream=sub_pdf, filetype="pdf") as doc:
             for number, page in enumerate(doc, start=1):
-                if NemotronParseReader.pages_used >= cap:
+                if type(self).pages_used >= cap:
                     raise RuntimeError(f"page cap {cap} reached")
                 zoom = min(1648 / page.rect.width, 2048 / page.rect.height)
                 png = page.get_pixmap(matrix=_pymupdf().Matrix(zoom, zoom)).tobytes("png")
-                body = {"model": os.environ.get("NEMOTRON_PARSE_MODEL", "nvidia/nemotron-parse"), "temperature": 0,
+                body = {"model": os.environ.get(f"{self.env}_MODEL", self.model), "temperature": 0,
                         "tools": [{"type": "function", "function": {"name": "markdown_bbox"}}],
                         "messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {
                             "url": "data:image/png;base64," + base64.b64encode(png).decode()}}]}]}
@@ -1296,8 +1298,8 @@ class NemotronParseReader(Reader):
                 reply = httpx.post("https://integrate.api.nvidia.com/v1/chat/completions", json=body, timeout=180,
                                    headers={"Authorization": f"Bearer {os.environ['NVIDIA_API_KEY'].strip()}",
                                             "Accept": "application/json"})
-                NemotronParseReader.seconds += time.perf_counter() - t0
-                NemotronParseReader.pages_used += 1
+                type(self).seconds += time.perf_counter() - t0
+                type(self).pages_used += 1
                 if reply.status_code >= 400:
                     raise RuntimeError(f"nemotron-parse HTTP {reply.status_code}: {reply.text[:200]}")
                 answer = reply.json()
@@ -1309,6 +1311,15 @@ class NemotronParseReader(Reader):
                         json.dump(answer, fh)
                 out.extend((number, g) for g in nemotron_grids(answer))
         return out
+
+
+class NemotronParse2Reader(NemotronParseReader):
+    """nemotron-parse 2.0 (``NEMOTRON_PARSE2_MODEL``, default ``nvidia/nemotron-parse-2.0``), the same call and answer as
+    ``NemotronParseReader`` (lead, 30 Oct 2026: listed on our free NVIDIA key, providers-check run 41059917128); bench only."""
+    name, ocr_engine = "nemotron2", "nemotron-parse-2.0"
+    env, model = "NEMOTRON_PARSE2", "nvidia/nemotron-parse-2.0"
+    pages_used = 0
+    seconds = 0.0
 
 
 def nemotron_grids(answer: dict) -> list[list[list[str]]]:
@@ -1504,7 +1515,7 @@ def ocr_cell(image, box: tuple, numeric: bool = False) -> str:
 
 READERS: dict[str, Reader] = {r.name: r for r in (
     NativeReader(), CamelotReader(), PdfplumberReader(), TabulaReader(), DoclingReader(), MineruReader(), PaddleReader(),
-    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader(), NemotronParseReader())}
+    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader(), NemotronParseReader(), NemotronParse2Reader())}
 
 DEFAULT_READERS = "native"
 

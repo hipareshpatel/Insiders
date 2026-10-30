@@ -103,6 +103,7 @@ def fill(dossier: dict, entries: list[dict]) -> int:
     return len(new)
 
 
+WRITE_WORKERS = 8   # companies written at once (each its own dossier and backup objects)
 WORKERS = 24  # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone; run 2 at 8: 8.7 min)
 
 
@@ -118,10 +119,27 @@ def _prepare(sink, scrip: str, at: str):
     return read, merged, entries, left
 
 
+def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exception | None]:
+    """One company's write: merged over what landed since it was read, backed up, put. (stage, failure or None)."""
+    stage = "saving the backup"
+    try:
+        keep_concurrent_writes(merged, read, sink.get_dossier(scrip))
+        backup.dossier(scrip, merged)
+        stage = "writing"
+        sink.put_dossier(scrip, merged)
+        return stage, None
+    except Exception as exc:  # noqa: BLE001 - reported in scrip order by run, where it stops the run
+        return stage, exc
+
+
 def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False,
-        workers: int = WORKERS) -> dict:
+        workers: int = WORKERS, write_workers: int = WRITE_WORKERS) -> dict:
     """``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review). The companies
-    are read ``workers`` at a time; the writes go one by one in scrip order, so the resume point and a stop stay exact."""
+    are read ``workers`` at a time and written ``write_workers`` at a time (each company's dossier and backup are its own
+    objects; the first write goes alone, as it opens the backup folder). Results are taken in scrip order: the first failure
+    stops the run there, and the resume point is the last company of the unbroken run before it, set once at the end (run 4:
+    six calls a company one after another were most of its 5.7 minutes). A company written after a failure is written again
+    by the next run with nothing to add, so a stop loses nothing."""
     from concurrent.futures import ThreadPoolExecutor
 
     from .backup import RunBackup
@@ -142,37 +160,45 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
 
     with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
         prepared = list(pool.map(safe, todo))
+    plan = []   # (scrip, added, (read, merged) or None), in scrip order, up to the first read failure
     for scrip, (ready, failure) in zip(todo, prepared):
-        stage = "reading"
-        try:
-            if failure is not None:
-                raise failure
-            if ready is None:
-                out["no_facts"] += 1
-                out["last"] = scrip
-                continue
-            read, merged, entries, left = ready
-            out["left_out"] += [f"{scrip} {x}" for x in left]
-            have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
-            for e in entries:
-                if (e["period"], e["basis"], e["table"]) not in have:
-                    out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
-            added = fill(merged, entries)
-            if added and apply:
-                stage = "saving the backup"
-                keep_concurrent_writes(merged, read, sink.get_dossier(scrip))
-                backup.dossier(scrip, merged)
-                stage = "writing"
-                sink.put_dossier(scrip, merged)
-                out["written"] += 1
-            out["entries"] += added
-            out["last"] = scrip
-            if apply and not named:
-                sink.kv_set(RESUME_KEY, scrip, at)
-        except Exception as exc:  # noqa: BLE001 - a read, backup or write failure stops the run; what was done stays
-            out["error"] = f"{scrip}, {stage}: {type(exc).__name__}: {exc}"[:300]
-            log.error("statements-backfill stopped at %s while %s: %s", scrip, stage, exc)
+        if failure is not None:
+            out["error"] = f"{scrip}, reading: {type(failure).__name__}: {failure}"[:300]
+            log.error("statements-backfill stopped at %s while reading: %s", scrip, failure)
             break
+        if ready is None:
+            out["no_facts"] += 1
+            plan.append((scrip, 0, None))
+            continue
+        read, merged, entries, left = ready
+        out["left_out"] += [f"{scrip} {x}" for x in left]
+        have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
+        for e in entries:
+            if (e["period"], e["basis"], e["table"]) not in have:
+                out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
+        added = fill(merged, entries)
+        plan.append((scrip, added, (read, merged) if added and apply else None))
+    writes = [(scrip, job) for scrip, _, job in plan if job is not None]
+    results: dict[str, tuple[str, Exception | None]] = {}
+    if writes:
+        first, rest = writes[0], writes[1:]
+        results[first[0]] = _write(sink, backup, first[0], *first[1])
+        if results[first[0]][1] is None and rest:
+            with ThreadPoolExecutor(max_workers=max(1, write_workers)) as pool:
+                for scrip, outcome in zip([s for s, _ in rest], pool.map(lambda w: _write(sink, backup, w[0], *w[1]), rest)):
+                    results[scrip] = outcome
+    out["written"] = sum(1 for _, failure in results.values() if failure is None)
+    for scrip, added, job in plan:
+        if job is not None:
+            stage, failure = results.get(scrip, ("writing", RuntimeError("not written: an earlier write failed")))
+            if failure is not None:
+                out["error"] = f"{scrip}, {stage}: {type(failure).__name__}: {failure}"[:300]
+                log.error("statements-backfill stopped at %s while %s: %s", scrip, stage, failure)
+                break
+        out["entries"] += added
+        out["last"] = scrip
+    if apply and not named and out["last"]:
+        sink.kv_set(RESUME_KEY, out["last"], at)
     if backup is not None:
         out["backup"] = backup.summary()
     return out

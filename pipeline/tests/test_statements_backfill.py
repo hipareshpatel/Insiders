@@ -84,3 +84,27 @@ def test_a_failed_facts_read_stops_the_company_not_a_silent_gap():
         cf._load("raw/xbrl-facts/500001/Q1FY27-consolidated.json")
     cf2 = sv.CompanyFacts([], lambda key: b"not json")
     assert cf2._load("x") is None
+
+
+def test_a_failed_write_stops_the_resume_point_before_it_and_later_writes_add_nothing_twice(settings):
+    """Writes go 8 at a time: the resume point is the last company of the unbroken run before the first failure."""
+    sink = _sink(settings)
+    for scrip in ("522262", "522263"):
+        doc = xbrl_facts.parse_facts((FIX / "nse_dolphin_q4fy24_cons.xml").read_bytes(), scrip, "u")
+        xbrl_facts.save(sink, scrip, doc["period"], doc["basis"], doc)
+        sink.put_dossier(scrip, {"scrip_code": scrip, "financial_metrics": []})
+    real = sink.put_dossier
+
+    def put(scrip, dossier):
+        if scrip == "522262":
+            raise RuntimeError("Worker 500")
+        return real(scrip, dossier)
+
+    sink.put_dossier = put
+    out = sb.run(sink, ["500001", "522261", "522262", "522263"], apply=True)
+    assert out["error"].startswith("522262, writing") and out["last"] == "522261"
+    assert sink.kv_get(sb.RESUME_KEY) == "522261"
+    assert out["written"] == 2 and "statements" in sink.get_dossier("522263")   # written beside the failure
+    sink.put_dossier = real
+    again = sb.run(sink, ["500001", "522261", "522262", "522263"], apply=True)
+    assert again["error"] is None and again["written"] == 1 and sink.kv_get(sb.RESUME_KEY) == "522263"

@@ -113,7 +113,7 @@ LEASE_ELEMENTS = ("LeaseLiabilitiesNoncurrent", "LeaseLiabilitiesCurrent", "Nonc
 FINANCE_LEASE_MATURITIES = "CurrentMaturitiesOfFinanceLeaseObligations"
 # the current maturities of long-term debt tagged by their own element (help article 11: they are debt): in screener's
 # Borrowings and not in ours in 129 rows of about 40 companies (L&T Q4FY21-FY26 22,719 / 31,373 / 26,399 Cr, Hyundai, KPR Mill,
-# Dr Reddy's, Arvind, Titan: run 40874998205, screener above ours, the gap = the element). Off with SCREENER_CMLTD=0, to measure on/off.
+# Dr Reddy's, Arvind, Titan: run 40874998205, screener above ours, the gap = the element). Behind the switch SCREENER_CMLTD (off until measured on/off: screener-rows on main and on a branch that turns it on).
 LT_DEBT_MATURITIES = "CurrentMaturitiesOfLongTermDebt"
 # the levies and discounts out of Sales (and Expenses): (elements, described row of the Other expenses breakdown)
 LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
@@ -156,6 +156,12 @@ class Row:
     value: float | None        # None: an element the recipe needs is not in the facts
     note: str
 
+
+
+def _cmltd() -> bool:
+    from .settings import _switch
+
+    return _switch("SCREENER_CMLTD")
 
 def family(template: str | None) -> str:
     """The recipe set, by the results file's template alone (xbrl.taxonomy: INDAS, NBFC, BANKING, GI, LI; LEGACY_* alike)."""
@@ -665,7 +671,7 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
         rows = [x for x in rows if not re.search(r"finance lease", x[1], re.I)]
         lease += fl
         lease_note = " + ".join(x for x in (lease_note, f"{FINANCE_LEASE_MATURITIES} {_fmt(fl)}") if x)
-    ltm = r.cr(LT_DEBT_MATURITIES) if os.environ.get("SCREENER_CMLTD", "1") != "0" else None
+    ltm = r.cr(LT_DEBT_MATURITIES) if _cmltd() else None
     if ltm:     # the element, not the same line again as a described row
         rows = [x for x in rows if not (re.search(r"current maturit", x[1], re.I) and abs(abs(x[2]) - abs(ltm)) <= 0.5)]
         lease += ltm

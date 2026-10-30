@@ -547,7 +547,9 @@ def test_current_maturities_of_finance_lease_obligations_are_borrowings_once():
 
 
 def test_current_maturities_of_long_term_debt_are_borrowings_once(monkeypatch):
-    """L&T Q4FY21-FY26, Hyundai, KPR Mill, Dr Reddy's: screener's Borrowings above ours by exactly this element (129 rows)."""
+    """L&T Q4FY21-FY26, Hyundai, KPR Mill, Dr Reddy's: screener's Borrowings above ours by exactly this element (129 rows).
+    Behind SCREENER_CMLTD, off until measured on/off."""
+    monkeypatch.setenv("SCREENER_CMLTD", "1")
     base = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Borrowings"]
     got = values(sv.corporate_bs(sv._Reader(annual_facts([(sv.LT_DEBT_MATURITIES, "I2026", 9.0)]), instant=END)))
     assert got["Borrowings"] == base + 9
@@ -557,7 +559,7 @@ def test_current_maturities_of_long_term_debt_are_borrowings_once(monkeypatch):
                          + [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Current maturities of long term debt"),
                             ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 9.0), (sv.LT_DEBT_MATURITIES, "I2026", 9.0)]))
     assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 9
-    monkeypatch.setenv("SCREENER_CMLTD", "0")       # the off switch of the on/off measurement
+    monkeypatch.delenv("SCREENER_CMLTD")            # off by default: today's rule
     assert values(sv.corporate_bs(sv._Reader(annual_facts([(sv.LT_DEBT_MATURITIES, "I2026", 9.0)]), instant=END)))["Borrowings"] == base
 
 

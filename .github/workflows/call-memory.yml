@@ -1,8 +1,8 @@
-# The call-memory reading as a job of its own (F180, TODO 83, docs/design/call-memory.md "queued job"). With the repository
-# variable MEMORY_CALL_V2 = 1 (exactly 1: the job's `if` reads only that) the 15-minute pipeline run only notes each transcript and deck in a queue (call_queue.py); this
+# The call-memory reading as a job of its own (F180, TODO 83, docs/design/call-memory.md "queued job"). With MEMORY_CALL_V2 on
+# (pipeline/config/switches.toml since 30 Oct 2026; a repository variable of that name wins) the 15-minute pipeline run only notes each transcript and deck in a queue (call_queue.py); this
 # job reads them, checks every point in code and merges it into the company's memory (call-memory --pending --apply), so a
-# slow reply (1-5 minutes) never holds the cards. Variable unset or not 1: the job is skipped, and the command itself would
-# do nothing and exit 0.
+# slow reply (1-5 minutes) never holds the cards. The variable at 0 skips the job; the switch off anywhere else makes the
+# command do nothing and exit 0.
 #
 # AI keys: GEMINI_API_KEY_3 (a Gemini project for call memory only: providers.gemini_3, only_routes) and NVIDIA's free key as
 # a spare on the call_memory route. Never GEMINI_API_KEY / GEMINI_API_KEY_2 (the cards' keys) and never DEEPSEEK_API_KEY.
@@ -35,7 +35,9 @@ env:
 
 jobs:
   run:
-    if: vars.MEMORY_CALL_V2 == '1'
+    # on from pipeline/config/switches.toml (owner, 30 Oct 2026); the variable at 0 turns it off. Compared as text: an unset
+    # variable against '0' compares as the number 0 and skipped the job (run 40986926388)
+    if: format('v{0}', vars.MEMORY_CALL_V2) != 'v0'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 45   # the 25-minute budget, then the filing in hand (a reply waits up to 5 minutes a part)
     defaults:
@@ -44,7 +46,6 @@ jobs:
     env:
       BSE_INTEL_SINK: platform
       D1_PLAN: ${{ vars.D1_PLAN }}
-      MEMORY_CALL_V2: ${{ vars.MEMORY_CALL_V2 }}
       PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
       INGEST_TOKEN: ${{ secrets.INGEST_TOKEN }}
       GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}   # call memory only (providers.gemini_3, only_routes)

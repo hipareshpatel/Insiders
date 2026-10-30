@@ -347,6 +347,22 @@ on:
         description: xbrl-facts only - run as this many parallel runners, 1 to 16 (owner, 28 Oct 2026, 8 then 16), each its own NSE client; file_cap is split over them (file_cap // shards each, at least 1 each, so a file_cap below shards gives every shard 1 file)
         type: string
         default: '1'
+      only_model:
+        description: call-memory only - a measured test locked on one model (provider:model, e.g. gemini_3:gemini-3.5-flash-lite); empty = the route as live
+        type: string
+        default: ''
+      part_chars:
+        description: call-memory only - characters a part for a measured test (live 60000); empty = live
+        type: string
+        default: ''
+      reasoning:
+        description: call-memory only - the Gemini models' thinking for a measured test (none, low, medium, high); empty = as configured
+        type: string
+        default: ''
+      prompt:
+        description: call-memory only - v2 reads with the held prompt (config/prompts/call_memory_v2.md) for a measured test; empty = live
+        type: string
+        default: ''
       file_cap:
         description: a test run's cap on NSE/BSE files (owner, 27 Oct 2026, the first test of a fetch is 100 files); empty means no cap
         type: string
@@ -757,6 +773,10 @@ jobs:
           PLATFORM_TIMEOUT_S: "30"   # F216
           PLATFORM_ATTEMPTS: "3"
           IDS: ${{ inputs.ids }}
+          ONLY_MODEL: ${{ inputs.only_model }}              # a measured test only; live runs never set these four
+          CALL_MEMORY_PART_CHARS: ${{ inputs.part_chars }}
+          CALL_MEMORY_REASONING: ${{ inputs.reasoning }}
+          CALL_MEMORY_PROMPT: ${{ inputs.prompt }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

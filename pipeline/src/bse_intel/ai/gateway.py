@@ -373,6 +373,12 @@ class AIGateway:
                     self.slots[target.key] = threading.BoundedSemaphore(int(concurrency))
             # A model trial (scripts/model_trial.py) sends every route that has the model to it alone, spare or not:
             # ONLY_MODEL=provider:model[,provider:model]. Scheduled runs never set it.
+            # A measured call-memory test may set the models' thinking (CALL_MEMORY_REASONING=none/low/medium/high; owner, 30
+            # Oct 2026: Flash-Lite reads with thinking off). Scheduled runs never set it.
+            if route == "call_memory" and (think := (env.get("CALL_MEMORY_REASONING") or "").strip()):
+                for t in targets:
+                    if t.provider.startswith("gemini"):
+                        t.extra_body = {**t.extra_body, "reasoning_effort": think}
             if only and any(t.key in only for t in targets):
                 targets = [t for t in targets if t.key in only]
                 for t in targets:

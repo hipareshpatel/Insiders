@@ -101,7 +101,7 @@ def test_bank_nbfc_and_insurer_ratios():
     assert bank["values"]["CET1Ratio"] == 0.1973 and bank["values"]["PercentageOfGrossNpa"] == 0.0158
     assert bank["values"]["GrossNonPerformingAssets"] == 458.17 and bank["values"]["NonPerformingAssets"] == 182.71
     _, nbfc = xbrl_extras.read(_doc("nse_irfc_q4fy26_nbfc.xml"))["fin_ratios"]
-    assert nbfc["values"] == {"DebtEquityRatio": 0.0769, "DebtServiceCoverageRatio": 0, "InterestServiceCoverageRatio": 0}
+    assert nbfc["values"] == {"DebtEquityRatio": 0.0769}     # the file's 0 cover ratios are the template's filler
     _, life = xbrl_extras.read(_doc("nse_hdfclife_q2fy27_cons.xml"))["fin_ratios"]
     v = life["values"]
     assert v["SolvencyRatio"] == 1.8 and v["PersistencyRatio13ThMonth"] == 0.794 and v["PersistencyRatio61ThMonth"] == 0.6591
@@ -109,11 +109,20 @@ def test_bank_nbfc_and_insurer_ratios():
     assert "fin_ratios" not in xbrl_extras.read(_doc("nse_dolphin_q4fy24_cons.xml"))
 
 
+def test_stored_filler_zero_ratios_are_dropped_when_a_file_is_read_again():
+    """Stock-page audit, 30 Oct 2026: SBI's CET1, NPAs and ROA stored as 0.0 for 12 quarters, the template's filler."""
+    d = {"fin_ratios": [{"period": "Q2FY24", "basis": "STANDALONE", "values": {"CET1Ratio": 0.0, "ReturnOnAssets": 0.0}},
+                        {"period": "Q3FY24", "basis": "STANDALONE", "values": {"CET1Ratio": 0.14, "ReturnOnAssets": 0.0}}]}
+    xbrl_extras.remember(d, _doc("nse_dolphin_q4fy24_cons.xml"), "n1", AS_OF, AT, replace=False)
+    assert [(e["period"], e["values"]) for e in d["fin_ratios"]] == [("Q3FY24", {"CET1Ratio": 0.14})]
+
+
 def test_remember_labels_replaces_a_revised_file_and_keeps_both_bases():
     doc = _doc("nse_hdfcbank_q2fy27_cons.xml")
     d = {}
-    assert xbrl_extras.remember(d, doc, "n1", AS_OF, AT) == 3          # audit, cash flow, ratios
-    assert set(d) == {"audit", "cash_flow_detail", "fin_ratios"}
+    # audit and cash flow; the file's ratios are all the template's filler zeros (HDFC Bank's CET1 is not 0)
+    assert xbrl_extras.remember(d, doc, "n1", AS_OF, AT) == 2
+    assert set(d) == {"audit", "cash_flow_detail"}
     e = d["audit"][0]
     assert (e["period"], e["basis"], e["lab"]["by"], e["source_news_id"]) == ("Q2FY27", "CONSOLIDATED", "file", "n1")
     revised = dict(doc, basis="STANDALONE")

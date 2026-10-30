@@ -274,8 +274,8 @@ def _ratios(doc: dict, end: date) -> dict | None:
     values: dict[str, float] = {}
     fallback: dict[str, float] = {}
     for el, ctx_id, unit, value, _ in facts.rows:
-        if el not in wanted or isinstance(value, str):
-            continue
+        if el not in wanted or isinstance(value, str) or not value:
+            continue   # a 0 is the template's filler, not a ratio (stock-page audit, 30 Oct 2026: SBI's CET1 0.0 in 12 quarters)
         ctx = facts.contexts.get(ctx_id) or {}
         if ctx.get("d") or ctx.get("e") != end.isoformat():
             continue
@@ -323,6 +323,10 @@ def remember(dossier: dict, doc: dict, news_id: str, as_of: str, at: str, replac
     if not period:
         return 0
     held_slip = {str(h.get("period") if isinstance(h, dict) else h) for h in dossier.get("scale_held", [])}
+    if any(isinstance(e, dict) and not all((e.get("values") or {0: 0}).values()) for e in dossier.get(RATIOS, [])):
+        # filler zeros written before 30 Oct 2026 go, and an entry left with none goes too; the file is read again below
+        kept = [{**e, "values": {k: v for k, v in (e.get("values") or {}).items() if v}} for e in dossier[RATIOS] if isinstance(e, dict)]
+        dossier[RATIOS] = [e for e in kept if e["values"]]
     found = read(doc)
     written = 0
     for key, (column, payload) in found.items():

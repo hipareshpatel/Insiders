@@ -92,6 +92,8 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Results page from the saved statements, 30 Oct 2026 ~21:00 IST (owner: "that page only uses the saved statements, no card"; "consolidated over standalone"; "no company repeated").** Built: `results_table.py` (`results-table`) writes a small file per company in R2 from its `statements` (the company page's Results tab source); the Worker reads only the page's companies and swaps the table into each RESULTS feed row; a quarter the statements lack shows its quarter and no figures; the page keeps one row per company and quarter. Each pipeline run refreshes the live window's companies; the first full build is Maintenance > results-table (`--all`). Not yet measured: how many rows go blank on live data (read the first file after the merge), and banks (no table). The card's own text and verdict are unchanged.
+
 **Owner's decisions, 30 Oct 2026 ~14:30 IST** (TODO 101, 128, 136, 140, 141): (1) call memory prompt v2: read ~150 points of new
 live calls apart, blind-judge, switch only at or under 2% wrong; (2) a late file's results card keeps no table until the file
 (option A); (3) empty balance-sheet entries removed by code (backup, 50 a run, dry run first); (4) the card design is already

@@ -128,6 +128,38 @@ async function snapshot(c: Context<AppEnv>): Promise<Snapshot | null> {
   });
 }
 
+const RESULTS_TABLE_PREFIX = "raw/results-table/";
+
+/** The results page's figures come from the saved statements (the company page's Results tab source), never from a card: the
+ * pipeline's `results-table` job writes a small file per company to R2 (results_table.py), and a page reads only the companies of its
+ * rows. A row's table is the one for its company and quarter; a quarter the statements do not hold keeps its quarter and no
+ * figures; a company with no file yet (the job has not reached it) is left as it is. */
+async function withStatementTables<T extends { scrip_code: string; card_json: string }>(c: Context<AppEnv>, cards: T[]): Promise<T[]> {
+  const scrips = [...new Set(cards.map((card) => card.scrip_code))];
+  const files = new Map(await Promise.all(scrips.map(async (scrip) => {
+    const rows = await memoised(`results-table:${scrip}`, 60_000, async () => {
+      const object = await c.env.VAULT.get(`${RESULTS_TABLE_PREFIX}${scrip}.json`);
+      return object ? ((await object.json()) as { rows: Record<string, unknown> }).rows : null;
+    });
+    return [scrip, rows] as const;
+  })));
+  return cards.map((card) => {
+    const rows = files.get(card.scrip_code);
+    if (!rows) return card;
+    try {
+      const body = JSON.parse(card.card_json) as { results?: { period?: string; revenue?: unknown } | null; xbrl?: { period?: string } | null;
+        had_table?: boolean };
+      const period = body.results?.period ?? body.xbrl?.period;
+      if (!period) return card;
+      body.had_table = !!body.results?.revenue;   // the page keeps, of two rows for one company and quarter, the one that was a results card
+      body.results = (rows[period] as { period?: string } | undefined) ?? ({ lens: "company", period } as never);
+      return { ...card, card_json: JSON.stringify(body) };
+    } catch {
+      return card;
+    }
+  });
+}
+
 // withHeld: the owner's private view (/api/owner/feed, behind OWNER_TOKEN and outside the edge cache) also
 // lists the cards held back from the public feed, so the owner can review them (owner, 2026-10-19).
 export async function feed(c: Context<AppEnv>, withHeld = false) {
@@ -198,7 +230,8 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
   // The first page of an unfiltered view is what most visitors load.
   const result = !cursorAt && !fts && (page ?? 1) === 1 ? await memoised(`feed:${sql}:${page}:${JSON.stringify(params)}`, 20_000, run) : await run();
   const more = result.rows.length > limit;
-  const cards = result.rows.slice(0, limit) as { filed_at: string; news_id: string }[];
+  const rows = result.rows.slice(0, limit) as { filed_at: string; news_id: string; scrip_code: string; card_json: string }[];
+  const cards = q.category === "RESULTS" ? await withStatementTables(c, rows) : rows;
   const last = cards[cards.length - 1];
   return c.json({
     cards,

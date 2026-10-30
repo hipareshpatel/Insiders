@@ -151,6 +151,8 @@ export interface CallRead {
 export type Fact = string | { text: string; quote?: string | null };
 
 export interface CardBody {
+  /** Set by the Worker on the results page: this row's card carried its own results table before the statements replaced it. */
+  had_table?: boolean;
   category_tag: string;
   event_type: string;
   impact_level: Impact;

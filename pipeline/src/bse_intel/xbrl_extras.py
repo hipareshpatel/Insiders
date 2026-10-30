@@ -64,6 +64,20 @@ RATIO_ELEMENTS = (
     "NetRetentionRatio", "ExpensesOfManagementRatio", "GrossNPAsShareholdersFund", "NetNPAsShareholdersFund",
     "PercentageOfGrossNPAsShareholdersFund", "PercentageOfNetNPAsShareholdersFund")
 
+# a ratio a real filer never reports as 0: its 0 is the template's filler (stock-page audit, 30 Oct 2026: SBI's CET1 0.0); a 0 NPA or
+# a 0 debt-equity can be true and stays, unless every ratio of the quarter is 0 (then the whole block is filler)
+NEVER_ZERO = frozenset({"CET1Ratio", "AdditionalTier1Ratio", "SolvencyRatio", "PersistencyRatio13ThMonth", "PersistencyRatio25ThMonth",
+                        "PersistencyRatio37ThMonth", "PersistencyRatio49ThMonth", "PersistencyRatio61ThMonth", "ConservationRatio",
+                        "CombinedRatio", "IncurredClaimRatio", "NetRetentionRatio", "ExpensesOfManagementRatio"})
+
+
+def _real(values: dict) -> dict:
+    """The ratios without the template's filler zeros: none when every one is 0, else the zeros of ``NEVER_ZERO`` out."""
+    if not any(values.values()):
+        return {}
+    return {k: v for k, v in values.items() if v or k not in NEVER_ZERO}
+
+
 CLAUSES = {"DisclosureInAuditorsReportRelatingToDefaultInRepaymentOfFinancialDues": "default_in_repayment",
            "DisclosureInAuditorsReportRelatingToFraudByTheCompanyOrOnTheCompanyByItsOfficersOrItsEmployeesReportedDuringPeriod": "fraud",
            "DisclosureInAuditorsReportRelatingToStatutoryDuesExplanatory": "statutory_dues"}
@@ -274,8 +288,8 @@ def _ratios(doc: dict, end: date) -> dict | None:
     values: dict[str, float] = {}
     fallback: dict[str, float] = {}
     for el, ctx_id, unit, value, _ in facts.rows:
-        if el not in wanted or isinstance(value, str) or not value:
-            continue   # a 0 is the template's filler, not a ratio (stock-page audit, 30 Oct 2026: SBI's CET1 0.0 in 12 quarters)
+        if el not in wanted or isinstance(value, str):
+            continue
         ctx = facts.contexts.get(ctx_id) or {}
         if ctx.get("d") or ctx.get("e") != end.isoformat():
             continue
@@ -286,6 +300,7 @@ def _ratios(doc: dict, end: date) -> dict | None:
             fallback.setdefault(el, v)     # a half-yearly filer states its ratios for the half year
     for el, v in fallback.items():
         values.setdefault(el, v)
+    values = _real(values)
     return {"values": values} if values else None
 
 
@@ -323,9 +338,9 @@ def remember(dossier: dict, doc: dict, news_id: str, as_of: str, at: str, replac
     if not period:
         return 0
     held_slip = {str(h.get("period") if isinstance(h, dict) else h) for h in dossier.get("scale_held", [])}
-    if any(isinstance(e, dict) and not all((e.get("values") or {0: 0}).values()) for e in dossier.get(RATIOS, [])):
+    if any(isinstance(e, dict) and _real(e.get("values") or {}) != (e.get("values") or {}) for e in dossier.get(RATIOS, [])):
         # filler zeros written before 30 Oct 2026 go, and an entry left with none goes too; the file is read again below
-        kept = [{**e, "values": {k: v for k, v in (e.get("values") or {}).items() if v}} for e in dossier[RATIOS] if isinstance(e, dict)]
+        kept = [{**e, "values": _real(e.get("values") or {})} for e in dossier[RATIOS] if isinstance(e, dict)]
         dossier[RATIOS] = [e for e in kept if e["values"]]
     found = read(doc)
     written = 0

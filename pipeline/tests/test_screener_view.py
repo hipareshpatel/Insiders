@@ -250,6 +250,9 @@ def test_a_report_two_years_later_never_gives_the_year_even_with_a_stray_fact_at
     cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.annual_key("1", "FY25", "CONSOLIDATED"): fy25,
                  xf.key("1", "Q4FY24", "CONSOLIDATED"): q4})
     assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY25"
+    # with no nearer report and no Q4 file, the later report is the last resort (HCL Tech FY20 from its FY22 report)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
 
 
 # --- the page and the comparison ------------------------------------------------------------------------------------------

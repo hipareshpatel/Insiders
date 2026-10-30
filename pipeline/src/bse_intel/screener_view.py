@@ -825,16 +825,20 @@ class CompanyFacts:
         return CORPORATE
 
     def year(self, fy: str, basis: str, fam: str, instant: bool = False):
-        """(facts, label, Q4 facts) of a March year: the newest annual-report doc holding the year (the next year's report, whose
-        comparative it is, counts), else the Q4 results file. A lender: always the Q4 file. A report is read only for its own year
-        and the year before: a report two or more years later can carry a stray fact at that date (UltraTech's FY26 report tags
-        Assets at 31 Mar 2024 in a note, with no balance sheet there), which made Borrowings 0 (TODO 129, 113 pairs)."""
+        """(facts, label, Q4 facts) of a March year, in this order: the newest of the year's own annual report and the next
+        year's (whose comparative it is) that holds the year; else the Q4 results file; else the nearest later report that holds
+        it. A lender: always the Q4 file. A report two or more years later is the last resort because it can carry a stray fact
+        at that date (UltraTech's FY26 report tags Assets at 31 Mar 2024 in a note, with no balance sheet there, which made FY24's
+        Borrowings 0: TODO 129, 113 pairs), yet for a year with no nearer source it often holds the full sheet (HCL Tech FY20
+        from its FY22 report, 16 rows equal to screener's)."""
         end = _fy_end(fy)
         q4 = self.result(f"Q4{fy}", basis)
-        if fam == CORPORATE and end is not None:
-            for (afy, b), key in sorted(self.annual.items(), key=lambda kv: _fy_num(kv[0][0]), reverse=True):
-                if b != basis or not 0 <= _fy_num(afy) - _fy_num(fy) <= 1:
-                    continue
+        if fam != CORPORATE or end is None:
+            return q4, f"results file Q4{fy}", None
+
+        def holding(offsets) -> tuple | None:
+            reports = [(afy, key) for (afy, b), key in self.annual.items() if b == basis and _fy_num(afy) - _fy_num(fy) in offsets]
+            for afy, key in sorted(reports, key=lambda r: offsets.index(_fy_num(r[0]) - _fy_num(fy))):
                 f = self._load(key)
                 if f is None:
                     continue
@@ -842,7 +846,14 @@ class CompanyFacts:
                     any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
                 if holds:
                     return f, f"annual report {afy}", q4
-        return q4, f"results file Q4{fy}", None
+            return None
+
+        near = holding([1, 0])                              # the newest first, as before: the next year's report, then the year's own
+        if near is not None:
+            return near
+        if q4 is not None:
+            return q4, f"results file Q4{fy}", None
+        return holding(list(range(2, 100))) or (q4, f"results file Q4{fy}", None)   # the nearest later report first
 
 
 def _fy_num(fy: str) -> int:

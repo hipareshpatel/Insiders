@@ -30,6 +30,8 @@ STATEMENTS = (
     "cards_apply_verdicts",
     "cards_release_pruned",
     "results_kpi_upsert",
+    "index_members_upsert",
+    "index_members_prune",
 )
 
 QUERIES = (

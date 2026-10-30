@@ -2289,6 +2289,20 @@ def cmd_restore(args, settings, sink) -> int:
     return 0
 
 
+def cmd_sync_indices(args, settings, sink) -> int:
+    """NSE's broad index constituents into index_members (index_members.py): every Sunday. Exit 1 when an index list could not be taken
+    (its old rows are kept); the others are written."""
+    from . import index_members, raw
+    from .nse import NseClient
+    from .timeutil import today_ist
+
+    with NseClient() as client:
+        raw.attach(client, sink, "nse", settings)
+        report = index_members.sync(sink, client, today_ist().isoformat())
+    print(json.dumps(report.as_dict()))
+    return 1 if report.skipped else 0
+
+
 def cmd_results_table(args, settings, sink) -> int:
     """The results page's figures from the saved statements (the company page's source): the KPI rows of the Results page, one per company and quarter in
     the results_kpi table (results_table.py). By default the live window's companies only; --all rebuilds every company. No card, no AI, no exchange call."""
@@ -2692,6 +2706,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_drop_known_wrong)
+    p = sub.add_parser("sync-indices", help="NSE's broad index constituents (Nifty 50 ... Microcap 250) into index_members: every Sunday; no AI")
+    p.set_defaults(func=cmd_sync_indices)
     p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), KPI rows in the database, one per company and quarter (no card, no AI, no NSE)")
     p.add_argument("--all", action="store_true", help="every company (the full rebuild); default: the companies with a results card in the live window")
     p.set_defaults(func=cmd_results_table)

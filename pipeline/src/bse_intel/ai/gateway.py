@@ -323,54 +323,60 @@ class AIGateway:
         # pending and let's clear them"): PREFER_MODEL=provider:model multiplies its weight. Scheduled runs never set it.
         prefer = (env.get("PREFER_MODEL") or "").strip()
         only = {k.strip() for k in (env.get("ONLY_MODEL") or "").split(",") if k.strip()}
+        # A card-writing test of a trial model (TODO 142 step 4, owner 30 Oct 2026): a named model that is on no route but the
+        # trial_new route is put, with its trial settings, on every route that has a primary, when ONLY_MODEL_ON_ALL_ROUTES=1.
+        trial_entries = {f"{e['provider']}:{e['model']}": e for e in config.get("routes", {}).get("trial_new", [])}
+        on_all = (env.get("ONLY_MODEL_ON_ALL_ROUTES") or "").strip() == "1"
+
+        def build(route: str, entry: dict) -> tuple[Target, str | None]:
+            pconf = providers.get(entry["provider"])
+            if pconf is None:
+                raise ValueError(f"route {route} references unknown provider {entry['provider']}")
+            base_url = _interpolate(pconf["base_url"], env)
+            reason = None
+            if not base_url:
+                reason = f"not configured: base_url {pconf['base_url']} has an unset variable"
+            elif not (env.get(pconf["api_key_env"]) or "").strip():
+                reason = f"not configured: {pconf['api_key_env']} is not set"
+            target = Target(
+                route=route,
+                provider=entry["provider"],
+                model=entry["model"],
+                base_url=base_url or pconf["base_url"],
+                api_key=((env.get(pconf["api_key_env"]) or "").strip() or None) if base_url else None,
+                timeout=float(entry.get("timeout_s", pconf.get("timeout_s", 60))),
+                json_mode=bool(entry.get("json_mode", False)),
+                max_tokens=int(entry.get("max_tokens", 2000)),
+                temperature=float(entry.get("temperature", 0.1)),
+                strip_reasoning=bool(entry.get("strip_reasoning", False)),
+                context_tokens=entry.get("context_tokens"),
+                weight=max(1, int(entry.get("weight", 1))),
+                spare=bool(entry.get("spare", False)),
+                extra_body=dict(entry.get("extra_body", {})),
+                max_share=float(entry["max_share"]) if entry.get("max_share") is not None else None,
+            )
+            if prefer and target.key == prefer and target.api_key:
+                target.weight *= PREFER_WEIGHT
+            if reason:
+                self.unavailable_at_start[target.key] = reason
+            if target.key not in self.limiters:
+                limits = Limits.from_config(entry.get("limits"))
+                scaled = limits.scaled(self.ceiling)
+                t_row, m_row = today.get(target.key, {}), month.get(target.key, {})
+                self.raw_limits[target.key] = limits
+                self.limiters[target.key] = RateLimiter(scaled, QuotaCounter(
+                    scaled, day_of=self._day_of.get(target.provider),
+                    day_requests=int(t_row.get("requests", 0)), day_tokens=tokens(t_row),
+                    month_requests=int(m_row.get("requests", 0)), month_tokens=tokens(m_row),
+                ))
+                self.usage[target.key] = Usage()
+            concurrency = (entry.get("limits") or {}).get("concurrency")
+            if concurrency and target.key not in self.slots:
+                self.slots[target.key] = threading.BoundedSemaphore(int(concurrency))
+            return target, reason
+
         for route, entries in config.get("routes", {}).items():
-            targets = []
-            for entry in entries:
-                pconf = providers.get(entry["provider"])
-                if pconf is None:
-                    raise ValueError(f"route {route} references unknown provider {entry['provider']}")
-                base_url = _interpolate(pconf["base_url"], env)
-                reason = None
-                if not base_url:
-                    reason = f"not configured: base_url {pconf['base_url']} has an unset variable"
-                elif not (env.get(pconf["api_key_env"]) or "").strip():
-                    reason = f"not configured: {pconf['api_key_env']} is not set"
-                target = Target(
-                    route=route,
-                    provider=entry["provider"],
-                    model=entry["model"],
-                    base_url=base_url or pconf["base_url"],
-                    api_key=((env.get(pconf["api_key_env"]) or "").strip() or None) if base_url else None,
-                    timeout=float(entry.get("timeout_s", pconf.get("timeout_s", 60))),
-                    json_mode=bool(entry.get("json_mode", False)),
-                    max_tokens=int(entry.get("max_tokens", 2000)),
-                    temperature=float(entry.get("temperature", 0.1)),
-                    strip_reasoning=bool(entry.get("strip_reasoning", False)),
-                    context_tokens=entry.get("context_tokens"),
-                    weight=max(1, int(entry.get("weight", 1))),
-                    spare=bool(entry.get("spare", False)),
-                    extra_body=dict(entry.get("extra_body", {})),
-                    max_share=float(entry["max_share"]) if entry.get("max_share") is not None else None,
-                )
-                if prefer and target.key == prefer and target.api_key:
-                    target.weight *= PREFER_WEIGHT
-                targets.append(target)
-                if reason:
-                    self.unavailable_at_start[target.key] = reason
-                if target.key not in self.limiters:
-                    limits = Limits.from_config(entry.get("limits"))
-                    scaled = limits.scaled(self.ceiling)
-                    t_row, m_row = today.get(target.key, {}), month.get(target.key, {})
-                    self.raw_limits[target.key] = limits
-                    self.limiters[target.key] = RateLimiter(scaled, QuotaCounter(
-                        scaled, day_of=self._day_of.get(target.provider),
-                        day_requests=int(t_row.get("requests", 0)), day_tokens=tokens(t_row),
-                        month_requests=int(m_row.get("requests", 0)), month_tokens=tokens(m_row),
-                    ))
-                    self.usage[target.key] = Usage()
-                concurrency = (entry.get("limits") or {}).get("concurrency")
-                if concurrency and target.key not in self.slots:
-                    self.slots[target.key] = threading.BoundedSemaphore(int(concurrency))
+            targets = [build(route, entry)[0] for entry in entries]
             # A model trial (scripts/model_trial.py) sends every route that has the model to it alone, spare or not:
             # ONLY_MODEL=provider:model[,provider:model]. Scheduled runs never set it.
             # A measured call-memory test may set the models' thinking (CALL_MEMORY_REASONING=none/low/medium/high; owner, 30
@@ -379,6 +385,14 @@ class AIGateway:
                 for t in targets:
                     if t.provider.startswith("gemini"):
                         t.extra_body = {**t.extra_body, "reasoning_effort": think}
+            if on_all and route != "trial_new" and any(not t.spare for t in targets) and not any(t.key in only for t in targets):
+                for key in sorted(only & trial_entries.keys()):
+                    entry = dict(trial_entries[key])
+                    for field in ("max_tokens", "context_tokens"):   # room for a whole card, not the trial's one-line answer
+                        if (room := max(int(entry.get(field) or 0), int(entries[0].get(field) or 0))):
+                            entry[field] = room
+                    targets.append(build(route, entry)[0])
+                    targets[-1].spare = False
             if only and any(t.key in only for t in targets):
                 targets = [t for t in targets if t.key in only]
                 for t in targets:

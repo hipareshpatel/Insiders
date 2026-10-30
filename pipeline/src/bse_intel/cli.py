@@ -1293,16 +1293,17 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                     filing = filing.model_copy(update={"xbrl_url": url})
                     row["xbrl_url_from_card"] = url
                 made = {}
-                for name, value in (("off", "0"), ("on", "1")):
+                # FACT_SHEET_AB_ON_ONLY=1 (a measured test of one named model, ONLY_MODEL): the switch-on card only, half the AI calls
+                for name, value in (("on", "1"),) if os.environ.get("FACT_SHEET_AB_ON_ONLY") == "1" else (("off", "0"), ("on", "1")):
                     os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)
                     with pipeline._lock:   # each card reads memory as stored, never the other run's merge (blind review)
                         pipeline._pending_memory.clear()
                     outcome = pipeline.analyze(filing, bulk=False)   # as the live path reads it
                     made[name] = {"status": outcome.update.get("status"), "reason": outcome.update.get("reason"), "card": _card_of(outcome)}
-                off, on = (made["off"]["card"] or {}), (made["on"]["card"] or {})
+                off, on = (made.get("off", {}).get("card") or {}), (made["on"]["card"] or {})
                 changed = sorted(k for k in set(off) | set(on) if k not in ("grounding", "score", "review", "model", "pack")
-                                 and off.get(k) != on.get(k))
-                row |= {"off_status": made["off"]["status"], "on_status": made["on"]["status"], "changed_fields": changed,
+                                 and off.get(k) != on.get(k)) if "off" in made else []
+                row |= {"off_status": made.get("off", {}).get("status"), "on_status": made["on"]["status"], "changed_fields": changed,
                         "fact_sheet": (on.get("grounding") or {}).get("fact_sheet"),
                         "text_removed": [n for n in ((on.get("grounding") or {}).get("change_fixes") or []) if "exchange file" in str(n)]}
                 missed = getattr(stub, "calls", [])[asked:]

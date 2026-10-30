@@ -366,7 +366,7 @@ on:
         type: string
         default: '1'
       only_model:
-        description: call-memory only - a measured test locked on one model (provider:model, e.g. gemini_3:gemini-3.5-flash-lite); empty = the route as live
+        description: call-memory and fact-sheet-ab - a measured test locked on one model (provider:model, e.g. gemini_3:gemini-3.5-flash-lite; for fact-sheet-ab, nvidia:minimaxai/minimax-m3.1-flash, groq:qwen/qwen3.8-27b, groq:openai/gpt-oss-120b writes every card with it, switch on only); empty = the route as live
         type: string
         default: ''
       part_chars:
@@ -827,6 +827,9 @@ jobs:
           PLATFORM_TIMEOUT_S: "30"
           PLATFORM_ATTEMPTS: "3"
           IDS: ${{ inputs.ids }}
+          ONLY_MODEL: ${{ inputs.only_model }}   # a measured test only (TODO 142 step 4): cards written by this one model, switch on only
+          ONLY_MODEL_ON_ALL_ROUTES: ${{ inputs.only_model != '' && '1' || '' }}
+          FACT_SHEET_AB_ON_ONLY: ${{ inputs.only_model != '' && '1' || '' }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # the keys the card path uses (pipeline.yml)
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

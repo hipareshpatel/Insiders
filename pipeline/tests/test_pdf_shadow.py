@@ -399,3 +399,28 @@ def test_no_memory_values_a_loss_share_gap_is_unknown_and_its_double_disagrees()
     assert row["verdict"] == "disagrees", row        # the loss counted twice: a gap of the share's size on the wrong side
     row = ps.check_card(tables, "Q2FY27", "CONSOLIDATED", [("pbt", round(printed + 1.0, 2), "")], dossier=None)[0]
     assert row["verdict"] == "disagrees", row
+
+
+def test_no_memory_values_a_share_printed_after_the_pbt_line():
+    # EMKAY's layout: the share comes after the profit after tax, so the printed PBT is without it; the card on the other side
+    # of it is the printed PBT + the share, and the printed PBT - the share is the wrong side
+    rows, want = pl()
+    share = [50.0, -30.0, -20.0, 80.0]
+    bottom = [round(a + b, 2) for a, b in zip(want["pat"], share)]
+    rows = rows[:-1] + [(["Profit after tax"], want["pat"]), (["Share of Profit/(Loss) of Associates"], share),
+                        (["Profit for the period"], bottom)]
+    tables = nf.analyse(statement(rows))
+    printed = crore(want["pbt"][0])
+    got = ps.printed_share(tables, "Q2FY27", "STANDALONE", 1, printed, 0.005)
+    assert got is not None and got[0] == pytest.approx(0.5) and got[3] is False, got
+    row = ps.check_card(tables, "Q2FY27", "STANDALONE", [("pbt", round(printed + 0.5, 2), "")], dossier=None)[0]
+    assert row["verdict"] == "unknown" and "associates' share printed on p1" in row["reason"], row
+    row = ps.check_card(tables, "Q2FY27", "STANDALONE", [("pbt", round(printed - 0.5, 2), "")], dossier=None)[0]
+    assert row["verdict"] == "disagrees", row
+
+
+def test_a_share_is_never_paired_with_another_tables_pbt():
+    data, printed, filed, share = associates_pdf()
+    tables = nf.analyse(data)
+    assert ps.printed_share(tables, "Q2FY27", "CONSOLIDATED", 1, printed, 0.005)[0] == pytest.approx(share)
+    assert ps.printed_share(tables, "Q2FY27", "CONSOLIDATED", 1, printed + 7.0, 0.005) is None

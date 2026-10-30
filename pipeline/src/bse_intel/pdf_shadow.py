@@ -146,11 +146,13 @@ def pbt_verdict(card_value: float, reading, parts: dict | None) -> tuple[str, st
     return "disagrees", f"{side} is none of memory's PBT values ({values}); {why}"[:300]
 
 
-def printed_share(tables, period: str, basis: str | None, page: int):
+def printed_share(tables, period: str, basis: str | None, page: int, pbt: float | None = None, pbt_tol: float = 0.0):
     """(value in crore, tolerance in crore, page, inside) of the associates' share printed on the table that gave the PBT: the row
     the solver classes ASSOC, read in the period's one column, and only where an identity of the table that holds in that column
     takes it in (a hop to the profit before tax, or the profit carried on after tax). ``inside``: the row is above the PBT line,
-    so the printed PBT holds it. None when there is no such row or the rows found do not give one value and one side."""
+    so the printed PBT holds it. ``pbt``: the PBT the reading gave; a table whose own PBT in that column is another figure is
+    never used, so a share is never paired with another table's PBT. None when there is no such row or the rows found do not
+    give one value and one side."""
     from . import pdf_numbers_first as nf
     from .pdf_referee import target_column
 
@@ -160,7 +162,10 @@ def printed_share(tables, period: str, basis: str | None, page: int):
     kind, when = target
     found: list[tuple[float, float, int]] = []
     for t in tables:
-        if t.basis != basis or t.page != page or not t.unit or nf.table_figure(t, "pbt", kind, when)[0] is None:
+        if t.basis != basis or t.page != page or not t.unit:
+            continue
+        own, own_tol, _, _ = nf.table_figure(t, "pbt", kind, when)
+        if own is None or (pbt is not None and abs(own - pbt) > max(own_tol, pbt_tol, FLOOR) + 1e-9):
             continue
         solver = getattr(t, "solver", None) or nf.Solver(t).solve()
         cols = nf.target_columns(t, kind, when)
@@ -256,7 +261,7 @@ def check_card(tables, period: str, basis: str | None, figures, dossier=None) ->
         if word == "disagrees" and metric == "pbt" and parts(used) is None:
             # no memory values to anchor on (a card filed before statements.py stored rows): the gap is no alarm only when it is
             # exactly the associates' share the same table prints (the card on the other side of the share); any other gap stays
-            share = printed_share(tables, period, used, reading.page)
+            share = printed_share(tables, period, used, reading.page, reading.value, float(reading.tol or 0))
             if share is not None:
                 # the card on the other side of the share: the printed PBT less a share printed above it, or plus one below it
                 other_side = reading.value - share[0] if share[3] else reading.value + share[0]

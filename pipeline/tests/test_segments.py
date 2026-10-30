@@ -109,3 +109,12 @@ def test_a_line_is_no_business_only_by_how_it_begins():
         assert segments.NOT_BUSINESS.search(name), name
     for name in ("Power Adjustment Services", "Bank Reconciliation Software", "Retail Banking"):
         assert not segments.NOT_BUSINESS.search(name), name
+
+
+def test_a_segment_that_rounds_to_nothing_is_left_out_not_divided_by():
+    """534328 (30 Oct 2026): every segment of a quarter under ₹50,000 rounded to 0.00 crore and the shares divided by zero."""
+    doc = _doc("bse_main_ind_as_532811_q3fy25.xml")
+    doc["facts"] = [[el, ctx, unit, value / 1e9 if el in segments.REVENUE and isinstance(value, (int, float)) else value, x]
+                    for el, ctx, unit, value, x in doc["facts"]]
+    found = segments.segment_rows(doc)
+    assert found is None or all(r["share_pct"] is not None for r in found.get("rows") or [])

@@ -89,8 +89,8 @@ def segment_rows(doc: dict) -> dict | None:
         # of the others do not add up to 100% without it (blind review)
         name = names.get(member) or ("Segment " + ("".join(ch for ch in member if ch.isdigit()) or "?"))
         rev = by_tag[common] if common else next((by_tag[t] for t in REVENUE if t in by_tag), None)
-        if NOT_BUSINESS.search(name) or rev is None or rev <= 0:
-            continue
+        if NOT_BUSINESS.search(name) or rev is None or round(rev, 2) <= 0:
+            continue   # a segment under ₹50,000 rounds to 0.00 crore: no share to show (534328, 30 Oct 2026: division by zero)
         rows.append({"segment": name, "revenue_cr": round(rev, 2),
                      "pbit_cr": round(result[member], 2) if member in result else None})
     if rows:

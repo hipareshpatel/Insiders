@@ -35,7 +35,9 @@ env:
 
 jobs:
   run:
-    if: vars.MEMORY_CALL_V2 != '0'   # on from pipeline/config/switches.toml (owner, 30 Oct 2026); the variable at 0 turns it off
+    # on from pipeline/config/switches.toml (owner, 30 Oct 2026); the variable at 0 turns it off. Compared as text: an unset
+    # variable against '0' compares as the number 0 and skipped the job (run 40986926388)
+    if: format('v{0}', vars.MEMORY_CALL_V2) != 'v0'
     runs-on: ${{ fromJSON(vars.PIPELINE_RUNNER_LABELS || '["ubuntu-latest"]') }}
     timeout-minutes: 45   # the 25-minute budget, then the filing in hand (a reply waits up to 5 minutes a part)
     defaults:

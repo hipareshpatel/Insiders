@@ -574,6 +574,22 @@ def test_a_model_trial_sends_routes_that_have_the_model_to_it_alone():
     assert [t.key for t in plain.routes["pass2"]] == ["a:m-a", "b:m-b"]
 
 
+def test_a_call_memory_test_may_set_the_gemini_models_thinking_on_that_route_only():
+    """CALL_MEMORY_REASONING (owner, 30 Oct 2026: test Flash-Lite with thinking on): only the call_memory route's Gemini
+    targets change; unset, the configured extra_body stands."""
+    from conftest import ENV
+
+    from bse_intel.ai.gateway import AIGateway
+
+    config = gateway_config({"call_memory": [{"provider": "gemini", "model": "lite"}],
+                             "pass2": [{"provider": "gemini", "model": "lite"}]},
+                            {"gemini": {"base_url": "https://g.invalid/v1", "api_key_env": "G_KEY"}})
+    env = {**ENV, "G_KEY": "k"}
+    gw = AIGateway(config, client_factory=lambda *a: None, env={**env, "CALL_MEMORY_REASONING": "low"})
+    assert gw.routes["call_memory"][0].extra_body == {"reasoning_effort": "low"} and gw.routes["pass2"][0].extra_body == {}
+    assert AIGateway(config, client_factory=lambda *a: None, env=env).routes["call_memory"][0].extra_body == {}
+
+
 # ------------------------------------------------------------------ second keys and the second opinion (survey, 24 Oct 2026)
 
 def _two_key_providers():

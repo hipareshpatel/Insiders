@@ -1045,3 +1045,21 @@ def test_a_failing_queue_save_is_logged_and_the_run_goes_on(monkeypatch, setting
     with caplog.at_level("WARNING", logger="bse_intel.cli"):
         assert cli.cmd_call_memory(_pending_args(tmp_path), settings, sink) == cli.MORE_LEFT
     assert caplog.text.count("queue state not saved: D1 down") == 2     # start's failure again, then defer's
+
+
+def test_a_measured_test_may_read_in_smaller_parts(monkeypatch):
+    """CALL_MEMORY_PART_CHARS (owner, 30 Oct 2026: test smaller parts on one locked model); unset or bad, the live size."""
+    assert cm.part_chars() == cm.PART_CHARS
+    monkeypatch.setenv("CALL_MEMORY_PART_CHARS", "15000")
+    assert cm.part_chars() == 15000
+    monkeypatch.setenv("CALL_MEMORY_PART_CHARS", "x")
+    assert cm.part_chars() == cm.PART_CHARS
+
+
+def test_a_measured_test_may_read_with_the_held_prompt(monkeypatch, settings):
+    """CALL_MEMORY_PROMPT=v2 (owner, 30 Oct 2026: test the held prompt on one locked model); unset, the live prompt."""
+    live = PromptEngine(settings)._call_memory.template
+    assert "give fewer points rather than a loose one" in live
+    monkeypatch.setenv("CALL_MEMORY_PROMPT", "v2")
+    held = PromptEngine(settings)._call_memory.template
+    assert "give fewer points rather than a loose one" not in held and "split by segment, product, channel" in held

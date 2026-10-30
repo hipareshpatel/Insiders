@@ -59,7 +59,7 @@ blind review and a measurement; a switch then decides whether the rule acts on l
 
 | Switch (off today) | What it does, in one line | Lead's advice | Owner |
 |---|---|---|---|
-| MEMORY_CALL_V2 | Each call transcript and deck gets its own memory reading (Gemini key 3); its points are checked by code and kept | On after one more blind check of 10 new documents (TODO 101) | Yes / No / Later |
+| MEMORY_CALL_V2 | Each call transcript and deck gets its own memory reading (Gemini key 3); its points are checked by code and kept | **On** (owner, 30 Oct 2026 ~06:45 IST) | Yes |
 | MEMORY_YEAR_CHECK | A year or half-year figure its own quarters do not add up to is not used on a card | Measure on stored memory, then on | Yes / No / Later |
 | XBRL_FILER_CHECKS | Where the company's own file contradicts itself, the figure is held, not kept | Measure on stored memory, then on | Yes / No / Later |
 | MEMORY_RESTATED | A restated comparative is named as such on the card ("restated in Q2FY27, first filed X") | Later, with the card work | Yes / No / Later |
@@ -92,7 +92,7 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
-**Owner's list, night of 29-30 Oct 2026 (every instruction of the session, in the owner's order; state at 02:45 IST).**
+**Owner's list, night of 29-30 Oct 2026 (every instruction of the session, in the owner's order; state at 06:35 IST).**
 The order: correct memory first, from the exchange's files by screener's rules; then cards read memory.
 1. **Memory's financial figures from the exchange's XBRL only, by screener's rules, never from cards or AI readings.**
    Built: `MEMORY_FILE_ONLY` (dossier.STATEMENT_FIGURES from file/calc sources only), OFF until D20 (one card a quarter)
@@ -100,16 +100,19 @@ The order: correct memory first, from the exchange's files by screener's rules; 
    timeline's own quarter, then the switch on (owner's word).
 2. **The stock page's statements as screener shows them, row by row, for every past quarter and year.** Built (PR #224):
    `statements-backfill` turns the stored facts (raw/xbrl-facts/, no download) into `dossier["statements"]` by the
-   screener_view recipes (quarters, years, balance sheets, cash flows, both bases; a unit-slipped quarter or one 1.5x off
-   memory's checked revenue left out); the stock page shows those tables. Next: dry run read (run 40954730816), then
-   apply runs of 50 for ~1,900 dossiers.
+   screener_view recipes (quarters, years, balance sheets, cash flows, both bases; a unit-slipped quarter, or a year or
+   quarter whose Net Profit is 1.5x off memory's profit on the same basis, left out); the stock page shows those tables.
+   **Applying, 30 Oct from 05:30 IST:** runs of 50 (OPS), 250 companies done by 06:30 IST (12,138 entries; a handful left
+   out by the profit check, e.g. MTNL Q2FY24: the stored file -7.93 Cr against memory's -793). Faster each round: 17 min a
+   run, then 8.7 (8 reads at once, PR #227), 5.7 (24, PR #229), 4.9; writes 8 at once from PR #230. ~1,650 companies left.
 3. **Every future result saved by screener's rules at filing time.** Live (PR #220, #222): the live path keeps each
    results file's statements, consolidated and standalone; the seed too (PR #224).
 4. **The last 3 days' results from the exchange files, missing quarters into memory.** Next: `seed-memory` for the 223
    companies with results cards 27-29 Oct (scratchpad/cm2/recent_results_scrips.json), runs of 50; 42 of 143 recent filers
    had their latest quarter from the AI only (Coal India among them).
-5. **Every results filing of the last 2 days processed?** Not yet known: the queue shows 1,000 pending (its cap) and 33
-   failed. failed-report (run 40953576322) to read; a breakdown by date and type.
+5. **Every results filing of the last 2 days processed?** **Yes (30 Oct, 06:10 IST):** of the filings of 28-30 Oct none is
+   waiting and none failed except one audio-only ZIP (CNL, no text). failed-report now counts the last days' waiting
+   filings by day and type (PR #228). The "1,000 pending" is the old history backlog, not recent filings.
 6. **One results card a quarter; consolidated when it exists, else standalone.** Live (PR #220). A press release naming no
    quarter and a deck filed as results no longer take a second card (PR #224; 13 companies had two on 28-29 Oct).
 7. **The late exchange file fetched for a card made from the PDF.** PR #224: the catch-up reads the PDF-only cards first.
@@ -121,8 +124,15 @@ The order: correct memory first, from the exchange's files by screener's rules; 
    shows today is before the share (M&M Q1FY27 7,260.60 against the printed 7,628.09). The ~20 companies screener keeps the
    share out for (Reliance, Sun Pharma, L&T, DLF, BEL, some NBFCs) stay as they are (owner, 30 Oct 2026, ~02:50 IST: "Let
    those 20 companies stay as they are right now"): the general rule, no named list (docs/design/screener-associates-outside-pbt.md).
-10. **Transcripts and presentations into memory on the third Gemini key (call-only).** Second blind check running
-    (call-memory run 40934802754 against 10 blind keys); `MEMORY_CALL_V2` stays off for the owner's word (TODO 101).
+10. **Transcripts and presentations into memory on the third Gemini key (call-only).** Second blind check: FAIL, important
+    recall 59/123 = 48%, wrong 3/120. Why (30 Oct): about 46 of the missed points the model never returned (risks, segment
+    mix, margin drivers, demand outlook, one-offs), about 9 lost to a deck part that failed to read, at most 7 dropped by
+    our checks. Key 3 serves more models than we used: the two Flash-Lite models (~500 a day each) joined the route (PR
+    #227), so ~1,080 requests a day instead of ~80. A prompt that asks for every true point and names mix, policy backdrop
+    and working capital (held, not merged): the same 10 documents re-read (run 40982123227) all 10 read (8 before), points
+    kept 225 (120), important points found by the same matcher 88 of 153 = 58% (64 = 42% before; on the 8 read both
+    times 60% against 52%). In-sample and below the 85% bar, wrong points not yet counted; and 8 of the 10 were served by Flash-Lite (the Flash models' 20 a day were spent), so the gain is the prompt and the model together, not the prompt alone. Flash-Lite's quotes on a deck's figure slides are often bare numbers (Waaree: 21 of 40 points dropped by the quote check, rightly). **`MEMORY_CALL_V2` ON since 30 Oct
+    ~06:45 IST (owner: "Switch it ON"; switches.toml, TODO 101).**
 11. **Richer cards: what moved and why, from memory** (TODO 128), and the other card improvements, after memory.
 12. **The four card switches on** (consolidated only, company EBITDA first, two parts, dated guidance): live (PR #219).
 13. **Memory gaps checked against listing dates** (TODO 130): 1,445 before listing, 26 missed by the count, 50 truly absent

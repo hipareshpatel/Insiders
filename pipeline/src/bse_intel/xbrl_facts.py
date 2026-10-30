@@ -459,9 +459,10 @@ def interesting(facts: Facts) -> set[str]:
 
 MAX_SHARDS = 16           # owner, 28 Oct 2026: 8 parallel downloads, then "Can we take it to 16" (the same day)
 SINCE = "2020-04-01"      # the seed's own --since default: the selection below is the seed's (latest SEED_QUARTERS, older March quarters)
-FACTS_QUARTERS = 12       # the seed's 12. Screener shows 13, but the comparison starts at FY26 (screener_view.FIRST_QUARTER, owner,
-                          # 29 Oct 2026), which 12 cover; with 13 the test run 40837101219 fetched 90 files of Q1FY24 and Q2FY24
-MARKER_V = 1              # the marker's version: one written under another selection is no marker, its company is listed again
+FACTS_QUARTERS = 13       # screener's 13 (stock-page audit, 30 Oct 2026: with the seed's 12, 1,159 of 1,229 companies on the site had no
+                          # Q1FY24 and 821 a hole in their quarters; the test run 40837101219 with 13 fetched 90 files of Q1FY24 and Q2FY24)
+MARKER_V = 3              # the marker's version: one written under another selection is no marker, its company is listed again
+                          # (3: 13 quarters, 30 Oct 2026; 2 was the 13-quarter test run of 29 Oct)
 LIST_REFRESH_DAYS = 7     # a company whose files are all stored is not listed again for this many days (its marker, ``listed_key``)
 FAILED_SAMPLES = 200      # failed files named in the summary; every one is counted by reason
 GONE_STATUSES = ("http_404", "http_410")     # a file NSE lists and does not serve: remembered in the marker, tried again after LIST_REFRESH_DAYS

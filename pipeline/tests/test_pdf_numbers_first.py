@@ -2205,12 +2205,14 @@ def test_a_statement_counts_only_with_revenue_pbt_and_pat_and_never_from_a_page_
     # NUMFIRST_STOP_EARLY (lead, 30 Oct 2026): the scanned-page OCR stops once every basis has a usable statement; ACI Q1FY27's
     # page 2 named a standalone statement in a garbled layer, and stopping on it lost the four standalone figures OCR gives
     from types import SimpleNamespace as NS
-    def table(basis, cls, source="textlayer", named=True):
-        return NS(basis=basis, named=named, source=source, solver=NS(cls=cls))
+    solved = {"revenue": [1], "pbt": [1], "pat": [1]}
+    def table(basis, cls, source="textlayer", named=True, explanations=solved):
+        return NS(basis=basis, named=named, source=source, solver=NS(cls=cls, explanations=explanations))
     statement = ["REV", "TE", "PBT", "TAX", "PAT"]
     assert nf.is_statement(table("STANDALONE", statement))
-    assert nf.is_statement(table("STANDALONE", ["TI", "PBT", "PAT"]))
+    assert nf.is_statement(table("STANDALONE", ["TI", "PBT", "PAT"], explanations={"total_income": [1], "pbt": [1], "pat": [1]}))
     assert not nf.is_statement(table("STANDALONE", ["REV", "PBT"]))                 # a segment or summary table
+    assert not nf.is_statement(table("STANDALONE", statement, explanations={"revenue": [1]}))   # labelled, PBT/PAT unsolved
     pages = {2: [table("STANDALONE", statement)], 5: [table("CONSOLIDATED", statement, "ocr")]}
     assert nf.stated_bases(pages, untrusted=[]) == {"STANDALONE", "CONSOLIDATED"}
     assert nf.stated_bases(pages, untrusted=[2]) == {"CONSOLIDATED"}                # page 2's layer is waiting for OCR

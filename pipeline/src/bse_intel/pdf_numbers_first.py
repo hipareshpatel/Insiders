@@ -1757,9 +1757,13 @@ def _measured(fn):
 
 
 def is_statement(table: Table) -> bool:
-    """A results statement, not any named table: its rows name revenue or total income, PBT and PAT."""
-    named = set(getattr(getattr(table, "solver", None), "cls", None) or [])
-    return bool(named & {"REV", "TI"}) and "PBT" in named and "PAT" in named
+    """A results statement, not any named table: its rows name revenue or total income, PBT and PAT, and the table's arithmetic
+    solved each of them (the solver's ``explanations``), so a table merely labelled so never counts (review)."""
+    solver = getattr(table, "solver", None)
+    named = set(getattr(solver, "cls", None) or [])
+    solved = getattr(solver, "explanations", None) or {}
+    return (bool(named & {"REV", "TI"}) and "PBT" in named and "PAT" in named
+            and bool(solved.get("revenue") or solved.get("total_income")) and bool(solved.get("pbt")) and bool(solved.get("pat")))
 
 
 def stated_bases(by_page: dict[int, list], untrusted: list[int]) -> set[str]:

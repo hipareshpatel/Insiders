@@ -129,3 +129,21 @@ def test_sync_reports_what_was_written_and_what_was_kept(settings):
     report = im.sync(LocalSink(settings), Client(sizes), "2026-11-01")
     assert "MICROCAP250" in report.skipped and report.members["NIFTY50"] == 50 and report.written == sum(report.members.values()) and report.adds == report.written
     assert report.as_dict()["skipped"] == report.skipped
+
+
+def test_a_first_run_that_died_halfway_does_not_start_the_rest_at_today(settings):
+    sink = LocalSink(settings)
+    # an earlier first run stored A and then failed before the tracking day was saved
+    sink.execute("index_members_add", [{"index_id": "NIFTY50", "isin": "INE001", "symbol": "AAA", "company_name": "A", "valid_from": im.FIRST_READ}])
+    assert sink.kv_get(im.TRACKING_KEY) is None
+    report = im.write(sink, {"NIFTY50": [A, B]}, "2026-11-08")
+    assert _stretches(sink) == [("INE001", "1900-01-01", None), ("INE002", "1900-01-01", None)]   # B is a first-read member too, not a joiner of 2026-11-08
+    assert report.added == {} and sink.kv_get(im.TRACKING_KEY) == "2026-11-08"
+
+
+def test_an_index_added_later_is_a_first_read_of_its_own(settings):
+    sink = LocalSink(settings)
+    im.write(sink, {"NIFTY50": [A, B]}, "2026-11-01")
+    report = im.write(sink, {"NIFTY50": [A, B], "NIFTY100": [A, C]}, "2026-11-08")
+    assert _stretches(sink, "NIFTY100") == [("INE001", "1900-01-01", None), ("INE003", "1900-01-01", None)]   # earlier members unknown, not "joined today"
+    assert report.added == {} and sink.kv_get(im.TRACKING_KEY) == "2026-11-01"

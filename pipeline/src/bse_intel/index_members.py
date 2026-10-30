@@ -109,6 +109,9 @@ def write(sink, taken: dict[str, list[dict]], as_of: str, report: Report | None 
     rest. An index with no open stretch at all is on its first read (or was emptied whole, which the size guard keeps from happening
     unseen): its members start at ``FIRST_READ``."""
     report = report or Report()
+    # until the tracking day is saved (after every write below has gone through) this is still the first read, even when an earlier run
+    # died halfway and left some members stored: the rest must start at FIRST_READ too, not at today
+    first_read = sink.kv_get(TRACKING_KEY) is None
     open_rows: dict[str, dict[str, dict]] = {}
     for r in sink.query("index_members_open", []):
         open_rows.setdefault(r["index_id"], {})[r["isin"]] = r
@@ -117,14 +120,14 @@ def write(sink, taken: dict[str, list[dict]], as_of: str, report: Report | None 
     for index_id, members in taken.items():
         report.members[index_id] = len(members)
         held = open_rows.get(index_id, {})
-        valid_from = as_of if held else FIRST_READ
+        valid_from = FIRST_READ if first_read or not held else as_of   # a new index is a first read too: its earlier members are unknown
         now = {m["isin"] for m in members}
         joined = [m for m in members if m["isin"] not in held]
         left = [r for isin, r in held.items() if isin not in now]
         adds += [{"index_id": index_id, "isin": m["isin"], "symbol": m["symbol"], "company_name": m["company_name"],
                   "valid_from": valid_from} for m in joined]
         closes += [{"index_id": index_id, "isin": r["isin"], "valid_to": as_of} for r in left]
-        if held and joined:
+        if not first_read and held and joined:
             report.added[index_id] = [m["symbol"] for m in joined][:LISTED]
         if left:
             report.closed[index_id] = [r.get("symbol") or r["isin"] for r in left][:LISTED]

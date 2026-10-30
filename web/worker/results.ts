@@ -142,7 +142,8 @@ export function registerResultsRoutes(api: Hono<AppEnv>, memoised: Memoised) {
         db.prepare(`SELECT scrip_code, period, kind, revenue, revenue_prev, revenue_yoy, ebitda, ebitda_prev, ebitda_yoy, ebitda_turn,
             pat, pat_prev, pat_yoy, pat_turn FROM results_kpi WHERE period IN (SELECT value FROM json_each(?1))`).bind(periods),
         db.prepare(`SELECT scrip_code, isin, industry, market_cap_cr FROM companies WHERE scrip_code IN
-            (SELECT DISTINCT scrip_code FROM results_kpi WHERE period IN (SELECT value FROM json_each(?1)))`).bind(periods),
+            (SELECT DISTINCT scrip_code FROM results_kpi WHERE period IN (SELECT value FROM json_each(?1)))
+            OR (?2 = 1 AND isin IN (SELECT isin FROM index_members))`).bind(periods, by === "index" ? 1 : 0),   // an index's "of" counts members with no row yet
         // an index view reads every index's members; a sector or industry view only the one it narrows to (or none)
         db.prepare(`SELECT index_id, isin, valid_from, valid_to FROM index_members WHERE ?1 = 'all' OR index_id = ?2`)
           .bind(by === "index" ? "all" : "one", withinIndex),

@@ -45,18 +45,18 @@ export function mainBasis(metrics: Metric[]): "CONSOLIDATED" | "STANDALONE" | nu
   // with none of them on record, all metrics
   const headline = metrics.filter((m) => HEADLINE.has(m.metric));
   const count = (rows: Metric[]) => {
-  let consolidated = 0;
-  let standalone = 0;
-  for (const m of rows) {
-    const x = m as Metric & { basis?: string | null; sources?: { basis?: string | null }[] };
-    // the metric's own basis (memory sets it from a single source) as well as its sources' (deep audit F-03)
-    const votes = x.basis ? [x.basis] : (x.sources ?? []).map((s) => s.basis);
-    const c = votes.filter((v) => v === "CONSOLIDATED").length;
-    const st = votes.filter((v) => v === "STANDALONE").length;
-    if (c && c >= st) consolidated++;
-    else if (st) standalone++;
-  }
-  return { consolidated, standalone };
+    let consolidated = 0;
+    let standalone = 0;
+    for (const m of rows) {
+      const x = m as Metric & { basis?: string | null; sources?: { basis?: string | null }[] };
+      // the metric's own basis (memory sets it from a single source) as well as its sources' (deep audit F-03)
+      const votes = x.basis ? [x.basis] : (x.sources ?? []).map((s) => s.basis);
+      const c = votes.filter((v) => v === "CONSOLIDATED").length;
+      const st = votes.filter((v) => v === "STANDALONE").length;
+      if (c && c >= st) consolidated++;
+      else if (st) standalone++;
+    }
+    return { consolidated, standalone };
   };
   let n = count(headline);
   if (n.consolidated === 0 && n.standalone === 0) n = count(metrics);

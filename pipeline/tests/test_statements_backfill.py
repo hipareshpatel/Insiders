@@ -70,3 +70,17 @@ def test_a_quarter_far_from_memorys_revenue_is_left_out(settings):
     out = sb.run(sink, ["522261"])
     assert any("Q4FY24" in x and "Net Profit" in x for x in out["left_out"])
     assert out["by_table"].get("quarters", 0) == 0
+
+
+def test_a_failed_facts_read_stops_the_company_not_a_silent_gap():
+    from bse_intel import screener_view as sv
+
+    def loader(key):
+        raise RuntimeError("429")
+
+    cf = sv.CompanyFacts(["raw/xbrl-facts/500001/Q1FY27-consolidated.json"], loader)
+    import pytest
+    with pytest.raises(RuntimeError):
+        cf._load("raw/xbrl-facts/500001/Q1FY27-consolidated.json")
+    cf2 = sv.CompanyFacts([], lambda key: b"not json")
+    assert cf2._load("x") is None

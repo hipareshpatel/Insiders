@@ -1135,6 +1135,31 @@ context_tokens = 900000
 extra_body = { reasoning_effort = "low" }
 limits = { rpm = 5, tpm = 250_000, rpd = 20 }
 
+# Flash-Lite on key 3 (owner, 30 Oct 2026: "check we have other models available in key 3 so combined limit is more").
+# Providers check run 40977019175: key 3 serves gemini-3.5-flash-lite and gemini-3.1-flash-lite beside the four Flash models
+# (20 a day each); Flash-Lite allows ~500 a day each (assumption from the card keys' pass-1 routes, not measured on key 3).
+# Weight 1: the Flash models take most documents while their quota lasts; Flash-Lite carries the rest. Its points against the
+# blind keys are measured on the same 10 documents before it is trusted for more.
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemini-3.5-flash-lite"
+weight = 1
+json_mode = true
+max_tokens = 32000
+context_tokens = 900000
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
+
+[[routes.call_memory]]
+timeout_s = 300
+provider = "gemini"
+model = "gemini-3.1-flash-lite"
+weight = 1
+json_mode = true
+max_tokens = 32000
+context_tokens = 900000
+limits = { rpm = 15, tpm = 250_000, rpd = 500 }
+
 [[routes.call_memory]]
 timeout_s = 300
 provider = "nvidia"

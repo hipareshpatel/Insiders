@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { Link, useParams } from "wouter";
+import { isPastDue } from "../../shared/promiseDue.ts";
 import type { CallQuarter, CardRow, Company, Dossier, Guidance, Peer, PriceReaction, Technicals } from "../../shared/types";
 import { EarningsCalls } from "../components/company/EarningsCalls";
 import { Institutions } from "../components/company/Institutions";
@@ -440,7 +441,7 @@ function PromiseTracker({ dossier, company }: { dossier: Dossier | null; company
                 <tbody>
                   {guidance.map((g) => {
                     const last = g.status_history[g.status_history.length - 1];
-                    const isLate = !!g.due_date && g.due_date < today && ["OPEN", "ON_TRACK"].includes(g.status);
+                    const isLate = isPastDue(g, today) && ["OPEN", "ON_TRACK"].includes(g.status);
                     return (
                       <tr key={g.id} className="border-b border-line align-top last:border-0">
                         <td className="px-5 py-2 text-ink">{short(g.statement, 160)}{g.target ? <span className="text-ink-2"> · {g.target}</span> : null}

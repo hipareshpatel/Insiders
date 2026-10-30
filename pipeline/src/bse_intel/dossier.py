@@ -1312,7 +1312,10 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         gid = "g_" + _hash(filing.scrip_code, _norm(item.statement))
         if gid in guidance or third_party_view(f"{item.statement} {item.target or ''}"):
             continue
-        deadline = due_date(item.due)
+        deadline = due_date(item.due, d.get("fy_end_month"))
+        if deadline and judged_on(item.due, deadline.isoformat(), d.get("fy_end_month")) < as_of[:10]:
+            deadline = None   # judged before the day it was said: a misread period, not a date (audit 137, B3). H1FY27
+            # said on 16 Oct ended on 30 Sep but is judged on 14 Nov, so it stays
         # the same target said again in other words (Heritage's ₹6,000 Cr FY27 revenue, May 2025 and May 2026): one
         # commitment, said twice, not two (T5, 2026-10-20)
         same = next((g for g in guidance.values() if item.metric and item.target and deadline
@@ -1332,7 +1335,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         g = guidance.get(update.guidance_id)
         if g is None or g.get("given_on", "") >= as_of:
             continue  # unknown id (hallucinated) or guidance newer than this filing
-        if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"]) < as_of[:10]:
+        if update.status == "ON_TRACK" and g.get("due_date") and judged_on(g.get("due"), g["due_date"], d.get("fy_end_month")) < as_of[:10]:
             continue  # past its deadline a promise is delivered or missed, not on track ("2 MLPD by FY26" in Q2FY27);
             # a period's deadline passes when its results are due, not at its end (O12, owner 2026-10-20)
         if card_guidance_dated() and update.status in ("DELIVERED", "ON_TRACK", "DELAYED", "MISSED"):
@@ -1533,11 +1536,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
     return d
 
 
-def judged_on(due: str | None, stored: str | None) -> str:
+def judged_on(due: str | None, stored: str | None, fy_end_month: int | None = None) -> str:
     """The first day a deadline counts as passed: for a reporting period ("H1FY27") its end plus the results window
     (``periods.results_due``), else the stored day. Jindal Stainless's H1FY27 guidance was overdue on 16 Oct, a month
     before its results were due (O12, owner 2026-10-20)."""
-    judged = results_due(due)
+    judged = results_due(due, fy_end_month)
     return judged.isoformat() if judged else stored or ""
 
 

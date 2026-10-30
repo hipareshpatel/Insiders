@@ -3,6 +3,7 @@
 // (dates, the cursor) instead of walking a table, and hot responses are kept
 // briefly in the isolate and, on a custom domain, in Cloudflare's edge cache.
 import { dedupeEvents } from "../shared/events";
+import { daysPastDue, isPastDue } from "../shared/promiseDue.ts";
 import { isCompanyKey } from "../shared/companyKey";
 import type { CallQuarter, PublicSystemResponse } from "../shared/types";
 import { registerResultsRoutes } from "./results";
@@ -477,7 +478,7 @@ async function callLinks(c: Context<AppEnv>, calls: CallQuarter[], cards: { news
 }
 
 type MemorySummary = {
-  open_promises: { id: string; statement: string; due: string | null; due_date: string | null; given_on: string | null; status: string; source_news_id: string | null }[];
+  open_promises: { id: string; statement: string; due: string | null; due_date: string | null; given_on: string | null; status: string; source_news_id: string | null; overdue_from?: string | null }[];
   triggers: { kind: string; date: string; text: string }[];
   active_capex: number;
   revenue: { period: string; value: number } | null;
@@ -527,10 +528,10 @@ api.get("/promises/overdue", async (c) => {
         FROM companies WHERE earliest_open_due < ?1 ORDER BY earliest_open_due LIMIT 500`).bind(today).all();
     const promises = (results as Record<string, unknown>[]).flatMap((r) =>
       (parseSummary(r.memory_summary_json)?.open_promises ?? [])
-        .filter((p) => p.due_date && p.due_date < today)
+        .filter((p) => isPastDue(p, today))
         .map((p) => ({ ...p, scrip_code: r.scrip_code, symbol: r.symbol, company_name: r.company_name,
                        credibility_score: r.credibility_score,
-                       days_overdue: Math.round((Date.parse(today) - Date.parse(p.due_date!)) / 86400_000) })));
+                       days_overdue: daysPastDue(p, today) })));
     promises.sort((a, b) => b.days_overdue - a.days_overdue);
     return { today, promises: promises.slice(0, 500) };
   });

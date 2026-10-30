@@ -43,6 +43,23 @@ def report(sink, since: str, limit: int = LIMIT) -> dict:
                         for reason, group in ordered]}
 
 
+def waiting(sink, start: str, end: str, max_attempts: int, limit: int = LIMIT) -> dict:
+    """The filings of ``start``..``end`` (inclusive) still to be read (PENDING, or FAILED with attempts left), counted by
+    filed day and event type, with up to five results filings named (owner, 30 Oct 2026: was every results filing of the
+    last days read?). Reads only; the live run's own query (filings_pending), one page."""
+    rows = sink.query("filings_pending", [start, end, max_attempts, limit, "", ""])
+    by_day: dict[str, dict[str, int]] = {}
+    for r in rows:
+        day = by_day.setdefault(str(r.get("filed_at"))[:10], {})
+        kind = r.get("event_type") or "(not read yet)"
+        day[kind] = day.get(kind, 0) + 1
+    results = [r for r in rows if r.get("event_type") == "RESULTS" or "result" in str(r.get("subject") or r.get("headline") or "").lower()]
+    return {"from": start, "to": end, "waiting": len(rows), "capped": len(rows) >= limit, "by_day": by_day,
+            "results_like": len(results),
+            "results_examples": [f"{r['news_id']} {r.get('symbol') or r.get('scrip_code')} {str(r.get('filed_at'))[:16]} "
+                                 f"{r.get('status')} attempts={r.get('attempts')}" for r in results[:5]]}
+
+
 def failed(sink, since: str, max_attempts: int, limit: int = LIMIT) -> list[dict]:
     """Filings out of attempts filed on or after ``since``, newest first."""
     return sink.query("filings_failed", [since, max_attempts, limit])

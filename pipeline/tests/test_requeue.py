@@ -104,3 +104,15 @@ def test_failed_report_groups_failures_by_reason_and_the_requeue_skips_files_too
         "reason": "ValidationError: x", "count": 2, "examples": report["reasons"][0]["examples"]}
     assert report["reasons"][1]["reason"].startswith("AttachmentTooLarge: file too large (over <n> MB): <url>")
     assert requeue.requeue(sink, since, 3)["requeued"] == 1   # f1 only: f0 is too large, f2 has attempts left
+
+
+def test_failed_report_counts_the_last_days_filings_still_to_read(settings):
+    """Owner, 30 Oct 2026: was every results filing of the last days read? Pending and failed-with-attempts-left count."""
+    pipeline, sink, now = _failed_filings(settings)
+    sink._db.execute("UPDATE filings SET status = 'PENDING', event_type = 'RESULTS' WHERE news_id = 'f0'")
+    sink._db.execute("UPDATE filings SET attempts = 1 WHERE news_id = 'f2'")
+    sink._db.commit()
+    start = (now - timedelta(days=30)).date().isoformat()
+    out = requeue.waiting(sink, start, now.date().isoformat(), 3)
+    assert out["waiting"] == 2 and out["results_like"] >= 1 and sum(sum(d.values()) for d in out["by_day"].values()) == 2
+    assert any(x.startswith("f0 ") for x in out["results_examples"])

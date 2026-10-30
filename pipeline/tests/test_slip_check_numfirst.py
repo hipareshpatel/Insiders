@@ -121,3 +121,23 @@ def test_analyse_without_a_deadline_is_unchanged_and_with_a_passed_one_raises():
     assert nf.analyse(data)
     with pytest.raises(nf.OutOfTime):
         nf.analyse(data, deadline=-1.0)
+
+
+@pytest.mark.parametrize("switch", ["1", "0"])
+def test_the_fallback_reader_runs_with_the_bench_options_only_when_switched_on(on, monkeypatch, switch):
+    # lead, 30 Oct 2026: the text-layer fallback scored 10 wrong on the hard key with the F215 options off, 0 with them on
+    from bse_intel import settings
+    monkeypatch.setenv("SLIP_CHECK_READER_OPTIONS", switch)
+    monkeypatch.setattr(nf, "reading_from_tables", lambda *a, **k: SimpleNamespace(status="none"))
+    seen = []
+    from bse_intel import pdf_referee
+    real = pdf_referee.figure_for
+
+    def spy(*a, **k):
+        seen.append(settings.pdf_option("pdf_row_fixes"))
+        return real(*a, **k)
+    monkeypatch.setattr(pdf_referee, "figure_for", spy)
+    monkeypatch.delenv("PDF_ROW_FIXES", raising=False)
+    rows, want = pl()
+    check(statement(rows), "pat", crore(want["pat"][0]))
+    assert seen and all(seen) is (switch == "1")

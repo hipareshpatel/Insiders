@@ -53,7 +53,7 @@ test("momentum: +2 points speeds up, -2 slows, between is steady", () => {
   assert.equal(paceSentence(kestrel), "Profit growth was +9.0% last quarter and +48.0% now: speeding up by 39.0 pts.");
   const delhivery = ROWS.find((r) => r.symbol === "DELHIVERY")!;
   assert.equal(notComparableText(delhivery), "Loss a year ago: no % to compare. Last quarter the loss narrowed.");
-  assert.match(paceSentence(delhivery), /loss to profit/);
+  assert.match(paceSentence(delhivery), /loss → profit/);
 });
 
 test("the season's headline and lines are templates over the summary", () => {
@@ -67,7 +67,7 @@ test("the season's headline and lines are templates over the summary", () => {
     "Profit grew faster than sales: the middle company's revenue +11.8%, EBITDA +14.6%.",
     "118 are speeding up, growing profit faster than last quarter; 98 are slowing.",
     "Nifty Midcap 150 leads: its middle company grew profit +19.4%, against +12.1% in the Nifty 50.",
-    "61 companies (26%) earned less than a year ago; 6 of 8 indices show their best median in 8 quarters.",
+    "61 companies (26%) earned less than a year ago; 7 of 8 indices show their best median in 8 quarters.",
   ]);
   // without the groups, the index parts are left out, not guessed
   assert.deepEqual(seasonLines(SUMMARY).map(text).slice(2), ["61 companies (26%) earned less than a year ago."]);
@@ -76,7 +76,7 @@ test("the season's headline and lines are templates over the summary", () => {
 
 test("groups in words", () => {
   const idx = groupsResponse("index").rows;
-  assert.equal(bestInEight(idx), 6);
+  assert.equal(bestInEight(idx), 7);   // every index but Nifty Next 50 is at its 8-quarter high this quarter
   assert.equal(text(groupsLead(idx, "index")), "Nifty Midcap 150 leads the season: its middle company grew profit +19.4%, the Nifty 50's +12.1%.");
   assert.equal(groupsBullets(idx, "index")[0],
     "Banks and other financials hold the Nifty 50 back: they make 38% of its profit and grew +8.4% in total, the rest +9.9%.");
@@ -88,7 +88,9 @@ test("the spread chart: bar heights, the middle company's place, band widths", (
   assert.equal(barHeight(85, 85, 160), 160);
   assert.equal(barHeight(1, 1000, 160), 2, "a small count stays visible");
   assert.equal(barHeight(0, 85, 160), 0);
-  assert.deepEqual(medianSlot(13.9), { bin: 2, frac: 0.39000000000000006 });
+  const slot = medianSlot(13.9);
+  assert.equal(slot.bin, 2);
+  assert.ok(Math.abs(slot.frac - 0.39) < 1e-9);
   assert.deepEqual(medianSlot(20), { bin: 3, frac: 0 }, "exactly 20 counts above");
   assert.equal(medianSlot(-80)!.bin, 0);
   assert.equal(medianSlot(null), null);
@@ -138,4 +140,13 @@ test("CSV export: header, every row, quoting, no formulas", () => {
   assert.match(tricky, /"Say ""hi"", ok"/);
   assert.match(tricky, /,'=HYPERLINK\(\),/);
   assert.equal(toCsv([]).trimEnd().split("\r\n").length, 1);
+});
+
+test("every avatar colour keeps its white initials at 4.5:1 or better", async () => {
+  const { readFileSync } = await import("node:fs");
+  const src = readFileSync(new URL("../src/components/Avatar.tsx", import.meta.url), "utf8");
+  const colours = src.match(/const PALETTE = \[([^\]]+)\]/)![1].match(/#[0-9a-f]{6}/gi)!;
+  const lum = (h: string) => { const [r, g, b] = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  assert.equal(colours.length, 10);
+  for (const c of colours) assert.ok(1.05 / (lum(c) + 0.05) >= 4.5, c);
 });

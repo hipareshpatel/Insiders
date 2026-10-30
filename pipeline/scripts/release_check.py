@@ -645,6 +645,9 @@ def text_window(item: str, text: str, missing: list[str], width: int = 300) -> s
     return " ".join(text[start:start + width].split())
 
 
+TEXT_SUPPORT_SOURCES: dict[str, tuple[str, str]] = {}   # news_id -> (filing text, memory view) of the cards with a drop
+
+
 def check_text_support(card: dict, dossier: dict | None, row: dict, text: str) -> dict:
     """text_support: `card_support.apply` over a deep copy of the stored card; every dropped item with its reason."""
     shown = {k: card[k] for k in Card.model_fields if k in card and card[k] is not None}
@@ -671,6 +674,8 @@ def check_text_support(card: dict, dossier: dict | None, row: dict, text: str) -
             why = [n for n in label_notes if n.startswith(field)][:1] or ["(profit label not on the figure's line)"]
         drops.append({"news_id": row["news_id"], "company": row.get("symbol") or row.get("company_name"), "field": field,
                       "item": item, "note": why, "filing_window": text_window(item, text, missing)})
+    if drops:   # kept for the blind sample's judges: the filing text and memory as the check read them
+        TEXT_SUPPORT_SOURCES[row["news_id"]] = (text, json.dumps(view or {}, ensure_ascii=False, indent=1))
     kept = [f"{f}: {t}" for (f, t), n in left.items() for _ in range(n)]
     rec = _record(row, card, [f"{f}: {t}" for f, t in before], kept, drops=drops)
     rec["diff"] = {"added": [], "removed": [f"{d['field']}: {d['item']}" for d in drops], "changed": []}
@@ -1030,6 +1035,12 @@ def finish(name: str, switch: str, result: dict, out: pathlib.Path, seed: int, n
         (out / f"{name}-blind.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
         (out / f"{name}-blind.md").write_text(md, encoding="utf-8")
         (out / f"{name}-key.json").write_text(json.dumps(key, ensure_ascii=False, indent=1), encoding="utf-8")
+        sources_dir = out / f"{name}-sources"   # what the judges read: each sampled card's filing text and its memory
+        for it in items:
+            text, memory = TEXT_SUPPORT_SOURCES.get(it["news_id"], ("", "{}"))
+            sources_dir.mkdir(exist_ok=True)
+            (sources_dir / f"{it['news_id']}.filing.txt").write_text(text, encoding="utf-8")
+            (sources_dir / f"{it['news_id']}.memory.json").write_text(memory, encoding="utf-8")
         (out / f"{name}.json").write_text(json.dumps({"switch": switch, "counts": counts, "errors": result["errors"][name][:50],
                                                       "dropped": drops}, ensure_ascii=False, indent=1), encoding="utf-8")
         (out / f"{name}.txt").write_text(summary_text(name, switch, counts, changed, notes), encoding="utf-8")

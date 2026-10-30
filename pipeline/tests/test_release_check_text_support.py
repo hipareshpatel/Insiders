@@ -61,3 +61,6 @@ def test_the_run_leaves_the_in_sample_cards_out_and_counts_them(tmp_path, monkey
     assert "not supported" not in md and "Dalmia" in md   # the item, no note
     key = json.loads((out / "text_support-key.json").read_text(encoding="utf-8"))
     assert key["t01"]["field"] == "track_next"
+    for b in blind:   # the judges read each sampled card's filing text and memory, not the exchange
+        assert (out / "text_support-sources" / f"{b['news_id']}.filing.txt").read_text(encoding="utf-8")
+        assert (out / "text_support-sources" / f"{b['news_id']}.memory.json").exists()

@@ -48,7 +48,7 @@ def test_no_workflow_sets_a_listed_switch_itself_and_every_python_workflow_passe
     import tomllib
 
     listed = {k for k, v in tomllib.loads(SWITCHES.read_text(encoding="utf-8"))["on"].items() if v}
-    assert len(listed) == 17   # the 13 of 27 Oct and the four card switches of 30 Oct
+    assert len(listed) == 18   # the 13 of 27 Oct, the four card switches and SLIP_CHECK_NUMFIRST of 30 Oct
     for wf in sorted((ROOT / ".github" / "workflows").glob("*.yml")):
         text = wf.read_text(encoding="utf-8")
         for name in listed:

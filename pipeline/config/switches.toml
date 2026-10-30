@@ -30,3 +30,8 @@ CARD_CONSOLIDATED_ONLY = true    # F154: a consolidated filer's card states cons
 CARD_EBITDA_PROFIT_V2 = true     # F151: the company's own EBITDA first, ours as "calculated"; one profit line
 CARD_TWO_PARTS = true            # F152: "From the filing (checked)" and "Our reading (AI)"; a failing AI line hidden alone
 CARD_GUIDANCE_DATED = true       # F172: a guidance verdict only from a dated target due this period
+# On 30 Oct 2026, ~05:40 IST (owner, ~02:55 IST: Yes to the new reader once #218's review is clean): the unit-slip check asks
+# the numbers-first PDF reader first; where it gives no answer the text-layer reader decides, as before. Out of sample
+# (docs/bench/oos/README.md): 243 right / 11 wrong / 246 none of 500, the 11 a PBT definition and a file's own unit; the
+# read is capped at SLIP_CHECK_NUMFIRST_SECONDS (60) and never waits past it for the OCR lock (#218).
+SLIP_CHECK_NUMFIRST = true       # slip_check.PdfCheck: numbers-first reader first, the old reader the fallback

@@ -2289,13 +2289,14 @@ def cmd_restore(args, settings, sink) -> int:
 
 
 def cmd_results_table(args, settings, sink) -> int:
-    """The results page's figures from the saved statements (the company page's source): one snapshot file, raw/results-table/latest.json (results_table.py).
-    No card, no AI, no exchange call."""
+    """The results page's figures from the saved statements (the company page's source): one small file per company, raw/results-table/<scrip>.json
+    (results_table.py). By default the live window's companies only; --all rebuilds every company. No card, no AI, no exchange call."""
     from . import results_table
     from .timeutil import now_ist
 
-    count = results_table.write(sink, now_ist().isoformat(timespec="seconds"))
-    print(f"results-table: {count} quarter tables written to {results_table.SNAPSHOT_KEY}")
+    scrips = None if args.all else results_table.recent_scrips(sink)
+    count = results_table.write(sink, now_ist().isoformat(timespec="seconds"), scrips)
+    print(f"results-table: {'all companies' if scrips is None else f'{len(scrips)} companies'}, {count} quarter tables written under {results_table.PREFIX}")
     return 0
 
 
@@ -2690,7 +2691,8 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
     p.add_argument("--json", help="write the report to this file")
     p.set_defaults(func=cmd_memory_drop_known_wrong)
-    p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), one snapshot file in R2 (no card, no AI, no NSE)")
+    p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), a small file per company in R2 (no card, no AI, no NSE)")
+    p.add_argument("--all", action="store_true", help="every company (the full rebuild); default: the companies with a results card in the live window")
     p.set_defaults(func=cmd_results_table)
     p = sub.add_parser("statements-backfill", help="every company's past statements by screener's rules from the stored facts into memory: dry run (default) or --apply (backs each dossier up first; no NSE, no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")

@@ -640,7 +640,7 @@ jobs:
         env:
           PLATFORM_TIMEOUT_S: "30"
           PLATFORM_ATTEMPTS: "3"
-        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel results-table'
+        run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel results-table --all'
       - name: Statements by screener's rules from the stored facts (a dry run unless apply)
         if: inputs.command == 'statements-backfill'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs

@@ -3,8 +3,9 @@ tab and use it"; "no card").
 
 The company page's Quarterly results table is ``dossier["statements"]`` in each company's memory file (``memory/<scrip>.json`` in R2):
 the exchange's XBRL files by screener's rules, file-labelled. This job turns that same source into one table per quarter
-(fact_sheet.fact_sheet: revenue, EBITDA, PBT, PAT, margin, each with its year-ago and previous-quarter figure) and writes them all into
-one file, ``raw/results-table/latest.json``, which the Worker serves beside the feed. No card, no AI, no exchange call. A quarter the
+(fact_sheet.fact_sheet: revenue, EBITDA, PBT, PAT, margin, each with its year-ago and previous-quarter figure) and writes a small
+file per company, ``raw/results-table/<scrip>.json``; the Worker reads only the companies of the page's rows, so a page costs a few
+dozen small reads and no large parse. No card, no AI, no exchange call. A quarter the
 statements do not hold, and a bank (its own lines, not these), has no table."""
 
 from __future__ import annotations
@@ -16,7 +17,7 @@ from . import fact_sheet, screener_view as sv, statements
 
 log = logging.getLogger(__name__)
 
-SNAPSHOT_KEY = "raw/results-table/latest.json"
+PREFIX = "raw/results-table/"   # one small file per company: {"v": 1, "built_at", "rows": {quarter: table}}
 QUARTERS_KEPT = 8   # the latest quarters a company keeps in the file; the page's rows are recent ones
 
 
@@ -39,21 +40,30 @@ def company_tables(dossier: dict, kept: int = QUARTERS_KEPT) -> dict[str, dict]:
     return out
 
 
-def build(sink, at: str) -> dict:
-    """The whole snapshot: rows keyed ``<scrip>|<quarter>``. A company whose read fails is logged and left out, not guessed."""
-    rows: dict[str, dict] = {}
-    for scrip in sink.list_dossiers():
+def recent_scrips(sink) -> list[str]:
+    """The companies with a results card in the live window: the query the results catch-up already uses (event_catchup)."""
+    import datetime
+
+    from .event_catchup import MAX_CARDS, RESULTS_DAYS
+    from .timeutil import today_ist
+
+    since = (today_ist() - datetime.timedelta(days=RESULTS_DAYS)).isoformat()
+    return sorted({r["scrip_code"] for r in sink.query("results_cards_recent", [since, MAX_CARDS]) if r.get("scrip_code")})
+
+
+def write(sink, at: str, scrips: list[str] | None = None) -> int:
+    """Read each company's statements and write its file; ``scrips`` None: every stored company (the full rebuild, which also marks a
+    company with no table by an empty file); a list: only those (each pipeline run does the live window's companies, so a run reads
+    a few hundred memory files, not all of them). A company whose read fails is logged and keeps its old file. Returns the number of
+    quarter tables written."""
+    count = 0
+    for scrip in (sink.list_dossiers() if scrips is None else scrips):
         try:
-            dossier = sink.get_dossier(scrip)
-            for period, table in company_tables(dossier or {}).items():
-                rows[f"{scrip}|{period}"] = table
+            tables = company_tables(sink.get_dossier(scrip) or {})
         except Exception as exc:  # noqa: BLE001 - one company's bad file must not stop the rest
             log.warning("results-table: %s not read: %s", scrip, exc)
-    return {"v": 1, "built_at": at, "rows": rows}
-
-
-def write(sink, at: str) -> int:
-    """Build the snapshot and write it. Returns the number of quarter tables written."""
-    snapshot = build(sink, at)
-    sink.put_object(SNAPSHOT_KEY, json.dumps(snapshot, separators=(",", ":")).encode("utf-8"))
-    return len(snapshot["rows"])
+            continue
+        body = {"v": 1, "built_at": at, "rows": tables}
+        sink.put_object(f"{PREFIX}{scrip}.json", json.dumps(body, separators=(",", ":")).encode("utf-8"))
+        count += len(tables)
+    return count

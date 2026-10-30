@@ -84,6 +84,28 @@ def test_a_figure_not_in_the_quote_drops_the_point():
     assert _reasons(dropped) == ["figure"]
 
 
+def test_a_slide_figure_must_be_in_its_own_quote_and_an_elided_figure_needs_its_label():
+    deck = ("--- Page 1 of 1 ---\nWorking Capital Days = Working Capital*365/ Revenue\n65\n"
+            "Pathology Vials (Lakhs)\nPartnership 25.8\nD2C 2.0 +23%\nNet revenue retention 105%\n")
+    base = dict(type="kpi", section="SLIDE", unit="DAYS", period=None, page=1)
+
+    def check(**kw):
+        return cm.check_points([_point(**{**base, **kw})], deck)
+
+    # the quote holds a figure (365) that is not the point's 65: the 65 on the slide is somewhere else
+    kept, dropped = check(statement="Working capital days stood at 65 days", value=65,
+                          quote="Working Capital Days = Working Capital*365/ Revenue")
+    assert kept == [] and _reasons(dropped) == ["figure"]
+    # an elided quote whose figure sits in a piece with no label words skips the row's label
+    kept, dropped = check(statement="Partnership pathology vials were 2.0 lakhs, up 23%", value=2.0, unit="LAKH_UNITS",
+                          quote="Pathology Vials (Lakhs) ... 2.0 ... +23%")
+    assert kept == [] and _reasons(dropped) == ["figure"]
+    # the figure in the quote with its words is kept, and a prose quote with no digit stays out of this rule
+    kept, dropped = check(statement="Net revenue retention was 105%", value=105, unit="PERCENT",
+                          quote="Net revenue retention 105%")
+    assert len(kept) == 1 and dropped == []
+
+
 def test_period_labels_and_dates_are_not_figures_of_the_statement():
     kept, dropped = _check(_point(statement="Growth of 15% for H2FY27 and Q4FY27, said on 12.11.2026"))
     assert len(kept) == 1

@@ -306,6 +306,23 @@ def figure_issue(point: CallPoint, quote: str, context: str = "") -> str | None:
     return None
 
 
+def label_issue(point: CallPoint, quote: str) -> str | None:
+    """The point's figure is tied to its own label (blind rounds of 30 Oct 2026, 389 points: 2 wrong dropped, none right):
+    figures in a deck's boxes and rows sit around their labels, so ±CONTEXT_CHARS is no proof the figure is the label's. On a slide the quote carries the value
+    itself (Praj's "Working Capital Days = Working Capital*365/ Revenue" for 65 days), and in an elided quote the value is in
+    a piece with words in it ("Pathology Vials (Lakhs) ... 2.0 ... +23%" skips the row label: 2.0 was the D2C row)."""
+    values = [v for v in (point.value, point.value_high) if v is not None]
+    if not values:
+        return None
+    figures = _numbers(quote)
+    if point.section == "SLIDE" and re.search(r"\d", quote) and not all(_has(v, figures) for v in values):
+        return "the slide's quote carries a figure, not the point's"
+    pieces = [x for x in re.split(r"\.{3}|…", quote) if x.strip()]
+    if len(pieces) > 1 and not any(_WORDS.search(x) and _has(v, _numbers(x)) for x in pieces for v in values[:1]):
+        return "the figure is in an elided piece with no label words"
+    return None
+
+
 def unit_issue(point: CallPoint, quote: str, context: str = "") -> str | None:
     """The unit agrees with the quote's own scale word (spec 3.3): "10 lakh tonnes" with unit TONNES loses a factor of
     100,000, and a crore figure typed as lakh is 100 times off. Also fills `value_base` / `base_unit` (the figure in the base
@@ -657,6 +674,9 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
             drop(p, "quote", "the quote has no words, only figures")
             continue
         if (issue := figure_issue(p, quote, context)):
+            drop(p, "figure", issue)
+            continue
+        if (issue := label_issue(p, quote)):
             drop(p, "figure", issue)
             continue
         p.figure_beside_quote = figure_issue(p, quote) is not None   # kept, but the quote alone does not carry every figure

@@ -43,6 +43,12 @@ log = logging.getLogger(__name__)
 PREFIX = "raw/xbrl-facts/"
 VERSION = 1
 TEXT_MAX = 1000
+# Text memory reads in full (xbrl_extras.py; TODO 139: the raw file goes after 180 days, so what is cut here is lost): the auditor's
+# clause answers (default, fraud, statutory dues), any modified-opinion or audit-qualification statement, the audit committee's
+# remarks on a related-party transaction, "other" transaction details and the segment names. Each is read whole up to
+# FULL_TEXT_MAX characters; everything else (notes, the whole auditor's report, which run to 35-50 thousand characters) stays at TEXT_MAX.
+FULL_TEXT_MAX = 20000
+FULL_TEXT = re.compile(r"^(DisclosureInAuditorsReportRelatingTo|RemarksOn|DetailsOfOther|DescriptionOf(ReportableSegment|SingleSegment)$)|Modif|Qualif")
 CRORE = 1e7
 
 
@@ -157,7 +163,8 @@ def _collect(contexts: dict, kinds: dict, elements: list, year_end: int | None, 
             used_units.setdefault(unit, _unit_kind(unit, kinds))
             value = _number(text)
         if value is None:
-            value = text[:TEXT_MAX]
+            name = xbrl._local(el.tag)
+            value = text[:FULL_TEXT_MAX if FULL_TEXT.search(name) else TEXT_MAX]
         facts.append([xbrl._local(el.tag), ctx, unit, value, _decimals(el.get("decimals"))])
     return used_contexts, used_units, facts
 

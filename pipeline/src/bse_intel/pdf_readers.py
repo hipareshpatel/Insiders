@@ -68,6 +68,7 @@ LAYER_MIN_CHARS = 40        # fewer characters on a page: no text layer
 HEADER_LINES = 25           # lines at the top of a page kept as the table's title and unit context
 
 _UNIT_WORD = re.compile(r"\b(crores?|lakhs?|lacs?|millions?|thousands?|mn|cr)\b", re.I)
+_TWO_POINTS = re.compile(r"^\(?-?[\d,]*\d\.\d+\.\d+\)?$")   # "18.370.88": a figure with two decimal points (nemotron_grids)
 _CONS_WORD = re.compile(r"\bconsolidated\b", re.I)
 _ALONE_WORD = re.compile(r"\bstand[- ]?alone\b", re.I)
 # "consolidated" as a verb in prose ("the Government has consolidated 29 labour laws into 4 Labour Codes", TATAELXSI Q2FY27): not a
@@ -1347,7 +1348,14 @@ def _keep_refusal(raw_dir: str | None, reply) -> None:
 
 def nemotron_grids(answer: dict) -> list[list[list[str]]]:
     """The grids of the table elements of a nemotron-parse answer (the ``markdown_bbox`` tool call's JSON list, sometimes
-    nested one level)."""
+    nested one level). The answer gives a page's title and unit line as elements of their own, so the text elements above
+    each table (since the one before it) go in as its first rows (``NEMOTRON_HEADER``, default on): the basis and the unit
+    are read from them. A cell holding a figure with two decimal points (FIVESTAR Q1FY24 "18.370.88" for 18,370.88, read
+    as 18.37: run 41063175585) is emptied, so it gives no answer rather than a wrong one. ``NEMOTRON_NEED_UNIT`` (default off;
+    measured 30 Oct: it dropped right tables and let another table on the page answer wrong) drops a table with no unit word
+    in it or above it."""
+    header_on = os.environ.get("NEMOTRON_HEADER", "1") != "0"
+    need_unit = os.environ.get("NEMOTRON_NEED_UNIT", "0") == "1"
     grids = []
     for choice in answer.get("choices") or []:
         for call in (choice.get("message") or {}).get("tool_calls") or []:
@@ -1359,10 +1367,24 @@ def nemotron_grids(answer: dict) -> list[list[list[str]]]:
                 items = items[0]
             if items and isinstance(items[0], list):
                 items = [e for group in items for e in group]
+            above: list[str] = []
             for element in items:
-                if isinstance(element, dict) and str(element.get("type", "")).lower() == "table":
-                    text = element.get("text") or ""
-                    grids.extend(latex_tables(text) or html_tables(text) or markdown_tables(text))
+                if not isinstance(element, dict):
+                    continue
+                kind = str(element.get("type", "")).lower()
+                text = element.get("text") or ""
+                if kind != "table":
+                    if kind not in ("page-footer", "footnote", "picture", "image"):
+                        above.append(re.sub(r"<br\s*/?>|\*\*", " ", text).strip())
+                    continue
+                found = [[["" if _TWO_POINTS.match(c.strip()) else c for c in row] for row in grid]
+                         for grid in (latex_tables(text) or html_tables(text) or markdown_tables(text))]
+                head = [[line] for line in above[-6:] if line] if header_on else []
+                above = []
+                for grid in found:
+                    if need_unit and not (_UNIT_WORD.search(text) or any(_UNIT_WORD.search(h[0]) for h in head)):
+                        continue
+                    grids.append(head + grid)
     return grids
 
 

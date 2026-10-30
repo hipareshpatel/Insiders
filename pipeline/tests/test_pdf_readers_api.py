@@ -85,7 +85,8 @@ def test_latex_tables_rows_cells_rules_and_multicolumn():
 
 
 def test_nemotron_grids_takes_only_table_elements_from_a_nested_list():
-    assert nemotron_grids(NEMO) == [[["Particulars", "Q1", "Q2"], ["Revenue", "1,234.5", "(12.3)"], ["Total", "", "9"]]]
+    assert nemotron_grids(NEMO) == [[["Statement of results"], ["Particulars", "Q1", "Q2"], ["Revenue", "1,234.5", "(12.3)"],
+                                     ["Total", "", "9"]]]
 
 
 @respx.mock
@@ -148,3 +149,31 @@ def test_mistral_refusal_is_kept(monkeypatch, tmp_path):
     with pytest.raises(RuntimeError, match="HTTP 403"):
         MistralOcrReader().extract(_pdf(1))
     assert json.loads((tmp_path / "refused-0.json").read_text())["status"] == 403
+
+
+def _answer(elements):
+    return {"choices": [{"message": {"tool_calls": [{"function": {"arguments": json.dumps([elements])}}]}}]}
+
+
+TABLE = r"\begin{tabular}{lrr} Particulars & Quarter ended 30 June 2023 & Quarter ended 30 June 2022 \\ Profit for the period & 18.370.88 & 14,417.73 \\ \end{tabular}"
+
+
+def test_nemotron_puts_the_title_and_unit_above_each_table_and_empties_a_two_point_figure(monkeypatch):
+    monkeypatch.delenv("NEMOTRON_HEADER", raising=False)
+    elements = [{"type": "Section-header", "text": "**Statement of unaudited standalone results**"},
+                {"type": "Text", "text": "(All amounts are in Indian Rupees in lakhs)"},
+                {"type": "Table", "text": TABLE},
+                {"type": "Page-footer", "text": "Place: Chennai"},
+                {"type": "Table", "text": TABLE}]
+    first, second = nemotron_grids(_answer(elements))
+    assert first[:2] == [["Statement of unaudited standalone results"], ["(All amounts are in Indian Rupees in lakhs)"]]
+    assert first[-1] == ["Profit for the period", "", "14,417.73"]        # 18.370.88 (read as 18.37) gives no answer
+    assert second[0][0].startswith("Particulars")                           # the footer is no header; the title went with the first
+
+
+def test_nemotron_header_off_and_unit_rule(monkeypatch):
+    elements = [{"type": "Table", "text": TABLE}]
+    monkeypatch.setenv("NEMOTRON_HEADER", "0")
+    assert len(nemotron_grids(_answer(elements))) == 1                       # the unit rule is off by default
+    monkeypatch.setenv("NEMOTRON_NEED_UNIT", "1")
+    assert nemotron_grids(_answer(elements)) == []                          # on: a table with no unit word anywhere is dropped

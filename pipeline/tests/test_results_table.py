@@ -91,6 +91,98 @@ def test_nothing_is_sent_when_there_is_nothing():
     assert rt.write(sink, "t") == 0 and sink.sent == []
 
 
+def _bank(period, revenue, net, basis="CONSOLIDATED", **extra):
+    return _entry(period, {"Revenue": revenue, "Interest": revenue / 2, "Profit before tax": net * 1.3, "Net Profit": net, **extra},
+                  basis=basis, family="bank")
+
+
+def _nbfc(period, revenue, fin_profit, net, margin):
+    return _entry(period, {"Revenue": revenue, "Sales": revenue, "Financing Profit": fin_profit, "Financing Margin %": margin,
+                           "Net Profit": net}, family="nbfc")
+
+
+def _row(memory, period="Q2FY27"):
+    return next(r for r in rt.company_rows("500010", memory, "t") if r["period"] == period)
+
+
+def test_a_bank_has_revenue_and_profit_but_no_ebitda_or_margin():
+    memory = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 28.0}), _bank("Q2FY26", 80.0, 20.0, **{"Net Profit (owners)": 24.0}),
+                             _bank("Q1FY27", 95.0, 27.0, **{"Net Profit (owners)": 25.0})]}
+    row = _row(memory)
+    assert row["kind"] == "bank" and (row["revenue"], row["revenue_prev"], row["revenue_yoy"], row["revenue_qoq"]) == (100.0, 80.0, 25.0, 5.3)
+    assert (row["pat"], row["pat_prev"], row["pat_yoy"], row["pat_qoq"]) == (28.0, 24.0, 16.7, 12.0)
+    assert (row["ebitda"], row["ebitda_key"], row["opm"], row["opm_yoy_bps"], row["nfo"]) == (None, None, None, None, 0)
+
+
+def test_an_nbfc_keeps_its_financing_profit_and_margin_in_the_ebitda_columns():
+    memory = {"statements": [_nbfc("Q2FY27", 500.0, 300.0, 120.0, 60.0), _nbfc("Q2FY26", 400.0, 200.0, 100.0, 50.0), _nbfc("Q1FY27", 480.0, 290.0, 110.0, 60.4)]}
+    row = _row(memory)
+    assert row["kind"] == "nbfc" and (row["revenue"], row["revenue_yoy"]) == (500.0, 25.0)
+    assert (row["ebitda"], row["ebitda_prev"], row["ebitda_yoy"], row["ebitda_qoq"]) == (300.0, 200.0, 50.0, 3.4)
+    assert (row["opm"], row["opm_yoy_bps"], row["opm_qoq_bps"]) == (60.0, 1000, -40)
+    assert row["nfo"] == 0   # never for a lender, whatever the figures
+
+
+def test_an_insurer_has_profit_only_and_a_quarter_without_a_profit_line_has_no_row():
+    memory = {"statements": [_entry("Q2FY27", {"Net Profit": 50.0}, family="insurer"), _entry("Q2FY26", {"Net Profit": 40.0}, family="insurer"),
+                             _entry("Q1FY27", {"Revenue": 9.0}, family="bank")]}
+    row = _row(memory)
+    assert row["kind"] == "insurer" and (row["pat"], row["pat_yoy"]) == (50.0, 25.0)
+    assert (row["revenue"], row["ebitda"], row["opm"]) == (None, None, None)
+    assert "Q1FY27" not in {r["period"] for r in rt.company_rows("500010", memory, "t")}
+
+
+def test_a_corporate_row_has_kind_company_prev_amounts_and_both_loss_turns():
+    memory = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 50.0)), _entry("Q2FY26", _rows(1000.0, 200.0, 160.0, -20.0)),
+                             _entry("Q1FY27", _rows(1100.0, 200.0, 150.0, -30.0))]}
+    row = _row(memory)
+    assert row["kind"] == "company" and (row["revenue_prev"], row["ebitda_prev"], row["pat_prev"]) == (1000.0, 200.0, -20.0)
+    assert (row["pat_turn"], row["pat_qoq_turn"], row["pat_yoy"], row["pat_qoq"]) == ("LOSS_TO_PROFIT", "LOSS_TO_PROFIT", None, None)
+    assert row["revenue_yoy"] == 20.0 and row["ebitda_yoy"] == 20.0   # revenue never has a turn; ebitda here is a plain per cent
+
+
+def test_each_family_takes_consolidated_over_standalone():
+    memory = {"statements": [_bank("Q2FY27", 100.0, 30.0), _bank("Q2FY27", 90.0, 25.0, basis="STANDALONE")]}
+    assert (_row(memory)["basis"], _row(memory)["revenue"]) == ("CONSOLIDATED", 100.0)
+    memory = {"statements": [_entry("Q2FY27", {"Net Profit": 5.0}, family="insurer", basis="STANDALONE")]}
+    assert _row(memory)["basis"] == "STANDALONE"
+    # a consolidated entry with no profit line gives way to the standalone one
+    memory = {"statements": [_entry("Q2FY27", {"Revenue": 100.0}, family="bank"), _bank("Q2FY27", 90.0, 25.0, basis="STANDALONE")]}
+    assert (_row(memory)["basis"], _row(memory)["pat"]) == ("STANDALONE", 25.0)
+
+
+def test_profit_not_from_operations_needs_a_company_with_profit_up_and_ebitda_down():
+    def row_of(now, before):
+        return _row({"statements": [_entry("Q2FY27", now), _entry("Q2FY26", before)]})
+    assert row_of(_rows(1200.0, 180.0, 200.0, 150.0), _rows(1000.0, 200.0, 160.0, 120.0))["nfo"] == 1        # profit +25%, EBITDA -10%
+    assert row_of(_rows(1200.0, 240.0, 200.0, 150.0), _rows(1000.0, 200.0, 160.0, 120.0))["nfo"] == 0        # EBITDA up
+    assert row_of(_rows(1200.0, 180.0, 200.0, 100.0), _rows(1000.0, 200.0, 160.0, 120.0))["nfo"] == 0        # profit down
+    assert row_of(_rows(1200.0, 180.0, 200.0, 50.0), _rows(1000.0, 200.0, 160.0, -20.0))["nfo"] == 1         # loss to profit, EBITDA down
+    assert row_of(_rows(1200.0, -10.0, 200.0, 50.0), _rows(1000.0, 200.0, 160.0, 40.0))["nfo"] == 1          # EBITDA profit to loss
+    assert row_of(_rows(1200.0, 180.0, 200.0, 150.0), _rows(1000.0, 200.0, 160.0, 120.0))["ebitda_turn"] is None
+
+
+def test_the_source_filing_is_kept_only_when_it_is_an_nse_one_and_is_part_of_the_digest():
+    memory = _memory()
+    assert _row(memory)["source_news_id"] is None   # the test entries carry "n-..." ids
+    memory["statements"][0]["source_news_id"] = "nse-123"
+    row = _row(memory)
+    assert row["source_news_id"] == "nse-123"
+    other = _memory()
+    other["statements"][0]["source_news_id"] = "nse-456"
+    assert _row(other)["digest"] != row["digest"]
+
+
+def test_the_row_keys_are_the_tables_columns_and_ten_quarters_are_kept(settings):
+    from bse_intel.sinks.local import LocalSink
+
+    row = rt.company_rows("500001", _memory(), "t")[0]
+    columns = [c[1] for c in LocalSink(settings)._db.execute("PRAGMA table_info(results_kpi)")]
+    assert sorted(row) == sorted(columns) and rt.QUARTERS_KEPT == 10
+    memory = {"statements": [_entry(f"Q{q}FY{y}", _rows(100.0 + y, 20.0, 15.0, 10.0)) for y in range(20, 28) for q in range(1, 5)]}
+    assert len(rt.company_rows("500001", memory, "t")) == 10
+
+
 def test_the_upsert_writes_the_table_and_an_unchanged_row_is_not_rewritten(settings):
     from bse_intel.sinks.local import LocalSink
 
@@ -100,6 +192,7 @@ def test_the_upsert_writes_the_table_and_an_unchanged_row_is_not_rewritten(setti
     assert sink.execute("results_kpi_upsert", rt.company_rows("500001", _memory(), "t2")) == 0   # same figures: no D1 row write
     stored = sink._db.execute("SELECT revenue, revenue_yoy, pat_key, updated_at FROM results_kpi WHERE scrip_code = '500001' AND period = 'Q2FY27'").fetchone()
     assert tuple(stored) == (1200.0, 20.0, 25.0, "t1")
+    assert sink._db.execute("SELECT kind, revenue_prev, pat_prev, nfo FROM results_kpi WHERE period = 'Q2FY27'").fetchone()[:] == ("company", 1000.0, 118.4, 0)
     changed = _memory()
     changed["statements"][0]["rows"]["Sales"] = 1300.0
     assert sink.execute("results_kpi_upsert", rt.company_rows("500001", changed, "t3")) == 1

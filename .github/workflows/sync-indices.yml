@@ -1,11 +1,12 @@
 # Weekly refresh of NSE's broad index constituents (owner, 30 Oct 2026: "map stocks from NSE broad indices", "update it every Sunday"):
 # Nifty 50, Next 50, 100, 200, 500, LargeMidcap 250, Midcap 150, MidSmallcap 400, Smallcap 250, Microcap 250 and Total Market, each one static
 # CSV on NSE's archive host, into the D1 table index_members (index_members.py). The Results KPI report joins it to companies by ISIN to
-# filter and summarise growth by index. NSE reconstitutes its indices in March and September, so a week is fast enough.
-# 03:30 UTC Sunday = 09:00 IST Sunday. About eleven NSE requests and about 2,300 row writes a week. No AI.
+# filter and summarise growth by index. The table keeps history (joins and leaves with their dates), so a quarter uses the members of its last
+# day; a run writes only the changes. NSE reconstitutes its indices in March and September, so a week is fast enough.
+# 03:30 UTC Sunday = 09:00 IST Sunday. About eleven NSE requests a week, row writes only for joins and leaves (about 2,300 on the first run). No AI.
 #
 # Like the pipeline, the schedule runs only once the owner switches the pipeline on (PIPELINE_SCHEDULE = "on").
-# Exit 1 when an index list could not be taken (a failed or cut download; its old rows are kept, the others are written).
+# Exit 1 when an index list could not be taken (a failed or cut download; that index is left as it is, the others are written).
 name: Sync indices
 
 on:

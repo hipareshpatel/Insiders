@@ -8,8 +8,12 @@ plain browser User-Agent; Nifty 500 and Smallcap 250 carry a placeholder row ``D
 ``DUMMYINGL2``, ``DUMMYINXGN``), which are not companies and are skipped.
 
 A list is taken only when its size is near the index's own (a failed or cut download must not empty an index): otherwise that index
-keeps last week's rows and the run ends with exit 1 after the others are written. A company that left an index is removed by the
-as_of of the newest read."""
+is left as it is and the run ends with exit 1 after the others are written.
+
+The table keeps history (owner, 30 Oct 2026: "track index changes so from next quarter onwards it shows the correct way"): a company
+that joins an index gets a row with ``valid_from`` = the day of the read, one that leaves gets ``valid_to`` = that day, one that returns
+gets a new row; an unchanged member writes nothing. The very first read of an index gives ``valid_from`` = ``FIRST_READ``, "a member
+when we began tracking" (the day is kept in kv ``index_members:tracking_since``)."""
 
 from __future__ import annotations
 
@@ -40,14 +44,24 @@ SIZE_TOLERANCE = 0.10   # a list within 10% of the index's size is taken (Total 
 BATCH = 500
 
 
+FIRST_READ = "1900-01-01"   # valid_from of a member the first read of its index found (migration 0016)
+TRACKING_KEY = "index_members:tracking_since"
+LISTED = 30                 # symbols named per index in the report
+
+
 @dataclass
 class Report:
-    members: dict[str, int] = field(default_factory=dict)   # index id -> constituents written
-    skipped: dict[str, str] = field(default_factory=dict)   # index id -> why its old rows were kept
-    written: int = 0
+    members: dict[str, int] = field(default_factory=dict)   # index id -> constituents in the list read
+    added: dict[str, list[str]] = field(default_factory=dict)    # index id -> symbols that joined (capped)
+    closed: dict[str, list[str]] = field(default_factory=dict)   # index id -> symbols that left (capped)
+    skipped: dict[str, str] = field(default_factory=dict)   # index id -> why it was left as it was
+    adds: int = 0
+    closes: int = 0
+    written: int = 0                                          # rows sent: adds and closes
 
     def as_dict(self) -> dict:
-        return {"members": self.members, "skipped": self.skipped, "written": self.written}
+        return {"members": self.members, "added": self.added, "closed": self.closed, "skipped": self.skipped,
+                "adds": self.adds, "closes": self.closes, "written": self.written}
 
 
 def parse_members(text: str) -> list[dict]:
@@ -90,20 +104,44 @@ def read_all(fetch) -> tuple[dict[str, list[dict]], dict[str, str]]:
     return taken, skipped
 
 
-def write(sink, taken: dict[str, list[dict]], as_of: str) -> int:
-    """Put the taken indices' members in the table and take out whoever left them. Returns the rows written."""
-    rows = [{"index_id": index_id, "as_of": as_of, **m} for index_id, members in taken.items() for m in members]
-    written = 0
-    for at in range(0, len(rows), BATCH):
-        written += sink.execute("index_members_upsert", rows[at:at + BATCH])
-    if taken:
-        sink.execute("index_members_prune", [{"index_id": index_id, "as_of": as_of} for index_id in taken])
-    return written
+def write(sink, taken: dict[str, list[dict]], as_of: str, report: Report | None = None) -> Report:
+    """Compare the taken lists with the open stretches of membership: add those who joined, close those who left, write nothing for the
+    rest. An index with no open stretch at all is on its first read (or was emptied whole, which the size guard keeps from happening
+    unseen): its members start at ``FIRST_READ``."""
+    report = report or Report()
+    open_rows: dict[str, dict[str, dict]] = {}
+    for r in sink.query("index_members_open", []):
+        open_rows.setdefault(r["index_id"], {})[r["isin"]] = r
+    adds: list[dict] = []
+    closes: list[dict] = []
+    for index_id, members in taken.items():
+        report.members[index_id] = len(members)
+        held = open_rows.get(index_id, {})
+        valid_from = as_of if held else FIRST_READ
+        now = {m["isin"] for m in members}
+        joined = [m for m in members if m["isin"] not in held]
+        left = [r for isin, r in held.items() if isin not in now]
+        adds += [{"index_id": index_id, "isin": m["isin"], "symbol": m["symbol"], "company_name": m["company_name"],
+                  "valid_from": valid_from} for m in joined]
+        closes += [{"index_id": index_id, "isin": r["isin"], "valid_to": as_of} for r in left]
+        if held and joined:
+            report.added[index_id] = [m["symbol"] for m in joined][:LISTED]
+        if left:
+            report.closed[index_id] = [r.get("symbol") or r["isin"] for r in left][:LISTED]
+    for at in range(0, len(adds), BATCH):
+        sink.execute("index_members_add", adds[at:at + BATCH])
+    for at in range(0, len(closes), BATCH):
+        sink.execute("index_members_close", closes[at:at + BATCH])
+    report.adds, report.closes = len(adds), len(closes)
+    report.written = len(adds) + len(closes)
+    if taken and sink.kv_get(TRACKING_KEY) is None:
+        sink.kv_set(TRACKING_KEY, as_of, as_of)
+    return report
 
 
 def sync(sink, client, as_of: str) -> Report:
-    """Read NSE's lists and refresh ``index_members``."""
+    """Read NSE's lists and bring ``index_members`` up to date."""
     taken, skipped = read_all(lambda name: client._get(INDEX_URL.format(name=name)).text)
-    report = Report(members={i: len(m) for i, m in taken.items()}, skipped=skipped, written=write(sink, taken, as_of))
+    report = write(sink, taken, as_of, Report(skipped=skipped))
     log.info("index members from NSE: %s", report.as_dict())
     return report

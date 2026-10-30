@@ -5,7 +5,7 @@
 import { dedupeEvents } from "../shared/events";
 import { isCompanyKey } from "../shared/companyKey";
 import type { CallQuarter, PublicSystemResponse } from "../shared/types";
-import { PAGE_SIZE, kpiRowsSql, kpiSummarySql, kpiWhere, parseKpiQuery, quarterIndex, type KpiResponse, type KpiRow } from "../shared/resultsKpi";
+import { registerResultsRoutes } from "./results";
 import { Hono } from "hono";
 import type { Context } from "hono";
 import type { AppEnv } from "./env";
@@ -211,29 +211,8 @@ export async function feed(c: Context<AppEnv>, withHeld = false) {
 
 api.get("/feed", (c) => feed(c));
 
-// The Results page as a KPI report: one row per company for a quarter, revenue / EBITDA / PAT growth worked out from the saved
-// statements (results_kpi, pipeline results_table.py; no card), filtered and sorted here in the database (shared/resultsKpi.ts).
-api.get("/results-kpi", async (c) => {
-  const query = parseKpiQuery(c.req.query());
-  const quarters = await memoised("results-kpi:quarters", 60_000, async () => {
-    const { results } = await c.env.DB.prepare("SELECT period, count(*) AS n FROM results_kpi GROUP BY period").all<{ period: string; n: number }>();
-    return results.sort((a, b) => (quarterIndex(b.period) ?? 0) - (quarterIndex(a.period) ?? 0));
-  });
-  const quarter = query.quarter && quarters.some((x) => x.period === query.quarter) ? query.quarter : (quarters[0]?.period ?? null);
-  const empty: KpiResponse = { quarter, quarters, rows: [], summary: { n: 0, revenue_up: 0, ebitda_up: 0, pat_up: 0, turnarounds: 0 }, page: 1, pages: 1 };
-  if (!quarter) return c.json(empty);
-  const { from, params } = kpiWhere(query, quarter);
-  const body = await memoised(`results-kpi:${JSON.stringify([query, quarter])}`, 20_000, async () => {
-    const [rows, summary] = await c.env.DB.batch([
-      c.env.DB.prepare(kpiRowsSql(query, from)).bind(...params),
-      c.env.DB.prepare(kpiSummarySql(from)).bind(...params),
-    ]);
-    const n = (summary.results[0] as KpiResponse["summary"] | undefined) ?? empty.summary;
-    return { quarter, quarters, rows: (rows.results as unknown as KpiRow[]).slice(0, PAGE_SIZE), summary: n, page: query.page,
-      pages: Math.max(1, Math.ceil(n.n / PAGE_SIZE)) } satisfies KpiResponse;
-  });
-  return c.json(body);
-});
+// The Results page as a KPI report (worker/results.ts): /results-kpi, /results-classification, /results-groups, /results-company/:key.
+registerResultsRoutes(api, memoised);
 
 const todayIst = () => new Date(Date.now() + 5.5 * 3600_000).toISOString().slice(0, 10);
 

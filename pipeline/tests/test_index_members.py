@@ -48,18 +48,74 @@ def test_a_source_block_stops_the_run_it_is_not_one_index_missing():
         im.read_all(fetch)
 
 
-def test_the_table_is_refreshed_and_a_company_that_left_an_index_goes_but_a_skipped_index_keeps_its_rows(settings):
+A = {"isin": "INE001", "symbol": "AAA", "company_name": "A"}
+B = {"isin": "INE002", "symbol": "BBB", "company_name": "B"}
+C = {"isin": "INE003", "symbol": "CCC", "company_name": "C"}
+
+
+def _stretches(sink, index_id="NIFTY50"):
+    return sorted(tuple(r) for r in sink._db.execute(
+        "SELECT isin, valid_from, valid_to FROM index_members WHERE index_id = ?", (index_id,)))
+
+
+def _members_on(sink, day, index_id="NIFTY50"):
+    return sorted(r[0] for r in sink._db.execute(
+        "SELECT isin FROM index_members WHERE index_id = ? AND valid_from <= ? AND (valid_to IS NULL OR valid_to > ?)",
+        (index_id, day, day)))
+
+
+def test_the_first_read_of_an_index_starts_its_members_at_the_sentinel_and_sets_tracking_since_once(settings):
     sink = LocalSink(settings)
-    a, b = {"isin": "INE001", "symbol": "AAA", "company_name": "A"}, {"isin": "INE002", "symbol": "BBB", "company_name": "B"}
-    im.write(sink, {"NIFTY50": [a, b], "NIFTY100": [a, b]}, "2026-10-25")
-    im.write(sink, {"NIFTY50": [a]}, "2026-11-01")   # B left the Nifty 50; the Nifty 100 list was not taken this week
-    rows = {tuple(r) for r in sink._db.execute("SELECT index_id, isin, as_of FROM index_members")}
-    assert rows == {("NIFTY50", "INE001", "2026-11-01"), ("NIFTY100", "INE001", "2026-10-25"), ("NIFTY100", "INE002", "2026-10-25")}
+    report = im.write(sink, {"NIFTY50": [A, B]}, "2026-11-01")
+    assert _stretches(sink) == [("INE001", "1900-01-01", None), ("INE002", "1900-01-01", None)]
+    assert (report.adds, report.closes, report.written, report.members) == (2, 0, 2, {"NIFTY50": 2})
+    assert sink.kv_get(im.TRACKING_KEY) == "2026-11-01"
+    im.write(sink, {"NIFTY50": [A, B]}, "2026-11-08")
+    assert sink.kv_get(im.TRACKING_KEY) == "2026-11-01"   # set once
+
+
+def test_a_second_identical_read_writes_nothing(settings):
+    sink = LocalSink(settings)
+    im.write(sink, {"NIFTY50": [A, B]}, "2026-11-01")
+    report = im.write(sink, {"NIFTY50": [A, B]}, "2026-11-08")
+    assert (report.adds, report.closes, report.written, report.added, report.closed) == (0, 0, 0, {}, {})
+    assert len(_stretches(sink)) == 2
+
+
+def test_a_company_that_leaves_gets_valid_to_and_stays_in_history_and_one_that_joins_starts_that_day(settings):
+    sink = LocalSink(settings)
+    im.write(sink, {"NIFTY50": [A, B]}, "2026-11-01")
+    report = im.write(sink, {"NIFTY50": [A, C]}, "2026-11-08")
+    assert _stretches(sink) == [("INE001", "1900-01-01", None), ("INE002", "1900-01-01", "2026-11-08"), ("INE003", "2026-11-08", None)]
+    assert report.added == {"NIFTY50": ["CCC"]} and report.closed == {"NIFTY50": ["BBB"]}
+
+
+def test_a_company_that_returns_gets_a_new_row_and_the_members_on_a_day_follow_the_history(settings):
+    sink = LocalSink(settings)
+    im.write(sink, {"NIFTY50": [A, B]}, "2026-11-01")
+    im.write(sink, {"NIFTY50": [A]}, "2026-11-08")
+    im.write(sink, {"NIFTY50": [A, B]}, "2026-11-22")
+    assert _stretches(sink) == [("INE001", "1900-01-01", None), ("INE002", "1900-01-01", "2026-11-08"), ("INE002", "2026-11-22", None)]
+    assert _members_on(sink, "2026-10-01") == ["INE001", "INE002"]   # before tracking: the first list stands in
+    assert _members_on(sink, "2026-11-07") == ["INE001", "INE002"]
+    assert _members_on(sink, "2026-11-08") == ["INE001"]             # valid_to is the first day out
+    assert _members_on(sink, "2026-11-21") == ["INE001"]
+    assert _members_on(sink, "2026-11-22") == ["INE001", "INE002"]
+
+
+def test_a_skipped_index_changes_nothing_and_each_index_is_read_alone(settings):
+    sink = LocalSink(settings)
+    im.write(sink, {"NIFTY50": [A, B], "NIFTY100": [A, B]}, "2026-11-01")
+    report = im.write(sink, {"NIFTY50": [A]}, "2026-11-08")   # the Nifty 100 list was not taken this week
+    assert _stretches(sink, "NIFTY100") == [("INE001", "1900-01-01", None), ("INE002", "1900-01-01", None)]
+    assert _stretches(sink)[1] == ("INE002", "1900-01-01", "2026-11-08")
+    assert "NIFTY100" not in report.members
 
 
 def test_a_week_with_nothing_taken_changes_nothing(settings):
     sink = LocalSink(settings)
-    assert im.write(sink, {}, "2026-11-01") == 0
+    assert im.write(sink, {}, "2026-11-01").written == 0
+    assert sink.kv_get(im.TRACKING_KEY) is None
 
 
 def test_sync_reports_what_was_written_and_what_was_kept(settings):
@@ -71,4 +127,5 @@ def test_sync_reports_what_was_written_and_what_was_kept(settings):
     sizes = {name: size for _i, _l, name, size in im.INDEXES}
     sizes["ind_niftymicrocap250_list.csv"] = 0
     report = im.sync(LocalSink(settings), Client(sizes), "2026-11-01")
-    assert "MICROCAP250" in report.skipped and report.members["NIFTY50"] == 50 and report.written == sum(report.members.values())
+    assert "MICROCAP250" in report.skipped and report.members["NIFTY50"] == 50 and report.written == sum(report.members.values()) and report.adds == report.written
+    assert report.as_dict()["skipped"] == report.skipped

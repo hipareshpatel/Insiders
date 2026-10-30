@@ -92,6 +92,7 @@ export interface KpiProgress {
   index_id: string;                             // NIFTY500
   reported: number;
   of: number;                                   // members matched to a company with a results row possible (REITs left out)
+  members: number;                              // every member of the index that day; members - of are not covered yet (REITs)
   quarter_reported: number;                     // every company with a row this quarter
   /** the next board meeting date of a company in that index that has not reported, and how many meet on it; null when not known */
   still_to_come: { date: string; companies: number } | null;

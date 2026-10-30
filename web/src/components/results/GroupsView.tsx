@@ -58,9 +58,9 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
       ) : (
         <>
           <div className="mt-7 grid gap-4 lg:grid-cols-[7fr_5fr]">
-            <Panel title={<>Profit growth by {groupNoun(by)}, {q} <span className="font-normal text-ink-2">· ranked by the middle company{cut !== "all" ? `, ${CUT_WORDS[cut]}` : ""}</span>
+            <Panel title={<>Profit growth by {groupNoun(by)}, {q} <span className="font-normal text-ink-2">· ranked by median profit growth{cut !== "all" ? `, ${CUT_WORDS[cut]}` : ""}</span>
               <span className="mt-2 flex flex-wrap gap-3.5 text-[12.5px] font-normal text-ink-2">
-                <span><i aria-hidden className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full bg-accent align-[-1px]" />Median (middle company)</span>
+                <span><i aria-hidden className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full bg-accent align-[-1px]" />Median</span>
                 <span><i aria-hidden className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full align-[-1px] ring-[1.8px] ring-inset ring-ink-2" />Total (all profits added up)</span>
               </span></>}>
               <div className={cn(rows.length > 14 && "max-h-[620px] overflow-y-auto")}>
@@ -73,7 +73,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
                 <ul className="mt-3.5 grid gap-2 text-[14px] text-ink-2">{groupsBullets(rows, by).map((t) => <li key={t}>· {t}</li>)}</ul>
               </Panel>
               <Panel title="Median or total?" className="text-[15px] text-ink-2">
-                <p><b className="text-ink">Median</b> is the middle company: every company counts the same. <b className="text-ink">Total</b> adds up all their
+                <p><b className="text-ink">Median</b> is the middle value: every company counts the same. <b className="text-ink">Total</b> adds up all their
                   profits: the biggest companies count most. Companies that turned a loss into a profit have no % and sit out of medians; totals include them.</p>
               </Panel>
             </div>
@@ -82,7 +82,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
           <div className="mb-2 mt-[34px] flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="text-[20px] font-bold tracking-[-0.01em] text-ink">All {plural}</h2>
-              <p className="text-[13.5px] text-ink-2">Growth vs the same quarter a year ago · sorted by the middle company's profit growth · click a row to see its companies</p>
+              <p className="text-[13.5px] text-ink-2">Growth vs the same quarter a year ago · sorted by median profit growth · click a row to see its companies</p>
             </div>
             <div className="flex flex-wrap gap-3.5 text-[12.5px] text-ink-2" aria-hidden>
               {KEY.map(([c, l]) => <span key={l}><i className={cn("mr-1.5 inline-block h-2.5 w-2.5 rounded-[3px] align-[-1px]", c)} />{l}</span>)}

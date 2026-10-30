@@ -83,19 +83,20 @@ export function registerResultsRoutes(api: Hono<AppEnv>, memoised: Memoised) {
     const day = quarterDay(quarter) ?? "1900-01-01";
     const members = `SELECT DISTINCT co.scrip_code FROM companies co WHERE co.isin IN (${memberIsins("?1", "?2")})`;
     const [counts, next] = await c.env.DB.batch([
-      c.env.DB.prepare(`SELECT count(*) AS of, coalesce(sum(k.scrip_code IS NOT NULL), 0) AS reported
+      c.env.DB.prepare(`SELECT count(*) AS of, coalesce(sum(k.scrip_code IS NOT NULL), 0) AS reported,
+          (SELECT count(DISTINCT x.isin) FROM (${memberIsins("?1", "?2")}) x) AS members
         FROM (${members}) m LEFT JOIN results_kpi k ON k.scrip_code = m.scrip_code AND k.period = ?3`).bind(MAIN_INDEX, day, quarter),
       c.env.DB.prepare(`SELECT ct.event_date AS date, count(DISTINCT ct.scrip_code) AS companies
         FROM catalysts ct WHERE ct.event_type = 'BOARD_MEETING' AND ct.event_date >= ?4 AND ct.description LIKE '%result%'
          AND ct.scrip_code IN (${members}) AND NOT EXISTS (SELECT 1 FROM results_kpi k WHERE k.scrip_code = ct.scrip_code AND k.period = ?3)
          GROUP BY ct.event_date ORDER BY ct.event_date LIMIT 1`).bind(MAIN_INDEX, day, quarter, todayIst()),
     ]);
-    const c0 = counts.results[0] as { of: number; reported: number } | undefined;
+    const c0 = counts.results[0] as { of: number; reported: number; members: number } | undefined;
     if (!c0 || !c0.of) return null;
     // only a board meeting whose description mentions results counts (a meeting for a dividend or a fund raise is no result to come);
     // an upcoming meeting says nothing about a quarter that is not the newest
     const still = quarter === quarters[0]?.period ? ((next.results[0] as { date: string; companies: number } | undefined) ?? null) : null;
-    return { index_id: MAIN_INDEX, reported: c0.reported, of: c0.of, quarter_reported: quarters.find((x) => x.period === quarter)?.n ?? 0, still_to_come: still };
+    return { index_id: MAIN_INDEX, reported: c0.reported, of: c0.of, members: c0.members ?? c0.of, quarter_reported: quarters.find((x) => x.period === quarter)?.n ?? 0, still_to_come: still };
   }
 
   api.get("/results-classification", async (c) => {

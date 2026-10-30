@@ -49,14 +49,14 @@ export function SeasonPanel({ summary, progress, quarter, indexRows, filtered, s
       </Panel>
 
       <Panel className="grid grid-cols-3 gap-2.5 px-[18px] sm:px-6 lg:col-span-3 lg:flex lg:flex-col lg:gap-[18px]">
-        <h2 className="col-span-3 text-[13px] font-semibold text-ink-2">Middle company's growth</h2>
+        <h2 className="col-span-3 text-[13px] font-semibold text-ink-2">Median growth</h2>
         <Median big value={summary.median_pat_yoy} label="Profit" up={summary.pat_up} of={summary.pat_of}
           extra={summary.loss_to_profit ? `, ${summary.loss_to_profit} of them from a loss` : ""} />
         <Median value={summary.median_ebitda_yoy} label="EBITDA" up={summary.ebitda_up} of={summary.ebitda_of} />
         <Median value={summary.median_revenue_yoy} label="Revenue" up={summary.revenue_up} of={summary.revenue_of} />
       </Panel>
 
-      <Panel className="px-[18px] sm:px-6 lg:col-span-4" title="Middle company's profit growth, by index">
+      <Panel className="px-[18px] sm:px-6 lg:col-span-4" title="Median profit growth, by index">
         <IndexTrends rows={indexRows} labels={labels} />
       </Panel>
     </div>
@@ -104,6 +104,7 @@ function Progress({ progress }: { progress: KpiProgress | null | undefined }) {
           <i className="block h-full rounded-full bg-accent" style={{ width: `${pctDone}%` }} />
         </div>
         <div className="text-[13px] text-ink-3">{t.done}</div>
+        {t.note && <div className="mt-1 text-[12.5px] text-ink-3">{t.note}</div>}
       </div>
       <div className="mt-3.5 flex items-center justify-between gap-2 border-t border-line pt-3.5 text-[14px]">
         <span className="text-ink-2">Still to come</span>
@@ -126,7 +127,7 @@ function IndexTrends({ rows, labels }: { rows: GroupRow[] | undefined; labels: s
   const order = (id: string) => { const i = INDICES.findIndex((x) => x.id === id); return i < 0 ? 99 : i; };
   const shown = rows.filter((r) => r.pat_median != null || r.trend_pat_median.some((v) => v != null))
     .sort((a, b) => order(a.id) - order(b.id)).slice(0, 8);
-  if (!shown.length) return <p className="py-8 text-[13px] text-ink-3">No index has a middle company with a per cent change yet.</p>;
+  if (!shown.length) return <p className="py-8 text-[13px] text-ink-3">No index has a median yet: no company with a per cent change.</p>;
   const [lo, hi] = sharedScale(shown.map((r) => r.trend_pat_median));
   const lead = [...shown].filter((r) => r.pat_median != null).sort((a, b) => b.pat_median! - a.pat_median!)[0];
   return (

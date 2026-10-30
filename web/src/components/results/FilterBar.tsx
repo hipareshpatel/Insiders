@@ -211,7 +211,7 @@ export function GrowthForm({ query, onApply, compact = false }: { query: KpiQuer
         <Steps label="Momentum" options={MOMENTUM_STEPS} value={d.momentum} onChange={(v) => set({ momentum: v })} big={compact} />)}
       <div className="py-2">
         <CheckRow checked={d.turnaround} onChange={(v) => set({ turnaround: v })} label="Turned loss to profit" hint="a loss a year ago, a profit now" big={compact} />
-        <CheckRow checked={d.nfo} onChange={(v) => set({ nfo: v })} label="Profit not from operations" hint="profit rose while EBITDA fell: check other income or one-offs" big={compact} />
+        <CheckRow checked={d.nfo} onChange={(v) => set({ nfo: v })} label="Profit up, EBITDA down" hint="profit rose while EBITDA fell: check other income or one-offs" big={compact} />
       </div>
       <div className="flex items-center justify-between gap-3 border-t border-line pt-4">
         <Button variant="ghost" className="h-10" onClick={() => setD({ pat_min: null, rev_min: null, ebitda_min: null, opm_min: null, momentum: null, turnaround: false, nfo: false })}>Reset</Button>

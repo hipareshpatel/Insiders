@@ -3,7 +3,7 @@
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
 import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
-import type { GroupBy, GroupRow, KpiProgress, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn } from "../../shared/resultsTypes.ts";
+import type { GroupBy, GroupRow, KpiProgress, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
 export const GROWTH_STEPS = [0, 10, 20, 30, 50, 100] as const;   // "growth at least this much, per cent"
 export const MARGIN_STEPS = [0, 100, 200, 300, 500] as const;    // "margin up at least this many basis points"
@@ -15,6 +15,9 @@ export const SPREAD_LABEL: Record<SpreadKey, string> = { below_0: "Below 0%", fr
 export const SORTS = RESULTS_SORTS;
 export type Sort = ResultsSort;
 export const DEFAULT_SORT: Sort = "pat_yoy";
+/** What each view ranks by until the reader picks a column: year-on-year by profit growth, momentum by profit pace, quarter-on-quarter by profit
+ *  growth against last quarter (the three lists lead with different companies). */
+export const VIEW_SORT: Record<View, Sort> = { yoy: "pat_yoy", momentum: "pat_momentum", qoq: "pat_qoq" };
 /** A name sorts A to Z first; every figure highest first. */
 export const firstDir = (sort: string): "asc" | "desc" => (sort === "company" ? "asc" : "desc");
 
@@ -146,14 +149,14 @@ export type Seg = { t: string; b?: boolean; tone?: Tone };
 
 const pctOf = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
 
-/** "Of 236 companies that have reported, 175 grew profit; the middle company grew +13.9%." */
+/** "Of 236 companies that have reported, 175 grew profit; median profit growth +13.9%." */
 export function seasonHeadline(s: KpiSummary, filtered = false): Seg[] {
   if (s.n === 0) return [{ t: filtered ? "No company in this list has reported yet." : "No company has reported for this quarter yet." }];
   const out: Seg[] = [
     { t: filtered ? `Of ${s.n} ${s.n === 1 ? "company" : "companies"} in this list, ` : `Of ${s.n} ${s.n === 1 ? "company" : "companies"} that have reported, ` },
     { t: String(s.pat_up), tone: "up" }, { t: " grew profit" },
   ];
-  if (s.median_pat_yoy != null) out.push({ t: "; the middle company grew " }, { t: fmtPct(s.median_pat_yoy), tone: toneOf(s.median_pat_yoy) });
+  if (s.median_pat_yoy != null) out.push({ t: "; median profit growth " }, { t: fmtPct(s.median_pat_yoy), tone: toneOf(s.median_pat_yoy) });
   out.push({ t: "." });
   return out;
 }
@@ -166,7 +169,7 @@ export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[]
   const { median_revenue_yoy: rev, median_ebitda_yoy: ebitda, median_pat_yoy: pat } = s;
   if (rev != null && pat != null) {
     const lead = pat > rev ? "Profit grew faster than sales" : pat < rev ? "Sales grew faster than profit" : "Profit grew as fast as sales";
-    lines.push([{ t: `${lead}: the middle company's revenue ` }, { t: fmtPct(rev), b: true },
+    lines.push([{ t: `${lead}: median revenue growth ` }, { t: fmtPct(rev), b: true },
       ...(ebitda != null ? [{ t: ", EBITDA " }, { t: fmtPct(ebitda), b: true }] : []), { t: "." }]);
   }
   const m = s.momentum;
@@ -178,7 +181,7 @@ export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[]
   if (ranked.length >= 2) {
     const top = ranked[0];
     const other = top.id === "NIFTY50" ? ranked[1] : ranked.find((r) => r.id === "NIFTY50") ?? ranked[ranked.length - 1];
-    lines.push([{ t: top.label, b: true }, { t: " leads: its middle company grew profit " }, { t: fmtPct(top.pat_median), b: true },
+    lines.push([{ t: top.label, b: true }, { t: " leads: its median profit growth is " }, { t: fmtPct(top.pat_median), b: true },
       { t: `, against ${fmtPct(other.pat_median)} in the ${other.label}.` }]);
   }
   const fell = s.spread.below_0;
@@ -201,9 +204,12 @@ export function bestInEight(rows: GroupRow[]): number {
 }
 
 /** The reporting-progress panel's lines. */
-export function progressText(p: KpiProgress): { done: string; next: string | null } {
+export function progressText(p: KpiProgress): { done: string; next: string | null; note: string | null } {
   const done = `${pctOf(p.reported, p.of)}% done · ${p.quarter_reported} ${p.quarter_reported === 1 ? "company has" : "companies have"} reported in all`;
-  return { done, next: p.still_to_come ? `${p.still_to_come.companies} ${p.still_to_come.companies === 1 ? "company" : "companies"}` : null };
+  const gap = p.members - p.of;
+  // REITs and InvITs report in their own format and are not read yet (STATUS.md, open work)
+  const note = gap > 0 ? `${p.members} members; ${gap} not covered yet (${gap === 1 ? "a REIT" : "REITs"}, which report in their own format)` : null;
+  return { done, next: p.still_to_come ? `${p.still_to_come.companies} ${p.still_to_come.companies === 1 ? "company" : "companies"}` : null, note };
 }
 
 export const indexLabel = (id: string | null | undefined) => INDICES.find((x) => x.id === id)?.label ?? id ?? "";
@@ -246,7 +252,7 @@ export function barHeight(n: number, max: number, px: number): number {
   return Math.max(2, (n / max) * px);
 }
 
-/** Where the middle company sits on the four bars: which bar, and how far across it (the outer bars read as -50..0 and 20..60). */
+/** Where the median sits on the four bars: which bar, and how far across it (the outer bars read as -50..0 and 20..60). */
 export function medianSlot(median: number | null | undefined): { bin: number; frac: number } | null {
   if (median == null) return null;
   const clamp = (v: number) => Math.min(1, Math.max(0, v));
@@ -312,12 +318,12 @@ export function stackWidths(pct: [number, number, number, number]): [number, num
 const GROUP_NOUN: Record<GroupBy, [string, string]> = { index: ["index", "indices"], sector: ["sector", "sectors"], industry: ["industry", "industries"] };
 export const groupNoun = (by: GroupBy, plural = false) => GROUP_NOUN[by][plural ? 1 : 0];
 
-/** "Nifty Midcap 150 leads the season: its middle company grew profit +19.4%, the Nifty 50's +12.1%." */
+/** "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%." */
 export function groupsLead(rows: GroupRow[], by: GroupBy): Seg[] {
   const ranked = rows.filter((r) => r.pat_median != null).sort((a, b) => b.pat_median! - a.pat_median!);
-  if (!ranked.length) return [{ t: `No ${groupNoun(by)} has a middle company with a per cent change yet.` }];
+  if (!ranked.length) return [{ t: `No ${groupNoun(by)} has a median yet: no company with a per cent change.` }];
   const top = ranked[0];
-  const out: Seg[] = [{ t: `${top.label} leads the season: its middle company grew profit ` }, { t: fmtPct(top.pat_median), tone: toneOf(top.pat_median) }];
+  const out: Seg[] = [{ t: `${top.label} leads the season: its median profit growth is ` }, { t: fmtPct(top.pat_median), tone: toneOf(top.pat_median) }];
   const ref = by === "index" ? ranked.find((r) => r.id === "NIFTY50" && r !== top) : undefined;
   const low = ref ?? (ranked.length > 1 ? ranked[ranked.length - 1] : undefined);
   if (low) out.push({ t: ref ? `, the ${low.label}'s ${fmtPct(low.pat_median)}.` : `; the lowest, ${low.label}, ${fmtPct(low.pat_median)}.` });
@@ -425,7 +431,7 @@ export function activeChips(q: KpiQuery): { id: string; label: string; clear: st
   if (q.opm_min != null) out.push({ id: "opm_min", label: `Margin up at least ${q.opm_min} bp`, clear: ["opm_min"] });
   if (q.momentum) out.push({ id: "momentum", label: MOMENTUM_TEXT[q.momentum], clear: ["momentum"] });
   if (q.turnaround) out.push({ id: "turnaround", label: "Turned loss to profit", clear: ["turnaround"] });
-  if (q.nfo) out.push({ id: "nfo", label: "Profit not from operations", clear: ["nfo"] });
+  if (q.nfo) out.push({ id: "nfo", label: "Profit up, EBITDA down", clear: ["nfo"] });
   if (q.spread) out.push({ id: "spread", label: `Profit growth ${SPREAD_LABEL[q.spread].toLowerCase()}`, clear: ["spread"] });
   return out;
 }
@@ -440,7 +446,7 @@ const CSV_COLUMNS: [string, (r: KpiRow) => string | number | null | boolean][] =
   ["EBITDA QoQ %", (r) => r.ebitda_qoq], ["Margin %", (r) => r.opm], ["Margin change YoY (bp)", (r) => r.opm_yoy_bps],
   ["PAT (Rs Cr)", (r) => r.pat], ["PAT YoY %", (r) => r.pat_yoy], ["PAT turn", (r) => (r.pat_turn ? TURN_TEXT[r.pat_turn] : null)],
   ["PAT QoQ %", (r) => r.pat_qoq], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT momentum (pts)", (r) => r.pat_momentum_pts],
-  ["Momentum", (r) => MOMENTUM_TEXT[r.momentum]], ["Profit not from operations", (r) => r.nfo], ["Filed", (r) => r.filed_at], ["Filing", (r) => r.filing_url],
+  ["Momentum", (r) => MOMENTUM_TEXT[r.momentum]], ["Profit up, EBITDA down", (r) => r.nfo], ["Filed", (r) => r.filed_at], ["Filing", (r) => r.filing_url],
 ];
 
 function csvCell(v: string | number | null | boolean): string {

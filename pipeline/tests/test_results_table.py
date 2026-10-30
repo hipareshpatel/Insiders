@@ -228,3 +228,17 @@ def test_write_prunes_only_companies_that_have_rows_now():
 def test_a_zero_base_going_to_a_loss_is_a_loss_that_appeared_not_a_profit_turned():
     memory = {"statements": [_entry("Q2FY27", _rows(1200.0, -5.0, 200.0, 150.0)), _entry("Q2FY26", _rows(1000.0, 0.0, 160.0, 100.0))]}
     assert rt.company_tables(memory)["Q2FY27"]["ebitda"]["yoy_turn"] == "LOSS_WIDENED"
+
+
+def test_a_long_run_saves_as_it_goes(monkeypatch):
+    monkeypatch.setattr(rt, "SAVE_EVERY", 2)
+    names = ["500001", "500002", "500003", "500004", "500005"]
+    sink = _Sink({n: _memory() for n in names})
+    sink.list_dossiers = lambda: names
+    saves = []
+    execute = sink.execute
+    sink.execute = lambda statement, rows: (saves.append(statement), execute(statement, rows))[1]
+    total = rt.write(sink, "t")
+    assert total == len(sink.sent) and total == 5 * len(rt.company_rows("500001", _memory(), "t"))
+    assert saves.count("results_kpi_upsert") == 3     # after 2, after 4, and the last one
+    assert sorted(k["scrip_code"] for k in sink.pruned) == names

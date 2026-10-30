@@ -66,6 +66,7 @@ import bisect
 import csv
 import io
 import json
+import os
 import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -110,6 +111,10 @@ LEASE_ELEMENTS = ("LeaseLiabilitiesNoncurrent", "LeaseLiabilitiesCurrent", "Nonc
 # a line of the other current financial liabilities, tagged by its own element: in screener's Borrowings in 58 rows of 23
 # companies (the 500 largest, run 40759776253: the gap = the element, screener above ours, every one an annual report)
 FINANCE_LEASE_MATURITIES = "CurrentMaturitiesOfFinanceLeaseObligations"
+# the current maturities of long-term debt tagged by their own element (help article 11: they are debt): in screener's
+# Borrowings and not in ours in 129 rows of about 40 companies (L&T Q4FY21-FY26 22,719 / 31,373 / 26,399 Cr, Hyundai, KPR Mill,
+# Dr Reddy's, Arvind, Titan: run 40874998205, screener above ours, the gap = the element). Off with SCREENER_CMLTD=0, to measure on/off.
+LT_DEBT_MATURITIES = "CurrentMaturitiesOfLongTermDebt"
 # the levies and discounts out of Sales (and Expenses): (elements, described row of the Other expenses breakdown)
 LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
           "sales tax": (("SalesTax", "ValueAddedTax", "GoodsAndServicesTax", "SalesTaxAndValueAddedTax"),
@@ -660,14 +665,19 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
         rows = [x for x in rows if not re.search(r"finance lease", x[1], re.I)]
         lease += fl
         lease_note = " + ".join(x for x in (lease_note, f"{FINANCE_LEASE_MATURITIES} {_fmt(fl)}") if x)
+    ltm = r.cr(LT_DEBT_MATURITIES) if os.environ.get("SCREENER_CMLTD", "1") != "0" else None
+    if ltm:     # the element, not the same line again as a described row
+        rows = [x for x in rows if not (re.search(r"current maturit", x[1], re.I) and abs(abs(x[2]) - abs(ltm)) <= 0.5)]
+        lease += ltm
+        lease_note = " + ".join(x for x in (lease_note, f"{LT_DEBT_MATURITIES} {_fmt(ltm)}") if x)
     extra = _sum_rows(rows)
     row_note = ("rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in rows)) if rows else ""
     borrowings = debt + lease + extra
     # a balance sheet with no debt line, no lease and no maturity row is a company with no borrowings (0), not missing facts
     has_sheet = r.cr("Assets") is not None
-    out["Borrowings"] = Row(borrowings if debt_names or lease_names or fl or rows or has_sheet else None,
+    out["Borrowings"] = Row(borrowings if debt_names or lease_names or fl or ltm or rows or has_sheet else None,
                             " + ".join(x for x in (" + ".join(debt_names), lease_note, row_note) if x) + src
-                            if debt_names or lease_names or fl or rows else ("no borrowings, lease or maturity line: 0" if has_sheet
+                            if debt_names or lease_names or fl or ltm or rows else ("no borrowings, lease or maturity line: 0" if has_sheet
                                                                          else "missing BorrowingsNoncurrent and BorrowingsCurrent") + src)
     fixed, fixed_names = total("PropertyPlantAndEquipment", "Goodwill", "OtherIntangibleAssets", "InvestmentProperty")
     rou = r.cr("RightOfUseAssets")

@@ -745,7 +745,8 @@ context_tokens = 120000
 limits = { rpm = 30 }
 
 # Owner's NVIDIA catalogue, 30 Oct 2026 ~20:10 IST (free endpoints): Mistral Large 4 (1T total / 52B active, new on NVIDIA,
-# not the Mistral Free plan's 20k tokens a minute) and StepFun Step 5 Preview. Trial only, like the three above.
+# not the Mistral Free plan's 20k tokens a minute) and StepFun Step 5 Preview. Trial only, like the three above. Tiny
+# requests (run 41070420047): both OK, Mistral Large 4 in 31 s, Step 5 Preview in 1.5 s.
 [[routes.trial_new]]
 provider = "nvidia"
 model = "mistralai/mistral-large-4-1t-a52b"
@@ -759,6 +760,28 @@ limits = { rpm = 30 }
 [[routes.trial_new]]
 provider = "nvidia"
 model = "stepfun-ai/step-5-preview"
+spare = true
+timeout_s = 150
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
+# Also free endpoints on the owner's NVIDIA page: Gemma 4 31B and Nemotron 3.5 Super VL, both already spares through Google
+# and OpenRouter (Super VL: 240 failures in 573 requests there, round 6); NVIDIA's copies have their own quota.
+[[routes.trial_new]]
+provider = "nvidia"
+model = "google/gemma-4-31b-it"
+spare = true
+timeout_s = 150
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "nvidia/nemotron-3.5-super-vl-120b-a12b"
 spare = true
 timeout_s = 150
 json_mode = true

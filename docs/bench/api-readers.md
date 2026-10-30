@@ -32,9 +32,47 @@ subclasses. Bench only: no live path selects these readers.
   Downloadable only). Since 30 Oct each refusal's status and body are kept as `refused-<n>.json` in the artifact and
   printed in the job log.
 
+## Guards on nemotron-parse (30 Oct 2026, replay)
+
+The run's 77 kept answers were replayed offline: the scoring was run with the API answered from the kept files in their
+call order (file times), and the replay reproduces the run exactly (155 / 2 / 183, 77 calls). Each change below was
+scored on that replay. **All of this is in-sample**: the guards were written after seeing these wrongs.
+
+| nemotron-parse setting | Right | Wrong | No answer |
+|---|---|---|---|
+| As run | 155 | 2 | 183 |
+| + the title, page-header and short text elements above each table as its header | 197 | 2 | 141 |
+| + a figure with two decimal points gives no answer | 194 | 1 | 145 |
+| After the blind review and re-review (real dates spared, marks ignored; notes, list items, captions, long text and a short line after a table never a header) | **185** | **1** | 154 |
+| Requiring a unit line (rejected) | 150 | 5 | 185 |
+| Elements sorted top to bottom (rejected) | 185 | 5 | 150 |
+
+- FIVESTAR's wrong was not a unit. nemotron wrote "18.370.88" for 18,370.88, and it was read as 18.37 lakh.
+- Requiring a unit line dropped right tables, and another table on the page answered wrong (GEOJIT x3).
+- Sorting by height gave J&KBANK's consolidated table another block's title, a two-column page (4 wrong). The answer's own
+  reading order stays.
+- The one wrong left is SPANDANA Q2FY25 consolidated revenue: 1,396.27 is the half-year figure (686.38 + 709.89).
+
+**With numbers-first** (frozen re-score se2, 272 / 0 / 68 on this key, also in-sample):
+
+| Order | Right | Wrong | No answer |
+|---|---|---|---|
+| Numbers-first alone | 272 | 0 | 68 |
+| Numbers-first first, guarded nemotron-parse on its no-answers | **294** | **0** | 46 |
+| Guarded nemotron-parse first, numbers-first on its no-answers | 293 | 1 | 46 |
+
+## Probe run 41072420377 (limit 2)
+
+- Mistral: HTTP 429 "Rate limit exceeded" (code 1300) on both calls. That is not a tier refusal. The reader now waits
+  and retries a 429 (2, 5, 10 s).
+- nemotron-parse-2.0: HTTP 400 '"auto" tool choice requires --enable-auto-tool-choice'. The endpoint exists; the reader
+  now names its tool in `tool_choice` (v1 is left as measured).
+- nemotron-3.5-parse: HTTP 404 "404 page not found" for `nvidia/nemotron-3.5-parse`. The name is not served at this
+  endpoint. Assumption, not found by a search on 30 Oct: it may have another id or another URL.
+
 ## Next
 
-- A probe run (`limit` = a few pairs): Mistral, nemotron-parse-2.0 and nemotron-3.5-parse
-  (`nvidia/nemotron-3.5-parse`, a free endpoint on the owner's catalogue, not yet in our /models list), to record each
-  refusal or answer.
-- If nemotron-3.5-parse answers: the full 65 pages, before the artifact expires on 2 Nov.
+- A second probe with the fixes: Mistral (retry) and nemotron-parse-2.0 (tool named). If either answers, the full 65
+  pages, before the artifact expires on 2 Nov.
+- The out-of-sample check before any live use (lead): numbers-first first plus guarded nemotron-parse, on the normal key and
+  the pdf-oos keys, both orders.

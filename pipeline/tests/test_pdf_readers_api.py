@@ -85,7 +85,8 @@ def test_latex_tables_rows_cells_rules_and_multicolumn():
 
 
 def test_nemotron_grids_takes_only_table_elements_from_a_nested_list():
-    assert nemotron_grids(NEMO) == [[["Particulars", "Q1", "Q2"], ["Revenue", "1,234.5", "(12.3)"], ["Total", "", "9"]]]
+    assert nemotron_grids(NEMO) == [[["Statement of results"], ["Particulars", "Q1", "Q2"], ["Revenue", "1,234.5", "(12.3)"],
+                                     ["Total", "", "9"]]]
 
 
 @respx.mock
@@ -148,3 +149,86 @@ def test_mistral_refusal_is_kept(monkeypatch, tmp_path):
     with pytest.raises(RuntimeError, match="HTTP 403"):
         MistralOcrReader().extract(_pdf(1))
     assert json.loads((tmp_path / "refused-0.json").read_text())["status"] == 403
+
+
+def _answer(elements):
+    return {"choices": [{"message": {"tool_calls": [{"function": {"arguments": json.dumps([elements])}}]}}]}
+
+
+TABLE = r"\begin{tabular}{lrr} Particulars & Quarter ended 30 June 2023 & Quarter ended 30 June 2022 \\ Profit for the period & 18.370.88 & 14,417.73 \\ \end{tabular}"
+
+
+def test_nemotron_puts_the_title_and_unit_above_each_table_and_empties_a_two_point_figure(monkeypatch):
+    monkeypatch.delenv("NEMOTRON_HEADER", raising=False)
+    elements = [{"type": "Section-header", "text": "**Statement of unaudited standalone results**"},
+                {"type": "Text", "text": "(All amounts are in Indian Rupees in lakhs)"},
+                {"type": "Table", "text": TABLE},
+                {"type": "Page-footer", "text": "Place: Chennai"},
+                {"type": "Table", "text": TABLE}]
+    first, second = nemotron_grids(_answer(elements))
+    assert first[:2] == [["Statement of unaudited standalone results"], ["(All amounts are in Indian Rupees in lakhs)"]]
+    assert first[-1] == ["Profit for the period", "", "14,417.73"]        # 18.370.88 (read as 18.37) gives no answer
+    assert second[0][0].startswith("Particulars")                           # the footer is no header; the title went with the first
+
+
+def test_nemotron_header_off_and_unit_rule(monkeypatch):
+    elements = [{"type": "Table", "text": TABLE}]
+    monkeypatch.setenv("NEMOTRON_HEADER", "0")
+    assert len(nemotron_grids(_answer(elements))) == 1                       # the unit rule is off by default
+    monkeypatch.setenv("NEMOTRON_NEED_UNIT", "1")
+    assert nemotron_grids(_answer(elements)) == []                          # on: a table with no unit word anywhere is dropped
+
+
+@respx.mock
+def test_nemotron2_names_its_tool_and_v1_does_not(monkeypatch):
+    from bse_intel.pdf_readers import NemotronParse2Reader
+    monkeypatch.setenv("NVIDIA_API_KEY", "k")
+    monkeypatch.setattr(NemotronParse2Reader, "pages_used", 0)
+    monkeypatch.setattr(NemotronParseReader, "pages_used", 0)
+    route = respx.post("https://integrate.api.nvidia.com/v1/chat/completions").mock(return_value=httpx.Response(200, json=NEMO))
+    NemotronParse2Reader().extract(_pdf(1))
+    NemotronParseReader().extract(_pdf(1))
+    first, second = (json.loads(c.request.content) for c in route.calls)
+    assert first["tool_choice"] == {"type": "function", "function": {"name": "markdown_bbox"}}
+    assert "tool_choice" not in second       # v1 answered without it (run 41063175585): left as it was measured
+
+
+@respx.mock
+def test_mistral_retries_a_429(monkeypatch):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    route = respx.post("https://api.mistral.ai/v1/ocr").mock(
+        side_effect=[httpx.Response(429, text="Rate limit exceeded"), httpx.Response(200, json=ANSWER)])
+    assert len(MistralOcrReader().extract(_pdf(2))) == 2 and route.call_count == 2
+
+
+def test_garbled_figure_spares_dates_and_sees_through_marks():
+    from bse_intel.pdf_readers import garbled_figure
+    assert all(garbled_figure(x) for x in ["18.370.88", "18.37.88", "1.23.45", "18.370.88*", "1.8.370.88", "−18.370.88", "(18.370.88)", "18.370.88 (1)"])
+    assert not any(garbled_figure(x) for x in ["30.06.2023", "1.6.24", "18,370.88", "12.5", "2023.24", ""])
+
+
+def test_nemotron_header_skips_notes_list_items_and_long_text(monkeypatch):
+    monkeypatch.delenv("NEMOTRON_HEADER", raising=False)
+    box = lambda y: {"xmin": 0.1, "ymin": y, "xmax": 0.9, "ymax": y + 0.05}
+    elements = [{"type": "Section-header", "text": "Statement of standalone results", "bbox": box(0.1)},
+                {"type": "List-item", "text": "1 The consolidated figures of the Group", "bbox": box(0.3)},
+                {"type": "Text", "text": "Notes: " + "the Group consolidated its figures " * 6, "bbox": box(0.35)},
+                {"type": "Table", "text": TABLE, "bbox": box(0.5)}]
+    (grid,) = nemotron_grids(_answer(elements))
+    assert grid[0] == ["Statement of standalone results"] and grid[1][0] == "Particulars"
+
+
+def test_nemotron_a_short_line_after_a_table_is_its_footnote(monkeypatch):
+    monkeypatch.delenv("NEMOTRON_HEADER", raising=False)
+    elements = [{"type": "Section-header", "text": "Statement of standalone results"},
+                {"type": "Table", "text": TABLE},
+                {"type": "Text", "text": "Figures are consolidated; Rs in lakhs"},
+                {"type": "Table", "text": TABLE},
+                {"type": "Section-header", "text": "Segment results"},
+                {"type": "Text", "text": "(Rs in crore)"},
+                {"type": "Table", "text": TABLE}]
+    first, second, third = nemotron_grids(_answer(elements))
+    assert second[0][0].startswith("Particulars")                        # table A's footnote is not table B's header
+    assert third[:2] == [["Segment results"], ["(Rs in crore)"]]           # a new title opens the next block again

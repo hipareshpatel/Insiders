@@ -68,6 +68,15 @@ LAYER_MIN_CHARS = 40        # fewer characters on a page: no text layer
 HEADER_LINES = 25           # lines at the top of a page kept as the table's title and unit context
 
 _UNIT_WORD = re.compile(r"\b(crores?|lakhs?|lacs?|millions?|thousands?|mn|cr)\b", re.I)
+_TWO_POINTS = re.compile(r"^\(?-?[\d,]*\d(?:\.\d+){2,}\)?$")   # "18.370.88": a figure with two or more decimal points (nemotron_grids)
+_DATE_POINTS = re.compile(r"^(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.(\d{2}|\d{4})$")   # 30.06.2023: a date (18.37.88 is not)
+_CELL_MARKS = re.compile(r"[*†‡#%\s]|\(\d\)$|\[\d\]$")             # footnote marks and the like around a figure
+
+
+def garbled_figure(cell: str) -> bool:
+    """A figure with two or more decimal points (\"18.370.88\" for 18,370.88), marks around it ignored; a date is not one."""
+    text = _CELL_MARKS.sub("", (cell or "").replace("\u2212", "-"))
+    return bool(_TWO_POINTS.match(text)) and not _DATE_POINTS.match(text)
 _CONS_WORD = re.compile(r"\bconsolidated\b", re.I)
 _ALONE_WORD = re.compile(r"\bstand[- ]?alone\b", re.I)
 # "consolidated" as a verb in prose ("the Government has consolidated 29 labour laws into 4 Labour Codes", TATAELXSI Q2FY27): not a
@@ -1242,8 +1251,12 @@ class MistralOcrReader(Reader):
                              "document_url": "data:application/pdf;base64," + base64.b64encode(sub_pdf).decode()}}
         import time
         t0 = time.perf_counter()
-        reply = httpx.post("https://api.mistral.ai/v1/ocr", json=body, timeout=180,
-                           headers={"Authorization": f"Bearer {os.environ['MISTRAL_API_KEY'].strip()}"})
+        for wait in (2, 5, 10, None):   # a 429 (probe run 41072420377: "Rate limit exceeded", code 1300) waits and tries again
+            reply = httpx.post("https://api.mistral.ai/v1/ocr", json=body, timeout=180,
+                               headers={"Authorization": f"Bearer {os.environ['MISTRAL_API_KEY'].strip()}"})
+            if reply.status_code != 429 or wait is None:
+                break
+            time.sleep(wait)
         raw_dir = os.environ.get("MISTRAL_OCR_RAW_DIR")
         if reply.status_code >= 400:     # the Free plan may refuse OCR (mistral-large-2512 answers 403 on our key): say why
             _keep_refusal(raw_dir, reply)
@@ -1267,6 +1280,7 @@ class NemotronParseReader(Reader):
     so a second model (``NemotronParse2Reader``) keeps its own cap, folder and count."""
     name, family = "nemotron", "nemotron"
     env, model = "NEMOTRON_PARSE", "nvidia/nemotron-parse"
+    named_tool = False      # True: the tool named in tool_choice (an endpoint without "auto" tool choice answers 400 otherwise)
     ocr_family, ocr_engine = "nemotron", "nemotron-parse"
     modules = ("httpx",)
     worker = False
@@ -1293,6 +1307,7 @@ class NemotronParseReader(Reader):
                 png = page.get_pixmap(matrix=_pymupdf().Matrix(zoom, zoom)).tobytes("png")
                 body = {"model": os.environ.get(f"{self.env}_MODEL", self.model), "temperature": 0,
                         "tools": [{"type": "function", "function": {"name": "markdown_bbox"}}],
+                        **({"tool_choice": {"type": "function", "function": {"name": "markdown_bbox"}}} if self.named_tool else {}),
                         "messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {
                             "url": "data:image/png;base64," + base64.b64encode(png).decode()}}]}]}
                 t0 = time.perf_counter()
@@ -1320,6 +1335,8 @@ class NemotronParse2Reader(NemotronParseReader):
     ``NemotronParseReader`` (lead, 30 Oct 2026: listed on our free NVIDIA key, providers-check run 41059917128); bench only."""
     name, ocr_engine = "nemotron2", "nemotron-parse-2.0"
     env, model = "NEMOTRON_PARSE2", "nvidia/nemotron-parse-2.0"
+    named_tool = True       # probe run 41072420377: 400 '"auto" tool choice requires --enable-auto-tool-choice'
+
     pages_used = 0
     seconds = 0.0
 
@@ -1347,7 +1364,14 @@ def _keep_refusal(raw_dir: str | None, reply) -> None:
 
 def nemotron_grids(answer: dict) -> list[list[list[str]]]:
     """The grids of the table elements of a nemotron-parse answer (the ``markdown_bbox`` tool call's JSON list, sometimes
-    nested one level)."""
+    nested one level). The answer gives a page's title and unit line as elements of their own, so the text elements above
+    each table (since the one before it, in the answer's reading order: titles, page headers and short text lines, never
+    notes, list items or captions) go in as its first rows (``NEMOTRON_HEADER``, default on): the basis and the unit are read from them. A cell holding a figure with two decimal points (FIVESTAR Q1FY24 "18.370.88" for 18,370.88, read
+    as 18.37: run 41063175585) is emptied, so it gives no answer rather than a wrong one. ``NEMOTRON_NEED_UNIT`` (default off;
+    measured 30 Oct: it dropped right tables and let another table on the page answer wrong) drops a table with no unit word
+    in it or above it."""
+    header_on = os.environ.get("NEMOTRON_HEADER", "1") != "0"
+    need_unit = os.environ.get("NEMOTRON_NEED_UNIT", "0") == "1"
     grids = []
     for choice in answer.get("choices") or []:
         for call in (choice.get("message") or {}).get("tool_calls") or []:
@@ -1359,10 +1383,30 @@ def nemotron_grids(answer: dict) -> list[list[list[str]]]:
                 items = items[0]
             if items and isinstance(items[0], list):
                 items = [e for group in items for e in group]
-            for element in items:
-                if isinstance(element, dict) and str(element.get("type", "")).lower() == "table":
-                    text = element.get("text") or ""
-                    grids.extend(latex_tables(text) or html_tables(text) or markdown_tables(text))
+            above: list[str] = []
+            after_table = False
+            # the answer's own reading order: sorting by height mixed two blocks side by side (J&KBANK, 4 consolidated PATs
+            # given another title: replay of run 41063175585, 30 Oct 2026)
+            for element in (e for e in items if isinstance(e, dict)):
+                kind = str(element.get("type", "")).lower()
+                text = element.get("text") or ""
+                if kind != "table":
+                    # titles and short lines only (a unit or a basis line); notes, list items and captions never name a table.
+                    # After a table a short line is its footnote until a new title starts the next block (blind review)
+                    titled = kind in ("title", "section-header", "page-header")
+                    after_table = after_table and not titled
+                    if titled or (kind == "text" and len(text) <= 120 and not after_table):
+                        above.append(re.sub(r"<br\s*/?>|\*\*|\\textbf\{|\}", " ", text).strip())
+                    continue
+                after_table = True
+                found = [[["" if garbled_figure(c) else c for c in row] for row in grid]
+                         for grid in (latex_tables(text) or html_tables(text) or markdown_tables(text))]
+                head = [[line] for line in above[-6:] if line] if header_on else []
+                above = []
+                for grid in found:
+                    if need_unit and not (_UNIT_WORD.search(text) or any(_UNIT_WORD.search(h[0]) for h in head)):
+                        continue
+                    grids.append(head + grid)
     return grids
 
 

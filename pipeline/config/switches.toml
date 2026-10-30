@@ -49,3 +49,8 @@ SLIP_CHECK_READER_OPTIONS = true # slip_check.PdfCheck: the fallback reader with
 # data and screener rules not using cards data"). A late file is waited for (event_catchup.results_catch_up). A repository
 # variable MEMORY_FILE_ONLY = 0 turns it off in every job.
 MEMORY_FILE_ONLY = true          # dossier merge: a card's reading of a statement figure stays on its card
+# On 30 Oct 2026, ~16:00 IST (owner: "Yes, switch on the new results cards", TODO 134): a results card's table, figures and
+# changes come from memory's exchange-file statements by screener's rules (fact_sheet.py); the AI writes the words and a line
+# the sheet contradicts is cut. Blind A/B round 2 (9 filings): WRONG 9 on against 14 off, better on 8 of 9, worse on none. A
+# repository variable CARD_FACT_SHEET = 0 turns it off; 20 live cards are blind-scored the next day.
+CARD_FACT_SHEET = true           # pipeline: the results card's figures from the exchange file in memory

@@ -61,6 +61,8 @@ def test_half_year_and_year_cash_flow_detail():
                  "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities", "AdjustmentsForDecreaseIncreaseInInventories"):
         assert name in rows, name
     assert not any(k.startswith(("Revenue", "ProfitBeforeTax", "Segment", "AmountOfItem")) for k in rows)
+    assert not {"Purchases", "PurchasesOfStockInTrade"} & set(rows)   # the P&L's purchases, not a cash-flow line
+    assert all(xbrl_extras.CASH_FLOW_NOT.match(n) for n in ("Purchases", "PurchasesOfStockInTrade"))
     col, fy = xbrl_extras.read(_doc("nse_dolphin_q4fy24_cons.xml"))["cash_flow_detail"]
     assert col == "FY24" and fy["span"] == "FY" and fy["months"] == 12 and len(fy["rows"]) > 80
     q3 = xbrl_extras.read(_doc("bse_main_ind_as_532811_q3fy25.xml"))

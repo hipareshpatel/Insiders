@@ -195,8 +195,9 @@ def kind_from_text(data: dict, headline: str) -> str:
 
 
 # ---------------------------------------------------------------- the sample
-def candidates(sink, days: int = DAYS, today=None) -> list[dict]:
-    """Published CONCALL_PRESENTATION cards filed in the last ``days`` days (export_cards, keyset paged from the cutoff)."""
+def candidates(sink, days: int = DAYS, today=None, held: bool = False) -> list[dict]:
+    """Published CONCALL_PRESENTATION cards filed in the last ``days`` days (export_cards, keyset paged from the cutoff);
+    with ``held`` the held ones too."""
     cutoff = ((today or today_ist()) - timedelta(days=days)).isoformat()
     after, out = [cutoff, ""], []
     while True:
@@ -204,7 +205,7 @@ def candidates(sink, days: int = DAYS, today=None) -> list[dict]:
         if not rows:
             break
         after = [rows[-1]["filed_at"], rows[-1]["news_id"]]
-        out += [r for r in rows if r.get("event_category") == EVENT and not r.get("held")]
+        out += [r for r in rows if r.get("event_category") == EVENT and (held or not r.get("held"))]
         if len(rows) < PAGE:
             break
     return out
@@ -283,9 +284,12 @@ def _folder_name(news_id: str) -> str:
     return "".join(ch for ch in news_id if ch.isalnum() or ch in "-_")[:80] or "unnamed"
 
 
-def export(sink, out: Path, limit: int = 20, seed: int = 26, days: int = DAYS, today=None) -> dict:
-    """Write the sample to ``out``; returns the index. Reads only."""
-    rows = candidates(sink, days, today)
+def export(sink, out: Path, limit: int = 20, seed: int = 26, days: int = DAYS, today=None, ids: list[str] | None = None) -> dict:
+    """Write the sample to ``out``; returns the index. Reads only. With ``ids`` the sample is those filings alone."""
+    rows = candidates(sink, days, today, held=bool(ids))
+    if ids:
+        rows = [r for r in rows if r["news_id"] in set(ids)]
+        limit = len(rows)
     scrips = sorted({r["scrip_code"] for r in rows})
 
     def cap(scrip):

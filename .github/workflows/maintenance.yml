@@ -732,9 +732,10 @@ jobs:
           PLATFORM_TIMEOUT_S: "30"   # F216
           PLATFORM_ATTEMPTS: "3"
           LIMIT: ${{ inputs.limit }}
+          IDS: ${{ inputs.ids }}   # through the environment, never pasted into the script
         run: |
           mkdir -p "$RUNNER_TEMP/recall"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-recall-export --out "$RUNNER_TEMP/recall" --limit "${LIMIT:-20}"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel memory-recall-export --out "$RUNNER_TEMP/recall" --limit "${LIMIT:-20}" --ids "${IDS:-}"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'memory-recall-export'
         with:

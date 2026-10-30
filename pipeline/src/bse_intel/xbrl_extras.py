@@ -53,7 +53,8 @@ CASH_FLOW_NAME = re.compile(
     r"(Received|Paid)Classified|Interest(Paid|Received)Classified|IncomeTaxesPaidRefundClassified|OtherInflowsOutflows|Proceeds|Purchase|"
     r"Payments?(Of|For|From|To)|IncreaseDecreaseInCashAndCashEquivalents|EffectOfExchangeRateChangesOnCashAndCashEquivalents|"
     r"CashAndCashEquivalentsCashFlowStatement)")
-CASH_FLOW_NOT = re.compile(r"^(AmountOfItem|IncomeTaxRelating)")
+# the P&L's purchases share the Purchase prefix and the 6- and 12-month contexts (blind review)
+CASH_FLOW_NOT = re.compile(r"^(AmountOfItem|IncomeTaxRelating|Purchases$|PurchasesOfStockInTrade$)")
 
 RATIO_ELEMENTS = (
     "CET1Ratio", "AdditionalTier1Ratio", "DebtEquityRatio", "DebtServiceCoverageRatio", "InterestServiceCoverageRatio",
@@ -73,6 +74,7 @@ RPT_MONEY = {"AmountOfRelatedPartyTransactionDuringTheReportingPeriod": "amount_
              "ValueOfTheRelatedPartyTransactionAsApprovedByTheAuditCommittee": "approved_cr"}
 RPT_SKIP = re.compile(r"^PANOf")        # a masked tax number: no memory use
 OTHER_TEXT_MAX = 300
+RPT_TEXT_MAX = 500      # a counterparty's name, relationship or remark: the facts doc keeps the whole text
 
 
 def _cr(value) -> float:
@@ -215,7 +217,7 @@ def _related_results(doc: dict, end: date) -> dict | None:
         elif el in RPT_MONEY and not isinstance(value, str) and facts._is_money(unit):
             row.setdefault(RPT_MONEY[el], _cr(value))
         elif el in RPT_TEXT and isinstance(value, str):
-            row.setdefault(RPT_TEXT[el], value.strip())
+            row.setdefault(RPT_TEXT[el], value.strip()[:RPT_TEXT_MAX])
         elif isinstance(value, str) and value.strip() and el not in RPT_TEXT:
             row.setdefault("other", {}).setdefault(el, value.strip()[:OTHER_TEXT_MAX])
         elif not isinstance(value, str) and el not in RPT_MONEY and el != "AmountOfRelatedPartyTransaction":

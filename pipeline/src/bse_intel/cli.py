@@ -1003,7 +1003,8 @@ def cmd_memory_recall_export(args, settings, sink) -> int:
     holds from it and its card (memory_recall_export.py, TODO row 82). Read only: no NSE, no AI, no write."""
     from . import memory_recall_export as mre
 
-    index = mre.export(sink, Path(args.out), args.limit, args.seed, args.days)
+    ids = [i.strip() for i in (args.ids or "").split(",") if i.strip()]
+    index = mre.export(sink, Path(args.out), args.limit, args.seed, args.days, ids=ids or None)
     print(mre.render(index))
     return 0 if index["sampled"] else 1
 
@@ -1230,6 +1231,17 @@ def _card_of(outcome) -> dict | None:
     return card
 
 
+class _NoExchange:
+    """Stands in for the NSE and BSE clients where a command must not call either: every use raises AttachmentError."""
+
+    def __getattr__(self, name):
+        from .bse import AttachmentError
+
+        def refuse(*args, **kwargs):
+            raise AttachmentError(f"no exchange call here ({name}): only stored copies are read")
+        return refuse
+
+
 def cmd_fact_sheet_ab(args, settings, sink) -> int:
     """The A/B of CARD_FACT_SHEET (TODO 131 and 134): each named filing's card made twice by the live code, the switch off and then on,
     side by side in one file a filing (<news_id>.json: off, on, and what differs) and summary.json. WRITES NOTHING LIVE: the sink is
@@ -1246,6 +1258,8 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     quiet = _ReadOnlySink(sink)
     pipeline = _pipeline(settings, quiet)
+    # never a call to NSE or BSE: a filing whose text or file is not stored fails here, it is not downloaded twice (owner rule)
+    pipeline.nse = pipeline.bse = _NoExchange()
     was = os.environ.get("CARD_FACT_SHEET")
     report: list[dict] = []
     try:
@@ -1259,6 +1273,8 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 made = {}
                 for name, value in (("off", "0"), ("on", "1")):
                     os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)
+                    with pipeline._lock:   # each card reads memory as stored, never the other run's merge (blind review)
+                        pipeline._pending_memory.clear()
                     outcome = pipeline.analyze(filing, bulk=False)   # as the live path reads it
                     made[name] = {"status": outcome.update.get("status"), "reason": outcome.update.get("reason"), "card": _card_of(outcome)}
                 off, on = (made["off"]["card"] or {}), (made["on"]["card"] or {})
@@ -2683,6 +2699,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, default=20, help="filings in the sample")
     p.add_argument("--seed", type=int, default=26)
     p.add_argument("--days", type=int, default=30, help="cards filed in the last N days")
+    p.add_argument("--ids", help="news ids, comma separated: export these filings alone, not a sample")
     p.set_defaults(func=cmd_memory_recall_export)
 
     p = sub.add_parser("fact-sheet-ab", help="the A/B of CARD_FACT_SHEET: the named filings' cards made with the switch off and on, side by side; writes nothing live (calls the AI)")

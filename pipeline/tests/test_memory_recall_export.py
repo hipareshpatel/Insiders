@@ -212,3 +212,11 @@ def test_a_headline_that_says_call_over_an_invitation_is_not_sampled_as_a_transc
     texts = {"inv": notice, "real": real}
     picked = mre.choose(cards, lambda nid: texts[nid], 5, seed=1)
     assert [r["news_id"] for r in picked] == ["real"]
+
+
+def test_ids_export_exactly_those_filings(tmp_path):
+    cards, texts, dossiers, caps = _world(12)
+    sink = FakeSink(cards, texts, dossiers, caps)
+    want = sorted(c["news_id"] for c in cards)[:3]
+    ix = mre.export(sink, tmp_path / "ids", limit=1, today=TODAY, ids=want)
+    assert sorted(s["news_id"] for s in ix["sample"]) == want

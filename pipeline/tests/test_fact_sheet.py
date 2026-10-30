@@ -183,6 +183,8 @@ def test_the_ab_makes_each_card_twice_writes_nothing_and_leaves_the_switch_as_it
                                  {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
     monkeypatch.setattr(call_memory, "find_filing", lambda s, news_id: filing)
     monkeypatch.setattr(cli, "_pipeline", lambda s, quiet: (setattr(pipeline, "sink", quiet), pipeline)[1])
+    fakes = pipeline.bse
+    monkeypatch.setattr(cli, "_NoExchange", lambda: fakes)   # the fakes stand in for our stored copies here; see the test below
     assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-ab", out=str(tmp_path)), settings, sink) == 0
     both = json.loads((tmp_path / "n-ab.json").read_text(encoding="utf-8"))
     assert both["off_status"] == both["on_status"] == "ANALYZED"
@@ -206,3 +208,21 @@ def test_the_ab_sink_reads_our_stored_copies_and_never_downloads_again():
     assert xbrl_store.enabled(wrapped) and xbrl_store.enabled(platform)
     wrapped.put_object("k", b"x")
     assert wrapped.blocked == {"put_object": 1}
+
+
+def test_the_ab_never_calls_an_exchange_and_the_on_card_reads_memory_as_stored(settings, monkeypatch, tmp_path):
+    """Blind review: a filing with no stored text failed over to an NSE download, and the on card read the off card's merge."""
+    import argparse
+
+    from bse_intel import call_memory, cli
+
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-ab2", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf("Revenue 12,000.00")}, {})
+    monkeypatch.setattr(call_memory, "find_filing", lambda s, news_id: filing)
+    monkeypatch.setattr(cli, "_pipeline", lambda s, quiet: (setattr(pipeline, "sink", quiet), pipeline)[1])
+    pipeline._pending_memory["x"] = [("n-old", {"timeline": []}, {})]
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-ab2", out=str(tmp_path)), settings, sink) == 1
+    summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
+    assert "no exchange call here" in summary["rows"][0]["error"] and not fake.calls
+    assert not pipeline._pending_memory

@@ -205,7 +205,7 @@ def test_mistral_retries_a_429(monkeypatch):
 
 def test_garbled_figure_spares_dates_and_sees_through_marks():
     from bse_intel.pdf_readers import garbled_figure
-    assert all(garbled_figure(x) for x in ["18.370.88", "18.370.88*", "1.8.370.88", "−18.370.88", "(18.370.88)", "18.370.88 (1)"])
+    assert all(garbled_figure(x) for x in ["18.370.88", "18.37.88", "1.23.45", "18.370.88*", "1.8.370.88", "−18.370.88", "(18.370.88)", "18.370.88 (1)"])
     assert not any(garbled_figure(x) for x in ["30.06.2023", "1.6.24", "18,370.88", "12.5", "2023.24", ""])
 
 
@@ -218,3 +218,17 @@ def test_nemotron_header_skips_notes_list_items_and_long_text(monkeypatch):
                 {"type": "Table", "text": TABLE, "bbox": box(0.5)}]
     (grid,) = nemotron_grids(_answer(elements))
     assert grid[0] == ["Statement of standalone results"] and grid[1][0] == "Particulars"
+
+
+def test_nemotron_a_short_line_after_a_table_is_its_footnote(monkeypatch):
+    monkeypatch.delenv("NEMOTRON_HEADER", raising=False)
+    elements = [{"type": "Section-header", "text": "Statement of standalone results"},
+                {"type": "Table", "text": TABLE},
+                {"type": "Text", "text": "Figures are consolidated; Rs in lakhs"},
+                {"type": "Table", "text": TABLE},
+                {"type": "Section-header", "text": "Segment results"},
+                {"type": "Text", "text": "(Rs in crore)"},
+                {"type": "Table", "text": TABLE}]
+    first, second, third = nemotron_grids(_answer(elements))
+    assert second[0][0].startswith("Particulars")                        # table A's footnote is not table B's header
+    assert third[:2] == [["Segment results"], ["(Rs in crore)"]]           # a new title opens the next block again

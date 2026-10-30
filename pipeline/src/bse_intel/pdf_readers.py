@@ -69,7 +69,7 @@ HEADER_LINES = 25           # lines at the top of a page kept as the table's tit
 
 _UNIT_WORD = re.compile(r"\b(crores?|lakhs?|lacs?|millions?|thousands?|mn|cr)\b", re.I)
 _TWO_POINTS = re.compile(r"^\(?-?[\d,]*\d(?:\.\d+){2,}\)?$")   # "18.370.88": a figure with two or more decimal points (nemotron_grids)
-_DATE_POINTS = re.compile(r"^\d{1,2}\.\d{1,2}\.\d{2,4}$")      # 30.06.2023: a date, never a garbled figure
+_DATE_POINTS = re.compile(r"^(0?[1-9]|[12]\d|3[01])\.(0?[1-9]|1[0-2])\.(\d{2}|\d{4})$")   # 30.06.2023: a date (18.37.88 is not)
 _CELL_MARKS = re.compile(r"[*†‡#%\s]|\(\d\)$|\[\d\]$")             # footnote marks and the like around a figure
 
 
@@ -1384,16 +1384,21 @@ def nemotron_grids(answer: dict) -> list[list[list[str]]]:
             if items and isinstance(items[0], list):
                 items = [e for group in items for e in group]
             above: list[str] = []
+            after_table = False
             # the answer's own reading order: sorting by height mixed two blocks side by side (J&KBANK, 4 consolidated PATs
             # given another title: replay of run 41063175585, 30 Oct 2026)
             for element in (e for e in items if isinstance(e, dict)):
                 kind = str(element.get("type", "")).lower()
                 text = element.get("text") or ""
                 if kind != "table":
-                    # titles and short lines only (a unit or a basis line); notes, list items and captions never name a table
-                    if kind in ("title", "section-header", "page-header") or (kind == "text" and len(text) <= 120):
+                    # titles and short lines only (a unit or a basis line); notes, list items and captions never name a table.
+                    # After a table a short line is its footnote until a new title starts the next block (blind review)
+                    titled = kind in ("title", "section-header", "page-header")
+                    after_table = after_table and not titled
+                    if titled or (kind == "text" and len(text) <= 120 and not after_table):
                         above.append(re.sub(r"<br\s*/?>|\*\*|\\textbf\{|\}", " ", text).strip())
                     continue
+                after_table = True
                 found = [[["" if garbled_figure(c) else c for c in row] for row in grid]
                          for grid in (latex_tables(text) or html_tables(text) or markdown_tables(text))]
                 head = [[line] for line in above[-6:] if line] if header_on else []

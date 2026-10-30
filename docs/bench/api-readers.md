@@ -43,7 +43,7 @@ scored on that replay. **All of this is in-sample**: the guards were written aft
 | As run | 155 | 2 | 183 |
 | + the title, page-header and short text elements above each table as its header | 197 | 2 | 141 |
 | + a figure with two decimal points gives no answer | 194 | 1 | 145 |
-| After the blind review (dates spared, marks ignored; notes, list items, captions and long text never a header) | **185** | **1** | 154 |
+| After the blind review and re-review (real dates spared, marks ignored; notes, list items, captions, long text and a short line after a table never a header) | **185** | **1** | 154 |
 | Requiring a unit line (rejected) | 150 | 5 | 185 |
 | Elements sorted top to bottom (rejected) | 185 | 5 | 150 |
 

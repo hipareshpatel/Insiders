@@ -122,7 +122,7 @@ does not store its basis is read on CONSOLIDATED first, then STANDALONE (the rea
 | Run | Command | Result | Next |
 |---|---|---|---|
 | 41062020974, 41067234416, 41076247799, 41083598145, 41091107349 | statements-backfill put-back-ratings, apply, 50 (runs 1-5, 18:47-22:04 IST) | 401 rating snapshots put back (63, 82, 97, 75, 84); 114 file-covered AI balance snapshots dropped; each "more left" | Run 6 |
-| 41099900518 | statements-backfill put-back-ratings, apply, 50 (run 6, 23:03 IST) | running | Read; then one rating company's stock page |
+| 41099900518 | statements-backfill put-back-ratings, apply, 50 (run 6, 23:03 IST) | 6 put back, 1 file-covered snapshot dropped, more left: False; 407 of 409 in all; backup backup/statements-backfill-20261030T181741Z/ | Done; 570004's rating checked on the live API |
 | 41078384472 ... 41095065726 (8 runs) | fact-sheet-ab, one trial model on every route | 0 cards on all: NVIDIA MiniMax M3.1 Flash and Mistral Large 4 300 s timeouts, Nemotron 3.5 Super VL token cut-off, Groq Qwen 3.8 27B and gpt-oss-120b per-minute token limit | Item 5 closed for these models |
 | 41099857249 | facts-dump 532538,532508 (branch, read only) | running | Why Borrowings reads 0 from annual reports (TODO 129) |
 | 41100186401 | xbrl-facts apply from_nse shards 1 file_cap 100 (23:05 IST; PR #271's 100-file test of the 13th quarter) | queued behind run 6 (group maint-nse-memory) | Read the test; then the full run, then statements-backfill |

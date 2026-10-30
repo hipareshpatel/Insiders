@@ -236,3 +236,16 @@ def test_the_no_exchange_stub_counts_every_refused_call():
     with pytest.raises(AttachmentError):
         stub.results_xbrl("500001")
     assert stub.calls == ["results_xbrl"]
+
+
+def test_the_ab_takes_the_results_file_link_from_the_stored_card():
+    from types import SimpleNamespace
+
+    from bse_intel import cli
+
+    card = {"xbrl": {"url": "https://nsearchives.nseindia.com/corporate/xbrl/X.xml"}}
+    rows = [{"news_id": "n-0", "card_json": "{}"}, {"news_id": "n-ab", "card_json": json.dumps(card)}]
+    sink = SimpleNamespace(query=lambda name, params: rows if name == "export_cards" else [])
+    filing = SimpleNamespace(news_id="n-ab", filed_at="2026-10-29T16:21:40+05:30")
+    assert cli._stored_card_xbrl(sink, filing) == card["xbrl"]["url"]
+    assert cli._stored_card_xbrl(sink, SimpleNamespace(news_id="n-0", filed_at="2026-10-29T16:21:40")) is None

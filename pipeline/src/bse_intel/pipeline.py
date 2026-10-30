@@ -1139,12 +1139,55 @@ def results_quarter(tagged, text: str, filed_on: str | None = None) -> str | Non
     return None
 
 
+COMPANION_DAYS = 3
+
+
+def companion_quarter(filing: Filing, dossier: dict) -> str | None:
+    """The quarter of the company's results card filed in the COMPANION_DAYS before this results filing, when this one
+    names no quarter a statement would ("quarter ended 30 September 2026"): a press release or an investor update says
+    "Q2 FY27", and with no quarter D20 never ran, so 13 companies had two results cards for Q2FY27 on 28-29 Oct 2026
+    (eClerx's statement at 18:58 and its press release at 19:09, Zensar, Acme Solar, Laurus...). The quarter is the
+    latest one memory holds from that card's own filing."""
+    try:
+        at = datetime.fromisoformat(filing.filed_at)
+    except (TypeError, ValueError):
+        return None
+    metrics = dossier.get("financial_metrics", [])
+    for t in sorted(dossier.get("timeline", []), key=lambda t: str(t.get("date") or ""), reverse=True):
+        if t.get("event_type") != "RESULTS" or t.get("news_id") == filing.news_id:
+            continue
+        try:
+            when = datetime.fromisoformat(str(t.get("date")))
+            if when > at or at - when > timedelta(days=COMPANION_DAYS):
+                continue
+        except (TypeError, ValueError):   # an unreadable or naive date is no companion
+            continue
+        if t.get("quarter"):
+            return t["quarter"]   # the card named its own quarter (TODO 133)
+        periods = [m["period"] for m in metrics if reported_by(m, t["news_id"]) and re.fullmatch(r"Q[1-4]FY\d{2}", str(m["period"]))]
+        if periods:
+            return max(periods, key=lambda p: quarter_index(p) or -1)
+    return None
+
+
 def carries_results(event_type: str, text: str, tagged=None) -> bool:
     """A filing typed OTHER, GOVERNANCE or CORPORATE_ACTION that carries the company's results statement (a board
     outcome with the results and a stock split): it is the results filing, before pass 2 as after it."""
     return event_type in ("OTHER", "GOVERNANCE", "CORPORATE_ACTION") and (
         (tagged is not None and tagged.kind == "RESULTS") or bool(_RESULTS_STATEMENT.search(text[:20000]))
         or results_cover(text))
+
+
+_DECK_NAME = re.compile(r"presentation|investor[_\s-]*(?:ppt|deck)|(?<![a-z])ppt(?![a-z])|transcript|earnings[_\s-]*call", re.I)
+_RESULTS_NAME = re.compile(r"result|outcome", re.I)   # anywhere in the file name, glued or not ("FinancialResultsandPresentation")
+
+
+def is_deck_or_transcript(filing: Filing) -> bool:
+    """An investor presentation or a call transcript by its own file name (COALINDIA_29102026183725_Presentation.pdf), never
+    by the headline alone: "Outcome of Board Meeting - Results and Investor Presentation" over a generic file name is the
+    results filing (blind review, 30 Oct 2026). A file name that also says result or outcome stays results."""
+    name = (filing.pdf_url or "").rsplit("/", 1)[-1]
+    return bool(_DECK_NAME.search(name)) and not _RESULTS_NAME.search(name)
 
 
 def results_cover(text: str) -> bool:
@@ -2939,12 +2982,20 @@ class Pipeline:
         dates = {t["news_id"]: t.get("date", "") for t in dossier.get("timeline", [])
                  if t.get("event_type") == "RESULTS" and t.get("news_id") != filing.news_id}
         metrics = dossier.get("financial_metrics", [])
-        owners = list(dict.fromkeys(n for m in metrics if m.get("period") == quarter for n in dates if reported_by(m, n)))
+        # the quarter a results card's own timeline entry names (TODO 133): it finds the card when memory holds none of its
+        # figures (MEMORY_FILE_ONLY keeps a PDF-only card's figures on the card)
+        named = {t["news_id"]: t.get("quarter") for t in dossier.get("timeline", [])
+                 if t.get("event_type") == "RESULTS" and t.get("news_id") in dates and t.get("quarter")}
+        # a card that names its own quarter owns that one alone, never the comparatives its figures cover (blind review)
+        owners = list(dict.fromkeys([n for m in metrics if m.get("period") == quarter for n in dates if reported_by(m, n)
+                                     and named.get(n, quarter) == quarter]
+                                    + [n for n, q in named.items() if q == quarter]))
         # A results filing filed after this one also reports this quarter as its comparative: it owns the quarter only
         # when it is its own latest quarter, the quarter of its results (Sunteck's Q1FY27 filings report Q4FY26 too).
         later = [n for n in owners if dates[n] >= filing.filed_at
-                 and max((quarter_index(m["period"]) or -1 for m in metrics if reported_by(m, n)), default=-1)
-                 == quarter_index(quarter)]
+                 and (named.get(n) == quarter if named.get(n) else
+                      max((quarter_index(m["period"]) or -1 for m in metrics if reported_by(m, n)), default=-1)
+                      == quarter_index(quarter))]
         owners = [n for n in owners if dates[n] < filing.filed_at]
         # An owner whose card is held out of the feed is not the quarter's card: another document of the quarter
         # may make the one that is published. 17 of the 43 quarters with D20 duplicates had their only card held
@@ -2954,7 +3005,9 @@ class Pipeline:
         # Consolidated first (owner, 30 Oct 2026: "if consolidated results available, use it only, if not available, use
         # standalone"): a consolidated file of the quarter takes it from a standalone-only card filed before it, which
         # becomes its duplicate once this card is published (_supersede); a standalone file never takes it from either
-        standalone_owners = [n for n in owners if basis == "CONSOLIDATED" and _standalone_only(metrics, quarter, n)]
+        named_basis = {t["news_id"]: t.get("basis") for t in dossier.get("timeline", []) if t.get("news_id") in dates}
+        standalone_owners = [n for n in owners if basis == "CONSOLIDATED" and (_standalone_only(metrics, quarter, n)
+                                                                             or named_basis.get(n) == "STANDALONE")]
         with self._lock:
             claimed = self._results_quarters.get(key)
             if claimed and claimed != filing.news_id:
@@ -3376,6 +3429,13 @@ class Pipeline:
             if now_rule.action == "FAST_TRACK":
                 filing = filing.model_copy(update={"route": "FAST_TRACK", "event_type": now_rule.event_type or filing.event_type})
                 event_type = filing.event_type or "OTHER"
+        if event_type == "RESULTS" and is_deck_or_transcript(filing):
+            # an investor presentation or call transcript filed under a results heading is no results filing: Coal India's
+            # deck (nse-106835008, 29 Oct 2026) took a second results card for H1FY27 beside the statement's, and its AI
+            # figures went into memory as the quarter's. It is read as a deck: no D20 quarter, no results table
+            log.info("%s is a deck or transcript filed as results; read as CONCALL_PRESENTATION", filing.news_id)
+            filing = filing.model_copy(update={"event_type": "CONCALL_PRESENTATION"})
+            event_type = "CONCALL_PRESENTATION"
         if filing.route == "PASS1":
             first_page = doc.first_page_text()
             _ocr_check(doc)
@@ -3495,9 +3555,15 @@ class Pipeline:
             # No attachment by design - an exchange's clarification request is its headline and subject - so
             # those are the filing's own words, and what its quotes answer to.
             text = "\n".join(t for t in (filing.headline, filing.subject) if t)
+        results_q = None   # the quarter this results filing is the card of (D20), named on its timeline entry (TODO 133)
         if event_type == "RESULTS" and self.settings.one_card_per_results_quarter:
-            earlier = self._same_results_quarter(filing, dossier, results_quarter(tagged, text, filing.filed_at),
-                                                 basis=getattr(tagged, "basis", None))
+            quarter = results_quarter(tagged, text, filing.filed_at)
+            if quarter is None and not tagged and not _RESULTS_STATEMENT.search(text[:20000]) and amounts(text) < FIGURE_PAGE_AMOUNTS:
+                # no statement, no file, few figures: a press release or an update, never a new quarter's statement
+                quarter = companion_quarter(filing, dossier)
+            earlier = self._same_results_quarter(filing, dossier, quarter, basis=getattr(tagged, "basis", None))
+            # stamped only when the quarter is the file's or a statement's own, never a text guess (blind review)
+            results_q = quarter if (tagged or _RESULTS_STATEMENT.search(text[:20000])) else None
             if earlier:
                 with self._lock:
                     self.stats.duplicates += 1
@@ -3770,6 +3836,12 @@ class Pipeline:
 
         merged = merge(dossier, remembered, filing, card.impact_level, now,
                        fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
+        if results_q:
+            for t in merged.get("timeline", []):
+                if t.get("news_id") == filing.news_id and t.get("event_type") == "RESULTS":
+                    t["quarter"] = results_q
+                    if getattr(tagged, "basis", None):
+                        t["basis"] = tagged.basis
         if standalone_file is not None and standalone_file.kind == "RESULTS":
             # the same quarter's standalone figures, for the company page's standalone view (never the card's)
             put_standalone(merged, standalone_file.memory_metrics(), standalone_file.balance_sheet, filing.filed_at, filing.news_id)

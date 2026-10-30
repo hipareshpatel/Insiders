@@ -1925,6 +1925,15 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     return REFUSED if summary["stopped"] and not summary["capped"] else 0
 
 
+def cmd_facts_dump(args, settings, sink) -> int:
+    """Read only: a company's stored facts documents and the facts whose element matches ``--match`` (xbrl_facts.dump)."""
+    from . import xbrl_facts
+
+    for scrip in [s.strip() for s in args.scrips.split(",") if s.strip()]:
+        print(xbrl_facts.dump(sink, scrip, args.match))
+    return 0
+
+
 def cmd_xbrl_expiry_check(args, settings, sink) -> int:
     """Read only (TODO 139): every raw results file in R2 (raw/xbrl/, deleted after 180 days) against the facts copies
     (raw/xbrl-facts/); xbrl_expiry.py. Exit 1 when a raw file that holds results has no facts copy or an object could not be
@@ -2963,6 +2972,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--workers", type=int, default=16, help="R2 reads at once (default 16)")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_xbrl_expiry_check)
+
+    p = sub.add_parser("facts-dump", help="read only: a company's stored facts documents (raw/xbrl-facts/<scrip>/) and the facts whose element matches --match")
+    p.add_argument("--scrips", required=True, help="comma-separated scrip codes as the facts folder names them")
+    p.add_argument("--match", default="Borrow|Lease|Assets$", help="regular expression on the element name (default: borrowings, leases, total assets)")
+    p.set_defaults(func=cmd_facts_dump)
 
     p = sub.add_parser("screener-referee", help="read-only: NSE's results XBRL as the referee of the screener cross-check's disagreeing pairs")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

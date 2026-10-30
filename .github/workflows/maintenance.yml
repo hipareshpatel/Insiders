@@ -115,6 +115,8 @@
 #   xbrl-180d, first deletions about late April 2027) against the facts copies (raw/xbrl-facts/): a raw file holding results
 #   with no facts copy fails the run (exit 1). No NSE request; summary.json goes up as the artifact `xbrl-expiry-check`.
 #   Group maint-ro-xbrl-expiry-check. Run it before April 2027 and then monthly.
+# - facts-dump: read only. The stored facts documents of the companies in `ids` (scrip codes, raw/xbrl-facts/<scrip>/) and
+#   their borrowings, lease and total-assets facts with period and dimensions, printed in the log. No NSE request, no write.
 # - xbrl-facts (owner, 28 Oct 2026: "save everything from XBRL"): every fact of each results XBRL file already stored in R2
 #   (raw/xbrl/, F191) is kept as raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz, outside the dossier, for the screener
 #   cross-check's complete screener view; no NSE request. It lists the filings whose file is not stored (not-stored.csv, with
@@ -300,7 +302,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, results-table, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, results-table, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -411,7 +413,7 @@ concurrency:
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
-    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset","deck-pdfs","xbrl-expiry-check"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab","api-reader-hardset","deck-pdfs","xbrl-expiry-check","facts-dump"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
     || 'maint-cards' }}
   cancel-in-progress: false
 
@@ -978,6 +980,12 @@ jobs:
           name: screener-crosscheck
           path: ${{ runner.temp }}/crosscheck/
           if-no-files-found: ignore
+      - name: Stored facts of named companies (reads only)
+        if: inputs.command == 'facts-dump'
+        env:
+          IDS: ${{ inputs.ids }}       # through the environment, never pasted into the script
+        run: |
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel facts-dump --scrips "$IDS"
       - name: Raw XBRL files against their facts copies before the 180-day rule (reads only)
         if: inputs.command == 'xbrl-expiry-check'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs

@@ -98,3 +98,14 @@ def test_no_identity_without_a_company_or_a_period():
     assert xbrl_expiry.identity({"facts": facts, "file_period": "Q2FY24", "basis": "Consolidated"}) == ("TITAN", "Q2FY24", "CONSOLIDATED")
     assert xbrl_expiry.identity({"facts": facts, "file_period": None, "period": None, "basis": "CONSOLIDATED"}) is None
     assert xbrl_expiry.identity({"facts": [], "file_period": "Q2FY24", "basis": "CONSOLIDATED"}) is None
+
+
+def test_facts_dump_lists_documents_and_matching_facts():
+    sink = FakeSink()
+    doc = xbrl_facts.parse_facts(TITAN, "1", URL)
+    xbrl_facts.save(sink, "1", doc["period"], doc["basis"], doc)
+    sink.objects[xbrl_facts.listed_key("1")] = b"{}"
+    text = xbrl_facts.dump(sink, "1", r"^Symbol$")
+    assert "kind=results" in text and URL in text and "_listed" not in text
+    assert "Symbol @" in text and "TITAN" in text
+    assert xbrl_facts.dump(sink, "2", "x") == "no facts stored for 2"

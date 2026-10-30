@@ -433,6 +433,160 @@ def _quote_on_near_pages(quote: str, p_page: int | None, pages: list[tuple[int |
     return None
 
 
+# ---------------------------------------------------------------- period of a table's column, speaker of a quote
+# (blind review of 240 kept points, 30 Oct 2026: 6 of 10 wrong points had a figure under the wrong column header, 2 an
+# analyst's words taken as management's.) Both checks only drop when the page or the transcript lets code tell; else keep.
+_HEADER = re.compile(
+    r"(?<![\w'])(?:(?:Q[1-4]|H[12]|9M)\s*[-]?\s*)?(?:FY|CY)\s*['’]?\s*(?:20)?\d{2}(?:\s*[-–/]\s*(?:20)?\d{2})?(?!\d)"
+    r"|(?<!\w)LTM\s+[A-Za-z]{3,9}\s*['’]?\s*(?:20)?\d{2}(?!\d)", re.I)
+_CELL = re.compile(r"(?<![\w.])[₹$]?\(?-?\d[\d,]*(?:\.\d+)?(?:\s?[-–]\s?\d[\d,]*(?:\.\d+)?)?\)?\s?(?:%|x|X)?\*?(?!\w)|(?<!\S)[-–—](?!\S)")
+
+
+def _tokens(page: str) -> list[tuple]:
+    """A page's text layer as ("H", period key), ("N", [figures]) and ("X", words) in reading order, line by line; a word
+    breaks a row of figures, a "-" is a cell (a nil)."""
+    items: list[tuple] = []
+    for line in page.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        at = 0
+        for m in re.finditer(f"(?:{_HEADER.pattern})|(?:{_CELL.pattern})", line, re.I):
+            if re.search(r"[A-Za-z]{2,}", line[at:m.start()]):
+                items.append(("X", line[at:m.start()]))
+            at = m.end()
+            if _HEADER.fullmatch(m.group(0).strip()):
+                items.append(("H", canonical_period(m.group(0))))
+            else:
+                items.append(("N", [float(x.replace(",", "")) for x in re.findall(r"\d[\d,]*(?:\.\d+)?", m.group(0))]))
+        if re.search(r"[A-Za-z]{2,}", line[at:]):
+            items.append(("X", line[at:]))
+    return items
+
+
+def _column_verdict(point: CallPoint, page: str) -> str | None:
+    """`point`'s figure sits in column j of its row of figures; its period is column i of the period headers over (or under)
+    that row. j != i on every place the figure stands: the issue ("period"); else None. No headers, a header row and a row
+    of figures of different lengths, a period or figure that is not found once: None (spec: keep when the page cannot tell)."""
+    if point.value is None or not point.period:
+        return None
+    want = canonical_period(point.period)
+    items = _tokens(page)
+    spots = []
+    for k, it in enumerate(items):
+        if it[0] == "N" and any(abs(abs(point.value) - abs(v)) < 1e-9 for v in it[1]):
+            a = b = k
+            while a > 0 and items[a - 1][0] == "N":
+                a -= 1
+            while b + 1 < len(items) and items[b + 1][0] == "N":
+                b += 1
+            spots.append((a, b, k - a))
+    if not spots:
+        return None
+    detail = []
+    for a, b, col in spots:
+        n, verdicts = b - a + 1, []
+        heads = []   # the header row before the figures (nearest), and the one right after them
+        k = a - 1
+        while k >= 0 and items[k][0] != "H":
+            k -= 1
+        if k >= 0:
+            j = k
+            while j > 0 and items[j - 1][0] == "H":
+                j -= 1
+            heads.append([h[1] for h in items[j:k + 1]])
+        if b + 1 < len(items) and items[b + 1][0] == "H":
+            j = b + 1
+            while j + 1 < len(items) and items[j + 1][0] == "H":
+                j += 1
+            heads.append([h[1] for h in items[b + 1:j + 1]])
+        for h in heads:
+            if len(h) < n or n < 3 or h.count(want) != 1:
+                verdicts.append(None)
+            elif len(h) > n:   # a header with no figure under it (Waaree's CY2026 over 4 figures): counted from the right
+                verdicts.append(len(h) - 1 - h.index(want) == n - 1 - col)
+            else:
+                verdicts.append(h.index(want) == col)
+        if not verdicts or any(v is not False for v in verdicts):
+            return None
+        detail.append(f"column {col + 1} of {n}, {want} is column {heads[0].index(want) + 1} of {len(heads[0])}")
+    return f"the figure {point.value:g} stands in " + "; ".join(detail)
+
+
+_TURN = re.compile(r"^[ \t]*((?:Mr\.?\s+|Ms\.?\s+|Dr\.?\s+)?[A-Z][A-Za-z.'’-]*(?:[ \t]+[A-Za-z.'’-]+){0,4}?):(?![\w/])[ \t]*", re.M)
+_TITLE = re.compile(r"^(?:mr|ms|mrs|dr|shri|smt|ca)\.?\s+", re.I)
+_INTRO = re.compile(r"(?:question|line)\s+(?:is\s+)?(?:from|of)\s+(?:the\s+line\s+of\s+)?(?:Mr\.?|Ms\.?|Mrs\.?|Dr\.?)?\s*"
+                    r"([A-Z][\w.'’-]+(?:\s+[A-Z][\w.'’-]+){0,3}?)\s+(?:from|of|with|at|-|–)\s", re.M)
+
+
+def _who(name: str) -> str:
+    return _TITLE.sub("", " ".join(name.lower().split())).strip(". ")
+
+
+def turns(text: str) -> list[tuple[str, str]]:
+    """(speaker, words) for each "Name:" line of a transcript (page markers left out). Empty when the text has none."""
+    clean = _PAGE_MARK.sub("", text or "")
+    marks = list(_TURN.finditer(clean))
+    return [(_who(m[1]), clean[m.end():marks[i + 1].start() if i + 1 < len(marks) else len(clean)])
+            for i, m in enumerate(marks)]
+
+
+def analysts_of(text: str) -> set[str]:
+    """The names the moderator introduces for a question ("the next question is from the line of Kevin Shah from Aditya Birla
+    Capital"), less anyone who also spoke before the first question: a name on both sides (Nuvoco's CFO and a Dolat analyst
+    are both "Shravan Shah") is never told apart, so it is not an analyst here."""
+    clean = _PAGE_MARK.sub("", text or "")
+    found = list(_INTRO.finditer(clean))
+    if not found:
+        return set()
+    before = {_who(m[1]) for m in _TURN.finditer(clean[:found[0].start()])}
+    return {_who(m[1]) for m in found} - before
+
+
+def _stems(point: CallPoint) -> set[str]:
+    return {w[:5] for w in re.findall(r"[a-z]{4,}", f"{point.topic or ''} {point.metric or ''}".lower().replace("_", " "))}
+
+
+def _speaker_issue(point: CallPoint, text: str, pages=None) -> str | None:
+    """The quote is only inside an analyst's turn (KEI: "in the interview today morning you mentioned that volume for FY27 will
+    be somewhere around 10%", an analyst's question taken as management's guidance, blind review of 30 Oct 2026) and no
+    management turn states the same figure beside the same topic: the issue ("speaker"). Turns that cannot be told apart
+    (no "Name:" lines, no analyst introduced by the moderator, the quote in no turn or in a management turn): None."""
+    quote = (point.quote or "").strip()
+    sections = turns(text)
+    analysts = analysts_of(text)
+    if not quote or not sections or not analysts:
+        return None
+    pieces = [gate._flat(q) for q in gate._ELISION.split(quote) if len(q.split()) >= 3] or [gate._flat(quote)]
+    at = [k for k, (_, words) in enumerate(sections) if all(piece in gate._flat(words) for piece in pieces)]
+    if not at:
+        return None
+    mine = [sections[k][0] for k in at]
+    if any(who not in analysts for who in mine):
+        # management's own turn that never says the figure, straight after an analyst's turn that does: the figure is the
+        # analyst's ("you mentioned volume around 10%", the answer "16% to 17%"; KEI)
+        k = at[0]
+        if (len(at) == 1 and point.value is not None and k > 0 and sections[k - 1][0] in analysts
+                and len(quote.split()) >= 8 and not _has(point.value, _numbers(sections[k][1])) and _has(point.value, _numbers(sections[k - 1][1]))):
+            return f"the figure {point.value:g} is in the question of {sections[k - 1][0]}, an analyst, not in the answer"
+        return None
+    if point.value is not None:
+        stems = _stems(point)
+        for who, words in sections:
+            if who in analysts or who == "moderator":
+                continue
+            flat = gate._flat(words)
+            for m in re.finditer(r"(?<![\w.])\d[\d,]*(?:\.\d+)?", flat):
+                try:
+                    figure = float(m.group(0).replace(",", "").rstrip("."))
+                except ValueError:
+                    continue
+                if abs(abs(point.value) - figure) < 1e-9 and (not stems or any(
+                        st in flat[max(0, m.start() - 200):m.end() + 200] for st in stems)):
+                    return None
+    return f"the quote is in the turn of {mine[0]}, an analyst, and no management turn gives the figure"
+
+
 def _topic_key(p: CallPoint) -> str:
     return _norm(p.topic or p.metric or (p.statement or "")[:60])
 
@@ -516,6 +670,12 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
                 p.period = canon   # "H2 FY27" and "FY2026-27" match one another call to call (review of F180)
         else:
             p.period_stated = False
+        if p.period and page_text and (issue := _column_verdict(p, page_text)):
+            drop(p, "period", issue)
+            continue
+        if p.section != "SLIDE" and (issue := _speaker_issue(p, text, pages)):
+            drop(p, "speaker", issue)
+            continue
         p.company_defined = bool((p.definition or "").strip())   # never written to financial_metrics (spec 3.8)
         p.pages = [p.page] if p.page else []
         p.id = point_id(scope, p)

@@ -79,3 +79,24 @@ through `xbrl.fix_scale`. It checks one figure: the first of `_SCALE_REFERENCE` 
 switch on. The figures that matter are revenue and total income. On the 66 PDFs none of them changed, and the 6 filings
 that cross the cap have no wrong revenue or total income figure (their only wrong is ERIS's PBT). So TODO 143 is not
 what blocks NUMFIRST_STOP_EARLY. The switch-on call goes back to the lead on these figures.
+
+## The clean sample: 72 PDFs, one copy (30 Oct 2026, lead: take the 72)
+
+The re-time of all 140 (`stop-early-live-72.json`) ran with one copy throughout and stopped at this session's 2-hour cap
+on background jobs after 72 PDFs. Lead: the 72 are the sample.
+
+- **Seconds:** off 3,961, on 3,148. That is 813 s saved, **11.3 s a filing**.
+- **Figures changed:** **0 of 341** key figures (revenue, total income, PBT, PAT).
+- **The live 60 s cap:** 28 of 72 run past 60 s with the switch off, 23 with it on. **5 filings drop under the cap only
+  with the switch on**, and 0 go the other way. On those 5, numbers-first would then decide the slip check, which asks
+  for revenue / total income / interest earned. Their readings against the key, switch on:
+  - ERIS: revenue and total income right.
+  - ACI: right.
+  - SHIVAUM: revenue 1 right, 1 no answer; total income 1 right, 1 no answer.
+  - MAHLOG: revenue 4 right, total income 4 right.
+  - One PDF has no key rows.
+
+  **No wrong revenue or total income figure.** The only wrongs are PBT, which the slip check never asks for: MAHLOG
+  consolidated Q2FY27 40.30 vs 40.36 and H1FY27 79.36 vs 79.47.
+
+The lead takes the switch-on call to the owner on these figures.

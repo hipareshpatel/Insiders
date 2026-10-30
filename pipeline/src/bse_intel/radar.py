@@ -44,16 +44,23 @@ def _day(ts: str | None) -> str | None:
 
 def open_promises(dossier: dict) -> list[dict]:
     out = []
-    from .dossier import third_party_view
+    from .dossier import judged_on, third_party_view
     from .periods import due_date
 
     for g in dossier.get("guidance", []):
         if _status(g) not in OPEN or third_party_view(f"{g.get('statement', '')} {g.get('target') or ''}"):
             continue
         # the deadline is read again from its words: memory written before ranges were read holds the early end
-        deadline = due_date(g.get("due"))
+        fy_end = dossier.get("fy_end_month")
+        deadline = due_date(g.get("due"), fy_end)
+        due_iso = deadline.isoformat() if deadline else g.get("due_date")
+        given = _day(g.get("given_on"))
+        if due_iso and given and due_iso < given:
+            due_iso = None   # a deadline before the day it was said is a misread period (audit 137, B3)
+        # overdue only once the period's results are due, not at its end (audit 137, B1; periods.results_due, O12)
+        judged = judged_on(g.get("due"), due_iso, fy_end) if due_iso else None
         out.append({"id": g["id"], "statement": g["statement"][:200], "due": g.get("due"),
-                    "due_date": deadline.isoformat() if deadline else g.get("due_date"), "given_on": _day(g.get("given_on")),
+                    "due_date": due_iso, "overdue_from": judged, "given_on": given,
                     "status": _status(g), "source_news_id": g.get("source_news_id")})
     out.sort(key=lambda p: (p["due_date"] or "9999", p["given_on"] or ""))
     return out[:MAX_PROMISES]
@@ -168,6 +175,6 @@ def summarize(dossier: dict) -> dict:
     }
     return {
         "memory_summary_json": summary,
-        "earliest_open_due": min((p["due_date"] for p in promises if p["due_date"]), default=None),
+        "earliest_open_due": min((p["overdue_from"] for p in promises if p["overdue_from"]), default=None),
         "inflection_last_at": found[0]["date"] if found else None,
     }

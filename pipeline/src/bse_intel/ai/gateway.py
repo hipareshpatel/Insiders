@@ -385,12 +385,16 @@ class AIGateway:
                 for t in targets:
                     if t.provider.startswith("gemini"):
                         t.extra_body = {**t.extra_body, "reasoning_effort": think}
-            if on_all and route != "trial_new" and any(not t.spare for t in targets) and not any(t.key in only for t in targets):
+            # card writing only (review of the harness, 30 Oct 2026): a text model on vision, the critic, call memory or level 1
+            # would leave those routes with no target that can do their work
+            if on_all and route.startswith(("pass2", "memory_seed")) and any(not t.spare for t in targets) \
+                    and not any(t.key in only for t in targets):
                 for key in sorted(only & trial_entries.keys()):
                     entry = dict(trial_entries[key])
-                    for field in ("max_tokens", "context_tokens"):   # room for a whole card, not the trial's one-line answer
-                        if (room := max(int(entry.get(field) or 0), int(entries[0].get(field) or 0))):
-                            entry[field] = room
+                    # room for a whole card, not the trial's one-line answer; the window stays the model's own, so the
+                    # oversize guard still skips a prompt it cannot take
+                    if (room := max(int(entry.get("max_tokens") or 0), int(entries[0].get("max_tokens") or 0))):
+                        entry["max_tokens"] = room
                     targets.append(build(route, entry)[0])
                     targets[-1].spare = False
             if only and any(t.key in only for t in targets):

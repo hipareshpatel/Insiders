@@ -585,6 +585,7 @@ def test_a_trial_model_can_write_on_every_card_route_only_when_asked_to():
                                        {"provider": "c", "model": "m-c", "spare": True}],
                              "pass2_long": [{"provider": "a", "model": "m-a", "max_tokens": 3000}],
                              "spares_only": [{"provider": "c", "model": "m-c", "spare": True}],
+                             "vision": [{"provider": "a", "model": "m-v"}],
                              "trial_new": [{"provider": "b", "model": "m-t", "spare": True, "max_tokens": 400,
                                             "context_tokens": 120000, "json_mode": True, "limits": {"rpm": 30}}]})
     env = {**ENV, "ONLY_MODEL": "b:m-t"}
@@ -594,7 +595,9 @@ def test_a_trial_model_can_write_on_every_card_route_only_when_asked_to():
         (t,) = gw.routes[name]
         assert (t.key, t.spare, t.route, t.json_mode) == ("b:m-t", False, name, True)
     assert [t.key for t in gw.routes["spares_only"]] == ["c:m-c"]
-    assert [(t.max_tokens, t.context_tokens) for t in (gw.routes["pass2"][0], gw.routes["pass2_long"][0])] == [(6000, 200000), (3000, 120000)]
+    assert [t.key for t in gw.routes["vision"]] == ["a:m-v"]   # card routes only: a text model never takes vision's work
+    # the card's output room, the model's own window (the oversize guard still skips a prompt it cannot take)
+    assert [(t.max_tokens, t.context_tokens) for t in (gw.routes["pass2"][0], gw.routes["pass2_long"][0])] == [(6000, 120000), (3000, 120000)]
     assert "b:m-t" in gw.limiters
     # a model that is on the route already is left to ONLY_MODEL alone
     both = AIGateway(config, client_factory=lambda *a: None, env={**ENV, "ONLY_MODEL": "a:m-a", "ONLY_MODEL_ON_ALL_ROUTES": "1"})

@@ -3627,7 +3627,7 @@ class Pipeline:
                 # RESULTS_PRESS_RELEASE: the company's release of this quarter, for its words only; the figures stay the file's
                 text += ("\n\nCompany press release filed with these results (use it only for management commentary, one-offs, "
                          "segment notes, order wins and guidance; the results figures come from the exchange file above):\n"
-                         + "\n\n".join(r["text"] for r in releases))
+                         + "\n\n".join(r["text"] for r in releases)[:release_fold.MAX_CHARS])
         # Memory as the model sees it: the periods this filing prints withheld (its own columns win, restated or not)
         # and the items that are probably this same event marked. Code reads memory's figures from `full_view`.
         printed = set()

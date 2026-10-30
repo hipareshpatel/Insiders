@@ -264,7 +264,7 @@ def test_how_many_fixture_filings_fill_each_second_group_key():
         for k in (xbrl_extras.read(doc) if doc else {}):
             if k in got:
                 got[k] += 1
-    assert got == {"oci": 10, "discontinued": 0, "segment_balance": 7, "dividends": 11, "kmp_pay": 2, "contingent_liabilities": 3}
+    assert got == {"oci": 9, "discontinued": 0, "segment_balance": 7, "dividends": 11, "kmp_pay": 2, "contingent_liabilities": 3}
 
 
 def test_the_second_group_is_remembered_replaced_capped_and_backfilled(settings):
@@ -296,3 +296,14 @@ def test_a_concurrent_writer_keeps_the_second_group_of_both():
     fresh = {"oci": [{"period": "Q1FY27", "basis": "CONSOLIDATED", "kind": "results"}]}
     keep_concurrent_writes(mine, {"oci": []}, fresh)
     assert [e["period"] for e in mine["oci"]] == ["Q1FY27", "Q2FY27"]
+
+
+def test_a_half_year_profit_is_not_an_oci_entry_and_one_failing_reader_keeps_the_others(monkeypatch):
+    """Review of the second group (30 Oct 2026): Vesuvius's half-yearly file has no OCI figure, only its 6-month profit, which was
+    stored as Q3FY26's OCI entry; and one reader raising lost every key of the file."""
+    doc = xbrl_facts.parse_facts((FIXTURES / "nse_vesuvius_halfyearly_dec_h2fy26.xml").read_bytes(), "520113", "u")
+    assert xbrl_extras.OCI not in xbrl_extras.read(doc)
+    hdfc = next(xbrl_facts.parse_facts(p.read_bytes(), "x", "u") for p in sorted(FIXTURES.glob("*.xml"))
+                if xbrl_extras.SEGMENT_BALANCE in xbrl_extras.read(xbrl_facts.parse_facts(p.read_bytes(), "x", "u")))
+    monkeypatch.setattr(xbrl_extras, "_oci", lambda *a: 1 / 0)
+    assert xbrl_extras.SEGMENT_BALANCE in xbrl_extras.read(hdfc)

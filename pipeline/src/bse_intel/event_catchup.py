@@ -138,7 +138,12 @@ def release_catch_up(pipeline, deadline: float) -> dict:
     days = [first, last]
     outcomes = {o.update["news_id"]: o for o in pipeline.process(min(days), max(days), deadline, bulk=False, only=set(ids))}
     report["rerun"] = {i: (outcomes[i].update.get("status") if i in outcomes else "left in the queue") for i in ids}
-    release_fold.clear(pipeline.sink, [i for i in ids if report["rerun"][i] == "ANALYZED"])   # only a re-made card settles it
+    # a re-made card settles it; a card re-run MAX_TRIES times without ending ANALYZED is given up (review, 30 Oct 2026: else
+    # every 15-minute run would re-run it for ever)
+    given_up = release_fold.tried(pipeline.sink, [i for i in ids if report["rerun"][i] != "ANALYZED"])
+    release_fold.clear(pipeline.sink, [i for i in ids if report["rerun"][i] == "ANALYZED"] + given_up)
+    if given_up:
+        report["given_up"] = given_up
     return report
 
 

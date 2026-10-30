@@ -358,8 +358,9 @@ MAX_CLASSES = 40
 
 
 def _quarter_values(facts, names: dict, end: date) -> dict:
-    """The undimensioned numbers of ``names`` (element -> key) for the quarter ending ``end``: its 3-month fact, else (a half-yearly
-    filer) the one ending then. Money in crore; other numbers (a face value) as filed."""
+    """The undimensioned numbers of ``names`` (element -> key) for the quarter ending ``end``: its 3-month fact; a number that is not
+    money (a face value) from any context ending then. A 6-, 9- or 12-month amount is never kept as the quarter's (review of the
+    second group, 30 Oct 2026: Vesuvius's half-year profit 80.23 Cr was stored as Q3FY26's). Money in crore."""
     quarter: dict[str, float] = {}
     other: dict[str, float] = {}
     for el, ctx_id, unit, value, _ in facts.rows:
@@ -368,7 +369,11 @@ def _quarter_values(facts, names: dict, end: date) -> dict:
         ctx = facts.contexts.get(ctx_id) or {}
         if ctx.get("d") or ctx.get("e") != end.isoformat():
             continue
-        (quarter if ctx.get("m") == 3 else other).setdefault(names[el], _cr(value) if facts._is_money(unit) else value)
+        money = facts._is_money(unit)
+        if ctx.get("m") == 3:
+            quarter.setdefault(names[el], _cr(value) if money else value)
+        elif not money:
+            other.setdefault(names[el], value)
     return {**other, **quarter}
 
 
@@ -411,8 +416,8 @@ def _oci(doc: dict, end: date) -> dict | None:
             row.setdefault("amount_cr", _cr(value))
     keep = _current(k.split(":", 1)[1] for k in items)
     rows = [r for k, r in items.items() if r.get("amount_cr") and k.split(":", 1)[1] in keep]
-    if not any(values.values()) and not rows:
-        return None            # every figure 0: the template's filler
+    if not any(values.get(k) for k in ("oci_net_cr", "reclassified_cr", "not_reclassified_cr")) and not rows:
+        return None            # no OCI figure (a profit alone is not one; every figure 0 is the template's filler)
     out: dict = {"values": values}
     if rows:
         out["items"] = rows[:MAX_OCI_ITEMS]
@@ -575,7 +580,11 @@ def read(doc: dict) -> dict[str, tuple[str, dict]]:
     readers = ((KMP_PAY, _kmp_pay), (CONTINGENT, _contingent)) if annual else \
         ((OCI, _oci), (DISCONTINUED, _discontinued), (SEGMENT_BALANCE, _segment_balance), (DIVIDENDS, _dividends))
     for key, reader in readers:
-        found = reader(doc, end)
+        try:
+            found = reader(doc, end)
+        except Exception as exc:  # noqa: BLE001 - one reader's failure must not cost the file's other keys
+            log.warning("xbrl extras: %s not read (%s: %s)", key, type(exc).__name__, exc)
+            found = None
         if found:
             out[key] = (period, {"kind": "annual" if annual else "results", **found})
     return out

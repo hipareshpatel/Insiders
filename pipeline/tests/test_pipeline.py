@@ -1391,3 +1391,19 @@ def test_release_catch_up_re_makes_the_card_with_the_release_and_clears_the_entr
     assert any("Kolkata plant order" in json.dumps(c["messages"]) for c in fake.calls)
     assert release_fold.pending(sink) == {}
     assert [r[0] for r in sink._db.execute("SELECT news_id FROM cards")] == ["r-1"]
+
+
+def test_a_folded_release_is_given_up_after_three_unfinished_re_runs_and_never_added_again(settings):
+    """Review of TODO 135: a card whose re-run never ends ANALYZED must not be re-run every 15 minutes for ever, and a
+    release already settled is not folded in again when it is requeued."""
+    from bse_intel import release_fold
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    release_fold.add(sink, "r-1", {"news_id": "p-1", "date": "2026-10-30", "text": "x"})
+    assert release_fold.tried(sink, ["r-1"]) == [] and release_fold.tried(sink, ["r-1"]) == []
+    assert release_fold.tried(sink, ["r-1"]) == ["r-1"]
+    release_fold.clear(sink, ["r-1"])
+    assert release_fold.pending(sink) == {}
+    release_fold.add(sink, "r-1", {"news_id": "p-1", "date": "2026-10-30", "text": "x"})
+    assert release_fold.pending(sink) == {}

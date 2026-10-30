@@ -87,6 +87,10 @@ test("the main figures' basis is read from their sources", async () => {
   assert.equal(mainBasis([withBasis("STANDALONE"), withBasis("CONSOLIDATED")]), "CONSOLIDATED");
   assert.equal(mainBasis([withBasis("STANDALONE")]), "STANDALONE");
   assert.equal(mainBasis([m("pat", "Q2FY27", 1)]), null);
+  // ICICIGI (audit 137, A2): one stray consolidated ratio among standalone figures is not a consolidated page
+  const stray = [withBasis("STANDALONE"), { ...withBasis("STANDALONE"), metric: "revenue" }, { ...withBasis("CONSOLIDATED"), metric: "solvency_ratio" }];
+  assert.equal(mainBasis(stray), "STANDALONE");
+  assert.equal(mainBasis([...stray, { ...m("pat", "Q1FY27", 1), basis: "CONSOLIDATED" }, { ...m("revenue", "Q1FY27", 1), basis: "CONSOLIDATED" }]), "CONSOLIDATED");
 });
 
 test("deep audit F-01, F-04, F-05, F-07: a stray revenue row, a missing year, gaps, a missing other income", async () => {

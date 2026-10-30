@@ -1526,6 +1526,42 @@ def stored_payload(src, store, url: str) -> tuple[bytes | None, str]:
     return data, why
 
 
+_KEPT_NAME = re.compile(r"^[0-9a-f]{16}\.pdf$")
+
+
+def store_kept_pdfs(sink, folder: str) -> dict:
+    """Put each PDF a run kept in ``folder`` (named ``pdf_key(url).pdf``, as ``--keep-pdfs`` and ``pdf_bench --collect`` name them)
+    into the PDF store (``PDF_STORE``, gzip), skipping a key the store already holds; nothing is downloaded from NSE. Returns the
+    counts: stored, already held, failed (a put that raised), skipped (a file not so named, or not a PDF). A failure is logged and
+    the next file goes on."""
+    import gzip
+
+    counts = {"stored": 0, "already_held": 0, "failed": 0, "skipped": 0}
+    try:
+        held: set[str] | None = set(sink.list_objects(PDF_STORE))
+    except Exception as exc:   # noqa: BLE001 - no listing: ask for each key instead
+        log.warning("store-kept-pdfs: the store could not list %s (%s); asking for each key", PDF_STORE, type(exc).__name__)
+        held = None
+    for path in sorted(Path(folder).iterdir()) if Path(folder).is_dir() else []:
+        if not path.is_file():
+            continue
+        data = path.read_bytes() if _KEPT_NAME.match(path.name) else b""
+        if not data.startswith(b"%PDF"):
+            counts["skipped"] += 1
+            continue
+        key = f"{PDF_STORE}{path.name}.gz"
+        try:
+            if (key in held) if held is not None else bool(sink.get_object(key)):
+                counts["already_held"] += 1
+                continue
+            sink.put_object(key, gzip.compress(data), "application/gzip")
+            counts["stored"] += 1
+        except Exception as exc:   # noqa: BLE001
+            log.warning("store-kept-pdfs: %s not stored (%s)", key, type(exc).__name__)
+            counts["failed"] += 1
+    return counts
+
+
 def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None,
                   store=None) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most

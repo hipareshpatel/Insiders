@@ -1865,6 +1865,19 @@ def cmd_pdf_shadow(args, settings, sink) -> int:
     return REFUSED if outcome["blocked"] else 0
 
 
+def cmd_store_kept_pdfs(args, settings, sink) -> int:
+    """Put the PDFs a run kept (a folder of ``pdf_key(url).pdf``, e.g. the `pdf-oos-pdfs` artifact) into the PDF store
+    (raw/results-pdf/<key>.pdf.gz), skipping the keys already held, so xbrl-key reads them from the store and never downloads
+    them again. Reads no exchange. Exit 1 when a put failed."""
+    from . import xbrl_key as xk
+
+    counts = xk.store_kept_pdfs(sink, args.dir)
+    print("store-kept-pdfs: " + ", ".join(f"{k.replace('_', ' ')} {v}" for k, v in counts.items()))
+    if args.json:
+        Path(args.json).write_text(json.dumps(counts, indent=2), encoding="utf-8")
+    return 1 if counts["failed"] else 0
+
+
 def cmd_xbrl_key(args, settings, sink) -> int:
     """Read-only: the exchange's XBRL figures in memory as a free answer key for the PDF reader (xbrl_key.py). Companies in a seeded
     shuffle; for each its newest results filing(s) with XBRL figures; the filing's PDF the way pdf-referee gets it (``Sources``:
@@ -2826,6 +2839,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--exclude-bench", action="store_true", help="leave out every company in docs/bench/normalpdf/key.csv or docs/bench/hardpdf/key.csv (an out-of-sample test); fails if a key file is missing")
     p.add_argument("--keep-pdfs", metavar="DIR", help="write every PDF the run downloads to DIR, named as `pdf_bench --collect` names them (<sha1(url)[:16]>.pdf), as soon as it is downloaded")
     p.set_defaults(func=cmd_xbrl_key)
+
+    p = sub.add_parser("store-kept-pdfs", help="put the PDFs a run kept (files named <pdf_key>.pdf) into the PDF store raw/results-pdf/, skipping those held; reads no exchange")
+    p.add_argument("--dir", required=True, help="the folder of kept PDFs")
+    p.add_argument("--json", help="write the counts to this file")
+    p.set_defaults(func=cmd_store_kept_pdfs)
 
     p = sub.add_parser("prune-companies", help="companies not on NSE's lists: dry run (default) or --apply (backup to R2, then remove those with no cards)")
     p.add_argument("--apply", action="store_true", help="back up, then delete; without it nothing is changed")

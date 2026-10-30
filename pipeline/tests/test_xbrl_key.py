@@ -875,3 +875,41 @@ def test_the_csv_keeps_every_digit_of_a_figure():
     # the pdf-oos key is built from this CSV: 58187.57 crore written as 58187.6 scored M&M's right reading wrong
     row = xk.result_row(xk.Result(xk.Expected("n", "M&M", "STANDALONE", "Q1FY27", "revenue", 58187.57), "found_unique"))
     assert xk.load_csv(xk.to_csv([row]))[0]["xbrl_value"] == 58187.57
+
+
+def test_store_kept_pdfs_stores_the_new_ones_and_skips_the_held_ones(tmp_path):
+    import gzip
+    from bse_intel import pdf_readers
+    pdf = make_pdf()
+    new_url, held_url = "https://nsearchives.nseindia.com/corporate/NEW.pdf", "https://nsearchives.nseindia.com/corporate/HELD.pdf"
+    for url in (new_url, held_url):
+        (tmp_path / f"{pdf_readers.pdf_key(url)}.pdf").write_bytes(pdf)
+    (tmp_path / "notes.txt").write_text("not a kept PDF")
+    (tmp_path / "0123456789abcdef.pdf").write_bytes(b"<html>refused</html>")       # named as kept, but no PDF
+
+    class ListingSink(FakeSink):
+        def list_objects(self, prefix):
+            return [k for k in self.saved if k.startswith(prefix)]
+
+    sink = ListingSink({})
+    sink.saved[_store_key(held_url)] = b"already there"
+    counts = xk.store_kept_pdfs(sink, str(tmp_path))
+    assert counts == {"stored": 1, "already_held": 1, "failed": 0, "skipped": 2}
+    assert gzip.decompress(sink.saved[_store_key(new_url)]) == pdf and sink.saved[_store_key(held_url)] == b"already there"
+    assert xk.store_kept_pdfs(sink, str(tmp_path))["stored"] == 0                   # a second run stores nothing
+
+    class NoListing(FakeSink):                                                     # no listing: each key is asked for
+        def list_objects(self, prefix):
+            raise ConnectionError("down")
+
+        def put_object(self, key, body, content_type=""):
+            if "HELD" in key:
+                raise AssertionError("never reached")
+            if key.endswith(f"{pdf_readers.pdf_key(new_url)}.pdf.gz") and getattr(self, "fail", False):
+                raise ConnectionError("put failed")
+            super().put_object(key, body, content_type)
+
+    sink = NoListing({})
+    sink.saved[_store_key(held_url)] = b"already there"
+    sink.fail = True
+    assert xk.store_kept_pdfs(sink, str(tmp_path)) == {"stored": 0, "already_held": 1, "failed": 1, "skipped": 2}

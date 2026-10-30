@@ -1213,6 +1213,76 @@ def words_in(words: list[tuple], box: tuple) -> str:
 _NUMERICISH = re.compile(r"[\d.,()\-\s]")
 
 
+class MistralOcrReader(Reader):
+    """Mistral's Document OCR API (``POST /v1/ocr``, model ``MISTRAL_OCR_MODEL``, default ``mistral-ocr-latest``), bench only (lead,
+    30 Oct 2026): never in a live path. The statement pages go in one call a PDF as a base64 data URL; tables come back as HTML
+    (``table_format``) in the page's ``tables`` or inline in its markdown. ``MISTRAL_OCR_PAGE_CAP`` (default 300) pages a process,
+    then no answer: at up to $10 per 1,000 pages that stays inside the lead's $3. ``MISTRAL_OCR_RAW_DIR`` keeps each answer."""
+    name, family = "mistral", "mistral"
+    ocr_family, ocr_engine = "mistral", "mistral-ocr"
+    modules = ("httpx",)
+    worker = False
+    pages_used = 0          # pages the API reported processed in this process (``usage_info.pages_processed``)
+
+    def available(self) -> bool:
+        return bool(os.environ.get("MISTRAL_API_KEY")) and super().available()
+
+    def extract(self, sub_pdf):
+        import base64
+        import hashlib
+
+        import httpx
+        with _pymupdf().open(stream=sub_pdf, filetype="pdf") as doc:
+            count = doc.page_count
+        cap = int(os.environ.get("MISTRAL_OCR_PAGE_CAP", "300"))
+        if MistralOcrReader.pages_used + count > cap:
+            raise RuntimeError(f"page cap {cap} reached ({MistralOcrReader.pages_used} used)")
+        body = {"model": os.environ.get("MISTRAL_OCR_MODEL", "mistral-ocr-latest"), "table_format": "html", "include_blocks": True,
+                "document": {"type": "document_url",
+                             "document_url": "data:application/pdf;base64," + base64.b64encode(sub_pdf).decode()}}
+        reply = httpx.post("https://api.mistral.ai/v1/ocr", json=body, timeout=180,
+                           headers={"Authorization": f"Bearer {os.environ['MISTRAL_API_KEY'].strip()}"})
+        reply.raise_for_status()
+        answer = reply.json()
+        MistralOcrReader.pages_used += int((answer.get("usage_info") or {}).get("pages_processed") or count)
+        raw_dir = os.environ.get("MISTRAL_OCR_RAW_DIR")
+        if raw_dir:
+            os.makedirs(raw_dir, exist_ok=True)
+            with open(os.path.join(raw_dir, hashlib.sha256(sub_pdf).hexdigest()[:16] + ".json"), "w", encoding="utf-8") as fh:
+                json.dump(answer, fh)
+        return mistral_grids(answer)
+
+
+def mistral_grids(answer: dict) -> list[tuple[int, list[list[str]]]]:
+    """(1-based page, grid) for every table of a Mistral OCR answer: the page's ``tables`` (HTML) when it lists them, else the
+    HTML or pipe tables written into its markdown."""
+    out = []
+    for page in answer.get("pages") or []:
+        number = int(page.get("index", 0)) + 1
+        listed = [t.get("content") or t.get("html") or "" for t in page.get("tables") or []]
+        grids = [g for html in listed for g in html_tables(html)]
+        if not grids:
+            text = page.get("markdown") or ""
+            grids = html_tables(text) or markdown_tables(text)
+        out.extend((number, g) for g in grids)
+    return out
+
+
+def markdown_tables(text: str) -> list[list[list[str]]]:
+    """The grids of the pipe tables in markdown; the ``|---|`` rule line is dropped."""
+    tables, rows = [], []
+    for line in (text or "").splitlines() + [""]:
+        line = line.strip()
+        if line.startswith("|") and line.endswith("|") and len(line) > 1:
+            cells = [c.strip() for c in line[1:-1].split("|")]
+            if not all(re.fullmatch(r":?-{2,}:?", c) for c in cells if c) or not any(cells):
+                rows.append(cells)
+        elif rows:
+            tables.append(rows)
+            rows = []
+    return tables
+
+
 class TatrReader(Reader):
     """Microsoft Table Transformer: detection ``table-transformer-detection``, structure
     ``table-transformer-structure-recognition-v1.1-all`` (PubTables-1M + FinTabNet), CPU, pages rendered at 250 dpi. Cell text is
@@ -1332,7 +1402,7 @@ def ocr_cell(image, box: tuple, numeric: bool = False) -> str:
 
 READERS: dict[str, Reader] = {r.name: r for r in (
     NativeReader(), CamelotReader(), PdfplumberReader(), TabulaReader(), DoclingReader(), MineruReader(), PaddleReader(),
-    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader())}
+    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader())}
 
 DEFAULT_READERS = "native"
 

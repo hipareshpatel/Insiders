@@ -744,6 +744,28 @@ max_tokens = 400
 context_tokens = 120000
 limits = { rpm = 30 }
 
+# Owner's NVIDIA catalogue, 30 Oct 2026 ~20:10 IST (free endpoints): Mistral Large 4 (1T total / 52B active, new on NVIDIA,
+# not the Mistral Free plan's 20k tokens a minute) and StepFun Step 5 Preview. Trial only, like the three above.
+[[routes.trial_new]]
+provider = "nvidia"
+model = "mistralai/mistral-large-4-1t-a52b"
+spare = true
+timeout_s = 150
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
+[[routes.trial_new]]
+provider = "nvidia"
+model = "stepfun-ai/step-5-preview"
+spare = true
+timeout_s = 150
+json_mode = true
+max_tokens = 400
+context_tokens = 120000
+limits = { rpm = 30 }
+
 [[routes.trial_new]]
 provider = "groq"
 model = "qwen/qwen3.8-27b"

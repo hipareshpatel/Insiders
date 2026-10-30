@@ -1337,27 +1337,57 @@ def test_a_press_release_beside_the_statement_joins_its_card_with_the_switch_on(
     pipeline._commit([pipeline.analyze(statement)])
     out = pipeline.analyze(release)
     assert out.update["status"] == "DUPLICATE" and "press release folded into the card of r-1" in out.update["reason"]
-    assert "Kolkata plant order" in pipeline._release_extra["r-1"][0][1]
+    from bse_intel import release_fold
+    assert "Kolkata plant order" in release_fold.pending(sink)["r-1"][0]["text"]
     pipeline._results_quarters.clear()
     fake.calls.clear()
     again = pipeline.analyze(statement)   # the card's re-run (event_catchup.release_catch_up processes it the same way)
-    assert again.update["status"] == "ANALYZED" and "r-1" not in pipeline._release_extra
+    assert again.update["status"] == "ANALYZED" and "r-1" in release_fold.pending(sink)   # kept until the card is re-made and committed
     assert any("Kolkata plant order" in json.dumps(c["messages"]) for c in fake.calls)
     pipeline._commit([out, again])
     assert [r[0] for r in sink._db.execute("SELECT news_id FROM cards")] == ["r-1"]
 
 
 def test_a_press_release_is_a_plain_duplicate_with_the_switch_off(settings, monkeypatch):
+    from bse_intel import release_fold
     monkeypatch.delenv("RESULTS_PRESS_RELEASE", raising=False)
     pipeline, sink, fake, statement, release = _release_setup(settings)
     pipeline._commit([pipeline.analyze(statement)])
     out = pipeline.analyze(release)
     assert out.update["status"] == "DUPLICATE" and out.update["reason"] == "duplicate of r-1 (same results quarter Q2FY27, D20)"
-    assert not pipeline._release_extra
+    assert not release_fold.pending(sink)
 
 
 def test_a_press_release_for_a_quarter_with_no_card_is_read_as_today(settings, monkeypatch):
+    from bse_intel import release_fold
     monkeypatch.setenv("RESULTS_PRESS_RELEASE", "1")
     pipeline, sink, fake, statement, release = _release_setup(settings)
     out = pipeline.analyze(release)
-    assert out.update["status"] != "DUPLICATE" and not pipeline._release_extra
+    assert out.update["status"] != "DUPLICATE" and not release_fold.pending(sink)
+
+
+def test_release_catch_up_re_makes_the_card_with_the_release_and_clears_the_entry(settings, monkeypatch):
+    """TODO 135 end to end: the fold is in the kv store; release_catch_up flips the card to PENDING, processes it alone, and
+    clears the entry only once the card is re-made. The entry survives a run that never gets to it."""
+    from bse_intel import event_catchup, release_fold
+
+    monkeypatch.setenv("RESULTS_PRESS_RELEASE", "1")
+    pipeline, sink, fake, statement, release = _release_setup(settings)
+    pipeline.bse.filings = [pipeline.bse.filings[0]]   # discovery sees the statement only
+    pipeline.discover(now_ist().date())
+    pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 60, bulk=False)
+    assert rows(sink, "select status from filings where news_id = 'r-1'")[0]["status"] == "ANALYZED"
+    out = pipeline.analyze(release)
+    pipeline._commit([out])
+    assert release_fold.pending(sink).keys() == {"r-1"}
+    # a run with no time left leaves the entry for the next one
+    assert event_catchup.release_catch_up(pipeline, time.monotonic() - 1) == {"rerun": {}}
+    assert release_fold.pending(sink).keys() == {"r-1"}
+    # the next run: a new pipeline over the same store applies it
+    pipeline._results_quarters.clear()
+    fake.calls.clear()
+    report = event_catchup.release_catch_up(pipeline, time.monotonic() + 60)
+    assert report["rerun"] == {"r-1": "ANALYZED"}
+    assert any("Kolkata plant order" in json.dumps(c["messages"]) for c in fake.calls)
+    assert release_fold.pending(sink) == {}
+    assert [r[0] for r in sink._db.execute("SELECT news_id FROM cards")] == ["r-1"]

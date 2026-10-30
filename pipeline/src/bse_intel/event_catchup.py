@@ -113,10 +113,12 @@ def results_due(row: dict, links: list) -> bool:
 def release_catch_up(pipeline, deadline: float) -> dict:
     """RESULTS_PRESS_RELEASE (TODO 135): read again the results cards whose press release this run folded in (pipeline._fold_release),
     so the release's words join the quarter's one card. Reuses the results re-run path: the filing goes back to PENDING and
-    is processed alone; the release text waits in pipeline._release_extra and is added to the card's text there."""
+    is processed alone; the release text waits in release_fold's kv key (cleared once the card is re-made) and is added to the card's text there."""
     report = {"rerun": {}}
-    with pipeline._lock:
-        ids = [i for i in pipeline._release_extra if pipeline._release_extra[i]]
+    from . import release_fold
+
+    waiting = release_fold.pending(pipeline.sink)
+    ids = list(waiting)
     if not ids or time.monotonic() >= deadline:
         return report
     from .pipeline import DEADLINE_GRACE_S
@@ -130,13 +132,13 @@ def release_catch_up(pipeline, deadline: float) -> dict:
     from datetime import date, timedelta
     from .pipeline import COMPANION_DAYS
 
-    with pipeline._lock:
-        released = [d for i in ids for _, _, d in pipeline._release_extra.get(i, [])]
+    released = [e["date"] for i in ids for e in waiting[i] if e.get("date")]
     last = max(released) if released else today_ist().isoformat()
     first = (date.fromisoformat(min(released)) - timedelta(days=COMPANION_DAYS)).isoformat() if released else last
     days = [first, last]
     outcomes = {o.update["news_id"]: o for o in pipeline.process(min(days), max(days), deadline, bulk=False, only=set(ids))}
     report["rerun"] = {i: (outcomes[i].update.get("status") if i in outcomes else "left in the queue") for i in ids}
+    release_fold.clear(pipeline.sink, [i for i in ids if report["rerun"][i] == "ANALYZED"])   # only a re-made card settles it
     return report
 
 

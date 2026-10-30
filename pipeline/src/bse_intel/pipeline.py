@@ -45,7 +45,7 @@ from .ocr import page_reader, recognise
 from . import raw
 from . import stages
 from . import order_band
-from . import call_memory, call_queue, card_support, gate, two_parts
+from . import call_memory, call_queue, release_fold, card_support, gate, two_parts
 from .currency import CODES as CURRENCY_CODES
 from .grounding import (DEFAULT_THRESHOLD, ground_all_fields, SourceIndex, _tokens, change_derived, check_card, check_claims,
                         declared_unit, foreign_as_rupees, margin_issues, scale_issues, unit_slips)
@@ -2048,7 +2048,6 @@ class Pipeline:
         self._holds = gate.load_holds(settings.config_dir / settings.card_holds_file)  # news_id -> reason
         self._results_quarters: dict[tuple[str, str], str] = {}  # (scrip, quarter) -> the results filing with its card (D20)
         self._superseding: dict[str, tuple[list[str], str]] = {}  # news_id -> later filings with its quarter's card (D20)
-        self._release_extra: dict[str, list[tuple[str, str, str]]] = {}  # results news_id -> (release news_id, text, its date) to add (RESULTS_PRESS_RELEASE)
         self._critic_jobs: list[dict] = []   # live cards committed this run, for the shadow critic (critic.py)
         # A card's memory waits for its card row (owner, 25 Oct 2026, after the architecture audit): written to the store
         # only once the batch holding the card is committed, so a run cut short or a rejected row leaves no memory
@@ -3043,10 +3042,8 @@ class Pipeline:
         if not results_press_release() or tagged or not _PRESS_RELEASE.search(f"{filing.headline or ''} {filing.subject or ''}") \
                 or _RESULTS_STATEMENT.search(text[:20000]) or not text.strip():
             return False
-        with self._lock:
-            kept = self._release_extra.setdefault(results_id, [])
-            if all(n != filing.news_id for n, _, _ in kept):
-                kept.append((filing.news_id, text[:RELEASE_TEXT_CHARS], str(filing.filing_date)[:10]))
+        release_fold.add(self.sink, results_id, {"news_id": filing.news_id, "date": str(filing.filing_date)[:10],
+                                                 "text": text[:RELEASE_TEXT_CHARS]})
         log.info("%s is a results press release; its text joins the card of %s (TODO 135)", filing.news_id, results_id)
         self._call_memory_step(filing, None, {}, text, "")
         return True
@@ -3624,13 +3621,13 @@ class Pipeline:
         if events_table:
             text = events_table + "\n\n" + text
         if event_type == "RESULTS":
-            with self._lock:
-                releases = self._release_extra.pop(filing.news_id, [])
+            # kept until the card is re-made (event_catchup.release_catch_up then clears it)
+            releases = release_fold.pending(self.sink).get(filing.news_id, []) if results_press_release() else []
             if releases:
                 # RESULTS_PRESS_RELEASE: the company's release of this quarter, for its words only; the figures stay the file's
                 text += ("\n\nCompany press release filed with these results (use it only for management commentary, one-offs, "
                          "segment notes, order wins and guidance; the results figures come from the exchange file above):\n"
-                         + "\n\n".join(t for _, t, _ in releases))
+                         + "\n\n".join(r["text"] for r in releases))
         # Memory as the model sees it: the periods this filing prints withheld (its own columns win, restated or not)
         # and the items that are probably this same event marked. Code reads memory's figures from `full_view`.
         printed = set()
@@ -4578,7 +4575,7 @@ class Pipeline:
                     caught = event_catchup.results_catch_up(
                         self, min(deadline, max(live_deadline, time.monotonic() + RESULTS_CATCH_UP_S)))
                     log.info("results XBRL catch-up: %s", json.dumps(caught))
-                    if self._release_extra:   # RESULTS_PRESS_RELEASE (TODO 135)
+                    if results_press_release():   # RESULTS_PRESS_RELEASE (TODO 135)
                         log.info("press releases joined to their results cards: %s",
                                  json.dumps(event_catchup.release_catch_up(self, min(deadline, live_deadline + RESULTS_CATCH_UP_S))))
                     fresh()

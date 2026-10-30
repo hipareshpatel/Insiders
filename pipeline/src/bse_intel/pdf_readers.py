@@ -1240,10 +1240,14 @@ class MistralOcrReader(Reader):
         body = {"model": os.environ.get("MISTRAL_OCR_MODEL", "mistral-ocr-latest"), "table_format": "html", "include_blocks": True,
                 "document": {"type": "document_url",
                              "document_url": "data:application/pdf;base64," + base64.b64encode(sub_pdf).decode()}}
+        import time
+        t0 = time.perf_counter()
         reply = httpx.post("https://api.mistral.ai/v1/ocr", json=body, timeout=180,
                            headers={"Authorization": f"Bearer {os.environ['MISTRAL_API_KEY'].strip()}"})
-        reply.raise_for_status()
+        if reply.status_code >= 400:     # the Free plan may refuse OCR (mistral-large-2512 answers 403 on our key): say why
+            raise RuntimeError(f"mistral ocr HTTP {reply.status_code}: {reply.text[:200]}")
         answer = reply.json()
+        answer["_seconds"] = round(time.perf_counter() - t0, 2)
         MistralOcrReader.pages_used += int((answer.get("usage_info") or {}).get("pages_processed") or count)
         raw_dir = os.environ.get("MISTRAL_OCR_RAW_DIR")
         if raw_dir:
@@ -1251,6 +1255,115 @@ class MistralOcrReader(Reader):
             with open(os.path.join(raw_dir, hashlib.sha256(sub_pdf).hexdigest()[:16] + ".json"), "w", encoding="utf-8") as fh:
                 json.dump(answer, fh)
         return mistral_grids(answer)
+
+
+class NemotronParseReader(Reader):
+    """NVIDIA's nemotron-parse on build.nvidia.com (``NEMOTRON_PARSE_MODEL``, default ``nvidia/nemotron-parse``), bench only (lead,
+    30 Oct 2026): never in a live path. Each statement page goes as one PNG (fitted inside the model's 1648 x 2048) to the
+    OpenAI-style chat endpoint with the ``markdown_bbox`` tool; the answer is a list of elements (normalised bbox, text, type),
+    and a table element's text is turned into a grid (LaTeX tabular, HTML or pipe table). ``NEMOTRON_PARSE_PAGE_CAP`` (default
+    300) pages a process; ``NEMOTRON_PARSE_RAW_DIR`` keeps each answer; ``seconds`` sums the calls. ``env`` names the switches,
+    so a second model (``NemotronParse2Reader``) keeps its own cap, folder and count."""
+    name, family = "nemotron", "nemotron"
+    env, model = "NEMOTRON_PARSE", "nvidia/nemotron-parse"
+    ocr_family, ocr_engine = "nemotron", "nemotron-parse"
+    modules = ("httpx",)
+    worker = False
+    pages_used = 0
+    seconds = 0.0
+
+    def available(self) -> bool:
+        return bool(os.environ.get("NVIDIA_API_KEY")) and super().available()
+
+    def extract(self, sub_pdf):
+        import base64
+        import hashlib
+        import time
+
+        import httpx
+        cap = int(os.environ.get(f"{self.env}_PAGE_CAP", "300"))
+        raw_dir = os.environ.get(f"{self.env}_RAW_DIR")
+        out = []
+        with _pymupdf().open(stream=sub_pdf, filetype="pdf") as doc:
+            for number, page in enumerate(doc, start=1):
+                if type(self).pages_used >= cap:
+                    raise RuntimeError(f"page cap {cap} reached")
+                zoom = min(1648 / page.rect.width, 2048 / page.rect.height)
+                png = page.get_pixmap(matrix=_pymupdf().Matrix(zoom, zoom)).tobytes("png")
+                body = {"model": os.environ.get(f"{self.env}_MODEL", self.model), "temperature": 0,
+                        "tools": [{"type": "function", "function": {"name": "markdown_bbox"}}],
+                        "messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {
+                            "url": "data:image/png;base64," + base64.b64encode(png).decode()}}]}]}
+                t0 = time.perf_counter()
+                reply = httpx.post("https://integrate.api.nvidia.com/v1/chat/completions", json=body, timeout=180,
+                                   headers={"Authorization": f"Bearer {os.environ['NVIDIA_API_KEY'].strip()}",
+                                            "Accept": "application/json"})
+                type(self).seconds += time.perf_counter() - t0
+                type(self).pages_used += 1
+                if reply.status_code >= 400:
+                    raise RuntimeError(f"nemotron-parse HTTP {reply.status_code}: {reply.text[:200]}")
+                answer = reply.json()
+                answer["_seconds"] = round(time.perf_counter() - t0, 2)
+                if raw_dir:
+                    os.makedirs(raw_dir, exist_ok=True)
+                    name = hashlib.sha256(png).hexdigest()[:16] + ".json"
+                    with open(os.path.join(raw_dir, name), "w", encoding="utf-8") as fh:
+                        json.dump(answer, fh)
+                out.extend((number, g) for g in nemotron_grids(answer))
+        return out
+
+
+class NemotronParse2Reader(NemotronParseReader):
+    """nemotron-parse 2.0 (``NEMOTRON_PARSE2_MODEL``, default ``nvidia/nemotron-parse-2.0``), the same call and answer as
+    ``NemotronParseReader`` (lead, 30 Oct 2026: listed on our free NVIDIA key, providers-check run 41059917128); bench only."""
+    name, ocr_engine = "nemotron2", "nemotron-parse-2.0"
+    env, model = "NEMOTRON_PARSE2", "nvidia/nemotron-parse-2.0"
+    pages_used = 0
+    seconds = 0.0
+
+
+def nemotron_grids(answer: dict) -> list[list[list[str]]]:
+    """The grids of the table elements of a nemotron-parse answer (the ``markdown_bbox`` tool call's JSON list, sometimes
+    nested one level)."""
+    grids = []
+    for choice in answer.get("choices") or []:
+        for call in (choice.get("message") or {}).get("tool_calls") or []:
+            try:
+                items = json.loads((call.get("function") or {}).get("arguments") or "[]")
+            except ValueError:
+                continue
+            while len(items) == 1 and isinstance(items[0], list):
+                items = items[0]
+            if items and isinstance(items[0], list):
+                items = [e for group in items for e in group]
+            for element in items:
+                if isinstance(element, dict) and str(element.get("type", "")).lower() == "table":
+                    text = element.get("text") or ""
+                    grids.extend(latex_tables(text) or html_tables(text) or markdown_tables(text))
+    return grids
+
+
+def latex_tables(text: str) -> list[list[list[str]]]:
+    """The grids of LaTeX tabular environments: rows split on \\\\, cells on &, rules dropped, \\multicolumn{n}{..}{x} as x
+    and n-1 empty cells."""
+    tables = []
+    for body in re.findall(r"\\begin\{tabular\}(?:\{[^}]*\})?(.*?)\\end\{tabular\}", text or "", re.S):
+        rows = []
+        for line in re.split(r"\\\\", body):
+            line = re.sub(r"\\(hline|toprule|midrule|bottomrule|cline\{[^}]*\})", "", line).strip()
+            if not line:
+                continue
+            cells = []
+            for cell in line.split("&"):
+                m = re.match(r"\s*\\multicolumn\{(\d+)\}\{[^}]*\}\{(.*)\}\s*$", cell, re.S)
+                if m:
+                    cells += [m.group(2).strip()] + [""] * (int(m.group(1)) - 1)
+                else:
+                    cells.append(cell.strip())
+            rows.append(cells)
+        if rows:
+            tables.append(rows)
+    return tables
 
 
 def mistral_grids(answer: dict) -> list[tuple[int, list[list[str]]]]:
@@ -1402,7 +1515,7 @@ def ocr_cell(image, box: tuple, numeric: bool = False) -> str:
 
 READERS: dict[str, Reader] = {r.name: r for r in (
     NativeReader(), CamelotReader(), PdfplumberReader(), TabulaReader(), DoclingReader(), MineruReader(), PaddleReader(),
-    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader())}
+    RapidTableReader(), MarkerReader(), SuryaReader(), TatrReader(), NumbersFirstReader(), MistralOcrReader(), NemotronParseReader(), NemotronParse2Reader())}
 
 DEFAULT_READERS = "native"
 

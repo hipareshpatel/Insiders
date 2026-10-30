@@ -1205,3 +1205,40 @@ def render(summary: dict) -> str:
     elif n:
         lines.append("no element or breakdown row on levies, leases, treasury shares or discounts in the files read")
     return "\n".join(lines)
+
+
+# --- a look at what is stored (read only) ---------------------------------------------------------------------------
+
+def dump(sink, scrip: str, pattern: str, *, max_rows: int = 400) -> str:
+    """Every stored facts document of one company, and in each the facts whose element matches ``pattern`` (a regular
+    expression, case-insensitive) with their period, dimensions and value: to see why a recipe finds a line or not, without a
+    download. Read only."""
+    rx = re.compile(pattern, re.I)
+    out = []
+    for k in sorted(sink.list_objects(f"{PREFIX}{scrip}/")):
+        if not k.endswith(".json.gz"):
+            continue
+        try:
+            doc = loads(sink.get_object(k))
+        except Exception as exc:  # noqa: BLE001
+            out.append(f"{k}: unreadable ({type(exc).__name__})")
+            continue
+        ctxs = doc.get("contexts") or {}
+        instants = sorted({c["i"] for c in ctxs.values() if c.get("i")})
+        out.append(f"{k}: kind={doc.get('kind') or 'results'} period={doc.get('period')} file_period={doc.get('file_period')} "
+                   f"fy={doc.get('fy')} year_end={doc.get('year_end')} basis={doc.get('basis')} n_facts={doc.get('n_facts')} "
+                   f"instants={instants} url={doc.get('url')}")
+        n = 0
+        for element, ctx, unit, value, _dec in doc.get("facts") or []:
+            if not rx.search(element):
+                continue
+            c = ctxs.get(ctx) or {}
+            when = c.get("i") or f"{c.get('s')}..{c.get('e')} ({c.get('m')}m)"
+            dims = ",".join(f"{a}={m}" for a, m in (c.get("d") or {}).items())
+            text = value if isinstance(value, (int, float)) else str(value)[:80]
+            out.append(f"    {element} @ {when}{' [' + dims + ']' if dims else ''} = {text}")
+            n += 1
+            if n >= max_rows:
+                out.append("    ...")
+                break
+    return "\n".join(out) or f"no facts stored for {scrip}"

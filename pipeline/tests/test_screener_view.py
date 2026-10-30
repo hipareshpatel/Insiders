@@ -236,6 +236,30 @@ def test_a_year_comes_from_the_newest_annual_report_that_holds_it_else_the_q4_fi
     assert cf.year("FY25", "CONSOLIDATED", sv.BANK)[1] == "results file Q4FY25"     # a lender: always the Q4 file
 
 
+def test_a_report_two_years_later_never_gives_the_year_even_with_a_stray_fact_at_its_date():
+    """UltraTech's FY26 report tags Assets at 31 Mar 2024 in a note (no balance sheet there): FY24 is the FY24 or FY25
+    report's, else the Q4 file's, never FY26's (TODO 129: Borrowings read as 0 on 113 pairs)."""
+    fy26 = doc([("Assets", "I2026", 9.0), ("Assets", "I2024", 5.0), ("RevenueFromOperations", "D2024", 1.0)])
+    fy26["contexts"]["I2024"] = {"i": "2024-03-31"}
+    fy26["contexts"]["D2024"] = {"s": "2023-04-01", "e": "2024-03-31", "m": 12}
+    q4 = doc([("RevenueFromOperations", "D2024", 4.0), ("Assets", "I2024", 7.0)], kind="results", template="INDAS", year=2024)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "results file Q4FY24"
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE)[1] == "results file Q4FY24"
+    fy25 = doc([("Assets", "I2025", 8.0), ("Assets", "I2024", 6.0)], year=2025)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.annual_key("1", "FY25", "CONSOLIDATED"): fy25,
+                 xf.key("1", "Q4FY24", "CONSOLIDATED"): q4})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY25"
+    # with no nearer report and no Q4 file, the later report is the last resort (HCL Tech FY20 from its FY22 report)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
+    # a Q4 file with no balance sheet at the year end gives way to the later report (HAL, NTPC FY22)
+    q4_pl = doc([("RevenueFromOperations", "D2024", 4.0)], kind="results", template="INDAS", year=2024)
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4_pl})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE)[1] == "results file Q4FY24"
+
+
 # --- the page and the comparison ------------------------------------------------------------------------------------------
 
 def section(section_id, rows, columns):

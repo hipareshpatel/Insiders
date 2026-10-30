@@ -1925,6 +1925,28 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
     return REFUSED if summary["stopped"] and not summary["capped"] else 0
 
 
+def cmd_facts_dump(args, settings, sink) -> int:
+    """Read only: a company's stored facts documents and the facts whose element matches ``--match`` (xbrl_facts.dump)."""
+    from . import xbrl_facts
+
+    for scrip in [s.strip() for s in args.scrips.split(",") if s.strip()]:
+        print(xbrl_facts.dump(sink, scrip, args.match))
+    return 0
+
+
+def cmd_xbrl_expiry_check(args, settings, sink) -> int:
+    """Read only (TODO 139): every raw results file in R2 (raw/xbrl/, deleted after 180 days) against the facts copies
+    (raw/xbrl-facts/); xbrl_expiry.py. Exit 1 when a raw file that holds results has no facts copy or an object could not be
+    read (an R2 failure is never a pass), else 0."""
+    from . import xbrl_expiry
+
+    summary = xbrl_expiry.check(sink, workers=args.workers)
+    print(xbrl_expiry.render(summary))
+    if args.json:
+        Path(args.json).write_text(xbrl_expiry.to_json(summary), encoding="utf-8")
+    return 1 if summary["facts_missing"] or summary["not_verified"] else 0
+
+
 def cmd_pdf_referee(args, settings, sink) -> int:
     """Read-only: the filing PDF as the last referee of the pairs the screener-referee left open (pdf_referee.py). The input
     is the screener-referee CSV (``--csv``); each pair with verdict neither, no_file or screener_matches_official gets its
@@ -2945,6 +2967,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file (with --from-nse also as the run goes)")
     p.add_argument("--csv", help="write the filings whose file is not stored to this file (with --from-nse: one line a listed file, with its status and NSE's timestamps)")
     p.set_defaults(func=cmd_xbrl_facts)
+
+    p = sub.add_parser("xbrl-expiry-check", help="read only: every raw results XBRL file in R2 (deleted after 180 days) has its facts copy in raw/xbrl-facts/ (TODO 139); exit 1 when one does not")
+    p.add_argument("--workers", type=int, default=16, help="R2 reads at once (default 16)")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_xbrl_expiry_check)
+
+    p = sub.add_parser("facts-dump", help="read only: a company's stored facts documents (raw/xbrl-facts/<scrip>/) and the facts whose element matches --match")
+    p.add_argument("--scrips", required=True, help="comma-separated scrip codes as the facts folder names them")
+    p.add_argument("--match", default="Borrow|Lease|Assets$", help="regular expression on the element name (default: borrowings, leases, total assets)")
+    p.set_defaults(func=cmd_facts_dump)
 
     p = sub.add_parser("screener-referee", help="read-only: NSE's results XBRL as the referee of the screener cross-check's disagreeing pairs")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

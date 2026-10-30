@@ -11,9 +11,10 @@ after the fact with alternatives; this module does not extend that approach.
 Sources (screener's own docs, read by the lead 28 Oct 2026: "annual data is imported from the annual extract in the quarterly (Q4)
 filings until the annual report is published ... we revise old numbers when the company revises them in new annual reports"):
 
-- a year (FYxx, March year end): the NEWEST stored annual-report facts doc that holds that year (its prior-year comparative counts:
-  FY25 from the FY26 report when stored), else the Q4 results file's 12-month context. Lenders file no annual-report XBRL on NSE:
-  always the Q4 file. A balance sheet at a March year end is read the same way (the instant at the year end);
+- a year (FYxx, March year end): the next year's annual-report facts doc (its prior-year comparative: FY25 from the FY26 report)
+  or the year's own, whichever holds the year, then the Q4 results file when it holds it, then the nearest later report (a report
+  two years later can carry stray facts at that date; CompanyFacts.year), else the Q4 file as it is. A Q4 file is read in its
+  12-month context. Lenders file no annual-report XBRL on NSE: always the Q4 file. A balance sheet at a March year end is read the same way (the instant at the year end);
 - a quarter: that quarter's own results file, its 3-month context; a half-year balance sheet (Sep): that quarter's file's instant.
 
 Every row carries a note naming the elements used and the source ("annual report FY26", "results file Q4FY26").
@@ -824,22 +825,37 @@ class CompanyFacts:
         return CORPORATE
 
     def year(self, fy: str, basis: str, fam: str, instant: bool = False):
-        """(facts, label, Q4 facts) of a March year: the newest annual-report doc holding the year (a later report's comparative
-        counts), else the Q4 results file. A lender: always the Q4 file."""
+        """(facts, label, Q4 facts) of a March year, in this order: the newest of the year's own annual report and the next
+        year's (whose comparative it is) that holds the year; else the Q4 results file when it holds it; else the nearest later
+        report that holds it; else the Q4 file as it is. A lender: always the Q4 file. A report two or more years later is the last resort because it can carry a stray fact
+        at that date (UltraTech's FY26 report tags Assets at 31 Mar 2024 in a note, with no balance sheet there, which made FY24's
+        Borrowings 0: TODO 129, 113 pairs), yet for a year with no nearer source it often holds the full sheet (HCL Tech FY20
+        from its FY22 report, 16 rows equal to screener's)."""
         end = _fy_end(fy)
         q4 = self.result(f"Q4{fy}", basis)
-        if fam == CORPORATE and end is not None:
-            for (afy, b), key in sorted(self.annual.items(), key=lambda kv: _fy_num(kv[0][0]), reverse=True):
-                if b != basis or _fy_num(afy) < _fy_num(fy):
-                    continue
+        if fam != CORPORATE or end is None:
+            return q4, f"results file Q4{fy}", None
+
+        def holds(f) -> bool:
+            return f.cr("Assets", instant=end) is not None if instant else \
+                any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
+
+        def holding(offsets) -> tuple | None:
+            reports = [(afy, key) for (afy, b), key in self.annual.items() if b == basis and _fy_num(afy) - _fy_num(fy) in offsets]
+            for afy, key in sorted(reports, key=lambda r: offsets.index(_fy_num(r[0]) - _fy_num(fy))):
                 f = self._load(key)
                 if f is None:
                     continue
-                holds = f.cr("Assets", instant=end) is not None if instant else \
-                    any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
-                if holds:
+                if holds(f):
                     return f, f"annual report {afy}", q4
-        return q4, f"results file Q4{fy}", None
+            return None
+
+        near = holding([1, 0])                              # the newest first, as before: the next year's report, then the year's own
+        if near is not None:
+            return near
+        if q4 is not None and holds(q4):           # a Q4 file without the year's balance sheet (HAL, NTPC FY22) is no source for it
+            return q4, f"results file Q4{fy}", None
+        return holding(list(range(2, 100))) or (q4, f"results file Q4{fy}", None)   # the nearest later report first
 
 
 def _fy_num(fy: str) -> int:

@@ -2294,7 +2294,13 @@ def cmd_statements_backfill(args, settings, sink) -> int:
     from . import statements_backfill as sb
 
     named = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
-    outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
+    if args.put_back_ratings:
+        # the rating snapshots the empty-snapshot clean-up took out, back from the runs' backups (review of PR #256)
+        ratings = sb.lost_ratings(sink)
+        print(f"rating snapshots in the backups: {sum(len(v) for p in ratings.values() for v in p.values())} in {len(ratings)} companies")
+        outcome = sb.run(sink, sorted(ratings), args.apply, args.limit, args.restart, ratings=ratings)
+    else:
+        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
     print(sb.render(outcome))
     if args.json:
         Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -2679,6 +2685,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--limit", type=int, default=50, help="at most this many companies a run (default 50, the owner's rule A)")
     p.add_argument("--restart", action="store_true", help="start again from the first company")
     p.add_argument("--json", help="write the report to this file")
+    p.add_argument("--put-back-ratings", action="store_true", help="only the companies whose rating snapshots the empty-snapshot clean-up took out: put them back from the backups")
     p.set_defaults(func=cmd_statements_backfill)
     p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")

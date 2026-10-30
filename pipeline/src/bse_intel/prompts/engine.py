@@ -271,7 +271,10 @@ class PromptEngine:
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
         self._consolidated_only = (prompts / "consolidated_only.md").read_text().strip()
         self._memory = Template((prompts / "memory.md").read_text())
-        self._call_memory = Template((prompts / "call_memory.md").read_text())
+        # CALL_MEMORY_PROMPT=v2: a measured test of the held prompt (owner, 30 Oct 2026); scheduled runs never set it
+        import os
+        variant = "call_memory_v2.md" if os.environ.get("CALL_MEMORY_PROMPT") == "v2" else "call_memory.md"
+        self._call_memory = Template((prompts / variant).read_text())
         self._verify = (prompts / "verify.md").read_text()
         self.memory_start = settings.backfill_start
         self.events: dict = settings.load_toml("events.toml")

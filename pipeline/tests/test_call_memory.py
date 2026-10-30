@@ -1054,3 +1054,12 @@ def test_a_measured_test_may_read_in_smaller_parts(monkeypatch):
     assert cm.part_chars() == 15000
     monkeypatch.setenv("CALL_MEMORY_PART_CHARS", "x")
     assert cm.part_chars() == cm.PART_CHARS
+
+
+def test_a_measured_test_may_read_with_the_held_prompt(monkeypatch, settings):
+    """CALL_MEMORY_PROMPT=v2 (owner, 30 Oct 2026: test the held prompt on one locked model); unset, the live prompt."""
+    live = PromptEngine(settings)._call_memory.template
+    assert "give fewer points rather than a loose one" in live
+    monkeypatch.setenv("CALL_MEMORY_PROMPT", "v2")
+    held = PromptEngine(settings)._call_memory.template
+    assert "give fewer points rather than a loose one" not in held and "split by segment, product, channel" in held

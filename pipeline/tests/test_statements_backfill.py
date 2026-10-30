@@ -187,3 +187,6 @@ def test_rating_snapshots_are_not_empty_and_are_put_back_from_the_backups(settin
     back = sink.get_dossier("522261")["balance_sheet"]
     assert [e["period"] for e in back] == ["Q4FY26", "Mar-2026", "Jun-2026"] and back[-1] == rating
     assert sb.run(sink, sorted(lost), apply=True, restart=True, ratings=lost)["ratings_put_back"] == 0
+    assert sink.kv_get(sb.RESUME_KEY) != "522261" and sink.kv_get(sb.RATINGS_RESUME_KEY) == "522261"   # the fill's point unmoved
+    labelled = dict(rating, lab={"by": "ai"})
+    assert sb.put_back({"balance_sheet": [labelled]}, {"main": [rating]}) == 0

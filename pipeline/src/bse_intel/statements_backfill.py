@@ -37,6 +37,7 @@ log = logging.getLogger(__name__)
 
 LIMIT = 50
 RESUME_KEY = "statements_backfill:done_through"
+RATINGS_RESUME_KEY = "statements_backfill:ratings_done_through"   # the put-back's own (review: it must not move the fill's)
 SLIP_RATIO = 1.5
 _QUARTER = re.compile(r"Q[1-4]FY\d{2}")
 
@@ -210,6 +211,11 @@ def drop_file_covered_balance(dossier: dict) -> tuple[int, int]:
 RATINGS_SINCE = "20261030T"   # the runs whose empty-snapshot clean-up (PR #250) also took out rating snapshots
 
 
+def _rating_id(e: dict) -> tuple:
+    """A rating snapshot's identity: the same rating with a field added since (its label) is not a second one."""
+    return (e.get("period"), e.get("source_news_id"), *(e.get(k) for k in RATING_FIELDS))
+
+
 def lost_ratings(sink, since: str = RATINGS_SINCE) -> dict[str, dict[str, list[dict]]]:
     """The rating snapshots (a rating, no figure) the backups of statements-backfill runs since ``since`` held before the run:
     scrip -> {"main": [...], "standalone": [...]}. ``drop_empty_balance`` read them as empty until the review of PR #256."""
@@ -229,7 +235,7 @@ def lost_ratings(sink, since: str = RATINGS_SINCE) -> dict[str, dict[str, list[d
         for part, sheets in (("main", dossier.get("balance_sheet")), ("standalone", standalone.get("balance_sheet"))):
             for e in sheets if isinstance(sheets, list) else []:
                 if isinstance(e, dict) and _held(e) and _held(e) <= set(RATING_FIELDS):
-                    mark = json.dumps([scrip, part, e], sort_keys=True)
+                    mark = json.dumps([scrip, part, _rating_id(e)])
                     if mark not in seen:
                         seen.add(mark)
                         out.setdefault(scrip, {}).setdefault(part, []).append(e)
@@ -247,8 +253,8 @@ def put_back(dossier: dict, lost: dict[str, list[dict]]) -> int:
             if not isinstance(holder, dict):
                 continue
         sheets = holder.get("balance_sheet") if isinstance(holder.get("balance_sheet"), list) else []
-        have = {json.dumps(e, sort_keys=True) for e in sheets if isinstance(e, dict)}
-        new = [e for e in entries if json.dumps(e, sort_keys=True) not in have]
+        have = {_rating_id(e) for e in sheets if isinstance(e, dict)}
+        new = [e for e in entries if _rating_id(e) not in have]
         if new:
             holder["balance_sheet"] = sorted(sheets + new, key=lambda e: str(e.get("as_of") or "") if isinstance(e, dict) else "")
             added += len(new)
@@ -309,7 +315,8 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
 
     from .backup import RunBackup
 
-    after = "" if (restart or not apply or named) else (sink.kv_get(RESUME_KEY) or "")
+    resume = RATINGS_RESUME_KEY if ratings else RESUME_KEY
+    after = "" if (restart or not apply or named) else (sink.kv_get(resume) or "")
     todo = [s for s in sorted(scrips) if s > after][:limit]
     backup = RunBackup(sink, "statements-backfill") if apply else None
     out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
@@ -370,7 +377,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
         out["entries"] += added
         out["last"] = scrip
     if apply and not named and out["last"]:
-        sink.kv_set(RESUME_KEY, out["last"], at)
+        sink.kv_set(resume, out["last"], at)
     if backup is not None:
         out["backup"] = backup.summary()
     return out

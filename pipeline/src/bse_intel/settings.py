@@ -133,8 +133,8 @@ def slip_check_numfirst() -> bool:
 def numfirst_stop_early() -> bool:
     """NUMFIRST_STOP_EARLY (default off; lead, 30 Oct 2026): the numbers-first reader stops OCR-reading the scanned pages whose text
     layer named no usable table once every basis the filing needs has a statement (revenue or total income, PBT and PAT named) on
-    a trusted page. Out of sample (62 PDFs, 500 figures): 369 of 547 such page reads skipped, about 53% of the reader's time, and
-    the same 243 right / 11 wrong / 246 none. Read at the call."""
+    a trusted page, its lines solved by the table's arithmetic. Out of sample (62 PDFs, 500 figures): 178 of 547 such page reads
+    skipped, about 28% of the reader's time, and the same 243 right / 11 wrong / 246 none (0 changed). Read at the call."""
     return _switch("NUMFIRST_STOP_EARLY")
 
 

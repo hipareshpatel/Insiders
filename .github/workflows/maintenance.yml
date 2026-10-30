@@ -264,6 +264,7 @@
 #   maint-ro-<command> read-only, one group per command (so each runs beside everything else, never beside itself):
 #                      failed-report, memory-gaps (memory only), label-memory, prune-companies (compares the companies table
 #                      with NSE's lists, writes nothing), audit-precision, release-check, screener-crosscheck (R2 and memory), screener-rows (R2 only; writes nothing), xbrl-facts (R2 and memory; writes only raw/xbrl-facts/ in R2; a run with `apply` downloads NSE files and is in the NSE memory group), tijori-crosscheck (R2 and memory; writes nothing), tijori-referee (R2, memory and NSE; writes nothing), screener-referee (R2, memory and NSE; writes nothing), pdf-referee (the referee CSV and NSE; writes nothing), xbrl-key (R2, memory and NSE; writes only raw/results-pdf/, each PDF it downloads), pdf-oos (R2, memory and NSE; writes only raw/results-pdf/), screener-explain (the referee CSV, memory and NSE; writes nothing), restated-report (memory only), restated-pdf-trial (memory and NSE; writes nothing), memory-recall-export (R2 and memory; writes nothing), nse-selfcheck (memory only), prediction-units (memory only), nse-speedtest (reads NSE; writes nothing), call-memory (R2, memory and the free AI providers; writes nothing), fact-sheet-ab (the card path's free AI providers; writes nothing)
+# A command in no list falls into maint-cards; add a new command to the right list in `concurrency.group` below.
 #
 # CHAINING: the input `then` is a comma-separated list of commands, each optionally `command:restart` (passes restart=true),
 # e.g. command=memory-gaps-fill, then="seed-memory:restart,label-memory". When the run's work has succeeded, the final job
@@ -284,6 +285,7 @@ on:
         description: what to run
         type: choice
         options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
         type: string
@@ -299,6 +301,7 @@ on:
         default: preview
       ids:
         description: screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank and statements-backfill - only these companies (scrip codes); pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        type: string
         default: ''
       since:
         description: requeue-failed only - failed filings filed on or after this date (YYYY-MM-DD); default the last 30 days
@@ -393,6 +396,7 @@ concurrency:
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
     || contains(fromJSON('["failed-report","memory-gaps","label-memory","prune-companies","audit-precision","release-check","screener-crosscheck","screener-rows","xbrl-facts","tijori-crosscheck","tijori-referee","screener-referee","screener-explain","pdf-referee","xbrl-key","pdf-referee-tijori","pdf-referee-ensemble","pdf-bench","pdf-oos","restated-report","restated-pdf-trial","memory-recall-export","nse-selfcheck","prediction-units","nse-speedtest","call-memory","fact-sheet-ab"]'), inputs.command) && format('maint-ro-{0}', inputs.command)
+    || 'maint-cards' }}
   cancel-in-progress: false
 
 # F215 (owner 27 Oct: merge and switch on once reviewed): the PDF referee and reader paths read two-digit years, rank pages and

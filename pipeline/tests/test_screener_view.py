@@ -546,6 +546,23 @@ def test_current_maturities_of_finance_lease_obligations_are_borrowings_once():
     assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 6
 
 
+def test_current_maturities_of_long_term_debt_are_borrowings_once(monkeypatch):
+    """L&T Q4FY21-FY26, Hyundai, KPR Mill, Dr Reddy's: screener's Borrowings above ours by exactly this element (129 rows).
+    Behind SCREENER_CMLTD, off until measured on/off."""
+    monkeypatch.setenv("SCREENER_CMLTD", "1")
+    base = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Borrowings"]
+    got = values(sv.corporate_bs(sv._Reader(annual_facts([(sv.LT_DEBT_MATURITIES, "I2026", 9.0)]), instant=END)))
+    assert got["Borrowings"] == base + 9
+    assert got["Other Liabilities"] == values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Other Liabilities"] - 9
+    # the same line also described in the breakdown is not counted twice
+    facts = xf.Facts(doc([r for r in ANNUAL if r[1] not in ("D2026_M3", "I2026_M3")]
+                         + [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", "D2026_M3", "Current maturities of long term debt"),
+                            ("OtherCurrentFinancialLiabilitiesOthers", "I2026_M3", 9.0), (sv.LT_DEBT_MATURITIES, "I2026", 9.0)]))
+    assert values(sv.corporate_bs(sv._Reader(facts, instant=END)))["Borrowings"] == 100 + 50 + 30 + 12 + 9
+    monkeypatch.delenv("SCREENER_CMLTD")            # off by default: today's rule
+    assert values(sv.corporate_bs(sv._Reader(annual_facts([(sv.LT_DEBT_MATURITIES, "I2026", 9.0)]), instant=END)))["Borrowings"] == base
+
+
 def test_tax_percent_is_on_the_size_of_the_pbt():
     """L&T standalone Q2FY26: PBT -2,982 with a tax charge, screener +20.0 (289 quarters of the 500 largest)."""
     assert round(sv._tax_pct(596.4, -2982.0), 1) == 20.0 and sv._tax_pct(1.0, 0.0) is None

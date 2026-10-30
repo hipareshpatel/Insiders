@@ -2,8 +2,8 @@
  *  sentences, chart geometry, the CSV and the URL's filters. No React here, so `node --test` runs the cases in resultsView.test.ts.
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
-import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS } from "../../shared/resultsTypes.ts";
-import type { GroupBy, GroupRow, KpiProgress, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, Turn } from "../../shared/resultsTypes.ts";
+import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
+import type { GroupBy, GroupRow, KpiProgress, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn } from "../../shared/resultsTypes.ts";
 
 export const GROWTH_STEPS = [0, 10, 20, 30, 50, 100] as const;   // "growth at least this much, per cent"
 export const MARGIN_STEPS = [0, 100, 200, 300, 500] as const;    // "margin up at least this many basis points"
@@ -11,10 +11,9 @@ export const SPREAD_KEYS = ["below_0", "from_0_to_10", "from_10_to_20", "above_2
 export type SpreadKey = (typeof SPREAD_KEYS)[number];
 export const SPREAD_LABEL: Record<SpreadKey, string> = { below_0: "Below 0%", from_0_to_10: "0–10%", from_10_to_20: "10–20%", above_20: "Above 20%" };
 
-/** The columns the page may sort by (the Worker's whitelist; anything else falls back to profit growth). */
-export const SORTS = ["company", "mcap", "revenue_yoy", "ebitda_yoy", "opm_yoy_bps", "pat_yoy", "revenue_qoq", "ebitda_qoq",
-  "opm_qoq_bps", "pat_qoq", "pat_momentum_pts", "revenue_momentum_pts", "ebitda_momentum_pts", "filed_at"] as const;
-export type Sort = (typeof SORTS)[number];
+/** The columns the page may sort by: the Worker's own list (shared/resultsTypes.ts); anything else falls back to profit growth. */
+export const SORTS = RESULTS_SORTS;
+export type Sort = ResultsSort;
 export const DEFAULT_SORT: Sort = "pat_yoy";
 /** A name sorts A to Z first; every figure highest first. */
 export const firstDir = (sort: string): "asc" | "desc" => (sort === "company" ? "asc" : "desc");
@@ -355,8 +354,11 @@ const stepOf = (v: string | null, allowed: readonly number[]): number | null => 
   return allowed.includes(n) ? n : null;
 };
 
+/** The API's query as the page reads it from its URL. */
+export type PageQuery = KpiQuery;
+
 /** The page's URL as the API's query: anything not on the lists is dropped (the Worker checks again). */
-export function readQuery(p: URLSearchParams): KpiQuery {
+export function readQuery(p: URLSearchParams): PageQuery {
   const sort = (SORTS as readonly string[]).includes(p.get("sort") ?? "") ? (p.get("sort") as Sort) : DEFAULT_SORT;
   const dirRaw = p.get("dir");
   const momentum = p.get("momentum");

@@ -92,6 +92,20 @@ Not met. The rate has stayed between 15% and 23% for a week while about 120 fixe
 
 ## 3. Open work, in order
 
+**Open work, in order (30 Oct 2026, 07:40 IST; the one list, kept current after every step).**
+| # | Item | State | Next |
+|---|---|---|---|
+| 1 | Past statements into memory (statements-backfill) | Running: ~1,550 of ~1,900 companies, runs of 50 a few minutes apart | OPS rows; look at the ~35 entries the profit check left out |
+| 2 | Re-read the 223 recent results companies from the exchange files (seed-memory) | Waiting for 1 (same memory jobs) | Runs of 50 |
+| 3 | Call memory tests on Flash-Lite, the same 10 documents (TODO 101) | A today's prompt 39%, B new prompt 49%; C smaller parts, D + thinking running | Independent wrong-point check; the best on 10 new documents; then ship the prompt |
+| 4 | Call memory live (on since 06:51 IST; the job's gate fixed, PR #234) | First queued readings from 07:41 IST | Count wrong points on the first readings |
+| 5 | Business mix from the results file's segment facts (TODO 137) | Being built (code, no AI) | Review, test, ship; then audit every stock-page section on ~20 companies |
+| 6 | A/B of fact-sheet cards on 10 companies (TODO 134, owner asked) | Not started | Build the switch, run off/on, blind score |
+| 7 | PDF reader (its own session) | Decided 30 Oct 07:20 IST: #232 after its skipped-page list; measure where OCR time goes; native fallback with options on; pdf-shadow PBT by screener's rule; pdf-oos picker fix | Review each before main |
+| 8 | MEMORY_FILE_ONLY (memory's figures from the exchange file only) | Built, off | Owner's word; after 1 |
+| 9 | Card strategy: press release into the results card and memory (TODO 135); deck and call cards lead with what changed (TODO 136); Gemini's good parts (TODO 128) | Planned | Owner's Yes / No / Later, and examples |
+| 10 | Smaller: Z.ai keys lost their three free models (providers check red); balance-sheet gaps (TODO 129); annual-report extras (TODO 132) | Open | In turn |
+
 **Summary for the owner, 30 Oct 2026, 07:00 IST.**
 - Done: the live path saves every result by screener's rules (3); one results card a quarter (6); late exchange file fetched
   for PDF-only cards first (7); every filing of 28-30 Oct read, none waiting, none failed but one audio file (5); four card

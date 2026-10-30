@@ -269,6 +269,15 @@ def card_consolidated_only() -> bool:
     return _switch("CARD_CONSOLIDATED_ONLY")
 
 
+def card_fact_sheet() -> bool:
+    """CARD_FACT_SHEET (default off, not in config/switches.toml; owner, 30 Oct 2026, TODO 131 and 134: the A/B of results cards whose
+    results figures come from memory): for a corporate filer's results filing whose quarter memory holds from the exchange file
+    (dossier["statements"], screener's rules), the results table's rows are that sheet's, pass 2 is given the sheet as its only results
+    figures, and a revenue / EBITDA / PBT / profit amount or change the model writes that disagrees with it is taken out of the text
+    (fact_sheet.py). With no sheet, nothing changes. Read at the call."""
+    return _switch("CARD_FACT_SHEET")
+
+
 def memory_file_only() -> bool:
     """MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using cards
     data"): a statement line (dossier.STATEMENT_FIGURES) enters memory only from the exchange's own file; a model's reading of

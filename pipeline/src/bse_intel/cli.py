@@ -1202,6 +1202,90 @@ def cmd_call_memory(args, settings, sink) -> int:
     return 0 if done else 1
 
 
+class _ReadOnlySink:
+    """A sink that reads through and writes nothing: every write is counted by name and dropped (fact-sheet-ab)."""
+
+    _WRITES = {"execute": 0, "put_dossier": None, "put_object": None, "delete_object": None, "kv_set": 0, "add_writes": None,
+               "add_uncounted_writes": None}
+
+    def __init__(self, sink):
+        self._sink = sink
+        self.read_through = sink   # the stores behind it, so stored texts and files are read, never downloaded again
+        self.blocked: dict[str, int] = {}
+
+    def __getattr__(self, name):
+        if name in self._WRITES:
+            def dropped(*a, **k):
+                self.blocked[name] = self.blocked.get(name, 0) + 1
+                return self._WRITES[name]
+            return dropped
+        return getattr(self._sink, name)
+
+
+def _card_of(outcome) -> dict | None:
+    row = outcome.card or {}
+    card = row.get("card")
+    if isinstance(card, str):
+        card = json.loads(card)
+    return card
+
+
+def cmd_fact_sheet_ab(args, settings, sink) -> int:
+    """The A/B of CARD_FACT_SHEET (TODO 131 and 134): each named filing's card made twice by the live code, the switch off and then on,
+    side by side in one file a filing (<news_id>.json: off, on, and what differs) and summary.json. WRITES NOTHING LIVE: the sink is
+    read-only (every D1, R2 and memory write is dropped and counted in `blocked_writes`). It calls the AI twice a filing, with the keys
+    the card path uses; the two cards also differ by the model's own run-to-run variation, so read the `fact_sheet` block of the on card
+    (what its table changed, what the text check removed) for the effect of the switch itself."""
+    ids = [i.strip() for i in (args.ids or "").replace("\n", ",").split(",") if i.strip()]
+    if not ids:
+        print("No filings: give --ids news_id,news_id")
+        return 2
+    from . import call_memory
+
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    quiet = _ReadOnlySink(sink)
+    pipeline = _pipeline(settings, quiet)
+    was = os.environ.get("CARD_FACT_SHEET")
+    report: list[dict] = []
+    try:
+        for news_id in ids:
+            row: dict = {"news_id": news_id}
+            try:
+                filing = call_memory.find_filing(sink, news_id)
+                if filing is None:
+                    raise RuntimeError("not in the filings ledger")
+                row |= {"symbol": filing.symbol, "company": filing.company_name, "event_type": filing.event_type}
+                made = {}
+                for name, value in (("off", "0"), ("on", "1")):
+                    os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)
+                    outcome = pipeline.analyze(filing, bulk=False)   # as the live path reads it
+                    made[name] = {"status": outcome.update.get("status"), "reason": outcome.update.get("reason"), "card": _card_of(outcome)}
+                off, on = (made["off"]["card"] or {}), (made["on"]["card"] or {})
+                changed = sorted(k for k in set(off) | set(on) if k not in ("grounding", "score", "review", "model", "pack")
+                                 and off.get(k) != on.get(k))
+                row |= {"off_status": made["off"]["status"], "on_status": made["on"]["status"], "changed_fields": changed,
+                        "fact_sheet": (on.get("grounding") or {}).get("fact_sheet"),
+                        "text_removed": [n for n in ((on.get("grounding") or {}).get("change_fixes") or []) if "exchange file" in str(n)]}
+                (out_dir / f"{news_id}.json").write_text(json.dumps({**row, "off": made["off"], "on": made["on"]}, ensure_ascii=False,
+                                                                    indent=1, default=str) + "\n", encoding="utf-8")
+            except Exception as exc:  # noqa: BLE001 - one filing never stops the rest
+                row["error"] = f"{type(exc).__name__}: {exc}"[:300]
+            report.append(row)
+            print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "off_status", "on_status", "changed_fields", "error")}, ensure_ascii=False, default=str))
+    finally:
+        if was is None:
+            os.environ.pop("CARD_FACT_SHEET", None)
+        else:
+            os.environ["CARD_FACT_SHEET"] = was
+    done = [r for r in report if "error" not in r]
+    summary = {"filings": len(ids), "made": len(done), "failed": len(report) - len(done),
+               "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "blocked_writes": quiet.blocked, "rows": report}
+    (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
+    print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False))
+    return 0 if done else 1
+
+
 def cmd_prediction_units(args, settings, sink) -> int:
     """Stored targets judged in two different units, and per-share units on figures that are not per share (TODO item
     84, prediction_check.py). Read only: no AI, no write; the next merge of each company withdraws the verdicts."""
@@ -2600,6 +2684,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--seed", type=int, default=26)
     p.add_argument("--days", type=int, default=30, help="cards filed in the last N days")
     p.set_defaults(func=cmd_memory_recall_export)
+
+    p = sub.add_parser("fact-sheet-ab", help="the A/B of CARD_FACT_SHEET: the named filings' cards made with the switch off and on, side by side; writes nothing live (calls the AI)")
+    p.add_argument("--ids", help="news ids of results filings, comma separated")
+    p.add_argument("--out", default="fact-sheet-ab", help="folder to write (one <news_id>.json each, summary.json)")
+    p.set_defaults(func=cmd_fact_sheet_ab)
 
     p = sub.add_parser("call-memory", help="the call-memory reading of named transcripts and decks (MEMORY_CALL_V2, TODO 83): checked points per document; memory is written only with --apply")
     p.add_argument("--ids", help="news ids, comma separated")

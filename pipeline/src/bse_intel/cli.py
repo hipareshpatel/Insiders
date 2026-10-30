@@ -1247,6 +1247,17 @@ class _NoExchange:
         return refuse
 
 
+def _stored_card_xbrl(sink, filing) -> str | None:
+    """The XBRL link on the stored card of a filing (card_json["xbrl"]["url"]), or None."""
+    start = (filing.filed_at or "")[:19]
+    before = start[:-1] + chr(ord(start[-1]) - 1) if start else ""
+    for row in sink.query("export_cards", [before, "", 50]) or []:
+        if row.get("news_id") == filing.news_id:
+            card = json.loads(row["card_json"]) if isinstance(row.get("card_json"), str) else (row.get("card_json") or {})
+            return ((card.get("xbrl") or {}).get("url")) or None
+    return None
+
+
 def cmd_fact_sheet_ab(args, settings, sink) -> int:
     """The A/B of CARD_FACT_SHEET (TODO 131 and 134): each named filing's card made twice by the live code, the switch off and then on,
     side by side in one file a filing (<news_id>.json: off, on, and what differs) and summary.json. WRITES NOTHING LIVE: the sink is
@@ -1276,6 +1287,11 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 if filing is None:
                     raise RuntimeError("not in the filings ledger")
                 row |= {"symbol": filing.symbol, "company": filing.company_name, "event_type": filing.event_type}
+                if not filing.xbrl_url and (url := _stored_card_xbrl(sink, filing)):
+                    # the results file the live card was made from: its link is on the card, the file in our store; the
+                    # lookup in NSE's results list would be an exchange call
+                    filing = filing.model_copy(update={"xbrl_url": url})
+                    row["xbrl_url_from_card"] = url
                 made = {}
                 for name, value in (("off", "0"), ("on", "1")):
                     os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)

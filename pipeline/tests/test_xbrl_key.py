@@ -386,13 +386,20 @@ class FakeNse:
 
     def announcements(self, day_from, day_to=None, symbol=None, scrip_for=None):
         self.lists.append((day_from, day_to, symbol))
-        return self.filings
+        return self.filings.get(symbol, []) if isinstance(self.filings, dict) else self.filings
 
     def fetch(self, url, max_bytes=0):
         self.fetches.append(url)
         if isinstance(self.error, (AttachmentError, FileCapReached)):
             raise self.error
         return self.pdfs.get(url)
+
+
+def own_pdfs(*symbols):
+    """Each company its own results PDF (filings by symbol, PDFs by url): the store serves a url read before, so a test of the
+    file cap or of a resume needs distinct files to count downloads."""
+    urls = {sym: f"https://nsearchives.nseindia.com/corporate/RES_{sym}.pdf" for sym in symbols}
+    return {sym: [filing(u)] for sym, u in urls.items()}, {u: make_pdf() for u in urls.values()}
 
 
 class FakeSink:
@@ -444,8 +451,7 @@ def test_a_run_that_reaches_the_file_cap_keeps_what_it_read_and_says_so():
                 raise FileCapReached("file cap reached (1 of 1 files)")
             return self.pdfs.get(url)
 
-    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
-    nse = Capped([filing()], {url: make_pdf()})
+    nse = Capped(*own_pdfs("A", "B"))
     sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
     out = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, per_company=1)
     assert out["file_cap_reached"] and len(out["rows"]) == 8              # the first company's filing was read, the second stopped
@@ -453,14 +459,13 @@ def test_a_run_that_reaches_the_file_cap_keeps_what_it_read_and_says_so():
 
 
 def test_a_run_stopped_by_its_time_budget_and_resumed_skips_the_filings_it_did():
-    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
     sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
     ticks = iter([0, 0, 10, 200, 300, 400])
-    first = xk.run(FakeNse([filing()], {url: make_pdf()}), sink, [("1", "A"), ("2", "B")], limit=5, seed=1, time_budget=150,
+    first = xk.run(FakeNse(*own_pdfs("A", "B")), sink, [("1", "A"), ("2", "B")], limit=5, seed=1, time_budget=150,
                    clock=lambda: next(ticks))
     assert first["out_of_time"] and len(first["rows"]) == 8
     assert xk.save_progress(sink, "n", first["rows"]) and xk.progress_key("n") in sink.saved
-    nse = FakeNse([filing()], {url: make_pdf()})
+    nse = FakeNse(*own_pdfs("A", "B"))
     second = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=xk.load_progress(sink, "n"))
     assert len(second["rows"]) == 16 and len(nse.fetches) == 1               # one more PDF, not two
 
@@ -470,6 +475,166 @@ def test_a_filing_with_no_pdf_gets_not_found_rows_with_the_reason():
     out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
     assert len(out["rows"]) == 8 and {r["status"] for r in out["rows"]} == {"not_found"}
     assert "no results filing" in out["rows"][0]["note"]
+
+
+def letter_pdf(*lines: str) -> bytes:
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    for i, line in enumerate(lines):
+        page.insert_text((40, 60 + 14 * i), line, fontsize=9)
+    return doc.tobytes()
+
+
+AGM_LINES = ("Sub: Outcome of the 40th Annual General Meeting and voting results under Regulation 44",
+             "Resolution 1: adoption of the audited financial statements for the year ended 31 March 2026",
+             "Votes in favour 1,23,456 (99.10%)  Votes against 1,111 (0.90%)", "Scrutinizer's report enclosed.")
+
+
+def scan_pdf() -> bytes:
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, 40, 40), False)
+    pix.clear_with(200)
+    page.insert_image(page.rect, pixmap=pix)
+    return doc.tobytes()
+
+
+def test_holds_results_tells_a_statement_or_a_scan_from_an_agm_letter():
+    assert xk.holds_results(make_pdf())                                   # a statement in the text layer
+    assert xk.holds_results(scan_pdf())                                   # a scanned results PDF: no text layer, kept for OCR
+    assert not xk.holds_results(letter_pdf(*AGM_LINES))                   # AGM proceedings, voting results
+    assert not xk.holds_results(letter_pdf("Sub: Intimation under Regulation 30 of SEBI (LODR) Regulations, 2015",
+                                           "Asset cover certificate as on 30 September 2026 for the listed debentures"))
+
+
+def _grey(side=40):
+    pix = pymupdf.Pixmap(pymupdf.csRGB, pymupdf.IRect(0, 0, side, side), False)
+    pix.clear_with(200)
+    return pix
+
+
+def test_a_scan_with_a_garbled_ocr_layer_passes_but_a_logo_on_a_letter_does_not():
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    page.insert_image(page.rect, pixmap=_grey())                         # the scanned statement covers the page
+    for i in range(10):                                                   # the scanner's OCR layer: words, none of a statement line
+        page.insert_text((40, 60 + 14 * i), "Rcvcnuc frorn opcrations 1,234 5,678 9,012 Tota1 lncome", fontsize=9)
+    assert len(page.get_text().split()) >= 30 and xk.holds_results(doc.tobytes())
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    page.insert_image(pymupdf.Rect(40, 20, 120, 60), pixmap=_grey())      # a logo
+    for i, line in enumerate(AGM_LINES * 3):
+        page.insert_text((40, 80 + 14 * i), line, fontsize=9)
+    assert not xk.holds_results(doc.tobytes())
+
+
+def test_a_statement_drawn_as_paths_with_no_text_passes():
+    doc = pymupdf.open()
+    page = doc.new_page(width=PAGE_W, height=PAGE_H)
+    for i in range(20):
+        page.draw_line(pymupdf.Point(40, 60 + 14 * i), pymupdf.Point(500, 60 + 14 * i))
+    assert page.get_text().strip() == "" and not page.get_images()
+    assert xk.holds_results(doc.tobytes())
+
+
+@pytest.mark.parametrize("line", ["Profit / (Loss) before tax", "Profit/(Loss) before tax", "Profit before exceptional items and tax",
+                                  "Premiums earned (Net)", "Net premium", "Gross sales"])
+def test_more_statement_lines_count(line):
+    assert xk.holds_results(letter_pdf("Statement of unaudited results for the quarter ended 30 September 2026", f"5 {line} 12.34"))
+
+
+def test_a_non_results_pdf_listed_as_results_gives_no_rows_and_the_next_pdf_is_read():
+    agm, res = "https://nsearchives.nseindia.com/corporate/AGM.pdf", "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    agm_filing = filing(agm, subject="Financial Results", headline="Outcome of AGM and voting results")
+    alone = xk.run(FakeNse([agm_filing], {agm: letter_pdf(*AGM_LINES)}), FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert len(alone["rows"]) == 8 and not any(r.get("pdf_url") for r in alone["rows"])      # no figure paired with the AGM letter
+    assert "not a results statement" in alone["rows"][0]["note"]
+    nse = FakeNse([agm_filing, filing(res)], {agm: letter_pdf(*AGM_LINES), res: make_pdf()})
+    both = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert nse.fetches == [agm, res] and {r["pdf_url"] for r in both["rows"]} == {res}
+    assert both["statuses"]["found_unique"] == 8
+
+
+def test_an_agm_pdf_with_stray_placements_listed_first_does_not_win_over_the_results_pdf():
+    agm, res = "https://nsearchives.nseindia.com/corporate/AGM.pdf", "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    stray = make_pdf(title="Outcome of the Annual General Meeting: voting results", pad=False,
+                     rows=[("1 Revenue from operations", ["100.00", "1.00", "1.00", "1.00"])])     # one figure lands in the letter
+    nse = FakeNse([filing(agm, headline="Outcome of AGM"), filing(res)], {agm: stray, res: make_pdf()})
+    out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert nse.fetches == [agm, res]                                       # every candidate is read
+    assert {r["pdf_url"] for r in out["rows"]} == {res} and out["statuses"]["found_unique"] == 8
+
+
+def test_of_two_results_pdfs_the_one_with_more_unique_placements_is_kept():
+    first, second = "https://nsearchives.nseindia.com/corporate/A.pdf", "https://nsearchives.nseindia.com/corporate/B.pdf"
+    partial = make_pdf(rows=ROWS[:2])                                      # a duplicate filing that carries part of the statement
+    nse = FakeNse([filing(first), filing(second)], {first: partial, second: make_pdf()})
+    out = xk.run(nse, FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
+    assert {r["pdf_url"] for r in out["rows"]} == {second} and out["statuses"]["found_unique"] == 8
+
+
+def _store_key(url):
+    from bse_intel import pdf_readers
+    return f"{xk.PDF_STORE}{pdf_readers.pdf_key(url)}.pdf.gz"
+
+
+def test_a_pdf_held_in_the_store_is_not_fetched_from_nse():
+    import gzip
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    sink = FakeSink({"1": full_dossier()})
+    sink.saved[_store_key(url)] = gzip.compress(make_pdf())
+    nse = FakeNse([filing(url)], {})                                       # NSE would serve nothing
+    out = xk.run(nse, sink, [("1", "X")], limit=1)
+    assert nse.fetches == [] and out["statuses"]["found_unique"] == 8 and {r["pdf_url"] for r in out["rows"]} == {url}
+
+
+def test_a_fetched_pdf_is_put_into_the_store_as_gzip_and_not_fetched_again():
+    import gzip
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    pdf = make_pdf()
+    sink = FakeSink({"1": full_dossier()})
+    nse = FakeNse([filing(url)], {url: pdf})
+    xk.run(nse, sink, [("1", "X")], limit=1)
+    assert nse.fetches == [url] and gzip.decompress(sink.saved[_store_key(url)]) == pdf
+    again = FakeNse([filing(url)], {url: pdf})
+    out = xk.run(again, sink, [("1", "X")], limit=1)
+    assert again.fetches == [] and out["statuses"]["found_unique"] == 8
+
+
+def test_a_store_that_fails_or_holds_a_damaged_file_still_downloads_and_locates():
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+
+    class Broken(FakeSink):
+        def __init__(self, dossiers, fail_get=True, fail_put=True):
+            super().__init__(dossiers)
+            self.fail_get, self.fail_put, self.tried = fail_get, fail_put, []
+
+        def get_object(self, key):
+            if key.startswith(xk.PDF_STORE):
+                self.tried.append(("get", key))
+                if self.fail_get:
+                    raise ConnectionError("store down")
+            return super().get_object(key)
+
+        def put_object(self, key, body, content_type=""):
+            if key.startswith(xk.PDF_STORE):
+                self.tried.append(("put", key))
+                if self.fail_put:
+                    raise ConnectionError("store down")
+            super().put_object(key, body, content_type)
+
+    for fail_get, fail_put in ((True, True), (True, False), (False, True)):
+        sink = Broken({"1": full_dossier()}, fail_get, fail_put)
+        nse = FakeNse([filing(url)], {url: make_pdf()})
+        out = xk.run(nse, sink, [("1", "X")], limit=1)
+        assert nse.fetches == [url] and out["statuses"]["found_unique"] == 8
+        # a store whose get fails is not asked again this run (its put is skipped); one whose put fails is tried once
+        assert sink.tried == ([("get", _store_key(url))] if fail_get else [("get", _store_key(url)), ("put", _store_key(url))])
+    sink = Broken({"1": full_dossier()}, False, False)
+    sink.saved[_store_key(url)] = b"not a gzip"                            # a damaged copy is downloaded again and replaced
+    nse = FakeNse([filing(url)], {url: make_pdf()})
+    out = xk.run(nse, sink, [("1", "X")], limit=1)
+    assert nse.fetches == [url] and out["statuses"]["found_unique"] == 8 and sink.saved[_store_key(url)] != b"not a gzip"
 
 
 def test_the_summary_counts_the_failure_stages_and_lists_the_other_values():
@@ -559,7 +724,7 @@ def test_a_failed_fetch_is_its_own_status_and_is_read_again_by_a_resume():
     assert {r["status"] for r in down["rows"]} == {"fetch_failed"}
     # a resume does not take them as finished: it reads both filings again
     assert xk.save_progress(sink, "n", first["rows"])
-    nse = FakeNse([filing()], {url: make_pdf()})
+    nse = FakeNse(*own_pdfs("A", "B"))
     second = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=xk.load_progress(sink, "n"))
     assert len(nse.fetches) == 2 and second["statuses"]["fetch_failed"] == 0 and second["statuses"]["found_unique"] == 16
     # a settled answer is not a failure: NSE serves no file, or lists no results filing
@@ -588,26 +753,30 @@ def test_a_download_that_failed_but_another_candidate_read_is_a_result():
 # --- the second re-review (28 Oct 2026) ----------------------------------------------------------------------------
 
 def test_rows_saved_by_another_locator_version_are_dropped_on_resume_and_their_filings_read_again(caplog):
-    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
     sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
-    first = xk.run(FakeNse([filing()], {url: make_pdf()}), sink, [("1", "A"), ("2", "B")], limit=5, seed=1)
+    first = xk.run(FakeNse(*own_pdfs("A", "B")), sink, [("1", "A"), ("2", "B")], limit=5, seed=1)
     assert {r["locator_version"] for r in first["rows"]} == {xk.LOCATOR_VERSION}
     assert xk.load_csv(xk.to_csv(first["rows"]))[0]["locator_version"] == xk.LOCATOR_VERSION
     saved = xk.load_csv(xk.to_csv(first["rows"]))
     next(r for r in saved if r["symbol"] == "A" and r["metric"] == "revenue")["locator_version"] = "an older one"
-    nse = FakeNse([filing()], {url: make_pdf()})
+    nse = FakeNse(*own_pdfs("A", "B"))
     with caplog.at_level("WARNING", logger="bse_intel.xbrl_key"):
         second = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=saved)
-    # the whole filing of A goes (8 rows) and is read again; B's stays
+    # the whole filing of A goes (8 rows) and is read again, from the PDF store, not downloaded twice; B's stays
     assert second["stale_rows_dropped"] == 8 and "8 saved rows of another locator version" in caplog.text
-    assert len(nse.fetches) == 1 and len(second["rows"]) == 16 and {r["locator_version"] for r in second["rows"]} == {xk.LOCATOR_VERSION}
+    assert nse.fetches == [] and len(nse.lists) == 1 and len(second["rows"]) == 16 and {r["locator_version"] for r in second["rows"]} == {xk.LOCATOR_VERSION}
     # a file with no version column at all (written before the stamp) is all stale
     old = xk.load_csv(xk.to_csv(first["rows"]))
     for r in old:
         r.pop("locator_version")
-    nse = FakeNse([filing()], {url: make_pdf()})
+    nse = FakeNse(*own_pdfs("A", "B"))
     third = xk.run(nse, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=old)
-    assert third["stale_rows_dropped"] == 16 and len(nse.fetches) == 2 and len(third["rows"]) == 16
+    assert third["stale_rows_dropped"] == 16 and len(nse.lists) == 2 and nse.fetches == [] and len(third["rows"]) == 16
+    # with an empty store, both are downloaded again
+    nse = FakeNse(*own_pdfs("A", "B"))
+    fresh = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
+    fourth = xk.run(nse, fresh, [("1", "A"), ("2", "B")], limit=5, seed=1, saved=old)
+    assert fourth["stale_rows_dropped"] == 16 and len(nse.fetches) == 2 and len(fourth["rows"]) == 16
 
 
 def test_an_error_inside_the_locator_is_locate_error_and_settled_not_a_fetch_failure(monkeypatch):
@@ -693,8 +862,12 @@ def test_keep_pdfs_writes_each_download_under_the_collect_name_and_survives_a_st
             return self.pdfs.get(url)
 
     sink = FakeSink({"1": full_dossier("1"), "2": full_dossier("2")})
-    second = xk.run(Capped([filing()], {url: pdf}), sink, [("1", "A"), ("2", "B")], limit=5, seed=1, keep_dir=str(tmp_path / "k2"))
-    assert second["file_cap_reached"] and [p.name for p in (tmp_path / "k2").iterdir()] == [kept.name]
+    listed, pdfs = own_pdfs("A", "B")
+    capped = Capped(listed, pdfs)
+    second = xk.run(capped, sink, [("1", "A"), ("2", "B")], limit=5, seed=1, keep_dir=str(tmp_path / "k2"))
+    first_url = capped.fetches[0]
+    assert len(capped.fetches) == 2 and capped.fetches[1] != first_url        # the second company's own PDF hit the cap
+    assert second["file_cap_reached"] and [p.name for p in (tmp_path / "k2").iterdir()] == [f"{pdf_readers.pdf_key(first_url)}.pdf"]
     # no keep_dir: nothing is written
     assert not (tmp_path / "none").exists()
 
@@ -703,3 +876,56 @@ def test_the_csv_keeps_every_digit_of_a_figure():
     # the pdf-oos key is built from this CSV: 58187.57 crore written as 58187.6 scored M&M's right reading wrong
     row = xk.result_row(xk.Result(xk.Expected("n", "M&M", "STANDALONE", "Q1FY27", "revenue", 58187.57), "found_unique"))
     assert xk.load_csv(xk.to_csv([row]))[0]["xbrl_value"] == 58187.57
+
+
+def test_store_kept_pdfs_stores_the_new_ones_and_skips_the_held_ones(tmp_path):
+    import gzip
+    from bse_intel import pdf_readers
+    pdf = make_pdf()
+    new_url, held_url = "https://nsearchives.nseindia.com/corporate/NEW.pdf", "https://nsearchives.nseindia.com/corporate/HELD.pdf"
+    for url in (new_url, held_url):
+        (tmp_path / f"{pdf_readers.pdf_key(url)}.pdf").write_bytes(pdf)
+    (tmp_path / "notes.txt").write_text("not a kept PDF")
+    (tmp_path / "0123456789abcdef.pdf").write_bytes(b"<html>refused</html>")       # named as kept, but no PDF
+
+    class ListingSink(FakeSink):
+        def list_objects(self, prefix):
+            return [k for k in self.saved if k.startswith(prefix)]
+
+    sink = ListingSink({})
+    sink.saved[_store_key(held_url)] = b"already there"
+    counts = xk.store_kept_pdfs(sink, str(tmp_path))
+    assert counts == {"stored": 1, "already_held": 1, "failed": 0, "skipped": 2}
+    assert gzip.decompress(sink.saved[_store_key(new_url)]) == pdf and sink.saved[_store_key(held_url)] == b"already there"
+    assert xk.store_kept_pdfs(sink, str(tmp_path))["stored"] == 0                   # a second run stores nothing
+
+    class NoListing(FakeSink):                                                     # no listing: each key is asked for
+        def list_objects(self, prefix):
+            raise ConnectionError("down")
+
+        def put_object(self, key, body, content_type=""):
+            if "HELD" in key:
+                raise AssertionError("never reached")
+            if key.endswith(f"{pdf_readers.pdf_key(new_url)}.pdf.gz") and getattr(self, "fail", False):
+                raise ConnectionError("put failed")
+            super().put_object(key, body, content_type)
+
+    sink = NoListing({})
+    sink.saved[_store_key(held_url)] = b"already there"
+    sink.fail = True
+    assert xk.store_kept_pdfs(sink, str(tmp_path)) == {"stored": 0, "already_held": 1, "failed": 1, "skipped": 2}
+
+
+def test_an_error_page_served_as_the_pdf_is_never_kept_and_a_stored_non_pdf_is_downloaded_again():
+    # review of the PDF store: an HTML page (an Akamai answer) or a ZIP served with 200 must not become the stored "PDF"
+    import gzip
+    url = "https://nsearchives.nseindia.com/corporate/RES.pdf"
+    sink = FakeSink({"1": full_dossier()})
+    nse = FakeNse([filing(url)], {url: b"<html>Access Denied</html>"})
+    xk.run(nse, sink, [("1", "X")], limit=1)
+    assert _store_key(url) not in sink.saved
+    sink.saved[_store_key(url)] = gzip.compress(b"<html>old error page</html>")    # kept by an older run: a miss
+    nse = FakeNse([filing(url)], {url: make_pdf()})
+    out = xk.run(nse, sink, [("1", "X")], limit=1)
+    assert nse.fetches == [url] and out["statuses"]["found_unique"] == 8
+    assert gzip.decompress(sink.saved[_store_key(url)]).startswith(b"%PDF")

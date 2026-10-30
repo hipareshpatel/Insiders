@@ -91,7 +91,7 @@ log = logging.getLogger(__name__)
 STATUSES = ("found_unique", "found_ambiguous", "row_found_other_value", "not_found", "no_text", "fetch_failed", "locate_error")
 # Bump whenever placement logic changes (what counts as a column, a row, a basis, a unit, a statement table, a status): saved rows
 # of another version are dropped on resume and their filings are read again.
-LOCATOR_VERSION = "2026-10-28.4"
+LOCATOR_VERSION = "2026-10-30.1"
 METRICS = ("revenue", "other_income", "total_income", "total_expenses", "exceptional_items", "pbt", "tax_expense", "pat", "eps",
            "interest_earned")
 TOL_CR = 0.006              # memory keeps crore to two decimals: half a hundredth, with a little to spare
@@ -1446,27 +1446,158 @@ def bench_symbols(docs_dir: str | None = None) -> set[str]:
     return symbols
 
 
-def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None) -> tuple[list[dict], str, bool]:
+_STATEMENT_WORDS = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|total\s+(?:income|revenue)|net\s+sales|gross\s+sales|"
+                             r"interest\s+earned|profit\s*(?:/\s*\(?\s*loss\s*\)?\s*)?before\s+(?:exceptional\s+items\s+and\s+)?tax|"
+                             r"premiums?\s+earned|net\s+premium", re.I)
+
+
+def _scanned_or_drawn(page, text: str) -> bool:
+    """A page only OCR can read: one image covers at least ``SCAN_IMAGE_SHARE`` of it (its text layer, if any, is the scanner's
+    and may be garbled), or it has images or vector drawings and almost no words (a statement drawn as paths)."""
+    from .pdf_numbers_first import SCAN_IMAGE_SHARE, largest_image_share
+
+    try:
+        if largest_image_share(page) >= SCAN_IMAGE_SHARE:
+            return True
+    except Exception:   # noqa: BLE001 - the images cannot be measured: keep the PDF
+        return True
+    return len(text.split()) < 30 and bool(page.get_images() or page.get_drawings())
+
+
+def holds_results(source, max_pages: int = MAX_PAGES) -> bool:
+    """Whether a PDF (bytes) may hold a results statement: a page of its text layer names a statement line (revenue from
+    operations, total income, profit (loss) before tax, premiums earned...), or a page is a scan or a drawing that only OCR can
+    read (``_scanned_or_drawn``). NSE's "results" announcements also carry AGM proceedings, postal ballot results, Reg 30
+    letters and asset cover certificates (30 Oct 2026: 76 of 500 key figures paired with such a PDF, where a stray number could
+    be "placed"); those have neither. Known and accepted: voting results or a scrutinizer's report with a scanned page still
+    pass, as without OCR a scanned letter cannot be told from a scanned statement. A file pymupdf cannot open is left to the
+    locator, as before."""
+    import pymupdf
+
+    try:
+        doc = pymupdf.open(stream=source, filetype="pdf")
+    except Exception:   # noqa: BLE001
+        return True
+    try:
+        for i in range(min(doc.page_count, max_pages)):
+            page = doc[i]
+            text = page.get_text()
+            if _STATEMENT_WORDS.search(text) or _scanned_or_drawn(page, text):
+                return True
+        return doc.page_count == 0
+    finally:
+        doc.close()
+
+
+_PLACED = ("found_unique", "found_ambiguous", "row_found_other_value")
+
+PDF_STORE = "raw/results-pdf/"     # every results PDF this module downloads, gzip, by ``pdf_key(url)``: read first, never fetched twice
+
+
+def stored_payload(src, store, url: str) -> tuple[bytes | None, str]:
+    """A candidate PDF read from our store first (``PDF_STORE``), downloaded only if we do not hold it, and every download kept
+    there at once (owner, 29 Oct 2026: reuse test files, never download twice). ``store`` is the sink (``get_object`` /
+    ``put_object``); None reads NSE as before. A store that fails to answer or to keep is logged and never stops the filing."""
+    import gzip
+
+    from .pdf_readers import pdf_key
+    if store is None or _STORE_DOWN.get(id(store)):
+        return src.payload(url)
+    key = f"{PDF_STORE}{pdf_key(url)}.pdf.gz"
+    try:
+        held = store.get_object(key)
+    except Exception as exc:   # noqa: BLE001
+        log.warning("xbrl-key: the PDF store did not answer for %s (%s); downloading, and the store is not asked again this "
+                    "run", key, type(exc).__name__)
+        _STORE_DOWN[id(store)] = True      # a store that is down costs its retries once a run, not twice a PDF (review)
+        return src.payload(url)
+    if held:
+        try:
+            data = gzip.decompress(held)
+        except Exception:   # noqa: BLE001 - not gzip (OSError), cut short (EOFError) or damaged (zlib.error)
+            data = b""
+        if data.startswith(b"%PDF"):
+            return data, ""
+        log.warning("xbrl-key: %s in the store is not a whole PDF; downloading again", key)
+    data, why = src.payload(url)
+    if data and data.startswith(b"%PDF"):  # an error page or a ZIP served as the file is never kept as the PDF (review)
+        try:
+            store.put_object(key, gzip.compress(data), "application/gzip")
+        except Exception as exc:   # noqa: BLE001
+            log.warning("xbrl-key: the PDF store did not keep %s (%s); not asked again this run", key, type(exc).__name__)
+            _STORE_DOWN[id(store)] = True
+    return data, why
+
+
+_STORE_DOWN: dict[int, bool] = {}       # stores that failed this run (by object id), asked no more
+
+
+_KEPT_NAME = re.compile(r"^[0-9a-f]{16}\.pdf$")
+
+
+def store_kept_pdfs(sink, folder: str) -> dict:
+    """Put each PDF a run kept in ``folder`` (named ``pdf_key(url).pdf``, as ``--keep-pdfs`` and ``pdf_bench --collect`` name them)
+    into the PDF store (``PDF_STORE``, gzip), skipping a key the store already holds; nothing is downloaded from NSE. Returns the
+    counts: stored, already held, failed (a put that raised), skipped (a file not so named, or not a PDF). A failure is logged and
+    the next file goes on."""
+    import gzip
+
+    counts = {"stored": 0, "already_held": 0, "failed": 0, "skipped": 0}
+    try:
+        held: set[str] | None = set(sink.list_objects(PDF_STORE))
+    except Exception as exc:   # noqa: BLE001 - no listing: ask for each key instead
+        log.warning("store-kept-pdfs: the store could not list %s (%s); asking for each key", PDF_STORE, type(exc).__name__)
+        held = None
+    for path in sorted(Path(folder).iterdir()) if Path(folder).is_dir() else []:
+        if not path.is_file():
+            continue
+        data = path.read_bytes() if _KEPT_NAME.match(path.name) else b""
+        if not data.startswith(b"%PDF"):
+            counts["skipped"] += 1
+            continue
+        key = f"{PDF_STORE}{path.name}.gz"
+        try:
+            if (key in held) if held is not None else bool(sink.get_object(key)):
+                counts["already_held"] += 1
+                continue
+            sink.put_object(key, gzip.compress(data), "application/gzip")
+            counts["stored"] += 1
+        except Exception as exc:   # noqa: BLE001
+            log.warning("store-kept-pdfs: %s not stored (%s)", key, type(exc).__name__)
+            counts["failed"] += 1
+    return counts
+
+
+def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_dir: str | None = None,
+                  store=None) -> tuple[list[dict], str, bool]:
     """The rows for one filing (quarter): its results PDFs from NSE's announcements, tried in the PDF referee's order (at most
-    ``MAX_CANDIDATES``); the first PDF that gives any figure a row or a placement is the filing's, the best answer of each
-    figure across the PDFs tried is kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
+    ``MAX_CANDIDATES``), a PDF with no results statement in it (``holds_results``) skipped. Every candidate is read; the filing's
+    rows are those of the ONE PDF with most ``found_unique`` figures (then most placements, then list order), the others' rows
+    dropped, so a letter that passed the filter with a few stray numbers placed cannot stand in for the statement (30 Oct
+    2026: the first PDF with any placement used to end the search before the results PDF was read). When no PDF has a
+    ``found_unique``, the first PDF that places any figure is the filing's, the best answer of each figure across the PDFs up
+    to it kept. Returns (rows, why none, transient): ``transient`` is true when nothing was read
     because a list or a download failed on the way (a timeout, a refused call), which a later run may get; a filing NSE has no
     results PDF for, or a PDF it serves empty or too large, is a settled answer, not a failure."""
     listed = src.filings(symbol, period)
     if isinstance(listed, str):
         return [], listed, bool(_TRANSIENT.match(listed))
     best: dict[int, tuple[Result, dict]] = {}
+    read: list[tuple[list[Result], dict]] = []       # (results, row extras) of each PDF located, in list order
     reasons = []
     transient = False
     error = None
     for f in listed[:MAX_CANDIDATES]:
-        data, why = src.payload(f.pdf_url)
+        data, why = stored_payload(src, store, f.pdf_url)
         if data is None:
             reasons.append(why)
             transient = transient or bool(_TRANSIENT.match(why))
             continue
         if keep_dir:
             keep_pdf(keep_dir, f.pdf_url, data)
+        if not holds_results(data):
+            reasons.append("not a results statement: " + f.pdf_url.rsplit("/", 1)[-1][:40])
+            continue
         extra = {"pdf_url": f.pdf_url, "pdf_news_id": f.news_id, "filing_period": period}
         try:
             results = locate(data, expected)
@@ -1475,13 +1606,26 @@ def locate_filing(src, symbol: str, period: str, expected: list[Expected], keep_
             error = (exc, extra)
             reasons.append(f"{type(exc).__name__} while locating")
             continue
-        for k, r in enumerate(results):
-            if k not in best or BEST[r.status] < BEST[best[k][0].status]:
-                best[k] = (r, extra)
-        if any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r in results):
-            break
-        reasons.append("no figure placed in " + f.pdf_url.rsplit("/", 1)[-1][:40])
-    used = any(r.status in ("found_unique", "found_ambiguous", "row_found_other_value") for r, _ in best.values())
+        read.append((results, extra))
+        if not any(r.status in _PLACED for r in results):
+            reasons.append("no figure placed in " + f.pdf_url.rsplit("/", 1)[-1][:40])
+
+    def score(i: int) -> tuple[int, int, int]:
+        results = read[i][0]
+        return sum(r.status == "found_unique" for r in results), sum(r.status in _PLACED for r in results), -i
+
+    winner = max(range(len(read)), key=score, default=None)
+    if winner is not None and score(winner)[0]:
+        results, extra = read[winner]
+        best = {k: (r, extra) for k, r in enumerate(results)}
+    else:
+        for results, extra in read:
+            for k, r in enumerate(results):
+                if k not in best or BEST[r.status] < BEST[best[k][0].status]:
+                    best[k] = (r, extra)
+            if any(r.status in _PLACED for r in results):
+                break
+    used = any(r.status in _PLACED for r, _ in best.values())
     if transient and not used:
         return [], "; ".join(dict.fromkeys(reasons)), True      # a download failed and no other PDF gave a figure: not finished
     if not best and error is not None:
@@ -1561,6 +1705,7 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
     from .pdf_referee import Sources
 
     src = src or Sources(nse, ocr=False)
+    _STORE_DOWN.clear()                  # a store that failed in an earlier run in this process is asked again
     kept, stale = drop_stale(saved or [])
     if stale:
         log.warning("xbrl-key: %d saved rows of another locator version (not %s) dropped; their filings are read again",
@@ -1576,7 +1721,8 @@ def run(nse, sink, companies: list[tuple[str, str]], limit: int | None = None, p
             out_of_time = True
             break
         try:
-            got, why, transient = locate_filing(src, symbol, period, expected, **({"keep_dir": keep_dir} if keep_dir else {}))
+            got, why, transient = locate_filing(src, symbol, period, expected, store=sink,
+                                                **({"keep_dir": keep_dir} if keep_dir else {}))
         except FileCapReached as exc:
             capped = True
             log.warning("file cap reached (%s): stopping the XBRL key; the rest waits for the next run", exc)

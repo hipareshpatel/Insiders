@@ -184,4 +184,4 @@ def test_a_lost_decimal_point_is_named_in_the_note_techno_electric():
 
 
 def test_the_locator_version_moved():
-    assert xk.LOCATOR_VERSION == "2026-10-28.4"
+    assert xk.LOCATOR_VERSION == "2026-10-30.1"

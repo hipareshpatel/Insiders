@@ -247,7 +247,9 @@ def _filing(news_id, when, event_type, headline="h"):
                   filing_date=when[:10], event_type=event_type)
 
 
-def _held(monkeypatch, on, metric, period, file_value, call_value, unit="INR_CR"):
+def _held(monkeypatch, on, metric, period, file_value, call_value, unit="INR_CR", file_only=False):
+    # the F180 guard is tested with MEMORY_FILE_ONLY off (it is a second wall behind it); the file-only behaviour has its own test
+    monkeypatch.setenv("MEMORY_FILE_ONLY", "1" if file_only else "0")
     if on:
         monkeypatch.setenv("MEMORY_CALL_V2", "1")
     else:
@@ -276,6 +278,12 @@ def test_a_calls_figure_far_from_the_files_is_not_a_source(monkeypatch, metric, 
 def test_a_calls_figure_within_five_percent_of_the_files_stays_a_source(monkeypatch):
     got = _held(monkeypatch, True, "operating_cash_flow", "H1FY27", 1000.0, 1030.0)
     assert sorted(s["value"] for s in got["sources"]) == [1000.0, 1030.0]
+
+
+def test_with_memory_file_only_a_calls_statement_figure_is_never_a_source(monkeypatch):
+    # owner, 30 Oct 2026 (MEMORY_FILE_ONLY): even a figure within 5% of the file's stays on its card; memory keeps the file's
+    got = _held(monkeypatch, True, "operating_cash_flow", "H1FY27", 1000.0, 1030.0, file_only=True)
+    assert [s["value"] for s in got.get("sources", [got])] == [1000.0] and got["value"] == 1000.0
 
 
 # ---------------------------------------------------------------- the reading, the command and the pipeline hook

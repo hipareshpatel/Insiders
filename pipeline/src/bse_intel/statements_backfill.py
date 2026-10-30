@@ -26,6 +26,7 @@ import re
 
 from . import screener_view as sv
 from . import segments
+from . import xbrl_extras
 from . import xbrl_facts
 from .dossier import keep_concurrent_writes
 from .memory_gaps import quarter_end
@@ -111,6 +112,25 @@ def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
     return added
 
 
+def fill_extras(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
+    """What the stored quarters' and annual reports' files say beyond the statements (xbrl_extras.py: audit status and auditors,
+    cash-flow detail, related parties, ratios) into the dossier's own keys (in place), where the period and basis hold none yet;
+    the number of entries added. Stamped with the period's own end, as fill_segments does. A file that fails is skipped."""
+    added = 0
+    docs = [(period, basis, cf.result(period, basis)) for period, basis in cf.results if _QUARTER.fullmatch(period)]
+    docs += [(fy, basis, cf._load(key)) for (fy, basis), key in cf.annual.items()]
+    for period, basis, facts in sorted(docs, key=lambda d: (d[1] != "CONSOLIDATED", d[0])):
+        if facts is None:
+            continue
+        try:
+            end = xbrl_extras._end(facts.doc)
+            added += xbrl_extras.remember(dossier, facts.doc, f"xbrl-facts:{period}:{basis.lower()}",
+                                          end.isoformat() if end else at, at, replace=False, source="stored facts")
+        except Exception as exc:  # noqa: BLE001 - an addition: one file's failure leaves the rest
+            log.warning("statements-backfill: extras of %s %s not built: %s", period, basis, exc)
+    return added
+
+
 def fill(dossier: dict, entries: list[dict]) -> int:
     """Add the entries memory does not hold yet (in place); the number added."""
     have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
@@ -133,7 +153,7 @@ def _prepare(sink, scrip: str, at: str):
     cf = sv.CompanyFacts(keys, sink.get_object)
     merged = json.loads(json.dumps(read))
     entries, left = company_entries(cf, merged, at)
-    segments_added = fill_segments(cf, merged, at)
+    segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
     return read, merged, entries, left, segments_added
 
 
@@ -228,7 +248,7 @@ def render(o: dict) -> str:
              f"{o['companies']} companies after '{o['after']}', {o['entries']} entries {'added' if o['apply'] else 'to add'}"
              f" in {o['written'] if o['apply'] else '-'} dossiers; {o['no_facts']} without stored facts; last {o['last']};"
              f" more left: {o['more']}",
-             "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows {o['segments']}",
+             "  by table: " + ", ".join(f"{k} {v}" for k, v in sorted(o["by_table"].items())) + f"; segment rows and extras (audit, cash-flow detail, related parties, ratios) {o['segments']}",
              f"  left out ({len(o['left_out'])}):"] + [f"    {x}" for x in o["left_out"][:60]]
     if o["backup"]:
         lines.append(f"backup: {o['backup']['prefix']} ({o['backup']['dossiers']} dossiers); undo with restore --backup "

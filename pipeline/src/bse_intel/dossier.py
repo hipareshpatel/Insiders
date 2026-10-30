@@ -729,6 +729,8 @@ _KEYED_LISTS = {
     "ownership": lambda e: e.get("period"),
     "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
     "statements": lambda e: (e.get("period"), e.get("basis"), e.get("table")),   # statements.py: one entry a period, basis, table
+    # xbrl_extras.py: one entry a period, basis and kind in each of its four keys
+    **{key: (lambda e: (e.get("period"), e.get("basis"), e.get("kind"))) for key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios")},
 }
 
 
@@ -772,6 +774,9 @@ def keep_concurrent_writes(merged: dict, read: dict | None, fresh: dict | None) 
                 elif key == "statements":
                     from .statements import keep_latest
                     rows = keep_latest(rows)
+                elif key in ("audit", "cash_flow_detail", "related_parties", "fin_ratios"):
+                    from .xbrl_extras import MAX_ENTRIES, _order
+                    rows = sorted(rows, key=lambda e: _order(e.get("period")))[-MAX_ENTRIES[key]:]
                 elif key == "ownership":
                     rows = sorted(rows, key=lambda o: (str(due_date(o.get("period")) or ""), str(o.get("as_of") or "")))[-8:]
                 else:

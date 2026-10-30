@@ -22,9 +22,9 @@ def _filing(news_id, scrip, name, when, headline, event):
                   filed_at=when, filing_date=when[:10], event_type=event, route="FAST_TRACK")
 
 
-def _run(dossier, filing, payload, company):
+def _run(dossier, filing, payload, company, by=None):
     out = Pass2Output.model_validate(payload)
-    after = merge(dossier, out, filing, out.card.impact_level, filing.filed_at)
+    after = merge(dossier, out, filing, out.card.impact_level, filing.filed_at, by=by)
     before = dossier_as_of(dossier, filing.filed_at, inclusive=False)
     current = dossier_as_of(after, filing.filed_at)
     signals = compute(before, current, out, filing, company, every=True)
@@ -80,7 +80,8 @@ def test_case_2_shivam_autotech_rights_issue():
                                  "financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 110},
                                                        {"metric": "finance_cost", "period": "Q1FY27", "value": 20.48},
                                                        {"metric": "ebitda", "period": "Q1FY27", "value": 22.0}]}}
-    out, current, signals = _run(dossier, filing, payload, {"market_cap_cr": 223})
+    # set-up: with MEMORY_FILE_ONLY the quarter's figures reach memory only from the file, so they arrive file-labelled
+    out, current, signals = _run(dossier, filing, payload, {"market_cap_cr": 223}, by="file")
     (dilution,) = [s for s in signals if s["type"] == "DILUTION"]
     # blueprint: 76.0% more shares, 19 / (25 + 19) = 43.18% post-money dilution
     assert "19:25 entitlement: 76.0% more shares (43.2% post-money dilution)" in dilution["text"]

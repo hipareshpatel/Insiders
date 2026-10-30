@@ -393,7 +393,7 @@ on:
         type: string
         default: ''
       prompt:
-        description: call-memory only - v2 reads with the held prompt (config/prompts/call_memory_v2.md) for a measured test; empty = live
+        description: call-memory only - v2 or v3 reads with a held prompt (config/prompts/call_memory_v2.md; v3 = v2 with the chart rule, TODO 144) for a measured test; empty = live
         type: string
         default: ''
       file_cap:

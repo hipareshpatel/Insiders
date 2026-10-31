@@ -70,6 +70,11 @@ export interface KpiRow {
   pat_pre: number | null;
   pat_pre_yoy: number | null;
   pat_pre_turn: Turn | null;
+  /** the whole profit (minority partners' share included) and its change on a year ago; set only when PAT is the owners' share and the
+   *  whole profit differs (results_table.py), else null. Shown beside PAT (wholeProfit in lib/resultsView.ts): other sites quote it. */
+  pat_total: number | null;
+  pat_total_yoy: number | null;
+  pat_total_turn: Turn | null;
   momentum: Momentum;                    // of profit growth
   /** profit up (or a loss turned to profit) while EBITDA fell; never for banks, NBFCs or insurers */
   nfo: boolean;

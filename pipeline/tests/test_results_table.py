@@ -184,6 +184,7 @@ def test_the_row_keys_are_the_tables_columns_and_ten_quarters_are_kept(settings)
     row = rt.company_rows("500001", _memory(), "t")[0]
     columns = [c[1] for c in LocalSink(settings)._db.execute("PRAGMA table_info(results_kpi)")]
     # the profit before exceptional items is in a row only for a quarter that has one (its absence keeps the digest)
+    # and the whole profit only where it differs from the owners' (this memory has a minority share)
     assert sorted(row) == sorted(set(columns) - {"pat_pre", "pat_pre_prev", "pat_pre_yoy", "pat_pre_turn"}) and rt.QUARTERS_KEPT == 10
     memory = {"statements": [_entry(f"Q{q}FY{y}", _rows(100.0 + y, 20.0, 15.0, 10.0)) for y in range(20, 28) for q in range(1, 5)]}
     assert len(rt.company_rows("500001", memory, "t")) == 10
@@ -434,3 +435,14 @@ def test_a_bank_takes_screeners_financing_profit_and_margin_in_the_ebitda_slots(
     row = _row(memory)
     assert row["kind"] == "bank" and (row["ebitda"], row["ebitda_prev"], row["ebitda_yoy"], row["ebitda_qoq"]) == (400.0, 300.0, 33.3, 5.3)
     assert (row["opm"], row["opm_yoy_bps"]) == (40.0, 667) and row["nfo"] == 0   # never "profit up, EBITDA down" for a lender
+
+
+def test_the_whole_profit_sits_beside_the_owners_profit_only_when_they_differ():
+    """Owner, 31 Oct 2026: "Both, owners' first" (Phoenix Mills Q2FY27: owners 325.71, +7.1%; whole 427.00, +11.2%, as the news quoted)."""
+    memory = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 28.0}), _bank("Q2FY26", 80.0, 20.0, **{"Net Profit (owners)": 24.0}),
+                             _bank("Q1FY27", 95.0, 27.0, **{"Net Profit (owners)": 25.0})]}
+    row = _row(memory)
+    assert (row["pat"], row["pat_yoy"]) == (28.0, 16.7)
+    assert (row["pat_total"], row["pat_total_prev"], row["pat_total_yoy"], row["pat_total_turn"]) == (30.0, 20.0, 50.0, None)
+    same = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 30.0}), _bank("Q2FY26", 80.0, 20.0, **{"Net Profit (owners)": 20.0})]}
+    assert "pat_total" not in _row(same)            # no minority share: the PAT is already the whole profit (the digest is kept)

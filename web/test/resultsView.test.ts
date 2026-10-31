@@ -4,7 +4,7 @@ import { test } from "node:test";
 import {
   activeChips, arrowOf, barHeight, bestInEight, coverageOf, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
   medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
-  KIND_TAG, nmLines, spreadHeading, tilesIntro, blankNote, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, oneOff, type Seg,
+  KIND_TAG, nmLines, spreadHeading, tilesIntro, blankNote, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, oneOff, wholeProfit, type Seg,
 } from "../src/lib/resultsView.ts";
 import { EMPTY_SUMMARY, groupsResponse, ROWS, SUMMARY } from "./fixtures/resultsFixture.ts";
 
@@ -238,4 +238,9 @@ test("the spread chart's header gives its base, and one sentence above the tiles
 test("an empty cell says why: insurers show no revenue by design (U4)", () => {
   assert.equal(blankNote("insurer", "revenue"), "Not shown for insurers");
   assert.equal(blankNote("bank", "ebitda"), "");   // a bank has a financing profit now
+});
+
+test("the whole profit (minority share included) shows beside the owners' PAT only when the row has one (owner, 31 Oct 2026)", () => {
+  assert.equal(wholeProfit({ pat: 325.71, pat_total: 427, pat_total_yoy: 11.2, pat_total_turn: null })?.text, "Whole profit ₹427 Cr · +11.2%");
+  assert.equal(wholeProfit({ pat: 100, pat_total: null, pat_total_yoy: null, pat_total_turn: null }), null);
 });

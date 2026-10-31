@@ -113,6 +113,15 @@ export function oneOff(r: Pick<KpiRow, "pat" | "pat_pre" | "pat_pre_yoy" | "pat_
   return { text: ["Before one-offs " + cr(r.pat_pre), change].filter(Boolean).join(" · "), title: "Profit after tax excluding exceptional items, after their tax" };
 }
 
+/** "Whole profit ₹427 Cr · +11.2%": the profit with the minority partners' share, beside the owners' PAT (owner, 31 Oct 2026: "Both, owners'
+ *  first"); news sites and Screener's Net Profit quote this one. Null when the row has none (the PAT is already the whole profit). */
+export function wholeProfit(r: Pick<KpiRow, "pat" | "pat_total" | "pat_total_yoy" | "pat_total_turn">): { text: string; title: string } | null {
+  if (r.pat == null || r.pat_total == null) return null;
+  const change = r.pat_total_turn ? TURN_TEXT[r.pat_total_turn].toLowerCase() : r.pat_total_yoy != null ? fmtGrowth(r.pat_total_yoy) : null;
+  return { text: ["Whole profit " + cr(r.pat_total), change].filter(Boolean).join(" · "),
+           title: "Profit after tax including the minority partners' share (the figure most sites and Screener's Net Profit show)" };
+}
+
 // ---------- kinds of company ----------
 
 export const KIND_TAG: Record<Kind, string> = { company: "", bank: "Bank", nbfc: "NBFC", insurer: "Insurer", reit: "REIT", invit: "InvIT" };

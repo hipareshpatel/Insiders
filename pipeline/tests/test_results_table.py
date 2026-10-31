@@ -353,3 +353,10 @@ def test_the_run_passes_each_companys_industry_from_the_companies_table():
     rt.write(sink, "t")
     kinds = {r["scrip_code"]: r["kind"] for r in sink.sent}
     assert kinds == {"500020": "company", "500021": "nbfc", "500022": "nbfc"}   # 500022 has no industry stored: as today
+
+
+def test_a_failed_industry_read_builds_the_table_as_before_and_does_not_stop_the_run():
+    sink = _Sink({"500020": _nbfc_template()}, {"500020": "Consumer Services > Restaurants"})
+    sink.query = lambda name, params: (_ for _ in ()).throw(RuntimeError("D1 timeout")) if name == "export_companies" else []
+    rt.write(sink, "t")
+    assert sink.sent and {r["kind"] for r in sink.sent} == {"nbfc"}   # every quarter as before: the NBFC layout

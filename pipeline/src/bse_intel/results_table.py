@@ -244,7 +244,11 @@ def write(sink, at: str, scrips: list[str] | None = None) -> int:
     all of them). The rows are saved every ``SAVE_EVERY`` companies, so a run that is stopped keeps what it did (and the page fills as it
     goes). A company whose read fails is logged and keeps its old rows. Returns the number of rows sent."""
     names = sink.list_dossiers() if scrips is None else scrips
-    industry = industries(sink)
+    try:
+        industry = industries(sink)
+    except Exception as exc:  # noqa: BLE001 - the 15-minute run builds this table too: without industries it builds as before, it does not stop
+        log.warning("results-table: industries not read (%s); NBFC-template filers keep the NBFC layout this run", exc)
+        industry = {}
     rows: list[dict] = []
     kept: list[dict] = []
     sent = 0

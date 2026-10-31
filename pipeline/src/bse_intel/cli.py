@@ -2378,6 +2378,26 @@ def cmd_statements_backfill(args, settings, sink) -> int:
     return 124 if outcome["more"] and args.apply else 0
 
 
+def cmd_statements_correct(args, settings, sink) -> int:
+    """The profit-line rules (screener_view.corrected_pl) over every stored quarters and annual entry (statements_correct.py): a dry
+    run by default, --apply backs each changed dossier up first and saves chunk by chunk, resuming. No NSE, BSE or AI."""
+    from . import statements_correct as sc
+
+    named = [s.strip() for s in (args.scrips or "").split(",") if s.strip()]
+    outcome = sc.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
+    print(sc.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if args.csv:
+        Path(args.csv).write_text(sc.to_csv(outcome), encoding="utf-8")
+    if outcome["error"]:
+        print(f"statements-correct: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each changed dossier up to backup/statements-correct-<time>/, then writes)")
+    return 124 if outcome["more"] and args.apply else 0
+
+
 def cmd_memory_rerank(args, settings, sink) -> int:
     """Put right the stored figures the TODO 118 B ranking changes (memory_rerank.py): a dry run by default, --apply backs
     each dossier up (backup.RunBackup) and writes at most --limit figures. No AI, no exchange."""
@@ -2762,6 +2782,14 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the report to this file")
     p.add_argument("--put-back-ratings", action="store_true", help="only the companies whose rating snapshots the empty-snapshot clean-up took out: put them back from the backups")
     p.set_defaults(func=cmd_statements_backfill)
+    p = sub.add_parser("statements-correct", help="the profit-line rules over every stored quarters and annual entry (stock page, cards and Results then read the same numbers): dry run (default) or --apply (backs each changed dossier up first; no NSE, no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--limit", type=int, default=0, help="at most this many companies a run (default 0: all; the run resumes after the last saved chunk)")
+    p.add_argument("--restart", action="store_true", help="start again from the first company")
+    p.add_argument("--json", help="write the report to this file")
+    p.add_argument("--csv", help="write the changes (scrip, period, basis, table, row, old, new) to this file")
+    p.set_defaults(func=cmd_statements_correct)
     p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")

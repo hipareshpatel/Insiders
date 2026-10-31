@@ -1011,3 +1011,24 @@ def test_the_stored_statements_are_compared_with_screener_row_by_row():
     assert got[("quarters", "Net Profit", "Q1FY26")]["status"] == "no_recipe"  # the entry lacks the row
     assert got[("quarters", "Sales", "Q4FY24")]["status"] == "before_cutoff"
     assert got[("annual", "Sales", "FY24")]["status"] == "no_facts"           # only the other basis is stored
+
+
+def test_a_december_year_comes_from_its_annual_report_else_its_december_quarter_file():
+    """Owner, 1 Nov 2026: 63 companies (VBL, ABB, Siemens, CRISIL) close their year in December; screener shows "YE:2025-12"."""
+    def dec(facts, kind="annual", year=2025):
+        d = doc(facts, kind=kind)
+        d["contexts"][f"DY{year}"] = {"s": f"{year}-01-01", "e": f"{year}-12-31", "m": 12}
+        d["facts"] = [[el, f"DY{year}" if ctx == "DY" else ctx, *rest] for el, ctx, *rest in d["facts"]]
+        return d
+
+    report = dec([("RevenueFromOperations", "DY", 1200.0), ("ProfitLossForPeriod", "DY", 150.0), ("Expenses", "DY", 1000.0)])
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): report})
+    facts, label = cf.year_end("YE:2025-12", "CONSOLIDATED")
+    assert label == "annual report FY26" and facts.cr("RevenueFromOperations", end=date(2025, 12, 31), months=12) == 1200.0
+    rows, _ = sv._ours(cf, sv.CORPORATE, "CONSOLIDATED", "annual", "YE:2025-12", {})
+    assert rows["Sales"].value == 1200.0 and rows["Net Profit"].value == 150.0
+    # no report: the December quarter's results file, which carries the year's column
+    q = dec([("RevenueFromOperations", "DY", 1200.0), ("ProfitLossForPeriod", "DY", 150.0)], kind="results")
+    cf = _store({xf.key("1", "Q3FY26", "CONSOLIDATED"): q})
+    assert cf.year_end("YE:2025-12", "CONSOLIDATED")[1] == "results file Q3FY26"
+    assert cf.year_end("YE:2024-12", "CONSOLIDATED") == (None, "")

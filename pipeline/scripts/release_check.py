@@ -113,13 +113,14 @@ from onoff_facts import tagged_from_memory  # noqa: E402
 
 ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ONLY", "QUOTE_EXACT_NUMBERS", "CARD_SAME_DEFINITION",
                 "CARD_GROUNDED_FIGURES", "CARD_GUIDANCE_DATED", "CARD_ONE_BASIS", "MEMORY_YEAR_CHECK",
-                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT")
+                "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
+                "RESULTS_NEEDS_STATEMENT")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
           ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
-          ("text_support", "CARD_TEXT_SUPPORT"))
+          ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -227,6 +228,15 @@ def switches_on(*names: str):
 
 
 # ---------------------------------------------------------------- the five checks
+def check_results_statement(card: dict, row: dict, text: str) -> dict:
+    """results_statement: a RESULTS card whose stored text carries no results statement (pipeline.lacks_results) would be read
+    as OTHER with RESULTS_NEEDS_STATEMENT on: no results table, no quarter claim, the event's own card instead."""
+    retyped = P.lacks_results(text)
+    off = [f"TYPE: {card.get('event_type') or 'RESULTS'}", f"HEADLINE: {card.get('headline') or ''}"]
+    on = ["TYPE: OTHER (no results statement in the text)", f"HEADLINE: {card.get('headline') or ''}"] if retyped else list(off)
+    return _record(row, card, off, on)
+
+
 def _record(row: dict, card: dict, off: list[str], on: list[str], **extra) -> dict:
     return {"news_id": row["news_id"], "symbol": row.get("symbol"), "scrip_code": str(row.get("scrip_code")),
             "pdf_url": row.get("pdf_url"), "period": (card.get("results") or {}).get("period"),
@@ -924,6 +934,15 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_text_support(card, memory() or None, row, text))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "results_statement":
+                    if not results:
+                        skipped[name]["not a results card"] += 1
+                    elif text is None:
+                        skipped[name]["no text"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_results_statement(card, row, text))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "one_basis":
                     seen[name] += 1

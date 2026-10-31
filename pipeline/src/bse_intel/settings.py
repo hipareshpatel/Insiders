@@ -320,6 +320,14 @@ def card_fact_sheet_lenders() -> bool:
     return _switch("CARD_FACT_SHEET_LENDERS")
 
 
+def results_needs_statement() -> bool:
+    """RESULTS_NEEDS_STATEMENT (default off; 31 Oct 2026, TMB nse-106836238): a filing typed RESULTS whose text holds no results
+    statement, no covering letter submitting results and no "financial results for the quarter/half/year" is read as OTHER
+    (pipeline.lacks_results), so a note about the results (a provision, a clarification) does not take the quarter's results path.
+    On only after the on/off check over stored cards (release_check.py results_statement) and a blind sample. Read at the call."""
+    return _switch("RESULTS_NEEDS_STATEMENT")
+
+
 def memory_file_only() -> bool:
     """MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using cards
     data"): a statement line (dossier.STATEMENT_FIGURES) enters memory only from the exchange's own file; a model's reading of

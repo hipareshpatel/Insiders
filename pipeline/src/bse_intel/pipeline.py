@@ -36,6 +36,7 @@ from threading import Lock
 from .ai.gateway import CEILING, TRANSIENT, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedError, XbrlLink
 from . import duplicates
+from . import requeue
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
                       own_former_name,
                       new_dossier, put_standalone, with_year_hold, repeated_order, reported_by, results_snapshot, call_results_snapshot, similar_timeline_entry, timeline_entry_dated, view_as_of)
@@ -56,7 +57,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_press_release
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -112,6 +113,8 @@ BACKFILL_SLICE_S = 600   # the backfill's slices: its filings share Gemini reque
                          # slice end sends the open packs part-full; shorter slices would spend more free requests
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
 RESULTS_QUARTER_DAYS = 100   # a results PDF comes at most this long after its quarter ends (SEBI: 45 days, 60 for Q4; slack for revisions)
+REQUEUED_FIRST_S = 180    # the slot after today's filings for filings requeued by id (requeue.mark_by_id, 31 Oct 2026)
+REQUEUED_FIRST_MAX = 6    # filings a run gives that slot
 RESULTS_CATCH_UP_S = 600  # the results XBRL catch-up's own window when the live share is used up (30 Oct 2026)
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
@@ -1173,6 +1176,29 @@ def companion_quarter(filing: Filing, dossier: dict) -> str | None:
         if periods:
             return max(periods, key=lambda p: quarter_index(p) or -1)
     return None
+
+
+def merged_priority(read: list[str], now: list[str], order: list[str]) -> list[str]:
+    """The history queue's priority list written back at the end of a backfill pass: the companies added since it was read (a
+    requeue by id meanwhile) first, then those read at the start that still have history left."""
+    left = set(order)
+    return [s for s in now if s not in set(read)] + [s for s in read if s in left]
+
+
+_RESULTS_FOR = re.compile(r"financial\s+results\s+(?:of\s+the\s+bank\s+|of\s+the\s+company\s+)?for\s+the\s+"
+                          r"(?:quarter|half[\s-]*year|period|nine\s+months|year|financial\s+year)", re.I)
+LACKS_RESULTS_MIN_CHARS = 1500   # a filing with less text than this (a scan OCR did not read) is never retyped
+
+
+def lacks_results(text: str) -> bool:
+    """A filing's text with enough words to judge, and none of what a results filing carries: the statement's heading
+    (`_RESULTS_STATEMENT`), a covering letter submitting the results (`results_cover`), or "financial results for the quarter"
+    (TMB nse-106836238, a note on a ₹304 Cr ECL provision typed RESULTS, took the results path and became a second card)."""
+    t = text or ""
+    if len(t.strip()) < LACKS_RESULTS_MIN_CHARS:
+        return False
+    head = t[:40000]
+    return not (_RESULTS_STATEMENT.search(head) or results_cover(t) or _RESULTS_FOR.search(head))
 
 
 def carries_results(event_type: str, text: str, tagged=None) -> bool:
@@ -3532,6 +3558,11 @@ class Pipeline:
             # CORPORATE_ACTION skipped the quarter's claim and its XBRL and became a second results card (O3, 2026-10-20)
             log.info("%s carries a results statement: %s -> RESULTS before pass 2", filing.news_id, event_type)
             event_type = "RESULTS"
+        elif event_type == "RESULTS" and results_needs_statement() and lacks_results(doc.select_text(10_000_000, [])):
+            # a note about the results is no results filing (RESULTS_NEEDS_STATEMENT, off until measured)
+            log.info("%s is typed RESULTS but carries no results statement; read as OTHER", filing.news_id)
+            filing = filing.model_copy(update={"event_type": "OTHER"})
+            event_type = "OTHER"
         subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
         if subsidiary:
             # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory
@@ -4497,6 +4528,55 @@ class Pipeline:
             if now < end or now >= deadline or self._halted(bulk=False):
                 return   # today's queue is empty for now, the run's time is up or the route is out of quota
 
+    def _requeued_first(self, history_to: date, deadline: float) -> int:
+        """Filings requeued by id (``requeue:by_id``) that are older than the live window, read in a slot of at most
+        REQUEUED_FIRST_S right after today's filings, REQUEUED_FIRST_MAX a run. In results season today's filings used every
+        run's whole time and the history pass, where such a filing waited, never started (31 Oct 2026: Hubtown nse-106629168,
+        a wrong live card, still not re-run six hours after its requeue). Ids no longer pending are dropped from the list;
+        one deferred stays for the next run. Returns how many filings were read."""
+        raw = self.sink.kv_get(requeue.BY_ID_KEY)
+        if not raw or self._blocked or self._halted(bulk=True):
+            return 0
+        try:
+            marked = json.loads(raw)
+        except ValueError:
+            marked = {}
+        ids = list(marked.get("ids") or [])
+        if not ids:
+            return 0
+        start, wanted = self.settings.backfill_start, set(ids)
+
+        def queues() -> dict[str, list[Filing]]:
+            out = {}
+            for scrip in marked.get("scrips") or []:
+                rows = self.sink.pending_for_company(scrip, start, history_to.isoformat(), self.settings.max_attempts, HISTORY_LIMIT)
+                q = [f for f in (Filing.model_validate(r) for r in rows) if f.news_id in wanted]
+                if q:
+                    out[scrip] = q
+            return out
+
+        before, todo, n = queues(), {}, 0
+        for scrip, q in before.items():
+            q = [f for f in q if f.news_id not in self._tried][:max(0, REQUEUED_FIRST_MAX - n)]
+            if q:
+                todo[scrip], n = q, n + len(q)
+        done, after = 0, before
+        if todo:
+            end = min(deadline, time.monotonic() + REQUEUED_FIRST_S)
+            results: dict = {}
+            self._slice(lambda: results.update(self._run_parallel(
+                {s: partial(self._process_group, q, deadline, True, True) for s, q in todo.items()})), end)
+            done = sum(len(v) for v in results.values())
+            log.info("requeued by id, read first: %d of %s", done, ", ".join(f.news_id for q in todo.values() for f in q))
+            after = queues()
+        # an id still pending stays (deferred, or past this run's share); one no longer pending (read, or inside the live
+        # window, which the live pass reads) is dropped
+        pending = {f.news_id for q in after.values() for f in q}
+        left = [i for i in ids if i in pending]
+        if left != ids:
+            self._kv_set(requeue.BY_ID_KEY, json.dumps({"ids": left, "scrips": [s for s in marked.get("scrips") or [] if s in after]}))
+        return done
+
     def _in_slices(self, step, until: float, fresh, slice_s: float | None = None) -> None:
         """Older work in slices (SLICE_S unless given), today's new filings looked for between them. A slice that ends
         before its own deadline had nothing left to do (or the route is out of quota), so the step is finished for this
@@ -4564,6 +4644,8 @@ class Pipeline:
                 if self._on_nse():
                     self.retriage_returning(today, started + time_budget_s * 0.2)
                 fresh()
+                if mode == "all":
+                    self._requeued_first(live_from - timedelta(days=1), deadline)
                 live_deadline = deadline if mode == "live" else started + time_budget_s * 0.6
                 # Near the day's share of the plan's writes (D1_DAILY_WRITE_CAP) the window's earlier days, the
                 # catch-ups and the memory syncs wait for the reset (05:30 IST) and the run only turns today's filings
@@ -4877,8 +4959,11 @@ class Pipeline:
                     unfinished.append(s)  # stopped early, or has more than one page of history
             order = unfinished + order
         self._kv_set("backfill:company_order", json.dumps({**state, "scrips": order}))
-        if priority:
-            self._kv_set("backfill:priority", json.dumps([s for s in priority if s in set(order)]))
+        # read the key again before writing it: a requeue by id during this run put its companies there (requeue.prioritise), and
+        # writing back the list read at the start would lose them (review of #298)
+        kept = merged_priority(priority, json.loads(self.sink.kv_get("backfill:priority") or "[]"), order)
+        if priority or kept:
+            self._kv_set("backfill:priority", json.dumps(kept))
         total = (state.get("total") or 0) + len(state["extra"])
         self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": total,
                                                       "built": state["built"], "through": through}))

@@ -1668,6 +1668,30 @@ def cmd_keep_annual_pdfs(args, settings, sink) -> int:
     return 0
 
 
+def cmd_bank_pdf_read(args, settings, sink) -> int:
+    """TODO 148: banks' annual-report PDFs read for the rows their XBRL lacks (bank_pdf.py): depreciation (a direct cash flow),
+    CWIP and Fixed Assets (CWIP inside the file's FixedAssets). The reports kept in R2 (raw/annual-pdf/<SYMBOL>/) and the BSE ones
+    linked on the stored Screener page (the newest --years), fetched once through the ported BSE adapter as written and kept; each
+    reading kept at raw/bank-pdf/<scrip>/ as it is made, with what the bank's own file says of each figure. Companies that are not
+    banks are skipped. --dry-run keeps the files, not the readings. A refusal stops the run (exit 75); the file cap is a planned
+    stop (0); --time-budget ends it between two reports (exit 124). No AI, no NSE, no memory write: the statements take the
+    readings at their next rebuild."""
+    from . import bank_pdf
+    from .adapters.bse import BSEClient
+
+    companies = _selected_companies(args, sink)
+    if companies is None:
+        return 2
+    out = bank_pdf.run(sink, BSEClient(), companies, years=args.years, time_budget=args.time_budget, dry_run=args.dry_run)
+    print(bank_pdf.render(out))
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if out["blocked"]:
+        logging.getLogger("bse_intel.bank_pdf").error("BSE refused; stopping: %s", out["blocked"])
+        return REFUSED
+    return MORE_LEFT if out["out_of_time"] else 0
+
+
 def cmd_tijori_download(args, settings, sink) -> int:
     """The download of every company's financials from Tijori Finance, raw and gzipped, into R2 (tijori.py, F189, TODO 92): one
     page a company at TIJORI_RATE requests a second (default 6) through 8 threads; the first refusal slows the run to one
@@ -2990,6 +3014,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--years", type=int, default=1, help="without --year: the newest N reports a company (default 1)")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_keep_annual_pdfs)
+
+    p = sub.add_parser("bank-pdf-read", help="banks' annual-report PDFs read for the rows their XBRL lacks (R2 and BSE, no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the universe; banks only are read)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest by market cap (of --scrips, else of the universe)")
+    p.add_argument("--years", type=int, default=4, help="the newest N BSE reports a bank on its Screener page (default 4: FY23 on)")
+    p.add_argument("--time-budget", type=int, help="seconds; exit 124 when it ends with reports left")
+    p.add_argument("--dry-run", action="store_true", help="keep the fetched files, not the readings")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_bank_pdf_read)
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

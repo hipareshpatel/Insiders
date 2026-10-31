@@ -140,7 +140,8 @@ def test_bank_words_in_the_text_check():
     assert fs.disagreements("Net interest income rose 25% YoY to ₹44,464 Cr.", sheet) == []
     assert fs.disagreements("NII grew to ₹44,464.20 Cr.", sheet) == []
     assert fs.disagreements("Net interest income rose 31% YoY to ₹44,464 Cr.", sheet)        # the change is 25.0%
-    assert fs.disagreements("Interest income was ₹91,000 Cr.", sheet)                         # interest earned is 95,131.63
+    assert fs.disagreements("Interest earned was ₹91,000 Cr.", sheet)                         # interest earned is 95,131.63
+    assert fs.disagreements("Interest income on advances rose to ₹71,000 Cr.", sheet) == []   # one part of it: not judged
     # a bank's operating profit (pre-provision) and total income (with other income) are not the sheet's lines: not judged
     assert fs.disagreements("Operating profit was ₹31,000 Cr.", sheet) == []
     assert fs.disagreements("Total income was ₹129,358 Cr.", sheet) == []
@@ -162,3 +163,15 @@ def test_switch_reads_the_setting(monkeypatch):
     assert fs.fact_sheet(d, period)["family"] == sv.BANK
     monkeypatch.setenv("CARD_FACT_SHEET_LENDERS", "0")
     assert fs.fact_sheet(d, period) is None
+
+
+def test_live_path_keeps_the_industry(monkeypatch):
+    # for_filing reads memory with the filing's own file put in: the company's industry must come along, or an NBFC-template
+    # restaurant is built as an NBFC (independent review of #300)
+    monkeypatch.setenv("CARD_FACT_SHEET_LENDERS", "1")
+    raw = (FIX / "nse_bajfin_q2fy27_cons.xml").read_bytes()
+    plain = fs.for_filing({"industry": "Consumer Services > Restaurants"}, raw, "500034", "https://x/a.xml", "nse-1",
+                          "2026-10-20", "2026-10-20T10:00:00Z")
+    life = fs.for_filing({"industry": "Financial Services > Insurance > Life Insurance"}, raw, "500034", "https://x/a.xml",
+                         "nse-1", "2026-10-20", "2026-10-20T10:00:00Z")
+    assert plain["family"] == sv.CORPORATE and life["family"] == sv.INSURER

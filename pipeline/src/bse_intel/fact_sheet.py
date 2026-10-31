@@ -170,7 +170,8 @@ def with_file(dossier: dict, data: bytes, scrip: str, url: str, news_id: str, as
     doc = xbrl_facts.parse_facts(data, scrip, url)
     if doc is None or not doc.get("period"):
         return None, None, None
-    held = {statements.KEY: [dict(e) for e in dossier.get(statements.KEY, []) if isinstance(e, dict)]}
+    held = {statements.KEY: [dict(e) for e in dossier.get(statements.KEY, []) if isinstance(e, dict)],
+            "industry": dossier.get("industry")}   # the layout of an NBFC-template filer depends on it (layout_of; review of #300)
     statements.remember(held, doc, news_id, as_of, at)
     return held, doc["period"], doc.get("basis")
 
@@ -293,10 +294,11 @@ _KEYWORDS = {"revenue": r"revenue|sales|turnover|total income",
              "pbt": r"pbt|profit before tax",
              "pat": r"pat|net profit|profit after tax|profit to shareholders|net income|bottom line"}
 # a lender's own words for its lines: a bank's "operating profit" is its pre-provision profit and its "total income" adds other income,
-# an NBFC's "total income" too, so neither is judged against the sheet; "interest income" is not the start of "net interest income"
+# an NBFC's "total income" too, so neither is judged against the sheet
 FAMILY_KEYWORDS = {
     sv.CORPORATE: _KEYWORDS,
-    sv.BANK: {"revenue": r"interest earned|(?<!net )interest income", "nii": r"net interest income|nii",
+    # "interest income" alone is often one part ("interest income on advances"), so only the whole line's words are judged
+    sv.BANK: {"revenue": r"interest earned|total interest income", "nii": r"net interest income|nii",
               "financing_profit": r"financing profit", "pbt": _KEYWORDS["pbt"], "pat": _KEYWORDS["pat"]},
     sv.NBFC: {"revenue": r"revenue", "financing_profit": r"financing profit", "pbt": _KEYWORDS["pbt"], "pat": _KEYWORDS["pat"]},
     sv.INSURER: {"pat": _KEYWORDS["pat"]},

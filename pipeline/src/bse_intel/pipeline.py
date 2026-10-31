@@ -2896,7 +2896,11 @@ class Pipeline:
         timely = [link for link in links if -2 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 45]
         if timely:
             return max(timely, key=lambda link: link.filed_at)
-        return min(links, key=lambda link: link.filed_at) if links else None
+        # a file filed later than 45 days can still be this filing's (a late one); one filed well before the PDF never is:
+        # QUESS's Q2FY27 card of 30 Oct 2026 (nse-106837502) took its Q1FY27 file of 29 Jul, so the whole card, table and
+        # headline, was the earlier quarter's (blind check of the fact-sheet cards, 31 Oct)
+        later = [link for link in links if (date.fromisoformat(link.filed_at[:10]) - day).days > 45]
+        return min(later, key=lambda link: link.filed_at) if later else None
 
     @stages.timed("xbrl")
     def _standalone_file(self, filing: Filing, tagged):

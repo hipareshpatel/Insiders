@@ -866,6 +866,12 @@ class _ReadAtUnit:
         return False
 
 
+def _places(crore: float) -> int:
+    """Decimal places that write a corrected crore figure within 0.5%: 45.67 lakh is ₹0.457 Cr, not ₹0.46 Cr; Rs 1,23,456
+    is ₹0.0123 Cr, not ₹0.01 Cr."""
+    return next((p for p in (2, 3, 4) if abs(round(crore, p) - crore) <= 0.005 * abs(crore)), 4)
+
+
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
@@ -894,7 +900,7 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             if read_right(value, decimals):
                 continue   # already the right reading of a figure at its own page's unit: never "corrected"
             # 1. a figure with its own unit, whatever unit the tables declare
-            fits = [(round(value / u, 2), 2) for u, values in filing_index._by_unit.items()
+            fits = [(round(value / u, _places(value / u)), _places(value / u)) for u, values in filing_index._by_unit.items()
                     if u != 1 and _near(values, value, tolerance)]
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
@@ -904,7 +910,7 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 continue
             # 2. a whole-rupee amount, a power of ten off
             tolerance = 0.5 * 10 ** (-decimals) + 1e-9
-            fits = sorted({(round(c, 2), 2) for c in whole for k in (-3, -2, -1, 1, 2, 3)
+            fits = sorted({(round(c, _places(c)), _places(c)) for c in whole for k in (-3, -2, -1, 1, 2, 3)
                            if abs(value - c * 10 ** k) <= max(tolerance, 0.002 * c * 10 ** k)})
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
@@ -923,8 +929,13 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             for k in (-4, -3, -2, -1, 1, 2, 3, 4):
                 right = value * 10 ** k
                 right_decimals = max(0, decimals - k)
+                if right < 0.05:
+                    # never under ₹5 lakh: Hubtown's right ₹18.82 Cr fitted the OCR's "1.882" lakh (its 1,882 with the
+                    # comma read as a point) and went live as ₹0.02 Cr (30 Oct 2026)
+                    continue
                 if filing_index.stated_crore(right, right_decimals, (unit,)):
-                    fits.append((round(right, min(right_decimals, 2)), min(right_decimals, 2)))
+                    places = min(right_decimals, _places(right))
+                    fits.append((round(right, places), places))
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
     return list(slips.values())

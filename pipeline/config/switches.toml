@@ -54,6 +54,12 @@ MEMORY_FILE_ONLY = true          # dossier merge: a card's reading of a statemen
 # the sheet contradicts is cut. Blind A/B round 2 (9 filings): WRONG 9 on against 14 off, better on 8 of 9, worse on none. A
 # repository variable CARD_FACT_SHEET = 0 turns it off; 20 live cards are blind-scored the next day.
 CARD_FACT_SHEET = true           # pipeline: the results card's figures from the exchange file in memory
+# On 1 Nov 2026, ~00:10 IST (TODO 151, #300; owner: "Yes, NBFC cards show financing profit"): banks', NBFCs' and insurers'
+# results cards get the fact sheet too, on their own statement rows. Blind A/B over 17 recent filings (run 41212857534, every
+# figure checked against the exchange file by an independent reviewer): WRONG 4 off against 0 on; the text check's right-text cuts
+# (about 3 right figures on 12 sheets) fixed in cae2c97c / b3b102f6 and re-run (41220046274: no new WRONG). A repository
+# variable CARD_FACT_SHEET_LENDERS = 0 turns it off.
+CARD_FACT_SHEET_LENDERS = true   # pipeline: lenders' and insurers' results figures from the exchange file in memory
 # On 30 Oct 2026, ~19:20 IST (owner: "Yes, switch on the faster PDF setting"): the numbers-first reader stops reading scanned
 # pages once both bases are stated (docs/bench/stop-early-live.md: 72 stored PDFs, 0 of 341 key figures changed, 11.3 s saved
 # a filing; 5 filings come inside the slip check's 60 s cap only with it on, none of their revenue or total income wrong).

@@ -160,6 +160,7 @@ def unsupported(text: str, src: _Sources) -> tuple[list[str], list[str]]:
     if not text:
         return [], []
     plain = text.replace("**", "")
+    src.first_words = set()   # this item's own first word only (independent review of #302: it carried over to the next item)
     _, names = unprinted_names(plain, src.raw)
     missing = {n.lower(): n for n in names}
     for low in [k for k, n in missing.items() if _PERIOD_CODE.match(n) or any(c.isdigit() for c in n) or _in(src.flat, n)]:

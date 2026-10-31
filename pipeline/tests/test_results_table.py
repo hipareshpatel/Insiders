@@ -457,3 +457,9 @@ def test_a_year_ago_quarter_with_no_owners_line_and_no_minority_share_is_the_own
     with_minority = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 28.0}),
                                     _bank("Q2FY26", 80.0, 20.0, **{"Minority share": 2.0})]}
     assert _row(with_minority)["pat_prev"] is None   # a total with a minority share is no base for the owners' profit
+
+
+def test_the_year_ago_total_is_no_owners_base_when_the_company_has_a_minority_share_now():
+    memory = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 28.0, "Minority share": 2.0}),
+                             _bank("Q2FY26", 80.0, 20.0)]}
+    assert _row(memory)["pat_prev"] is None   # the year-ago file lacks the minority row; its total is not the owners'

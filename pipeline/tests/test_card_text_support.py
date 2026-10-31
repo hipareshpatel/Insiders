@@ -174,3 +174,9 @@ def test_the_card_path_is_untouched_with_the_switch_off(settings, monkeypatch):
     monkeypatch.setattr(card_support, "strict_prompt", boom)
     monkeypatch.setattr("bse_intel.prompts.engine.strict_prompt", boom)
     test_pipeline.test_live_run_end_to_end(settings)
+
+
+def test_a_first_word_excused_in_one_item_is_not_excused_in_the_next():
+    out = _out(track_next={"risks": ["Fermentation programs ramp", "Delay as Fermentation and Zymase units stall"]})
+    card_support.support_check(out, SOURCES)
+    assert out.card.track_next.risks == ["Fermentation programs ramp"]   # the second names two things no source prints

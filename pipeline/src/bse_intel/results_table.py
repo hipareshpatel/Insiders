@@ -162,7 +162,9 @@ def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | 
         revenue_row, ebitda_row, margin_row = LAYOUT[layout]
         # the profit's comparatives are the same row as its value (a total with minority interest is no base for the owners' profit)
         pat_row = next((r for r in PAT_ROWS if (now.get("rows") or {}).get(r) is not None), None)
-        if pat_row == fact_sheet.OWNERS:
+        if pat_row == fact_sheet.OWNERS and not ((now.get("rows") or {}).get("Minority share") or 0):
+            # only for a company with no minority share now either: a year-ago file that simply lacks the row is no proof of none
+            # (independent review of #302)
             before = {slot: _owners_from_total(e) for slot, e in before.items()}
         # the year-ago base as a later filing restates it (owner, 31 Oct 2026: as Screener does), from this quarter's own filing or an
         # earlier one: the growth is worked against what the company now says the year-ago figure was

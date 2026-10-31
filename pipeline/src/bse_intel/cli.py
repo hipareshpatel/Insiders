@@ -1284,7 +1284,15 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
     pipeline = _pipeline(settings, quiet)
     # never a call to NSE or BSE: a filing whose text or file is not stored fails here, it is not downloaded twice (owner rule)
     stub = pipeline.nse = pipeline.bse = _NoExchange()
-    was = os.environ.get("CARD_FACT_SHEET")
+    # FACT_SHEET_AB_SWITCH=CARD_FACT_SHEET_LENDERS (TODO 151): flip the lenders' switch instead, the fact sheet itself kept on
+    switch = os.environ.get("FACT_SHEET_AB_SWITCH") or "CARD_FACT_SHEET"
+    if switch not in ("CARD_FACT_SHEET", "CARD_FACT_SHEET_LENDERS"):
+        print(f"FACT_SHEET_AB_SWITCH {switch!r}: only CARD_FACT_SHEET or CARD_FACT_SHEET_LENDERS")
+        return 2
+    kept = {name: os.environ.get(name) for name in ("CARD_FACT_SHEET", "CARD_FACT_SHEET_LENDERS")}
+    if switch == "CARD_FACT_SHEET_LENDERS":
+        os.environ["CARD_FACT_SHEET"] = "1"
+    was = os.environ.get(switch)
     report: list[dict] = []
     try:
         for news_id in ids:
@@ -1303,7 +1311,7 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 made = {}
                 # FACT_SHEET_AB_ON_ONLY=1 (a measured test of one named model, ONLY_MODEL): the switch-on card only, half the AI calls
                 for name, value in (("on", "1"),) if os.environ.get("FACT_SHEET_AB_ON_ONLY") == "1" else (("off", "0"), ("on", "1")):
-                    os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)
+                    os.environ[switch] = value   # read at the call (settings._switch)
                     with pipeline._lock:   # each card reads memory as stored, never the other run's merge (blind review)
                         pipeline._pending_memory.clear()
                     outcome = pipeline.analyze(filing, bulk=False)   # as the live path reads it
@@ -1324,13 +1332,14 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
             report.append(row)
             print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "off_status", "on_status", "changed_fields", "warning", "error")}, ensure_ascii=False, default=str))
     finally:
-        if was is None:
-            os.environ.pop("CARD_FACT_SHEET", None)
-        else:
-            os.environ["CARD_FACT_SHEET"] = was
+        for name, value in kept.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
     done = [r for r in report if "error" not in r]
     summary = {"filings": len(ids), "made": len(done), "failed": len(report) - len(done),
-               "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
+               "switch": switch, "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
                "blocked_writes": quiet.blocked, "rows": report}
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False))

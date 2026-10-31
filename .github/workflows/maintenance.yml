@@ -242,7 +242,7 @@
 #   ids) each made into a card twice by the live code (pipeline.analyze), the switch off and then on, with the free AI providers the card
 #   path uses (two calls a filing, never DeepSeek); the sink is read-only (every D1, R2 and memory write dropped and counted). One
 #   <news_id>.json each (off, on, changed fields, what the table and the text check changed) and summary.json go up as the artifact
-#   `fact-sheet-ab`. Writes nothing live.
+#   `fact-sheet-ab`. Writes nothing live. `sample=lenders` flips CARD_FACT_SHEET_LENDERS instead (banks, NBFCs and insurers; TODO 151).
 # - restated-pdf-trial: read only (F202, TODO 104). restated-pdf --dry-run: the latest six quarters' results PDFs of the companies
 #   in `ids` (or the first `limit` of the universe), text layer only, and every comparative that differs from memory's original
 #   listed with both figures and their sources (artifact `restated-pdf-trial`). Writes nothing; storing waits for its review.
@@ -360,7 +360,7 @@ on:
         type: boolean
         default: false
       sample:
-        description: pdf-referee only - instead of the open pairs, a random sample of N pairs where memory equals NSE's file (tests the file against its PDF)
+        description: pdf-referee only - instead of the open pairs, a random sample of N pairs where memory equals NSE's file (tests the file against its PDF); fact-sheet-ab - `lenders` flips CARD_FACT_SHEET_LENDERS (the fact sheet kept on) instead of CARD_FACT_SHEET
         type: string
         default: ''
       then:
@@ -940,6 +940,7 @@ jobs:
           ONLY_MODEL: ${{ inputs.only_model }}   # a measured test only (TODO 142 step 4): cards written by this one model, switch on only
           ONLY_MODEL_ON_ALL_ROUTES: ${{ inputs.only_model != '' && '1' || '' }}
           FACT_SHEET_AB_ON_ONLY: ${{ inputs.only_model != '' && '1' || '' }}
+          FACT_SHEET_AB_SWITCH: ${{ inputs.command == 'fact-sheet-ab' && inputs.sample == 'lenders' && 'CARD_FACT_SHEET_LENDERS' || '' }}   # TODO 151
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # the keys the card path uses (pipeline.yml)
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

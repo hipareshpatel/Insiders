@@ -253,12 +253,17 @@ def test_a_report_two_years_later_never_gives_the_year_even_with_a_stray_fact_at
     cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.annual_key("1", "FY25", "CONSOLIDATED"): fy25,
                  xf.key("1", "Q4FY24", "CONSOLIDATED"): q4})
     assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY25"
-    # with no nearer report and no Q4 file, the later report is the last resort (HCL Tech FY20 from its FY22 report)
+    # with no nearer report and no Q4 file, the later report is the last resort (HCL Tech FY20 from its FY22 report), but only
+    # when it holds the year's equity too: a stray Assets fact is no sheet (JSL and Jindal SAW FY22 from FY24: Borrowings 0)
     cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26})
+    assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "results file Q4FY24"
+    full = doc([("Assets", "I2026", 9.0), ("Assets", "I2024", 5.0), ("EquityShareCapital", "I2024", 1.0)])
+    full["contexts"]["I2024"] = {"i": "2024-03-31"}
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): full})
     assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
     # a Q4 file with no balance sheet at the year end gives way to the later report (HAL, NTPC FY22)
     q4_pl = doc([("RevenueFromOperations", "D2024", 4.0)], kind="results", template="INDAS", year=2024)
-    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): fy26, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4_pl})
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): full, xf.key("1", "Q4FY24", "CONSOLIDATED"): q4_pl})
     assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE, instant=True)[1] == "annual report FY26"
     assert cf.year("FY24", "CONSOLIDATED", sv.CORPORATE)[1] == "results file Q4FY24"
 

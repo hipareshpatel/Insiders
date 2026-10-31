@@ -242,3 +242,13 @@ def test_a_long_run_saves_as_it_goes(monkeypatch):
     assert total == len(sink.sent) and total == 5 * len(rt.company_rows("500001", _memory(), "t"))
     assert saves.count("results_kpi_upsert") == 3     # after 2, after 4, and the last one
     assert sorted(k["scrip_code"] for k in sink.pruned) == names
+
+
+def test_a_filler_zero_owners_profit_gives_way_to_the_net_profit():
+    # measured 31 Oct 2026: 204 live quarters showed a profit of 0 (PNB Housing Q2FY27 NBFC, Kaynes Q2FY26), the owners' line a filler
+    memory = {"statements": [_entry("Q2FY27", _rows(2423.15, 812.59, 700.0, 560.0, owners=0.0), family="nbfc"),
+                             _entry("Q2FY26", _rows(2127.86, 773.3, 650.0, 500.0, owners=0.0), family="nbfc")]}
+    table = rt.company_tables(memory)["Q2FY27"]
+    assert table["pat"]["value"] == 560.0 and table["pat"]["yoy_pct"] == 12.0
+    real = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 0.0, owners=0.0))]}
+    assert rt.company_tables(real)["Q2FY27"]["pat"]["value"] == 0.0   # a true zero (both lines 0) stays

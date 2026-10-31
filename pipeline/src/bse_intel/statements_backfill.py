@@ -64,8 +64,20 @@ def _memory_profit(dossier: dict, period: str, basis: str) -> float | None:
     return None
 
 
-def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[dict], list[str]]:
-    """The entries the stored facts give for one company, and the ones left out (with why)."""
+def _confirmed(confirm, period: str, basis: str, top: float | None) -> bool:
+    """Screener's stored quarter agrees with the file's Net Profit (within max(1 Cr, 1%), Screener prints whole crore): with memory
+    in doubt, two sources agreeing decide (owner, 31 Oct 2026; memory's AI-read profit was the wrong side for CGPOWER Q2FY26,
+    18.24 against the file's 284.29 and Screener's 284)."""
+    if confirm is None or top is None or not period.startswith("Q"):
+        return False
+    theirs = confirm(period, basis)
+    return theirs is not None and abs(theirs - top) <= max(1.0, abs(top) / 100)
+
+
+def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -> tuple[list[dict], list[str]]:
+    """The entries the stored facts give for one company, and the ones left out (with why). ``confirm(period, basis)``: Screener's
+    stored Net Profit for a quarter, or None; a quarter memory doubts (held as unit-slipped, or 1.5x off memory's profit) goes in
+    when Screener confirms the file's figure."""
     entries, left = [], []
     held = {str(h.get("period")) for h in dossier.get("scale_held", []) if isinstance(h, dict)} \
         | {str(h) for h in dossier.get("scale_held", []) if isinstance(h, str)}
@@ -77,19 +89,22 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
         columns = [("quarters", p) for p in quarters] + [("balance", p) for p in quarters if p[:2] in ("Q2", "Q4")] \
             + [("annual", fy) for fy in years] + [("cash_flow", fy) for fy in years]
         for table, period in columns:
-            if period in held or f"Q4{period}" in held:
-                left.append(f"{basis} {table} {period}: unit slip held in memory")
-                continue
             rows, why = sv._ours(cf, fam, basis, table, period, memo)
             values = {name: row.value for name, row in (rows or {}).items() if row.value is not None}
             if not values:
                 continue
             if table in ("quarters", "annual"):
                 values = sv.corrected_pl(values, fam)   # the profit-line rules, as at the live write (screener_view.corrected_pl)
-                top = values.get("Net Profit")
+            quarter = period if table == "quarters" else None
+            top = values.get("Net Profit") if table in ("quarters", "annual") else None
+            sure = _confirmed(confirm, quarter, basis, top) if quarter else False
+            if (period in held or f"Q4{period}" in held) and not sure:
+                left.append(f"{basis} {table} {period}: unit slip held in memory")
+                continue
+            if table in ("quarters", "annual"):
                 mine = _memory_profit(dossier, period, basis)
                 if top and mine and abs(mine) >= 1 and (top > 0) == (mine > 0) \
-                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO):
+                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO) and not sure:
                     left.append(f"{basis} {table} {period}: Net Profit {top:g} against memory's profit {mine:g}")
                     continue
             column = period
@@ -269,6 +284,31 @@ def _rebuildable(e: dict) -> bool:
     return lab.get("by") == "file" and lab.get("rules", "screener_view") == "screener_view"
 
 
+def _screener_confirm(sink):
+    """scrip -> confirm(period, basis): Screener's stored quarterly Net Profit (restated_pdf.ScreenerStore over the stored pages),
+    or None for the whole run when the pages or the symbols cannot be read (the old checks then stand alone)."""
+    try:
+        from .company_master import stored_companies
+        from .restated_pdf import ScreenerStore
+        symbols = {c["scrip_code"]: c.get("symbol") for c in stored_companies(sink) if c.get("symbol")}
+        store = ScreenerStore(sink)
+    except Exception as exc:  # noqa: BLE001 - no confirmation is the old behaviour, never a stop
+        log.warning("statements-backfill: Screener pages not read (%s); memory's checks stand alone", exc)
+        return None
+
+    def confirm_for(scrip):
+        symbol = symbols.get(scrip)
+        if not symbol:
+            return None
+        def confirm(period, basis):
+            try:
+                return store.figure(symbol, basis, "pat", period)
+            except Exception:  # noqa: BLE001
+                return None
+        return confirm
+    return confirm_for
+
+
 def fill(dossier: dict, entries: list[dict], replace: bool = False) -> int:
     """Add the entries memory does not hold yet (in place); the number added. ``replace`` (statements-rebuild): an entry the stored
     facts rebuild is put back with the current recipes when its rows changed (owner, 31 Oct 2026: a recipe rule is site-wide, so
@@ -290,7 +330,7 @@ WRITE_WORKERS = 8   # companies written at once (each its own dossier and backup
 WORKERS = 24  # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone; run 2 at 8: 8.7 min)
 
 
-def _prepare(sink, scrip: str, at: str, lost: dict | None = None):
+def _prepare(sink, scrip: str, at: str, lost: dict | None = None, confirm_for=None):
     """One company read and worked out (no write): (read, merged, entries, left, segment rows added) or None when it has no dossier or facts."""
     read = sink.get_dossier(scrip)
     keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
@@ -298,7 +338,7 @@ def _prepare(sink, scrip: str, at: str, lost: dict | None = None):
         return None
     cf = sv.CompanyFacts(keys, sink.get_object)
     merged = json.loads(json.dumps(read))
-    entries, left = company_entries(cf, merged, at)
+    entries, left = company_entries(cf, merged, at, confirm_for(scrip) if confirm_for else None)
     segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
     stubs = drop_empty_balance(merged)
     covered, extra = drop_file_covered_balance(merged)
@@ -340,9 +380,11 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
            "backup": None, "error": None}
     at = now_iso()
 
+    confirm_for = _screener_confirm(sink)
+
     def safe(scrip):
         try:
-            return _prepare(sink, scrip, at, ratings), None
+            return _prepare(sink, scrip, at, ratings, confirm_for), None
         except Exception as exc:  # noqa: BLE001 - reported in order below, where it stops the run
             return None, exc
 

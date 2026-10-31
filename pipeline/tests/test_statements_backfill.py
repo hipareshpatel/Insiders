@@ -208,3 +208,12 @@ def test_replace_puts_back_a_file_entry_the_recipes_now_build_differently_and_le
     assert sb.fill(dossier, fresh, replace=True) == 2   # Q2FY27 replaced, Q3FY26 added
     got = {e["period"]: (e["rows"]["Operating Profit"], e["lab"]["by"]) for e in dossier["statements"]}
     assert got == {"Q2FY27": (2648.0, "file"), "Q1FY27": (3272.0, "card"), "Q4FY26": (2640.0, "file"), "Q3FY26": (2883.0, "file")}
+
+
+def test_screener_breaks_the_tie_when_memory_doubts_the_files_profit():
+    # CGPOWER Q2FY26: memory's AI-read profit 18.24, the file's 284.29, Screener's 284: the file's quarter goes in
+    assert sb._confirmed(lambda p, b: 284.0, "Q2FY26", "CONSOLIDATED", 284.29) is True
+    assert sb._confirmed(lambda p, b: 18.0, "Q2FY26", "CONSOLIDATED", 284.29) is False     # Screener sides with memory: stays out
+    assert sb._confirmed(lambda p, b: None, "Q2FY26", "CONSOLIDATED", 284.29) is False     # no page: the old check stands
+    assert sb._confirmed(None, "Q2FY26", "CONSOLIDATED", 284.29) is False
+    assert sb._confirmed(lambda p, b: 284.0, "FY26", "CONSOLIDATED", 284.29) is False      # a year: Screener's quarter page has none

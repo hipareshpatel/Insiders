@@ -625,6 +625,57 @@ def insurer_pl(r: _Reader, source: str = "") -> dict[str, Row]:
                                   else "missing ProfitLossAfterTaxAndExtraordinaryItems") + (f" [{source}]" if source else ""))}
 
 
+# ---- the profit-line rules, applied where the statements are written and again where they are read ----
+
+SLIP_MIN = 5.0     # Cr: a profit this far from PBT - tax, and on the other side of zero, is a slip
+SLIP_SHARE = 0.5
+
+
+def corrected_pl(rows: dict[str, float], fam: str) -> dict[str, float]:
+    """A quarter's or year's P&L values (row name -> number, as stored) with the profit lines made consistent; the same dict when nothing
+    changes. Three rules, each from a measured case (31 Oct 2026), in this order:
+    1. owners' profit against the whole profit and the minority's share: owners + minority must add up to Net Profit within
+       max(0.01 Cr, 0.5%) (the rule reit_results.read applies), else the owners' profit is the whole less the minority's. ATUL Q2FY26
+       consolidated, NSE's own file: profit 182.37, owners 87.95, minority 3.13 (Screener 182, Tijori 179.24 = 182.37 - 3.13), so
+       Q2FY27 showed +77.1% where the truth is about -13%.
+    2. with no minority row, an owners' profit of exactly 0 beside a non-zero net profit is a filler and the net profit is the owners'
+       (204 live quarters at 0: PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; nbfc_pl lacks corporate_pl's guard).
+    3. a corporate quarter whose profit is on the other side of zero from Profit before tax - Tax, and further from it than
+       max(5 Cr, half of it), has PBT - Tax as its profit (APARINDS Q1FY27: PAT -138.56 beside EBITDA 757.57; four other sites 467.45).
+       The corporate PBT already holds the associates' share, the regulatory deferral movement and the discontinued operations after tax
+       (corporate_pl) and Tax is the continuing tax, so PBT - Tax is the whole profit; the owners' is that less the minority's share
+       (without a minority row it is guarded only when it equals the whole). A genuine loss (same side of zero) stays. Other families
+       are not guarded: their PBT is not built the same way."""
+    owners, net, minority = rows.get("Net Profit (owners)"), rows.get("Net Profit"), rows.get("Minority share")
+    out = dict(rows)
+    if owners is not None and net is not None:
+        if minority is not None:
+            if abs(owners + minority - net) > max(0.01, abs(net) / 200):
+                out["Net Profit (owners)"] = round(net - minority, 2)
+        elif owners == 0 and net != 0:
+            out["Net Profit (owners)"] = net
+    pbt, tax = rows.get("Profit before tax"), rows.get("Tax")
+    if fam == CORPORATE and pbt is not None and tax is not None:
+        whole = round(pbt - tax, 2)
+        for row in ("Net Profit", "Net Profit (owners)"):
+            value = out.get(row)
+            if value is None:
+                continue
+            if row == "Net Profit":
+                expected = whole
+            else:
+                share = out.get("Minority share")
+                if share is None:
+                    share = 0.0 if value == out.get("Net Profit") else None
+                if share is None:
+                    continue
+                expected = round(whole - share, 2)
+            if value * expected < 0 and abs(value - expected) > max(SLIP_MIN, SLIP_SHARE * abs(expected)):
+                out[row] = expected
+    return out if out != rows else rows
+
+
+
 def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str = "") -> dict[str, Row]:
     if fam == BANK:
         return bank_pl(r, source)

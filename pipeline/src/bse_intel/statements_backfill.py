@@ -84,6 +84,7 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
             if not values:
                 continue
             if table in ("quarters", "annual"):
+                values = sv.corrected_pl(values, fam)   # the profit-line rules, as at the live write (screener_view.corrected_pl)
                 top = values.get("Net Profit")
                 mine = _memory_profit(dossier, period, basis)
                 if top and mine and abs(mine) >= 1 and (top > 0) == (mine > 0) \

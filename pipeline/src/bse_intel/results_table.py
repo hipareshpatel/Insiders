@@ -66,67 +66,8 @@ def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
                 and e.get("family") in LAYOUT and (e.get("lab") or {}).get("by") == "file"):
-            return _without_pat_slip(_owners_that_add_up(_without_filler_owners(e)))
+            return statements.corrected_entry(e)
     return None
-
-
-def _without_filler_owners(e: dict) -> dict:
-    """The entry with an owners' profit of exactly 0 beside a net profit that is not replaced by that net profit: a filler (measured
-    31 Oct 2026, the live table: 204 quarters at 0, e.g. PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; the NBFC template is
-    read without the corporate guard of screener_view); a listed parent's shareholders never own none of a profit. The owners' row is
-    kept, at the net profit, so a quarter whose owners' row is real still finds its year-ago base on the same row (Kaynes Q1FY27 PAT 56.43
-    against Q1FY26 74.61 had no YoY when the filler row was dropped)."""
-    rows = e.get("rows") or {}
-    if rows.get(fact_sheet.OWNERS) == 0 and rows.get("Net Profit") not in (None, 0):
-        return {**e, "rows": {**rows, fact_sheet.OWNERS: rows["Net Profit"]}}
-    return e
-
-
-def _owners_that_add_up(e: dict) -> dict:
-    """An owners' profit that does not add up with the minority's share to the whole profit is the whole profit less the minority's (the
-    rule reit_results.read applies, within max(0.01 Cr, 0.5%)). Measured 31 Oct 2026, ATUL Q2FY26 consolidated, NSE's own file
-    INTEGRATED_FILING_INDAS_1551863: ProfitLossForPeriod 182.37, owners 87.95, minority 3.13 (the owners' tag is a slip; Screener 182,
-    Tijori 179.24 = 182.37 - 3.13), so Q2FY27 showed +77.1% where the truth is about -13%. Without a minority row nothing says what the
-    owners' share should be, so the owners' row stays (a filler 0 is handled above, a wrong sign by the slip guard)."""
-    rows = e.get("rows") or {}
-    owners, minority, net = rows.get(fact_sheet.OWNERS), rows.get("Minority share"), rows.get("Net Profit")
-    if owners is None or minority is None or net is None or abs(owners + minority - net) <= max(0.01, abs(net) / 200):
-        return e
-    return {**e, "rows": {**rows, fact_sheet.OWNERS: round(net - minority, 2)}}
-
-
-SLIP_MIN = 5.0   # Cr: a profit this far from PBT - tax, and on the other side of zero, is a slip
-SLIP_SHARE = 0.5
-
-
-def _without_pat_slip(e: dict) -> dict:
-    """A corporate quarter whose profit line is on the other side of zero from Profit before tax - Tax, and further from it than
-    max(5 Cr, half of it), has PBT - Tax as its profit (measured 31 Oct 2026, live: APARINDS Q1FY27 PAT -138.56 beside EBITDA 757.57 and
-    revenue 6,591; four other sites show 467.45). The corporate PBT already holds the associates' share, the regulatory deferral
-    movement and the discontinued operations after tax (screener_view), and Tax is the continuing tax, so PBT - Tax is the whole profit;
-    the owners' profit is that less the minority's share (without a minority row it is guarded only when it equals the whole). A genuine
-    loss (same side of zero) stays. Other families are not guarded: their PBT is not built the same way."""
-    rows = e.get("rows") or {}
-    pbt, tax = rows.get("Profit before tax"), rows.get("Tax")
-    if e.get("family") != sv.CORPORATE or pbt is None or tax is None:
-        return e
-    whole = round(pbt - tax, 2)
-    fixed = dict(rows)
-    net = rows.get("Net Profit")
-    for row, expected in (("Net Profit", whole), (fact_sheet.OWNERS, None)):
-        value = rows.get(row)
-        if value is None:
-            continue
-        if expected is None:
-            minority = rows.get("Minority share")
-            if minority is None:
-                minority = 0.0 if value == net else None
-            if minority is None:
-                continue
-            expected = round(whole - minority, 2)
-        if value * expected < 0 and abs(value - expected) > max(SLIP_MIN, SLIP_SHARE * abs(expected)):
-            fixed[row] = expected
-    return e if fixed == rows else {**e, "rows": fixed}
 
 
 def _line(key: str, row: str, now: dict, before: dict) -> dict | None:

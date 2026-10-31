@@ -1642,7 +1642,7 @@ def cmd_keep_annual_pdfs(args, settings, sink) -> int:
     try:
         client = NseClient()
         client.warm_up()
-        out = ap.run(sink, client, symbols, args.year)
+        out = ap.run(sink, client, symbols, args.year, years=args.years)
     except SourceBlockedError as exc:
         logging.getLogger("bse_intel.annual_pdfs").error("NSE refused; stopping: %s", exc)
         return REFUSED
@@ -2960,6 +2960,7 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("keep-annual-pdfs", help="keep named companies' annual-report PDFs in R2, once (NSE, no AI)")
     p.add_argument("--symbols", help="comma-separated NSE symbols")
     p.add_argument("--year", help="the year the report ends, e.g. 2026 for FY26 (default: each company's newest)")
+    p.add_argument("--years", type=int, default=1, help="without --year: the newest N reports a company (default 1)")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_keep_annual_pdfs)
 

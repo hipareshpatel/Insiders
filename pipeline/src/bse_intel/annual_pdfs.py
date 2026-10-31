@@ -43,8 +43,13 @@ def newest_year(rows: list[dict]) -> str | None:
     return max(years) if years else None
 
 
-def run(sink, client, symbols: list[str], to_year: str | None = None) -> dict:
-    """``to_year`` None: each company's newest report."""
+def newest_years(rows: list[dict], n: int) -> list[str]:
+    years = sorted({str(x.get("toYr")) for x in rows or [] if str(x.get("toYr") or "").isdigit()}, reverse=True)
+    return years[:n]
+
+
+def run(sink, client, symbols: list[str], to_year: str | None = None, years: int = 1) -> dict:
+    """``to_year`` None: each company's newest ``years`` reports (owner, 31 Oct 2026: two or three a company to drill into a gap)."""
     out = {"symbols": len(symbols), "listed": 0, "stored_before": 0, "downloaded": 0, "missing": 0, "not_listed": [], "bytes": 0,
            "kept": []}
     for symbol in symbols:
@@ -52,7 +57,8 @@ def run(sink, client, symbols: list[str], to_year: str | None = None) -> dict:
         data = client._get(LIST, {"index": "equities", "symbol": symbol.upper()}).json()
         rows = data.get("data") if isinstance(data, dict) else data
         rows = rows if isinstance(rows, list) else []
-        urls = rows_for_year(rows, to_year or newest_year(rows) or "")
+        wanted = [to_year] if to_year else newest_years(rows, max(1, years))
+        urls = [u for y in wanted for u in rows_for_year(rows, y)]
         if not urls:
             out["not_listed"].append(symbol)
             continue

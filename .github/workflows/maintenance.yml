@@ -348,7 +348,7 @@ on:
         type: boolean
         default: false
       days:
-        description: fill-memory only - days of NSE's shareholding list to read (110 covers the last two quarters)
+        description: fill-memory only - days of NSE's shareholding list to read (110 covers the last two quarters); keep-annual-pdfs - the newest N annual reports a company
         type: string
         default: '110'
       limit:
@@ -634,9 +634,10 @@ jobs:
         if: inputs.command == 'keep-annual-pdfs'
         env:
           SCRIPS: ${{ inputs.scrips }}   # NSE symbols, comma-separated; through the environment, never pasted into the script
+          YEARS: ${{ inputs.days != '110' && inputs.days || '1' }}   # `days` reused: the newest N reports a company (default 1)
         run: |
           mkdir -p "$RUNNER_TEMP/annualpdf"
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel keep-annual-pdfs --symbols "$SCRIPS" --json "$RUNNER_TEMP/annualpdf/keep-annual-pdfs.json"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel keep-annual-pdfs --symbols "$SCRIPS" --years "${YEARS:-1}" --json "$RUNNER_TEMP/annualpdf/keep-annual-pdfs.json"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'keep-annual-pdfs'
         with:

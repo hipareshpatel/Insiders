@@ -39,3 +39,9 @@ def test_the_years_pdf_is_kept_once_and_never_fetched_again():
     again = Client()
     second = ap.run(sink, again, ["AMBUJACEM"], "2026")
     assert again.fetched == [] and second["stored_before"] == 1
+
+
+def test_the_newest_n_years_are_the_distinct_report_years_newest_first():
+    rows = [{"toYr": "2026", "fileName": "a.pdf"}, {"toYr": "2024", "fileName": "c.pdf"}, {"toYr": "2025", "fileName": "b.pdf"},
+            {"toYr": "2026", "fileName": "a2.pdf"}, {"toYr": ""}]
+    assert ap.newest_years(rows, 3) == ["2026", "2025", "2024"] and ap.newest_years(rows, 1) == ["2026"]

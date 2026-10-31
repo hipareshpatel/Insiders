@@ -7,7 +7,7 @@ import pytest
 
 import json
 import time
-from datetime import timedelta
+from datetime import date, timedelta
 
 import pymupdf
 from conftest import FakeProvider, api_error, openai
@@ -1374,7 +1374,8 @@ def test_release_catch_up_re_makes_the_card_with_the_release_and_clears_the_entr
     monkeypatch.setenv("RESULTS_PRESS_RELEASE", "1")
     pipeline, sink, fake, statement, release = _release_setup(settings)
     pipeline.bse.filings = [pipeline.bse.filings[0]]   # discovery sees the statement only
-    pipeline.discover(now_ist().date())
+    # the statement's own day, not today: filed three hours ago, it is yesterday's between 00:00 and 03:00 IST (CI red on #305, 01:47 IST)
+    pipeline.discover(date.fromisoformat(statement.filing_date))
     pipeline.process("2000-01-01", "2100-01-01", time.monotonic() + 60, bulk=False)
     assert rows(sink, "select status from filings where news_id = 'r-1'")[0]["status"] == "ANALYZED"
     out = pipeline.analyze(release)

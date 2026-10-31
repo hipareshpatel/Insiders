@@ -47,8 +47,18 @@ def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
                 and e.get("family") in LAYOUT and (e.get("lab") or {}).get("by") == "file"):
-            return e
+            return _without_filler_owners(e)
     return None
+
+
+def _without_filler_owners(e: dict) -> dict:
+    """The entry without an owners' profit of exactly 0 beside a net profit that is not: a filler (measured 31 Oct 2026, the live
+    table: 204 quarters at 0, e.g. PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; the NBFC template is read without the
+    corporate guard of screener_view); a listed parent's shareholders never own none of a profit. The net profit is then the line."""
+    rows = e.get("rows") or {}
+    if rows.get(fact_sheet.OWNERS) == 0 and rows.get("Net Profit") not in (None, 0):
+        return {**e, "rows": {k: v for k, v in rows.items() if k != fact_sheet.OWNERS}}
+    return e
 
 
 def _line(key: str, row: str, now: dict, before: dict) -> dict | None:

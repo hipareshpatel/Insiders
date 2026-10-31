@@ -64,7 +64,7 @@ def test_no_sheet_when_memory_lacks_the_quarter_or_the_rows_are_not_a_corporate_
     pdf_read = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 150.0), by="pdf")]}
     assert fs.fact_sheet(pdf_read, "Q2FY27") is None                          # only file-labelled rows count
     bank = {"statements": [_entry("Q2FY27", {"Revenue": 9.0, "Financing Profit": 3.0, "Net Profit": 2.0}, family="bank")]}
-    assert fs.fact_sheet(bank, "Q2FY27") is None
+    assert fs.fact_sheet(bank, "Q2FY27", lenders=False) is None             # a bank is the lenders switch's (test_fact_sheet_lenders)
 
 
 def test_a_missing_comparative_gives_no_change_and_a_loss_gives_a_turn_not_a_percent():

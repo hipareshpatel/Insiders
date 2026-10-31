@@ -32,7 +32,7 @@ from itertools import permutations
 
 from .metrics import CONSOLIDATED, STANDALONE
 
-READER = 5      # 5: "1937 ,74 ,81" (Bank of Maharashtra); 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read; 4: "000's
+READER = 6      # 6: "(Amount in < thousand)"; 5: "1937 ,74 ,81" (Bank of Maharashtra); 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read; 4: "000's
 #                 Omitted", "31st-Mar-2024", "31-Mar-25" (31 Oct 2026); an empty reading of an older reader is read again
 PREFIX = "raw/bank-pdf/"        # + <scrip>/<report file name>.json: what ``read`` found in one report (bank-pdf-read)
 TOL = 1.0                       # crore: the file's figure and the report's agree within this (screener_view.ABS_TOL)
@@ -71,8 +71,9 @@ def figures(line: str) -> list[float] | None:
     return out
 
 
-# "(000's Omitted)": Bank of India, Central Bank (bank-pdf-read run 41205954270)
-_UNITS = ((re.compile(r"0{3}\s*[’'‘]?\s*s?\s*omitted|in\s*[‘'’`]?\s*0{3}|0{3}\s*[’'‘]?\s*s?\s*\)|in\s+thousands?", re.I), 1e-4),
+# "(000's Omitted)": Bank of India, Central Bank (bank-pdf-read run 41205954270); "(Amount in < thousand)": Bank of Maharashtra
+# FY26, the rupee sign read as "<" (run 41207426627)
+_UNITS = ((re.compile(r"0{3}\s*[’'‘]?\s*s?\s*omitted|in\s*[‘'’`]?\s*0{3}|0{3}\s*[’'‘]?\s*s?\s*\)|in\s*[<₹`]?\s*thousands?", re.I), 1e-4),
           (re.compile(r"in\s+lakhs?|lakhs?\s*\)|lacs?\s*\)", re.I), 1e-2),
           (re.compile(r"in\s+millions?|millions?\s*\)", re.I), 1e-1),
           (re.compile(r"in\s+crores?|crores?\s*\)|[₹`]\s*crores?|rs\.?\s*crores?", re.I), 1.0))

@@ -68,7 +68,7 @@ export function Histogram({ summary, active, onPick, turnaround, onTurnaround, h
           {slot && (
             <span className="absolute top-6 flex -translate-x-1/2 flex-col items-center whitespace-nowrap text-[12.5px] text-ink"
               style={{ left: `${((slot.bin + slot.frac) / 4) * 100}%` }}>
-              <span aria-hidden className="text-[10px] leading-none">▲</span>
+              <span aria-hidden className="text-[11px] leading-none">▲</span>
               <span>Median <b className="num">{fmtPct(summary.median_pat_yoy)}</b></span>
             </span>
           )}
@@ -117,7 +117,7 @@ export function LineChart({ series, labels, w = 424, h = 230 }: {
       {ticks.map((t) => (
         <g key={t}>
           <line x1={L} x2={w - R} y1={ys(t)} y2={ys(t)} stroke={t === 0 ? "var(--line-strong)" : "var(--line)"} />
-          <text x={L - 8} y={ys(t) + 4} textAnchor="end" fontSize={11} fill="var(--ink-3)">{`${t}%`}</text>
+          <text x={L - 8} y={ys(t) + 4} textAnchor="end" fontSize={11} fill="var(--ink-3)">{t > 0 ? `+${t}%` : t < 0 ? `−${Math.abs(t)}%` : "0%"}</text>
         </g>
       ))}
       {labels.map((q, i) => (i % 2 === 1 || i === labels.length - 1) && (

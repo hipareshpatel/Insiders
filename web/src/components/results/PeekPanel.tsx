@@ -1,11 +1,11 @@
 import { AlertTriangle, ArrowRight, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { Link } from "wouter";
 import type { KpiRow } from "../../../shared/resultsTypes";
 import { industryLine } from "../../../shared/industry";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
-import { fmtPct, lineLabels, paceSentence, quarterLabel, quarterSeries } from "../../lib/resultsView";
+import { fmtMargin, fmtPct, lineLabels, paceSentence, quarterLabel, quarterSeries } from "../../lib/resultsView";
 import { Avatar } from "../Avatar";
 import { Growth } from "./bits";
 import { LineChart } from "./charts";
@@ -19,11 +19,12 @@ const KIND_NOTE: Record<KpiRow["kind"], string | null> = {
   invit: "InvITs: revenue, operating profit and profit as the trust files them; left out of EBITDA medians and totals. Cash distributions are not shown yet.",
 };
 
-function Tile({ label, value, turn, amount }: { label: string; value: number | null; turn?: KpiRow["pat_turn"]; amount: number | null }) {
+function Tile({ label, value, turn, amount, title }: { label: string; value: number | null; turn?: KpiRow["pat_turn"]; amount: number | null; title?: string }) {
+  // min-w-0 and a value that may wrap: "Loss → profit" ran past the tile at 480 px (audit 31 Oct 2026)
   return (
-    <div className="rounded-xl bg-surface-2 px-3.5 py-2.5">
-      <div className="text-[13px] text-ink-2">{label}</div>
-      <div className="mt-0.5 text-[20px] font-bold tracking-[-0.01em] sm:text-[22px]"><Growth value={value} turn={turn} /></div>
+    <div className="min-w-0 rounded-xl bg-surface-2 px-3 py-2.5 sm:px-3.5">
+      <div className="text-[13px] text-ink-2" title={title}>{label}</div>
+      <div className="mt-0.5 text-[18px] font-bold leading-tight tracking-[-0.01em] sm:text-[20px]"><Growth value={value} turn={turn} className="whitespace-normal break-words" /></div>
       <div className="num mt-0.5 text-[13px] text-ink-3">{cr(amount)}</div>
     </div>
   );
@@ -34,9 +35,29 @@ function Tile({ label, value, turn, amount }: { label: string; value: number | n
 export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }) {
   const ref = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const opener = useRef<Element | null>(typeof document === "undefined" ? null : document.activeElement);
+  const rowKey = row.symbol || row.scrip_code;
   useEffect(() => { closeRef.current?.focus({ preventScroll: true }); }, [row.scrip_code]);
+  // closing hands focus back to the row's quick-look button (else to whatever opened the panel)
+  useEffect(() => () => {
+    const btn = document.querySelector<HTMLElement>(`[aria-label="Quick look at ${CSS.escape(rowKey)}"]`);
+    const back = btn ?? (opener.current instanceof HTMLElement && opener.current.isConnected ? opener.current : null);
+    back?.focus({ preventScroll: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
-    const key = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { onClose(); return; }
+      if (e.key !== "Tab" || !ref.current) return;
+      // a small focus trap: Tab and Shift+Tab stay inside the dialog
+      const items = [...ref.current.querySelectorAll<HTMLElement>("a[href],button:not([disabled])")];
+      if (!items.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      else if (!ref.current.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    };
     document.addEventListener("keydown", key);
     return () => document.removeEventListener("keydown", key);
   }, [onClose]);
@@ -44,13 +65,15 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
   const name = row.company_name ?? row.symbol ?? row.scrip_code;
   const q = quarterLabel(row.period);
   return (
-    <aside ref={ref} role="dialog" aria-modal="false" aria-label={`${name}: results`}
+    <>
+    <div aria-hidden onClick={onClose} className="fixed inset-0 z-30 hidden bg-black/10 sm:block" />
+    <aside ref={ref} role="dialog" aria-modal="true" aria-labelledby={titleId}
       className="fixed inset-y-0 right-0 z-40 flex w-full flex-col bg-surface shadow-[-1px_0_0_var(--line-strong),-30px_0_60px_-40px_rgba(20,30,50,0.25)] sm:w-[480px]">
       <div className="flex-1 overflow-y-auto px-5 pb-6 pt-6 sm:px-7">
         <div className="flex items-center gap-3">
           <Avatar name={name} symbol={row.symbol} size={40} className="rounded-xl text-[16px]" />
           <div className="min-w-0">
-            <h2 className="truncate text-[20px] font-bold tracking-[-0.01em] text-ink">{name}</h2>
+            <h2 id={titleId} className="truncate text-[20px] font-bold tracking-[-0.01em] text-ink">{name}</h2>
             <p className="truncate text-[13px] text-ink-3">{row.symbol ?? row.scrip_code} · {industryLine(row.industry) ?? "Unclassified"}{row.basis === "STANDALONE" ? " · standalone" : ""}</p>
           </div>
           <button ref={closeRef} type="button" onClick={onClose} aria-label="Close"
@@ -63,7 +86,7 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
           {labels.revenue ? <Tile label={labels.revenue} value={row.revenue_yoy} amount={row.revenue} /> : <NoTile label="Revenue" note="not for insurers" />}
           {labels.ebitda ? <Tile label={labels.ebitda} value={row.ebitda_yoy} turn={row.ebitda_turn} amount={row.ebitda} />
             : <NoTile label="EBITDA" note={row.kind === "bank" ? "not for banks" : "not for insurers"} />}
-          <Tile label="Profit (PAT)" value={row.pat_yoy} turn={row.pat_turn} amount={row.pat} />
+          <Tile label="Profit (PAT)" title="PAT: profit after tax" value={row.pat_yoy} turn={row.pat_turn} amount={row.pat} />
         </div>
         <p className="mt-2 text-[13px] text-ink-3">{q} vs the same quarter a year ago</p>
 
@@ -94,8 +117,10 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
             <dt className="text-ink-2">{labels.margin ? `${labels.margin} change` : "Margin change"}</dt>
             <dd className="text-right">
               {labels.margin && row.opm_yoy_bps != null
-                ? <><Growth value={row.opm_yoy_bps} unit="bp" /> <span className="text-ink-3">to {row.opm == null ? "—" : `${row.opm.toFixed(1)}%`}</span></>
-                : <span className="text-ink-3">—</span>}
+                ? <><Growth value={row.opm_yoy_bps} unit="bp" /> <span className="text-ink-3">to {fmtMargin(row.opm)}</span></>
+                : labels.margin && row.opm != null && (row.ebitda_yoy != null || row.ebitda_turn != null)
+                  ? <span className="font-semibold text-ink-2" title="Not meaningful: a margin outside −100%…+100%, or a loss in the base period">NM <span className="font-normal text-ink-3">to {fmtMargin(row.opm)}</span></span>
+                  : <span className="text-ink-3">—</span>}
             </dd>
             <dt className="text-ink-2">Market cap</dt><dd className="num text-right text-ink">{cr(row.market_cap_cr)}</dd>
             <dt className="text-ink-2">Filed</dt>
@@ -121,14 +146,15 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
         )}
       </div>
     </aside>
+    </>
   );
 }
 
 function NoTile({ label, note }: { label: string; note: string }) {
   return (
-    <div className="rounded-xl bg-surface-2 px-3.5 py-2.5">
+    <div className="min-w-0 rounded-xl bg-surface-2 px-3 py-2.5 sm:px-3.5">
       <div className="text-[13px] text-ink-2">{label}</div>
-      <div className="mt-0.5 text-[22px] font-bold text-ink-3">—</div>
+      <div className="mt-0.5 text-[20px] font-bold text-ink-3">—</div>
       <div className="mt-0.5 text-[13px] text-ink-3">{note}</div>
     </div>
   );

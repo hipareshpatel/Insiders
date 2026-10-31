@@ -264,7 +264,7 @@ def test_how_many_fixture_filings_fill_each_second_group_key():
         for k in (xbrl_extras.read(doc) if doc else {}):
             if k in got:
                 got[k] += 1
-    assert got == {"oci": 9, "discontinued": 0, "segment_balance": 7, "dividends": 11, "kmp_pay": 2, "contingent_liabilities": 3}
+    assert got == {"oci": 9, "discontinued": 0, "segment_balance": 8, "dividends": 12, "kmp_pay": 2, "contingent_liabilities": 3}
 
 
 def test_the_second_group_is_remembered_replaced_capped_and_backfilled(settings):

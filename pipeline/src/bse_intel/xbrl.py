@@ -349,7 +349,41 @@ def _contexts(root) -> dict[str, dict]:
             elif name == "typedMember":   # its value is a child element's text ("MutualFundsOrUTI_Context15")
                 info["dims"][_local(el.get("dimension", ""))] = "".join(el.itertext()).strip().rsplit(":", 1)[-1]
         out[ctx.get("id")] = info
+    _undeclared_legacy(root, out)
     return out
+
+
+_LEGACY_IDS = ("OneD", "FourD", "OneI")
+
+
+def _undeclared_legacy(root, contexts: dict[str, dict]) -> None:
+    """Some of NSE's banking files before the integrated filing tag their figures to "OneD", "FourD" and "OneI" and never
+    declare those contexts (Bank of Maharashtra's Q4FY23, BANKING_90815: only the segment contexts are declared, so 64
+    of 234 facts were read and the year's interest earned, profit and cash flow were lost; 25 banks' March 2023 files,
+    31 Oct 2026). Their dates come from the file's own: the quarter of three months to the reporting date, the year to
+    date from the financial year's start, the balance at the reporting date."""
+    refs = {el.get("contextRef") for el in root.iter() if el.get("contextRef") in _LEGACY_IDS}
+    missing = [ctx for ctx in _LEGACY_IDS if ctx in refs and ctx not in contexts]
+    if not missing:
+        return
+    dates = {}
+    for el in root.iter():
+        name = _local(el.tag)
+        if name in ("DateOfEndOfReportingPeriod", "DateOfStartOfFinancialYear") and el.text and name not in dates:
+            try:
+                dates[name] = date.fromisoformat(el.text.strip()[:10])
+            except ValueError:
+                pass
+    end = dates.get("DateOfEndOfReportingPeriod")
+    if end is None:
+        return
+    month = end.month - 2 if end.month > 2 else end.month + 10
+    quarter_start = date(end.year if end.month > 2 else end.year - 1, month, 1)
+    fy_start = dates.get("DateOfStartOfFinancialYear") or date(end.year if end.month >= 4 else end.year - 1, 4, 1)
+    made = {"OneD": {"startDate": quarter_start, "endDate": end}, "FourD": {"startDate": fy_start, "endDate": end},
+            "OneI": {"instant": end}}
+    for ctx in missing:
+        contexts[ctx] = {"dims": {}, **made[ctx]}
 
 
 def _units(root) -> dict[str, str]:

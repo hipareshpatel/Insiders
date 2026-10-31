@@ -1,0 +1,23 @@
+name: Screener weekly check
+
+# TODO 149 (owner, 31 Oct 2026: "Yes, weekly"): every Sunday the Maintenance screener-rows check runs on the 500 largest
+# companies on main; its step "Screener rows against the previous run on main" reports the rows that broke or mended since
+# the last run and warns when a row class lost 5 or more exact pairs. Reads only: no NSE request, no AI, no write. $0.
+
+on:
+  schedule:
+    - cron: "41 2 * * 0"   # Sunday 08:11 IST
+  workflow_dispatch:
+
+permissions:
+  actions: write   # starts the Maintenance run
+
+jobs:
+  start:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start screener-rows on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: gh workflow run maintenance.yml --repo "$REPO" --ref main -f command=screener-rows -f limit=500

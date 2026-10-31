@@ -537,7 +537,9 @@ def test_requeue_by_id_takes_a_backup_first_and_requeues_nothing_when_it_does_no
     assert cmd_requeue_failed(args, SimpleNamespace(max_attempts=3), sink) == 0
     (folder,) = _backups(sink)
     assert folder.startswith("requeue-") and "no after-state: restore it only with --force" in capsys.readouterr().out
-    assert sink.seen[-1][0] == "filings_update" and f"backup/{folder}/cards/00001.json" in sink.seen[-1][1]
+    update = next(op for op in reversed(sink.seen) if op[0] == "filings_update")
+    assert f"backup/{folder}/cards/00001.json" in update[1]
+    assert sink.seen[-1][0] == "kv_set"     # then the companies of the named filings go first in the history queue
     bad = _store(settings.__class__(**{**settings.__dict__, "local_dir": settings.local_dir.parent / "bad"}), BadReadback)
     bad.seen = []
     bad.execute = lambda statement, rows: bad.seen.append(statement)

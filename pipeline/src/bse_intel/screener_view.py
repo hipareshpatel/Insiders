@@ -1205,7 +1205,14 @@ class CompanyFacts:
             return near
         if q4 is not None and holds(q4):           # a Q4 file without the year's balance sheet (HAL, NTPC FY22) is no source for it
             return q4, f"results file Q4{fy}", None
-        return holding(list(range(2, 100))) or (q4, f"results file Q4{fy}", None)   # the nearest later report first
+        # a report two or more years later counts for a balance sheet only with the year's equity in it: a stray Assets fact in a
+        # note is no sheet (JSL and Jindal SAW FY22 from their FY24 reports, UltraTech FY20 from FY22: Borrowings 0 against
+        # screener's 4,007 / 6,031 / 23,019, run 41182762968)
+        late = holding(list(range(2, 100)))
+        if late is not None and instant and late[0].cr("EquityShareCapital", instant=end) is None and \
+                late[0].cr("Equity", instant=end) is None:
+            late = None
+        return late or (q4, f"results file Q4{fy}", None)   # the nearest later report first
 
 
 def _fy_num(fy: str) -> int:

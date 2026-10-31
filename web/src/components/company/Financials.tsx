@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import type { Dossier } from "../../../shared/types";
 import { cn } from "../../lib/cn";
 import {
-  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, screenerTable, statementDate, statementMetrics, statementSheets, withRestated, type Table,
+  formatCell, growth, isBank, mainBasis, ratioTable, screenerTable, statementDate, statementMetrics, statementSheets, withRestated, type Table,
 } from "./statements";
 import { Panel } from "./Panel";
 
@@ -11,8 +11,8 @@ import { Panel } from "./Panel";
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
   "November", "December"];
 
-// TODO 52 / F210: screener's own formulas for the lines (statements.ts `screener`); build-time switch, default off
-const SCREENER_LINES = (import.meta.env?.VITE_SCREENER_LINES ?? "") === "1";
+// a company without stored statements (TODO 150)
+const NOT_BUILT = "Not built from the exchange's files yet for this company: it appears once its results XBRL is read by the same rules as every other company";
 
 export function Financials({ dossier }: { dossier: Dossier }) {
   // consolidated and standalone, as screener.in switches them (owner, 2026-10-21); memory's main figures are the
@@ -29,12 +29,12 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   // screener's tables by its rules from the exchange's files when memory holds them (owner, 30 Oct 2026: "our stock page
   // having financial statements will be saved as per screener"); else the lines worked out from memory's figures, as before
   const stBasis = useAlone ? "STANDALONE" : (main ?? "CONSOLIDATED");
-  const pick = (t: Table, fallback: () => Table) => (t.columns.length ? t : fallback());
-  const quarterly = pick(withRestated(screenerTable(dossier.statements, stBasis, "quarters", 12), dossier.restated_figures, stBasis),
-    () => quarterlyTable(metrics, SCREENER_LINES));
-  const annual = pick(screenerTable(dossier.statements, stBasis, "annual", 6), () => annualTable(metrics, SCREENER_LINES));
-  const balance = pick(screenerTable(dossier.statements, stBasis, "balance", 8), () => balanceTable(sheets, SCREENER_LINES));
-  const cash = pick(screenerTable(dossier.statements, stBasis, "cash_flow", 6), () => cashFlowTable(metrics));
+  // only the stored statements, by screener's rules (owner, 31 Oct 2026, TODO 150: no tables worked out by the old rules); a
+  // company without them shows a short note instead
+  const quarterly = withRestated(screenerTable(dossier.statements, stBasis, "quarters", 12), dossier.restated_figures, stBasis);
+  const annual = screenerTable(dossier.statements, stBasis, "annual", 6);
+  const balance = screenerTable(dossier.statements, stBasis, "balance", 8);
+  const cash = screenerTable(dossier.statements, stBasis, "cash_flow", 6);
   // growth boxes and ratios read the same statements (owner, 31 Oct 2026: one source for the whole site)
   const figures = statementMetrics(dossier.statements, stBasis, metrics);
   const ratios = ratioTable(figures, statementSheets(dossier.statements, stBasis, sheets));
@@ -65,11 +65,11 @@ export function Financials({ dossier }: { dossier: Dossier }) {
           ))}
         </div>
       )}
-      <Statement title="Quarterly results" t={quarterly} label={statementDate} sub={sub}
+      <Statement title="Quarterly results" t={quarterly} label={statementDate} sub={sub} empty={NOT_BUILT}
         footer={quarterly.rows.some((r) => r.restated?.some(Boolean)) && (
           <p className="mt-3 text-[12px] text-ink-3"><sup>R</sup> Restated: the figure a later results filing gives for that quarter, as Screener shows it. Hover for the figure first filed.</p>
         )} />
-      <Statement title="Profit & loss" t={annual} label={(p) => (p === "TTM" ? "TTM" : statementDate(p))} sub={sub}
+      <Statement title="Profit & loss" t={annual} label={(p) => (p === "TTM" ? "TTM" : statementDate(p))} sub={sub} empty={NOT_BUILT}
         footer={boxes.length > 0 && (
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {boxes.map((b) => (

@@ -399,3 +399,13 @@ def test_a_profit_on_the_wrong_side_of_pbt_less_tax_is_a_slip_and_a_genuine_loss
     # a minority share that turns the owners' profit negative is not a slip
     minority = {"statements": [_slip("Q1FY27", 30.0, 10.0, 20.0, owners=-8.0, minority=28.0)]}
     assert rt.company_tables(minority)["Q1FY27"]["pat"]["value"] == -8.0
+
+
+def test_primesecu_like_nbfc_quarters_find_their_bases_beside_filler_owners_rows():
+    # measured 31 Oct 2026, live: PRIMESECU Q1FY27 3.49 vs Q1FY26 10.48 and Q4FY26 -10.93 vs Q4FY25 0.80 had no change at all: the
+    # current quarters carry a real owners' row, the older ones a filler 0 that used to be dropped
+    memory = {"statements": [_entry("Q4FY26", _rows(30.2, 5.0, -12.0, -10.93, owners=-10.93), family="nbfc"),
+                             _entry("Q4FY25", _rows(12.33, 2.0, 1.0, 0.8, owners=0.0), family="nbfc"),
+                             _entry("Q3FY26", _rows(30.18, 6.0, 3.0, 2.1, owners=0.0), family="nbfc")]}
+    pat = rt.company_tables(memory)["Q4FY26"]["pat"]
+    assert (pat["prev_year"], pat["yoy_turn"], pat["prev_quarter"] if "prev_quarter" in pat else None, pat["qoq_turn"]) == (0.8, "PROFIT_TO_LOSS", None, "PROFIT_TO_LOSS")

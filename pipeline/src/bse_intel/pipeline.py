@@ -111,6 +111,7 @@ SLICE_S = 180            # older work between two looks for today's new filings 
 BACKFILL_SLICE_S = 600   # the backfill's slices: its filings share Gemini requests (packs wait up to 180 s), and a
                          # slice end sends the open packs part-full; shorter slices would spend more free requests
 DEADLINE_GRACE_S = 240   # a filing started before the deadline may finish within this
+RESULTS_QUARTER_DAYS = 100   # a results PDF comes at most this long after its quarter ends (SEBI: 45 days, 60 for Q4; slack for revisions)
 RESULTS_CATCH_UP_S = 600  # the results XBRL catch-up's own window when the live share is used up (30 Oct 2026)
 PAUSE_CHECK_S = 60       # how often a running pipeline looks for the nightly pause (pause.py)
 RETURNING_PER_RUN = 5   # companies back in the universe whose set-aside filings one run looks up again
@@ -2896,11 +2897,17 @@ class Pipeline:
         timely = [link for link in links if -2 <= (date.fromisoformat(link.filed_at[:10]) - day).days <= 45]
         if timely:
             return max(timely, key=lambda link: link.filed_at)
-        # a file filed later than 45 days can still be this filing's (a late one); one filed well before the PDF never is:
-        # QUESS's Q2FY27 card of 30 Oct 2026 (nse-106837502) took its Q1FY27 file of 29 Jul, so the whole card, table and
-        # headline, was the earlier quarter's (blind check of the fact-sheet cards, 31 Oct)
-        later = [link for link in links if (date.fromisoformat(link.filed_at[:10]) - day).days > 45]
-        return min(later, key=lambda link: link.filed_at) if later else None
+        # never a quarter that ended more than RESULTS_QUARTER_DAYS before the PDF, nor after it: QUESS's Q2FY27 card of 30 Oct 2026
+        # (nse-106837502) took its Q1FY27 file of 29 Jul (a quarter ended 122 days before), so the whole card, table and headline,
+        # was the earlier quarter's (blind check of the fact-sheet cards, 31 Oct). A same-quarter file filed weeks before a
+        # re-filed or corrected PDF is still taken (review of the first fix).
+        from .memory_gaps import quarter_end
+
+        def plausible(link) -> bool:
+            end = quarter_end(link.period) if link.period else None
+            return end is None or 0 <= (day - end).days <= RESULTS_QUARTER_DAYS
+        links = [link for link in links if plausible(link)]
+        return min(links, key=lambda link: link.filed_at) if links else None
 
     @stages.timed("xbrl")
     def _standalone_file(self, filing: Filing, tagged):

@@ -30,6 +30,11 @@ def test_a_file_filed_months_before_the_pdf_is_never_its_results_file(monkeypatc
     me = SimpleNamespace(_results_links=lambda f: [_link("Q1FY27", "2026-07-29T12:00:00+05:30")])
     monkeypatch.setattr(pl, "statement_quarter", lambda text, at: "Q1FY27")
     assert Pipeline._results_xbrl_link(me, filing, "") is None
+    # a same-quarter file filed weeks before a re-filed PDF is still taken (review of the first fix)
+    refiled = SimpleNamespace(filed_at="2026-11-25T10:00:00+05:30", news_id="n", scrip_code="539978", symbol="QUESS")
+    me = SimpleNamespace(_results_links=lambda f: [_link("Q2FY27", "2026-10-30T18:30:00+05:30")])
+    monkeypatch.setattr(pl, "statement_quarter", lambda text, at: "Q2FY27")
+    assert Pipeline._results_xbrl_link(me, refiled, "").period == "Q2FY27"
     # the quarter's own file filed with the PDF is still taken, and a late one (over 45 days after) too
     me = SimpleNamespace(_results_links=lambda f: [_link("Q2FY27", "2026-10-30T18:30:00+05:30")])
     monkeypatch.setattr(pl, "statement_quarter", lambda text, at: "Q2FY27")

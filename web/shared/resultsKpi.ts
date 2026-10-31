@@ -13,14 +13,16 @@ const MAX_OFFSET = 10_000;
 /** The most filtered rows the summary reads (a quarter holds about 2,800 companies, so this is never reached in practice). */
 export const SUMMARY_CAP = 5000;
 
-/** The columns a sort may name; the value is the SQL it orders by (growth sorts on the key that ranks a turn across a loss; momentum is
- *  this quarter's growth minus last quarter's, null when either is missing). */
+/** The columns a sort may name; the value is the SQL it orders by (growth sorts on the per cent only, so a named turn across a loss has
+ *  none and lands after every row with a %, either direction, as the QoQ sorts already did: measured 31 Oct 2026, the default list
+ *  opened with 15 "Loss → profit" rows; the turnaround filter still finds them; momentum is this quarter's growth minus last
+ *  quarter's, null when either is missing). */
 export const KPI_SORTS = {
   company: "co.company_name COLLATE NOCASE",
   mcap: "co.market_cap_cr",
   revenue_yoy: "k.revenue_yoy",
-  ebitda_yoy: "k.ebitda_key",
-  pat_yoy: "k.pat_key",
+  ebitda_yoy: "k.ebitda_yoy",
+  pat_yoy: "k.pat_yoy",
   opm_yoy_bps: "k.opm_yoy_bps",
   revenue_qoq: "k.revenue_qoq",
   ebitda_qoq: "k.ebitda_qoq",

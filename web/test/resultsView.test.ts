@@ -2,9 +2,9 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import {
-  activeChips, arrowOf, barHeight, bestInEight, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
-  medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, progressText, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
-  KIND_TAG, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, type Seg,
+  activeChips, arrowOf, barHeight, bestInEight, coverageOf, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
+  medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
+  KIND_TAG, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, type Seg,
 } from "../src/lib/resultsView.ts";
 import { EMPTY_SUMMARY, groupsResponse, ROWS, SUMMARY } from "./fixtures/resultsFixture.ts";
 
@@ -59,6 +59,10 @@ test("momentum: +2 points speeds up, -2 slows, between is steady", () => {
 test("the season's headline and lines are templates over the summary", () => {
   assert.equal(text(seasonHeadline(SUMMARY)), "Of 236 companies that have reported, 175 grew profit; median profit growth +13.9%.");
   assert.equal(text(seasonHeadline(EMPTY_SUMMARY)), "No company has reported for this quarter yet.");
+  // a company with no year-ago quarter is reported but not in the base of "grew" (C1)
+  assert.equal(text(seasonHeadline({ ...SUMMARY, n: 611, pat_n: 611, pat_of: 553, pat_up: 401 })),
+    "Of 553 companies with a year-ago quarter to compare (611 reported), 401 grew profit; median profit growth +13.9%.");
+  assert.match(text(seasonHeadline({ ...SUMMARY, n: 1772, pat_n: 1772, pat_of: 1500, pat_up: 1127 })), /^Of 1,500 companies with a year-ago quarter to compare \(1,772 reported\), 1,127 grew/);
   assert.equal(text(seasonHeadline({ ...SUMMARY, median_pat_yoy: null })), "Of 236 companies that have reported, 175 grew profit.");
   assert.match(text(seasonHeadline({ ...SUMMARY, n: 12 }, true)), /^Of 12 companies in this list/);
   const idx = groupsResponse("index").rows;
@@ -66,8 +70,8 @@ test("the season's headline and lines are templates over the summary", () => {
   assert.deepEqual(lines, [
     "Profit grew faster than sales: median revenue growth +11.8%, EBITDA +14.6%.",
     "118 are speeding up, growing profit faster than last quarter; 98 are slowing.",
-    "Nifty Midcap 150 leads: its median profit growth is +19.4%, against +12.1% in the Nifty 50.",
-    "61 companies (26%) earned less than a year ago; 7 of 8 indices show their best median in 8 quarters.",
+    "Nifty Midcap 150 leads: its median profit growth is +19.4% (130 of 149 reported), against +12.1% in the Nifty 50 (41 of 50 reported).",
+    "61 companies (26%) earned less than a year ago; 7 of 7 indices (with at least 80% of members reported) show their best median in 8 quarters.",
   ]);
   // without the groups, the index parts are left out, not guessed
   assert.deepEqual(seasonLines(SUMMARY).map(text).slice(2), ["61 companies (26%) earned less than a year ago."]);
@@ -76,7 +80,18 @@ test("the season's headline and lines are templates over the summary", () => {
 
 test("groups in words", () => {
   const idx = groupsResponse("index").rows;
-  assert.equal(bestInEight(idx), 7);   // every index but Nifty Next 50 is at its 8-quarter high this quarter
+  assert.equal(bestInEight(idx), 7);   // Nifty Next 50 (22 of 50 reported) is not counted; the other 7 are all at their 8-quarter high
+  // an index with under 80% of its members reported is not compared with full seasons (measured 31 Oct 2026: Midcap 150 on 80 of 150)
+  const mid = idx.find((r) => r.id === "MIDCAP150")!;
+  assert.equal(bestInEight([mid]), 1);
+  assert.equal(bestInEight([{ ...mid, reported: 80, of: 150 }]), 0);
+  assert.deepEqual(wellCovered([mid, { ...mid, reported: 80, of: 150 }, { ...mid, reported: 5, of: null }]).length, 2);   // no member list: kept
+  assert.equal(coverageOf({ reported: 32, of: 50 }), " (32 of 50 reported)");
+  assert.equal(coverageOf({ reported: 32, of: null }), "");
+  assert.equal(medianNote({ median_pat_n: 511, pat_turn_n: 51 }),
+    "Median of 511 companies with a % change; 51 whose profit crossed zero (loss to profit, profit to loss, loss narrowed or widened) are not in the median but are in the counts.");
+  // revenue totals compare ex-financials only: a bank's revenue is interest earned (C5)
+  assert.match(groupsBullets(idx, "index").join("|"), /companies other than financials/);
   assert.equal(text(groupsLead(idx, "index")), "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%.");
   assert.equal(groupsBullets(idx, "index")[0],
     "Banks and other financials hold the Nifty 50 back: they make 38% of its profit and grew +8.4% in total, the rest +9.9%.");
@@ -158,13 +173,6 @@ test("each view ranks by its own column until a column is picked", async () => {
   assert.equal(VIEW_SORT.yoy, DEFAULT_SORT);
 });
 
-test("the progress box says how many members are not covered yet", () => {
-  const p = { index_id: "NIFTY500", reported: 185, of: 497, members: 500, quarter_reported: 236, still_to_come: null };
-  assert.equal(progressText(p).note, "500 members; 3 not covered yet (REITs, which report in their own format)");
-  assert.match(progressText({ ...p, members: 498 }).note!, /^498 members; 1 not covered yet \(a REIT/);
-  assert.equal(progressText({ ...p, members: 497 }).note, null);
-});
-
 test("a link that names only a view ranks by that view's own column; a picked column wins", () => {
   assert.equal(readQuery(new URLSearchParams("")).sort, "pat_yoy");
   assert.equal(readQuery(new URLSearchParams("view=momentum")).sort, "pat_momentum");
@@ -177,4 +185,26 @@ test("a trust is tagged REIT or InvIT and shows revenue, EBITDA and margin like 
   assert.equal(KIND_TAG.reit, "REIT");
   assert.equal(KIND_TAG.invit, "InvIT");
   for (const kind of ["reit", "invit"] as const) assert.deepEqual(lineLabels(kind), { revenue: "Revenue", ebitda: "EBITDA", margin: "EBITDA margin" });
+});
+
+test("NM: a change above +999% and a margin outside -100..+100% are not meaningful; the exact figure goes in the title (C6)", () => {
+  assert.equal(fmtGrowth(6643.4), "NM");
+  assert.equal(fmtGrowth(999), "+999.0%");
+  assert.equal(fmtGrowth(-100), "−100.0%");
+  assert.equal(isNmPct(null), false);
+  assert.equal(fmtMargin(-628.89), "NM");
+  assert.equal(fmtMargin(17.92), "17.9%");
+  const g = growth(6643.4)!;
+  assert.deepEqual([g.text, g.title], ["NM", "Not meaningful: +6643.4% (a change above +999%)"]);
+  assert.equal(growth(12, null, "bp")!.title, "100 bp = 1 percentage point");
+  assert.equal(wasLine("₹10 Cr", 2159), "₹10 Cr · was NM");
+  const csv = toCsv([{ ...ROWS[0], pat_yoy: 2159, opm: -628.89 }]).split("\r\n")[1];
+  assert.match(csv, /,NM,/);
+  assert.ok(!csv.includes("2159") && !csv.includes("628.89"));
+});
+
+test("CSV headers say what a column is (U14)", () => {
+  const head = toCsv([]).trimEnd();
+  for (const h of ["EBITDA margin %", "Kind (company/bank/nbfc/insurer/reit/invit)", "PAT growth change vs last quarter (pts)"]) assert.ok(head.includes(h), h);
+  assert.ok(!head.includes("PAT momentum"));
 });

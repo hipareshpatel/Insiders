@@ -32,7 +32,8 @@ from itertools import permutations
 
 from .metrics import CONSOLIDATED, STANDALONE
 
-READER = 2      # 2: mixed-case and number-only schedule headings (31 Oct 2026); an empty reading of an older reader is read again
+READER = 3      # 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read (31 Oct 2026); an
+#                 empty reading of an older reader is read again
 PREFIX = "raw/bank-pdf/"        # + <scrip>/<report file name>.json: what ``read`` found in one report (bank-pdf-read)
 TOL = 1.0                       # crore: the file's figure and the report's agree within this (screener_view.ABS_TOL)
 SLACK = 2                       # printed units: a movement or a sum of rounded items may be off by this many
@@ -279,12 +280,13 @@ def drop_page_numbers(pages: list[str], places: list[int] | None = None) -> list
     return out
 
 
-def read_pages(pages: list[str], places: list[int] | None = None) -> dict:
+def read_pages(pages: list[str], places: list[int] | None = None, why: list | None = None) -> dict:
     """What one report prints, by basis and year: {"STANDALONE": {"FY25": {"depreciation", "opex_total", "opex_adds_up",
     "fa_total", "cwip", "fa_subtotal", "pages": {...}}}}. A schedule's basis is the one its page names; a page naming neither takes
     the order of the report (the first readable schedule of a kind is standalone, the next consolidated). ``places``: each page's place
 in the report (1 = the first page; default their order here), so trimmed pages keep their printed-number offset; the
-"pages" noted are these places."""
+"pages" noted are these places. ``why``: a list given here gets one line for each fixed-assets or operating-expenses schedule
+found and not read, with the reason (the run's diagnosis of an empty report)."""
     places = places or list(range(1, len(pages) + 1))
     text_of = dict(zip(places, pages))
     lines: list[tuple[int, str]] = [(p, line) for p, page in zip(places, drop_page_numbers(pages, places)) for line in page]
@@ -308,10 +310,16 @@ in the report (1 = the first page; default their order here), so trimmed pages k
         header = page_lines + body[:40]
         unit, years = unit_of(header), years_of(header)
         if unit is None or len(years) < 2:
+            if why is not None:
+                why.append({"page": page, "kind": kind, "reason": "no unit note" if unit is None else f"years {years}",
+                            "header": [x.strip()[:80] for x in header if x.strip()][:12]})
             continue
         gs = groups(body)
         section = fixed_section(gs) if kind == FIXED else opex_section(gs)
         if section is None:
+            if why is not None:
+                why.append({"page": page, "kind": kind, "reason": "no total or no depreciation line read",
+                            "groups": [(g[0][:50], g[1][:4]) for g in gs[:25]]})
             continue
         basis = _basis_marks(text_of[page]) or (STANDALONE if seen[kind] == 0 else CONSOLIDATED)
         seen[kind] += 1
@@ -337,6 +345,9 @@ def read(payload: bytes) -> dict:
 _SCHEDULE_WORD = re.compile(r"schedule\s*[-–]?\s*\d{1,2}", re.I)
 
 
+_SCHEDULE_10_16 = re.compile(r"schedule\s*[-–—]?\s*(?:10|16)\b", re.I)
+
+
 def diagnose(pages: list[str]) -> dict:
     """Why a report gave no figures, from its own text (bank-pdf-read run 41197917866: 50 of 100 reports gave none, among them all
     four of Bank of Maharashtra's): how many pages carry text, the schedule headings seen (page and line), and the pages naming
@@ -346,9 +357,18 @@ def diagnose(pages: list[str]) -> dict:
                 if _SCHEDULE_WORD.search(line) and len(line.strip()) < 120]
     opex = [i for i, t in enumerate(pages, 1) if re.search(r"operating\s+expenses", t, re.I)]
     fixed = [i for i, t in enumerate(pages, 1) if re.search(r"fixed\s+assets", t, re.I)]
+    # the lines naming Schedule 10 or 16 with the three lines after each, and why each schedule found was not read
+    near = []
+    for i, t in enumerate(pages, 1):
+        ls = t.splitlines()
+        for j, line in enumerate(ls):
+            if _SCHEDULE_10_16.search(line) and len(line.strip()) < 120:
+                near.append((i, [x.strip()[:80] for x in ls[j:j + 4]]))
+    why: list = []
+    read_pages(pages, why=why)
     return {"pages": len(pages), "pages_with_text": len(with_text), "chars": sum(len(t) for t in pages),
             "schedule_headings": len(headings), "first_headings": headings[:12], "opex_pages": opex[:10],
-            "fixed_pages": fixed[:10]}
+            "fixed_pages": fixed[:10], "schedule_10_16": near[:10], "not_read": why[:6]}
 
 
 def read_with_diagnosis(payload: bytes) -> tuple[dict, dict | None]:

@@ -361,6 +361,9 @@ def test_diagnosis_of_an_empty_report():
     laid = bp.diagnose(["word " * 60 + "\nSchedule 16: Operating Expenses (Rs in lakh)\nDepreciation 12.5", "word " * 60])
     assert laid["pages_with_text"] == 2 and laid["schedule_headings"] == 1 and laid["opex_pages"] == [1]
     assert laid["first_headings"][0][0] == 1
+    # a schedule found but not read says why (no unit note here) and shows its heading lines
+    no_unit = bp.diagnose(["SCHEDULE 16 - OPERATING EXPENSES\nAs at 31.03.2025\nAs at 31.03.2024\nI. Rent\n10\n9\nTOTAL\n10\n9"])
+    assert no_unit["not_read"][0]["reason"] == "no unit note" and no_unit["schedule_10_16"][0][1][0].startswith("SCHEDULE 16")
 
 
 def test_empty_reading_is_read_again_once_for_its_diagnosis():

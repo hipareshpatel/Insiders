@@ -164,7 +164,9 @@ LEASE_ROW = r"lease\w*\s*(lia|lib|obl)|liab\w*\s+for\s+leas"
 # under a FINANCIAL-liability parent a row named "lease" (or "leases", followed by any word) is a lease liability: "Lease Laibility" (KPIT,
 # SCI), "Payable for Lease Obiligation" (Dixon -252.7 / -312.0 / -417.8), "Lease" / "LEASE" (JSL, Granules), "Leases" (PGEL), "Financial
 # Lease" (Maruti): 22 rows apart, ours below screener's (srules/bscf report rule 4c). A sale and lease back is not (JSW Steel)
-LEASE_ROW_FINANCIAL = LEASE_ROW + r"|^(?!.*(sale\s+and\s+lease|lease\s*back)).*\bleases?\b"
+# a lease liability however it is spelt (KPIT, SCI "Laibility", Dixon "Lease Obiligation", JSL/Granules "Lease", PGEL "Leases", Maruti
+# "Financial Lease"); never a rent, a deposit or a receivable that only mentions a lease, nor a sale and lease back
+LEASE_ROW_FINANCIAL = LEASE_ROW + r"|^(?!.*(sale\s+and\s+lease|lease\s*back|rent|deposit|receivable|advance)).*\bleases?\b"
 # a lease liability filed under the NON-financial other liabilities (Ambuja FY25 "CURRENT LEASE LIABILITY" 304.14, Concor FY24
 # "Lease liability-Ind AS 116" 746.11, Delhivery FY25 243.88: 18 rows of 12 companies, the gap exactly) is still debt
 LEASE_PARENTS = ("OtherNoncurrentLiabilitiesOthers", "OtherCurrentLiabilitiesOthers", "OtherNoncurrentLiabilities",

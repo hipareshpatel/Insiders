@@ -366,6 +366,14 @@ allotment, a forward contract or a bank balance: those are Other Assets for scre
 - Annual profit and loss: where screener's year equals its four quarters we match 86%; where it does not (its regrouped annual
   figure) 47%. The `year by source` column of `screener-rows` shows which source each year matches.
 
+**Annual profit and loss, what the new columns showed (run 41182762968, FY23-FY26, 500 largest).** The year's source is
+not the cause: of the rows from an annual report, the current choice (next year's report first) is 89.1% exact, the next report alone
+89.6% where it exists, the year's own report 85.1%, the Q4 results file 75.0%, our four quarters added up 69.3%. Of the annual Expenses
+rows apart, 703 match no source at all: screener regroups the year itself. One class is named by screener's own sub-rows: about 130
+years where screener's Other Income holds an "Exceptional items" sub-row equal to the gap (a loss taken out of Expenses or Interest:
+Bajaj Finance, Titan, Adani Ports FY24 450 in Interest), PBT exact, with no tagged line of that amount in the filing. Screener's
+reading of the notes; not copied (Screener class).
+
 **Tools for the next gap.** `screener-rows` lists, for every row apart, screener's own sub-rows of that head and the ones equal to
 the gap, and for every year the value of each source (own report, next report, Q4 file, four quarters). The drill-down set keeps
 the newest annual reports of the companies with the most gaps (`keep-annual-pdfs --years 3`). New results go into memory by these

@@ -9,6 +9,8 @@ failed filings one more try, so a filing broken by a bug fixed that day still ge
 
 from __future__ import annotations
 
+import json
+
 import logging
 import re
 
@@ -74,6 +76,19 @@ def requeue_ids(sink, news_ids: list[str], max_attempts: int, dry_run: bool = Fa
     if updates and not dry_run:
         sink.execute("filings_update", updates)
     return {"requeued": len(updates), "dry_run": dry_run, "filings": [u["news_id"] for u in updates]}
+
+
+PRIORITY_KEY = "backfill:priority"
+
+
+def prioritise(sink, scrips: list[str]) -> list[str]:
+    """Put the named companies first in the history queue (pipeline._backfill reads ``backfill:priority``): a filing requeued by
+    id that is older than the live window would otherwise wait behind every other company's history (31 Oct 2026: Hubtown
+    nse-106629168, filed 19 May, requeued after the unit-slip fix, waited behind ~1,500 history filings). Returns the list kept."""
+    have = json.loads(sink.kv_get(PRIORITY_KEY) or "[]")
+    kept = list(dict.fromkeys([s for s in scrips if s] + list(have)))
+    sink.kv_set(PRIORITY_KEY, json.dumps(kept), now_iso())
+    return kept
 
 
 def requeue(sink, since: str, max_attempts: int, attempts_left: int | None = None, dry_run: bool = False) -> dict:

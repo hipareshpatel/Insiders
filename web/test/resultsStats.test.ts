@@ -225,3 +225,17 @@ test("a bank's financing profit stays out of the EBITDA tile and median (R10)", 
   const s = summarise([sr({ ebitda_yoy: 10 }), sr({ kind: "bank", ebitda_yoy: 50, ebitda: 400 })]);
   assert.deepEqual([s.ebitda_n, s.ebitda_of, s.median_ebitda_yoy], [1, 1, 10]);
 });
+
+test("like for like: revenue, EBITDA and profit medians over the same ordinary companies only (#303 item A)", () => {
+  const rows = [
+    sr({ revenue_yoy: 20, ebitda_yoy: 22, pat_yoy: 18 }), sr({ revenue_yoy: 22, ebitda_yoy: 24, pat_yoy: 20 }),
+    sr({ revenue_yoy: 24, ebitda_yoy: 23, pat_yoy: 21 }), sr({ revenue_yoy: 21, ebitda_yoy: 25, pat_yoy: 19 }),
+    sr({ revenue_yoy: 23, ebitda_yoy: 21, pat_yoy: 22 }),
+    sr({ kind: "bank", revenue_yoy: 5, ebitda: null, ebitda_yoy: null, pat_yoy: 60 }),   // a bank: not in the like-for-like set
+    sr({ revenue_yoy: 2, ebitda_yoy: 1, pat_yoy: null, pat_turn: "LOSS_TO_PROFIT" }),     // no profit per cent: left out
+  ];
+  const s = summarise(rows);
+  assert.deepEqual(s.like_for_like, { n: 5, revenue: 22, ebitda: 23, pat: 20 });
+  assert.ok((s.median_pat_yoy ?? 0) > 20);   // the tile median, over a different set, would have read "profit faster"
+  assert.equal(summarise(rows.slice(0, 3)).like_for_like, null);   // too few companies to say
+});

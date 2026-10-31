@@ -1158,6 +1158,24 @@ jobs:
           elif [ "$code" -ne 0 ]; then echo "::warning::the comparison failed (exit $code)"; fi
           echo "Compared with artifact $id ($name, the previous full run on main)" >> "$GITHUB_STEP_SUMMARY"
           cat "$RUNNER_TEMP/screener-rows/against-previous.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: The statements stored in memory (what the site shows) against screener, and against the recipes (reads only)
+        if: "!cancelled() && inputs.command == 'screener-rows'"
+        continue-on-error: true    # a report beside the recipe measurement; it never fails the run
+        timeout-minutes: 240       # limit 2000 (every company, owner 31 Oct 2026) reads ~4x the pages of limit 500
+        env:
+          PLATFORM_TIMEOUT_S: "30"
+          PLATFORM_ATTEMPTS: "3"
+          IDS: ${{ inputs.ids }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          d="$RUNNER_TEMP/screener-rows/stored"
+          mkdir -p "$d"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-rows --stored ${IDS:+--scrips "$IDS"} --top-mcap "${LIMIT:-50}" --workers 24 --json "$d/summary.json" --csv "$d/rows.csv" --md "$d/screener-rows.md"
+          # "broke" here: a pair the recipes get exact that the stored statement does not (an entry the rebuild left out or did not rewrite)
+          if [ -s "$RUNNER_TEMP/screener-rows/rows.csv" ]; then
+            "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-rows-diff --prev "$RUNNER_TEMP/screener-rows/rows.csv" --curr "$d/rows.csv" --md "$d/stored-against-recipes.md" || true
+            { echo "## Stored statements against the recipes"; cat "$d/stored-against-recipes.md"; } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'screener-rows'
         with:

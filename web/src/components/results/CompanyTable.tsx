@@ -5,7 +5,7 @@ import type { KpiRow, View } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
 import {
-  blankNote, filedDay, NBFC_EBITDA_NOTE, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, oneOff as oneOffOf, type Sort,
+  blankNote, filedDay, NBFC_EBITDA_NOTE, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, oneOff as oneOffOf, wholeProfit, type Sort,
 } from "../../lib/resultsView";
 import { CompanyCell, Growth, MomentumMark, NfoFlag, Signals, Skeleton } from "./bits";
 import { Dumbbell, Spark } from "./charts";
@@ -95,6 +95,7 @@ function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
   const turn = qoq ? r.pat_qoq_turn : r.pat_turn;
   const amount = r.pat == null ? null : `${cr(r.pat)}${turn ? (r.pat >= 0 ? " profit" : " loss") : ""}`;
   const oneOff = qoq ? null : oneOffOf(r);   // the year-ago comparison only: its growth is a year-on-year one
+  const whole = qoq ? null : wholeProfit(r);
   return (
     <>
       <span className="whitespace-nowrap">
@@ -104,6 +105,7 @@ function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
       <Sm>{qoq ? amount ?? "—" : wasLine(amount, r.pat_prev_yoy, r.pat_prev_turn)}</Sm>
       {(qoq ? r.pat_qoq : r.pat_yoy) == null && !turn && <Sm italic>{NO_BASE(qoq)}</Sm>}
       {oneOff && <Sm><span title={oneOff.title}>{oneOff.text}</span></Sm>}
+      {whole && <Sm><span title={whole.title}>{whole.text}</span></Sm>}
       {r.nfo && <div className="mt-1.5"><NfoFlag /></div>}
     </>
   );

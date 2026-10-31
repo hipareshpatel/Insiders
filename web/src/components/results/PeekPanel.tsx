@@ -5,7 +5,7 @@ import type { KpiRow } from "../../../shared/resultsTypes";
 import { industryLine } from "../../../shared/industry";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
-import { fmtMargin, fmtPct, lineLabels, NBFC_EBITDA_NOTE, oneOff as oneOffOf, paceSentence, quarterLabel, quarterSeries } from "../../lib/resultsView";
+import { fmtMargin, fmtPct, lineLabels, NBFC_EBITDA_NOTE, oneOff as oneOffOf, paceSentence, wholeProfit, quarterLabel, quarterSeries } from "../../lib/resultsView";
 import { Avatar } from "../Avatar";
 import { Growth } from "./bits";
 import { AXIS_CLIP, LineChart } from "./charts";
@@ -66,6 +66,7 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
   const name = row.company_name ?? row.symbol ?? row.scrip_code;
   const q = quarterLabel(row.period);
   const oneOff = oneOffOf(row);
+  const whole = wholeProfit(row);
   return (
     <>
     <div aria-hidden onClick={onClose} className="fixed inset-0 z-30 hidden bg-black/10 sm:block" />
@@ -92,6 +93,7 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
         </div>
         <p className="mt-2 text-[13px] text-ink-3">{q} vs the same quarter a year ago</p>
         {oneOff && <p className="mt-1 text-[13px] text-ink-2" title={oneOff.title}>{oneOff.text}</p>}
+        {whole && <p className="mt-1 text-[13px] text-ink-2" title={whole.title}>{whole.text}</p>}
 
         {row.nfo && (
           <div className="mt-3.5 flex gap-3 rounded-xl bg-warn-soft px-4 py-3.5 text-[14px] text-ink">

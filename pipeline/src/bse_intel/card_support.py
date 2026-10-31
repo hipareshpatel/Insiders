@@ -5,7 +5,8 @@ Two checks, both run beside ``ground_all_fields`` and both returning change-log 
 
 * ``support_check``: a risk, catalyst, milestone, pending approval, the core catalyst, a change's "why" and a SECTOR (or
   memory-less MEMORY) insight may use only names and content words the filing, the memory block or the scale block print
-  (never the peer context). An item with two or more such words missing, or with a whole number of 31 or less beside a
+  (never the peer context). An item with a name the sources never print (or, with CARD_TEXT_SUPPORT_WORDS=1, two or more
+  such names and content words missing), or with a whole number of 31 or less beside a
   noun ("5 observations") or a day-month date ("30 Oct") the sources do not print, is dropped. The 37 WRONG items of the
   two blind rounds of 30 Oct: Dalmia Bharat, Merino wool, MSEDCL, "5 USFDA observations", an earnings call "30 Oct".
 * ``label_check``: a point that names "net profit", "to shareholders", "discontinued" or "total comprehensive income" on a
@@ -60,7 +61,18 @@ _STEM_SUFFIXES = ("ations", "ation", "ments", "ment", "ities", "ity", "ings", "i
 _GENERIC_FILE = Path(__file__).resolve().parents[2] / "config" / "generic_words.txt"
 _WORD = re.compile(r"[A-Za-z][A-Za-z]{2,}(?:-[A-Za-z]{2,})*")
 _PERIOD_CODE = re.compile(r"^(?:[QH][1-4]?)?FY?\d{2,4}$|^[QH]\d\w*$|^FY\w*$", re.I)
-_MIN_MISSING = 2   # an item is dropped at this many unsupported words or names (lenient: one is forgiven)
+_MIN_MISSING = 2   # with the word check on: an item is dropped at this many unsupported words or names (one is forgiven)
+_MIN_NAMES = 1     # names only (the default): one name the sources never print drops the item; driver words (KEEP_CHECKED)
+                   # count towards _MIN_MISSING with the names
+
+
+def words_checked() -> bool:
+    """CARD_TEXT_SUPPORT_WORDS=1: also the plain content words of six letters or more (the check as first built). Off by
+    default since 31 Oct 2026: over 9,249 stored cards it dropped items on 3,341 (36%, release-check text_support, run
+    41100996875), mostly on ordinary words the filing does not use ("acceleration", "compared"). Names, dates and counts
+    carry the WRONG items it was built for (Dalmia Bharat, MSEDCL, "5 USFDA observations", "30 Oct")."""
+    import os
+    return os.environ.get("CARD_TEXT_SUPPORT_WORDS", "0").strip() == "1"
 
 _MONTHS = ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec")
 _MONTH_RE = r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
@@ -128,6 +140,7 @@ class _Sources:
         self.raw = joined
         self.flat = f" {_flat(joined)} "
         self._dates: set[tuple[int, int]] | None = None
+        self.first_words: set[str] = set()   # an item's first word read like a name (names-only mode)
 
     @property
     def dates(self) -> set[tuple[int, int]]:
@@ -151,10 +164,29 @@ def unsupported(text: str, src: _Sources) -> tuple[list[str], list[str]]:
     missing = {n.lower(): n for n in names}
     for low in [k for k, n in missing.items() if _PERIOD_CODE.match(n) or any(c.isdigit() for c in n) or _in(src.flat, n)]:
         del missing[low]   # a period code, or a capitalised plain word the sources print in another form ("Inventory")
+    every_word = words_checked()
+    drivers = {_stem(w) for w in KEEP_CHECKED}
+    if not every_word:
+        # the first word is never read as a name (it is capitalised anyway): "Fermentation programs ramp", "Merino wool and
+        # ..." are invented names in that place; checked like a name when it is long and not card vocabulary
+        first = _WORD.match(plain.lstrip())
+        if first and first.group(0)[0].isupper() and len(first.group(0)) >= 6:
+            word = first.group(0).split("-")[0]
+            if _stem(word.lower()) not in generic_stems() and not _in(src.flat, word):
+                missing.setdefault(word.lower(), word)
+                src.first_words.add(word.lower())
     for m in _WORD.finditer(plain):
         for word in m.group(0).split("-"):
             low = word.lower()
-            if len(word) < 6 or _stem(low) in generic_stems() or low in missing:
+            if low in missing:
+                continue
+            if not every_word:
+                # names only, plus the driver words kept checked on purpose (Grasim's invented "passenger demand and
+                # capacity growth"): an ordinary word the filing does not use ("acceleration") is no longer a miss
+                if _stem(low) in drivers and not _in(src.flat, word):
+                    missing[low] = word
+                continue
+            if len(word) < 6 or _stem(low) in generic_stems():
                 continue
             if not _in(src.flat, word):
                 missing[low] = word
@@ -177,7 +209,12 @@ def unsupported(text: str, src: _Sources) -> tuple[list[str], list[str]]:
 def _rejected(text: str, src: _Sources) -> list[str]:
     """Why an item fails, or []: two or more words or names missing, or any small count or date missing."""
     words, odd = unsupported(text, src)
-    if odd or len(words) >= _MIN_MISSING:
+    if words_checked():
+        return words + odd if odd or len(words) >= _MIN_MISSING else []
+    drivers = {_stem(w) for w in KEEP_CHECKED}
+    # a first word alone never drops an item (it may be an ordinary word): it counts towards _MIN_MISSING only
+    names = [w for w in words if _stem(w.lower()) not in drivers and w.lower() not in src.first_words]
+    if odd or len(names) >= _MIN_NAMES or len(words) >= _MIN_MISSING:
         return words + odd
     return []
 

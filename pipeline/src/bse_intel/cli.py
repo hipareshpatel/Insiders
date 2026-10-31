@@ -1871,7 +1871,8 @@ def cmd_screener_rows(args, settings, sink) -> int:
     companies = _selected_companies(args, sink)
     if companies is None:
         return 2
-    summary = sv.run(sink, companies, args.workers, args.day)
+    # --stored: the statements stored in memory (what the site shows) instead of the recipes over the stored facts
+    summary = (sv.run_stored if args.stored else sv.run)(sink, companies, args.workers, args.day)
     print(sv.render(summary))
     if args.json:
         Path(args.json).write_text(sv.to_json(summary), encoding="utf-8")
@@ -3065,6 +3066,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the summary to this file")
     p.add_argument("--csv", help="write every pair (company, basis, period, table, row, screener, ours, diff, status, recipe note)")
     p.add_argument("--md", help="write the markdown report to this file")
+    p.add_argument("--stored", action="store_true", help="compare the statements stored in memory (what the site shows), not the recipes")
     p.set_defaults(func=cmd_screener_rows)
     p = sub.add_parser("screener-rows-diff", help="read-only: two screener-rows runs' rows.csv compared row by row (broken and mended pairs by class)")
     p.add_argument("--prev", required=True, help="the earlier run's rows.csv")

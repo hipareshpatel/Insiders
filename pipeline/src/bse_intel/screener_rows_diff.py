@@ -14,7 +14,7 @@ import io
 import re
 from collections import Counter, defaultdict
 
-FROM_FY = 23
+FROM_FY = 25   # owner, 31 Oct 2026 ~20:15 IST: "cut off of FY 25 onwards only" (was FY23)
 EXAMPLES = 5
 
 

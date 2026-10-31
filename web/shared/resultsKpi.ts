@@ -191,7 +191,7 @@ export function kpiWhere(query: KpiQuery, quarter: string): { from: string; para
 const KPI_BASE = `k.scrip_code, k.period, k.basis, k.kind,
   k.revenue, k.revenue_yoy, k.revenue_qoq, k.ebitda, k.ebitda_yoy, k.ebitda_qoq, k.ebitda_turn,
   k.opm, k.opm_yoy_bps, k.opm_qoq_bps, k.pat, k.pat_yoy, k.pat_qoq, k.pat_turn, k.pat_qoq_turn, k.nfo,
-  k.pat_pre, k.pat_pre_yoy, k.pat_pre_turn,
+  k.pat_pre, k.pat_pre_yoy, k.pat_pre_turn, k.pat_total, k.pat_total_yoy, k.pat_total_turn,
   co.symbol, co.company_name, co.industry, co.market_cap_cr, co.size_category, f.filed_at, f.pdf_url AS filing_url`;
 export const KPI_COLUMNS = `${KPI_BASE},
   pk.revenue_yoy AS prev_revenue_yoy, pk.ebitda_yoy AS prev_ebitda_yoy, pk.pat_yoy AS prev_pat_yoy, pk.pat_turn AS prev_pat_turn`;
@@ -233,6 +233,7 @@ export interface DbKpiRow {
   opm: number | null; opm_yoy_bps: number | null; opm_qoq_bps: number | null;
   pat: number | null; pat_yoy: number | null; pat_qoq: number | null; pat_turn: Turn | null; pat_qoq_turn: Turn | null; nfo: number;
   pat_pre: number | null; pat_pre_yoy: number | null; pat_pre_turn: Turn | null;
+  pat_total: number | null; pat_total_yoy: number | null; pat_total_turn: Turn | null;
   symbol: string | null; company_name: string | null; industry: string | null; market_cap_cr: number | null; size_category: string | null;
   prev_revenue_yoy: number | null; prev_ebitda_yoy: number | null; prev_pat_yoy: number | null; prev_pat_turn: Turn | null;
   filed_at: string | null; filing_url: string | null;
@@ -263,6 +264,7 @@ export function toKpiRow(r: DbKpiRow, series: { series_pat: (number | null)[]; s
     pat: r.pat, pat_yoy: r.pat_yoy, pat_qoq: r.pat_qoq, pat_turn: r.pat_turn, pat_qoq_turn: r.pat_qoq_turn,
     pat_prev_yoy: r.prev_pat_yoy, pat_prev_turn: r.prev_pat_turn, pat_momentum_pts: pat,
     pat_pre: r.pat_pre, pat_pre_yoy: r.pat_pre_yoy, pat_pre_turn: r.pat_pre_turn,
+    pat_total: r.pat_total, pat_total_yoy: r.pat_total_yoy, pat_total_turn: r.pat_total_turn,
     momentum: momentumClass(pat), nfo: r.nfo === 1,
     filed_at: r.filed_at, filing_url: r.filing_url, ...series,
   };

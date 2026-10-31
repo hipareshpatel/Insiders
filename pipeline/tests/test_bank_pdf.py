@@ -77,6 +77,17 @@ def test_headings_of_the_other_layouts(line, following, expected):
     assert bp.heading(line, following) == expected
 
 
+def test_units_and_years_of_the_other_layouts():
+    # header lines as the reports of run 41205954270 print them
+    assert bp.unit_of(["(000's \u00edes\u00e6[s ieS nQ 000's Omitted)"]) == 1e-4          # Bank of India
+    assert bp.unit_of(["(000\u2019s Omitted)"]) == 1e-4                                    # Central Bank
+    assert bp.unit_of(["(R in \u2018000s)"]) == 1e-4                                       # RBL
+    assert bp.years_of(["As on 31st-Mar-2025", "As on 31st-Mar-2024"]) == ["FY25", "FY24"]  # Bank of Maharashtra
+    assert bp.years_of(["For the Year Ended  31stMar, 2025", "For the Year Ended  31stMar, 2024"]) == ["FY25", "FY24"]
+    assert bp.years_of(["As at 31-Mar-25", "As at 31-Mar-24"]) == ["FY25", "FY24"]           # Central Bank, RBL
+    assert bp.years_of(["31-03-2023", "31-03-2022"]) == ["FY23", "FY22"]                    # Bank of India
+
+
 def test_heading_is_the_schedule_not_a_note():
     assert bp.heading("SCHEDULE 16 - OPERATING EXPENSES") == (16, "operating expenses")
     assert bp.heading("SCHEDULE 10 - FIXED ASSETS:") == (10, "fixed assets")

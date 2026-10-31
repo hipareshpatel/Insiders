@@ -32,8 +32,8 @@ from itertools import permutations
 
 from .metrics import CONSOLIDATED, STANDALONE
 
-READER = 3      # 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read (31 Oct 2026); an
-#                 empty reading of an older reader is read again
+READER = 4      # 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read; 4: "000's
+#                 Omitted", "31st-Mar-2024", "31-Mar-25" (31 Oct 2026); an empty reading of an older reader is read again
 PREFIX = "raw/bank-pdf/"        # + <scrip>/<report file name>.json: what ``read`` found in one report (bank-pdf-read)
 TOL = 1.0                       # crore: the file's figure and the report's agree within this (screener_view.ABS_TOL)
 SLACK = 2                       # printed units: a movement or a sum of rounded items may be off by this many
@@ -70,7 +70,8 @@ def figures(line: str) -> list[float] | None:
     return out
 
 
-_UNITS = ((re.compile(r"0{3}\s*s?\s*omitted|in\s*[‘'’`]?\s*0{3}|0{3}\s*[’'‘]?\s*s?\s*\)|in\s+thousands?", re.I), 1e-4),
+# "(000's Omitted)": Bank of India, Central Bank (bank-pdf-read run 41205954270)
+_UNITS = ((re.compile(r"0{3}\s*[’'‘]?\s*s?\s*omitted|in\s*[‘'’`]?\s*0{3}|0{3}\s*[’'‘]?\s*s?\s*\)|in\s+thousands?", re.I), 1e-4),
           (re.compile(r"in\s+lakhs?|lakhs?\s*\)|lacs?\s*\)", re.I), 1e-2),
           (re.compile(r"in\s+millions?|millions?\s*\)", re.I), 1e-1),
           (re.compile(r"in\s+crores?|crores?\s*\)|[₹`]\s*crores?|rs\.?\s*crores?", re.I), 1.0))
@@ -85,13 +86,20 @@ def unit_of(lines: list[str]) -> float | None:
     return None
 
 
-_DATES = (re.compile(r"\b31\s*[./-]\s*0?3\s*[./-]\s*(\d{4})\b"), re.compile(r"\b31(?:st)?\s+march,?\s+(\d{4})", re.I),
-          re.compile(r"\bmarch\s+31,?\s+(\d{4})", re.I))
+# "31.03.2025", "31st March 2025", "March 31, 2025"; "As on 31st-Mar-2024" and "31stMar, 2024" (Bank of Maharashtra); "31-Mar-25" with
+# two digits (RBL, Central Bank: run 41205954270)
+_DATES = (re.compile(r"\b31\s*[./-]\s*0?3\s*[./-]\s*(\d{4})\b"), re.compile(r"\b31\s*(?:st)?\s*[-\s]*mar(?:ch)?\s*[-,\s]+(\d{4})\b", re.I),
+          re.compile(r"\bmarch\s+31,?\s+(\d{4})", re.I), re.compile(r"\b31\s*[-/.]\s*mar(?:ch)?\s*[-/.]\s*(\d{2})\b", re.I))
+
+
+def _year(text: str) -> int:
+    y = int(text)
+    return 2000 + y if y < 100 else y
 
 
 def years_of(lines: list[str]) -> list[str]:
     """The March years the lines name, newest first ("FY25", "FY24"): a report prints the current year's column first."""
-    found = {int(y) for line in lines for p in _DATES for y in p.findall(line) if 1990 < int(y) < 2100}
+    found = {_year(y) for line in lines for p in _DATES for y in p.findall(line) if 1990 < _year(y) < 2100}
     return [f"FY{y % 100:02d}" for y in sorted(found, reverse=True)]
 
 

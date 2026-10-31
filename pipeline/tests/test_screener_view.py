@@ -958,3 +958,17 @@ def test_a_compared_year_lists_what_each_source_gives_for_the_row():
     rows = {(r["table"], r["row"], r["period"]): r for r in sv.compare(page, cf, "1", "DEMO")}
     assert rows[("annual", "Sales", "FY26")]["alts"].startswith("own ")
     assert "alts" not in rows[("annual", "Sales", "FY24")]          # nothing compared, nothing listed
+
+
+def test_a_bank_states_its_stock_options_in_the_balance_sheet_note_and_screener_moves_them_to_reserves_at_march():
+    """HDFC Bank Q4FY24 standalone: "Employees stock options outstanding as at March 31, 2024 were Rs. 2652.72 crore" (screener
+    Reserves 439,486); the segment note's "Capital, ... stock options outstanding and Reserves" total is never read."""
+    note = ("DisclosureOfNotesOnAssetsAndLiabilitiesExplanatoryTextBlock", "I2026",
+            "Employees stock options outstanding as at March 31, 2026 were Rs. 4,545.11 crore and Other liability is Rs 1")
+    segment = ("DisclosureOfNotesOnSegmentsExplanatoryTextBlock", "I2026",
+               "Capital, Employees stock options outstanding and Reserves for quarter ended March 2026 is Rs. 5,62,900.90 crore")
+    base = [("ReservesAndSurplus", "I2026", 50000.0), ("OtherLiabilitiesAndProvisions", "I2026", 20000.0)]
+    march = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment, note], template="BANKING")), instant=END))
+    assert march["Reserves"].value == pytest.approx(54545.11) and march["Other Liabilities"].value == pytest.approx(15454.89)
+    alone = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment], template="BANKING")), instant=END))
+    assert alone["Reserves"].value == pytest.approx(50000.0)

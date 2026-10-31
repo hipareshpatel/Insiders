@@ -908,6 +908,26 @@ def _paid_up(r: _Reader) -> tuple[float | None, str]:
 ESOP_ROW = r"stock option|esop"
 
 
+ESOP_NOTE = re.compile(r"employees?\W+stock\s+options?(?:\s*/\s*units)?\s+outstanding\b[^.]{0,60}?\bRs\.?\s*([\d,]+(?:\.\d+)?)", re.I)
+
+
+def _esop_note(r: _Reader, olp: float | None) -> float:
+    """The stock options outstanding a bank states in its balance-sheet note (crore), 0 when none; never the segment note's
+    "Capital, Employees stock options outstanding and Reserves ... Rs. 501424" (another total), never above the other liabilities."""
+    for name, _ctx, _unit, value, _dec in r.facts.doc.get("facts") or []:
+        if name != "DisclosureOfNotesOnAssetsAndLiabilitiesExplanatoryTextBlock" or not isinstance(value, str):
+            continue
+        m = ESOP_NOTE.search(value)
+        if m:
+            try:
+                v = float(m[1].replace(",", ""))
+            except ValueError:
+                continue
+            if v > 0 and (olp is None or v < olp):
+                return v
+    return 0.0
+
+
 def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     """A bank's balance sheet (srules2 bs report, 1; 10 of 10 standalone Q4FY26 files: HDFC, SBI, ICICI, Union, Canara, IDFC First,
     Axis, Kotak, BoB, PNB, all within tolerance except the two named residues below).
@@ -926,18 +946,31 @@ def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
         out["Equity Capital"] = Row(paid[0], paid[1] + src)
     else:
         out["Equity Capital"] = Row(cap, ("Capital" if cap is not None else "missing Capital") + src)
-    esop = r.rows(("OtherLiabilitiesAndProvisions",), ESOP_ROW)
-    esop_v = _sum_rows(esop)
+    # screener moves the stock options outstanding and the Capital - paid-up difference into Reserves at March only: at September
+    # both stay in Other Liabilities (Q2FY27: HDFC both bases, Axis, Kotak, ICICI standalone; every row the move mends is a March
+    # one; bank balance-sheet review, 31 Oct 2026)
+    instant = r.at.get("instant")
+    march = instant is not None and instant.month == 3
+    esop = r.rows(("OtherLiabilitiesAndProvisions",), ESOP_ROW) if march else []
+    esop_v, esop_name = _sum_rows(esop), "ESOP row"
+    if march and not esop:
+        # HDFC Bank states it only in its balance-sheet note ("Employees stock options outstanding as at March 31, 2024 were
+        # Rs. 2652.72 crore"): Reserves FY24-FY26 both bases equal screener's with it
+        esop_v = _esop_note(r, olp=r.cr("OtherLiabilitiesAndProvisions"))
+        esop_name = "ESOP (balance-sheet note)"
     shift = (cap - paid[0]) if cap is not None and paid[0] is not None else 0.0
-    res_note = "ReservesAndSurplus" + (f" + Capital - paid-up {_fmt(shift)}" if shift else "") \
-        + (f" + ESOP row {_fmt(esop_v)}" if esop else "")
-    out["Reserves"] = Row(None if rs is None else rs + shift + esop_v, (res_note if rs is not None else "missing ReservesAndSurplus") + src)
+    to_reserves = shift if march else 0.0
+    res_note = "ReservesAndSurplus" + (f" + Capital - paid-up {_fmt(shift)}" if to_reserves else "") \
+        + (f" + {esop_name} {_fmt(esop_v)}" if esop_v else "")
+    out["Reserves"] = Row(None if rs is None else rs + to_reserves + esop_v, (res_note if rs is not None else "missing ReservesAndSurplus") + src)
     for row, name in (("Deposits", "Deposits"), ("Borrowing", "Borrowings")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
     olp = r.cr("OtherLiabilitiesAndProvisions")
-    out["Other Liabilities"] = Row(None if olp is None else olp - esop_v,
-                                   ("OtherLiabilitiesAndProvisions" + (f" - ESOP row {_fmt(esop_v)}" if esop else "")
+    to_other = shift - to_reserves      # a September sheet: the Capital - paid-up difference stays among the other liabilities
+    out["Other Liabilities"] = Row(None if olp is None else olp - esop_v + to_other,
+                                   ("OtherLiabilitiesAndProvisions" + (f" - {esop_name} {_fmt(esop_v)}" if esop_v else "")
+                                    + (f" + Capital - paid-up {_fmt(to_other)}" if to_other else "")
                                     if olp is not None else "missing OtherLiabilitiesAndProvisions") + src)
     tot, tot_name = r.cr("CapitalAndLiabilities"), "CapitalAndLiabilities"
     if tot is None:

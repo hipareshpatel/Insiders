@@ -40,6 +40,8 @@ RESUME_KEY = "statements_backfill:done_through"
 REBUILD_RESUME_KEY = "statements_rebuild:done_through"   # statements-rebuild's own (it must not move the fill's)
 RATINGS_RESUME_KEY = "statements_backfill:ratings_done_through"   # the put-back's own (review: it must not move the fill's)
 SLIP_RATIO = 1.5
+UNIT_SLIP = 30      # a quarter's Sales this many times off the median of the company's other quarters (both ways) is a unit slip
+UNIT_SLIP_NOTE = "unit slip against the company's other quarters"
 _QUARTER = re.compile(r"Q[1-4]FY\d{2}")
 
 
@@ -107,12 +109,41 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
                         and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO) and not sure:
                     left.append(f"{basis} {table} {period}: Net Profit {top:g} against memory's profit {mine:g}")
                     continue
+            if table == "quarters" and not sure and _off_by_scale(values, period, basis, cf, fam, memo):
+                left.append(f"{basis} {table} {period}: {UNIT_SLIP_NOTE}")
+                continue
             column = period
             entries.append({"period": column, "basis": basis, "table": table, "family": fam, "rows": values,
                             "source_news_id": f"xbrl-facts:{period}:{basis.lower()}", "as_of": at,
                             "lab": {"by": "file", "doc": "results", "basis": basis, "at": at, "rules": "screener_view",
                                     "from": "stored facts"}})
     return entries, left
+
+
+def _off_by_scale(values: dict, period: str, basis: str, cf: sv.CompanyFacts, fam: str, memo: dict) -> bool:
+    """A quarter whose Sales and Net Profit are both UNIT_SLIP times or more off the medians of the company's other quarters of the
+    same basis, in the same direction: a file tagged in the wrong unit (audit #303 item D: IMPAL Q1FY27 Sales 2.3429 against
+    196.69-230.99 in its other quarters; the live path holds such a file out unless its PDF proves the factor, xbrl.fix_scale, but
+    the backfill from stored facts wrote it). Needs at least three other quarters; a real step (a demerger) moves Sales alone."""
+    sales = values.get("Sales") or values.get("Revenue")
+    profit = values.get("Net Profit")
+    if not sales or not profit:
+        return False
+    others_s, others_p = [], []
+    for p, b in cf.results:
+        if b != basis or p == period or not _QUARTER.fullmatch(p):
+            continue
+        rows, _ = sv._ours(cf, fam, basis, "quarters", p, memo)
+        got = {n: r.value for n, r in (rows or {}).items() if r.value is not None}
+        if got.get("Sales") or got.get("Revenue"):
+            others_s.append(abs(got.get("Sales") or got.get("Revenue")))
+        if got.get("Net Profit"):
+            others_p.append(abs(got["Net Profit"]))
+    if len(others_s) < 3 or len(others_p) < 3:
+        return False
+    med = lambda xs: sorted(xs)[len(xs) // 2]
+    rs, rp = abs(sales) / med(others_s), abs(profit) / med(others_p)
+    return (rs <= 1 / UNIT_SLIP and rp <= 1 / UNIT_SLIP) or (rs >= UNIT_SLIP and rp >= UNIT_SLIP)
 
 
 def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:
@@ -309,7 +340,7 @@ def _screener_confirm(sink):
     return confirm_for
 
 
-def fill(dossier: dict, entries: list[dict], replace: bool = False) -> int:
+def fill(dossier: dict, entries: list[dict], replace: bool = False, slipped: set | None = None) -> int:
     """Add the entries memory does not hold yet (in place); the number added. ``replace`` (statements-rebuild): an entry the stored
     facts rebuild is put back with the current recipes when its rows changed (owner, 31 Oct 2026: a recipe rule is site-wide, so
     the stored statements the stock page reads are rebuilt from the same files; the backfill alone only added), counted too."""
@@ -320,10 +351,22 @@ def fill(dossier: dict, entries: list[dict], replace: bool = False) -> int:
     if replace:
         changed = [e for e in entries if (old := have.get((e["period"], e["basis"], e["table"]))) is not None
                    and _rebuildable(old) and (old.get("rows") or {}) != (e.get("rows") or {})]
-    if new or changed:
-        gone = {(e["period"], e["basis"], e["table"]) for e in changed}
+    # a file entry the stored facts now leave out as a unit slip is taken out on a rebuild (the old one would stay on the site)
+    dropped = [k for k, e in have.items() if replace and slipped and k in slipped and _rebuildable(e)]
+    if new or changed or dropped:
+        gone = {(e["period"], e["basis"], e["table"]) for e in changed} | set(dropped)
         dossier[KEY] = keep_latest([e for e in held if (e.get("period"), e.get("basis"), e.get("table")) not in gone] + new + changed)
-    return len(new) + len(changed)
+    return len(new) + len(changed) + len(dropped)
+
+
+def slipped_keys(left: list[str]) -> set:
+    """(period, basis, table) of the quarters ``company_entries`` left out as a unit slip, from its notes."""
+    out = set()
+    for note in left:
+        m = re.fullmatch(rf"(\S+) (quarters) (\S+): {re.escape(UNIT_SLIP_NOTE)}", note)
+        if m:
+            out.add((m[3], m[1], m[2]))
+    return out
 
 
 WRITE_WORKERS = 8   # companies written at once (each its own dossier and backup objects)
@@ -411,7 +454,7 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
             old = have.get((e["period"], e["basis"], e["table"]))
             if old is None or (replace and _rebuildable(old) and (old.get("rows") or {}) != (e.get("rows") or {})):
                 out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
-        added = fill(merged, entries, replace)
+        added = fill(merged, entries, replace, slipped_keys(left))
         out["segments"] += segments_added
         # written when anything changed, a clean-up with nothing added too (30 Oct 2026: filler-zero ratios dropped by
         # xbrl_extras.remember were never saved, the run writing only where entries were added)

@@ -147,7 +147,8 @@ def test_corporate_balance_sheet_reads_rows_described_on_the_year_with_amounts_a
     assert got["Other Assets"] == 997 - 375 - 20 - 125
 
 
-def test_a_standalone_year_end_total_is_the_filed_assets_with_no_deferred_tax_offset():
+def test_a_standalone_year_end_total_is_the_filed_assets_with_no_deferred_tax_offset(monkeypatch):
+    monkeypatch.setattr(sv, "B4_NET_ANY_BASIS", False)
     got = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END), standalone=True))
     assert got["Total Assets"] == got["Total Liabilities"] == 1000.0         # no min(DTA 8, DTL 3) on a standalone sheet
 
@@ -686,3 +687,134 @@ def test_expense_parts_take_the_rest_from_screeners_total_and_round_by_the_place
                                   "Mar 2026", 1000.0, 870.0)
     assert got == pytest.approx({"material": 720.0, "employee": 49.0, "rest": 101.0})
     assert slack["material"] == pytest.approx(5.0) and slack["employee"] == pytest.approx(0.05)
+
+
+# --- the first batch of screener-matching rules (31 Oct 2026; real NSE files trimmed to the facts a test needs) -------------------
+
+RULES1 = json.loads((FIXTURES / "screener_rules1.json").read_text())
+
+
+def rules1(key):
+    return xf.Facts(RULES1[key])
+
+
+Q1 = dict(end=date(2026, 6, 30), months=3)
+
+
+def q1_pl(key, **period):
+    return sv.corporate_pl(sv._Reader(rules1(key), **(period or Q1)))
+
+
+def test_p1_the_share_goes_into_pbt_where_the_segment_pbt_holds_it():
+    """Segment PBT = PBT + share: Hindalco Q1FY27 9,387 + 6 = 9,393; ITC 5,774.94 + 85.91 = 5,860.85 (screener's PBT; Tata Steel, Bharti, NTPC alike)."""
+    for key, pbt in (("HINDALCO_q1fy27", 9393.0), ("ITC_q1fy27", 5860.85)):
+        rows = q1_pl(key)
+        assert rows["Profit before tax"].value == pytest.approx(pbt) and "Associates' share outside PBT" not in rows
+
+
+def test_p1_the_share_stays_out_where_the_segment_pbt_equals_the_filed_pbt():
+    """Segment PBT = PBT: DLF Q1FY27 share 485.83 Cr, screener's Other Income 325 (not 811.05) and PBT 422.76; L&T 6,922.26 (Reliance, Tata Consumer alike)."""
+    dlf, lt = q1_pl("DLF_q1fy27"), q1_pl("LT_q1fy27")
+    assert dlf["Profit before tax"].value == pytest.approx(422.76) and dlf["Other Income"].value == pytest.approx(325.22, abs=0.01)
+    assert dlf["Associates' share"].value == pytest.approx(485.83) and dlf["Associates' share outside PBT"].value == pytest.approx(485.83)
+    assert lt["Profit before tax"].value == pytest.approx(6922.26) and lt["Associates' share outside PBT"].value == pytest.approx(5.18)
+
+
+def test_p1_a_share_kept_out_of_pbt_is_in_no_expense_and_a_loss_is_not_added_to_expenses():
+    """Tata Consumer Q1FY27: Expenses 4,625 in screener, not 4,642.41 (the loss 17.67 stays out)."""
+    seg = [("SegmentProfitBeforeTax", "D2026", 270.0)]
+    base = values(sv.corporate_pl(sv._Reader(annual_facts(seg), end=END, months=12)))
+    loss = values(sv.corporate_pl(sv._Reader(annual_facts(seg + [(sv.ASSOCIATES, "D2026", -8.0)]), end=END, months=12)))
+    assert loss["Expenses"] == base["Expenses"] and loss["Operating Profit"] == base["Operating Profit"]
+    assert loss["Profit before tax"] == base["Profit before tax"] == 270.0 and loss["Other Income"] == base["Other Income"]
+    # and where the segment holds the share the loss is an expense as before
+    inside = values(sv.corporate_pl(sv._Reader(annual_facts([("SegmentProfitBeforeTax", "D2026", 262.0), (sv.ASSOCIATES, "D2026", -8.0)]),
+                                               end=END, months=12)))
+    assert inside["Expenses"] == base["Expenses"] + 8 and inside["Profit before tax"] == 262.0
+
+
+def test_p1_with_no_segment_pbt_the_module_default_decides(monkeypatch):
+    """BEL Q1FY27 files a filler 0 segment PBT beside a share of 10.63 Cr."""
+    on = q1_pl("BEL_q1fy27")["Profit before tax"].value
+    monkeypatch.setattr(sv, "ASSOCIATES_DEFAULT_INCLUDE", False)
+    off = q1_pl("BEL_q1fy27")["Profit before tax"].value
+    assert on == pytest.approx(1396.25 + 10.63) and off == pytest.approx(1396.25)
+
+
+def test_p1_the_split_share_elements_are_read_too():
+    seg = [("SegmentProfitBeforeTax", "D2026", 279.0)]
+    split = [(sv.ASSOCIATES_SPLIT[0], "D2026", 4.0), (sv.ASSOCIATES_SPLIT[1], "D2026", 5.0)]
+    rows = sv.corporate_pl(sv._Reader(annual_facts(seg + split), end=END, months=12))
+    assert rows["Profit before tax"].value == pytest.approx(279.0) and rows["Associates' share"].value == pytest.approx(9.0)
+    only_jv = sv.corporate_pl(sv._Reader(annual_facts([(sv.ASSOCIATES_SPLIT[1], "D2026", 5.0)]), end=END, months=12))
+    assert only_jv["Profit before tax"].value == pytest.approx(275.0)        # the default: include
+
+
+def test_p1_the_profit_line_rule_does_not_count_a_share_kept_below_pbt_twice():
+    """PBT 10, tax 40, share 100 below PBT: the whole profit is 70 (not PBT - tax = -30), so Net Profit 70 is no slip."""
+    facts = [("ProfitBeforeTax", "D2026", 10.0), ("SegmentProfitBeforeTax", "D2026", 10.0), ("TaxExpense", "D2026", 40.0),
+             (sv.ASSOCIATES, "D2026", 100.0), ("ProfitLossForPeriod", "D2026", 70.0), ("RevenueFromOperations", "D2026", 500.0)]
+    rows = sv.corporate_pl(sv._Reader(xf.Facts(doc(facts)), end=END, months=12))
+    stored = {k: r.value for k, r in rows.items() if r.value is not None}
+    assert stored["Profit before tax"] == 10.0 and stored["Associates' share outside PBT"] == 100.0
+    assert sv.corrected_pl(stored, sv.CORPORATE) is stored
+    inside = dict(stored)
+    del inside["Associates' share outside PBT"]
+    assert sv.corrected_pl(inside, sv.CORPORATE)["Net Profit"] == -30.0       # the guard still fires where the share is not added back
+
+
+def test_p2_a_fair_value_loss_on_equity_investments_leaves_expenses():
+    """TMCV Q2FY27 consolidated: Operating Profit 1,940 + the row 708 = 2,648 = screener."""
+    rows = q1_pl("TMCV_q2fy27", end=date(2026, 9, 30), months=3)
+    assert rows["Operating Profit"].value == pytest.approx(2648.0) and "loss on investments 708" in rows["Expenses"].note
+
+
+def test_p2_a_fair_value_line_on_derivatives_commodities_or_exchange_stays_in_expenses():
+    """TMPV Q1FY27 "Foreign exchange loss/(gain) and commodity derivatives fair value adjustments" 150 Cr is in screener's Expenses."""
+    assert "loss on investments" not in q1_pl("TMPV_q1fy27")["Expenses"].note
+    import re
+    for text in ("Foreign exchange loss/(gain) and commodity derivatives fair value adjustments", "Fair value loss on derivative instruments"):
+        assert not re.search(sv.FAIR_VALUE_INVESTMENT, text, re.I)
+    for text in ("Fair value (gain)/loss on equity investments measured at FVTPL", "Loss on investments carried at fair value"):
+        assert re.search(sv.FAIR_VALUE_INVESTMENT, text, re.I)
+
+
+def test_b1_a_right_of_use_row_under_other_non_current_financial_assets_is_fixed_assets():
+    """KIMS consolidated FY26: Fixed Assets 4,581.8 + the row 1,128.3 (screener's gap -1,128.2)."""
+    rows = sv.corporate_bs(sv._Reader(rules1("KIMS_fy26_bs"), instant=date(2026, 3, 31)))
+    assert rows["Fixed Assets"].value == pytest.approx(4581.8 + 1128.3, abs=0.1) and "right-of-use row 1,128.30" in rows["Fixed Assets"].note
+
+
+def test_b2_exploration_and_biological_assets_are_fixed_assets_and_a_filler_zero_is_not():
+    """Coal India cons Q4FY23 -4,924.4 = the E&E asset 4,924.9; Atul, Godrej Industries: biological assets (synthetic: no stored file holds one)."""
+    base = values(sv.corporate_bs(sv._Reader(annual_facts(), instant=END)))["Fixed Assets"]
+    got = sv.corporate_bs(sv._Reader(annual_facts([("AssetsArisingFromExplorationForAndEvaluationOfMineralResources", "I2026", 12.0),
+                                                   ("BiologicalAssetsOtherThanBearerPlants", "I2026", 3.0)]), instant=END))
+    assert got["Fixed Assets"].value == pytest.approx(base + 15.0)
+    zero = sv.corporate_bs(sv._Reader(annual_facts([("BiologicalAssetsOtherThanBearerPlants", "I2026", 0.0)]), instant=END))
+    assert zero["Fixed Assets"].value == pytest.approx(base) and "Biological" not in zero["Fixed Assets"].note
+
+
+def test_b3_a_lease_row_under_a_financial_liability_is_borrowings_whatever_its_spelling():
+    """KPIT/SCI "Lease Laibility", Dixon "Payable for Lease Obiligation", JSL/Granules "LEASE", PGEL "Leases", Maruti "Financial Lease"."""
+    base = [x for x in ANNUAL if not x[1].endswith(("_M1", "_M2", "_M3"))]
+    texts = ["Lease Laibility", "Payable for Lease Obiligation", "LEASE", "Leases", "Financial Lease",
+             "Payable for sale and lease back of an under construction asset"]
+    extra = []
+    for i, text in enumerate(texts, 1):
+        member = f"M{i}" if i < 7 else "M8"
+        if member == "M4":      # M4 holds the right-of-use asset row of ANNUAL
+            member = "M9"
+        extra += [("DescriptionOfOtherCurrentFinancialLiabilitiesOthers", f"D2026_{member}", text),
+                  ("OtherCurrentFinancialLiabilitiesOthers", f"I2026_{member}", float(i))]
+    got = sv.corporate_bs(sv._Reader(xf.Facts(doc(base + extra)), instant=END))
+    assert got["Borrowings"].value == pytest.approx(150 + 1 + 2 + 3 + 4 + 5)        # the sale and lease back row (6) stays out
+
+
+def test_b4_both_deferred_tax_lines_are_netted_on_a_standalone_year_end_too(monkeypatch):
+    """Infosys standalone FY25: Assets 124,936 - min(DTA 497, DTL 1,062) = 124,439 = screener; a half-year column stays the filed total."""
+    r = sv._Reader(rules1("INFY_fy25_bs"), instant=date(2025, 3, 31))
+    assert sv.corporate_bs(r, standalone=True)["Total Assets"].value == pytest.approx(124439.0)
+    assert sv.corporate_bs(r, standalone=True, half_year=True)["Total Assets"].value == pytest.approx(124936.0)
+    monkeypatch.setattr(sv, "B4_NET_ANY_BASIS", False)
+    assert sv.corporate_bs(r, standalone=True)["Total Assets"].value == pytest.approx(124936.0)

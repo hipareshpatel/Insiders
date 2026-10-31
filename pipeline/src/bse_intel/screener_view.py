@@ -32,7 +32,8 @@ Corporate (Ind AS) profit and loss, crore (evidence: docs/audit/screener-rows-20
   "profit from associates is always other ordinary income") are in the note, and the note says when the two differ;
 - Interest = FinanceCosts + the financial-services finance-cost row ("Finance cost of financial services business..."; an annual
   report files that breakdown only as a text block, so for a year read from it the row is read from the Q4 results file);
-- Depreciation, Profit before tax = ProfitBeforeTax + associates' share + regulatory deferral movement, Tax % = TaxExpense / PBT, Net Profit = ProfitLossForPeriod (the website's Net
+- Depreciation, Profit before tax = ProfitBeforeTax + associates' share (only where the company's own layout puts it inside PBT:
+  SegmentProfitBeforeTax, else ASSOCIATES_DEFAULT_INCLUDE) + regulatory deferral movement, Tax % = TaxExpense / PBT, Net Profit = ProfitLossForPeriod (the website's Net
   Profit is the whole profit). Named rows not on the page: Tax, Net Profit (owners) (= profit for EPS), Minority share, Associates'
   share, Exceptional items, Exceptional items AT (= exceptional - tax x exceptional / PBT; the exceptional itself when that tax is
   larger than it), Profit for PE (= owners' profit - exceptional AT).
@@ -40,9 +41,9 @@ Corporate (Ind AS) profit and loss, crore (evidence: docs/audit/screener-rows-20
 Corporate balance sheet (instant): Equity Capital = EquityShareCapital; Reserves = OtherEquity; Borrowings = BorrowingsNoncurrent +
 BorrowingsCurrent + lease liabilities (elements, else described rows "lease" of the other financial liabilities) + described rows
 "current maturities" (not of a lease when lease elements are used); Fixed Assets = PPE + Goodwill + OtherIntangibleAssets +
-InvestmentProperty + right-of-use (element RightOfUseAssets, else the described row "Right-of-use assets" of Other non-current
-assets); CWIP = CapitalWorkInProgress + IntangibleAssetsUnderDevelopment; Investments = NoncurrentInvestments + CurrentInvestments +
-InvestmentsAccountedForUsingEquityMethod; Total (Liabilities and Assets) = Assets - min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet);
+InvestmentProperty + exploration and evaluation assets + biological assets + right-of-use (element RightOfUseAssets, else the described
+row "Right-of-use assets" of the other non-current (financial) assets); CWIP = CapitalWorkInProgress + IntangibleAssetsUnderDevelopment; Investments = NoncurrentInvestments + CurrentInvestments +
+InvestmentsAccountedForUsingEquityMethod; Total (Liabilities and Assets) = Assets - min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet) (a year-end column, B4_NET_ANY_BASIS);
 Other Liabilities and Other Assets are the remainders.
 
 Cash flow (every template): Operating, Investing + EffectOfExchangeRateChangesOnCashAndCashEquivalents, Financing, Net Cash Flow =
@@ -107,7 +108,15 @@ TABLES = (("quarters", "quarters", PL_ROWS), ("profit-loss", "annual", PL_ROWS),
 EXPENSE_PARENTS = ("OtherExpenses", "Expenses")
 LIABILITY_PARENTS = ("OtherNoncurrentFinancialLiabilitiesOthers", "OtherCurrentFinancialLiabilitiesOthers",
                      "OtherNoncurrentFinancialLiabilities", "OtherCurrentFinancialLiabilities")
-ASSET_PARENTS = ("OtherNoncurrentAssetsOthers", "OtherNoncurrentAssets")
+# a right-of-use asset row sits under any of these in Fixed Assets for screener: 66 company-periods of 34 companies closed by the
+# three added parents (KIMS cons Q4FY26 gap -1,128.2 = row 1,128.3 under OtherNoncurrentFinancialAssets; JSW Steel Sep-26 4,689; Eternal
+# Sep-26 5,360; run 41164053629, srules/bscf report rule 1)
+ASSET_PARENTS = ("OtherNoncurrentAssetsOthers", "OtherNoncurrentAssets", "OtherNoncurrentFinancialAssets",
+                 "OtherNoncurrentFinancialAssetsOthers")
+# exploration and evaluation assets and biological assets (other than bearer plants, which are PPE) are Fixed Assets for screener: Coal
+# India cons Q4FY23 -4,924.4 = 4,924.9, Oil India FY25/FY26 -2,482.7 / -3,894.6, Atul, Godrej Industries (10 company-periods; srules/bscf
+# report rule 2)
+FIXED_ASSET_EXTRAS = ("AssetsArisingFromExplorationForAndEvaluationOfMineralResources", "BiologicalAssetsOtherThanBearerPlants")
 LEASE_ELEMENTS = ("LeaseLiabilitiesNoncurrent", "LeaseLiabilitiesCurrent", "NoncurrentLeaseLiabilities", "CurrentLeaseLiabilities")
 # a line of the other current financial liabilities, tagged by its own element: in screener's Borrowings in 58 rows of 23
 # companies (the 500 largest, run 40759776253: the gap = the element, screener above ours, every one an annual report)
@@ -127,6 +136,20 @@ LEVIES = {"excise": (("ExciseDuty",), r"^\s*excise"),
 from .screener_parts import FINANCE_MEMBER as FIN_SERVICES_ROW  # noqa: E402 - one pattern for both (L&T's and Grasim's wording)
 LOSS_ON_DISPOSAL = "LossOnDisposalDiscardDemolishmentAndDestructionOfDepreciablePropertyPlantAndEquipment"
 ASSOCIATES = "ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod"
+# the same share under its two split names (the apart pairs of 10 company-years where the recipe added nothing carry them; srules/annual
+# report rule 2): read the joint element, else the sum of these
+ASSOCIATES_SPLIT = ("ShareOfProfitLossOfAssociatesAccountedForUsingEquityMethod",
+                    "ShareOfProfitLossOfJointVenturesAccountedForUsingEquityMethod")
+SEGMENT_PBT = "SegmentProfitBeforeTax"
+# the associates' share is in PBT (and in Other Income, or Expenses for a loss) when the company's own layout puts it there, as screener
+# does: the undimensioned SegmentProfitBeforeTax says which (_share_in_pbt). With no segment figure this default decides. Measured
+# 31 Oct 2026 (run 41164053629): a share added to PBT is right for 195 company-bases (870 PBT quarters), wrong for 28 (+27 mixed), so the
+# default stays "include" until the owner's on/off measurement
+ASSOCIATES_DEFAULT_INCLUDE = True
+# a standalone sheet nets min(DTA, DTL) from the total like a consolidated one when both are filed (not a half-year column). Infosys
+# standalone FY25: Assets 124,936 - min(497, 1,062) = 124,439 = screener; consolidated netted 754 ok / 64 apart, standalone filers matched
+# both ways (1,371 without, 30 with), so the switch is measured on/off (srules/bscf report rule 7)
+B4_NET_ANY_BASIS = True
 EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # a row of other financial liabilities that is bank debt by its own words: Titan standalone "Secured and Unsecured Payable to Banks"
 # 7,043 Cr FY25 and 14,314 Cr FY26 = screener's Borrowings less ours, exactly (its gold on loan; measured 28 Oct 2026)
@@ -138,6 +161,10 @@ EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # and in other ways (Persistent "CurrentbLease Liability", MTAR "lease libaility", Belrise "Lease libilities", Avalon "Lease
 # Obligations", Asahi India "Liability for Leased ...": 16 rows of 8 companies in the 500 largest, screener above ours)
 LEASE_ROW = r"lease\w*\s*(lia|lib|obl)|liab\w*\s+for\s+leas"
+# under a FINANCIAL-liability parent a row named "lease" (or "leases", followed by any word) is a lease liability: "Lease Laibility" (KPIT,
+# SCI), "Payable for Lease Obiligation" (Dixon -252.7 / -312.0 / -417.8), "Lease" / "LEASE" (JSL, Granules), "Leases" (PGEL), "Financial
+# Lease" (Maruti): 22 rows apart, ours below screener's (srules/bscf report rule 4c). A sale and lease back is not (JSW Steel)
+LEASE_ROW_FINANCIAL = LEASE_ROW + r"|^(?!.*(sale\s+and\s+lease|lease\s*back)).*\bleases?\b"
 # a lease liability filed under the NON-financial other liabilities (Ambuja FY25 "CURRENT LEASE LIABILITY" 304.14, Concor FY24
 # "Lease liability-Ind AS 116" 746.11, Delhivery FY25 243.88: 18 rows of 12 companies, the gap exactly) is still debt
 LEASE_PARENTS = ("OtherNoncurrentLiabilitiesOthers", "OtherCurrentLiabilitiesOthers", "OtherNoncurrentLiabilities",
@@ -146,6 +173,11 @@ BANK_DEBT_ROW = r"payable to banks?|due to banks?|gold (on )?loan|metal loans?|(
 # a loss on investments only: an impairment of investments stays in Expenses (Tech Mahindra standalone Q4FY24-Q4FY26, Cipla
 # Q4FY26, Purvankara, Kolte-Patil, Jagran: about 11 rows apart by exactly the impairment row, none exact by it; run 40793194881)
 INVESTMENT_LOSS = r"^\s*(net\s+)?loss\b.{0,25}\binvestments?\b"
+# a fair value (gain) / loss ON INVESTMENTS in the Other expenses breakdown is not an operating cost for screener (TMCV Q2FY27 consolidated
+# "Fair value (gain)/loss on equity investments measured at FVTPL" 708 Cr: Operating Profit 1,940 + 708 = 2,648 = screener, 5 of 5 quarters;
+# srules/quarters report rule 2). It needs "investment" and never a derivative, commodity or foreign exchange line: TMPV Q1FY27 "Foreign
+# exchange loss/(gain) and commodity derivatives fair value adjustments" 150 Cr stays in screener's Expenses
+FAIR_VALUE_INVESTMENT = r"^(?!.*(derivative|commodit|foreign|exchange|forex|hedg)).*(fair.value.*\binvestments?\b|\binvestments?\b.*fair.value)"
 DISCONTINUED = "ProfitLossFromDiscontinuedOperationsAfterTax"
 REGULATORY_DEFERRAL = "NetMovementInRegulatoryDeferralAccountBalancesRelatedToProfitOrLossAndTheRelatedDeferredTaxMovement"
 
@@ -428,6 +460,31 @@ def _exceptional_rows(out: dict[str, Row], exceptional: float | None, tax: float
         out["Profit for PE"] = Row(owners - at, "owners' profit - exceptional items AT")
 
 
+def _associates(r: _Reader) -> float | None:
+    """The share of profit of associates and joint ventures: the joint element, else the two split elements added."""
+    v = r.cr(ASSOCIATES)
+    if v is not None:
+        return v
+    parts = [x for n in ASSOCIATES_SPLIT if (x := r.cr(n)) is not None]
+    return sum(parts) if parts else None
+
+
+def _share_in_pbt(r: _Reader, filed_pbt: float | None, share: float | None) -> tuple[bool, str]:
+    """Whether the associates' share goes into PBT, Other Income and Expenses: follow the company's own presentation. The undimensioned
+    SegmentProfitBeforeTax equal to PBT + share (within 1 Cr) means the company presents the share inside its PBT: include (TATASTEEL,
+    HINDALCO, ITC, BHARTIARTL, NTPC); equal to the filed ProfitBeforeTax: leave it out (RELIANCE, DLF, LT, TATACONSUM). No usable segment
+    figure (absent, a filler 0, or neither): ASSOCIATES_DEFAULT_INCLUDE. Measured 31 Oct 2026 on 9 of 13 consolidated Q1/Q2FY27 files."""
+    if not share:
+        return True, ""
+    seg = r.cr(SEGMENT_PBT)
+    if seg and filed_pbt is not None:
+        if abs(seg - filed_pbt) <= ABS_TOL:
+            return False, "the segment PBT equals the filed PBT"
+        if abs(seg - (filed_pbt + share)) <= ABS_TOL:
+            return True, "the segment PBT holds the share"
+    return ASSOCIATES_DEFAULT_INCLUDE, "default"
+
+
 def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") -> dict[str, Row]:
     """The corporate (Ind AS) profit and loss rows of one period. ``fallback`` is where the financial-services finance-cost row is
     read when this doc has none (a year read from the annual report: its Q4 results file)."""
@@ -443,15 +500,21 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # Expenses (docs: profit from the sale of investments / associates is exceptional). M&M Q4FY26 "Loss from investments
     # related to subsidiaries, associates and joint ventures" 410.2 Cr = the 410.47 Cr Expenses gap (run 40726456306)
     inv_rows = r.rows(EXPENSE_ROW_PARENTS, INVESTMENT_LOSS)
+    # and a fair value (gain)/loss on investments, signed as filed (TMCV Q2FY27 708 Cr), once when a row matches both patterns
+    inv_rows += [x for x in r.rows(EXPENSE_ROW_PARENTS, FAIR_VALUE_INVESTMENT) if x not in inv_rows]
     inv_loss = _sum_rows(inv_rows) if inv_rows else 0.0
     loss += inv_loss
     # bank charges are a finance cost for screener: HAL, IndiGo and IOC, every year FY24-FY26 and both bases, the yearly
     # Interest gap = the annual report's BankCharges (run 40735344929); the quarters' files carry no such element
     bank = r.cr("BankCharges") or 0.0
-    share = r.cr(ASSOCIATES)
+    share_filed = share = _associates(r)
     # a loss from associates is an expense for screener, a profit other income: 43 of 43 quarters where Expenses and Other
     # Income were both apart by the share, PBT exact, had a loss (JSW Steel 8, Power Grid 7, Nestle 7, TVS 7, Adani Ports 5,
     # Bajaj Auto 3: Q2FY25 580 Cr, KTM; run 40735344929)
+    pbt_filed = pbt
+    in_pbt, in_pbt_why = _share_in_pbt(r, pbt_filed, share)
+    if not in_pbt:      # the company's own layout keeps the share below PBT: out of PBT, Other Income, Expenses and Operating Profit
+        share = 0.0
     assoc_loss = -share if share is not None and share < 0 else 0.0
     regulatory = r.cr(REGULATORY_DEFERRAL)
     # a net regulatory EXPENSE (a negative movement in the regulatory deferral balances) is an expense for screener, a net
@@ -491,7 +554,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # net movement in regulatory deferral balances, both of which SEBI's results format puts below the filed PBT (measured
     # 28 Oct 2026 on the owner's screener Excel files: 39 of 55 quarters with associates, e.g. Coal India Q4FY26 14,510.7 +
     # 116.1 = 14,626.75; NTPC Q1FY26 5,281.2 + 2,007.3 + 476.6 = 7,765.06; Power Grid Q1FY26 4,330.2 + 212.8 - 44.4 = 4,498.57).
-    # Reliance is the one company seen the other way (screener follows its own layout, associates after tax): it stays apart.
+    # Reliance, DLF, L&T and Tata Consumer are the other way (their layout keeps the share below PBT): _share_in_pbt follows it.
     filed_pbt = pbt
     if pbt is not None:
         pbt = pbt + (share or 0.0) + (regulatory or 0.0) + (discontinued or 0.0)
@@ -508,6 +571,7 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     else:
         out["Other Income"] = Row(None, "missing a line of the identity (PBT, Depreciation, Interest, Operating Profit)" + src)
     out["Profit before tax"] = Row(pbt, ("ProfitBeforeTax" + (" + associates' share" if share else "")
+                                         + (" (share left out: " + in_pbt_why + ")" if share_filed and not in_pbt else "")
                                          + (" + regulatory deferral movement" if regulatory else "")
                                          + (" + discontinued operations after tax" if discontinued else "") if pbt is not None
                                          else "missing ProfitBeforeTax") + src)
@@ -525,8 +589,10 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     minority = r.cr("ProfitOrLossAttributableToNonControllingInterests")
     if minority is not None:
         out["Minority share"] = Row(minority, "ProfitOrLossAttributableToNonControllingInterests" + src)
-    if share is not None:
-        out["Associates' share"] = Row(share, ASSOCIATES + src)
+    if share_filed is not None:
+        out["Associates' share"] = Row(share_filed, ASSOCIATES + src)
+        if share_filed and not in_pbt:      # so the profit-line rules know the whole profit is PBT - Tax + this (corrected_pl)
+            out["Associates' share outside PBT"] = Row(share_filed, "share kept below PBT: " + in_pbt_why + src)
     _exceptional_rows(out, exc, tax, pbt, owners)
     return out
 
@@ -642,7 +708,8 @@ def corrected_pl(rows: dict[str, float], fam: str) -> dict[str, float]:
        (204 live quarters at 0: PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; nbfc_pl lacks corporate_pl's guard).
     3. a corporate quarter whose profit is on the other side of zero from Profit before tax - Tax, and further from it than
        max(5 Cr, half of it), has PBT - Tax as its profit (APARINDS Q1FY27: PAT -138.56 beside EBITDA 757.57; four other sites 467.45).
-       The corporate PBT already holds the associates' share, the regulatory deferral movement and the discontinued operations after tax
+       The corporate PBT already holds the associates' share (unless the company's layout keeps it below PBT: the row "Associates' share
+       outside PBT" is then added back), the regulatory deferral movement and the discontinued operations after tax
        (corporate_pl) and Tax is the continuing tax, so PBT - Tax is the whole profit; the owners' is that less the minority's share
        (without a minority row it is guarded only when it equals the whole). A genuine loss (same side of zero) stays. Other families
        are not guarded: their PBT is not built the same way."""
@@ -656,7 +723,8 @@ def corrected_pl(rows: dict[str, float], fam: str) -> dict[str, float]:
             out["Net Profit (owners)"] = net
     pbt, tax = rows.get("Profit before tax"), rows.get("Tax")
     if fam == CORPORATE and pbt is not None and tax is not None:
-        whole = round(pbt - tax, 2)
+        # PBT - Tax is the whole profit only when the associates' share is in PBT; a share kept below PBT (corporate_pl: its layout) is added
+        whole = round(pbt - tax + (rows.get("Associates' share outside PBT") or 0.0), 2)
         for row in ("Net Profit", "Net Profit (owners)"):
             value = out.get(row)
             if value is None:
@@ -711,7 +779,7 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
         rows = [x for x in r.rows(LIABILITY_PARENTS, rf"current maturit|{BANK_DEBT_ROW}") if not re.search("lease", x[1], re.I)]
         lease_note = f"lease {_fmt(lease)} ({', '.join(lease_names)})"
     else:
-        rows = r.rows(LIABILITY_PARENTS, rf"{LEASE_ROW}|current maturit|{BANK_DEBT_ROW}")
+        rows = r.rows(LIABILITY_PARENTS, rf"{LEASE_ROW_FINANCIAL}|current maturit|{BANK_DEBT_ROW}")
         seen = {(t, round(v, 2)) for _, t, v in rows}
         for x in r.rows(LEASE_PARENTS, LEASE_ROW):      # a parent and its "Others" member can carry the same line
             if (x[1], round(x[2], 2)) not in seen:
@@ -738,6 +806,10 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
                             if debt_names or lease_names or fl or ltm or rows else ("no borrowings, lease or maturity line: 0" if has_sheet
                                                                          else "missing BorrowingsNoncurrent and BorrowingsCurrent") + src)
     fixed, fixed_names = total("PropertyPlantAndEquipment", "Goodwill", "OtherIntangibleAssets", "InvestmentProperty")
+    extras, extra_names = total(*FIXED_ASSET_EXTRAS)
+    if extras:      # a filler 0 is no line
+        fixed += extras
+        fixed_names += extra_names
     rou = r.cr("RightOfUseAssets")
     rou_note = "RightOfUseAssets" if rou is not None else ""
     if rou is None:
@@ -762,7 +834,7 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
     assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
     # the half-year column is the filed total: HCL Tech, Adani Power, Adani Green, Wipro, Torrent Pharma Q2FY27 apart by exactly
     # min(DTA, DTL), while HCL Tech's year columns FY23-FY26 are exact with it (run 40735344929)
-    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year and not standalone else 0.0
+    offset = min(dta, dtl) if dta is not None and dtl is not None and not half_year and (B4_NET_ANY_BASIS or not standalone) else 0.0
     tot = None if assets is None else assets - offset
     tot_note = ("Assets" + (f" - min(DTA, DTL) {_fmt(offset)}" if offset else "") if assets is not None else "missing Assets") + src
     out["Total Liabilities"] = Row(tot, tot_note)

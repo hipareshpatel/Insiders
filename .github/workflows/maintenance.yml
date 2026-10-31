@@ -406,11 +406,12 @@ permissions:
   actions: write    # seed-memory starts its next pass (workflow_dispatch) while companies are left
 
 concurrency:
+  # (reit-results: NSE downloads and a write to companies and results_kpi, so the NSE memory group. No # inside the expression below: GitHub reads it as part of it.)
   # groups by source and by what a job writes: the table in the header comment (a downloading xbrl-facts run is NSE traffic: the NSE memory group)
   group: >-
     ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
-    || inputs.command == 'reit-results' && 'maint-nse-memory'   # NSE downloads and a write to companies and results_kpi
+    || inputs.command == 'reit-results' && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","results-table","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["text-backfill-bse","bse-annual-xbrl","bse-results-xbrl"]'), inputs.command) && format('maint-bse-{0}', inputs.command)
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'

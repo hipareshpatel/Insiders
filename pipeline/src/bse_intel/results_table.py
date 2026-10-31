@@ -5,7 +5,7 @@ The company page's Quarterly results table is ``dossier["statements"]`` in each 
 screener's rules, file-labelled. This job turns that same source into one table per quarter and keeps the KPI figures of each in the
 ``results_kpi`` table, one row per company and quarter, so the page can filter, sort and summarise them in the database. No card, no
 AI, no exchange call. Every statement layout (``family``) gives a row: a corporate filer's revenue, EBITDA (operating profit), margin
-and profit; a bank's revenue (interest earned) and profit; an NBFC's revenue, financing profit and financing margin (in the EBITDA and
+and profit; a bank's revenue (interest earned), financing profit (after interest and provisions, as Screener), margin and profit; an NBFC's revenue, financing profit and financing margin (in the EBITDA and
 margin columns) and profit; an insurer's profit only. A quarter with no profit line has no row. The basis is consolidated when the
 statements have the quarter on it with a profit line, else standalone."""
 
@@ -31,7 +31,10 @@ QUARTERS_KEPT = 10   # the latest quarters a company keeps: the page's eight-qua
 TURN_KEY = {"LOSS_TO_PROFIT": 1e6, "LOSS_NARROWED": 1e5, "LOSS_WIDENED": -1e5, "PROFIT_TO_LOSS": -1e6}
 # family -> (revenue row, EBITDA row, margin row) of its saved statements; None: the family has no such line
 LAYOUT = {sv.CORPORATE: ("Sales", "Operating Profit", "OPM %"),
-          sv.BANK: ("Revenue", None, None),
+          # a bank takes Screener's own rows (screener_view.bank_pl): Financing Profit = Revenue - Interest - Expenses, provisions inside Expenses,
+          # and its margin, in the EBITDA and margin slots (owner, 31 Oct 2026: "match Screener; banks get a figure"); the page keeps banks out
+          # of the EBITDA tile and medians
+          sv.BANK: ("Revenue", "Financing Profit", "Financing Margin %"),
           sv.NBFC: ("Revenue", "Financing Profit", "Financing Margin %"),
           sv.INSURER: (None, None, None),
           # a REIT or InvIT files the corporate lines (reit_results.py); only its kind differs on the page

@@ -203,7 +203,7 @@ export function GrowthForm({ query, onApply, compact = false }: { query: KpiQuer
         <Steps label="Profit growth at least" options={growthSteps("%")} value={d.pat_min} onChange={(v) => set({ pat_min: v })} big={compact} />)}
       {group("Revenue growth at least", "",
         <Steps label="Revenue growth at least" options={growthSteps("%")} value={d.rev_min} onChange={(v) => set({ rev_min: v })} big={compact} />)}
-      {group("EBITDA growth at least", "not for banks and insurers",
+      {group("EBITDA growth at least", "not for insurers",
         <Steps label="EBITDA growth at least" options={growthSteps("%")} value={d.ebitda_min} onChange={(v) => set({ ebitda_min: v })} big={compact} />)}
       {group("Margin change at least", "100 bp = 1 percentage point",
         <Steps label="Margin change at least" options={growthSteps("bp")} value={d.opm_min} onChange={(v) => set({ opm_min: v })} big={compact} />)}

@@ -220,3 +220,8 @@ test("group momentum and the trend use only quarters on the company's basis this
   const same = computeGroups({ quarter: NOW, by: "sector", cut: "all", rows: [stat("1", NOW, { basis: "CONSOLIDATED", pat_yoy: 30 }), stat("1", "Q1FY27", { basis: "CONSOLIDATED", pat_yoy: 5 })], companies, members: [], withinIndex: null, withinMcap: null })[0];
   assert.equal(same.speeding_up_pct, 100);
 });
+
+test("a bank's financing profit stays out of the EBITDA tile and median (R10)", () => {
+  const s = summarise([sr({ ebitda_yoy: 10 }), sr({ kind: "bank", ebitda_yoy: 50, ebitda: 400 })]);
+  assert.deepEqual([s.ebitda_n, s.ebitda_of, s.median_ebitda_yoy], [1, 1, 10]);
+});

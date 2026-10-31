@@ -206,7 +206,7 @@ export function ResultsView() {
                   <div className="sm:hidden"><PhoneList rows={rows} onSelect={select} /></div>
                   <p className="hidden px-3 pt-2 text-[12.5px] text-ink-3 sm:block">
                     NM: not meaningful, a change above +999% on a small base (the exact figure is in the row's quick look).
-                    {rows.some((r) => r.kind === "nbfc") && <> * {NBFC_EBITDA_NOTE}</>}
+                    {rows.some((r) => r.kind === "nbfc" || r.kind === "bank") && <> * {NBFC_EBITDA_NOTE}</>}
                   </p>
                   <div className="flex flex-col items-stretch gap-3 py-4 text-[13px] text-ink-3 sm:flex-row sm:items-center sm:justify-between sm:px-3">
                     <span className="hidden sm:inline">

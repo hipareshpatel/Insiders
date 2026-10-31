@@ -117,11 +117,11 @@ export function oneOff(r: Pick<KpiRow, "pat" | "pat_pre" | "pat_pre_yoy" | "pat_
 
 export const KIND_TAG: Record<Kind, string> = { company: "", bank: "Bank", nbfc: "NBFC", insurer: "Insurer", reit: "REIT", invit: "InvIT" };
 
-/** What each column holds for a kind of company: a bank's revenue is interest income and it has no EBITDA; an NBFC's EBITDA columns hold
- *  its financing profit and margin; an insurer has profit only (docs/design/results-kpi.md rule 1). null: the line is not shown. */
+/** What each column holds for a kind of company: a bank's revenue is interest income; a bank's and an NBFC's EBITDA columns hold
+ *  their financing profit and margin (Screener's rows); an insurer has profit only (docs/design/results-kpi.md rule 1). null: the line is not shown. */
 export function lineLabels(kind: Kind): { revenue: string | null; ebitda: string | null; margin: string | null } {
   switch (kind) {
-    case "bank": return { revenue: "Interest income", ebitda: null, margin: null };
+    case "bank": return { revenue: "Interest income", ebitda: "Financing profit", margin: "Financing margin" };
     case "nbfc": return { revenue: "Income", ebitda: "Financing profit", margin: "Financing margin" };
     case "insurer": return { revenue: null, ebitda: null, margin: null };
     default: return { revenue: "Revenue", ebitda: "EBITDA", margin: "EBITDA margin" };
@@ -129,9 +129,8 @@ export function lineLabels(kind: Kind): { revenue: string | null; ebitda: string
 }
 
 /** Why a cell is empty, said once in the cell (an honest blank, not a zero). */
-export function blankNote(kind: Kind, line: "revenue" | "ebitda" | "margin"): string {
+export function blankNote(kind: Kind, _line?: "revenue" | "ebitda" | "margin"): string {
   if (kind === "insurer") return "Not shown for insurers";
-  if (kind === "bank") return line === "ebitda" ? "Not shown for banks" : "";
   return "";
 }
 
@@ -196,8 +195,8 @@ export function tilesIntro(s: Pick<KpiSummary, "n" | "pat_of">): string {
   return `${fmtCount(s.n)} ${noun(s.n)} reported; ${fmtCount(s.pat_of)} can be compared with the same quarter last year.`;
 }
 
-/** What an NBFC's EBITDA cell holds, said where it is shown so a reader comparing sites is not misled. */
-export const NBFC_EBITDA_NOTE = "Financing profit: after interest (as Screener); other sites show operating profit before interest.";
+/** What a bank's or NBFC's EBITDA cell holds, said where it is shown so a reader comparing sites is not misled. */
+export const NBFC_EBITDA_NOTE = "Financing profit, as Screener: after interest (banks: after provisions too).";
 
 const pctOf = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
 
@@ -504,8 +503,8 @@ const CSV_COLUMNS: [string, (r: KpiRow) => string | number | null | boolean][] =
   ["Symbol", (r) => r.symbol ?? r.scrip_code], ["Company", (r) => r.company_name], ["Classification", (r) => r.industry],
   ["Kind (company/bank/nbfc/insurer/reit/invit)", (r) => r.kind], ["Basis", (r) => r.basis.toLowerCase()], ["Quarter", (r) => r.period], ["Market cap (Rs Cr)", (r) => r.market_cap_cr],
   ["Revenue (Rs Cr)", (r) => r.revenue], ["Revenue YoY %", (r) => nmCell(r.revenue_yoy)], ["Revenue QoQ %", (r) => nmCell(r.revenue_qoq)],
-  ["EBITDA (Rs Cr)", (r) => r.ebitda], ["EBITDA YoY %", (r) => nmCell(r.ebitda_yoy)], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
-  ["EBITDA QoQ %", (r) => nmCell(r.ebitda_qoq)], ["EBITDA margin %", (r) => r.opm], ["Margin change YoY (bp; 100 bp = 1 percentage point)", (r) => r.opm_yoy_bps],
+  ["EBITDA / financing profit (Rs Cr; EBITDA for companies, financing profit for banks and NBFCs)", (r) => r.ebitda], ["EBITDA YoY %", (r) => nmCell(r.ebitda_yoy)], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
+  ["EBITDA QoQ %", (r) => nmCell(r.ebitda_qoq)], ["EBITDA margin % (financing margin for banks and NBFCs)", (r) => r.opm], ["Margin change YoY (bp; 100 bp = 1 percentage point)", (r) => r.opm_yoy_bps],
   ["PAT (Rs Cr)", (r) => r.pat], ["PAT YoY %", (r) => nmCell(r.pat_yoy)], ["PAT turn", (r) => (r.pat_turn ? TURN_TEXT[r.pat_turn] : null)],
   ["PAT QoQ %", (r) => nmCell(r.pat_qoq)],
   ["PAT before exceptional items (Rs Cr)", (r) => r.pat_pre], ["PAT before exceptional items YoY %", (r) => (r.pat_pre_turn ? TURN_TEXT[r.pat_pre_turn] : nmCell(r.pat_pre_yoy))], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT growth change vs last quarter (pts)", (r) => r.pat_momentum_pts],

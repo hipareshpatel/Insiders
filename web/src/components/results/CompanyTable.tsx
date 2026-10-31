@@ -70,7 +70,7 @@ function EbitdaCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
       <Growth value={qoq ? r.ebitda_qoq : r.ebitda_yoy} turn={qoq ? null : r.ebitda_turn} className="text-[15px]" />
       <Sm>{qoq ? cr(r.ebitda) : wasLine(r.ebitda == null ? null : cr(r.ebitda), r.ebitda_prev_yoy)}</Sm>
       {(qoq ? r.ebitda_qoq : r.ebitda_yoy) == null && !(qoq ? false : r.ebitda_turn) && <Sm italic>{NO_BASE(qoq)}</Sm>}
-      {label !== "EBITDA" && <Sm italic><span title={r.kind === "nbfc" ? NBFC_EBITDA_NOTE : undefined}>{label}{r.kind === "nbfc" && <sup aria-hidden> *</sup>}</span></Sm>}
+      {label !== "EBITDA" && <Sm italic><span title={r.kind === "nbfc" || r.kind === "bank" ? NBFC_EBITDA_NOTE : undefined}>{label}{(r.kind === "nbfc" || r.kind === "bank") && <sup aria-hidden> *</sup>}</span></Sm>}
     </>
   );
 }
@@ -86,7 +86,7 @@ function MarginCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
       {bps == null && r.opm != null && hadBase
         ? <span className="num whitespace-nowrap text-[15px] font-semibold text-ink-2" title="Not meaningful: a margin outside −100%…+100%, or a loss in the base period">{NM}</span>
         : <Growth value={bps} unit="bp" className="text-[15px]" />}
-      <Sm>{r.kind === "nbfc" ? "margin" : "now"} <span title={r.opm != null && Math.abs(r.opm) > 100 ? `Not meaningful: ${r.opm.toFixed(1)}%` : undefined}>{fmtMargin(r.opm)}</span></Sm>
+      <Sm>{r.kind === "nbfc" || r.kind === "bank" ? "margin" : "now"} <span title={r.opm != null && Math.abs(r.opm) > 100 ? `Not meaningful: ${r.opm.toFixed(1)}%` : undefined}>{fmtMargin(r.opm)}</span></Sm>
     </>
   );
 }
@@ -318,7 +318,7 @@ export function PhoneList({ rows, onSelect }: { rows: KpiRow[]; onSelect: (r: Kp
                 ) : <span className="text-ink-3">No revenue (insurer)</span>}
                 {labels.ebitda ? (
                   <span>{labels.ebitda === "EBITDA" ? "EBITDA" : "Fin. profit"} <Growth value={r.ebitda_yoy} turn={r.ebitda_turn} arrowClass="hidden" /></span>
-                ) : r.kind === "bank" ? <span className="text-ink-3">No EBITDA (bank)</span> : null}
+                ) : null}
               </span>
               {r.nfo && <span className="mt-2 block pl-11"><NfoFlag /></span>}
             </button>

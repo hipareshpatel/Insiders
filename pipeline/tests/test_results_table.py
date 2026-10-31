@@ -424,3 +424,13 @@ def test_an_owners_profit_that_does_not_add_up_with_the_minoritys_to_the_whole_i
     assert rt.company_tables({"statements": [atul("Q2FY27", 158.8, 155.67, 3.13), atul("Q2FY26", 100.0, 96.9, 3.1)]})["Q2FY27"]["pat"]["prev_year"] == 96.9
     bare = {"statements": [_entry("Q2FY27", _rows(1500.0, 300.0, 230.1, 182.37, owners=87.95))]}
     assert rt.company_tables(bare)["Q2FY27"]["pat"]["value"] == 87.95
+
+
+def test_a_bank_takes_screeners_financing_profit_and_margin_in_the_ebitda_slots():
+    # owner, 31 Oct 2026: match Screener, banks get a figure (screener_view.bank_pl: Revenue - Interest - Expenses, provisions inside Expenses)
+    def bank(period, revenue, fp, margin, net):
+        return _bank(period, revenue, net, **{"Financing Profit": fp, "Financing Margin %": margin})
+    memory = {"statements": [bank("Q2FY27", 1000.0, 400.0, 40.0, 250.0), bank("Q2FY26", 900.0, 300.0, 33.33, 200.0), bank("Q1FY27", 950.0, 380.0, 40.0, 240.0)]}
+    row = _row(memory)
+    assert row["kind"] == "bank" and (row["ebitda"], row["ebitda_prev"], row["ebitda_yoy"], row["ebitda_qoq"]) == (400.0, 300.0, 33.3, 5.3)
+    assert (row["opm"], row["opm_yoy_bps"]) == (40.0, 667) and row["nfo"] == 0   # never "profit up, EBITDA down" for a lender

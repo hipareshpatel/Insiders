@@ -117,7 +117,7 @@ function SheetBody({ query, indices, onApply }: { query: KpiQuery; indices: { id
           {back("Revenue, EBITDA, margin")}
           <div className="pb-1 pt-2 text-[14px] text-ink-2">Revenue growth at least</div>
           <Steps big label="Revenue growth at least" options={growthSteps("%")} value={d.rev_min} onChange={(v) => set({ rev_min: v })} />
-          <div className="pb-1 pt-3.5 text-[14px] text-ink-2">EBITDA growth at least <span className="text-ink-3">· not for banks and insurers</span></div>
+          <div className="pb-1 pt-3.5 text-[14px] text-ink-2">EBITDA growth at least <span className="text-ink-3">· not for insurers</span></div>
           <Steps big label="EBITDA growth at least" options={growthSteps("%")} value={d.ebitda_min} onChange={(v) => set({ ebitda_min: v })} />
           <div className="pb-1 pt-3.5 text-[14px] text-ink-2">Margin change at least <span className="text-ink-3">· 100 bp = 1 point</span></div>
           <Steps big label="Margin change at least" options={growthSteps("bp")} value={d.opm_min} onChange={(v) => set({ opm_min: v })} />

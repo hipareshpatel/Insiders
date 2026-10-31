@@ -12,7 +12,7 @@ import { AXIS_CLIP, LineChart } from "./charts";
 
 const KIND_NOTE: Record<KpiRow["kind"], string | null> = {
   company: null,
-  bank: "Banks: no operating-expense line is saved, so no EBITDA or margin; revenue is interest income.",
+  bank: "Banks: revenue is interest income; financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians and totals.",
   nbfc: "NBFCs: financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians and totals.",
   insurer: "Insurers: profit only; no revenue or EBITDA is saved in a comparable layout.",
   reit: "REITs: revenue, operating profit and profit as the trust files them; left out of EBITDA medians and totals. Cash distributions are not shown yet.",
@@ -87,7 +87,7 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
         <div className="mt-[22px] grid grid-cols-3 gap-2.5">
           {labels.revenue ? <Tile label={labels.revenue} value={row.revenue_yoy} amount={row.revenue} /> : <NoTile label="Revenue" note="not shown for insurers" />}
           {labels.ebitda ? <Tile label={labels.ebitda} value={row.ebitda_yoy} turn={row.ebitda_turn} amount={row.ebitda} />
-            : <NoTile label="EBITDA" note={row.kind === "bank" ? "not for banks" : "not for insurers"} />}
+            : <NoTile label="EBITDA" note="not shown for insurers" />}
           <Tile label="Profit (PAT)" title="PAT: profit after tax" value={row.pat_yoy} turn={row.pat_turn} amount={row.pat} />
         </div>
         <p className="mt-2 text-[13px] text-ink-3">{q} vs the same quarter a year ago</p>
@@ -135,7 +135,7 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
             </dd>
             <dt className="text-ink-2">Basis</dt><dd className="text-right text-ink">{row.basis === "CONSOLIDATED" ? "Consolidated" : "Standalone"}</dd>
           </dl>
-          {row.kind === "nbfc" && <p className="mt-3 text-[12.5px] text-ink-3">{NBFC_EBITDA_NOTE}</p>}
+          {(row.kind === "nbfc" || row.kind === "bank") && <p className="mt-3 text-[12.5px] text-ink-3">{NBFC_EBITDA_NOTE}</p>}
           {KIND_NOTE[row.kind] && <p className="mt-3 text-[12.5px] text-ink-3">{KIND_NOTE[row.kind]}</p>}
         </section>
       </div>

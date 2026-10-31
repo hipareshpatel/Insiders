@@ -39,7 +39,7 @@ test("growth has a sign, a true minus and an arrow, never colour alone", () => {
 });
 
 test("banks, NBFCs and insurers get honest labels", () => {
-  assert.deepEqual(lineLabels("bank"), { revenue: "Interest income", ebitda: null, margin: null });
+  assert.deepEqual(lineLabels("bank"), { revenue: "Interest income", ebitda: "Financing profit", margin: "Financing margin" });   // Screener's rows (31 Oct 2026)
   assert.deepEqual(lineLabels("nbfc"), { revenue: "Income", ebitda: "Financing profit", margin: "Financing margin" });
   assert.deepEqual(lineLabels("insurer"), { revenue: null, ebitda: null, margin: null });
 });
@@ -237,5 +237,5 @@ test("the spread chart's header gives its base, and one sentence above the tiles
 
 test("an empty cell says why: insurers show no revenue by design (U4)", () => {
   assert.equal(blankNote("insurer", "revenue"), "Not shown for insurers");
-  assert.equal(blankNote("bank", "ebitda"), "Not shown for banks");
+  assert.equal(blankNote("bank", "ebitda"), "");   // a bank has a financing profit now
 });

@@ -1309,7 +1309,7 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 missed = getattr(stub, "calls", [])[asked:]
                 if missed:   # a stored copy was missing and its reader went on without it: this filing's A/B is not like for like
                     row["warning"] = "not stored, so read without: " + ", ".join(dict.fromkeys(missed))
-                (out_dir / f"{news_id}.json").write_text(json.dumps({**row, "off": made["off"], "on": made["on"]}, ensure_ascii=False,
+                (out_dir / f"{news_id}.json").write_text(json.dumps({**row, "off": made.get("off"), "on": made["on"]}, ensure_ascii=False,
                                                                     indent=1, default=str) + "\n", encoding="utf-8")
             except Exception as exc:  # noqa: BLE001 - one filing never stops the rest
                 row["error"] = f"{type(exc).__name__}: {exc}"[:300]

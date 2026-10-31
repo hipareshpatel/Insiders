@@ -74,7 +74,7 @@ import os
 import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 
 from . import bank_pdf, xbrl_facts
 from .memory_gaps import quarter_end
@@ -1204,6 +1204,30 @@ class CompanyFacts:
                 self._cache[key] = None
         return self._cache[key]
 
+    def year_end(self, period: str, basis: str) -> tuple[xbrl_facts.Facts | None, str]:
+        """(facts, label) of twelve months to a year end that is not March ("YE:2025-12"): the nearest annual report that holds them
+        (its own year first, then the next one's comparative), else the results file of the quarter ending that day (a December
+        company's Dec-quarter results carry the year's column)."""
+        end = _ye_end(period)
+        if end is None:
+            return None, ""
+
+        def holds(f) -> bool:
+            return any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod"))
+
+        reports = sorted(((afy, key) for (afy, b), key in self.annual.items() if b == basis),
+                         key=lambda r: (abs(_fy_num(r[0]) - (end.year % 100 + (end.month > 3))), _fy_num(r[0])))
+        for afy, key in reports:
+            f = self._load(key)
+            if f is not None and holds(f):
+                return f, f"annual report {afy}"
+        for (p, b), key in self.results.items():
+            if b == basis and quarter_end(p) == end:
+                f = self._load(key)
+                if f is not None and holds(f):
+                    return f, f"results file {p}"
+        return None, ""
+
     def result(self, period: str, basis: str) -> xbrl_facts.Facts | None:
         return self._load(self.results.get((period, basis)))
 
@@ -1259,6 +1283,15 @@ def _fy_num(fy: str) -> int:
     return int(m[1]) if m else -1
 
 
+def _ye_end(period: str) -> date | None:
+    """"YE:2025-12" -> 2025-12-31 (the last day of the month the year ends in)."""
+    m = re.fullmatch(r"YE:(\d{4})-(\d{2})", period or "")
+    if not m:
+        return None
+    y, mo = int(m[1]), int(m[2])
+    return date(y + (mo == 12), mo % 12 + 1, 1) - timedelta(days=1)
+
+
 def _fy_end(fy: str) -> date | None:
     m = re.fullmatch(r"FY(\d{2})", fy)
     return date(2000 + int(m[1]), 3, 31) if m else None
@@ -1306,7 +1339,19 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
     result: tuple[dict[str, Row] | None, str]
     reader = None
     if period.startswith("YE:"):
-        result = None, "year end not March: no recipe source yet"
+        # a year that does not end in March ("YE:2025-12": VBL, ABB, Siemens, CRISIL, Hexaware; 63 of the 2,000 stored pages, owner
+        # 1 Nov 2026): twelve months to that day from an annual report, else from the results file of the quarter that ends it
+        f, label = cf.year_end(period, basis)
+        end = _ye_end(period)
+        reader = _Reader(f, end=end, months=12) if f is not None and end is not None else None
+        if reader is None:
+            result = None, f"no annual-report or year-end results facts for {period}"
+        elif table == "annual":
+            result = pl_rows(fam, reader, None, label), ""
+        elif table == "cash_flow":
+            result = cf_rows(reader, label), ""
+        else:
+            result = None, "a balance sheet is read by its quarter"
     elif table == "quarters":
         end, f = quarter_end(period), cf.result(period, basis)
         reader = _Reader(f, end=end, months=3) if f is not None and end else None

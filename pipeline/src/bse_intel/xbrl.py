@@ -716,6 +716,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     tagged_minority = {label for (m, label), v in values.items() if m == "pat_minority" and v}
     if filer_checks:
         filer_profit(values)
+    continuing_before_share(values)
     owners_share(values, minority)
     eps_fillers(values)
     eps_signs(values, tagged_minority, filer_checks)
@@ -845,6 +846,25 @@ def filer_profit(values: dict) -> int:
         values.pop(("pat_continuing", label), None)
         changed += 1
     return changed
+
+
+def continuing_before_share(values: dict) -> int:
+    """The taxonomy's "profit from continuing operations" is before the associates' and joint ventures' share (profit =
+    continuing + discontinued + share). With no discontinued operation it only restates the profit without the share, and the
+    model read the gap as one: 5 of 20 live cards of 30 Oct 2026 said "net profit includes ₹X Cr from discontinued operations"
+    with X the associates' share (Gabriel, IGL, GMR P&UI, Nahar Poly, NTPC Green; blind check of the fact-sheet cards). Such a
+    continuing profit is taken out; one with a real discontinued figure stays. The number taken out."""
+    taken = 0
+    for (metric, label) in [k for k in values if k[0] == "pat_continuing"]:
+        pat, share = values.get(("pat", label)), values.get(("share_associates", label))
+        discontinued = values.get(("pat_discontinued", label)) or 0.0
+        continuing = values[(metric, label)]
+        if pat is None or not share or abs(discontinued) > 0.005 * max(1.0, abs(pat)):
+            continue
+        if abs(pat - continuing - share) <= 0.02 + 0.001 * abs(pat):
+            values.pop((metric, label))
+            taken += 1
+    return taken
 
 
 def owners_share(values: dict, kept: dict | None = None) -> int:

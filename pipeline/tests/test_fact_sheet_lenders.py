@@ -218,3 +218,19 @@ def test_a_dropped_comparative_is_recorded():
     table = {"lens": "bank", "period": "Q2FY27", "pat": {"value": pat, "prev_year": -100.0, "yoy_turn": "LOSS_TO_PROFIT"}}
     notes = fs.apply_to_results(table, sheet)
     assert [n["line"] for n in notes] == ["pat"] and "prev_year" not in table["pat"]
+
+
+def test_the_lender_skips_leave_a_wrong_figure_judged():
+    # independent review of the fix: another line's word after the figure, or "from" elsewhere, must not let a wrong figure through
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180")
+    bank = fs.fact_sheet(d, period, lenders=True)
+    assert fs.disagreements("Net profit rose to ₹19,000 Cr on lower provisions.", bank)
+    assert fs.disagreements("Net profit rose to ₹19,000 Cr as deposits grew.", bank)
+    assert fs.disagreements("Provisions fell and net profit rose to ₹19,000 Cr.", bank)
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180", year_ago_scale=None)
+    lacking = fs.fact_sheet(d, period, lenders=True)
+    assert fs.disagreements("Net profit of ₹19,000 Cr arising from higher fees.", lacking)
+    assert fs.disagreements("Net profit rose to ₹19,000 Cr, up from ₹17,000 Cr.", lacking) == [("19,000", fs.disagreements(
+        "Net profit was ₹19,000 Cr.", lacking)[0][1])]                                  # the current figure judged, the base not
+    assert fs.disagreements("Net profit rose 20% YoY to ₹19,000 Cr.", lacking)
+    assert fs.disagreements("Net profit was ₹20,700 Cr against ₹17,000 Cr a year ago.", lacking) == []

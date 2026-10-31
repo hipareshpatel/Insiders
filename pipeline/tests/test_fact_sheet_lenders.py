@@ -175,3 +175,15 @@ def test_live_path_keeps_the_industry(monkeypatch):
     life = fs.for_filing({"industry": "Financial Services > Insurance > Life Insurance"}, raw, "500034", "https://x/a.xml",
                          "nse-1", "2026-10-20", "2026-10-20T10:00:00Z")
     assert plain["family"] == sv.CORPORATE and life["family"] == sv.INSURER
+
+
+def test_nbfc_sheet_into_a_bank_table_fills_pbt_and_profit_only():
+    # most NBFC cards carry the bank table (live feed, 31 Oct 2026)
+    d, period = dossier_of("nse_bajfin_q2fy27_cons.xml", "500034")
+    nbfc = fs.fact_sheet(d, period, lenders=True)
+    table = {"lens": "bank", "period": "Q2FY27", "interest_earned": {"value": 20000.0}, "nii": {"value": 11000.0},
+             "pbt": {"value": 8000.0}, "pat": {"value": 6000.0}, "lines": [{"key": "interest_earned"}, {"key": "nii"}, {"key": "pat"}]}
+    fs.apply_to_results(table, nbfc)
+    assert table["interest_earned"] == {"value": 20000.0} and table["nii"] == {"value": 11000.0}
+    assert table["pbt"]["value"] == pytest.approx(8537.2) and table["pat"]["value"] == pytest.approx(6266.2)
+    assert "financing_profit" not in table and table["lines"] == [{"key": "interest_earned"}, {"key": "nii"}, {"key": "pat"}]

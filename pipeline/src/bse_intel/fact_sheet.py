@@ -57,7 +57,10 @@ FAMILY_LINES = {
     sv.INSURER: ((("pat", "Net Profit", "PAT"),), None),
 }
 # the card table a family's sheet goes into (results_snapshot's lens), and the sheet line -> that table's key where they differ
-LENS = {sv.CORPORATE: "company", sv.NBFC: "company", sv.BANK: "bank", sv.INSURER: "insurer"}
+LENS = {sv.CORPORATE: ("company",), sv.NBFC: ("company", "bank"), sv.BANK: ("bank",), sv.INSURER: ("insurer",)}
+# most NBFC results cards carry the bank table (interest earned, NII...; the live feed of 31 Oct 2026: LICHSGFIN, MOTILALOFS,
+# SPANDANA, ABCAPITAL, MFSL): an NBFC's sheet fills only its PBT and profit there, its revenue being no "interest earned"
+LENS_LINES = {(sv.NBFC, "bank"): ("pbt", "pat")}
 TABLE_KEY = {sv.BANK: {"revenue": "interest_earned"}}
 
 
@@ -230,10 +233,13 @@ def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
     Returns what changed, {line, was, now}, for the card's grounding record. A table of another kind than the sheet's family (a
     bank's sheet beside a company table) and a table of another quarter are left as they are."""
     family = sheet.get("family", sv.CORPORATE) if sheet else None
-    if not results or not sheet or results.get("lens") != LENS.get(family) or results.get("period") != sheet["period"]:
+    if not results or not sheet or results.get("lens") not in LENS.get(family, ()) or results.get("period") != sheet["period"]:
         return []
+    only = LENS_LINES.get((family, results.get("lens")))
     notes = []
     for line_key, line in sheet["lines"].items():
+        if only is not None and line_key not in only:
+            continue
         key = TABLE_KEY.get(family, {}).get(line_key, line_key)
         if key not in results and not (family == sv.NBFC and line_key in ("financing_profit", "financing_margin")):
             continue
@@ -250,7 +256,7 @@ def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
         if row != {k: v for k, v in was.items() if k in row or k in ("derived", "held")}:
             notes.append({"line": key, "was": {k: v for k, v in was.items() if isinstance(v, (int, float, str))}, "now": row})
         results[key] = row
-    if family == sv.NBFC:
+    if family == sv.NBFC and results.get("lens") == "company":
         notes += _nbfc_rows(results)
     return notes
 

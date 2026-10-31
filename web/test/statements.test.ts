@@ -87,6 +87,10 @@ test("the main figures' basis is read from their sources", async () => {
   assert.equal(mainBasis([withBasis("STANDALONE"), withBasis("CONSOLIDATED")]), "CONSOLIDATED");
   assert.equal(mainBasis([withBasis("STANDALONE")]), "STANDALONE");
   assert.equal(mainBasis([m("pat", "Q2FY27", 1)]), null);
+  // ICICIGI (audit 137, A2): one stray consolidated ratio among standalone figures is not a consolidated page
+  const stray = [withBasis("STANDALONE"), { ...withBasis("STANDALONE"), metric: "revenue" }, { ...withBasis("CONSOLIDATED"), metric: "solvency_ratio" }];
+  assert.equal(mainBasis(stray), "STANDALONE");
+  assert.equal(mainBasis([...stray, { ...m("pat", "Q1FY27", 1), basis: "CONSOLIDATED" }, { ...m("revenue", "Q1FY27", 1), basis: "CONSOLIDATED" }]), "CONSOLIDATED");
 });
 
 test("deep audit F-01, F-04, F-05, F-07: a stray revenue row, a missing year, gaps, a missing other income", async () => {
@@ -179,4 +183,13 @@ test("screener's tables come from memory's statements, by basis, latest periods 
   assert.deepEqual(t.rows[0].cells, [46254.8, 44178.7]);
   assert.deepEqual(screenerTable(entries, "STANDALONE", "quarters", 12).columns, ["Q2FY27"]);
   assert.equal(screenerTable(undefined, "CONSOLIDATED", "quarters", 12).columns.length, 0);
+});
+
+test("a consolidated company's many standalone-only KPIs do not make its page Standalone", async () => {
+  const { mainBasis } = await import("../src/components/company/statements.ts");
+  const own = (metric: string, basis: string) => ({ ...m(metric, "Q2FY27", 1), basis });
+  const metrics = [own("revenue", "CONSOLIDATED"), own("pat", "CONSOLIDATED"),
+    ...["plant_utilisation", "stores", "solvency_ratio", "roe", "volume"].map((k) => own(k, "STANDALONE"))];
+  assert.equal(mainBasis(metrics), "CONSOLIDATED");
+  assert.equal(mainBasis([own("revenue", "STANDALONE"), own("pat", "STANDALONE"), own("roe", "CONSOLIDATED")]), "STANDALONE");
 });

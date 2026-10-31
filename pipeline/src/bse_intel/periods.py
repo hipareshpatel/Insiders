@@ -163,7 +163,14 @@ def quarter_from_index(index: int) -> str:
 _RANGE_SPLIT = re.compile(r"\s+(?:to|till|until|through|and|or)\s+|\s*[–—]\s*|\s+-\s+|(?<=\d)\s*-\s*(?=(?:Q[1-4]|H[12]|9M)?\s*FY)", re.I)
 
 
-def due_date(text: str | None) -> date | None:
+def _fy_point(end_year: int, fy_end_month: int, months_back: int) -> date:
+    """The last day of the month `months_back` before the end of the financial year that ends in `fy_end_month` of `end_year`."""
+    index = end_year * 12 + fy_end_month - 1 - months_back
+    year, month = divmod(index, 12)
+    return date(year, month + 1, calendar.monthrange(year, month + 1)[1])
+
+
+def due_date(text: str | None, fy_end_month: int | None = None) -> date | None:
     """Last day of the period a deadline or figure refers to, if parseable.
 
     "FY27" / "FY2026-27" -> 2027-03-31, "Q3FY27" / "Q3 FY 2026-27" -> 2026-12-31, "H1 FY27" ->
@@ -176,13 +183,19 @@ def due_date(text: str | None) -> date | None:
     # "due FY26-FY27" read as FY26 showed 202 days overdue). "FY2026-27" is one year, not a range.
     parts = [p for p in _RANGE_SPLIT.split(text) if p.strip()]
     if len(parts) > 1:
-        ends = [d for d in (due_date(p) for p in parts) if d]
+        ends = [d for d in (due_date(p, fy_end_month) for p in parts) if d]
         if len(ends) > 1:
             return max(ends)
     exact = explicit_date(text)
     if exact:
         return exact
     s = canonical_period(text)
+    fy = fy_end_month if fy_end_month in range(1, 13) and fy_end_month != 3 else None
+    if fy and (m := re.fullmatch(r"(?:(Q[1-4]|H[12]|9M))?FY(\d{2})", s)):
+        # a company whose year does not end in March (Castrol: December): its FY26 ends in month `fy` of 2026 and its
+        # quarters are counted back from there (stock-page audit 137, B3: Castrol's FY26 target read as 31 Mar 2026)
+        back = {None: 0, "Q4": 0, "H2": 0, "Q3": 3, "9M": 3, "Q2": 6, "H1": 6, "Q1": 9}[m[1]]
+        return _fy_point(_fy_end_year(m[2]), fy, back)
     if m := re.fullmatch(r"Q([1-4])FY(\d{2})", s):
         end_year = _fy_end_year(m[2])
         month, year = ((6, end_year - 1), (9, end_year - 1), (12, end_year - 1), (3, end_year))[int(m[1]) - 1]
@@ -215,16 +228,16 @@ RESULTS_DAYS_QUARTER = 45
 RESULTS_DAYS_YEAR = 60
 
 
-def results_due(text: str | None) -> date | None:
+def results_due(text: str | None, fy_end_month: int | None = None) -> date | None:
     """The first day a deadline can be judged missed: for a reporting period (Q1-Q4, H1/H2, 9M, FY) its end plus the
     results filing window ("H1FY27" -> 2026-11-14, "Q4FY27" / "FY27" -> 2027-05-30); for a date or a month, that day
     (``due_date``). A range is judged at its later end."""
-    end = due_date(text)
+    end = due_date(text, fy_end_month)
     if end is None:
         return None
     parts = [p for p in _RANGE_SPLIT.split(text) if p.strip()]
-    last = max(parts, key=lambda p: due_date(p) or date.min) if len(parts) > 1 else text
-    if explicit_date(last) or due_date(last) != end:
+    last = max(parts, key=lambda p: due_date(p, fy_end_month) or date.min) if len(parts) > 1 else text
+    if explicit_date(last) or due_date(last, fy_end_month) != end:
         return end
     s = canonical_period(last)
     if re.fullmatch(r"(?:Q4|H2)?FY\d{2}", s):

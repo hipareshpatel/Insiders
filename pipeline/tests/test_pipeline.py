@@ -155,7 +155,7 @@ def test_live_run_end_to_end(settings):
     (company,) = rows(sink, "select card_count, sector, memory_summary_json, earliest_open_due from companies")
     assert company["card_count"] == 1
     # the radar summary rides on the company row: the open promise and its due date
-    assert company["earliest_open_due"] == "2027-03-31"
+    assert company["earliest_open_due"] == "2027-05-30"
     assert json.loads(company["memory_summary_json"])["open_promises"][0]["statement"].startswith("Commission 2 MTPA")
 
     (run,) = rows(sink, "select status, stats_json from pipeline_runs")

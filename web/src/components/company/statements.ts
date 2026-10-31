@@ -34,15 +34,33 @@ const get = (v: Values, metric: string, period: string): Cell => v.get(metric)?.
 const sub = (a: Cell, b: Cell): Cell => (a == null || b == null ? null : a - b);
 const pct = (a: Cell, b: Cell): Cell => (a == null || b == null || b === 0 ? null : (a / b) * 100);
 
-/** The basis of memory's main figures: consolidated when any of their sources is, else standalone (a company that files
- *  only standalone results), else not stated. */
+const HEADLINE = new Set(["revenue", "interest_earned", "total_income", "ebitda", "pat", "pbt"]);
+
+/** The basis of memory's main figures: the one most of its metrics carry (a tie goes to consolidated), else not stated.
+ *  Not "any one metric is consolidated": ICICI General's single stray solvency ratio tagged consolidated labelled a page
+ *  of standalone figures Consolidated (stock-page audit 137, A2). A metric counts once, by its own basis, else by its
+ *  sources'. */
 export function mainBasis(metrics: Metric[]): "CONSOLIDATED" | "STANDALONE" | null {
-  // the metric's own basis (memory sets it from a single source) as well as its sources' (deep audit F-03)
-  const bases = new Set(metrics.flatMap((m) => {
-    const x = m as Metric & { basis?: string | null; sources?: { basis?: string | null }[] };
-    return [x.basis, ...(x.sources ?? []).map((s) => s.basis)];
-  }));
-  return bases.has("CONSOLIDATED") ? "CONSOLIDATED" : bases.has("STANDALONE") ? "STANDALONE" : null;
+  // the headline results lines only: standalone-only KPIs and ratios must not outvote a consolidated company's results;
+  // with none of them on record, all metrics
+  const headline = metrics.filter((m) => HEADLINE.has(m.metric));
+  const count = (rows: Metric[]) => {
+    let consolidated = 0;
+    let standalone = 0;
+    for (const m of rows) {
+      const x = m as Metric & { basis?: string | null; sources?: { basis?: string | null }[] };
+      // the metric's own basis (memory sets it from a single source) as well as its sources' (deep audit F-03)
+      const votes = x.basis ? [x.basis] : (x.sources ?? []).map((s) => s.basis);
+      const c = votes.filter((v) => v === "CONSOLIDATED").length;
+      const st = votes.filter((v) => v === "STANDALONE").length;
+      if (c && c >= st) consolidated++;
+      else if (st) standalone++;
+    }
+    return { consolidated, standalone };
+  };
+  let n = count(headline);
+  if (n.consolidated === 0 && n.standalone === 0) n = count(metrics);
+  return n.consolidated === 0 && n.standalone === 0 ? null : n.consolidated >= n.standalone ? "CONSOLIDATED" : "STANDALONE";
 }
 
 /** A bank files interest earned as its top line, not revenue. */

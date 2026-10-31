@@ -872,17 +872,31 @@ def _places(crore: float) -> int:
     return next((p for p in (2, 3, 4) if abs(round(crore, p) - crore) <= 0.005 * abs(crore)), 4)
 
 
+# A figure whose digit groups fit neither the Indian (12,34,567) nor the western (1,234,567) grouping: the OCR lost or moved
+# a separator or a digit ("4,558,21" for 4,558.21, "19,89,68"). Read as a number it is a different, much larger figure.
+_MALFORMED_GROUPS = re.compile(
+    r"(?<![\d.,])(?!(?:\d{1,3}(?:,\d{3})+|\d{1,2}(?:,\d{2})+,\d{3})(?![\d,]))\d{1,3}(?:,\d+)+(?:\.\d+)?(?![\d,])")
+
+
+def _blank_malformed(text: str) -> str:
+    return _MALFORMED_GROUPS.sub(lambda m: " " * len(m.group(0)), text)
+
+
 def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, float, int, float, int]]:
     """(raw, value, decimals, corrected, corrected_decimals) for each card amount to correct.
 
     Three readings, in order: a figure the filing writes with its own unit ("INR 3 (Three) Million" carded "₹3 Cr",
     Excelsoft), whatever unit the tables declare; an amount written out in whole rupees ("Rs 11,10,59,061" carded "₹1.11
     Cr", Nestle; "Rs. 1,165,179,600" as "₹1,165 Cr", Anlon); and a table figure in the declared unit read a power of
-    ten off ("(Rs billion) 1,562.8" carded "₹15,628 Cr", RBL). A card figure the filing states in crore is never touched."""
+    ten off ("(Rs billion) 1,562.8" carded "₹15,628 Cr", RBL). A card figure the filing states in crore is never touched.
+
+    An enlargement (the correction is the larger figure) needs a figure with well-formed digit groups: LCC's "4,558,21"
+    (the OCR's 4,558.21 in ₹ million) read as 455,821 "corrected" a right ₹455.82 Cr to ₹45,582 Cr (30 Oct 2026)."""
     unit = declared_unit(filing)
     # a foreign-currency amount is no rupee figure at any unit: it is held, never "corrected" (foreign_as_rupees)
     filing = _FOREIGN.sub(" ", filing or "")
     filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
+    well_formed = SourceIndex(_blank_malformed(filing))   # what may support an enlargement
     whole = whole_rupee_crores(filing)
     if not unit and not whole and not any(u != 1 for u in filing_index._by_unit):
         return []
@@ -901,7 +915,8 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 continue   # already the right reading of a figure at its own page's unit: never "corrected"
             # 1. a figure with its own unit, whatever unit the tables declare
             fits = [(round(value / u, _places(value / u)), _places(value / u)) for u, values in filing_index._by_unit.items()
-                    if u != 1 and _near(values, value, tolerance)]
+                    if u != 1 and _near(values, value, tolerance)
+                    and (u >= 1 or _near(well_formed._by_unit.get(u, []), value, tolerance))]
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
                 continue
@@ -933,7 +948,7 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                     # never under ₹5 lakh: Hubtown's right ₹18.82 Cr fitted the OCR's "1.882" lakh (its 1,882 with the
                     # comma read as a point) and went live as ₹0.02 Cr (30 Oct 2026)
                     continue
-                if filing_index.stated_crore(right, right_decimals, (unit,)):
+                if (filing_index if right <= value else well_formed).stated_crore(right, right_decimals, (unit,)):
                     places = min(right_decimals, _places(right))
                     fits.append((round(right, places), places))
             if len(fits) == 1:

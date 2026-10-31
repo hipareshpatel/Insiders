@@ -252,3 +252,15 @@ def test_a_filler_zero_owners_profit_gives_way_to_the_net_profit():
     assert table["pat"]["value"] == 560.0 and table["pat"]["yoy_pct"] == 12.0
     real = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 0.0, owners=0.0))]}
     assert rt.company_tables(real)["Q2FY27"]["pat"]["value"] == 0.0   # a true zero (both lines 0) stays
+
+
+def test_a_margin_change_is_not_given_when_a_margin_is_past_100_per_cent_or_the_base_ebitda_is_negative():
+    # live, 31 Oct 2026: SADHNANIQ Q2FY27 17.92% against -628.89% gave +64,681 bp
+    memory = {"statements": [_entry("Q2FY27", _rows(100.0, 17.92, 20.0, 15.0)), _entry("Q2FY26", _rows(10.0, -62.889, -70.0, -70.0, opm=-628.89)),
+                             _entry("Q1FY27", _rows(90.0, 16.0, 18.0, 13.0)), ]}
+    row = _row(memory)
+    assert (row["opm"], row["opm_yoy_bps"]) == (17.92, None)   # the base margin is out of range and its EBITDA negative
+    assert row["opm_qoq_bps"] == round((17.92 - 17.78) * 100)   # last quarter's margin is fine
+    # a negative base EBITDA with an in-range margin is no base either
+    memory = {"statements": [_entry("Q2FY27", _rows(100.0, 10.0, 12.0, 9.0)), _entry("Q2FY26", _rows(100.0, -5.0, -6.0, -6.0, opm=-5.0))]}
+    assert _row(memory)["opm_yoy_bps"] is None

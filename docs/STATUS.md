@@ -177,6 +177,7 @@ job. Hourly lead check-ins until 22:00 IST.**
    `requeue:by_id`; each run gives them a slot of at most 3 minutes, 6 filings, right after today's filings
    (`pipeline._requeued_first`), before the history pass. Hubtown was requeued before this existed: after #301 merges, run
    `requeue-failed ids=nse-106629168` once more.
+   **Owner, 31 Oct 2026 ~20:15 IST: the Screener match cut-off is FY25 onward** ("We took cut off of FY 25 onwards only data required so no problem if past data is not available for screener match"; was FY23). screener-rows-diff counts from FY25; quarters are compared from Q1FY26 (`FIRST_QUARTER`, also the BSE fetch start, left as is). Older years stay on the site as stored, not matched.
 5. TODO 147 leftovers (unit-slip enlargements: SYRMA nse-106836602 cause unproven; reading 2 on malformed digit groups). **31 Oct
    ~16:05 IST (second session):** SYRMA's live card is right (1,989.68, rewritten by the exchange-file card); the cause needs its PDF
    (`SYRMASGS_30102026163122_BMOutcome30102026.pdf`), not downloaded here: the lead checks R2 for a kept copy before any fetch (rule:

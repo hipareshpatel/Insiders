@@ -116,3 +116,19 @@ def test_failed_report_counts_the_last_days_filings_still_to_read(settings):
     out = requeue.waiting(sink, start, now.date().isoformat(), 3)
     assert out["waiting"] == 2 and out["results_like"] >= 1 and sum(sum(d.values()) for d in out["by_day"].values()) == 2
     assert any(x.startswith("f0 ") for x in out["results_examples"])
+
+
+def test_a_requeue_by_id_puts_its_companies_first_in_the_history_queue():
+    class Kv:
+        def __init__(self):
+            self.kv = {"backfill:priority": '["B"]'}
+
+        def kv_get(self, key):
+            return self.kv.get(key)
+
+        def kv_set(self, key, value, at):
+            self.kv[key] = value
+
+    sink = Kv()
+    assert requeue.prioritise(sink, ["A", "B", ""]) == ["A", "B"]
+    assert requeue.prioritise(sink, ["C"]) == ["C", "A", "B"]

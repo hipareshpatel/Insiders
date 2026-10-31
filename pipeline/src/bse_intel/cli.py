@@ -469,15 +469,18 @@ def cmd_requeue_failed(args, settings, sink) -> int:
         from . import prune
 
         ids = prune.release(sink, dry_run=True)["rerun_ids"] + [i.strip() for i in (args.ids or "").split(",") if i.strip()]
-        if not args.dry_run and not _snapshot_requeue(sink, ids):
+        if not args.dry_run and _snapshot_requeue(sink, ids) is None:
             return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
         return 0
     if args.ids:
         ids = [i.strip() for i in args.ids.replace("\n", ",").split(",")]
-        if not args.dry_run and not _snapshot_requeue(sink, ids):
+        scrips = [] if args.dry_run else _snapshot_requeue(sink, ids)
+        if scrips is None:
             return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
+        if scrips:      # their history is read first, so an older requeued filing runs on the next pipeline run
+            print("requeue-failed: first in the history queue: " + ", ".join(requeue.prioritise(sink, scrips)[:len(scrips)]))
         return 0
     since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
     print("requeue-failed: no backup taken (no filings named; failed filings have no card to back up)")
@@ -485,10 +488,10 @@ def cmd_requeue_failed(args, settings, sink) -> int:
     return 0
 
 
-def _snapshot_requeue(sink, ids: list[str]) -> bool:
+def _snapshot_requeue(sink, ids: list[str]) -> list[str] | None:
     """Before named filings are set pending (the live run re-reads them later and rewrites their cards and their companies'
     memory): save the named filings' cards and those companies' dossiers (backup.start_scope). False when a copy did not read
-    back: nothing is requeued. The backup has no after-state (the live run rewrites the filings later, and what it or anything
+    back: nothing is requeued (None); else the companies of the named filings. The backup has no after-state (the live run rewrites the filings later, and what it or anything
     else writes meanwhile cannot be told from the job's), so it restores only with ``--force``, the dry run listing every
     difference. Finding the cards of named filings reads every stored card once (export_cards, about 80 pages): acceptable for
     a named re-run, and the reason a re-run by date takes no backup."""
@@ -499,14 +502,14 @@ def _snapshot_requeue(sink, ids: list[str]) -> bool:
         backup = start_scope(sink, "requeue", news_ids=ids)
     except BackupError as exc:
         print(f"requeue-failed: the backup did not read back, nothing requeued: {exc}")
-        return False
+        return None
     summary = backup.summary()
     print("requeue-failed: " + (f"backup of {summary['cards']} stored cards and {summary['dossiers']} dossiers before the re-run: "
                                 f"{summary['prefix']} (no after-state: restore it only with --force; the dry run lists every difference, "
                                 "later live writes included)" if summary else "no backup taken (none of the filings has a stored card)"))
     if backup.missing_ids and summary:
         print(f"requeue-failed: no stored card, not in the backup: {len(backup.missing_ids)} filings")
-    return True
+    return list(getattr(backup, "scrips", []))
 
 
 def cmd_failed_report(args, settings, sink) -> int:
@@ -1877,6 +1880,19 @@ def cmd_screener_rows(args, settings, sink) -> int:
     return 0
 
 
+def cmd_screener_rows_diff(args, settings, sink) -> int:
+    """Two screener-rows runs compared (screener_rows_diff.py, TODO 149): the weekly check's report. Reads two local files."""
+    from . import screener_rows_diff as srd
+
+    result = srd.compare(Path(args.prev).read_text(encoding="utf-8"), Path(args.curr).read_text(encoding="utf-8"))
+    report = srd.render(result)
+    if args.md:
+        Path(args.md).write_text(report, encoding="utf-8")
+    else:
+        print(report)
+    return 1 if args.fail_on_worse and srd.worse_classes(result) else 0
+
+
 def cmd_xbrl_facts(args, settings, sink) -> int:
     """Every fact of the results XBRL files already stored in R2 (raw/xbrl/), into raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz
     (xbrl_facts.py; owner, 28 Oct 2026). Reads R2 and memory only: no request to NSE. Lists the filings whose file is not stored
@@ -3048,6 +3064,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--csv", help="write every pair (company, basis, period, table, row, screener, ours, diff, status, recipe note)")
     p.add_argument("--md", help="write the markdown report to this file")
     p.set_defaults(func=cmd_screener_rows)
+    p = sub.add_parser("screener-rows-diff", help="read-only: two screener-rows runs' rows.csv compared row by row (broken and mended pairs by class)")
+    p.add_argument("--prev", required=True, help="the earlier run's rows.csv")
+    p.add_argument("--curr", required=True, help="this run's rows.csv")
+    p.add_argument("--md", help="write the markdown report to this file (else print it)")
+    p.add_argument("--fail-on-worse", action="store_true", help="exit 1 when a class lost 5 or more exact pairs net")
+    p.set_defaults(func=cmd_screener_rows_diff)
 
     p = sub.add_parser("xbrl-facts", help="keep every fact of the stored results XBRL files in R2 (raw/xbrl-facts/); lists the filings whose file is not stored; no NSE request unless --download")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

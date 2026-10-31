@@ -138,6 +138,7 @@ def start_scope(sink, job: str, scrips=(), news_ids=(), cards_of_scrips: bool = 
     backup.missing_ids = []
     rows = scan_cards(sink, scrips if cards_of_scrips else (), news_ids)
     scrips |= {r["scrip_code"] for r in rows if r["news_id"] in set(news_ids)}
+    backup.scrips = sorted(scrips)      # the companies whose dossiers are kept (a requeue by id puts them first: requeue.prioritise)
     backup.missing_ids = sorted(set(news_ids) - {r["news_id"] for r in rows})   # no stored card: its company is not known
     for scrip in sorted(scrips):
         backup.dossier(scrip)

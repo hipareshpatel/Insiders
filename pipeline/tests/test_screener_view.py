@@ -818,3 +818,12 @@ def test_b4_both_deferred_tax_lines_are_netted_on_a_standalone_year_end_too(monk
     assert sv.corporate_bs(r, standalone=True, half_year=True)["Total Assets"].value == pytest.approx(124936.0)
     monkeypatch.setattr(sv, "B4_NET_ANY_BASIS", False)
     assert sv.corporate_bs(r, standalone=True)["Total Assets"].value == pytest.approx(124936.0)
+
+
+def test_a_minority_share_as_large_as_the_whole_profit_is_the_slip_and_the_owners_figure_stays():
+    # FINCABLES Q4FY25: owners 191.71 (Screener 192); a minority row equal to the total would have made the owners' profit 0
+    fin = {"Net Profit": 191.71, "Net Profit (owners)": 191.71, "Minority share": 191.71}
+    assert sv.corrected_pl(fin, sv.CORPORATE)["Net Profit (owners)"] == 191.71
+    # BANCOINDIA Q1FY26: owners 164.06 against total 115.0 and minority 5.48 -> 109.52 (Screener 110): the rule still corrects
+    banco = {"Net Profit": 115.0, "Net Profit (owners)": 164.06, "Minority share": 5.48}
+    assert sv.corrected_pl(banco, sv.CORPORATE)["Net Profit (owners)"] == 109.52

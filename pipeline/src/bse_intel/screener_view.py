@@ -719,7 +719,11 @@ def corrected_pl(rows: dict[str, float], fam: str) -> dict[str, float]:
     out = dict(rows)
     if owners is not None and net is not None:
         if minority is not None:
-            if abs(owners + minority - net) > max(0.01, abs(net) / 200):
+            # a minority share as large as the whole profit is itself the slip, not the owners' (measured 31 Oct 2026, the dry run of
+            # statements-correct against Screener: FINCABLES Q4FY25 191.71 would have become 0, ABREL Q4FY26 10.84 -104.86; Screener
+            # 192 and 5), so the owners' figure stays as filed; below it the rule held (CGPOWER Q2FY26 18.24 -> 284.29, Screener 284;
+            # BANCOINDIA Q1FY26 164.06 -> 109.52, Screener 110; SUNFLAG Q1FY25 717.31 -> 27.89, Screener 28)
+            if abs(owners + minority - net) > max(0.01, abs(net) / 200) and abs(minority) < abs(net):
                 out["Net Profit (owners)"] = round(net - minority, 2)
         elif owners == 0 and net != 0:
             out["Net Profit (owners)"] = net

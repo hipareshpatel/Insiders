@@ -169,7 +169,18 @@ job. Hourly lead check-ins until 22:00 IST.**
 3. Review and run the second session's PRs (TODO 148 bank PDF reader, TODO 151 fact sheet for lenders).
 4. Hubtown nse-106629168: the live card still shows finance cost Q4FY25 0.02 Cr (right: 18.82); requeued 12:52 IST after #294 but
    a 19 May filing waits behind ~1,500 history filings. Re-run that one card by the existing path, never a hand edit.
-5. TODO 147 leftovers (unit-slip enlargements: SYRMA nse-106836602 cause unproven; reading 2 on malformed digit groups).
+5. TODO 147 leftovers (unit-slip enlargements: SYRMA nse-106836602 cause unproven; reading 2 on malformed digit groups). **31 Oct
+   ~16:05 IST (second session):** SYRMA's live card is right (1,989.68, rewritten by the exchange-file card); the cause needs its PDF
+   (`SYRMASGS_30102026163122_BMOutcome30102026.pdf`), not downloaded here: the lead checks R2 for a kept copy before any fetch (rule:
+   never download twice, keep every file).
+   **Varun Beverages (handover item): no mapping fault.** Card nse-106835976 (30 Oct 11:50 IST, before CARD_FACT_SHEET went on at 16:00)
+   shows the file's gross revenue 6,815.59; card nse-106835992 (press release) 6,607.6 = our statements' Screener Sales 6,607.56 (net
+   of levies). New results cards use the sheet; the old card is to be requeued (asked on #299).
+   **TMB nse-106836238** (₹304 Cr ECL provision note, typed RESULTS): typed RESULTS by NSE's category or the model, it took the results
+   path and found the bank's Q2FY27 file, so a second results card for the quarter. Proposed rule: a RESULTS-typed filing with no
+   results statement and no results covering letter in its text (`_RESULTS_STATEMENT`, `results_cover`) is OTHER. It changes cards, so
+   it needs the on/off audit over stored cards and a blind sample first (owner rule); not built.
+   **TODO 129: fixed on #298** (a later report gives a year's balance sheet only with that year's equity; every case found is before FY23).
 6. Owner questions from docs/handover/2026-10-31.md section 4 (Mistral October spend; NVIDIA nemotron-3.5-parse model id; a results
    filing made twice: table on the repeat card?; Cloudflare Workers Paid renewal before ~21 Nov).
 7. Handover section 5: TODO 129 Borrowings 0 on 169 annual-report pairs (UltraTech FY20-24, JSL, Jindal SAW), SHILPAMED double count;

@@ -346,8 +346,12 @@ allotment, a forward contract or a bank balance: those are Other Assets for scre
   outstanding as at March 31, 2024 were Rs. 2652.72 crore"); never the segment note's total of capital, options and reserves.
 - Screener moves the stock options and the Capital - paid-up difference into a bank's Reserves at March only; at September both
   stay in Other Liabilities (HDFC both bases, Axis, Kotak, ICICI standalone, Q2FY27). Statement.
-- A bank's exceptional loss in Expenses (SBI FY24 7,100.31, both bases): trial, as HDFC Bank's consolidated exceptional item is left
-  out of PBT by screener instead; the measurement decides.
+- A bank's exceptional loss in Expenses (SBI FY24 7,100.31, both bases), so Financing Profit + Other Income - Depreciation is the
+  filed PBT, as screener's rows add up. Measured (runs 41182528007 against 41182762968): Expenses 4 mended / 3 broken, Financing
+  Profit 4 / 3, Financing Margin 5 / 4. Kept for the identity; HDFC Bank consolidated FY24-FY26 is a recorded exception (screener
+  leaves its exceptional item out of PBT there, with nothing in the file to tell the case apart).
+- Batch 3 in all (same runs): 37 rows mended, 11 broken (the HDFC exception above, Union Bank Q2FY27 Other Liabilities: screener
+  uses Capital there, an inconsistency); Reserves +13 and Other Liabilities +11 from the stock options.
 - The backfill takes a year memory doubts when screener's annual Net Profit equals the file's (as for quarters).
 
 **Ceilings (measured; nothing in the filing carries the figure).**

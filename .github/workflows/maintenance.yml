@@ -1135,7 +1135,7 @@ jobs:
       - name: The statements stored in memory (what the site shows) against screener, and against the recipes (reads only)
         if: "!cancelled() && inputs.command == 'screener-rows'"
         continue-on-error: true    # a report beside the recipe measurement; it never fails the run
-        timeout-minutes: 120
+        timeout-minutes: 240       # limit 2000 (every company, owner 31 Oct 2026) reads ~4x the pages of limit 500
         env:
           PLATFORM_TIMEOUT_S: "30"
           PLATFORM_ATTEMPTS: "3"

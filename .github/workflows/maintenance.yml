@@ -344,7 +344,7 @@ on:
         type: string
         default: ''
       restart:
-        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried; xbrl-key - ignore the rows an earlier run saved and start clean; xbrl-facts - read again the stored files whose facts are kept (--force, after a reader fix)
+        description: seed-memory only - start again from the first company; memory-gaps-fill - try the companies an earlier pass tried; xbrl-key - ignore the rows an earlier run saved and start clean; xbrl-facts - read again the stored results files that tag figures to an undeclared OneD context (--reread-legacy, after the reader fix of 31 Oct 2026; with dry_run it counts)
         type: boolean
         default: false
       days:
@@ -2131,7 +2131,7 @@ jobs:
           from_nse=; csv=not-stored.csv
           if [ "$FROM_NSE" = "true" ]; then from_nse=--from-nse; csv=listing.csv; fi   # NSE's own list of each company's results files
           shard=; if [ "$SHARDS" != "1" ]; then shard="--shard $SHARD/$SHARDS"; fi
-          force=; if [ "$RESTART" = "true" ]; then force=--force; fi          # read again the stored files (a reader fix)
+          force=; if [ "$RESTART" = "true" ]; then force=--reread-legacy; fi  # read the stored legacy files again (a reader fix)
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel xbrl-facts ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} $shard $from_nse $download $annual $force --time-budget 19200 ${{ inputs.dry_run && '--dry-run' || '' }} --json "$RUNNER_TEMP/xbrl-facts/summary.json" --csv "$RUNNER_TEMP/xbrl-facts/$csv" || code=$?
           if [ "$code" -eq 124 ]; then echo more > "$RUNNER_TEMP/more/$SHARD"; echo "::notice::shard $SHARD stopped on its time budget: everything fetched is saved; dispatch again for the rest"; code=0; fi
           exit "$code"

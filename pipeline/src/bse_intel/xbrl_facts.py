@@ -381,6 +381,48 @@ def save(sink, scrip: str, period: str, basis: str | None, doc: dict) -> int:
     return len(body)
 
 
+def reread_legacy(sink, scrips: list[str], *, dry_run: bool = False) -> dict:
+    """Every stored results document of ``scrips`` whose raw file (raw/xbrl/, xbrl_store) tags figures to an undeclared "OneD"
+    context, read again with the reader that dates it (xbrl._undeclared_legacy, 31 Oct 2026: 25 banks' March 2023 files kept
+    64 of 234 facts). A document is replaced only when the new read keeps more facts; its period label stays memory's. No NSE
+    request. ``dry_run`` counts and writes nothing."""
+    from . import xbrl_store
+
+    out = {"companies": 0, "docs": 0, "candidates": 0, "no_raw": 0, "reread": 0, "facts_before": 0, "facts_after": 0, "changed": []}
+    for scrip in scrips:
+        out["companies"] += 1
+        for k in sorted(sink.list_objects(f"{PREFIX}{scrip}/")):
+            name = k.rsplit("/", 1)[-1]
+            if name.startswith(("annual-", "_")) or not name.endswith(".json.gz"):
+                continue
+            out["docs"] += 1
+            try:
+                doc = loads(sink.get_object(k))
+            except Exception:  # noqa: BLE001 - an unreadable document is left as it is
+                continue
+            if "OneD" in (doc.get("contexts") or {}) or not doc.get("url"):
+                continue
+            raw = xbrl_store.get(sink, doc["url"])
+            if raw is None:
+                out["no_raw"] += 1
+                continue
+            if b'contextRef="OneD"' not in raw:
+                continue
+            out["candidates"] += 1
+            new = parse_facts(raw, scrip, doc["url"])
+            if new is None or new["n_facts"] <= (doc.get("n_facts") or 0):
+                continue
+            new["period"] = doc.get("period") or new["period"]
+            out["reread"] += 1
+            out["facts_before"] += doc.get("n_facts") or 0
+            out["facts_after"] += new["n_facts"]
+            if len(out["changed"]) < 200:
+                out["changed"].append(f"{k}: {doc.get('n_facts')} -> {new['n_facts']}")
+            if not dry_run:
+                sink.put_object(k, dumps(new), content_type="application/gzip")
+    return out
+
+
 # --- the files of a company --------------------------------------------------------------------------------------
 
 _RES_ID = re.compile(r"xbrl:res(?:-sa)?:([^:]*):(.+)")

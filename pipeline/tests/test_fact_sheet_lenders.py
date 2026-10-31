@@ -234,3 +234,22 @@ def test_the_lender_skips_leave_a_wrong_figure_judged():
         "Net profit was ₹19,000 Cr.", lacking)[0][1])]                                  # the current figure judged, the base not
     assert fs.disagreements("Net profit rose 20% YoY to ₹19,000 Cr.", lacking)
     assert fs.disagreements("Net profit was ₹20,700 Cr against ₹17,000 Cr a year ago.", lacking) == []
+
+
+def test_a_named_comparative_checks_its_own_slot_only():
+    # review of cae2c97c: "a year ago" after the amount, with the year-ago on the sheet and only the previous quarter missing
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180")
+    sheet = fs.fact_sheet(d, period, lenders=True)
+    sheet["lines"]["pat"].pop("prev_quarter", None)
+    year_ago = sheet["lines"]["pat"]["prev_year"]
+    assert fs.disagreements("Net profit rose from ₹5,600 Cr a year ago.", sheet)
+    assert fs.disagreements(f"Net profit rose from ₹{year_ago:,.2f} Cr a year ago.", sheet) == []
+    assert fs.disagreements("Net profit rose from ₹5,600 Cr in the previous quarter.", sheet) == []
+
+
+def test_exceptional_and_half_year_figures_are_other_lines():
+    # A/B rerun 41220046274: BoB's NMC settlement and ICICI Prudential Life's H1 profit were cut as quarter PAT
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180")
+    sheet = fs.fact_sheet(d, period, lenders=True)
+    assert fs.disagreements("Net profit was hit by the ₹5,680 Cr settlement.", sheet) == []
+    assert fs.disagreements("Net profit for H1 was ₹760 Cr.", sheet) == []

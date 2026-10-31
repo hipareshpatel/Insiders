@@ -331,7 +331,7 @@ _CHANGE = re.compile(r"(?:\(?\s*)?(?:y[\s/-]*o[\s/-]*y|q[\s/-]*o[\s/-]*q|year[- 
 _LENDER_OTHER = (r"revenue|sales|turnover|total income|other income|operating profit|pre[- ]provision\w*|ppop|provisions?|"
                  r"interest (?:earned|expended|expenses?)|total interest income|operating expenses|premiums?|claims?|"
                  r"assets under management|aum|deposits|advances|loan book|disbursements?|profit before tax|pbt|ebitda|"
-                 r"net interest income|nii|financing profit")
+                 r"net interest income|nii|financing profit|exceptional|one[- ]?time|settlement|h1|half[- ]year|nine months|9m")
 
 
 def _lines_named(sentence: str, family: str = sv.CORPORATE) -> list[str]:
@@ -348,11 +348,15 @@ def _lender_skip(lead: str, follow: str, line_words: str, line: dict) -> bool:
     own_at = last(line_words)
     other_at = max((m.end() for m in re.finditer(rf"\b(?:{_LENDER_OTHER})\b", re.sub(
         rf"\b(?:{line_words})\b", lambda m: " " * len(m.group()), lead, flags=re.I), re.I)), default=-1)
-    if other_at > own_at:
+    if other_at > own_at or re.match(rf"[\s)]*(?:{_LENDER_OTHER})\b", follow, re.I):   # "... the ₹5,680 Cr settlement"
         return True
-    compares = _COMPARES_BEFORE.search(lead[-40:])
-    return bool(("prev_year" not in line and (compares or _YEAR_AGO_AFTER.match(follow)))
-                or ("prev_quarter" not in line and (compares or _QUARTER_AGO_AFTER.match(follow))))
+    # a named comparative checks only its own slot ("from ₹560 Cr a year ago" with a year-ago on the sheet is judged; review of
+    # cae2c97c); a bare "from" / "against" is let off when the sheet lacks either
+    if _YEAR_AGO_AFTER.match(follow):
+        return "prev_year" not in line
+    if _QUARTER_AGO_AFTER.match(follow):
+        return "prev_quarter" not in line
+    return bool(_COMPARES_BEFORE.search(lead[-40:]) and ("prev_year" not in line or "prev_quarter" not in line))
 
 
 def _near(value: float, decimals: int, target: float | None, scale: float = 1.0) -> bool:

@@ -360,3 +360,77 @@ def test_a_failed_industry_read_builds_the_table_as_before_and_does_not_stop_the
     sink.query = lambda name, params: (_ for _ in ()).throw(RuntimeError("D1 timeout")) if name == "export_companies" else []
     rt.write(sink, "t")
     assert sink.sent and {r["kind"] for r in sink.sent} == {"nbfc"}   # every quarter as before: the NBFC layout
+
+
+def test_an_owners_row_beside_a_year_ago_filler_zero_still_finds_its_base():
+    # measured 31 Oct 2026, live: KAYNES Q1FY27 PAT 56.43 against Q1FY26 74.61 (owners' line a filler 0) had no YoY
+    memory = {"statements": [_entry("Q1FY27", _rows(1000.0, 150.0, 80.0, 57.0, owners=56.43)), _entry("Q1FY26", _rows(900.0, 130.0, 100.0, 74.61, owners=0.0))]}
+    pat = rt.company_tables(memory)["Q1FY27"]["pat"]
+    assert (pat["value"], pat["prev_year"], pat["yoy_pct"]) == (56.43, 74.61, -24.4)
+
+
+def test_an_nbfc_template_filer_in_insurance_gets_the_insurer_layout():
+    for industry in ("Financial Services > Insurance > Life Insurance", "Financial Services > Insurance > General Insurance"):
+        row = next(r for r in rt.company_rows("500020", _nbfc_template(), "t", industry) if r["period"] == "Q2FY27")
+        assert row["kind"] == "insurer" and (row["pat"], row["revenue"], row["ebitda"], row["opm"]) == (20.0, None, None, None)
+    row = next(r for r in rt.company_rows("500020", _nbfc_template(), "t", "Financial Services > Finance > NBFC") if r["period"] == "Q2FY27")
+    assert row["kind"] == "nbfc"
+
+
+def _slip(period, pbt, tax, net, owners=None, minority=None):
+    rows = _rows(6591.0, 757.57, pbt, net, owners=owners)
+    rows["Tax"] = tax
+    if minority is not None:
+        rows["Minority share"] = minority
+    return _entry(period, rows)
+
+
+def test_a_profit_on_the_wrong_side_of_pbt_less_tax_is_a_slip_and_a_genuine_loss_stays():
+    # measured 31 Oct 2026, live: APARINDS Q1FY27 PAT -138.56 beside PBT about 600
+    memory = {"statements": [_slip("Q1FY27", 625.0, 157.55, -138.56, owners=-138.56, minority=0.0), _slip("Q1FY26", 300.0, 75.0, 225.0, owners=225.0, minority=0.0)]}
+    pat = rt.company_tables(memory)["Q1FY27"]["pat"]
+    assert (pat["value"], pat["yoy_pct"]) == (467.45, 107.8)
+    # the same slip in the year-ago quarter: the base is PBT - tax
+    memory = {"statements": [_slip("Q1FY27", 400.0, 100.0, 300.0, owners=300.0, minority=0.0), _slip("Q1FY26", 625.0, 157.55, -138.56, owners=-138.56, minority=0.0)]}
+    assert rt.company_tables(memory)["Q1FY27"]["pat"]["prev_year"] == 467.45
+    # a real loss: PBT - tax is negative too, so nothing changes
+    loss = {"statements": [_slip("Q1FY27", -150.0, -20.0, -130.0, owners=-130.0, minority=0.0)]}
+    assert rt.company_tables(loss)["Q1FY27"]["pat"]["value"] == -130.0
+    # a minority share that turns the owners' profit negative is not a slip
+    minority = {"statements": [_slip("Q1FY27", 30.0, 10.0, 20.0, owners=-8.0, minority=28.0)]}
+    assert rt.company_tables(minority)["Q1FY27"]["pat"]["value"] == -8.0
+
+
+def test_primesecu_like_nbfc_quarters_find_their_bases_beside_filler_owners_rows():
+    # measured 31 Oct 2026, live: PRIMESECU Q1FY27 3.49 vs Q1FY26 10.48 and Q4FY26 -10.93 vs Q4FY25 0.80 had no change at all: the
+    # current quarters carry a real owners' row, the older ones a filler 0 that used to be dropped
+    memory = {"statements": [_entry("Q4FY26", _rows(30.2, 5.0, -12.0, -10.93, owners=-10.93), family="nbfc"),
+                             _entry("Q4FY25", _rows(12.33, 2.0, 1.0, 0.8, owners=0.0), family="nbfc"),
+                             _entry("Q3FY26", _rows(30.18, 6.0, 3.0, 2.1, owners=0.0), family="nbfc")]}
+    pat = rt.company_tables(memory)["Q4FY26"]["pat"]
+    assert (pat["prev_year"], pat["yoy_turn"], pat["prev_quarter"], pat["qoq_turn"]) == (0.8, "PROFIT_TO_LOSS", 2.1, "PROFIT_TO_LOSS")
+
+
+def test_an_owners_profit_that_does_not_add_up_with_the_minoritys_to_the_whole_is_the_whole_less_the_minority():
+    # measured 31 Oct 2026, NSE's ATUL Q2FY26 file: profit 182.37, owners 87.95, minority 3.13 (Tijori 179.24); the page showed +77.1% for Q2FY27
+    def atul(period, net, owners, minority):
+        rows = _rows(1500.0, 300.0, 230.1, net, owners=owners)
+        rows["Minority share"] = minority
+        return _entry(period, rows)
+    memory = {"statements": [atul("Q2FY27", 158.8, 155.67, 3.13), atul("Q2FY26", 182.37, 87.95, 3.13)]}
+    pat = rt.company_tables(memory)["Q2FY27"]["pat"]
+    assert (pat["prev_year"], pat["yoy_pct"]) == (179.24, -13.1)
+    # rows that add up (within 0.5%) are left alone, and with no minority row the owners' row stays
+    assert rt.company_tables({"statements": [atul("Q2FY27", 158.8, 155.67, 3.13), atul("Q2FY26", 100.0, 96.9, 3.1)]})["Q2FY27"]["pat"]["prev_year"] == 96.9
+    bare = {"statements": [_entry("Q2FY27", _rows(1500.0, 300.0, 230.1, 182.37, owners=87.95))]}
+    assert rt.company_tables(bare)["Q2FY27"]["pat"]["value"] == 87.95
+
+
+def test_a_bank_takes_screeners_financing_profit_and_margin_in_the_ebitda_slots():
+    # owner, 31 Oct 2026: match Screener, banks get a figure (screener_view.bank_pl: Revenue - Interest - Expenses, provisions inside Expenses)
+    def bank(period, revenue, fp, margin, net):
+        return _bank(period, revenue, net, **{"Financing Profit": fp, "Financing Margin %": margin})
+    memory = {"statements": [bank("Q2FY27", 1000.0, 400.0, 40.0, 250.0), bank("Q2FY26", 900.0, 300.0, 33.33, 200.0), bank("Q1FY27", 950.0, 380.0, 40.0, 240.0)]}
+    row = _row(memory)
+    assert row["kind"] == "bank" and (row["ebitda"], row["ebitda_prev"], row["ebitda_yoy"], row["ebitda_qoq"]) == (400.0, 300.0, 33.3, 5.3)
+    assert (row["opm"], row["opm_yoy_bps"]) == (40.0, 667) and row["nfo"] == 0   # never "profit up, EBITDA down" for a lender

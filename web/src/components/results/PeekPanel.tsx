@@ -5,14 +5,14 @@ import type { KpiRow } from "../../../shared/resultsTypes";
 import { industryLine } from "../../../shared/industry";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
-import { fmtMargin, fmtPct, lineLabels, oneOff as oneOffOf, paceSentence, quarterLabel, quarterSeries } from "../../lib/resultsView";
+import { fmtMargin, fmtPct, lineLabels, NBFC_EBITDA_NOTE, oneOff as oneOffOf, paceSentence, quarterLabel, quarterSeries } from "../../lib/resultsView";
 import { Avatar } from "../Avatar";
 import { Growth } from "./bits";
-import { LineChart } from "./charts";
+import { AXIS_CLIP, LineChart } from "./charts";
 
 const KIND_NOTE: Record<KpiRow["kind"], string | null> = {
   company: null,
-  bank: "Banks: no operating-expense line is saved, so no EBITDA or margin; revenue is interest income.",
+  bank: "Banks: revenue is interest income; financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians and totals.",
   nbfc: "NBFCs: financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians and totals.",
   insurer: "Insurers: profit only; no revenue or EBITDA is saved in a comparable layout.",
   reit: "REITs: revenue, operating profit and profit as the trust files them; left out of EBITDA medians and totals. Cash distributions are not shown yet.",
@@ -24,8 +24,9 @@ function Tile({ label, value, turn, amount, title }: { label: string; value: num
   return (
     <div className="min-w-0 rounded-xl bg-surface-2 px-3 py-2.5 sm:px-3.5">
       <div className="text-[13px] text-ink-2" title={title}>{label}</div>
-      <div className="mt-0.5 text-[18px] font-bold leading-tight tracking-[-0.01em] sm:text-[20px]"><Growth value={value} turn={turn} className={turn ? "whitespace-normal" : undefined} /></div>
+      <div className="mt-0.5 text-[18px] font-bold leading-tight tracking-[-0.01em] sm:text-[20px]"><Growth value={value} turn={turn} exact className="whitespace-normal" /></div>
       <div className="num mt-0.5 text-[13px] text-ink-3">{cr(amount)}</div>
+      {value == null && !turn && <div className="mt-0.5 text-[12.5px] italic text-ink-3">No year-ago figure to compare</div>}
     </div>
   );
 }
@@ -84,9 +85,9 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
         </div>
 
         <div className="mt-[22px] grid grid-cols-3 gap-2.5">
-          {labels.revenue ? <Tile label={labels.revenue} value={row.revenue_yoy} amount={row.revenue} /> : <NoTile label="Revenue" note="not for insurers" />}
+          {labels.revenue ? <Tile label={labels.revenue} value={row.revenue_yoy} amount={row.revenue} /> : <NoTile label="Revenue" note="not shown for insurers" />}
           {labels.ebitda ? <Tile label={labels.ebitda} value={row.ebitda_yoy} turn={row.ebitda_turn} amount={row.ebitda} />
-            : <NoTile label="EBITDA" note={row.kind === "bank" ? "not for banks" : "not for insurers"} />}
+            : <NoTile label="EBITDA" note="not shown for insurers" />}
           <Tile label="Profit (PAT)" title="PAT: profit after tax" value={row.pat_yoy} turn={row.pat_turn} amount={row.pat} />
         </div>
         <p className="mt-2 text-[13px] text-ink-3">{q} vs the same quarter a year ago</p>
@@ -111,6 +112,9 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
             ...(labels.revenue ? [{ name: labels.revenue === "Revenue" ? "Revenue" : labels.revenue, vals: row.series_revenue, color: "var(--ink-3)" }] : []),
             { name: "Profit", vals: row.series_pat, color: "var(--accent)" },
           ]} />
+          {[...row.series_pat, ...row.series_revenue].some((v) => v != null && Math.abs(v) > AXIS_CLIP) && (
+            <p className="mt-1 text-[12.5px] text-ink-3">The axis stops at ±{AXIS_CLIP}%; a triangle marks a quarter beyond it (hover for its figure).</p>
+          )}
           <p className="mt-2 text-[13px] text-ink-3">{paceSentence(row)}</p>
         </section>
 
@@ -128,10 +132,10 @@ export function PeekPanel({ row, onClose }: { row: KpiRow; onClose: () => void }
             <dt className="text-ink-2">Filed</dt>
             <dd className="text-right text-ink">
               {row.filed_at ? new Date(row.filed_at).toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }) : "—"}
-              {row.filing_url && <> · <a href={row.filing_url} target="_blank" rel="noreferrer" className="font-semibold text-accent hover:underline">NSE filing ↗</a></>}
             </dd>
             <dt className="text-ink-2">Basis</dt><dd className="text-right text-ink">{row.basis === "CONSOLIDATED" ? "Consolidated" : "Standalone"}</dd>
           </dl>
+          {(row.kind === "nbfc" || row.kind === "bank") && <p className="mt-3 text-[12.5px] text-ink-3">{NBFC_EBITDA_NOTE}</p>}
           {KIND_NOTE[row.kind] && <p className="mt-3 text-[12.5px] text-ink-3">{KIND_NOTE[row.kind]}</p>}
         </section>
       </div>

@@ -103,3 +103,28 @@ def test_the_standalone_file_beside_a_consolidated_one_keeps_its_statements_too(
     pipeline.run("live", time_budget_s=60)
     bases = {e["basis"] for e in sink.get_dossier(filing.scrip_code).get("statements", []) if e["period"] == "Q2FY27"}
     assert bases == {"CONSOLIDATED", "STANDALONE"}
+
+
+def test_the_profit_line_rules_are_applied_where_entries_are_written_and_the_backfill_builds_them():
+    from bse_intel import screener_view as sv
+    rows = {"Net Profit": 182.37, "Net Profit (owners)": 87.95, "Minority share": 3.13, "Profit before tax": 230.1, "Tax": 48.91}
+    assert sv.corrected_pl(rows, sv.CORPORATE)["Net Profit (owners)"] == 179.24
+    assert sv.corrected_pl(rows, sv.CORPORATE) is not rows and sv.corrected_pl({"Net Profit": 5.0}, sv.CORPORATE) == {"Net Profit": 5.0}
+    ok = {"Net Profit": 100.0, "Net Profit (owners)": 96.9, "Minority share": 3.1}
+    assert sv.corrected_pl(ok, sv.CORPORATE) is ok                                   # adds up: untouched
+    assert sv.corrected_pl({"Net Profit": 560.0, "Net Profit (owners)": 0.0}, sv.NBFC)["Net Profit (owners)"] == 560.0   # filler, no minority row
+    assert sv.corrected_pl({"Net Profit": -138.56, "Profit before tax": 625.0, "Tax": 157.55}, sv.CORPORATE)["Net Profit"] == 467.45
+    assert sv.corrected_pl({"Net Profit": -138.56, "Profit before tax": 625.0, "Tax": 157.55}, sv.BANK)["Net Profit"] == -138.56   # only corporate PBT is built to hold it
+    from bse_intel import statements
+    e = {"table": "quarters", "family": "corporate", "rows": rows}
+    assert statements.corrected_entry(e)["rows"]["Net Profit (owners)"] == 179.24 and e["rows"]["Net Profit (owners)"] == 87.95
+    assert statements.corrected_entry({"table": "balance", "family": "corporate", "rows": rows}) ["rows"] is rows
+
+
+def test_remember_stores_the_corrected_profit_lines(monkeypatch):
+    from bse_intel import screener_view as sv
+    raw = {"Net Profit": 182.37, "Net Profit (owners)": 87.95, "Minority share": 3.13}
+    monkeypatch.setattr(statements, "rows_of", lambda doc, source="": [("quarters", {k: sv.Row(v, "") for k, v in raw.items()}, "Q2FY26")])
+    d: dict = {}
+    assert statements.remember(d, {"period": "Q2FY26", "basis": "CONSOLIDATED", "template": "INDAS"}, "n1", "2025-10-17", "t") == 1
+    assert d["statements"][0]["rows"]["Net Profit (owners)"] == 179.24

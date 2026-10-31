@@ -5,7 +5,7 @@ The company page's Quarterly results table is ``dossier["statements"]`` in each 
 screener's rules, file-labelled. This job turns that same source into one table per quarter and keeps the KPI figures of each in the
 ``results_kpi`` table, one row per company and quarter, so the page can filter, sort and summarise them in the database. No card, no
 AI, no exchange call. Every statement layout (``family``) gives a row: a corporate filer's revenue, EBITDA (operating profit), margin
-and profit; a bank's revenue (interest earned) and profit; an NBFC's revenue, financing profit and financing margin (in the EBITDA and
+and profit; a bank's revenue (interest earned), financing profit (after interest and provisions, as Screener), margin and profit; an NBFC's revenue, financing profit and financing margin (in the EBITDA and
 margin columns) and profit; an insurer's profit only. A quarter with no profit line has no row. The basis is consolidated when the
 statements have the quarter on it with a profit line, else standalone."""
 
@@ -31,7 +31,10 @@ QUARTERS_KEPT = 10   # the latest quarters a company keeps: the page's eight-qua
 TURN_KEY = {"LOSS_TO_PROFIT": 1e6, "LOSS_NARROWED": 1e5, "LOSS_WIDENED": -1e5, "PROFIT_TO_LOSS": -1e6}
 # family -> (revenue row, EBITDA row, margin row) of its saved statements; None: the family has no such line
 LAYOUT = {sv.CORPORATE: ("Sales", "Operating Profit", "OPM %"),
-          sv.BANK: ("Revenue", None, None),
+          # a bank takes Screener's own rows (screener_view.bank_pl): Financing Profit = Revenue - Interest - Expenses, provisions inside Expenses,
+          # and its margin, in the EBITDA and margin slots (owner, 31 Oct 2026: "match Screener; banks get a figure"); the page keeps banks out
+          # of the EBITDA tile and medians
+          sv.BANK: ("Revenue", "Financing Profit", "Financing Margin %"),
           sv.NBFC: ("Revenue", "Financing Profit", "Financing Margin %"),
           sv.INSURER: (None, None, None),
           # a REIT or InvIT files the corporate lines (reit_results.py); only its kind differs on the page
@@ -43,6 +46,11 @@ LAYOUT = {sv.CORPORATE: ("Sales", "Operating Profit", "OPM %"),
 PAT_ROWS = (fact_sheet.OWNERS, "Net Profit")   # the profit to shareholders when the file has it, else the net profit
 EXCEPTIONAL_AT = "Exceptional items AT"   # screener_view._exceptional_rows: the exceptional item after its tax (a gain is positive); corporate, bank and NBFC filers
 EXCEPTIONAL = "Exceptional items"
+
+
+def insurer_industry(industry: str | None) -> bool:
+    """True when NSE's industry is an insurance one ("Financial Services > Insurance > Life Insurance")."""
+    return "insurance" in (industry or "").lower()
 
 
 def non_lender(industry: str | None) -> bool:
@@ -58,18 +66,8 @@ def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
                 and e.get("family") in LAYOUT and (e.get("lab") or {}).get("by") == "file"):
-            return _without_filler_owners(e)
+            return statements.corrected_entry(e)
     return None
-
-
-def _without_filler_owners(e: dict) -> dict:
-    """The entry without an owners' profit of exactly 0 beside a net profit that is not: a filler (measured 31 Oct 2026, the live
-    table: 204 quarters at 0, e.g. PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; the NBFC template is read without the
-    corporate guard of screener_view); a listed parent's shareholders never own none of a profit. The net profit is then the line."""
-    rows = e.get("rows") or {}
-    if rows.get(fact_sheet.OWNERS) == 0 and rows.get("Net Profit") not in (None, 0):
-        return {**e, "rows": {k: v for k, v in rows.items() if k != fact_sheet.OWNERS}}
-    return e
 
 
 def _line(key: str, row: str, now: dict, before: dict) -> dict | None:
@@ -133,7 +131,11 @@ def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | 
         if now is None:
             continue
         before = {slot: _entry(dossier, p, basis) for slot, p in prior.items()}
-        layout = sv.CORPORATE if now["family"] == sv.NBFC and non_lender(industry) else now["family"]
+        layout = now["family"]
+        if layout == sv.NBFC:
+            # an insurer on the NBFC template has no financing profit (measured 31 Oct 2026, live: MFSL, "Financial Services > Insurance >
+            # Life Insurance", showed "financing profit" and kind nbfc; 7 such rows): the insurer's page, profit only
+            layout = sv.CORPORATE if non_lender(industry) else sv.INSURER if insurer_industry(industry) else layout
         revenue_row, ebitda_row, margin_row = LAYOUT[layout]
         # the profit's comparatives are the same row as its value (a total with minority interest is no base for the owners' profit)
         pat_row = next((r for r in PAT_ROWS if (now.get("rows") or {}).get(r) is not None), None)

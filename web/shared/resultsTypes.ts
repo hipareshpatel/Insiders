@@ -12,6 +12,8 @@ export type View = "yoy" | "momentum" | "qoq";
  *  quarter has no per cent (a loss, or a missing quarter) */
 export type Momentum = "speeding_up" | "slowing" | "steady" | "not_comparable";
 export const MOMENTUM_POINTS = 2;
+/** A change above this per cent is "NM" (not meaningful) everywhere: the cell, the ranking and the momentum. */
+export const NM_PCT = 999;
 
 /** The indices the page offers, in the order it lists them (ids as stored in index_members.index_id). */
 export const INDICES: { id: string; label: string }[] = [
@@ -155,7 +157,7 @@ export type Cut = "all" | "ex_financials" | "financials";
 export interface GroupRow {
   id: string;                                   // index id, or the classification path of the group
   label: string;
-  reported: number;                             // companies of the group with a row this quarter (in the cut)
+  reported: number;                             // companies of the group with a row this quarter; for an index every member that reported, whatever the cut (so "of" is the same base)
   of: number | null;                            // the group's size (an index's members matched to companies; null for a sector or industry)
   pat_median: number | null;                    // in the chosen cut
   /** total profit growth: every company's profit this quarter added up against the same total a year ago, losses included */

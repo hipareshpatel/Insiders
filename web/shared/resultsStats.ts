@@ -9,6 +9,7 @@ import { industryParts } from "./industry.ts";
 export interface StatRow {
   scrip_code: string;
   period: string;
+  basis?: string;   // when given, momentum and the trend use only quarters on the quarter's own basis (as the table does)
   kind: Kind;
   revenue: number | null; revenue_prev: number | null; revenue_yoy: number | null;
   ebitda: number | null; ebitda_prev: number | null; ebitda_yoy: number | null; ebitda_turn: Turn | null;
@@ -135,6 +136,9 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
   const byPeriod = new Map<string, StatRow[]>(periods.map((p) => [p, []]));
   for (const r of input.rows) byPeriod.get(r.period)?.push(r);
   const prevByScrip = new Map((byPeriod.get(periods[periods.length - 2]) ?? []).map((r) => [r.scrip_code, r]));
+  const basisNow = new Map((byPeriod.get(quarter) ?? []).map((r) => [r.scrip_code, r.basis]));
+  /** a row of another quarter counts only on the basis its company reports this quarter (rows without a basis always count) */
+  const sameBasis = (r: StatRow) => !r.basis || !basisNow.get(r.scrip_code) || basisNow.get(r.scrip_code) === r.basis;
   const narrowed = (c: GroupCompany | undefined, within: Set<string> | null) =>
     !!c && (withinMcap == null || (c.market_cap_cr != null && c.market_cap_cr >= withinMcap)) && (!within || (c.isin != null && within.has(c.isin)));
   const sets = new Map<string, Set<string>>();   // index members by "index|period"
@@ -188,10 +192,10 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
     const bands = { below_0: 0, from_0_to_10: 0, from_10_to_20: 0, above_20: 0 };
     for (const r of rows) { const b = bandOf(r); if (b && b in bands) bands[b as keyof typeof bands]++; }
     const inBars = bands.below_0 + bands.from_0_to_10 + bands.from_10_to_20 + bands.above_20;
-    const known = rows.map((r) => momentumClass(momentumPts(r.pat_yoy, prevByScrip.get(r.scrip_code)?.pat_yoy))).filter((m: Momentum) => m !== "not_comparable");
+    const known = rows.map((r) => momentumClass(momentumPts(r.pat_yoy, (sameBasis(prevByScrip.get(r.scrip_code) ?? r) ? prevByScrip.get(r.scrip_code)?.pat_yoy : null)))).filter((m: Momentum) => m !== "not_comparable");
     const totalPat = patSum(all.filter((r) => r.pat != null));
     out.push({
-      id, label: label(id), reported: rows.length, of,
+      id, label: label(id), reported: of != null ? all.length : rows.length, of,
       pat_median: median(rows.map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null)),
       pat_total_all: totalGrowth(pairs(all, "pat")), pat_total_ex_financials: totalGrowth(pairs(ord, "pat")), pat_total_financials: totalGrowth(pairs(fin, "pat")),
       financials_share_pct: totalPat > 0 ? (patSum(fin) / totalPat) * 100 : null,
@@ -200,7 +204,7 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
       ebitda_total_ex_financials: totalGrowth(pairs(ord, "ebitda")),
       spread_pct: inBars ? [bands.below_0, bands.from_0_to_10, bands.from_10_to_20, bands.above_20].map((n) => (n / inBars) * 100) as [number, number, number, number] : [0, 0, 0, 0],
       speeding_up_pct: known.length ? (known.filter((m) => m === "speeding_up").length / known.length) * 100 : null,
-      trend_pat_median: trends.map((g) => median((g.get(id) ?? []).filter((r) => inCut(r.kind, cut)).map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null))),
+      trend_pat_median: trends.map((g) => median((g.get(id) ?? []).filter((r) => inCut(r.kind, cut) && sameBasis(r)).map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null))),
     });
   }
   return out.sort((a, b) => (a.pat_median == null ? 1 : 0) - (b.pat_median == null ? 1 : 0) || (b.pat_median ?? 0) - (a.pat_median ?? 0) || a.label.localeCompare(b.label));

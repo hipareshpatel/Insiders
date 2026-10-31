@@ -3,7 +3,7 @@ import { useEffect, useRef, type ReactNode, type RefObject } from "react";
 import type { KpiRow, Momentum, Turn } from "../../../shared/resultsTypes";
 import { industryLine } from "../../../shared/industry";
 import { cn } from "../../lib/cn";
-import { growth, KIND_TAG, type Seg, type Tone } from "../../lib/resultsView";
+import { fmtPct, growth, KIND_TAG, NM, type Seg, type Tone } from "../../lib/resultsView";
 import { Avatar } from "../Avatar";
 
 export const TONE_TEXT: Record<Tone, string> = { up: "text-pos", down: "text-neg", flat: "text-ink-2" };
@@ -20,8 +20,8 @@ export function Segs({ segs }: { segs: Seg[] }) {
 }
 
 /** A growth figure: a small arrow and the signed number (never a filled pill), or the named turn across a loss. */
-export function Growth({ value, turn, unit = "%", className, arrowClass }: {
-  value: number | null | undefined; turn?: Turn | null; unit?: "%" | "bp"; className?: string; arrowClass?: string;
+export function Growth({ value, turn, unit = "%", className, arrowClass, exact }: {
+  value: number | null | undefined; turn?: Turn | null; unit?: "%" | "bp"; className?: string; arrowClass?: string; exact?: boolean;
 }) {
   const g = growth(value, turn, unit);
   if (!g) return <span className="font-medium text-ink-3">—</span>;
@@ -29,6 +29,7 @@ export function Growth({ value, turn, unit = "%", className, arrowClass }: {
     <span title={g.title} className={cn("num whitespace-nowrap font-semibold", TONE_TEXT[g.tone], className)}>
       {g.arrow && <span aria-hidden className={cn("relative -top-[0.12em] mr-1 text-[11px]", arrowClass)}>{g.arrow}</span>}
       {g.text}
+      {exact && g.text === NM && value != null && <span className="ml-1 text-[12.5px] font-normal">({fmtPct(value)})</span>}
     </span>
   );
 }
@@ -70,8 +71,8 @@ const markOf = (label: string, value: number | null, turn: Turn | null, shown: b
 export function Signals({ row, qoq = false }: { row: KpiRow; qoq?: boolean }) {
   const marks: Mark[] = [
     markOf(row.kind === "bank" ? "Interest income" : "Revenue", qoq ? row.revenue_qoq : row.revenue_yoy, null, row.kind !== "insurer"),
-    markOf(row.kind === "nbfc" ? "Financing profit" : "EBITDA", qoq ? row.ebitda_qoq : row.ebitda_yoy, qoq ? null : row.ebitda_turn,
-      row.kind !== "bank" && row.kind !== "insurer"),
+    markOf(row.kind === "nbfc" || row.kind === "bank" ? "Financing profit" : "EBITDA", qoq ? row.ebitda_qoq : row.ebitda_yoy, qoq ? null : row.ebitda_turn,
+      row.kind !== "insurer"),
     markOf("Profit", qoq ? row.pat_qoq : row.pat_yoy, qoq ? row.pat_qoq_turn : row.pat_turn, true),
   ];
   return (
@@ -107,7 +108,7 @@ export function CompanyCell({ row, compact = false }: { row: Pick<KpiRow, "symbo
 }
 
 /** Closes a floating panel on a click outside `refs` or on Escape. */
-export function useDismiss(open: boolean, onClose: () => void, refs: RefObject<HTMLElement | null>[]) {
+export function useDismiss(open: boolean, onClose: () => void, refs: RefObject<HTMLElement | null>[], returnTo?: RefObject<HTMLElement | null>) {
   const close = useRef(onClose);
   close.current = onClose;
   useEffect(() => {
@@ -115,11 +116,11 @@ export function useDismiss(open: boolean, onClose: () => void, refs: RefObject<H
     const down = (e: MouseEvent) => {
       if (refs.every((r) => !r.current?.contains(e.target as Node))) close.current();
     };
-    const key = (e: KeyboardEvent) => { if (e.key === "Escape") close.current(); };
+    const key = (e: KeyboardEvent) => { if (e.key === "Escape") { close.current(); returnTo?.current?.focus(); } };
     document.addEventListener("mousedown", down);
     document.addEventListener("keydown", key);
     return () => { document.removeEventListener("mousedown", down); document.removeEventListener("keydown", key); };
-  }, [open, refs]);
+  }, [open, refs, returnTo]);
 }
 
 /** A segmented switch (quarter, view, group by, cut): one choice pressed, on a grey track. */

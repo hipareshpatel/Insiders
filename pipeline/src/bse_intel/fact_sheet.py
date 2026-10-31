@@ -43,7 +43,7 @@ def quarter_entries(dossier: dict, period: str, basis: str) -> dict | None:
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
                 and e.get("family") == sv.CORPORATE and (e.get("lab") or {}).get("by") == "file"):
-            return e
+            return statements.corrected_entry(e)   # the shared profit-line rules, also for a dossier not yet rebuilt
     return None
 
 

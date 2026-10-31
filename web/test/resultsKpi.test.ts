@@ -2,7 +2,7 @@
 import { strict as assert } from "node:assert";
 import { RESULTS_SORTS } from "../shared/resultsTypes.ts";
 import { test } from "node:test";
-import { KPI_SORTS, companyRows, kpiRowsSql, kpiSummaryRowsSql, kpiWhere, momentumClass, momentumPts, parseKpiQuery, periodsBack, prevPeriod,
+import { KPI_SORTS, sortExpr, momentumSql, companyRows, kpiRowsSql, kpiSummaryRowsSql, kpiWhere, momentumClass, momentumPts, parseKpiQuery, periodsBack, prevPeriod,
   quarterDay, quarterIndex, seriesFor, toKpiRow, type DbKpiRow } from "../shared/resultsKpi.ts";
 
 test("quarters order newest first by their number", () => {
@@ -47,7 +47,7 @@ test("a request keeps only what is on the lists", () => {
     turnaround: "1", nfo: "1", spread: "above_20", page: "-3" });
   assert.equal(q.index, "NIFTY500");
   assert.equal(q.q, "tata");
-  assert.equal(q.sort, "pat_yoy");   // an unknown sort falls back to PAT growth
+  assert.equal(q.sort, "mcap");   // an unknown sort falls back to the default: market cap
   assert.equal(q.dir, "desc");
   assert.equal(q.mcap_min, 5000);
   assert.equal(q.class, "Healthcare > Pharma");
@@ -96,13 +96,14 @@ test("no filter, only the quarter and the joins", () => {
 
 test("the sort names a listed column, puts a missing figure last and breaks ties by company", () => {
   for (const sort of Object.keys(KPI_SORTS)) {
-    const col = KPI_SORTS[sort as keyof typeof KPI_SORTS];
-    assert.ok(kpiRowsSql(parseKpiQuery({ sort, dir: "asc" }), "FROM results_kpi k").includes(`ORDER BY (${col}) IS NULL, ${col} ASC, k.scrip_code`), sort);
+    for (const dir of ["asc", "desc"] as const) {
+      const col = sortExpr(sort as keyof typeof KPI_SORTS, dir);
+      assert.ok(kpiRowsSql(parseKpiQuery({ sort, dir }), "FROM results_kpi k").includes(`ORDER BY (${col}) IS NULL, ${col} ${dir.toUpperCase()}, k.scrip_code`), sort);
+    }
   }
   assert.deepEqual(Object.keys(KPI_SORTS).sort(), [...RESULTS_SORTS].sort());   // the Worker accepts exactly the shared list the page sends from
-  assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_yoy" }), "FROM x"), /ORDER BY \(k\.pat_yoy\) IS NULL, k\.pat_yoy DESC/);   // a turn across a loss has no per cent: after every row with one
-  assert.match(kpiRowsSql(parseKpiQuery({ sort: "ebitda_yoy" }), "FROM x"), /ORDER BY \(k\.ebitda_yoy\) IS NULL, k\.ebitda_yoy DESC/);
-  assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_momentum" }), "FROM x"), /\(k\.pat_yoy - pk\.pat_yoy\) DESC/);
+  assert.match(kpiRowsSql(parseKpiQuery({}), "FROM x"), /ORDER BY \(co\.market_cap_cr\) IS NULL, co\.market_cap_cr DESC/);   // the default: market cap, largest first
+  assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_momentum" }), "FROM x"), /k\.pat_yoy > 999 OR pk\.pat_yoy > 999 THEN NULL ELSE k\.pat_yoy - pk\.pat_yoy END\) DESC/);
   assert.match(kpiRowsSql(parseKpiQuery({ page: "3" }), "FROM x"), /LIMIT 50 OFFSET 100/);
   const hand = { ...parseKpiQuery({}), sort: "1; DROP TABLE x" };   // a hand-built query still cannot name a column
   assert.ok(!kpiRowsSql(hand, "FROM x").includes("DROP"));
@@ -161,4 +162,61 @@ test("momentum compares only quarters on the same basis", () => {
   assert.equal(same.pat_momentum_pts, 5);
   assert.equal(switched.pat_momentum_pts, null);
   assert.equal(switched.momentum, "not_comparable");
+});
+
+// ---- the growth sorts and the NM rule (R3, R4): the SQL is run for real in SQLite below ----
+import { DatabaseSync } from "node:sqlite";
+
+function rank(sort: "pat_yoy" | "ebitda_yoy" | "pat_qoq", dir: "asc" | "desc", rows: Record<string, unknown>[]): string[] {
+  const sql = new DatabaseSync(":memory:");
+  sql.exec("CREATE TABLE k (id TEXT, pat_yoy REAL, pat_turn TEXT, ebitda_yoy REAL, ebitda_turn TEXT, pat_qoq REAL, pat_qoq_turn TEXT)");
+  const ins = sql.prepare("INSERT INTO k VALUES (?, ?, ?, ?, ?, ?, ?)");
+  for (const r of rows) ins.run(r.id as string, (r.pat_yoy ?? null) as number | null, (r.pat_turn ?? null) as string | null, (r.ebitda_yoy ?? null) as number | null,
+    (r.ebitda_turn ?? null) as string | null, (r.pat_qoq ?? null) as number | null, (r.pat_qoq_turn ?? null) as string | null);
+  const col = sortExpr(sort, dir).replace(/\bk\./g, "");
+  return sql.prepare(`SELECT id FROM k ORDER BY (${col}) IS NULL, ${col} ${dir === "asc" ? "ASC" : "DESC"}, id`).all().map((r) => r.id as string);
+}
+const SORT_ROWS = [
+  { id: "mid", pat_yoy: 12 }, { id: "top", pat_yoy: 80 }, { id: "nm", pat_yoy: 2159 }, { id: "nm2", pat_yoy: 6643 }, { id: "fall", pat_yoy: -40 },
+  { id: "p2l", pat_turn: "PROFIT_TO_LOSS" }, { id: "wide", pat_turn: "LOSS_WIDENED" }, { id: "l2p", pat_turn: "LOSS_TO_PROFIT" },
+  { id: "narrow", pat_turn: "LOSS_NARROWED" }, { id: "none" },
+];
+
+test("highest first: NM rows come after every meaningful row and before rows with no figure (R3a)", () => {
+  const order = rank("pat_yoy", "desc", SORT_ROWS);
+  assert.deepEqual(order.slice(0, 5), ["top", "mid", "fall", "nm2", "nm"]);   // 80, 12, -40, then the NM ones (6643 before 2159)
+  assert.ok(order.indexOf("nm") < order.indexOf("p2l") && order.indexOf("nm") < order.indexOf("none"));
+});
+
+test("lowest first: falls across a loss lead, then the per cents, then rows with no figure; a gain across a loss never leads (R3b)", () => {
+  const order = rank("pat_yoy", "asc", SORT_ROWS);
+  assert.deepEqual(order.slice(0, 5), ["p2l", "wide", "fall", "mid", "top"]);
+  assert.deepEqual(order.slice(5, 7), ["nm", "nm2"]);
+  assert.ok(["l2p", "narrow", "none"].every((id) => order.indexOf(id) > order.indexOf("nm2")));
+  assert.deepEqual(rank("pat_qoq", "asc", [{ id: "a", pat_qoq: 5 }, { id: "b", pat_qoq_turn: "PROFIT_TO_LOSS" }, { id: "c", pat_qoq_turn: "LOSS_TO_PROFIT" }]), ["b", "a", "c"]);
+  assert.deepEqual(rank("ebitda_yoy", "asc", [{ id: "a", ebitda_yoy: -5 }, { id: "b", ebitda_turn: "LOSS_WIDENED" }]), ["b", "a"]);
+});
+
+test("momentum is not comparable when either quarter's growth is NM (R4): the SQL, the points and the class agree", () => {
+  assert.equal(momentumPts(2159, 13), null);
+  assert.equal(momentumPts(13, 2159), null);
+  assert.equal(momentumPts(999, 13), 986);   // +999% is the last meaningful figure
+  assert.equal(momentumClass(momentumPts(2159, 13)), "not_comparable");
+  const sql = new DatabaseSync(":memory:");
+  sql.exec("CREATE TABLE k (pat_yoy REAL); CREATE TABLE pk (pat_yoy REAL)");
+  const expr = (a: number, b: number) => {
+    sql.exec(`DELETE FROM k; DELETE FROM pk; INSERT INTO k VALUES (${a}); INSERT INTO pk VALUES (${b})`);
+    return (sql.prepare(`SELECT ${momentumSql("pat_yoy").replace(/\b(k|pk)\./g, "$1.")} AS m FROM k, pk`).get() as { m: number | null }).m;
+  };
+  assert.equal(expr(2159, 13), null);
+  assert.equal(expr(13, 2159), null);
+  assert.equal(expr(20, 13), 7);
+  const row = toKpiRow(db({ pat_yoy: 2159, prev_pat_yoy: 13 }), { series_pat: [], series_revenue: [] });
+  assert.deepEqual([row.pat_momentum_pts, row.momentum], [null, "not_comparable"]);
+});
+
+test("a series point on another basis than the row's is left out (R8)", () => {
+  const by = new Map([["Q1FY27", { pat_yoy: 10, revenue_yoy: 5, basis: "STANDALONE" }], ["Q2FY27", { pat_yoy: 20, revenue_yoy: 6, basis: "CONSOLIDATED" }]]);
+  assert.deepEqual(seriesFor(by, "Q2FY27", "CONSOLIDATED").series_pat.slice(-2), [null, 20]);
+  assert.deepEqual(seriesFor(by, "Q2FY27").series_pat.slice(-2), [10, 20]);   // no basis given: as before
 });

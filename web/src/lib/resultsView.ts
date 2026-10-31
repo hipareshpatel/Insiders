@@ -3,7 +3,7 @@
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
 import { cr, num } from "./format.ts";
-import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
+import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, NM_PCT, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
 import type { GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
 export const GROWTH_STEPS = [0, 10, 20, 30, 50, 100] as const;   // "growth at least this much, per cent"
@@ -15,10 +15,11 @@ export const SPREAD_LABEL: Record<SpreadKey, string> = { below_0: "Below 0%", fr
 /** The columns the page may sort by: the Worker's own list (shared/resultsTypes.ts); anything else falls back to profit growth. */
 export const SORTS = RESULTS_SORTS;
 export type Sort = ResultsSort;
-export const DEFAULT_SORT: Sort = "pat_yoy";
-/** What each view ranks by until the reader picks a column: year-on-year by profit growth, momentum by profit pace, quarter-on-quarter by profit
- *  growth against last quarter (the three lists lead with different companies). */
-export const VIEW_SORT: Record<View, Sort> = { yoy: "pat_yoy", momentum: "pat_momentum", qoq: "pat_qoq" };
+export const DEFAULT_SORT: Sort = "mcap";
+/** What each view ranks by until the reader picks a column: year-on-year by market cap, largest first (a results list's usual order; the
+ *  profit-growth default opened with tiny-base NM rows, 31 Oct 2026), momentum by profit pace, quarter-on-quarter by profit growth against
+ *  last quarter. Every other sort stays one click away and `sort=` in the URL still names it. */
+export const VIEW_SORT: Record<View, Sort> = { yoy: "mcap", momentum: "pat_momentum", qoq: "pat_qoq" };
 /** A name sorts A to Z first; every figure highest first. */
 /** The view a URL names (year-on-year when it names none or an unknown one). */
 export const viewOf = (p: URLSearchParams): View => (p.get("view") === "momentum" ? "momentum" : p.get("view") === "qoq" ? "qoq" : "yoy");
@@ -69,7 +70,7 @@ const signed = (v: number, digits: number) => `${v > 0 ? "+" : v < 0 ? "−" : "
 export const fmtPct = (v: number | null | undefined, digits = 1) => (v == null ? "—" : `${signed(v, digits)}%`);
 /** A change above this is "NM" (not meaningful), the sell-side convention; the exact figure goes in the cell's tooltip (owner audit, 31 Oct 2026:
  *  +6,643.4% for a profit of 30.99 Cr). A margin outside -100%..+100% is "NM" too. */
-export const NM_PCT = 999;
+export { NM_PCT };
 export const NM = "NM";
 export const isNmPct = (v: number | null | undefined) => v != null && v > NM_PCT;
 export const isNmMargin = (v: number | null | undefined) => v != null && Math.abs(v) > 100;
@@ -116,11 +117,11 @@ export function oneOff(r: Pick<KpiRow, "pat" | "pat_pre" | "pat_pre_yoy" | "pat_
 
 export const KIND_TAG: Record<Kind, string> = { company: "", bank: "Bank", nbfc: "NBFC", insurer: "Insurer", reit: "REIT", invit: "InvIT" };
 
-/** What each column holds for a kind of company: a bank's revenue is interest income and it has no EBITDA; an NBFC's EBITDA columns hold
- *  its financing profit and margin; an insurer has profit only (docs/design/results-kpi.md rule 1). null: the line is not shown. */
+/** What each column holds for a kind of company: a bank's revenue is interest income; a bank's and an NBFC's EBITDA columns hold
+ *  their financing profit and margin (Screener's rows); an insurer has profit only (docs/design/results-kpi.md rule 1). null: the line is not shown. */
 export function lineLabels(kind: Kind): { revenue: string | null; ebitda: string | null; margin: string | null } {
   switch (kind) {
-    case "bank": return { revenue: "Interest income", ebitda: null, margin: null };
+    case "bank": return { revenue: "Interest income", ebitda: "Financing profit", margin: "Financing margin" };
     case "nbfc": return { revenue: "Income", ebitda: "Financing profit", margin: "Financing margin" };
     case "insurer": return { revenue: null, ebitda: null, margin: null };
     default: return { revenue: "Revenue", ebitda: "EBITDA", margin: "EBITDA margin" };
@@ -128,9 +129,8 @@ export function lineLabels(kind: Kind): { revenue: string | null; ebitda: string
 }
 
 /** Why a cell is empty, said once in the cell (an honest blank, not a zero). */
-export function blankNote(kind: Kind, line: "revenue" | "ebitda" | "margin"): string {
-  if (kind === "insurer") return line === "revenue" ? "Insurers: profit only" : "";
-  if (kind === "bank") return line === "ebitda" ? "Not shown for banks" : "";
+export function blankNote(kind: Kind, _line?: "revenue" | "ebitda" | "margin"): string {
+  if (kind === "insurer") return "Not shown for insurers";
   return "";
 }
 
@@ -180,6 +180,23 @@ export function medianNote(s: Pick<KpiSummary, "median_pat_n" | "pat_turn_n">): 
   const t = s.pat_turn_n;
   return `Median of ${fmtCount(s.median_pat_n)} ${s.median_pat_n === 1 ? "company" : "companies"} with a % change; ${fmtCount(t)} whose profit crossed zero (loss to profit, profit to loss, loss narrowed or widened) ${t === 1 ? "is" : "are"} not in the median but ${t === 1 ? "is" : "are"} in the counts.`;
 }
+
+/** The header of the spread chart with its base said honestly: the companies with a year-ago quarter, and what the bars hold. The bars count the
+ *  per cents and the falls across a loss; a loss turned to profit or narrowed sits apart (measured 31 Oct 2026, live Q2FY27: 611 reported, 558
+ *  comparable, bars 515, loss to profit 29, narrowed 14; the old header said 611). */
+export function spreadHeading(s: Pick<KpiSummary, "pat_of" | "spread">): string {
+  const { with_pct, loss_to_profit, loss_narrowed } = s.spread;
+  return `${fmtCount(s.pat_of)} with a year-ago quarter: ${fmtCount(with_pct)} in the bars, ${fmtCount(loss_to_profit)} loss to profit, ${fmtCount(loss_narrowed)} loss narrowed`;
+}
+
+/** One sentence above the tiles: how many reported and how many can be compared with the same quarter last year. */
+export function tilesIntro(s: Pick<KpiSummary, "n" | "pat_of">): string {
+  const noun = (n: number) => (n === 1 ? "company has" : "companies have");
+  return `${fmtCount(s.n)} ${noun(s.n)} reported; ${fmtCount(s.pat_of)} can be compared with the same quarter last year.`;
+}
+
+/** What a bank's or NBFC's EBITDA cell holds, said where it is shown so a reader comparing sites is not misled. */
+export const NBFC_EBITDA_NOTE = "Financing profit, as Screener: after interest (banks: after provisions too).";
 
 const pctOf = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
 
@@ -474,18 +491,24 @@ export function activeChips(q: KpiQuery): { id: string; label: string; clear: st
 
 // ---------- CSV ----------
 
-/** A growth per cent in the CSV: "NM" past +999% (the same rule as the page). */
-const nmCell = (v: number | null) => (isNmPct(v) ? NM : v);
+/** The growth lines of a row that the page shows as "NM" (a change above +999%); the CSV keeps the real number in its own column and names
+ *  these lines in one more. */
+export function nmLines(r: KpiRow): string[] {
+  const lines: [string, number | null][] = [["Revenue YoY", r.revenue_yoy], ["Revenue QoQ", r.revenue_qoq], ["EBITDA YoY", r.ebitda_yoy], ["EBITDA QoQ", r.ebitda_qoq],
+    ["PAT YoY", r.pat_yoy], ["PAT QoQ", r.pat_qoq], ["PAT before exceptional items YoY", r.pat_pre_yoy]];
+  return lines.filter(([, v]) => isNmPct(v)).map(([name]) => name);
+}
+const nmCell = (v: number | null) => v;
 const CSV_COLUMNS: [string, (r: KpiRow) => string | number | null | boolean][] = [
   ["Symbol", (r) => r.symbol ?? r.scrip_code], ["Company", (r) => r.company_name], ["Classification", (r) => r.industry],
   ["Kind (company/bank/nbfc/insurer/reit/invit)", (r) => r.kind], ["Basis", (r) => r.basis.toLowerCase()], ["Quarter", (r) => r.period], ["Market cap (Rs Cr)", (r) => r.market_cap_cr],
   ["Revenue (Rs Cr)", (r) => r.revenue], ["Revenue YoY %", (r) => nmCell(r.revenue_yoy)], ["Revenue QoQ %", (r) => nmCell(r.revenue_qoq)],
-  ["EBITDA (Rs Cr)", (r) => r.ebitda], ["EBITDA YoY %", (r) => nmCell(r.ebitda_yoy)], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
-  ["EBITDA QoQ %", (r) => nmCell(r.ebitda_qoq)], ["EBITDA margin %", (r) => (isNmMargin(r.opm) ? NM : r.opm)], ["Margin change YoY (bp; 100 bp = 1 percentage point)", (r) => r.opm_yoy_bps],
+  ["EBITDA / financing profit (Rs Cr; EBITDA for companies, financing profit for banks and NBFCs)", (r) => r.ebitda], ["EBITDA YoY %", (r) => nmCell(r.ebitda_yoy)], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
+  ["EBITDA QoQ %", (r) => nmCell(r.ebitda_qoq)], ["EBITDA margin % (financing margin for banks and NBFCs)", (r) => r.opm], ["Margin change YoY (bp; 100 bp = 1 percentage point)", (r) => r.opm_yoy_bps],
   ["PAT (Rs Cr)", (r) => r.pat], ["PAT YoY %", (r) => nmCell(r.pat_yoy)], ["PAT turn", (r) => (r.pat_turn ? TURN_TEXT[r.pat_turn] : null)],
   ["PAT QoQ %", (r) => nmCell(r.pat_qoq)],
   ["PAT before exceptional items (Rs Cr)", (r) => r.pat_pre], ["PAT before exceptional items YoY %", (r) => (r.pat_pre_turn ? TURN_TEXT[r.pat_pre_turn] : nmCell(r.pat_pre_yoy))], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT growth change vs last quarter (pts)", (r) => r.pat_momentum_pts],
-  ["Momentum", (r) => MOMENTUM_TEXT[r.momentum]], ["Profit up, EBITDA down", (r) => r.nfo], ["Filed", (r) => r.filed_at], ["Filing", (r) => r.filing_url],
+  ["Growth NM (over +999%)", (r) => nmLines(r).join("; ")], ["Momentum", (r) => MOMENTUM_TEXT[r.momentum]], ["Profit up, EBITDA down", (r) => r.nfo], ["Filed", (r) => r.filed_at], ["Filing", (r) => r.filing_url],
 ];
 
 function csvCell(v: string | number | null | boolean): string {

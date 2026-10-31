@@ -282,3 +282,24 @@ def test_a_comparative_without_the_shareholders_line_gives_no_change_on_another_
     memory["statements"][1]["rows"].pop("Net Profit (owners)")     # the year-ago quarter states only the total
     pat = fs.fact_sheet(memory, "Q2FY27")["lines"]["pat"]
     assert pat["value"] == 148.0 and "prev_year" not in pat and "yoy_pct" not in pat and pat["qoq_pct"] == 50.0
+
+
+def test_a_card_gets_the_corrected_profit_of_a_quarter_whose_filed_profit_does_not_add_up():
+    # the shared profit-line rules (screener_view.corrected_pl) reach the card: ATUL Q2FY26 (owners 87.95 beside 182.37 and a minority of 3.13),
+    # APARINDS Q1FY27 (-138.56 beside PBT 625 and tax 157.55), PNB Housing-like filler 0 owners (the card's PAT line reads the owners' row first)
+    def entry(period, net, owners, minority=None, pbt=None, tax=None, family="corporate"):
+        rows = _rows(1500.0, 300.0, pbt if pbt is not None else net * 1.3, net, owners=owners)
+        if minority is not None:
+            rows["Minority share"] = minority
+        if tax is not None:
+            rows["Tax"] = tax
+        return _entry(period, rows, family=family)
+    atul = {"statements": [entry("Q2FY27", 158.8, 155.67, 3.13), entry("Q2FY26", 182.37, 87.95, 3.13)]}
+    pat = fs.fact_sheet(atul, "Q2FY27")["lines"]["pat"]
+    assert (pat["prev_year"], pat["yoy_pct"]) == (179.24, -13.1)
+    apar = {"statements": [entry("Q1FY27", -138.56, -138.56, 0.0, pbt=625.0, tax=157.55), entry("Q1FY26", 225.0, 225.0, 0.0, pbt=300.0, tax=75.0)]}
+    pat = fs.fact_sheet(apar, "Q1FY27")["lines"]["pat"]
+    assert (pat["value"], pat["yoy_pct"]) == (467.45, 107.8)
+    pnb = {"statements": [entry("Q2FY27", 560.0, 0.0), entry("Q2FY26", 500.0, 0.0)]}
+    pat = fs.fact_sheet(pnb, "Q2FY27")["lines"]["pat"]
+    assert (pat["value"], pat["yoy_pct"]) == (560.0, 12.0)

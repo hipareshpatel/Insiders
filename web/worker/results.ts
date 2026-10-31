@@ -49,7 +49,7 @@ export function registerResultsRoutes(api: Hono<AppEnv>, memoised: Memoised) {
       const raw = page.results as unknown as DbKpiRow[];
       const summary = summarise(light.results as unknown as SummaryRow[]);
       const series = await seriesOf(c, raw, quarter);
-      const rows = raw.map((r) => toKpiRow(r, seriesFor(series.get(r.scrip_code) ?? new Map(), quarter)));
+      const rows = raw.map((r) => toKpiRow(r, seriesFor(series.get(r.scrip_code) ?? new Map(), quarter, r.basis)));
       const [indices, progress] = await Promise.all([indicesOf(c, quarter), progressOf(c, quarter, quarters)]);
       return { quarter, quarters, indices, index_tracking_since: since, rows, summary, progress, page: query.page,
         pages: Math.max(1, Math.ceil(summary.n / PAGE_SIZE)) } satisfies KpiResponse;
@@ -59,10 +59,10 @@ export function registerResultsRoutes(api: Hono<AppEnv>, memoised: Memoised) {
 
   // The latest 8 quarters of profit and revenue growth for the page's companies, one query.
   async function seriesOf(c: Context<AppEnv>, raw: DbKpiRow[], quarter: string) {
-    const out = new Map<string, Map<string, { pat_yoy: number | null; revenue_yoy: number | null }>>();
+    const out = new Map<string, Map<string, { pat_yoy: number | null; revenue_yoy: number | null; basis: string }>>();
     if (!raw.length) return out;
     const { results } = await c.env.DB.prepare(kpiSeriesSql).bind(JSON.stringify(raw.map((r) => r.scrip_code)), JSON.stringify(periodsBack(quarter)))
-      .all<{ scrip_code: string; period: string; pat_yoy: number | null; revenue_yoy: number | null }>();
+      .all<{ scrip_code: string; period: string; basis: string; pat_yoy: number | null; revenue_yoy: number | null }>();
     for (const r of results) (out.get(r.scrip_code) ?? out.set(r.scrip_code, new Map()).get(r.scrip_code)!).set(r.period, r);
     return out;
   }
@@ -141,7 +141,7 @@ export function registerResultsRoutes(api: Hono<AppEnv>, memoised: Memoised) {
       const periods = JSON.stringify(periodsBack(quarter));
       const db = c.env.DB;
       const [rows, companies, members] = await db.batch([
-        db.prepare(`SELECT scrip_code, period, kind, revenue, revenue_prev, revenue_yoy, ebitda, ebitda_prev, ebitda_yoy, ebitda_turn,
+        db.prepare(`SELECT scrip_code, period, basis, kind, revenue, revenue_prev, revenue_yoy, ebitda, ebitda_prev, ebitda_yoy, ebitda_turn,
             pat, pat_prev, pat_yoy, pat_turn FROM results_kpi WHERE period IN (SELECT value FROM json_each(?1))`).bind(periods),
         db.prepare(`SELECT scrip_code, isin, industry, market_cap_cr FROM companies WHERE scrip_code IN
             (SELECT DISTINCT scrip_code FROM results_kpi WHERE period IN (SELECT value FROM json_each(?1)))

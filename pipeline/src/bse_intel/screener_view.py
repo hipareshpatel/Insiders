@@ -146,7 +146,7 @@ SEGMENT_PBT = "SegmentProfitBeforeTax"
 # does: the undimensioned SegmentProfitBeforeTax says which (_share_in_pbt). With no segment figure this default decides. Measured
 # 31 Oct 2026 (run 41164053629): a share added to PBT is right for 195 company-bases (870 PBT quarters), wrong for 28 (+27 mixed), so the
 # default stays "include" until the owner's on/off measurement
-ASSOCIATES_DEFAULT_INCLUDE = True
+ASSOCIATES_DEFAULT_INCLUDE = False
 ASSOCIATES_RULE_ON_YEARS = False   # the presentation rule on a year's P&L (off: measured worse there)
 # a standalone sheet nets min(DTA, DTL) from the total like a consolidated one when both are filed (not a half-year column). Infosys
 # standalone FY25: Assets 124,936 - min(497, 1,062) = 124,439 = screener; consolidated netted 754 ok / 64 apart, standalone filers matched

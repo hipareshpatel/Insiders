@@ -390,10 +390,12 @@ def test_empty_reading_is_read_again_once_for_its_diagnosis():
     blank_pdf = doc.tobytes()
     kept = "raw/annual-pdf/SBIN/blank.pdf.gz"
     sink.put_object(kept, gzip.compress(blank_pdf))
-    sink.put_object(bp.key("500112", kept), json.dumps({"figures": {}, "diagnosis": {"pages": 1}}).encode())   # an older reader's
+    sink.put_object(bp.key("500112", kept), json.dumps({"figures": {}, "diagnosis": {"pages": 1},
+                                                        "url": "https://www.bseindia.com/x.pdf"}).encode())   # an older reader's
     out = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
     reading = json.loads(sink.objects[bp.key("500112", kept)])
     assert reading["diagnosis"]["pages"] == 1 and reading["figures"] == {} and reading["reader"] == bp.READER
+    assert reading["url"] == "https://www.bseindia.com/x.pdf"       # the BSE address survives a re-read from R2 (review of #299)
     again = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
     assert again["reports_read"] == 0 or all(r.get("file") != kept for r in again["readings"])
 

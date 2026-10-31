@@ -594,6 +594,7 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
             if fy in newest and k not in stored:
                 todo.append((k, url))
         for k, url in todo:
+            prior = {}
             if key(scrip, k) in done:
                 # a reading with no figures and no diagnosis is read again (from R2, nothing fetched) for its diagnosis
                 prior = sink.get_object(key(scrip, k))
@@ -640,7 +641,8 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
             if not figures:
                 out["no_text"] += 1
             fys = sorted({fy for by in figures.values() for fy in by}, reverse=True)
-            report = {"scrip": scrip, "symbol": sym, "file": k, "url": url, "years": fys[:2], "figures": figures, "read_at": now_iso(),
+            report = {"scrip": scrip, "symbol": sym, "file": k, "url": url or (prior or {}).get("url"), "years": fys[:2],
+                      "figures": figures, "read_at": now_iso(),
                       "reader": READER}
             if diagnosis is not None:
                 report["diagnosis"] = diagnosis

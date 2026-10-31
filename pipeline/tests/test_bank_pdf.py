@@ -253,6 +253,13 @@ PAGE = """<html><div class="documents annual-reports flex-column"><h3>Annual rep
 </ul></div><div class="documents credit-ratings">x</div></html>"""
 
 
+def test_screener_links_newer_wording():
+    # the stored pages of 26 Oct 2026 say "Annual Report 2026" (bank-pdf-read run 41196920352: 29 banks, every box this way)
+    page = PAGE.replace("Financial Year 2023", "Annual Report 2023").replace("Financial Year 2022", "Annual Report 2022")
+    assert [fy for fy, _ in bp.screener_links(page)] == ["FY23", "FY22"]
+    assert bp.screener_links('<div class="documents annual-reports"><a href="https://www.bseindia.com/x.pdf">Annual Report</a></div>') == []
+
+
 def test_screener_links():
     got = bp.screener_links(PAGE)
     assert got == [("FY23", "https://www.bseindia.com/xml-data/corpfiling/AttachHis/22d33d1d-af2a-4d2d-98c0-eff16cd73cb5.pdf"),

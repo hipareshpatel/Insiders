@@ -393,11 +393,15 @@ def attach(cf, sink, scrip: str) -> int:
 
 # --- the run: read each bank's reports once, keep every file and every reading ----------------------------------------
 
-_LINK = re.compile(r'<a[^>]+href="(https?://(?:www\.)?bseindia\.com/[^"]+?\.pdf)"[^>]*>\s*(?:Financial\s+Year\s+)?(\d{4})', re.I)
+# the link's own words name the year: "Financial Year 2023" (earlier pages) or "Annual Report 2026" (the stored pages of 26 Oct 2026,
+# 29 banks of the 500 largest: bank-pdf-read run 41196920352 found none with the older words)
+_LINK = re.compile(r'<a[^>]+href="(https?://(?:www\.)?bseindia\.com/[^"]+?\.pdf)"[^>]*>\s*(?:(?:Financial\s+Year|Annual\s+Report)\s+)?(\d{4})',
+                   re.I)
 
 
 def screener_links(html: str) -> list[tuple[str, str]]:
-    """(year "FY23", BSE PDF address) from the annual-reports box of a stored Screener page ("Financial Year 2023 / from bse"),
+    """(year "FY23", BSE PDF address) from the annual-reports box of a stored Screener page ("Financial Year 2023" or "Annual Report
+    2023", "from bse"),
     once each, newest first. Only BSE addresses: NSE's copies come through keep-annual-pdfs and its own client."""
     start = html.find("annual-reports")
     if start < 0:

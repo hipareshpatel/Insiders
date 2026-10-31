@@ -677,7 +677,10 @@ def bank_pl(r: _Reader, source: str = "", pdf: dict | None = None) -> dict[str, 
         # Schedule 16, when that schedule's total is the file's OperatingExpenses
         dep, why = _bank_pdf_depreciation(r, pdf, opex)
         if dep is not None:
-            # and the bank's identity holds with it: Financing Profit + Other Income - Depreciation = the filed PBT
+            # and the bank's identity holds with it: Financing Profit + Other Income - Depreciation = the filed PBT. Depreciation
+            # cancels out of this sum, so it proves the file's own lines reach its PBT (the rows built around the figure), not the
+            # figure: that is pl_figure's check (Schedule 16's items add up to its total, and the total is the file's
+            # OperatingExpenses; independent review of #299)
             loss_, gain_ = -min(exc or 0.0, 0.0), max(exc or 0.0, 0.0)
             if None in (earned, expended, opex, other, pbt_filed) or abs(earned - expended - (opex + (prov or 0.0) - dep + loss_) + other + gain_ - dep - pbt_filed) > ABS_TOL:
                 dep, why = None, "Financing Profit + Other Income - Depreciation is not the filed PBT"

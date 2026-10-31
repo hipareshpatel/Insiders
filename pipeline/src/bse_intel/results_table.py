@@ -109,7 +109,11 @@ def table_of(dossier: dict, period: str) -> dict | None:
                 base = ((before[slot] or {}).get("rows") or {}).get(margin_row)
                 if base is not None:
                     line[slot] = round(base, 2)
-                    line[f"{tag}_bps"] = round((margin - base) * 100)
+                    base_ebitda = ((before[slot] or {}).get("rows") or {}).get(ebitda_row)
+                    # a change in margin means nothing when either margin is past +-100% or the base EBITDA is negative (measured 31 Oct
+                    # 2026, live: SADHNANIQ Q2FY27 17.92% against -628.89% gave +64,681 bp, MAHLIFE +12,909): no bps, so no filter or sort reads it
+                    if abs(margin) <= 100 and abs(base) <= 100 and not (base_ebitda is not None and base_ebitda < 0):
+                        line[f"{tag}_bps"] = round((margin - base) * 100)
             table["ebitda_margin"] = line
         return table
     return None

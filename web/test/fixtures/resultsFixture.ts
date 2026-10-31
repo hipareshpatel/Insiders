@@ -89,8 +89,8 @@ export const ROWS_PAGE_2: KpiRow[] = [
 ];
 
 export const SUMMARY: KpiSummary = {
-  n: 236, revenue_up: 196, revenue_of: 230, ebitda_up: 182, ebitda_of: 205, pat_up: 175, pat_of: 236, loss_to_profit: 11,
-  median_revenue_yoy: 11.8, median_ebitda_yoy: 14.6, median_pat_yoy: 13.9,
+  n: 236, revenue_up: 196, revenue_of: 230, revenue_n: 230, ebitda_up: 182, ebitda_of: 205, ebitda_n: 205, pat_up: 175, pat_of: 236, pat_n: 236, loss_to_profit: 11, loss_prev_n: 19,
+  median_revenue_yoy: 11.8, median_ebitda_yoy: 14.6, median_pat_yoy: 13.9, median_pat_n: 221, pat_turn_n: 15,
   spread: { below_0: 61, from_0_to_10: 38, from_10_to_20: 41, above_20: 85, loss_to_profit: 11, loss_narrowed: 4, with_pct: 225 },
   momentum: { speeding_up: 118, slowing: 98, steady: 12, not_comparable: 8 },
   nfo: 9,
@@ -114,22 +114,22 @@ export function kpiResponse(page = 1, over: Partial<KpiResponse> = {}): KpiRespo
 
 /** A filtered answer that keeps nothing (the empty state). */
 export const EMPTY_SUMMARY: KpiSummary = {
-  n: 0, revenue_up: 0, revenue_of: 0, ebitda_up: 0, ebitda_of: 0, pat_up: 0, pat_of: 0, loss_to_profit: 0,
-  median_revenue_yoy: null, median_ebitda_yoy: null, median_pat_yoy: null,
+  n: 0, revenue_up: 0, revenue_of: 0, revenue_n: 0, ebitda_up: 0, ebitda_of: 0, ebitda_n: 0, pat_up: 0, pat_of: 0, pat_n: 0, loss_to_profit: 0,
+  median_revenue_yoy: null, median_ebitda_yoy: null, median_pat_yoy: null, median_pat_n: 0, pat_turn_n: 0,
   spread: { below_0: 0, from_0_to_10: 0, from_10_to_20: 0, above_20: 0, loss_to_profit: 0, loss_narrowed: 0, with_pct: 0 },
   momentum: { speeding_up: 0, slowing: 0, steady: 0, not_comparable: 0 }, nfo: 0,
 };
 
 // the sample's index table: [label, id, reported, of, median, total all, ex-fin, fin, fin share, rev all, rev ex, rev fin, ebitda ex, spread, speeding, trend]
 const IDX: [string, number, number, number, number, number, number, number, number, number, number, number, [number, number, number, number], number, number[]][] = [
-  ["NIFTY50", 31, 50, 12.1, 9.3, 9.9, 8.4, 38, 8.7, 8.5, 9.4, 12.4, [14, 28, 38, 20], 52, [8.4, 9.8, 7.1, 10.9, 9.2, 11.0, 10.4, 12.1]],
+  ["NIFTY50", 41, 50, 12.1, 9.3, 9.9, 8.4, 38, 8.7, 8.5, 9.4, 12.4, [14, 28, 38, 20], 52, [8.4, 9.8, 7.1, 10.9, 9.2, 11.0, 10.4, 12.1]],
   ["NIFTYNEXT50", 22, 50, 11.0, 11.6, 12.5, 9.1, 27, 9.9, 9.6, 10.4, 14.1, [16, 30, 40, 14], 49, [12.0, 11.2, 9.8, 10.4, 11.4, 10.6, 9.6, 11.0]],
-  ["NIFTY100", 53, 100, 11.8, 10.0, 10.7, 8.6, 34, 9.1, 8.9, 9.8, 12.9, [15, 29, 33, 23], 51, [9.6, 10.4, 8.4, 10.6, 10.0, 10.5, 10.1, 11.8]],
-  ["NIFTY200", 91, 200, 13.6, 11.6, 12.4, 9.8, 31, 10.5, 10.2, 11.1, 15.0, [13, 24, 36, 27], 53, [9.0, 9.4, 8.6, 10.8, 11.2, 11.0, 12.0, 13.6]],
-  ["NIFTY500", 185, 497, 14.6, 12.4, 12.9, 11.2, 28, 10.5, 10.4, 10.9, 14.5, [14, 20, 35, 31], 54, [9.5, 10.0, 9.6, 11.8, 12.4, 12.6, 13.0, 14.6]],
-  ["MIDCAP150", 62, 149, 19.4, 17.4, 18.2, 14.9, 24, 14.0, 13.6, 15.2, 20.1, [9, 13, 30, 48], 58, [10.2, 12.4, 11.0, 14.6, 15.0, 13.8, 16.2, 19.4]],
-  ["SMALLCAP250", 70, 248, 16.8, 18.0, 17.5, 21.0, 14, 13.0, 12.8, 14.0, 15.3, [14, 17, 28, 41], 55, [7.2, 9.0, 10.4, 11.2, 12.6, 13.4, 14.8, 16.8]],
-  ["MICROCAP250", 51, 250, 10.5, 9.5, 9.2, 12.4, 9, 8.2, 8.0, 9.0, 9.8, [22, 26, 40, 12], 47, [8.0, 9.2, 9.8, 9.4, 10.0, 9.6, 10.2, 10.5]],
+  ["NIFTY100", 85, 100, 11.8, 10.0, 10.7, 8.6, 34, 9.1, 8.9, 9.8, 12.9, [15, 29, 33, 23], 51, [9.6, 10.4, 8.4, 10.6, 10.0, 10.5, 10.1, 11.8]],
+  ["NIFTY200", 170, 200, 13.6, 11.6, 12.4, 9.8, 31, 10.5, 10.2, 11.1, 15.0, [13, 24, 36, 27], 53, [9.0, 9.4, 8.6, 10.8, 11.2, 11.0, 12.0, 13.6]],
+  ["NIFTY500", 410, 497, 14.6, 12.4, 12.9, 11.2, 28, 10.5, 10.4, 10.9, 14.5, [14, 20, 35, 31], 54, [9.5, 10.0, 9.6, 11.8, 12.4, 12.6, 13.0, 14.6]],
+  ["MIDCAP150", 130, 149, 19.4, 17.4, 18.2, 14.9, 24, 14.0, 13.6, 15.2, 20.1, [9, 13, 30, 48], 58, [10.2, 12.4, 11.0, 14.6, 15.0, 13.8, 16.2, 19.4]],
+  ["SMALLCAP250", 210, 248, 16.8, 18.0, 17.5, 21.0, 14, 13.0, 12.8, 14.0, 15.3, [14, 17, 28, 41], 55, [7.2, 9.0, 10.4, 11.2, 12.6, 13.4, 14.8, 16.8]],
+  ["MICROCAP250", 210, 250, 10.5, 9.5, 9.2, 12.4, 9, 8.2, 8.0, 9.0, 9.8, [22, 26, 40, 12], 47, [8.0, 9.2, 9.8, 9.4, 10.0, 9.6, 10.2, 10.5]],
 ];
 
 const indexRows = (): GroupRow[] => IDX.map(([id, reported, of, med, ta, te, tf, share, ra, re, rf, ee, sp, su, tr]) => ({

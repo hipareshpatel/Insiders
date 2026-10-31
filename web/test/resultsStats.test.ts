@@ -46,6 +46,16 @@ test("summary: up counts and their bases; EBITDA statistics are for ordinary com
   assert.deepEqual([s.ebitda_up, s.ebitda_of], [2, 4]);              // 4 ordinary companies; the loss-to-profit one is up; bank and insurer out
   assert.deepEqual([s.pat_up, s.pat_of], [4, 6]);                    // 5, loss to profit, bank 40, insurer 15; the base is every company
   assert.equal(s.loss_to_profit, 1);
+  assert.equal(s.loss_prev_n, 1);                                      // the base of loss to profit: a loss a year ago (profit to loss is not)
+});
+
+test("summary: a company with no year-ago quarter is reported but not in the base of X of Y", () => {
+  const rows = [sr({}), sr({ revenue_yoy: -5, ebitda_yoy: -5, pat_yoy: -5 }), sr({ revenue_yoy: null, ebitda_yoy: null, pat_yoy: null }),
+    sr({ pat_yoy: null, pat_turn: "LOSS_NARROWED", ebitda_yoy: null, ebitda_turn: "LOSS_NARROWED" })];
+  const s = summarise(rows);
+  assert.deepEqual([s.pat_up, s.pat_of, s.pat_n], [1, 3, 4]);          // the loss that narrowed has a turn and is comparable (not up)
+  assert.deepEqual([s.revenue_up, s.revenue_of, s.revenue_n], [2, 3, 4]);
+  assert.deepEqual([s.ebitda_up, s.ebitda_of, s.ebitda_n], [1, 3, 4]);
 });
 
 test("summary: medians use companies with a per cent; turns are left out and lenders stay out of EBITDA", () => {

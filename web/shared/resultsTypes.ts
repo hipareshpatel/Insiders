@@ -76,13 +76,17 @@ export interface KpiRow {
 /** The numbers above the table, for the filtered set (all companies of the quarter when nothing is filtered). */
 export interface KpiSummary {
   n: number;
-  revenue_up: number; revenue_of: number;      // a company with revenue saved
-  ebitda_up: number; ebitda_of: number;        // ordinary companies only: banks, NBFCs and insurers are not in EBITDA statistics
-  pat_up: number; pat_of: number;              // pat_up counts a loss turned to profit; pat_of is every company
+  /** `*_of` counts the companies that can be compared with a year ago (a per cent or a named turn); `*_n` counts every company that reported the line */
+  revenue_up: number; revenue_of: number; revenue_n: number;   // a company with revenue saved
+  ebitda_up: number; ebitda_of: number; ebitda_n: number;      // ordinary companies only: banks, NBFCs and insurers are not in EBITDA statistics
+  pat_up: number; pat_of: number; pat_n: number;               // pat_up counts a loss turned to profit
   loss_to_profit: number;
+  loss_prev_n: number;                         // companies with a loss a year ago: the base of loss_to_profit
   median_revenue_yoy: number | null;           // medians use companies with a per cent change
   median_ebitda_yoy: number | null;
   median_pat_yoy: number | null;
+  median_pat_n: number;                        // companies in median_pat_yoy: those with a per cent change
+  pat_turn_n: number;                          // companies whose profit crossed zero (a named turn): in the counts, not in the median
   /** companies by profit growth: below 0 (a fall, including profit to loss and a wider loss), 0-10, 10-20, above 20 (>= 20 counts above);
    *  loss_to_profit and loss_narrowed have no per cent and sit outside the bars */
   spread: { below_0: number; from_0_to_10: number; from_10_to_20: number; above_20: number; loss_to_profit: number; loss_narrowed: number; with_pct: number };

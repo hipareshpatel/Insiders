@@ -14,7 +14,7 @@ import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { TURN, turnOf } from "../lib/results";
 import {
-  activeChips, csvName, firstDir, VIEW_SORT, viewOf, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
+  activeChips, csvName, firstDir, VIEW_SORT, viewOf, fmtCount, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
   toCsv, type Sort, type SpreadKey,
 } from "../lib/resultsView";
 import { useQueryState } from "../lib/url";
@@ -34,6 +34,8 @@ const SORT_LABEL: Record<Sort, string> = {
   revenue_qoq: "revenue vs last quarter", ebitda_qoq: "EBITDA vs last quarter", opm_qoq_bps: "margin vs last quarter", pat_qoq: "profit vs last quarter",
   pat_momentum: "profit pace", revenue_momentum: "revenue pace", ebitda_momentum: "EBITDA pace", filed: "filing date",
 };
+/** The direction in words: a name runs A to Z, every figure highest first (it was "reversed", which said nothing). */
+const dirWords = (sort: Sort, dir: "asc" | "desc") => (sort === "company" ? (dir === "asc" ? "A to Z" : "Z to A") : dir === "desc" ? "highest first" : "lowest first");
 const PHONE_SORTS: Sort[] = ["pat_yoy", "revenue_yoy", "ebitda_yoy", "opm_yoy_bps", "pat_momentum", "mcap", "filed", "company"];
 const MAX_EXPORT_PAGES = 40;
 
@@ -94,6 +96,7 @@ export function ResultsView() {
   const filtered = activeChips(query).length > 0;
   const summary = first?.summary;
   const total = summary?.n ?? 0;
+  const noMatch = filtered && !!first && !kpi.isPlaceholderData && summary?.n === 0;
 
   return (
     <div className="results-c min-h-full">
@@ -105,7 +108,7 @@ export function ResultsView() {
             </h1>
             <p className="mt-2 text-[14px] text-ink-2">{quarter ? `${quarterMonths(quarter)} · ` : ""}growth is against the same quarter a year ago</p>
           </div>
-          <div className="no-scrollbar -mx-4 mt-3.5 flex items-center gap-2.5 overflow-x-auto px-4 sm:mx-0 sm:mt-0 sm:overflow-visible sm:px-0">
+          <div className="mt-3.5 flex flex-wrap items-center gap-2.5 sm:mt-0">
             <QuarterSwitch quarters={quarters} value={quarter} onChange={(p) => setParams({ quarter: p === quarters[0]?.period ? null : p, peek: null, spread: null })} />
             <ExportButton rows={rows} total={total} quarter={quarter} pages={first?.pages ?? 1} loadedPages={kpi.data?.pages.length ?? 0}
               fetchPage={(p) => api.resultsKpi(toApiParams(query, p))} />
@@ -133,9 +136,12 @@ export function ResultsView() {
           <GroupsView quarter={quarter} by={by} cut={cut} setParams={set} onPick={onPickGroup} />
         ) : (
           <>
-            <SeasonPanel summary={summary} progress={first?.progress} quarter={quarter} indexRows={indexRows} filtered={filtered}
-              spread={query.spread} turnaround={query.turnaround}
-              onSpread={(k: SpreadKey | null) => setParams({ spread: k, turnaround: null })} onTurnaround={(on) => setParams({ turnaround: on ? "1" : null, spread: null })} />
+            {/* nothing matches: one card below says so, not tiles of "0 of 0" */}
+            {!noMatch && (
+              <SeasonPanel summary={summary} indexRows={indexRows} filtered={filtered}
+                spread={query.spread} turnaround={query.turnaround}
+                onSpread={(k: SpreadKey | null) => setParams({ spread: k, turnaround: null })} onTurnaround={(on) => setParams({ turnaround: on ? "1" : null, spread: null })} />
+            )}
 
             <FilterBar query={query} view={view} indices={first?.indices ?? []} setParams={set} onView={onView} />
 
@@ -168,25 +174,25 @@ export function ResultsView() {
                 <h2 className="text-[20px] font-bold tracking-[-0.01em] text-ink">{view === "momentum" ? "Momentum" : view === "qoq" ? "Quarter-on-quarter" : "Companies"}</h2>
                 <p className="text-[13.5px] text-ink-2">
                   {view === "momentum" && summary
-                    ? `Is profit growth speeding up or slowing? ${summary.momentum.speeding_up} speeding up · ${summary.momentum.slowing} slowing · ${summary.momentum.steady + summary.momentum.not_comparable} steady or not comparable`
-                    : view === "qoq" ? `${quarterLabel(quarter)} against the quarter just before it · sorted by ${SORT_LABEL[query.sort]}`
-                    : `Growth vs the same quarter a year ago · sorted by ${SORT_LABEL[query.sort]}${query.dir === firstDir(query.sort) ? "" : ", reversed"}`}
+                    ? `Is profit growth speeding up or slowing? ${fmtCount(summary.momentum.speeding_up)} speeding up · ${fmtCount(summary.momentum.slowing)} slowing · ${fmtCount(summary.momentum.steady + summary.momentum.not_comparable)} steady or not comparable`
+                    : view === "qoq" ? `${quarterLabel(quarter)} against the quarter just before it · sorted by ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}`
+                    : `Growth vs the same quarter a year ago · sorted by ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}`}
                 </p>
               </div>
-              <p className="num text-right text-[13.5px] text-ink-2">{summary ? `${total} ${total === 1 ? "company" : "companies"} · ${query.index ? indexLabel(query.index) : "all indices"}` : ""}</p>
+              <p className="num text-right text-[13.5px] text-ink-2">{summary ? `${fmtCount(total)} ${total === 1 ? "company" : "companies"} · ${query.index ? indexLabel(query.index) : "all indices"}` : ""}</p>
             </div>
             <p className="mb-1 mt-3 text-[13px] text-ink-3 sm:hidden">
-              {summary ? `${rows.length} of ${total} · ${SORT_LABEL[query.sort]}, ${query.dir === "desc" ? "highest first" : "lowest first"}` : ""}
+              {summary ? `${fmtCount(rows.length)} of ${fmtCount(total)} · ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}` : ""}
             </p>
 
             <div className={cn("transition-opacity", kpi.isPlaceholderData && "opacity-60")} aria-busy={kpi.isFetching}>
               {!first ? <TableSkeleton /> : rows.length === 0 ? (
                 <div className="rounded-2xl bg-surface-2 px-6 py-14 text-center">
-                  <p className="text-[17px] font-semibold text-ink">{filtered ? "No company matches these filters" : `No results saved for ${quarterLabel(quarter)} yet`}</p>
+                  <p className="text-[17px] font-semibold text-ink">{filtered ? "No companies match these filters" : `No results saved for ${quarterLabel(quarter)} yet`}</p>
                   <p className="mx-auto mt-1 max-w-md text-[14px] text-ink-2">
                     {filtered ? "Loosen or remove a filter to see more companies." : "Companies appear here once their statements for the quarter are saved."}
                   </p>
-                  {filtered && <Button className="mt-4" onClick={() => setParams(Object.fromEntries(activeChips(query).flatMap((c) => c.clear).map((k) => [k, null])))}>Clear all filters</Button>}
+                  {filtered && <Button className="mt-4 h-11" onClick={() => setParams(Object.fromEntries(activeChips(query).flatMap((c) => c.clear).map((k) => [k, null])))}>Clear all</Button>}
                 </div>
               ) : (
                 <>
@@ -196,12 +202,12 @@ export function ResultsView() {
                   <div className="sm:hidden"><PhoneList rows={rows} onSelect={select} /></div>
                   <div className="flex flex-col items-stretch gap-3 py-4 text-[13px] text-ink-3 sm:flex-row sm:items-center sm:justify-between sm:px-3">
                     <span className="hidden sm:inline">
-                      Showing {rows.length} of {total}
+                      Showing {fmtCount(rows.length)} of {fmtCount(total)}
                       {view === "momentum" ? " · points = this quarter's growth vs a year ago minus last quarter's" : " · small grey line: amount this quarter · “was” = last quarter's growth vs a year ago"}
                     </span>
                     {(kpi.hasNextPage || kpi.isFetchNextPageError) && (
                       <Button className="h-12 justify-center rounded-[11px] border-0 bg-surface-2 font-semibold text-ink sm:h-[38px]" onClick={() => kpi.fetchNextPage()} disabled={kpi.isFetchingNextPage}>
-                        {kpi.isFetchNextPageError ? "Couldn't load more · retry" : kpi.isFetchingNextPage ? "Loading…" : `Show more (${total - rows.length} left)`}
+                        {kpi.isFetchNextPageError ? "Couldn't load more · retry" : kpi.isFetchingNextPage ? "Loading…" : `Show more (${fmtCount(total - rows.length)} left)`}
                       </Button>
                     )}
                   </div>
@@ -236,17 +242,17 @@ function QuarterSwitch({ quarters, value, onChange }: { quarters: { period: stri
   const recent = quarters.slice(0, 4), older = quarters.slice(4);
   const olderOn = older.some((q) => q.period === value);
   return (
-    <div ref={box} className="relative inline-flex shrink-0 gap-0.5 rounded-xl bg-surface-2 p-1" role="group" aria-label="Quarter">
+    <div ref={box} className="relative inline-flex max-w-full flex-wrap gap-0.5 rounded-xl bg-surface-2 p-1 max-sm:w-full" role="group" aria-label="Quarter">
       {recent.map((q) => (
         <button key={q.period} type="button" aria-pressed={q.period === value} onClick={() => onChange(q.period)} title={`${q.n} companies`}
-          className={cn("min-h-[38px] whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11 max-sm:px-3.5",
+          className={cn("min-h-[38px] whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11 max-sm:flex-1 max-sm:px-2",
             q.period === value ? "bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]" : "text-ink-2 hover:text-ink")}>
           {q.period}
         </button>
       ))}
       {older.length > 0 && (
         <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
-          className={cn("inline-flex min-h-[38px] items-center gap-1 whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11",
+          className={cn("inline-flex min-h-[38px] items-center gap-1 whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11 max-sm:flex-1 max-sm:justify-center max-sm:px-2",
             olderOn ? "bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]" : "text-ink-2 hover:text-ink")}>
           {olderOn ? value : "Older"}<ChevronDown aria-hidden className="h-3.5 w-3.5" />
         </button>
@@ -288,7 +294,7 @@ function ExportButton({ rows, total, quarter, pages, loadedPages, fetchPage }: {
   };
   return (
     <Button onClick={run} disabled={busy || !total} title={`Download the filtered list (all ${total} companies, every column) as a CSV file`}
-      className="hidden h-[38px] rounded-[11px] border-0 bg-surface-2 px-3.5 text-[13.5px] font-semibold text-ink sm:inline-flex">
+      className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[13.5px] font-semibold text-ink sm:h-[38px]">
       <Download aria-hidden className="h-4 w-4" />{busy ? "Preparing…" : failed ? "Export failed · retry" : "Export CSV"}
     </Button>
   );

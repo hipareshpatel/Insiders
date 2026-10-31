@@ -5,7 +5,7 @@ import type { KpiRow, View } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
 import {
-  blankNote, filedDay, fmtPct, fmtPts, lineLabels, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, type Sort,
+  blankNote, filedDay, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, type Sort,
 } from "../../lib/resultsView";
 import { CompanyCell, Growth, MomentumMark, NfoFlag, Signals, Skeleton } from "./bits";
 import { Dumbbell, Spark } from "./charts";
@@ -22,19 +22,19 @@ interface TableProps {
   onSelect: (r: KpiRow | null) => void;
 }
 
-function Th({ children, hint, sortKey, sort, dir, onSort, left, className }: {
-  children: ReactNode; hint?: ReactNode; sortKey?: Sort; sort: Sort; dir: "asc" | "desc"; onSort: (s: Sort) => void; left?: boolean; className?: string;
+function Th({ children, hint, title, sortKey, sort, dir, onSort, left, className }: {
+  children: ReactNode; hint?: ReactNode; title?: string; sortKey?: Sort; sort: Sort; dir: "asc" | "desc"; onSort: (s: Sort) => void; left?: boolean; className?: string;
 }) {
   const on = sortKey != null && sortKey === sort;
   const Arrow = dir === "asc" ? ArrowUp : ArrowDown;
   const body = (
     <>
-      <span className={cn("inline-flex items-center gap-1", on && "text-ink")}>{children}{on && <Arrow aria-hidden className="h-3 w-3" />}</span>
+      <span className={cn("inline-flex items-center gap-1", on && "text-ink")}>{children}{on && <Arrow aria-hidden className="h-3 w-3 text-accent" />}</span>
       {hint && <span className="block text-[12px] font-normal text-ink-3">{hint}</span>}
     </>
   );
   return (
-    <th scope="col" aria-sort={sortKey ? (on ? (dir === "asc" ? "ascending" : "descending") : "none") : undefined}
+    <th scope="col" title={title} aria-sort={sortKey ? (on ? (dir === "asc" ? "ascending" : "descending") : "none") : undefined}
       className={cn("whitespace-nowrap border-b border-line px-2.5 py-2.5 align-bottom text-[13px] font-semibold text-ink-2", left ? "text-left" : "text-right", className)}>
       {sortKey ? <button type="button" onClick={() => onSort(sortKey)} className={cn("rounded hover:text-ink", left ? "text-left" : "text-right")}>{body}</button> : body}
     </th>
@@ -75,10 +75,14 @@ function MarginCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
   const label = lineLabels(r.kind).margin;
   const bps = qoq ? r.opm_qoq_bps : r.opm_yoy_bps;
   if (!label || (r.opm == null && bps == null)) return <span className="font-medium text-ink-3" title="No EBITDA margin for this kind of company">—</span>;
+  // no bp where a margin is past +-100% or the base EBITDA is a loss (results_table.py); NM when a year-ago (or last-quarter) figure exists
+  const hadBase = qoq ? r.ebitda_qoq != null : r.ebitda_yoy != null || r.ebitda_turn != null;
   return (
     <>
-      <Growth value={bps} unit="bp" className="text-[15px]" />
-      <Sm>{r.kind === "nbfc" ? "financing margin" : "now"} {r.opm == null ? "—" : `${r.opm.toFixed(1)}%`}</Sm>
+      {bps == null && r.opm != null && hadBase
+        ? <span className="num whitespace-nowrap text-[15px] font-semibold text-ink-2" title="Not meaningful: a margin outside −100%…+100%, or a loss in the base period">{NM}</span>
+        : <Growth value={bps} unit="bp" className="text-[15px]" />}
+      <Sm>{r.kind === "nbfc" ? "financing margin" : "now"} <span title={r.opm != null && Math.abs(r.opm) > 100 ? `Not meaningful: ${r.opm.toFixed(1)}%` : undefined}>{fmtMargin(r.opm)}</span></Sm>
     </>
   );
 }
@@ -101,11 +105,12 @@ function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
 function Filed({ r }: { r: KpiRow }) {
   return (
     <>
-      <span className="whitespace-nowrap text-ink">{filedDay(r.filed_at)}</span>
+      <span className="whitespace-nowrap text-ink" title={!r.filed_at && !r.filing_url ? "No filing date or link on NSE yet" : undefined}>{filedDay(r.filed_at)}</span>
       {r.filing_url && (
         <div>
+          {/* the ::before reaches a 44x44 touch area (the link is 38x18) without moving anything */}
           <a href={r.filing_url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} title="Open the filing on NSE"
-            className="text-[13px] font-semibold text-accent hover:underline">NSE<span aria-hidden> ↗</span><span className="sr-only"> filing (opens in a new tab)</span></a>
+            className="relative inline-block text-[13px] font-semibold text-accent before:absolute before:-inset-x-[3px] before:-inset-y-[13px] before:content-[''] hover:underline">NSE<span aria-hidden> ↗</span><span className="sr-only"> filing (opens in a new tab)</span></a>
         </div>
       )}
     </>
@@ -120,7 +125,7 @@ function Pace({ now, was, pts, big }: { now: number | null; was: number | null; 
       <span className={cn("num whitespace-nowrap font-semibold text-ink", big ? "text-[16.5px] font-bold" : "text-[15px]")}>
         <span aria-hidden>{pts > 0 ? "⇡ " : pts < 0 ? "⇣ " : ""}</span>{fmtPts(pts)}
       </span>
-      <Sm>{fmtPct(was)} → {fmtPct(now)}</Sm>
+      <Sm>{fmtGrowth(was)} → {fmtGrowth(now)}</Sm>
     </>
   );
 }
@@ -128,7 +133,7 @@ function Pace({ now, was, pts, big }: { now: number | null; was: number | null; 
 /** Quick actions that appear on a row's hover or focus: the side panel and the company page. */
 function QuickActions({ r, onPeek }: { r: KpiRow; onPeek: () => void }) {
   return (
-    <span className="absolute right-1 top-3 hidden gap-1 group-hover:flex group-focus-within:flex">
+    <span className="absolute right-1 top-3 flex gap-1 opacity-0 focus-within:opacity-100 group-hover:opacity-100">
       <button type="button" title="Quick look" aria-label={`Quick look at ${rowKey(r)}`} onClick={(e) => { e.stopPropagation(); onPeek(); }}
         className="grid h-7 w-7 place-items-center rounded-lg bg-surface text-ink-2 shadow-[0_0_0_1px_var(--line-strong)] hover:text-ink">
         <PanelRight aria-hidden className="h-3.5 w-3.5" />
@@ -151,7 +156,7 @@ const COLS: Record<View, number[]> = {
  *  panel, Space toggles it. */
 export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect }: TableProps) {
   const body = useRef<HTMLTableSectionElement>(null);
-  const [cursor, setCursor] = useState(0);
+  const [, setCursor] = useState(0);
   const th = { sort, dir, onSort };
   const focusRow = (i: number) => {
     const n = Math.max(0, Math.min(rows.length - 1, i));
@@ -179,8 +184,8 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
             <Th {...th} left hint="Rev · EBITDA · Profit">Signals</Th>
             <Th {...th} sortKey="revenue_yoy">Revenue</Th>
             <Th {...th} sortKey="ebitda_yoy">EBITDA</Th>
-            <Th {...th} sortKey="opm_yoy_bps" hint="EBITDA margin">Margin change</Th>
-            <Th {...th} sortKey="pat_yoy" hint="⇡ faster / ⇣ slower than last qtr">Profit (PAT)</Th>
+            <Th {...th} sortKey="opm_yoy_bps" title="100 bp = 1 percentage point" hint="EBITDA margin">Margin change</Th>
+            <Th {...th} sortKey="pat_yoy" title="PAT: profit after tax" hint="⇡ faster / ⇣ slower than last qtr">Profit (PAT)</Th>
             <Th {...th} hint="8 qtrs, own scale">Profit trend</Th>
             <Th {...th} sortKey="mcap">Market cap</Th>
             <Th {...th} sortKey="filed" className="pr-3">Filed</Th>
@@ -206,8 +211,8 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
             <Th {...th} left hint="vs last quarter">Signals</Th>
             <Th {...th} sortKey="revenue_qoq">Revenue</Th>
             <Th {...th} sortKey="ebitda_qoq">EBITDA</Th>
-            <Th {...th} sortKey="opm_qoq_bps" hint="EBITDA margin">Margin change</Th>
-            <Th {...th} sortKey="pat_qoq">Profit (PAT)</Th>
+            <Th {...th} sortKey="opm_qoq_bps" title="100 bp = 1 percentage point" hint="EBITDA margin">Margin change</Th>
+            <Th {...th} sortKey="pat_qoq" title="PAT: profit after tax">Profit (PAT)</Th>
             <Th {...th} sortKey="mcap">Market cap</Th>
             <Th {...th} sortKey="filed" className="pr-3">Filed</Th>
           </tr>
@@ -218,7 +223,7 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
           const sel = selected === rowKey(r);
           const td = "border-b border-line px-2.5 py-3.5 text-right align-top";
           return (
-            <tr key={`${r.scrip_code}-${r.period}`} tabIndex={i === cursor ? 0 : -1} aria-selected={sel}
+            <tr key={`${r.scrip_code}-${r.period}`} tabIndex={-1} aria-selected={sel}
               onClick={() => { setCursor(i); onSelect(sel ? null : r); }} onFocus={() => setCursor(i)} onKeyDown={(e) => onKey(e, i, r)}
               className={cn("group cursor-pointer outline-none focus-visible:[&>td]:bg-accent-soft hover:[&>td]:bg-[#f7f8fa]",
                 sel && "[&>td]:!bg-accent-soft [&>td:first-child]:shadow-[inset_3px_0_0_var(--accent)]")}>

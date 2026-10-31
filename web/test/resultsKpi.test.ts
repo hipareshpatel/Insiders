@@ -100,8 +100,8 @@ test("the sort names a listed column, puts a missing figure last and breaks ties
     assert.ok(kpiRowsSql(parseKpiQuery({ sort, dir: "asc" }), "FROM results_kpi k").includes(`ORDER BY (${col}) IS NULL, ${col} ASC, k.scrip_code`), sort);
   }
   assert.deepEqual(Object.keys(KPI_SORTS).sort(), [...RESULTS_SORTS].sort());   // the Worker accepts exactly the shared list the page sends from
-  assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_yoy" }), "FROM x"), /k\.pat_key DESC/);   // growth ranks a turn across a loss beside the per cents
-  assert.match(kpiRowsSql(parseKpiQuery({ sort: "ebitda_yoy" }), "FROM x"), /k\.ebitda_key DESC/);
+  assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_yoy" }), "FROM x"), /ORDER BY \(k\.pat_yoy\) IS NULL, k\.pat_yoy DESC/);   // a turn across a loss has no per cent: after every row with one
+  assert.match(kpiRowsSql(parseKpiQuery({ sort: "ebitda_yoy" }), "FROM x"), /ORDER BY \(k\.ebitda_yoy\) IS NULL, k\.ebitda_yoy DESC/);
   assert.match(kpiRowsSql(parseKpiQuery({ sort: "pat_momentum" }), "FROM x"), /\(k\.pat_yoy - pk\.pat_yoy\) DESC/);
   assert.match(kpiRowsSql(parseKpiQuery({ page: "3" }), "FROM x"), /LIMIT 50 OFFSET 100/);
   const hand = { ...parseKpiQuery({}), sort: "1; DROP TABLE x" };   // a hand-built query still cannot name a column

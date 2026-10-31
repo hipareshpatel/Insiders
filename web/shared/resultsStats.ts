@@ -71,18 +71,28 @@ export function summarise(rows: SummaryRow[]): KpiSummary {
   }
   spread.with_pct = spread.below_0 + spread.from_0_to_10 + spread.from_10_to_20 + spread.above_20;
   const withRevenue = rows.filter((r) => r.revenue != null);
+  // "X of Y grew": Y holds only companies that can be compared (a per cent or a named turn); a company with no year-ago quarter is
+  // in `*_n` (reported) but not in `*_of` (measured 31 Oct 2026, live Q2FY27: 401 of 611 read 65.6%, 401 of 553 comparable is 72.5%)
+  const comparable = (yoy: number | null, turn: Turn | null) => yoy != null || turn != null;
   return {
     n: rows.length,
     revenue_up: withRevenue.filter((r) => r.revenue_yoy != null && r.revenue_yoy > 0).length,
-    revenue_of: withRevenue.length,
+    revenue_of: withRevenue.filter((r) => r.revenue_yoy != null).length,
+    revenue_n: withRevenue.length,
     ebitda_up: withEbitda.filter((r) => isUp(r.ebitda_yoy, r.ebitda_turn)).length,
-    ebitda_of: withEbitda.length,
+    ebitda_of: withEbitda.filter((r) => comparable(r.ebitda_yoy, r.ebitda_turn)).length,
+    ebitda_n: withEbitda.length,
     pat_up: rows.filter((r) => isUp(r.pat_yoy, r.pat_turn)).length,
-    pat_of: rows.length,
+    pat_of: rows.filter((r) => comparable(r.pat_yoy, r.pat_turn)).length,
+    pat_n: rows.length,
     loss_to_profit: rows.filter((r) => r.pat_turn === "LOSS_TO_PROFIT").length,
+    // the base of "loss to profit": companies that made a loss a year ago (it turned to profit, narrowed or widened), not every company
+    loss_prev_n: rows.filter((r) => r.pat_turn === "LOSS_TO_PROFIT" || r.pat_turn === "LOSS_NARROWED" || r.pat_turn === "LOSS_WIDENED").length,
     median_revenue_yoy: median(withRevenue.map((r) => r.revenue_yoy).filter((v): v is number => v != null)),
     median_ebitda_yoy: median(ordinary.map((r) => pct(r.ebitda_yoy, r.ebitda_turn)).filter((v): v is number => v != null)),
     median_pat_yoy: median(rows.map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null)),
+    median_pat_n: rows.filter((r) => pct(r.pat_yoy, r.pat_turn) != null).length,
+    pat_turn_n: rows.filter((r) => r.pat_turn != null).length,
     spread, momentum,
     nfo: ordinary.filter((r) => r.nfo === 1).length,
   };

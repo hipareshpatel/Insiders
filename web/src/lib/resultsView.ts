@@ -2,8 +2,9 @@
  *  sentences, chart geometry, the CSV and the URL's filters. No React here, so `node --test` runs the cases in resultsView.test.ts.
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
+import { num } from "./format.ts";
 import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
-import type { GroupBy, GroupRow, KpiProgress, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
+import type { GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
 export const GROWTH_STEPS = [0, 10, 20, 30, 50, 100] as const;   // "growth at least this much, per cent"
 export const MARGIN_STEPS = [0, 100, 200, 300, 500] as const;    // "margin up at least this many basis points"
@@ -66,6 +67,16 @@ export const arrowOf = (v: number | null | undefined) => (v == null || v === 0 ?
 const signed = (v: number, digits: number) => `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(digits)}`;
 /** +13.9% / −5.2% (a true minus sign, as the design sets it). */
 export const fmtPct = (v: number | null | undefined, digits = 1) => (v == null ? "—" : `${signed(v, digits)}%`);
+/** A change above this is "NM" (not meaningful), the sell-side convention; the exact figure goes in the cell's tooltip (owner audit, 31 Oct 2026:
+ *  +6,643.4% for a profit of 30.99 Cr). A margin outside -100%..+100% is "NM" too. */
+export const NM_PCT = 999;
+export const NM = "NM";
+export const isNmPct = (v: number | null | undefined) => v != null && v > NM_PCT;
+export const isNmMargin = (v: number | null | undefined) => v != null && Math.abs(v) > 100;
+/** A growth per cent as the page shows it: "NM" past +999%, else the signed figure. */
+export const fmtGrowth = (v: number | null | undefined) => (isNmPct(v) ? NM : fmtPct(v));
+/** The margin in per cent, "NM" outside -100%..+100%. */
+export const fmtMargin = (v: number | null | undefined) => (v == null ? "—" : isNmMargin(v) ? NM : `${v.toFixed(1)}%`);
 /** +399 bp: a margin's change, 100 bp = 1 percentage point. */
 export const fmtBp = (v: number | null | undefined) => (v == null ? "—" : `${signed(Math.round(v), 0)} bp`);
 /** +81.8 pts: a change in growth, this quarter's minus last quarter's. */
@@ -77,15 +88,17 @@ export const TURN_TEXT: Record<Turn, string> = {
 export const turnTone = (t: Turn): Tone => (t === "LOSS_TO_PROFIT" || t === "LOSS_NARROWED" ? "up" : "down");
 
 /** A growth figure in words: a per cent, or the named turn across a loss (no per cent exists), or nothing. */
-export function growth(value: number | null | undefined, turn?: Turn | null, unit: "%" | "bp" = "%"): { text: string; tone: Tone; arrow: string } | null {
+export function growth(value: number | null | undefined, turn?: Turn | null, unit: "%" | "bp" = "%"): { text: string; tone: Tone; arrow: string; title?: string } | null {
   if (turn) { const tone = turnTone(turn); return { text: TURN_TEXT[turn], tone, arrow: tone === "up" ? "▲" : "▼" }; }
   if (value == null) return null;
-  return { text: unit === "bp" ? fmtBp(value) : fmtPct(value), tone: toneOf(value), arrow: arrowOf(value) };
+  if (unit === "%" && isNmPct(value)) return { text: NM, tone: "up", arrow: "▲", title: `Not meaningful: ${fmtPct(value)} (a change above +${NM_PCT}%)` };
+  if (unit === "bp") return { text: fmtBp(value), tone: toneOf(value), arrow: arrowOf(value), title: "100 bp = 1 percentage point" };
+  return { text: fmtPct(value), tone: toneOf(value), arrow: arrowOf(value) };
 }
 
 /** The quiet second line of a growth cell: the amount this quarter and last quarter's growth ("₹2,900 Cr · was +17.1%"). */
 export function wasLine(amount: string | null, prevYoy: number | null | undefined, prevTurn?: Turn | null): string {
-  const was = prevTurn ? `last qtr ${TURN_TEXT[prevTurn].toLowerCase()}` : prevYoy != null ? `was ${fmtPct(prevYoy)}` : "";
+  const was = prevTurn ? `last qtr ${TURN_TEXT[prevTurn].toLowerCase()}` : prevYoy != null ? `was ${fmtGrowth(prevYoy)}` : "";
   return [amount, was].filter(Boolean).join(" · ");
 }
 
@@ -149,14 +162,28 @@ export function notComparableText(row: Pick<KpiRow, "pat_turn" | "pat_prev_turn"
 /** A run of text; `b` bold, `up`/`down` coloured (with a sign in the text, so never colour alone). */
 export type Seg = { t: string; b?: boolean; tone?: Tone };
 
+/** A count in Indian grouping ("1,27,000"): the page's one helper (lib/format.ts). */
+export const fmtCount = (n: number) => num(n);
+
+/** What the median of profit growth covers (rule: the median keeps companies with a per cent change; the rest are in the counts). */
+export function medianNote(s: Pick<KpiSummary, "median_pat_n" | "pat_turn_n">): string {
+  const t = s.pat_turn_n;
+  return `Median of ${fmtCount(s.median_pat_n)} ${s.median_pat_n === 1 ? "company" : "companies"} with a % change; ${fmtCount(t)} whose profit crossed zero (loss to profit, profit to loss, loss narrowed or widened) ${t === 1 ? "is" : "are"} not in the median but ${t === 1 ? "is" : "are"} in the counts.`;
+}
+
 const pctOf = (a: number, b: number) => (b > 0 ? Math.round((a / b) * 100) : 0);
 
 /** "Of 236 companies that have reported, 175 grew profit; median profit growth +13.9%." */
 export function seasonHeadline(s: KpiSummary, filtered = false): Seg[] {
   if (s.n === 0) return [{ t: filtered ? "No company in this list has reported yet." : "No company has reported for this quarter yet." }];
+  // the base of "grew" is the companies with a year-ago quarter to compare (C1); the rest are said once, in brackets
+  const base = s.pat_of, noun = (n: number) => (n === 1 ? "company" : "companies");
+  const gap = s.pat_n < s.n || base < s.pat_n ? ` (${fmtCount(s.n)} reported)` : "";
   const out: Seg[] = [
-    { t: filtered ? `Of ${s.n} ${s.n === 1 ? "company" : "companies"} in this list, ` : `Of ${s.n} ${s.n === 1 ? "company" : "companies"} that have reported, ` },
-    { t: String(s.pat_up), tone: "up" }, { t: " grew profit" },
+    { t: s.pat_of < s.n
+        ? `Of ${fmtCount(base)} ${noun(base)} ${filtered ? "in this list " : ""}with a year-ago quarter to compare${gap}, `
+        : filtered ? `Of ${fmtCount(s.n)} ${noun(s.n)} in this list, ` : `Of ${fmtCount(s.n)} ${noun(s.n)} that have reported, ` },
+    { t: fmtCount(s.pat_up), tone: "up" }, { t: " grew profit" },
   ];
   if (s.median_pat_yoy != null) out.push({ t: "; median profit growth " }, { t: fmtPct(s.median_pat_yoy), tone: toneOf(s.median_pat_yoy) });
   out.push({ t: "." });
@@ -184,34 +211,34 @@ export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[]
     const top = ranked[0];
     const other = top.id === "NIFTY50" ? ranked[1] : ranked.find((r) => r.id === "NIFTY50") ?? ranked[ranked.length - 1];
     lines.push([{ t: top.label, b: true }, { t: " leads: its median profit growth is " }, { t: fmtPct(top.pat_median), b: true },
-      { t: `, against ${fmtPct(other.pat_median)} in the ${other.label}.` }]);
+      { t: `${coverageOf(top)}, against ${fmtPct(other.pat_median)} in the ${other.label}${coverageOf(other)}.` }]);
   }
   const fell = s.spread.below_0;
-  const fellLine: Seg[] = [{ t: String(fell), b: true }, { t: ` ${fell === 1 ? "company" : "companies"} (${pctOf(fell, s.n)}%) earned less than a year ago` }];
-  const withTrend = (indexRows ?? []).filter((r) => r.trend_pat_median.some((v) => v != null));
+  const fellLine: Seg[] = [{ t: fmtCount(fell), b: true }, { t: ` ${fell === 1 ? "company" : "companies"} (${pctOf(fell, s.pat_of)}% of those with a year-ago quarter) earned less than a year ago` }];
+  const withTrend = wellCovered((indexRows ?? []).filter((r) => r.trend_pat_median.some((v) => v != null)));
   if (withTrend.length) {
-    fellLine.push({ t: "; " }, { t: `${bestInEight(withTrend)} of ${withTrend.length}`, b: true }, { t: " indices show their best median in 8 quarters." });
+    fellLine.push({ t: "; " }, { t: `${bestInEight(withTrend)} of ${withTrend.length}`, b: true },
+      { t: ` ${withTrend.length === 1 ? "index" : "indices"} (with at least ${COVERAGE_MIN * 100}% of members reported) show their best median in 8 quarters.` });
   } else fellLine.push({ t: "." });
   lines.push(fellLine);
   return lines;
 }
 
-/** How many groups have this quarter's median as the highest of their 8-quarter trend. */
+/** An index counts toward "best median in 8 quarters" only when this share of its members has reported: the current point is the median of
+ *  early reporters, set against full-season medians (measured 31 Oct 2026: Midcap 150 showed a high on 80 of 150). */
+export const COVERAGE_MIN = 0.8;
+/** The groups that can be compared with full seasons: a sector or industry (no member list) is kept as it is. */
+export const wellCovered = (rows: GroupRow[]): GroupRow[] => rows.filter((r) => !r.of || r.reported / r.of >= COVERAGE_MIN);
+/** " (32 of 50 reported)" for an index, "" for a group with no member list. */
+export const coverageOf = (r: Pick<GroupRow, "reported" | "of">) => (r.of ? ` (${fmtCount(r.reported)} of ${fmtCount(r.of)} reported)` : "");
+
+/** How many groups have this quarter's median as the highest of their 8-quarter trend (an index counts only with 80% of its members reported). */
 export function bestInEight(rows: GroupRow[]): number {
-  return rows.filter((r) => {
+  return wellCovered(rows).filter((r) => {
     const vals = r.trend_pat_median.filter((v): v is number => v != null);
     const last = r.trend_pat_median[r.trend_pat_median.length - 1];
     return last != null && vals.length > 1 && last >= Math.max(...vals);
   }).length;
-}
-
-/** The reporting-progress panel's lines. */
-export function progressText(p: KpiProgress): { done: string; next: string | null; note: string | null } {
-  const done = `${pctOf(p.reported, p.of)}% done · ${p.quarter_reported} ${p.quarter_reported === 1 ? "company has" : "companies have"} reported in all`;
-  const gap = p.members - p.of;
-  // REITs and InvITs report in their own format and are not read yet (STATUS.md, open work)
-  const note = gap > 0 ? `${p.members} members; ${gap} not covered yet (${gap === 1 ? "a REIT" : "REITs"}, which report in their own format)` : null;
-  return { done, next: p.still_to_come ? `${p.still_to_come.companies} ${p.still_to_come.companies === 1 ? "company" : "companies"}` : null, note };
 }
 
 export const indexLabel = (id: string | null | undefined) => INDICES.find((x) => x.id === id)?.label ?? id ?? "";
@@ -222,13 +249,6 @@ export function filedDay(iso: string | null | undefined): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
   return d.toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata", day: "numeric", month: "short" });
-}
-
-/** "Tue 3 Nov" for a board-meeting date (YYYY-MM-DD). */
-export function meetingDay(day: string): string {
-  const d = new Date(`${day}T12:00:00+05:30`);
-  if (Number.isNaN(d.getTime())) return day;
-  return d.toLocaleDateString("en-GB", { timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short" }).replace(",", "");
 }
 
 /** "30 Oct 2026, 3:35 pm IST": the newest filing timestamp among rows. */
@@ -343,13 +363,16 @@ export function groupsBullets(rows: GroupRow[], by: GroupBy): string[] {
   } else if (share) {
     out.push(`Financials make ${Math.round(share.financials_share_pct!)}% of the ${share.label}'s profit and grew ${fmtPct(share.pat_total_financials)} in total, the rest ${fmtPct(share.pat_total_ex_financials)}.`);
   }
-  const trended = rows.filter((r) => r.trend_pat_median.some((v) => v != null));
-  if (trended.length) out.push(`${bestInEight(trended)} of ${trended.length} ${groupNoun(by, true)} show their best median in 8 quarters.`);
-  const both = rows.filter((r) => r.pat_total_all != null && r.revenue_total_all != null);
+  const trended = wellCovered(rows.filter((r) => r.trend_pat_median.some((v) => v != null)));
+  if (trended.length) {
+    out.push(`${bestInEight(trended)} of ${trended.length} ${groupNoun(by, trended.length !== 1)}${by === "index" ? ` (with at least ${COVERAGE_MIN * 100}% of members reported)` : ""} show their best median in 8 quarters.`);
+  }
+  // ex-financials only: a bank's "revenue" is interest earned, not sales (C5)
+  const both = rows.filter((r) => r.pat_total_ex_financials != null && r.revenue_total_ex_financials != null);
   if (both.length) {
-    const faster = both.filter((r) => r.pat_total_all! > r.revenue_total_all!).length;
-    out.push(faster === both.length ? `In every ${groupNoun(by)}, total profit grew faster than total revenue.`
-      : `Total profit grew faster than total revenue in ${faster} of ${both.length} ${groupNoun(by, true)}.`);
+    const faster = both.filter((r) => r.pat_total_ex_financials! > r.revenue_total_ex_financials!).length;
+    out.push(faster === both.length ? `In every ${groupNoun(by)}, total profit grew faster than total revenue (companies other than financials).`
+      : `Total profit grew faster than total revenue in ${faster} of ${both.length} ${groupNoun(by, true)} (companies other than financials).`);
   }
   return out;
 }
@@ -441,14 +464,16 @@ export function activeChips(q: KpiQuery): { id: string; label: string; clear: st
 
 // ---------- CSV ----------
 
+/** A growth per cent in the CSV: "NM" past +999% (the same rule as the page). */
+const nmCell = (v: number | null) => (isNmPct(v) ? NM : v);
 const CSV_COLUMNS: [string, (r: KpiRow) => string | number | null | boolean][] = [
   ["Symbol", (r) => r.symbol ?? r.scrip_code], ["Company", (r) => r.company_name], ["Classification", (r) => r.industry],
-  ["Kind", (r) => r.kind], ["Basis", (r) => r.basis.toLowerCase()], ["Quarter", (r) => r.period], ["Market cap (Rs Cr)", (r) => r.market_cap_cr],
-  ["Revenue (Rs Cr)", (r) => r.revenue], ["Revenue YoY %", (r) => r.revenue_yoy], ["Revenue QoQ %", (r) => r.revenue_qoq],
-  ["EBITDA (Rs Cr)", (r) => r.ebitda], ["EBITDA YoY %", (r) => r.ebitda_yoy], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
-  ["EBITDA QoQ %", (r) => r.ebitda_qoq], ["Margin %", (r) => r.opm], ["Margin change YoY (bp)", (r) => r.opm_yoy_bps],
-  ["PAT (Rs Cr)", (r) => r.pat], ["PAT YoY %", (r) => r.pat_yoy], ["PAT turn", (r) => (r.pat_turn ? TURN_TEXT[r.pat_turn] : null)],
-  ["PAT QoQ %", (r) => r.pat_qoq], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT momentum (pts)", (r) => r.pat_momentum_pts],
+  ["Kind (company/bank/nbfc/insurer/reit/invit)", (r) => r.kind], ["Basis", (r) => r.basis.toLowerCase()], ["Quarter", (r) => r.period], ["Market cap (Rs Cr)", (r) => r.market_cap_cr],
+  ["Revenue (Rs Cr)", (r) => r.revenue], ["Revenue YoY %", (r) => nmCell(r.revenue_yoy)], ["Revenue QoQ %", (r) => nmCell(r.revenue_qoq)],
+  ["EBITDA (Rs Cr)", (r) => r.ebitda], ["EBITDA YoY %", (r) => nmCell(r.ebitda_yoy)], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
+  ["EBITDA QoQ %", (r) => nmCell(r.ebitda_qoq)], ["EBITDA margin %", (r) => (isNmMargin(r.opm) ? NM : r.opm)], ["Margin change YoY (bp; 100 bp = 1 percentage point)", (r) => r.opm_yoy_bps],
+  ["PAT (Rs Cr)", (r) => r.pat], ["PAT YoY %", (r) => nmCell(r.pat_yoy)], ["PAT turn", (r) => (r.pat_turn ? TURN_TEXT[r.pat_turn] : null)],
+  ["PAT QoQ %", (r) => nmCell(r.pat_qoq)], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT growth change vs last quarter (pts)", (r) => r.pat_momentum_pts],
   ["Momentum", (r) => MOMENTUM_TEXT[r.momentum]], ["Profit up, EBITDA down", (r) => r.nfo], ["Filed", (r) => r.filed_at], ["Filing", (r) => r.filing_url],
 ];
 

@@ -88,8 +88,15 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
         fam = cf.family(basis)
         memo: dict = {}
         quarters = sorted({p for p, b in cf.results if b == basis and _QUARTER.fullmatch(p)}, key=lambda p: sv.quarter_index(p) or 0)
-        years = sorted({p[2:] for p in quarters if p.startswith("Q4")} | {fy for fy, b in cf.annual if b == basis})
-        columns = [("quarters", p) for p in quarters] + [("balance", p) for p in quarters if p[:2] in ("Q2", "Q4")] \
+        # every year with a quarter held, but the newest quarter's year only once its Q4 is in (an unfinished year is no year); and a
+        # balance sheet at any quarter a file gives one. A December-year company closes its year and books in Q3 (stored-statements
+        # check of 31 Oct 2026: 4,153 FY25 pairs the recipes got exact were missing on the site, 183 companies, Schaeffler, Rain,
+        # Hexaware, ZF Steering among them, as only Q4 years and Q2/Q4 balance sheets were built). A quarter with no balance sheet in
+        # its file gives none (_ours returns nothing), so a March-year company is unchanged.
+        newest = quarters[-1] if quarters else ""
+        years = sorted({p[2:] for p in quarters if p[2:] != newest[2:] or newest.startswith("Q4")}
+                       | {fy for fy, b in cf.annual if b == basis})
+        columns = [("quarters", p) for p in quarters] + [("balance", p) for p in quarters] \
             + [("annual", fy) for fy in years] + [("cash_flow", fy) for fy in years]
         for table, period in columns:
             rows, why = sv._ours(cf, fam, basis, table, period, memo)

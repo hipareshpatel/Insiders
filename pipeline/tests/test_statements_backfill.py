@@ -258,3 +258,30 @@ def test_a_seasonal_quarter_as_large_as_a_year_earlier_is_no_unit_slip(monkeypat
     cf = SimpleNamespace(results={(p, "STANDALONE"): f"k{p}" for p in figures}, annual={}, family=lambda b: "corporate")
     entries, left = sb.company_entries(cf, {}, "t")
     assert left == [] and {e["period"] for e in entries} >= {"Q2FY26", "Q2FY27"}
+
+
+def test_a_december_year_company_gets_its_year_and_its_december_balance_sheet(monkeypatch):
+    """Stored-statements check, 31 Oct 2026: Schaeffler, Rain and Hexaware's FY25 years (Dec 2024) and Dec balance sheets were never
+    built, as only Q4 years and Q2/Q4 balance sheets were. The newest, unfinished year stays out."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    quarters = ["Q4FY24", "Q1FY25", "Q2FY25", "Q3FY25", "Q4FY25", "Q1FY26"]
+    row = lambda v: SimpleNamespace(value=v)
+
+    def ours(cf, fam, basis, table, period, memo):
+        if table == "quarters" and period in quarters:
+            return {"Sales": row(100.0), "Net Profit": row(10.0)}, ""
+        if table == "balance" and period in ("Q1FY25", "Q3FY25"):          # its June half-year and December year-end sheets
+            return {"Total Assets": row(500.0)}, ""
+        if table in ("annual", "cash_flow"):
+            return ({"Sales": row(400.0), "Net Profit": row(40.0)} if table == "annual" else {"Cash from Operating Activity": row(50.0)}), ""
+        return None, ""
+
+    monkeypatch.setattr(sv, "_ours", ours)
+    cf = SimpleNamespace(results={(p, "CONSOLIDATED"): f"k{p}" for p in quarters}, annual={}, family=lambda b: "corporate")
+    entries, _ = sb.company_entries(cf, {}, "t")
+    got = {(e["table"], e["period"]) for e in entries}
+    assert {("balance", "Q1FY25"), ("balance", "Q3FY25"), ("annual", "FY25"), ("cash_flow", "FY25")} <= got
+    assert ("annual", "FY26") not in got and ("balance", "Q2FY25") not in got   # FY26 unfinished; no sheet in that file

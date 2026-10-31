@@ -771,11 +771,16 @@ def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str =
 # --- balance sheet ------------------------------------------------------------------------------------------------
 
 # a described row naming an investment inside the "Others" of another asset line is screener's Investments (srules2 bs report, 4: GAIL
-# cons FY26 "Other Investments" 9,360.17; Finolex Cables FY26 262.76 + 719.55; KIMS FY26 87.5; all 3 files that carry one close, 0 broken)
+# cons FY26 "Other Investments" 9,360.17; Finolex Cables FY26 262.76 + 719.55; KIMS FY26 87.5; all 3 files that carry one close, 0 broken).
+# Not a lease receivable ("net investment in (sub)lease": Infosys, Tata Technologies, Nykaa, Welspun, Black Box), plan money with
+# an insurer (Nestle's "Investment in Insurance plan", Eternal's gratuity plan, GRSE's leave encashment with LIC), application
+# money or shares pending allotment (Ashok Leyland, ZF, GAIL FY23), a forward contract (Zydus) or a bank balance (Molbio):
+# screener keeps those in Other Assets (screener-rows run 41173800391: 43 rows broken, 21 mended before this list)
 INVESTMENT_PARENTS = ("OtherNoncurrentFinancialAssets", "OtherNoncurrentFinancialAssetsOthers", "OtherNoncurrentAssets",
                       "OtherNoncurrentAssetsOthers", "OtherCurrentFinancialAssets", "OtherCurrentFinancialAssetsOthers")
 INVESTMENT_ROW = (r"^(?!.*(investment\s+propert|loans?\b|advances?\b|receivable|accrued|interest|income|dividend|deposit|"
-                  r"right.of.use)).*\binvest")
+                  r"right.of.use|lease|insurance|gratuity|\blic\b|encashment|pending\s+allotment|application\s+money|forward|bank\s+balance))"
+                  r".*\binvest")
 
 
 def _investment_rows(r: _Reader) -> list[tuple[str, str, float]]:

@@ -32,6 +32,7 @@ from itertools import permutations
 
 from .metrics import CONSOLIDATED, STANDALONE
 
+READER = 2      # 2: mixed-case and number-only schedule headings (31 Oct 2026); an empty reading of an older reader is read again
 PREFIX = "raw/bank-pdf/"        # + <scrip>/<report file name>.json: what ``read`` found in one report (bank-pdf-read)
 TOL = 1.0                       # crore: the file's figure and the report's agree within this (screener_view.ABS_TOL)
 SLACK = 2                       # printed units: a movement or a sum of rounded items may be off by this many
@@ -95,8 +96,16 @@ def years_of(lines: list[str]) -> list[str]:
 
 # --- the schedules ---------------------------------------------------------------------------------------------------
 
-_HEADING = re.compile(r"(?:^|/)\s*SCHEDULE\s*[-–]?\s*(\d{1,2})\s*[-–:.]?\s*([A-Za-z &,]+?)\s*[:.]?\s*(?:\((?:contd|continued)\.?\))?\s*$",
+_DASH = "-–—"
+_HEADING = re.compile(rf"(?:^|/)\s*SCHEDULE\s*[{_DASH}]?\s*(\d{{1,2}})\s*[{_DASH}:.]*\s*([A-Za-z &,]+?)\s*[:.]?\s*(?:\((?:contd|continued)\.?\))?\s*$",
                       re.I)
+_NUMBER_ONLY = re.compile(rf"(?:^|/)\s*SCHEDULE\s*[{_DASH}]?\s*(\d{{1,2}})\s*[{_DASH}:.]*\s*$", re.I)
+# the names of the RBI format's schedules: a heading in mixed case ("Schedule - 1 Capital", Bank of Maharashtra; "Schedule 3 — DEPOSITS",
+# UCO) counts only with one of them, so a note's sentence ("Schedule 16 of the Standalone Financial Statements and") is no heading
+_SCHEDULE_NAMES = ("capital", "employees stock options", "reserves", "deposits", "borrowings", "other liabilities", "cash and balances",
+                   "balances with banks", "investments", "advances", "fixed assets", "other assets", "contingent liabilities",
+                   "interest earned", "other income", "interest expended", "operating expenses", "provisions and contingencies",
+                   "significant accounting policies", "notes")
 FIXED, OPEX = "fixed assets", "operating expenses"
 _ENUM = re.compile(r"^\s*(?:[IVX]{1,5}[A-Z]?\s*[.)]|\(?[a-hA-H]\)|[A-H]\s*\.|\([ivx]{1,4}\)|[ivx]{1,4}\))")
 _MOVEMENT = re.compile(r"at\s+cost|opening|as\s+per\s+last|preceding\s+year|addition|deduction|transfer|capitali[sz]|adjust|"
@@ -107,14 +116,26 @@ CWIP = re.compile(r"capital\s+work[\s-]*in[\s-]*progress|under\s+construction", 
 _INTANGIBLE = re.compile(r"intangible", re.I)
 
 
-def heading(line: str) -> tuple[int, str] | None:
-    """(schedule number, its name lower-cased) when the line is a schedule's own heading, not a sentence naming it."""
+def heading(line: str, following: str = "") -> tuple[int, str] | None:
+    """(schedule number, its name lower-cased) when the line is a schedule's own heading, not a sentence naming it. A line with the
+    number alone ("SCHEDULE - 5", Bank of Baroda, IOB) takes its name from ``following``, the next line with words. Measured on the
+    reports of bank-pdf-read run 41204340792 (46 reports of 13 banks, every one with a text layer, none read before)."""
     if len(line) > 140:
         return None
     m = _HEADING.search(line)
-    if not m or not re.search(r"SCHEDULE", line):      # a heading is upper case (a note says "Schedule 16 - Operating Expenses (XII ...")
+    if m:
+        number, name = int(m[1]), re.sub(r"\s+", " ", m[2].strip().lower())
+    elif (n := _NUMBER_ONLY.search(line)) and following:
+        number, name = int(n[1]), re.sub(r"\s+", " ", re.sub(r"[^A-Za-z &,]", " ", following.split("/")[-1]).strip().lower())
+        if not name.startswith(_SCHEDULE_NAMES):
+            return None
+        return number, name
+    else:
         return None
-    return int(m[1]), re.sub(r"\s+", " ", m[2].strip().lower())
+    upper = bool(re.search(r"SCHEDULE", line))      # an upper-case heading needs no known name (the older reports, all banks)
+    if not upper and not name.startswith(_SCHEDULE_NAMES):
+        return None
+    return number, name
 
 
 def _basis_marks(text: str) -> str | None:
@@ -267,7 +288,13 @@ in the report (1 = the first page; default their order here), so trimmed pages k
     places = places or list(range(1, len(pages) + 1))
     text_of = dict(zip(places, pages))
     lines: list[tuple[int, str]] = [(p, line) for p, page in zip(places, drop_page_numbers(pages, places)) for line in page]
-    starts = [(k, h) for k, (_, line) in enumerate(lines) if (h := heading(line))]
+    def following(k: int) -> str:
+        for _, nxt in lines[k + 1:k + 4]:
+            if re.search(r"[A-Za-z]{3,}", nxt):
+                return nxt
+        return ""
+
+    starts = [(k, h) for k, (_, line) in enumerate(lines) if (h := heading(line, following(k)))]
     out: dict[str, dict[str, dict]] = {}
     seen = {FIXED: 0, OPEX: 0}
     for n, (k, (number, name)) in enumerate(starts):
@@ -541,7 +568,7 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
                     prior = json.loads(prior) if prior else {}
                 except ValueError:
                     prior = {}
-                if prior.get("figures") or prior.get("diagnosis"):
+                if prior.get("figures") or prior.get("diagnosis") and prior.get("reader") == READER:
                     continue
             if url is None:
                 body = sink.get_object(k)
@@ -580,7 +607,8 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
             if not figures:
                 out["no_text"] += 1
             fys = sorted({fy for by in figures.values() for fy in by}, reverse=True)
-            report = {"scrip": scrip, "symbol": sym, "file": k, "url": url, "years": fys[:2], "figures": figures, "read_at": now_iso()}
+            report = {"scrip": scrip, "symbol": sym, "file": k, "url": url, "years": fys[:2], "figures": figures, "read_at": now_iso(),
+                      "reader": READER}
             if diagnosis is not None:
                 report["diagnosis"] = diagnosis
             if not dry_run:

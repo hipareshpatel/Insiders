@@ -59,6 +59,24 @@ def test_units_and_years():
     assert bp.years_of(["March 31, 2025"]) == ["FY25"]
 
 
+@pytest.mark.parametrize("line,following,expected", [
+    # the heading lines of the reports read by bank-pdf-read run 41204340792 (46 reports, 13 banks), as their text layers print them
+    ("Schedule - 1 Capital", "", (1, "capital")),                                       # Bank of Maharashtra, IndusInd
+    ("Schedule 16 - Operating Expenses", "", (16, "operating expenses")),
+    ("+xÉÖºÉÚSÉÒ 3 ---- VÉ¨ÉÉ®úÉÊ¶ÉªÉÉÆ/Schedule 3 — DEPOSITS", "", (3, "deposits")),   # UCO, bilingual, a long dash
+    ("Schedule 10 — FIXED ASSETS", "", (10, "fixed assets")),
+    ("SCHEDULE - 5", "OTHER LIABILITIES AND PROVISIONS", (5, "other liabilities and provisions")),   # Bank of Baroda, IOB
+    ("SCHEDULE - 16", "OPERATING EXPENSES", (16, "operating expenses")),
+    ("SCHEDULE- 1 :CAPITAL", "", (1, "capital")),                                       # Bank of Maharashtra FY23
+    ("Schedule 16 of the Standalone Financial Statements and", "", None),               # a note's sentence
+    ("Schedule 18 of the financial statements for FY 2024-25.", "", None),
+    ("Schedule 16", "of the Standalone Financial Statements", None),
+    ("Refer Schedule 9, Schedule 17(1) and Schedule 18 Note 11.1", "", None),
+])
+def test_headings_of_the_other_layouts(line, following, expected):
+    assert bp.heading(line, following) == expected
+
+
 def test_heading_is_the_schedule_not_a_note():
     assert bp.heading("SCHEDULE 16 - OPERATING EXPENSES") == (16, "operating expenses")
     assert bp.heading("SCHEDULE 10 - FIXED ASSETS:") == (10, "fixed assets")
@@ -354,9 +372,9 @@ def test_empty_reading_is_read_again_once_for_its_diagnosis():
     blank_pdf = doc.tobytes()
     kept = "raw/annual-pdf/SBIN/blank.pdf.gz"
     sink.put_object(kept, gzip.compress(blank_pdf))
-    sink.put_object(bp.key("500112", kept), json.dumps({"figures": {}}).encode())       # an earlier run's empty reading
+    sink.put_object(bp.key("500112", kept), json.dumps({"figures": {}, "diagnosis": {"pages": 1}}).encode())   # an older reader's
     out = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
     reading = json.loads(sink.objects[bp.key("500112", kept)])
-    assert reading["diagnosis"]["pages"] == 1 and reading["figures"] == {}
+    assert reading["diagnosis"]["pages"] == 1 and reading["figures"] == {} and reading["reader"] == bp.READER
     again = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
     assert again["reports_read"] == 0 or all(r.get("file") != kept for r in again["readings"])

@@ -313,6 +313,13 @@ def card_fact_sheet() -> bool:
     return _switch("CARD_FACT_SHEET")
 
 
+def card_fact_sheet_lenders() -> bool:
+    """CARD_FACT_SHEET_LENDERS (default off; TODO 151, owner 31 Oct 2026 ~13:45 IST): with CARD_FACT_SHEET, banks', NBFCs' and
+    insurers' results cards get the fact sheet too, on their own statement rows (fact_sheet.FAMILY_LINES). Off: only corporate filers'
+    cards, as before. Read at the call."""
+    return _switch("CARD_FACT_SHEET_LENDERS")
+
+
 def memory_file_only() -> bool:
     """MEMORY_FILE_ONLY (owner, 30 Oct 2026: "memory must be filled using exchange data and screener rules not using cards
     data"): a statement line (dossier.STATEMENT_FIGURES) enters memory only from the exchange's own file; a model's reading of

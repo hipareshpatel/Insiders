@@ -13,7 +13,16 @@ With the switch on and a sheet:
 - a revenue / EBITDA / PBT / profit amount, or a YoY / QoQ change of one, that the model writes about the quarter and that disagrees with
   the sheet beyond rounding is taken out of the card text (``removed``; the same shape as ``standalone_figures_removed``: a sentence is
   cut, a point or key number hidden, the card not held).
-With no sheet (the file is late, a bank or insurer, a quarter memory lacks) nothing here runs and the card is what it was.
+With no sheet (the file is late, a quarter memory lacks) nothing here runs and the card is what it was.
+
+TODO 151 (owner, 31 Oct 2026 ~13:45 IST), behind CARD_FACT_SHEET_LENDERS (default off): banks, NBFCs and insurers get a sheet too, on
+the rows results_table.LAYOUT gives each family (screener_view's statements). A bank: interest earned (screener's "Revenue"), net
+interest income (Revenue - Interest, as memory works out NII), financing profit and its margin, PBT and profit; an NBFC: revenue,
+financing profit and its margin, PBT and profit; an insurer: profit only (its statements hold no other line). An NBFC-template filer
+whose known industry is not financial services is a company (the corporate rows, as results_table), and one in insurance an insurer.
+Each family has its own words in the text check (a bank's "operating profit" is its pre-provision profit and its "total income" adds
+other income: neither is judged), and its sheet goes only into a card table of its own kind (a bank table's interest earned, NII, PBT
+and profit; an insurer's PBT and profit; an NBFC's company table: revenue, PBT and profit, its EBITDA row left as it is).
 Orders of book, guidance, capex and segment figures are not touched: a sentence is judged only when it names one results line and no
 other period, segment or outlook."""
 
@@ -35,14 +44,46 @@ LINES = (("revenue", "Sales", "Revenue"), ("ebitda", "Operating Profit", "EBITDA
          ("pbt", "Profit before tax", "PBT"), ("pat", "Net Profit", "PAT"))
 OWNERS = "Net Profit (owners)"      # the profit to shareholders, also accepted for the PAT line in the text check
 MARGIN = "OPM %"
-_TURN_LINES = {"ebitda", "pbt", "pat"}
+NII = ("Revenue", "Interest")       # a bank's net interest income: its statements' Revenue (interest earned) less Interest (expended)
+_TURN_LINES = {"ebitda", "pbt", "pat", "financing_profit"}
+# family -> (lines, (margin key, margin row, its label) or None); the rows are results_table.LAYOUT's for each family
+FAMILY_LINES = {
+    sv.CORPORATE: (LINES, ("ebitda_margin", MARGIN, "EBITDA margin")),
+    sv.BANK: ((("revenue", "Revenue", "Interest earned"), ("nii", NII, "Net interest income"),
+               ("financing_profit", "Financing Profit", "Financing profit"), ("pbt", "Profit before tax", "PBT"),
+               ("pat", "Net Profit", "Net profit")), ("financing_margin", "Financing Margin %", "Financing margin")),
+    sv.NBFC: ((("revenue", "Revenue", "Revenue"), ("financing_profit", "Financing Profit", "Financing profit"),
+               ("pbt", "Profit before tax", "PBT"), ("pat", "Net Profit", "PAT")), ("financing_margin", "Financing Margin %", "Financing margin")),
+    sv.INSURER: ((("pat", "Net Profit", "PAT"),), None),
+}
+# the card table a family's sheet goes into (results_snapshot's lens), and the sheet line -> that table's key where they differ
+LENS = {sv.CORPORATE: "company", sv.NBFC: "company", sv.BANK: "bank", sv.INSURER: "insurer"}
+TABLE_KEY = {sv.BANK: {"revenue": "interest_earned"}}
 
 
-def quarter_entries(dossier: dict, period: str, basis: str) -> dict | None:
-    """The file-labelled corporate quarters-table entry of a period and basis, or None."""
+def _value(rows: dict, row) -> float | None:
+    """A sheet line's figure from an entry's rows: the row itself, or for a pair (NII) the first less the second."""
+    if isinstance(row, tuple):
+        a, b = (rows or {}).get(row[0]), (rows or {}).get(row[1])
+        return None if a is None or b is None else a - b
+    return (rows or {}).get(row)
+
+
+def layout_of(family: str | None, industry: str | None) -> str | None:
+    """The sheet's layout for an entry's family: an NBFC-template filer in a known industry outside financial services is a company,
+    one in insurance an insurer (results_table.table_of, measured 31 Oct 2026); None for a family with no sheet."""
+    from . import results_table      # results_table imports this module
+
+    if family == sv.NBFC:
+        return sv.CORPORATE if results_table.non_lender(industry) else sv.INSURER if results_table.insurer_industry(industry) else sv.NBFC
+    return family if family in FAMILY_LINES else None
+
+
+def quarter_entries(dossier: dict, period: str, basis: str, families: tuple[str, ...] = (sv.CORPORATE,)) -> dict | None:
+    """The file-labelled quarters-table entry of a period and basis whose family is one of ``families``, or None."""
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
-                and e.get("family") == sv.CORPORATE and (e.get("lab") or {}).get("by") == "file"):
+                and e.get("family") in families and (e.get("lab") or {}).get("by") == "file"):
             return statements.corrected_entry(e)   # the shared profit-line rules, also for a dossier not yet rebuilt
     return None
 
@@ -59,30 +100,42 @@ def _change(now: float | None, base: float | None, key: str) -> dict:
     return {"pct": round((now - base) / abs(base) * 100, 1)} if base else {}
 
 
-def fact_sheet(dossier: dict, period: str | None, basis: str | None = None) -> dict | None:
+def fact_sheet(dossier: dict, period: str | None, basis: str | None = None, lenders: bool | None = None) -> dict | None:
     """The quarter's fact sheet from ``dossier["statements"]``, or None when memory lacks the quarter (the exchange file is late,
-    or it is not a corporate filer's). ``basis`` None: consolidated when memory has the quarter on it, else standalone."""
+    or, without ``lenders``, it is not a corporate filer's). ``basis`` None: consolidated when memory has the quarter on it, else
+    standalone. ``lenders`` None: the switch CARD_FACT_SHEET_LENDERS (banks, NBFCs and insurers too, TODO 151)."""
     if not period or not period.startswith("Q"):
         return None
+    if lenders is None:
+        from .settings import card_fact_sheet_lenders
+        lenders = card_fact_sheet_lenders()
+    families = tuple(FAMILY_LINES) if lenders else (sv.CORPORATE,)
     prior = {"prev_year": prior_year_period(period), "prev_quarter": prior_quarter_period(period)}
     for b in ((basis,) if basis else (CONSOLIDATED, STANDALONE)):
-        now = quarter_entries(dossier, period, b)
+        now = quarter_entries(dossier, period, b, families)
         if now is None:
             continue
-        before = {slot: quarter_entries(dossier, p, b) if p else None for slot, p in prior.items()}
+        family = now.get("family")
+        layout = layout_of(family, dossier.get("industry")) if lenders else family
+        if layout is None:
+            continue
+        lines, margin_spec = FAMILY_LINES[layout]
+        # the comparatives on the entry's own family (a quarter filed on another template is no base)
+        before = {slot: quarter_entries(dossier, p, b, (family,)) if p else None for slot, p in prior.items()}
         sheet: dict = {"period": period, "basis": b, "unit": "₹ crore", "prev_year_period": prior["prev_year"],
-                       "prev_quarter_period": prior["prev_quarter"], "source_news_id": now.get("source_news_id"), "lines": {}}
-        for key, row, label in LINES:
+                       "prev_quarter_period": prior["prev_quarter"], "source_news_id": now.get("source_news_id"), "lines": {},
+                       "family": layout}
+        for key, row, label in lines:
             if key == "pat" and (now.get("rows") or {}).get(OWNERS) is not None:
                 # the profit to shareholders, the line a card calls PAT; its comparatives on the same footing only (A/B of 30 Oct
                 # 2026: the total with minority interest went out as "profit to shareholders", Grindwell 133.17 for 132.70)
                 row = OWNERS
-            value = (now.get("rows") or {}).get(row)
+            value = _value(now.get("rows"), row)
             if value is None:
                 continue
             line: dict = {"label": label, "value": round(value, 2)}
             for slot, tag in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
-                base = ((before[slot] or {}).get("rows") or {}).get(row)
+                base = _value((before[slot] or {}).get("rows"), row)
                 if base is None:
                     continue
                 line[slot] = round(base, 2)
@@ -94,16 +147,18 @@ def fact_sheet(dossier: dict, period: str | None, basis: str | None = None) -> d
             if key == "pat" and row == OWNERS and (now.get("rows") or {}).get("Net Profit") is not None:
                 line["with_minority"] = round(now["rows"]["Net Profit"], 2)
             sheet["lines"][key] = line
-        margin = (now.get("rows") or {}).get(MARGIN)
+        margin_key, margin_row, margin_label = margin_spec or (None, None, None)
+        margin = (now.get("rows") or {}).get(margin_row) if margin_row else None
         if margin is not None:
-            line = {"label": "EBITDA margin", "value": round(margin, 2)}
+            line = {"label": margin_label, "value": round(margin, 2)}
             for slot, tag in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
-                base = ((before[slot] or {}).get("rows") or {}).get(MARGIN)
+                base = ((before[slot] or {}).get("rows") or {}).get(margin_row)
                 if base is not None:
                     line[slot] = round(base, 2)
                     line[f"{tag}_bps"] = round((margin - base) * 100)
-            sheet["lines"]["ebitda_margin"] = line
-        if "revenue" in sheet["lines"] and "pat" in sheet["lines"]:
+            sheet["lines"][margin_key] = line
+        has_revenue = any(key == "revenue" for key, _, _ in lines)
+        if "pat" in sheet["lines"] and ("revenue" in sheet["lines"] or not has_revenue):
             return sheet
     return None
 
@@ -144,7 +199,7 @@ def block(sheet: dict) -> str:
            f"{sheet['basis'].title()}, ₹ crore, quarter {sheet['period']} (year ago {sheet['prev_year_period']}, "
            f"previous quarter {sheet['prev_quarter_period']}); changes worked out by code"]
     for key, line in sheet["lines"].items():
-        unit = "%" if key == "ebitda_margin" else ""
+        unit = "%" if key.endswith("_margin") else ""
         parts = [f"{_cr(line['value'])}{unit}"]
         if "prev_year" in line:
             parts.append(f"year ago {_cr(line['prev_year'])}{unit}")
@@ -167,14 +222,17 @@ _SLOTS = (("prev_year", "yoy"), ("prev_quarter", "qoq"))
 
 
 def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
-    """The sheet's figures into a card's results table (``results_snapshot``'s dict, in place), for the lines of a company table
-    (revenue, EBITDA, margin, PAT; PBT where the table holds it). A row is the sheet's alone: a comparative the sheet lacks is not kept
-    from memory's other sources. Returns what changed, {line, was, now}, for the card's grounding record. A bank's or an
-    insurer's table (another lens) and a table of another quarter are left as they are."""
-    if not results or not sheet or results.get("lens") != "company" or results.get("period") != sheet["period"]:
+    """The sheet's figures into a card's results table (``results_snapshot``'s dict, in place), for the lines the table holds: a
+    company table's revenue, EBITDA, margin, PAT (PBT where it holds it); a bank table's interest earned, NII, PBT and profit; an
+    insurer's PBT and profit. A row is the sheet's alone: a comparative the sheet lacks is not kept from memory's other sources.
+    Returns what changed, {line, was, now}, for the card's grounding record. A table of another kind than the sheet's family (a
+    bank's sheet beside a company table) and a table of another quarter are left as they are."""
+    family = sheet.get("family", sv.CORPORATE) if sheet else None
+    if not results or not sheet or results.get("lens") != LENS.get(family) or results.get("period") != sheet["period"]:
         return []
     notes = []
-    for key, line in sheet["lines"].items():
+    for line_key, line in sheet["lines"].items():
+        key = TABLE_KEY.get(family, {}).get(line_key, line_key)
         if key not in results:
             continue
         was = results[key]
@@ -197,6 +255,15 @@ _KEYWORDS = {"revenue": r"revenue|sales|turnover|total income",
              "ebitda": r"ebitda|operating profit",
              "pbt": r"pbt|profit before tax",
              "pat": r"pat|net profit|profit after tax|profit to shareholders|net income|bottom line"}
+# a lender's own words for its lines: a bank's "operating profit" is its pre-provision profit and its "total income" adds other income,
+# an NBFC's "total income" too, so neither is judged against the sheet; "interest income" is not the start of "net interest income"
+FAMILY_KEYWORDS = {
+    sv.CORPORATE: _KEYWORDS,
+    sv.BANK: {"revenue": r"interest earned|(?<!net )interest income", "nii": r"net interest income|nii",
+              "financing_profit": r"financing profit", "pbt": _KEYWORDS["pbt"], "pat": _KEYWORDS["pat"]},
+    sv.NBFC: {"revenue": r"revenue", "financing_profit": r"financing profit", "pbt": _KEYWORDS["pbt"], "pat": _KEYWORDS["pat"]},
+    sv.INSURER: {"pat": _KEYWORDS["pat"]},
+}
 _OTHER_PERIOD = re.compile(r"\b(H[12]|9M|FY\s?\d{2,4}|full[- ]year|annual|year[- ]to[- ]date|YTD|cumulative|guidance|outlook|target|"
                            r"expect\w*|segment\w*|division|order\s?book|backlog|capex|forecast|project\w*|estimate\w*)\b", re.I)
 _OWN_QUARTER = re.compile(r"\bQ[1-4]\s?FY\s?\d{2,4}\b", re.I)
@@ -207,8 +274,9 @@ _CHANGE = re.compile(r"(?:\(?\s*)?(?:y[\s/-]*o[\s/-]*y|q[\s/-]*o[\s/-]*q|year[- 
                      r"sequential\w*|from a year|vs\.? (?:the )?(?:year|previous|prior))", re.I)
 
 
-def _lines_named(sentence: str) -> list[str]:
-    return [k for k, words in _KEYWORDS.items() if re.search(rf"\b(?:{words})\b", sentence, re.I)]
+def _lines_named(sentence: str, family: str = sv.CORPORATE) -> list[str]:
+    words_of = FAMILY_KEYWORDS.get(family, _KEYWORDS)
+    return [k for k, words in words_of.items() if re.search(rf"\b(?:{words})\b", sentence, re.I)]
 
 
 def _near(value: float, decimals: int, target: float | None, scale: float = 1.0) -> bool:
@@ -228,7 +296,7 @@ def disagreements(text: str, sheet: dict) -> list[tuple[str, str]]:
     for sentence in re.split(r"(?<=[.;])\s+", (text or "").replace("**", "")):
         if _OTHER_PERIOD.search(_OWN_QUARTER.sub(" ", sentence)):
             continue
-        named = _lines_named(sentence)
+        named = _lines_named(sentence, sheet.get("family", sv.CORPORATE))
         if len(named) != 1 or named[0] not in sheet["lines"]:
             continue
         line = sheet["lines"][named[0]]

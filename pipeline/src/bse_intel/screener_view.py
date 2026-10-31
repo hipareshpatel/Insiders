@@ -76,7 +76,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import date
 
-from . import xbrl_facts
+from . import bank_pdf, xbrl_facts
 from .memory_gaps import quarter_end
 from .periods import quarter_index
 from .metrics import CONSOLIDATED, STANDALONE
@@ -651,7 +651,17 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     return out
 
 
-def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
+def _bank_pdf_depreciation(r: _Reader, pdf: dict | None, opex: float | None) -> tuple[float | None, str]:
+    """A year's depreciation from the bank's annual report (TODO 148, ``bank_pdf``) when its file has none: only for a 12-month
+    column, and only when the report's Schedule 16 adds up to the file's OperatingExpenses (``bank_pdf.pl_figure``)."""
+    if pdf is None or r.at.get("months") != 12:
+        return None, ""
+    return bank_pdf.pl_figure(pdf, opex)
+
+
+def bank_pl(r: _Reader, source: str = "", pdf: dict | None = None) -> dict[str, Row]:
+    """``pdf``: what the bank's annual report prints for this year and basis (``bank_pdf.read``), or None; used only for a row the
+    file lacks and only when the bank's own figures agree with it."""
     src = f" [{source}]" if source else ""
     out: dict[str, Row] = {}
     earned, expended = r.cr("InterestEarned"), r.cr("InterestExpended")
@@ -661,8 +671,19 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     pbt_filed, tax = r.cr("ProfitLossFromOrdinaryActivitiesBeforeTax"), r.cr("TaxExpense")
     out["Revenue"] = Row(earned, ("InterestEarned" if earned is not None else "missing InterestEarned") + src)
     out["Interest"] = Row(expended, ("InterestExpended" if expended is not None else "missing InterestExpended") + src)
-    out["Depreciation"] = Row(dep, ("AdjustmentsForDepreciationAndAmortisationExpense (cash flow)" if dep is not None
-                                    else "missing AdjustmentsForDepreciationAndAmortisationExpense (no cash flow in this period)") + src)
+    dep_note = "AdjustmentsForDepreciationAndAmortisationExpense (cash flow)" + src
+    if dep is None:
+        # a bank filing a direct cash flow has no depreciation in its file (Bank of Maharashtra, F228): its annual report's
+        # Schedule 16, when that schedule's total is the file's OperatingExpenses
+        dep, why = _bank_pdf_depreciation(r, pdf, opex)
+        if dep is not None:
+            # and the bank's identity holds with it: Financing Profit + Other Income - Depreciation = the filed PBT
+            loss_, gain_ = -min(exc or 0.0, 0.0), max(exc or 0.0, 0.0)
+            if None in (earned, expended, opex, other, pbt_filed) or abs(earned - expended - (opex + (prov or 0.0) - dep + loss_) + other + gain_ - dep - pbt_filed) > ABS_TOL:
+                dep, why = None, "Financing Profit + Other Income - Depreciation is not the filed PBT"
+        dep_note = (why if dep is not None else "missing AdjustmentsForDepreciationAndAmortisationExpense (no cash flow in this"
+                    " period)" + (f"; annual report not used: {why}" if why else "")) + src
+    out["Depreciation"] = Row(dep, dep_note)
     # a loss filed as an exceptional item is in screener's Expenses (a gain is in its Other Income, below), so Financing Profit +
     # Other Income - Depreciation stays the filed PBT (SBI FY24: its 7,100.31 Cr pension charge, Expenses and Financing Profit
     # apart by exactly that, both bases, screener-rows run 41174640014)
@@ -807,9 +828,10 @@ def corrected_pl(rows: dict[str, float], fam: str) -> dict[str, float]:
 
 
 
-def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str = "") -> dict[str, Row]:
+def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str = "", pdf: dict | None = None) -> dict[str, Row]:
+    """``pdf``: a bank's annual-report reading for the column (``bank_pdf``); other families ignore it."""
     if fam == BANK:
-        return bank_pl(r, source)
+        return bank_pl(r, source, pdf)
     if fam == NBFC:
         return nbfc_pl(r, source)
     if fam == INSURER:
@@ -972,7 +994,7 @@ def _esop_note(r: _Reader, olp: float | None) -> float:
     return 0.0
 
 
-def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
+def bank_bs(r: _Reader, source: str = "", pdf: dict | None = None) -> dict[str, Row]:
     """A bank's balance sheet (srules2 bs report, 1; 10 of 10 standalone Q4FY26 files: HDFC, SBI, ICICI, Union, Canara, IDFC First,
     Axis, Kotak, BoB, PNB, all within tolerance except the two named residues below).
 
@@ -1022,8 +1044,16 @@ def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     out["Total Liabilities"] = Row(tot, (tot_name if tot is not None else "missing CapitalAndLiabilities") + src)
     out["Total Assets"] = Row(tot, out["Total Liabilities"].note)
     fa, inv, cwip = r.cr("FixedAssets"), r.cr("Investments"), r.cr("CapitalWorkInProgress")
-    out["Fixed Assets"] = Row(fa, ("FixedAssets" if fa is not None else "missing FixedAssets") + src)
-    if cwip is not None:
+    fa_note = "FixedAssets"
+    if cwip is None and pdf is not None and march and fa is not None:
+        # TODO 148: the file keeps CWIP inside FixedAssets (F228); the annual report's Schedule 10 splits it, taken only when that
+        # schedule's total is the file's FixedAssets (Fixed Assets + CWIP = FixedAssets)
+        split, why = bank_pdf.bs_figures(pdf, fa)
+        if split is not None:
+            (fa, cwip), fa_note = split, f"FixedAssets - CWIP ({why})"
+            out["CWIP"] = Row(cwip, why + src)
+    out["Fixed Assets"] = Row(fa, (fa_note if fa is not None else "missing FixedAssets") + src)
+    if cwip is not None and "CWIP" not in out:
         out["CWIP"] = Row(cwip, "CapitalWorkInProgress" + src)
     out["Investments"] = Row(inv, ("Investments" if inv is not None else "missing Investments") + src)
     out["Other Assets"] = Row(None if None in (tot, fa, inv) else tot - fa - (cwip or 0.0) - inv,
@@ -1093,9 +1123,10 @@ NBFC_LIABILITY_PARENTS = ("OtherFinancialLiabilities", "OtherFinancialLiabilitie
 NBFC_ASSET_PARENTS = ("OtherNonFinancialAssets", "OtherNonFinancialAssetsOthers", "OtherFinancialAssets", "OtherFinancialAssetsOthers")
 
 
-def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:
+def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False,
+            pdf: dict | None = None) -> dict[str, Row]:
     if fam == BANK:
-        return bank_bs(r, source)
+        return bank_bs(r, source, pdf)
     if fam == NBFC:
         return nbfc_bs(r, source)
     if fam == INSURER:
@@ -1140,6 +1171,8 @@ class CompanyFacts:
                 (self.annual if m[1] else self.results)[(m[2], m[3].upper())] = key
         self._cache: dict[str, xbrl_facts.Facts | None] = {}
         self.bse_periods: set[str] | None = None     # the quarters BSE's results list holds; None: BSE not asked yet
+        # a bank's annual-report readings by (year, basis) (``bank_pdf.load``, TODO 148); {}: none stored, nothing changes
+        self.bank_pdf: dict[tuple[str, str], dict] = {}
 
     def before_listing(self, period: str) -> bool:
         """Whether ``period`` (a quarter, or a year "FY25": its March quarter) is before the company's first results on either
@@ -1273,7 +1306,7 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
             result = None, f"no annual-report or Q4 results facts for {period}"
         elif table == "annual":
             fallback = _Reader(q4, end=end, months=12) if q4 is not None else None
-            result = pl_rows(fam, reader, fallback, label), ""
+            result = pl_rows(fam, reader, fallback, label, pdf=cf.bank_pdf.get((period, basis))), ""
         else:
             result = cf_rows(reader, label), ""
     else:   # balance
@@ -1283,7 +1316,9 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
         else:
             f, label = cf.result(period, basis), f"results file {period}"
         reader = _Reader(f, instant=end) if f is not None and end else None
-        sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE) if reader else None
+        pdf = cf.bank_pdf.get((period[2:], basis)) if period.startswith("Q4") else None
+        sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE, pdf=pdf) \
+            if reader else None
         result = (sheet, "") if reader \
             else (None, f"no facts for {period}")
     memo[k] = result
@@ -1432,6 +1467,7 @@ def run(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | Non
             return entry
         facts = CompanyFacts(sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/"), sink.get_object)
         facts.bse_periods = _bse_periods(sink, scrip)
+        bank_pdf.attach(facts, sink, scrip)       # a bank's annual-report rows its file lacks (TODO 148); none stored: no change
         if not facts.results and not facts.annual:
             entry["skipped"] = "no stored facts"
         bundle = {}

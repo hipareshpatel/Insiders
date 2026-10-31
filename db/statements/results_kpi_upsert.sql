@@ -3,7 +3,8 @@ INSERT INTO results_kpi (scrip_code, period, basis, kind, source_news_id,
                          revenue, revenue_prev, revenue_yoy, revenue_qoq,
                          ebitda, ebitda_prev, ebitda_yoy, ebitda_qoq, ebitda_turn, ebitda_key,
                          pat, pat_prev, pat_yoy, pat_qoq, pat_turn, pat_qoq_turn, pat_key,
-                         opm, opm_yoy_bps, opm_qoq_bps, nfo, pat_pre, pat_pre_prev, pat_pre_yoy, pat_pre_turn, digest, updated_at)
+                         opm, opm_yoy_bps, opm_qoq_bps, nfo, pat_pre, pat_pre_prev, pat_pre_yoy, pat_pre_turn,
+                         pat_total, pat_total_prev, pat_total_yoy, pat_total_turn, digest, updated_at)
 SELECT json_extract(value, '$.scrip_code'), json_extract(value, '$.period'), json_extract(value, '$.basis'), json_extract(value, '$.kind'),
        json_extract(value, '$.source_news_id'),
        json_extract(value, '$.revenue'), json_extract(value, '$.revenue_prev'), json_extract(value, '$.revenue_yoy'), json_extract(value, '$.revenue_qoq'),
@@ -14,6 +15,7 @@ SELECT json_extract(value, '$.scrip_code'), json_extract(value, '$.period'), jso
        json_extract(value, '$.opm'), json_extract(value, '$.opm_yoy_bps'), json_extract(value, '$.opm_qoq_bps'),
        coalesce(json_extract(value, '$.nfo'), 0),
        json_extract(value, '$.pat_pre'), json_extract(value, '$.pat_pre_prev'), json_extract(value, '$.pat_pre_yoy'), json_extract(value, '$.pat_pre_turn'),
+       json_extract(value, '$.pat_total'), json_extract(value, '$.pat_total_prev'), json_extract(value, '$.pat_total_yoy'), json_extract(value, '$.pat_total_turn'),
        json_extract(value, '$.digest'), json_extract(value, '$.updated_at')
 FROM json_each(?1)
 WHERE true
@@ -27,5 +29,6 @@ ON CONFLICT (scrip_code, period) DO UPDATE SET
        opm = excluded.opm, opm_yoy_bps = excluded.opm_yoy_bps, opm_qoq_bps = excluded.opm_qoq_bps,
        nfo = excluded.nfo,
        pat_pre = excluded.pat_pre, pat_pre_prev = excluded.pat_pre_prev, pat_pre_yoy = excluded.pat_pre_yoy, pat_pre_turn = excluded.pat_pre_turn,
+       pat_total = excluded.pat_total, pat_total_prev = excluded.pat_total_prev, pat_total_yoy = excluded.pat_total_yoy, pat_total_turn = excluded.pat_total_turn,
        digest = excluded.digest, updated_at = excluded.updated_at
  WHERE results_kpi.digest IS NOT excluded.digest;

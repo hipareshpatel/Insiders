@@ -96,7 +96,18 @@ export function summarise(rows: SummaryRow[]): KpiSummary {
     pat_turn_n: rows.filter((r) => r.pat_turn != null).length,
     spread, momentum,
     nfo: ordinary.filter((r) => r.nfo === 1).length,
+    like_for_like: likeForLike(ordinary),
   };
+}
+
+/** Revenue, EBITDA and profit growth over the same companies: ordinary companies with a per cent for all three (audit of 31 Oct 2026,
+ *  #303 item A: the three tile medians are over three different sets, so "profit grew faster than sales" read true from them while,
+ *  like for like, 427 companies had revenue +22.2% and profit +21.3%). Null below 5 companies. */
+function likeForLike(ordinary: SummaryRow[]): KpiSummary["like_for_like"] {
+  const both = ordinary.filter((r) => r.revenue_yoy != null && pct(r.ebitda_yoy, r.ebitda_turn) != null && pct(r.pat_yoy, r.pat_turn) != null);
+  if (both.length < 5) return null;
+  return { n: both.length, revenue: median(both.map((r) => r.revenue_yoy as number)),
+           ebitda: median(both.map((r) => pct(r.ebitda_yoy, r.ebitda_turn) as number)), pat: median(both.map((r) => pct(r.pat_yoy, r.pat_turn) as number)) };
 }
 
 // ---- the group view ----

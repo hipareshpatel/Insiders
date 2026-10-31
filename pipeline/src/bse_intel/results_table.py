@@ -91,6 +91,29 @@ def _line(key: str, row: str, now: dict, before: dict) -> dict | None:
     return line
 
 
+TOTAL_ROW = "Net Profit"   # the whole profit, minority partners' share included (Screener's Net Profit row)
+
+
+def _owners_from_total(entry: dict | None) -> dict | None:
+    """A comparative entry that filed no owners' line but a net profit with no minority share: its owners' profit is that net profit
+    (Ind AS: with no non-controlling interest the whole profit is the owners'). Audit of 31 Oct 2026 (#303, item B): CHOLAFIN, IIFLCAPS,
+    MONARCH, 5PAISA, SPANDANA and SEITINVIT had revenue growth but no profit growth, because the year-ago quarter's file had no owners'
+    line. An entry with a minority share, or with the owners' line, is returned as it is."""
+    rows = (entry or {}).get("rows") or {}
+    if entry is None or rows.get(fact_sheet.OWNERS) is not None or rows.get(TOTAL_ROW) is None or (rows.get("Minority share") or 0) != 0:
+        return entry
+    return {**entry, "rows": {**rows, fact_sheet.OWNERS: rows[TOTAL_ROW]}}
+
+
+def _whole_profit(now: dict, before: dict, pat_row: str, pat: dict) -> dict | None:
+    """The whole profit beside the owners' (owner, 31 Oct 2026: "Both, owners' first"), on the PAT's own change rule: only when the PAT
+    column is the owners' row and the whole profit differs from it (a minority share), else None (the PAT is already the whole profit)."""
+    rows = now.get("rows") or {}
+    if pat_row == TOTAL_ROW or rows.get(TOTAL_ROW) is None or round(rows[TOTAL_ROW] - pat["value"], 2) == 0:
+        return None
+    return _line("pat", TOTAL_ROW, now, before)
+
+
 def _before_exceptional(now: dict, before: dict, pat_row: str, pat: dict) -> dict | None:
     """The profit before exceptional items: the PAT line's own row less the exceptional item after tax (Ind AS 1 shows it apart; brokers
     quote adjusted PAT beside the reported), and its change on the same rule as the PAT's. Only when the quarter has a non-zero exceptional
@@ -139,6 +162,10 @@ def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | 
         revenue_row, ebitda_row, margin_row = LAYOUT[layout]
         # the profit's comparatives are the same row as its value (a total with minority interest is no base for the owners' profit)
         pat_row = next((r for r in PAT_ROWS if (now.get("rows") or {}).get(r) is not None), None)
+        if pat_row == fact_sheet.OWNERS and not ((now.get("rows") or {}).get("Minority share") or 0):
+            # only for a company with no minority share now either: a year-ago file that simply lacks the row is no proof of none
+            # (independent review of #302)
+            before = {slot: _owners_from_total(e) for slot, e in before.items()}
         # the year-ago base as a later filing restates it (owner, 31 Oct 2026: as Screener does), from this quarter's own filing or an
         # earlier one: the growth is worked against what the company now says the year-ago figure was
         rebased, _ = restated_pdf.rebase_entry(dossier, before["prev_year"], {revenue_row: "revenue", **({pat_row: "pat"} if pat_row else {})},
@@ -151,6 +178,9 @@ def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | 
         pre = _before_exceptional(now, before, pat_row, pat)
         if pre is not None:
             table["pat_pre"] = pre
+        total = _whole_profit(now, before, pat_row, pat)
+        if total is not None:
+            table["pat_total"] = total
         for key, row in (("revenue", revenue_row), ("ebitda", ebitda_row)):
             line = _line(key, row, now, before) if row else None
             if line is not None:
@@ -197,6 +227,7 @@ def kpi_row(scrip: str, table: dict, at: str) -> dict:
     rewritten in the database). The keys are the table's column names."""
     revenue, ebitda, pat, opm = table.get("revenue") or {}, table.get("ebitda") or {}, table.get("pat") or {}, table.get("ebitda_margin") or {}
     pre = table.get("pat_pre") or {}
+    total = table.get("pat_total") or {}
     kind = table["lens"]
     news_id = table.get("source_news_id")
     row = {"scrip_code": scrip, "period": table["period"], "basis": table["basis"], "kind": kind,
@@ -217,6 +248,9 @@ def kpi_row(scrip: str, table: dict, at: str) -> dict:
     if pre:
         row.update({"pat_pre": pre.get("value"), "pat_pre_prev": pre.get("prev_year"), "pat_pre_yoy": pre.get("yoy_pct"),
                     "pat_pre_turn": pre.get("yoy_turn")})
+    if total:   # as pat_pre: only where there is one, so an unchanged row keeps its digest
+        row.update({"pat_total": total.get("value"), "pat_total_prev": total.get("prev_year"), "pat_total_yoy": total.get("yoy_pct"),
+                    "pat_total_turn": total.get("yoy_turn")})
     row["digest"] = hashlib.sha1(json.dumps(row, sort_keys=True).encode()).hexdigest()[:16]
     row["updated_at"] = at
     return row

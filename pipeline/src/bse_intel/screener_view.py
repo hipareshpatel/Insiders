@@ -90,6 +90,9 @@ STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff", "before_lis
 # older ones carry screener's merger restatements and the older file format; a quarter before it is listed as before_cutoff, never
 # counted in the exact share. Years and balance sheets are compared as before.
 FIRST_QUARTER = "Q1FY26"
+# the quarters measured against screener (owner, 31 Oct 2026 ~21:30 IST: "Yes, measure FY25 quarters"; the cut-off is FY25 onward).
+# FIRST_QUARTER stays the start of the BSE results fetch (bse_results_xbrl): measuring more never downloads more.
+MEASURE_FROM = "Q1FY25"
 LISTING_FROM = "Q1FY24"       # before_listing is decided only from here: the years and quarters screener shows for a recent listing
 # a period screener shows from before the company's first results on any exchange (its prospectus, or the year-ago column of its first
 # results) is before_listing, never counted (owner, 29 Oct 2026: "we don't need it at all"): no facts for it, earlier than the first
@@ -1382,8 +1385,8 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
             for period, theirs in by_period.items():
                 rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": fam, "period": period, "table": table,
                        "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "", "hints": ""}
-                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(FIRST_QUARTER):
-                    rec.update(status="before_cutoff", note=f"before {FIRST_QUARTER}: not compared")
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(MEASURE_FROM):
+                    rec.update(status="before_cutoff", note=f"before {MEASURE_FROM}: not compared")
                     out.append(rec)
                     continue
                 ours_rows, why = _ours(cf, fam, basis, table, period, memo)
@@ -1629,3 +1632,71 @@ def render(summary: dict) -> str:
         share = "-" if c["exact_share"] is None else f"{c['exact_share'] * 100:.1f}%"
         out.append(f"  {key:45s} exact {c['ok']:>4} apart {c['apart']:>4} ({share})")
     return "\n".join(out)
+
+
+# --- the stored statements against screener (owner, 31 Oct 2026: "is our memory finally updated?") ---------------------
+# screener-rows above measures the recipes over the stored facts. The site shows dossier.statements, written by the live path,
+# the backfill and the rebuild: an entry left out, written before a rule, or put back by another source would not show there.
+
+def compare_stored(page: dict, entries: list[dict], scrip: str = "", symbol: str = "", basis: str | None = None) -> list[dict]:
+    """Every (table, row, period) the page shows against the dossier's stored statements entry of that table, basis and period:
+    ok, apart, no_facts (no stored entry) or no_recipe (the entry has no such row); quarters before MEASURE_FROM are not
+    compared, as in ``compare``."""
+    basis = basis or page.get("basis") or CONSOLIDATED
+    stored = {(e.get("table"), e.get("period"), e.get("basis")): e for e in entries or []}
+    out = []
+    for _, table, _ in TABLES:
+        for row, by_period in (page.get("tables") or {}).get(table, {}).items():
+            for period, theirs in by_period.items():
+                e = stored.get((table, period, basis))
+                rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": (e or {}).get("family") or "", "period": period,
+                       "table": table, "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "",
+                       "hints": ""}
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(MEASURE_FROM):
+                    rec.update(status="before_cutoff", note=f"before {MEASURE_FROM}: not compared")
+                elif e is None:
+                    rec.update(status="no_facts", note="no stored statements entry")
+                elif (e.get("rows") or {}).get(row) is None:
+                    rec.update(status="no_recipe", note=f"the stored entry has no {row}")
+                else:
+                    got = float(e["rows"][row])
+                    lab = e.get("lab") or {}
+                    rec.update(ours=round(got, 2), diff=round(got - theirs, 2), status="ok" if exact(got, theirs, row) else "apart",
+                               note=f"stored {str(e.get('as_of') or '')[:10]} by {lab.get('by') or '?'} from {lab.get('from') or lab.get('doc') or '?'}")
+                out.append(rec)
+    return out
+
+
+def run_stored(sink, companies: list[tuple[str, str]], workers: int = 8, day: str | None = None) -> dict:
+    """Read only: the stored screener pages against each company's stored statements (its dossier). No request to NSE, BSE or
+    screener; summarised like ``run``, so ``to_csv`` and screener-rows-diff read it the same way."""
+    from .screener_crosscheck import stored_pages
+    from .screener_download import unpack
+
+    pages_by_symbol, newest = stored_pages(sink, day)
+
+    def one(item: tuple[str, str]) -> dict:
+        scrip, symbol = item
+        entry = {"scrip": scrip, "symbol": symbol, "rows": [], "skipped": None}
+        try:
+            entry["sector"], entry["industry"] = _sector(sink, scrip)
+            stored = pages_by_symbol.get(symbol) or {}
+            if not stored:
+                entry["skipped"] = "no stored page"
+                return entry
+            dossier = sink.get_dossier(scrip) or {}
+            entries = dossier.get("statements") or []
+            if not entries:
+                entry["skipped"] = "no stored statements"
+            for basis, key in sorted(stored.items()):
+                blob = sink.get_object(key)
+                if blob:
+                    page = parse_page(unpack(blob))
+                    entry["rows"] += compare_stored(page, entries, scrip, symbol, page.get("basis") or basis)
+        except Exception as exc:  # noqa: BLE001 - one company's bad page or dossier is that company's skip
+            entry["skipped"] = f"error: {type(exc).__name__}: {exc}"[:200]
+        return entry
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        results = list(pool.map(one, companies))
+    return summarise(results, newest)

@@ -580,6 +580,10 @@ def test_unit_slips_never_shrink_a_figure_under_five_lakh():
 
     card = ["Finance costs rose to ₹84.83 Cr from ₹18.82 Cr (Q4FY25)."]
     assert unit_slips(card, HUBTOWN_LAKH) == []   # 18.82 -> 1.882 lakh = ₹0.01882 Cr, never "₹0.02 Cr"
+    # re-made on 31 Oct 2026, the same comma-as-point class at ₹41 lakh: FY25 revenue 40,847 lakh read "40.847" made the right
+    # ₹408.47 Cr into ₹0.41 Cr, finance cost 13,492 lakh read "13.492" made ₹134.92 Cr into ₹0.135 Cr. A shrink by exactly 1,000 is never made
+    card = ["FY26 revenue ₹643.51 Cr against ₹408.47 Cr in FY25; finance costs ₹150.66 Cr against ₹134.92 Cr."]
+    assert unit_slips(card, HUBTOWN_LAKH) == []
     # real slips are still corrected: 8,483 lakh carded as ₹8,483 Cr is ₹84.83 Cr
     assert unit_slips(["Finance costs of ₹8,483 Cr"], HUBTOWN_LAKH) == [("8,483", 8483.0, 0, 84.83, 2)]
     # and a small one is written with the places it needs: 45.67 lakh carded as ₹4,567 Cr is ₹0.457 Cr

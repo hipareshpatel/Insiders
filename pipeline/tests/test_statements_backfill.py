@@ -217,3 +217,71 @@ def test_screener_breaks_the_tie_when_memory_doubts_the_files_profit():
     assert sb._confirmed(lambda p, b: None, "Q2FY26", "CONSOLIDATED", 284.29) is False     # no page: the old check stands
     assert sb._confirmed(None, "Q2FY26", "CONSOLIDATED", 284.29) is False
     assert sb._confirmed(lambda p, b: 284.0, "FY26", "CONSOLIDATED", 284.29) is True       # a year: the page's annual Net Profit
+
+
+def test_a_quarter_a_hundred_times_off_the_companys_other_quarters_is_left_out_and_taken_off_a_rebuild(monkeypatch):
+    """Audit #303 item D: IMPAL Q1FY27 Sales 2.3429, Net Profit 0.217 against its other quarters' ~200 and ~25 (the file tagged in the
+    wrong unit); the backfill from stored facts wrote it, so the Results page showed -98.8% and a 9,363% rise the next quarter."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    figures = {"Q1FY26": (196.69, 20.41), "Q2FY26": (198.71, 25.5), "Q3FY26": (230.99, 17.18), "Q4FY26": (210.72, 33.46),
+               "Q1FY27": (2.3429, 0.217), "Q2FY27": (221.7, 27.67)}
+    row = lambda v: SimpleNamespace(value=v)
+    monkeypatch.setattr(sv, "_ours", lambda cf, fam, basis, table, period, memo: (
+        ({"Sales": row(figures[period][0]), "Net Profit": row(figures[period][1])}, "") if table == "quarters" else (None, "")))
+    cf = SimpleNamespace(results={(p, "STANDALONE"): f"k{p}" for p in figures}, annual={}, family=lambda b: "corporate")
+    entries, left = sb.company_entries(cf, {}, "t")
+    assert {e["period"] for e in entries if e["table"] == "quarters"} == set(figures) - {"Q1FY27"}
+    assert left == [f"STANDALONE quarters Q1FY27: {sb.UNIT_SLIP_NOTE}"]
+    # the slipped entry the earlier backfill wrote is taken out on a rebuild; an entry a card wrote is left alone
+    stored = {"statements": [{"period": "Q1FY27", "basis": "STANDALONE", "table": "quarters", "rows": {"Sales": 2.3429},
+                              "lab": {"by": "file", "rules": "screener_view"}},
+                             {"period": "Q1FY27", "basis": "CONSOLIDATED", "table": "quarters", "rows": {"Sales": 9.0}, "lab": {"by": "card"}}]}
+    assert sb.fill(stored, entries, replace=True, slipped=sb.slipped_keys(left)) == len(entries) + 1
+    assert [(e["period"], e["basis"]) for e in stored["statements"] if e["period"] == "Q1FY27"] == [("Q1FY27", "CONSOLIDATED")]
+
+
+def test_a_seasonal_quarter_as_large_as_a_year_earlier_is_no_unit_slip(monkeypatch):
+    """Dry run 41225623600: Maharashtra Scooters' Jul-Sep quarter (its dividends) is ~40x its other quarters every year."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    figures = {"Q1FY26": (29.27, 35.36), "Q2FY26": (271.02, 267.07), "Q3FY26": (6.44, 4.12), "Q4FY26": (6.03, 4.01),
+               "Q1FY27": (5.41, 3.32), "Q2FY27": (297.36, 293.27)}
+    row = lambda v: SimpleNamespace(value=v)
+    monkeypatch.setattr(sv, "_ours", lambda cf, fam, basis, table, period, memo: (
+        ({"Sales": row(figures[period][0]), "Net Profit": row(figures[period][1])}, "")
+        if table == "quarters" and period in figures else (None, "")))
+    cf = SimpleNamespace(results={(p, "STANDALONE"): f"k{p}" for p in figures}, annual={}, family=lambda b: "corporate")
+    entries, left = sb.company_entries(cf, {}, "t")
+    assert left == [] and {e["period"] for e in entries} >= {"Q2FY26", "Q2FY27"}
+
+
+def test_a_december_year_company_gets_its_year_and_its_december_balance_sheet(monkeypatch):
+    """Stored-statements check, 31 Oct 2026: Schaeffler, Rain and Hexaware's FY25 years (Dec 2024) and Dec balance sheets were never
+    built, as only Q4 years and Q2/Q4 balance sheets were. The newest, unfinished year stays out."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    quarters = ["Q4FY24", "Q1FY25", "Q2FY25", "Q3FY25", "Q4FY25", "Q1FY26"]
+    row = lambda v: SimpleNamespace(value=v)
+
+    def ours(cf, fam, basis, table, period, memo):
+        if table == "quarters" and period in quarters:
+            return {"Sales": row(100.0), "Net Profit": row(10.0)}, ""
+        if table == "balance" and period in ("Q1FY25", "Q3FY25"):          # its June half-year and December year-end sheets
+            return {"Total Assets": row(500.0)}, ""
+        if table in ("annual", "cash_flow"):
+            return ({"Sales": row(400.0), "Net Profit": row(40.0)} if table == "annual" else {"Cash from Operating Activity": row(50.0)}), ""
+        return None, ""
+
+    monkeypatch.setattr(sv, "_ours", ours)
+    cf = SimpleNamespace(results={(p, "CONSOLIDATED"): f"k{p}" for p in quarters}, annual={}, family=lambda b: "corporate")
+    entries, _ = sb.company_entries(cf, {}, "t")
+    got = {(e["table"], e["period"]) for e in entries}
+    assert {("balance", "Q1FY25"), ("balance", "Q3FY25"), ("annual", "FY25"), ("cash_flow", "FY25")} <= got
+    assert ("annual", "FY26") not in got and ("balance", "Q2FY25") not in got   # FY26 unfinished; no sheet in that file

@@ -283,10 +283,10 @@ PAGE = (section("profit-loss", {"Sales&nbsp;+": [900, 50], "Expenses&nbsp;+": [6
         + section("cash-flow", {"Cash from Investing Activity&nbsp;+": [-88, 1]}, ["Mar 2026", "Dec 2024"]))
 
 
-def test_quarters_before_fy26_are_listed_but_never_counted():
-    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90]}, ["Jun 2025", "Mar 2025"]))
+def test_quarters_before_fy25_are_listed_but_never_counted():
+    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90]}, ["Jun 2024", "Mar 2024"]))
     rows = {r["period"]: r for r in sv.compare(page, _store({}), "1", "DEMO")}
-    assert rows["Q4FY25"]["status"] == "before_cutoff" and rows["Q1FY26"]["status"] == "no_facts"   # owner: quarters from FY26
+    assert rows["Q4FY24"]["status"] == "before_cutoff" and rows["Q1FY25"]["status"] == "no_facts"   # owner 31 Oct: from FY25
     summary = sv.summarise([{"scrip": "1", "symbol": "DEMO", "rows": list(rows.values()), "skipped": None}], "2026-10-29")
     assert summary["by_status"]["before_cutoff"] == 1 and summary["by_row"]["quarters: Sales"]["exact_share"] is None
 
@@ -383,6 +383,8 @@ def test_workflow_runs_screener_rows_read_only_and_always_uploads():
     assert 'screener-rows ${IDS:+--scrips "$IDS"} --top-mcap "${LIMIT:-50}"' in run["run"] and "--apply" not in run["run"]
     upload = next(s for s in steps if s.get("if") == "always() && inputs.command == 'screener-rows'")
     assert upload["with"]["name"] == "screener-rows"
+    stored = next(s for s in steps if s.get("if") == "!cancelled() && inputs.command == 'screener-rows'")
+    assert "screener-rows --stored" in stored["run"] and "--apply" not in stored["run"] and stored.get("continue-on-error")
 
 
 # --- the review's findings (28 Oct 2026) -----------------------------------------------------------------------------------
@@ -987,3 +989,25 @@ def test_a_row_apart_names_the_screener_sub_rows_that_equal_its_gap():
     assert sv.sub_row_hints(head, "Mar 2025", 1245.5)[1] == "Long term Borrowings 1,200.00 + Lease Liabilities 45.50"
     assert sv.sub_row_hints({"Material Cost %": {"Mar 2025": "40%"}}, "Mar 2025", 40.0) == ("", "")
     assert sv.column_for("balance", "Q4FY25") == "Mar 2025" and sv.column_for("cash_flow", "FY25") == "Mar 2025"
+
+
+def test_the_stored_statements_are_compared_with_screener_row_by_row():
+    """Owner, 31 Oct 2026: is our memory updated? The site shows dossier.statements, not the recipes screener-rows measures."""
+    from bse_intel import screener_view as sv
+
+    page = {"basis": "CONSOLIDATED", "tables": {
+        "quarters": {"Sales": {"Q1FY26": 100.0, "Q2FY26": 50.0, "Q3FY26": 70.0, "Q4FY24": 9.0}, "Net Profit": {"Q1FY26": 10.0}},
+        "annual": {"Sales": {"FY24": 400.0}}}}
+    entries = [
+        {"table": "quarters", "period": "Q1FY26", "basis": "CONSOLIDATED", "rows": {"Sales": 100.0}, "as_of": "2026-10-31T09:00",
+         "lab": {"by": "file", "from": "stored facts"}},
+        {"table": "quarters", "period": "Q2FY26", "basis": "CONSOLIDATED", "rows": {"Sales": 57.0}},
+        {"table": "annual", "period": "FY24", "basis": "STANDALONE", "rows": {"Sales": 400.0}},
+    ]
+    got = {(r["table"], r["row"], r["period"]): r for r in sv.compare_stored(page, entries, "1", "ACME")}
+    assert got[("quarters", "Sales", "Q1FY26")]["status"] == "ok" and "stored 2026-10-31 by file" in got[("quarters", "Sales", "Q1FY26")]["note"]
+    assert got[("quarters", "Sales", "Q2FY26")]["status"] == "apart" and got[("quarters", "Sales", "Q2FY26")]["diff"] == 7.0
+    assert got[("quarters", "Sales", "Q3FY26")]["status"] == "no_facts"        # no stored entry
+    assert got[("quarters", "Net Profit", "Q1FY26")]["status"] == "no_recipe"  # the entry lacks the row
+    assert got[("quarters", "Sales", "Q4FY24")]["status"] == "before_cutoff"
+    assert got[("annual", "Sales", "FY24")]["status"] == "no_facts"           # only the other basis is stored

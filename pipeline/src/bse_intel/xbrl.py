@@ -468,12 +468,19 @@ BANK_RATIOS = ("gnpa_pct", "nnpa_pct", "roa_pct")
 def _bank_ratio_fillers(values: dict) -> None:
     """A bank's consolidated file carries 0 for gross NPA, net NPA and RoA alike (SBI Q1FY27, HDFC Bank Q2FY27, IDFC
     First Q1FY27; measured 2026-10-20, docs/SOURCES.md): a filler, not a value, so a period whose bank ratios are all
-    0 keeps none of them ("gross NPA 0%" on a card otherwise). A single 0 beside real ratios (a net NPA of nil) stays."""
+    0 keeps none of them ("gross NPA 0%" on a card otherwise). A gross NPA of 0 is a filler even beside a real RoA, and takes the
+    net NPA with it. A net NPA of nil beside a real gross NPA stays."""
     for label in {p for m, p in values if m in BANK_RATIOS}:
         present = [values[(m, label)] for m in BANK_RATIOS if (m, label) in values]
         if present and all(v == 0 for v in present):
             for m in BANK_RATIOS:
                 values.pop((m, label), None)
+        elif values.get(("gnpa_pct", label)) == 0:
+            # a gross NPA of 0 beside a real RoA is the template's filler too: a bank that lends has bad loans, and net NPA cannot
+            # exceed gross, so neither is kept (BANKBARODA Q2FY27 consolidated: "net NPA 0.00%, gross 0.00%" in a live headline,
+            # 31 Oct 2026, while its own text said 1.78% / 0.37%)
+            values.pop(("gnpa_pct", label), None)
+            values.pop(("nnpa_pct", label), None)
 
 
 _YTD_MONTHS = {"H1": 6, "H2": 6, "9M": 9, "FY": 12}

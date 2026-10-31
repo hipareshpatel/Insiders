@@ -113,6 +113,15 @@ export function oneOff(r: Pick<KpiRow, "pat" | "pat_pre" | "pat_pre_yoy" | "pat_
   return { text: ["Before one-offs " + cr(r.pat_pre), change].filter(Boolean).join(" · "), title: "Profit after tax excluding exceptional items, after their tax" };
 }
 
+/** "Whole profit ₹427 Cr · +11.2%": the profit with the minority partners' share, beside the owners' PAT (owner, 31 Oct 2026: "Both, owners'
+ *  first"); news sites and Screener's Net Profit quote this one. Null when the row has none (the PAT is already the whole profit). */
+export function wholeProfit(r: Pick<KpiRow, "pat" | "pat_total" | "pat_total_yoy" | "pat_total_turn">): { text: string; title: string } | null {
+  if (r.pat == null || r.pat_total == null) return null;
+  const change = r.pat_total_turn ? TURN_TEXT[r.pat_total_turn].toLowerCase() : r.pat_total_yoy != null ? fmtGrowth(r.pat_total_yoy) : null;
+  return { text: ["Whole profit " + cr(r.pat_total), change].filter(Boolean).join(" · "),
+           title: "Profit after tax including the minority partners' share (the figure most sites and Screener's Net Profit show)" };
+}
+
 // ---------- kinds of company ----------
 
 export const KIND_TAG: Record<Kind, string> = { company: "", bank: "Bank", nbfc: "NBFC", insurer: "Insurer", reit: "REIT", invit: "InvIT" };
@@ -222,11 +231,13 @@ export function seasonHeadline(s: KpiSummary, filtered = false): Seg[] {
 export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[][] {
   if (s.n === 0) return [];
   const lines: Seg[][] = [];
-  const { median_revenue_yoy: rev, median_ebitda_yoy: ebitda, median_pat_yoy: pat } = s;
-  if (rev != null && pat != null) {
+  // the comparison is made over the same companies only (#303 item A): the tile medians are over three different sets
+  const same = s.like_for_like;
+  if (same && same.revenue != null && same.pat != null) {
+    const { revenue: rev, ebitda, pat } = same;
     const lead = pat > rev ? "Profit grew faster than sales" : pat < rev ? "Sales grew faster than profit" : "Profit grew as fast as sales";
-    lines.push([{ t: `${lead}: median revenue growth ` }, { t: fmtPct(rev), b: true },
-      ...(ebitda != null ? [{ t: ", EBITDA " }, { t: fmtPct(ebitda), b: true }] : []), { t: "." }]);
+    lines.push([{ t: `${lead} for the ${fmtCount(same.n)} companies with all three figures: median revenue growth ` }, { t: fmtPct(rev), b: true },
+      ...(ebitda != null ? [{ t: ", EBITDA " }, { t: fmtPct(ebitda), b: true }] : []), { t: ", profit " }, { t: fmtPct(pat), b: true }, { t: "." }]);
   }
   const m = s.momentum;
   if (m.speeding_up + m.slowing > 0) {

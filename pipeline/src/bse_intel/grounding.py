@@ -944,7 +944,11 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 continue
             # 3. the declared unit read a power of ten off: the table figure is value * 10**k in that unit's terms
             fits = []
-            for k in (-4, -3, -2, -1, 1, 2, 3, 4):
+            for k in (-4, -2, -1, 1, 2, 3, 4):
+                # never a shrink by exactly 1,000: that is a lakh table's thousands comma read as a point ("40,847" as "40.847"), the
+                # card's right figure seen a thousand times too large. Hubtown nse-106629168 had its right ₹18.82 Cr made ₹0.02 Cr
+                # (30 Oct 2026), and once re-made, its FY25 revenue ₹408.47 Cr made ₹0.41 Cr and finance cost ₹134.92 Cr made ₹0.135 Cr
+                # (31 Oct 2026). A real slip is a unit read as another: lakh as crore (100), million as crore (10), thousand as lakh (100)
                 right = value * 10 ** k
                 right_decimals = max(0, decimals - k)
                 if right < 0.05:

@@ -51,7 +51,27 @@ def test_a_catalyst_and_core_catalyst_and_change_why_and_approval_are_checked():
     assert out.card.core_catalyst is None
     assert out.card.track_next.catalysts == []
     assert out.card.track_next.pending_approvals == ["Railway Board nod for coaches"]
-    assert out.card.notable_changes[0].why == "" and out.card.notable_changes[0].current == "10 Cr"
+    # names only (the default): one unprinted first word is forgiven, like any single ordinary word
+    assert out.card.notable_changes[0].why == "Fermentation programs ramp" and out.card.notable_changes[0].current == "10 Cr"
+
+
+def test_with_every_word_checked_a_lone_invented_word_counts_too(monkeypatch):
+    monkeypatch.setenv("CARD_TEXT_SUPPORT_WORDS", "1")
+    out = _out(notable_changes=[{"metric": "capex", "why": "Fermentation programs ramp", "current": "10 Cr"}])
+    card_support.support_check(out, SOURCES)
+    assert out.card.notable_changes[0].why == ""
+
+
+def test_names_only_keeps_ordinary_words_the_filing_does_not_use(monkeypatch):
+    """31 Oct 2026: the word check dropped items on 36% of 9,249 stored cards, mostly on words like "acceleration"."""
+    item = "Order acceleration compared with the earlier quarter for coaches"
+    out = _out(track_next={"risks": [item]})
+    card_support.support_check(out, SOURCES)
+    assert out.card.track_next.risks == [item]
+    monkeypatch.setenv("CARD_TEXT_SUPPORT_WORDS", "1")
+    out = _out(track_next={"risks": [item]})
+    card_support.support_check(out, SOURCES)
+    assert out.card.track_next.risks == []
 
 
 def test_a_sector_insight_is_checked_a_filing_insight_and_a_memory_insight_with_an_id_are_not():
@@ -154,3 +174,9 @@ def test_the_card_path_is_untouched_with_the_switch_off(settings, monkeypatch):
     monkeypatch.setattr(card_support, "strict_prompt", boom)
     monkeypatch.setattr("bse_intel.prompts.engine.strict_prompt", boom)
     test_pipeline.test_live_run_end_to_end(settings)
+
+
+def test_a_first_word_excused_in_one_item_is_not_excused_in_the_next():
+    out = _out(track_next={"risks": ["Fermentation programs ramp", "Delay as Fermentation and Zymase units stall"]})
+    card_support.support_check(out, SOURCES)
+    assert out.card.track_next.risks == ["Fermentation programs ramp"]   # the second names two things no source prints

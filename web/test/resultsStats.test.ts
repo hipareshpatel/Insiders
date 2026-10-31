@@ -1,7 +1,7 @@
 // The Results report's rules: the summary and the group figures (shared/resultsStats.ts). Run: npm test.
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { bandOf, computeGroups, median, membersOn, summarise, totalGrowth, type GroupCompany, type IndexMember, type StatRow, type SummaryRow } from "../shared/resultsStats.ts";
+import { bandOf, computeGroups, isFinancial, median, membersOn, summarise, totalGrowth, type GroupCompany, type IndexMember, type StatRow, type SummaryRow } from "../shared/resultsStats.ts";
 import { periodsBack } from "../shared/resultsKpi.ts";
 import type { Turn } from "../shared/resultsTypes.ts";
 
@@ -178,4 +178,14 @@ test("groups: trend points are null where the group had no per cent, and a media
   assert.ok(g[1].trend_pat_median.every((v) => v === null));
   assert.deepEqual(g[1].spread_pct, [0, 0, 0, 0]);
   assert.equal(g[1].speeding_up_pct, null);
+});
+
+test("a REIT or an InvIT counts in profit and revenue statistics but is no ordinary company for EBITDA and no financial for the cuts", () => {
+  const rows = [sr({}), sr({ kind: "reit", pat_yoy: 30, ebitda_yoy: 30 }), sr({ kind: "invit", pat_yoy: 20, ebitda_yoy: 20 })];
+  const s = summarise(rows);
+  assert.equal(s.n, 3);
+  assert.equal(s.pat_of, 3);        // every company counts in profit
+  assert.equal(s.ebitda_of, 1);     // the EBITDA statistics are for ordinary companies only
+  assert.equal(s.nfo, 0);
+  assert.deepEqual(["company", "bank", "nbfc", "insurer", "reit", "invit"].map((k) => isFinancial(k as never)), [false, true, true, true, false, false]);
 });

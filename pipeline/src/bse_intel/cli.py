@@ -2337,6 +2337,25 @@ def cmd_results_table(args, settings, sink) -> int:
     return 0
 
 
+def cmd_reit_results(args, settings, sink) -> int:
+    """REITs and InvITs on the Results page (reit_results.py): NSE's trust results list, each trust's XBRL (stored, else downloaded under FILE_CAP and
+    kept in R2), the trusts into companies and their quarters into results_kpi. No AI. Exit 75 when NSE refused the session; the file cap is a
+    planned stop (exit 0, the counts say capped)."""
+    from . import raw, reit_results
+    from .nse import NseClient, SourceBlockedError
+    from .timeutil import now_ist
+
+    try:
+        with NseClient() as client:
+            raw.attach(client, sink, "nse", settings)
+            out = reit_results.run(client, sink, now_ist().isoformat(timespec="seconds"))
+    except SourceBlockedError as exc:
+        print(f"NSE refused ({exc}): stopped")
+        return REFUSED
+    print("reit-results: " + json.dumps(out, ensure_ascii=False))
+    return 0
+
+
 def cmd_statements_backfill(args, settings, sink) -> int:
     """Every company's past statements by screener's rules from the stored facts into memory (statements_backfill.py): a dry
     run by default, --apply backs each dossier up first; at most --limit companies a run, resuming. No NSE, BSE or AI."""
@@ -2733,6 +2752,8 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("results-table", help="the results page's figures from the saved statements (the company page's Results tab source), KPI rows in the database, one per company and quarter (no card, no AI, no NSE)")
     p.add_argument("--all", action="store_true", help="every company (the full rebuild); default: the companies with a results card in the live window")
     p.set_defaults(func=cmd_results_table)
+    p = sub.add_parser("reit-results", help="REITs and InvITs on the Results page: NSE's trust results list, each trust's XBRL (stored, else downloaded under FILE_CAP and kept in R2), the trusts into companies and their quarters into the results table (no AI)")
+    p.set_defaults(func=cmd_reit_results)
     p = sub.add_parser("statements-backfill", help="every company's past statements by screener's rules from the stored facts into memory: dry run (default) or --apply (backs each dossier up first; no NSE, no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")

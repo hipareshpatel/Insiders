@@ -4,7 +4,7 @@ import { test } from "node:test";
 import {
   activeChips, arrowOf, barHeight, bestInEight, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
   medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, progressText, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
-  seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, type Seg,
+  KIND_TAG, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, type Seg,
 } from "../src/lib/resultsView.ts";
 import { EMPTY_SUMMARY, groupsResponse, ROWS, SUMMARY } from "./fixtures/resultsFixture.ts";
 
@@ -171,4 +171,10 @@ test("a link that names only a view ranks by that view's own column; a picked co
   assert.equal(readQuery(new URLSearchParams("view=qoq")).sort, "pat_qoq");
   assert.equal(readQuery(new URLSearchParams("view=qoq&sort=mcap")).sort, "mcap");
   assert.equal(readQuery(new URLSearchParams("view=nonsense")).sort, "pat_yoy");
+});
+
+test("a trust is tagged REIT or InvIT and shows revenue, EBITDA and margin like a company", () => {
+  assert.equal(KIND_TAG.reit, "REIT");
+  assert.equal(KIND_TAG.invit, "InvIT");
+  for (const kind of ["reit", "invit"] as const) assert.deepEqual(lineLabels(kind), { revenue: "Revenue", ebitda: "EBITDA", margin: "EBITDA margin" });
 });

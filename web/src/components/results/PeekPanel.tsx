@@ -15,6 +15,8 @@ const KIND_NOTE: Record<KpiRow["kind"], string | null> = {
   bank: "Banks: no operating-expense line is saved, so no EBITDA or margin; revenue is interest income.",
   nbfc: "NBFCs: financing profit and financing margin stand in for EBITDA and margin; left out of EBITDA medians and totals.",
   insurer: "Insurers: profit only; no revenue or EBITDA is saved in a comparable layout.",
+  reit: "REITs: revenue, operating profit and profit as the trust files them; left out of EBITDA medians and totals. Cash distributions are not shown yet.",
+  invit: "InvITs: revenue, operating profit and profit as the trust files them; left out of EBITDA medians and totals. Cash distributions are not shown yet.",
 };
 
 function Tile({ label, value, turn, amount }: { label: string; value: number | null; turn?: KpiRow["pat_turn"]; amount: number | null }) {

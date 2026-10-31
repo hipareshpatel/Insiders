@@ -132,3 +132,11 @@ def test_a_requeue_by_id_puts_its_companies_first_in_the_history_queue():
     sink = Kv()
     assert requeue.prioritise(sink, ["A", "B", ""]) == ["A", "B"]
     assert requeue.prioritise(sink, ["C"]) == ["C", "A", "B"]
+
+
+def test_a_backfill_pass_keeps_a_company_requeued_while_it_ran():
+    from bse_intel.pipeline import merged_priority
+
+    # read ["B", "C"] at the start; a requeue by id meanwhile put "A" first; "C" has no history left
+    assert merged_priority(["B", "C"], ["A", "B", "C"], ["B", "X"]) == ["A", "B"]
+    assert merged_priority([], [], ["X"]) == []

@@ -1175,6 +1175,13 @@ def companion_quarter(filing: Filing, dossier: dict) -> str | None:
     return None
 
 
+def merged_priority(read: list[str], now: list[str], order: list[str]) -> list[str]:
+    """The history queue's priority list written back at the end of a backfill pass: the companies added since it was read (a
+    requeue by id meanwhile) first, then those read at the start that still have history left."""
+    left = set(order)
+    return [s for s in now if s not in set(read)] + [s for s in read if s in left]
+
+
 def carries_results(event_type: str, text: str, tagged=None) -> bool:
     """A filing typed OTHER, GOVERNANCE or CORPORATE_ACTION that carries the company's results statement (a board
     outcome with the results and a stock split): it is the results filing, before pass 2 as after it."""
@@ -4877,8 +4884,11 @@ class Pipeline:
                     unfinished.append(s)  # stopped early, or has more than one page of history
             order = unfinished + order
         self._kv_set("backfill:company_order", json.dumps({**state, "scrips": order}))
-        if priority:
-            self._kv_set("backfill:priority", json.dumps([s for s in priority if s in set(order)]))
+        # read the key again before writing it: a requeue by id during this run put its companies there (requeue.prioritise), and
+        # writing back the list read at the start would lose them (review of #298)
+        kept = merged_priority(priority, json.loads(self.sink.kv_get("backfill:priority") or "[]"), order)
+        if priority or kept:
+            self._kv_set("backfill:priority", json.dumps(kept))
         total = (state.get("total") or 0) + len(state["extra"])
         self._kv_set("backfill:progress", json.dumps({"companies_left": len(order), "companies_total": total,
                                                       "built": state["built"], "through": through}))

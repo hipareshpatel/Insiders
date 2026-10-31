@@ -54,6 +54,19 @@ def test_the_year_to_date_and_the_dimension_contexts_are_not_the_quarter():
     assert rr.read(xbrl_doc(start="2026-04-01", end="2026-09-30")) is None  # no three-month period: a half year is not a quarter here
 
 
+def test_a_filler_zero_owners_share_is_not_the_profit_but_a_real_split_is():
+    filler = xbrl_doc(profit=177_399_000, owners=False).replace(b"</xbrli:xbrl>", b'<in-capmkt:ProfitOrLossAttributableToOwnersOfParent '
+        b'contextRef="OneD" unitRef="INR" decimals="-4">0</in-capmkt:ProfitOrLossAttributableToOwnersOfParent><in-capmkt:'
+        b'ProfitOrLossAttributableToNonControllingInterests contextRef="OneD" unitRef="INR" decimals="-4">0</in-capmkt:'
+        b'ProfitOrLossAttributableToNonControllingInterests></xbrli:xbrl>')
+    assert "Net Profit (owners)" not in rr.read(filler)["rows"]   # TVS Jun 2026: profit 17.74 Cr, owners 0 and minority 0
+    split = xbrl_doc(profit=2_213_400_000, owners=False).replace(b"</xbrli:xbrl>", b'<in-capmkt:ProfitOrLossAttributableToOwnersOfParent '
+        b'contextRef="OneD" unitRef="INR" decimals="-4">1798100000</in-capmkt:ProfitOrLossAttributableToOwnersOfParent><in-capmkt:'
+        b'ProfitOrLossAttributableToNonControllingInterests contextRef="OneD" unitRef="INR" decimals="-4">415300000</in-capmkt:'
+        b'ProfitOrLossAttributableToNonControllingInterests></xbrli:xbrl>')
+    assert rr.read(split)["rows"]["Net Profit (owners)"] == 179.81   # Brookfield Jun 2026: 179.81 + 41.53 = 221.34
+
+
 def test_a_file_without_a_profit_line_has_no_quarter_and_standalone_is_told_from_consolidated():
     assert rr.read(xbrl_doc(profit="")) is None
     assert rr.read(xbrl_doc(basis="Standalone"))["basis"] == "STANDALONE"
@@ -173,6 +186,17 @@ def test_trusts_not_on_bse_are_keyed_by_their_nse_symbol_and_the_shared_000000_r
     got = dict(sink._db.execute("SELECT scrip_code, revenue FROM results_kpi").fetchall())
     assert got == {"NSE:TVSINVIT": 100.0, "NSE:NDRINVIT": 300.0, "NSE:NOCODE": 1302.63}   # each trust its own figures; nothing under 000000
     assert sink._db.execute("SELECT symbol FROM companies WHERE scrip_code = 'NSE:TVSINVIT'").fetchone()[0] == "TVSINVIT"
+
+
+def test_the_shared_000000_company_row_goes_so_it_no_longer_shadows_a_trusts_symbol(settings):
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    sink.execute("companies_upsert", [{"scrip_code": "000000", "symbol": "NXT-INFRA", "company_name": "Nxt-Infra Trust", "isin": "INE0NXT23010",
+                                       "industry": None, "updated_at": "t0"}])
+    rows = [row(symbol="NXT-INFRA", name="Nxt-Infra Trust", file="nxt.xml", kind="InvITs")]
+    rr.run(Client(rows, {"nxt.xml": xbrl_doc(scrip="000000", symbol="NXT-INFRA", isin="INE0NXT23010")}), sink, "t")
+    assert [r[0] for r in sink._db.execute("SELECT scrip_code FROM companies WHERE symbol = 'NXT-INFRA'")] == ["NSE:NXT-INFRA"]
 
 
 def test_prune_companies_keeps_a_trust_that_is_not_on_nses_equity_list(settings):

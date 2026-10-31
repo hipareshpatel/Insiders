@@ -122,8 +122,10 @@ def read(data: bytes) -> dict | None:
     if pat is None:
         return None
     rows: dict[str, float] = {"Net Profit": round(pat / CRORE, 2)}
-    owners = amount("ProfitOrLossAttributableToOwnersOfParent")
-    if owners is not None:
+    owners, minority = amount("ProfitOrLossAttributableToOwnersOfParent"), amount("ProfitOrLossAttributableToNonControllingInterests")
+    # the owners' share only when it and the minority's add up to the profit: some files fill both with 0 (measured 31 Oct 2026: TVS
+    # Jun 2026, profit 17.74 Cr, owners 0, minority 0), and a filler zero is no profit to the unitholders
+    if owners is not None and abs(owners + (minority or 0) - pat) <= max(CRORE / 100, abs(pat) / 200):
         rows["Net Profit (owners)"] = round(owners / CRORE, 2)
     if revenue is not None:
         rows["Sales"] = round(revenue / CRORE, 2)
@@ -218,6 +220,9 @@ def run(client, sink, at: str, day_from: date | None = None) -> dict:
         sink.kv_set(TRUSTS_KEY, json.dumps(sorted(known | {c["isin"] for c in companies})), at)
     if kpi:
         sink.execute(results_table.STATEMENT, kpi)
+        placeholders = sorted({k["scrip_code"] for k in kept if not k["periods"]})
+        if placeholders:   # the shared 000000 company row once named after one of them shadows that trust's own (the guards of companies_prune hold)
+            sink.execute("companies_prune", [{"scrip_code": s} for s in placeholders])
         for i in range(0, len(kept), results_table.PRUNE_BATCH):
             sink.execute(results_table.PRUNE_STATEMENT, kept[i:i + results_table.PRUNE_BATCH])
     per_period: dict[str, int] = defaultdict(int)

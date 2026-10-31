@@ -71,7 +71,7 @@ export function Signals({ row, qoq = false }: { row: KpiRow; qoq?: boolean }) {
   const marks: Mark[] = [
     markOf(row.kind === "bank" ? "Interest income" : "Revenue", qoq ? row.revenue_qoq : row.revenue_yoy, null, row.kind !== "insurer"),
     markOf(row.kind === "nbfc" ? "Financing profit" : "EBITDA", qoq ? row.ebitda_qoq : row.ebitda_yoy, qoq ? null : row.ebitda_turn,
-      row.kind === "company" || row.kind === "nbfc"),
+      row.kind !== "bank" && row.kind !== "insurer"),
     markOf("Profit", qoq ? row.pat_qoq : row.pat_yoy, qoq ? row.pat_qoq_turn : row.pat_turn, true),
   ];
   return (

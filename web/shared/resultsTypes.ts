@@ -3,7 +3,9 @@
  *  Growth is always against the same quarter a year ago unless the name says otherwise. A growth figure is null when it does not exist
  *  (no such line saved, or a change across a loss, which has a named *_turn instead of a per cent). */
 
-export type Kind = "company" | "bank" | "nbfc" | "insurer";
+/** The statement layout a row comes from. A REIT or an InvIT (a trust) files the corporate lines; it is neither an ordinary company in the
+ *  EBITDA statistics nor a financial in the cuts (rule 2, docs/design/results-kpi.md). */
+export type Kind = "company" | "bank" | "nbfc" | "insurer" | "reit" | "invit";
 export type Turn = "LOSS_TO_PROFIT" | "PROFIT_TO_LOSS" | "LOSS_NARROWED" | "LOSS_WIDENED";
 export type View = "yoy" | "momentum" | "qoq";
 /** this quarter's growth against last quarter's, in points: >= +2 speeding up, <= -2 slowing, between steady; not comparable when either

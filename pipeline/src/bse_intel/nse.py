@@ -626,6 +626,21 @@ class NseClient:
         rows = data.get("data") if isinstance(data, dict) else data
         return rows if isinstance(rows, list) else []
 
+    def reit_invit_results(self, day_from: date | None = None, day_to: date | None = None, symbol: str | None = None) -> list[dict]:
+        """NSE's REIT and InvIT results list (the call its own Financial Results page makes for them: ``index=reitsinvits``,
+        script ``corporate-filings.js``, function ``loadFRInvitsreits``; measured 30 Oct 2026: 193 filings from 27 trusts, each with an
+        ``xbrl`` file). Rows as NSE gives them, newest first. NSE answers an unknown index name with ``no data found``, so an empty list
+        is not proof that a trust has no filings."""
+        params: dict[str, str] = {"index": "reitsinvits", "period": "Quarterly"}
+        if symbol:
+            params["symbol"] = symbol.strip().upper()
+        if day_from:
+            params["from_date"] = day_from.strftime("%d-%m-%Y")
+        if day_to:
+            params["to_date"] = day_to.strftime("%d-%m-%Y")
+        data = self._get(RESULTS_ENDPOINT, params).json()
+        return data if isinstance(data, list) else []
+
     def event_xbrl(self, kind: str, day_from: date, day_to: date | None = None, symbol: str | None = None) -> list:
         """NSE's event XBRL files of one type ("announcements", "para-b", "action") broadcast between the two dates
         (event_xbrl.py). One answer for the range, as the "Announcements XBRL" tab asks for it."""

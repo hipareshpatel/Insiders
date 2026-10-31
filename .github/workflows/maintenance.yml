@@ -305,7 +305,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, results-table, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -410,6 +410,7 @@ concurrency:
   group: >-
     ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
+    || inputs.command == 'reit-results' && 'maint-nse-memory'   # NSE downloads and a write to companies and results_kpi
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","results-table","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["text-backfill-bse","bse-annual-xbrl","bse-results-xbrl"]'), inputs.command) && format('maint-bse-{0}', inputs.command)
     || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
@@ -656,6 +657,19 @@ jobs:
           PLATFORM_TIMEOUT_S: "30"
           PLATFORM_ATTEMPTS: "3"
         run: '"$RUNNER_TEMP/venv/bin/python" -m bse_intel results-table --all'
+      # REITs and InvITs (reit_results.py; docs/STATUS.md item 12 step 1): NSE's REIT/InvIT results list (index=reitsinvits), each trust's XBRL
+      # kept in R2 (raw/reit-xbrl/) and read into companies and results_kpi. Downloads NSE files, so file_cap is required (the first test of a
+      # fetch is 100 files, owner 27 Oct 2026; a stored file is not downloaded again and costs none of the cap; a full run: a number such as 1000).
+      - name: REIT and InvIT results from NSE's XBRL (reit_results.py; files kept; no AI)
+        if: inputs.command == 'reit-results'
+        env:
+          PLATFORM_TIMEOUT_S: "30"
+          PLATFORM_ATTEMPTS: "3"
+        run: |
+          if [ "${FILE_CAP:-0}" = "0" ]; then
+            echo "::error::reit-results downloads NSE files: give file_cap (the first test of a fetch is 100 files, owner 27 Oct 2026; a full run, a number above the files left, such as 1000)"; exit 1
+          fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel reit-results
       - name: Statements by screener's rules from the stored facts (a dry run unless apply)
         if: inputs.command == 'statements-backfill'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs

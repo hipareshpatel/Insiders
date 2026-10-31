@@ -91,7 +91,7 @@ export function wasLine(amount: string | null, prevYoy: number | null | undefine
 
 // ---------- kinds of company ----------
 
-export const KIND_TAG: Record<Kind, string> = { company: "", bank: "Bank", nbfc: "NBFC", insurer: "Insurer" };
+export const KIND_TAG: Record<Kind, string> = { company: "", bank: "Bank", nbfc: "NBFC", insurer: "Insurer", reit: "REIT", invit: "InvIT" };
 
 /** What each column holds for a kind of company: a bank's revenue is interest income and it has no EBITDA; an NBFC's EBITDA columns hold
  *  its financing profit and margin; an insurer has profit only (docs/design/results-kpi.md rule 1). null: the line is not shown. */

@@ -100,7 +100,9 @@ export function membersOn(members: IndexMember[], indexId: string, day: string):
   return out;
 }
 
-const inCut = (kind: Kind, cut: Cut) => cut === "all" || (cut === "ex_financials" ? kind === "company" : kind !== "company");
+/** Banks, NBFCs and insurers. A REIT or an InvIT is not one, and is not an ordinary company either: it is in "all" only. */
+export const isFinancial = (kind: Kind) => kind === "bank" || kind === "nbfc" || kind === "insurer";
+const inCut = (kind: Kind, cut: Cut) => cut === "all" || (cut === "ex_financials" ? kind === "company" : isFinancial(kind));
 
 export interface GroupsInput {
   quarter: string;
@@ -169,7 +171,7 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
       of = input.companies.filter((c) => c.isin != null && isins.has(c.isin) && narrowed(c, withinNow)).length;
       if (!of) continue;
     } else if (!rows.length) continue;
-    const fin = all.filter((r) => r.kind !== "company");
+    const fin = all.filter((r) => isFinancial(r.kind));
     const ord = all.filter((r) => r.kind === "company");
     const pairs = (xs: StatRow[], f: "pat" | "revenue" | "ebitda") => xs.map((r) => ({ cur: r[f], prev: r[`${f}_prev`] }));
     const patSum = (xs: StatRow[]) => xs.reduce((s, r) => s + (r.pat ?? 0), 0);

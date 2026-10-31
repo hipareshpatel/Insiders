@@ -33,7 +33,10 @@ TURN_KEY = {"LOSS_TO_PROFIT": 1e6, "LOSS_NARROWED": 1e5, "LOSS_WIDENED": -1e5, "
 LAYOUT = {sv.CORPORATE: ("Sales", "Operating Profit", "OPM %"),
           sv.BANK: ("Revenue", None, None),
           sv.NBFC: ("Revenue", "Financing Profit", "Financing Margin %"),
-          sv.INSURER: (None, None, None)}
+          sv.INSURER: (None, None, None),
+          # a REIT or InvIT files the corporate lines (reit_results.py); only its kind differs on the page
+          "reit": ("Sales", "Operating Profit", "OPM %"),
+          "invit": ("Sales", "Operating Profit", "OPM %")}
 PAT_ROWS = (fact_sheet.OWNERS, "Net Profit")   # the profit to shareholders when the file has it, else the net profit
 
 

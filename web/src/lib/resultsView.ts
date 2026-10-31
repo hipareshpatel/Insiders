@@ -214,7 +214,7 @@ export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[]
       { t: `${coverageOf(top)}, against ${fmtPct(other.pat_median)} in the ${other.label}${coverageOf(other)}.` }]);
   }
   const fell = s.spread.below_0;
-  const fellLine: Seg[] = [{ t: String(fell), b: true }, { t: ` ${fell === 1 ? "company" : "companies"} (${pctOf(fell, s.n)}%) earned less than a year ago` }];
+  const fellLine: Seg[] = [{ t: fmtCount(fell), b: true }, { t: ` ${fell === 1 ? "company" : "companies"} (${pctOf(fell, s.pat_of)}% of those with a year-ago quarter) earned less than a year ago` }];
   const withTrend = wellCovered((indexRows ?? []).filter((r) => r.trend_pat_median.some((v) => v != null)));
   if (withTrend.length) {
     fellLine.push({ t: "; " }, { t: `${bestInEight(withTrend)} of ${withTrend.length}`, b: true },

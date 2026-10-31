@@ -86,6 +86,8 @@ export function summarise(rows: SummaryRow[]): KpiSummary {
     pat_of: rows.filter((r) => comparable(r.pat_yoy, r.pat_turn)).length,
     pat_n: rows.length,
     loss_to_profit: rows.filter((r) => r.pat_turn === "LOSS_TO_PROFIT").length,
+    // the base of "loss to profit": companies that made a loss a year ago (it turned to profit, narrowed or widened), not every company
+    loss_prev_n: rows.filter((r) => r.pat_turn === "LOSS_TO_PROFIT" || r.pat_turn === "LOSS_NARROWED" || r.pat_turn === "LOSS_WIDENED").length,
     median_revenue_yoy: median(withRevenue.map((r) => r.revenue_yoy).filter((v): v is number => v != null)),
     median_ebitda_yoy: median(ordinary.map((r) => pct(r.ebitda_yoy, r.ebitda_turn)).filter((v): v is number => v != null)),
     median_pat_yoy: median(rows.map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null)),

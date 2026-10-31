@@ -71,10 +71,10 @@ test("the season's headline and lines are templates over the summary", () => {
     "Profit grew faster than sales: median revenue growth +11.8%, EBITDA +14.6%.",
     "118 are speeding up, growing profit faster than last quarter; 98 are slowing.",
     "Nifty Midcap 150 leads: its median profit growth is +19.4% (130 of 149 reported), against +12.1% in the Nifty 50 (41 of 50 reported).",
-    "61 companies (26%) earned less than a year ago; 7 of 7 indices (with at least 80% of members reported) show their best median in 8 quarters.",
+    "61 companies (26% of those with a year-ago quarter) earned less than a year ago; 7 of 7 indices (with at least 80% of members reported) show their best median in 8 quarters.",
   ]);
   // without the groups, the index parts are left out, not guessed
-  assert.deepEqual(seasonLines(SUMMARY).map(text).slice(2), ["61 companies (26%) earned less than a year ago."]);
+  assert.deepEqual(seasonLines(SUMMARY).map(text).slice(2), ["61 companies (26% of those with a year-ago quarter) earned less than a year ago."]);
   assert.deepEqual(seasonLines(EMPTY_SUMMARY), []);
 });
 

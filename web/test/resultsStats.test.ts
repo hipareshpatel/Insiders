@@ -46,6 +46,7 @@ test("summary: up counts and their bases; EBITDA statistics are for ordinary com
   assert.deepEqual([s.ebitda_up, s.ebitda_of], [2, 4]);              // 4 ordinary companies; the loss-to-profit one is up; bank and insurer out
   assert.deepEqual([s.pat_up, s.pat_of], [4, 6]);                    // 5, loss to profit, bank 40, insurer 15; the base is every company
   assert.equal(s.loss_to_profit, 1);
+  assert.equal(s.loss_prev_n, 1);                                      // the base of loss to profit: a loss a year ago (profit to loss is not)
 });
 
 test("summary: a company with no year-ago quarter is reported but not in the base of X of Y", () => {

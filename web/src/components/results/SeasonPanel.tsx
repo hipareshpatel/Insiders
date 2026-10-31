@@ -25,7 +25,8 @@ export function SeasonPanel({ summary, indexRows, filtered, spread, turnaround, 
           foot={<MedianFoot noun="EBITDA" value={summary.median_ebitda_yoy} />} />
         <Tile icon={<TrendingUp className="h-3.5 w-3.5" />} label="PAT up" title="PAT: profit after tax" up={summary.pat_up} of={summary.pat_of} reported={summary.pat_n}
           foot={<MedianFoot noun="profit" value={summary.median_pat_yoy} title={medianNote(summary)} />} />
-        <Tile icon={<ArrowRight className="h-3.5 w-3.5" />} label="Loss to profit" up={summary.loss_to_profit} of={summary.n} reported={summary.n}
+        <Tile icon={<ArrowRight className="h-3.5 w-3.5" />} label="Loss to profit" up={summary.loss_to_profit} of={summary.loss_prev_n} reported={summary.loss_prev_n}
+          note={`Of the ${fmtCount(summary.loss_prev_n)} that made a loss a year ago.`}
           foot={<span className="text-ink-3">No % when last year was a loss</span>} />
       </div>
 

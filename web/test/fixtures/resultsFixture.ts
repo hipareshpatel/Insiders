@@ -89,7 +89,7 @@ export const ROWS_PAGE_2: KpiRow[] = [
 ];
 
 export const SUMMARY: KpiSummary = {
-  n: 236, revenue_up: 196, revenue_of: 230, revenue_n: 230, ebitda_up: 182, ebitda_of: 205, ebitda_n: 205, pat_up: 175, pat_of: 236, pat_n: 236, loss_to_profit: 11,
+  n: 236, revenue_up: 196, revenue_of: 230, revenue_n: 230, ebitda_up: 182, ebitda_of: 205, ebitda_n: 205, pat_up: 175, pat_of: 236, pat_n: 236, loss_to_profit: 11, loss_prev_n: 19,
   median_revenue_yoy: 11.8, median_ebitda_yoy: 14.6, median_pat_yoy: 13.9, median_pat_n: 221, pat_turn_n: 15,
   spread: { below_0: 61, from_0_to_10: 38, from_10_to_20: 41, above_20: 85, loss_to_profit: 11, loss_narrowed: 4, with_pct: 225 },
   momentum: { speeding_up: 118, slowing: 98, steady: 12, not_comparable: 8 },

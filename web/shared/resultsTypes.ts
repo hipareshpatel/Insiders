@@ -81,6 +81,7 @@ export interface KpiSummary {
   ebitda_up: number; ebitda_of: number; ebitda_n: number;      // ordinary companies only: banks, NBFCs and insurers are not in EBITDA statistics
   pat_up: number; pat_of: number; pat_n: number;               // pat_up counts a loss turned to profit
   loss_to_profit: number;
+  loss_prev_n: number;                         // companies with a loss a year ago: the base of loss_to_profit
   median_revenue_yoy: number | null;           // medians use companies with a per cent change
   median_ebitda_yoy: number | null;
   median_pat_yoy: number | null;

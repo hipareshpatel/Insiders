@@ -4,7 +4,7 @@ import { test } from "node:test";
 import {
   activeChips, arrowOf, barHeight, bestInEight, coverageOf, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
   medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
-  KIND_TAG, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, type Seg,
+  KIND_TAG, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, oneOff, type Seg,
 } from "../src/lib/resultsView.ts";
 import { EMPTY_SUMMARY, groupsResponse, ROWS, SUMMARY } from "./fixtures/resultsFixture.ts";
 
@@ -207,4 +207,17 @@ test("CSV headers say what a column is (U14)", () => {
   const head = toCsv([]).trimEnd();
   for (const h of ["EBITDA margin %", "Kind (company/bank/nbfc/insurer/reit/invit)", "PAT growth change vs last quarter (pts)"]) assert.ok(head.includes(h), h);
   assert.ok(!head.includes("PAT momentum"));
+});
+
+test("the profit before one-offs shows only when the exceptional item is at least 10% of PAT (F1)", () => {
+  const live = { pat: 412, pat_pre: 112, pat_pre_yoy: 514, pat_pre_turn: null };   // CGPOWER-like: an exceptional gain of 300 after tax
+  assert.equal(oneOff(live)?.text, "Before one-offs ₹112 Cr · +514.0%");
+  assert.equal(oneOff(live)?.title, "Profit after tax excluding exceptional items, after their tax");
+  assert.equal(oneOff({ pat: 100, pat_pre: 95, pat_pre_yoy: 5, pat_pre_turn: null }), null);   // 5% of PAT: not shown
+  assert.ok(oneOff({ pat: 100, pat_pre: 90, pat_pre_yoy: 5, pat_pre_turn: null }));            // exactly 10%: shown
+  assert.equal(oneOff({ pat: 100, pat_pre: null, pat_pre_yoy: null, pat_pre_turn: null }), null);
+  assert.equal(oneOff({ pat: 858.5, pat_pre: 158.5, pat_pre_yoy: null, pat_pre_turn: "LOSS_TO_PROFIT" })?.text, "Before one-offs ₹159 Cr · loss → profit");
+  const csv = toCsv([{ ...ROWS[0], pat_pre: 112, pat_pre_yoy: 514 }]);
+  assert.ok(csv.includes("PAT before exceptional items (Rs Cr),PAT before exceptional items YoY %"));
+  assert.match(csv.split("\r\n")[1], /,112,514,/);
 });

@@ -63,6 +63,11 @@ export interface KpiRow {
   pat_prev_yoy: number | null;
   pat_prev_turn: Turn | null;
   pat_momentum_pts: number | null;
+  /** profit after tax excluding exceptional items (after their tax) and its change on a year ago; set only for a quarter with a non-zero
+   *  exceptional item (results_table.py), else null. The page shows it when the item is at least 10% of |PAT| (oneOff in lib/resultsView.ts). */
+  pat_pre: number | null;
+  pat_pre_yoy: number | null;
+  pat_pre_turn: Turn | null;
   momentum: Momentum;                    // of profit growth
   /** profit up (or a loss turned to profit) while EBITDA fell; never for banks, NBFCs or insurers */
   nfo: boolean;

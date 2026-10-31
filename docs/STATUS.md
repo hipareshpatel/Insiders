@@ -114,12 +114,18 @@ Q4FY24 929; older quarters a handful (a company keeps its newest ten). Index ref
 497 reported for Q2FY27 then. A late filer appears within one or two pipeline runs once its exchange XBRL file is read (the results
 step refreshes companies with a results card in the last 10 days).
 
-*Running now.* Maintenance `reit-results` with `file_cap` 100, run 41150836776 (started ~06:10 IST after waiting behind the other
-session's `xbrl-facts`). **Not read yet.** Next: its log line `reit-results: {...}` (trusts, files listed / downloaded / stored, cap
-reached, rows per quarter); compare Embassy, Brookfield and Bagmane with Screener (Embassy Sep 2026: sales 1,303, operating profit
-980, profit 831 Cr); the Nifty 500 box should then read 500 members with no "not covered" note. Then, with the owner: the full run
-(`file_cap` such as 1000), a daily refresh step, trusts' market cap (none yet), whether the R2 lifecycle reaches `raw/reit-xbrl/`,
-and step 2 (NDCF, distribution per unit, NAV per unit, from the same files).
+*REIT 100-file test, read 31 Oct ~06:30 IST* (Maintenance `reit-results`, `file_cap` 100, run 41150836776, 06:10-06:20 IST): NSE listed
+193 filings, 185 after revisions; 100 downloaded and kept (`raw/reit-xbrl/`), the cap reached as planned, none unreadable; all 27 trusts
+in `companies`; 54 quarter rows (Q1FY27 26, Q2FY27 5, Q4FY26 23). The Nifty 500 box reads 260 of 500 members (no "not covered" note).
+Against Screener: Embassy Sep 2026 1,302.6 / 980 / 831 and Jun 2026 1,240.8 / 959 / 195 (Screener 1,303 / 980 / 831 and 1,241 / 959 /
+195): equal. Brookfield Jun 2026 sales 973.8 (Screener 974), operating profit 713.6 (Screener 701, not explained yet: our expenses are
+total expenses less finance cost and depreciation), profit 179.8 to unitholders against Screener's 221.3 total (41.5 minority interest:
+the page's rule is the owners' share, as for companies). Bagmane Jun 2026 437.0 / 364.2 / 57.9 (Screener 437 / 364 / 59, total 58.5).
+Bagmane's newest file (broadcast 22 Oct) is its June quarter, filed late; NSE's list calls it period 31-Mar-2027. No growth figures yet:
+the year-ago files are among the 85 not downloaded. Four more files were fetched once by hand (Brookfield, Bagmane) to check the above.
+Next: the full run (`file_cap` 100 more is enough: 85 left), then the year-ago check; the list reaches back to Sep 2025 only by default
+(Q1FY27 has no year-ago file without a `from_date`); a daily refresh step; trusts' market cap; the R2 lifecycle for `raw/reit-xbrl/`;
+step 2 (NDCF, distribution per unit, NAV per unit).
 
 *Open PR.* **#281** (not merged, waits for the owner's OK): the top of the Companies tab as the owner's Design E (revenue / EBITDA /
 PAT up and loss-to-profit tiles with medians, progress ring with the next meeting, "What this list says" kept, spread of PAT growth,
@@ -127,7 +133,7 @@ PAT up and loss-to-profit tiles with medians, progress ring with the next meetin
 
 *Waiting for the owner.* (1) Merge #281. (2) A minimum group size, proposed 5 companies reported, before a group is ranked or named
 "leads the season" (live, 31 Oct: Diversified +480% and Telecom Equipment +1,746% led their tabs on one or two companies). (3) The REIT
-full run after the 100-file test is read.
+full run (the 100-file test is read, above).
 
 *Learned the hard way.*
 - No `#` inside a folded `${{ }}` expression in a workflow: YAML loads it and CI passes, GitHub refuses the dispatch.

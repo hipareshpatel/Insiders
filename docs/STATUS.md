@@ -179,7 +179,11 @@ job. Hourly lead check-ins until 22:00 IST.**
    **TMB nse-106836238** (₹304 Cr ECL provision note, typed RESULTS): typed RESULTS by NSE's category or the model, it took the results
    path and found the bank's Q2FY27 file, so a second results card for the quarter. Proposed rule: a RESULTS-typed filing with no
    results statement and no results covering letter in its text (`_RESULTS_STATEMENT`, `results_cover`) is OTHER. It changes cards, so
-   it needs the on/off audit over stored cards and a blind sample first (owner rule); not built.
+   it needs the on/off audit over stored cards and a blind sample first (owner rule). **Built 31 Oct ~18:10 IST behind
+   `RESULTS_NEEDS_STATEMENT` (off; `pipeline.lacks_results`: no statement heading, no results covering letter, no "financial results
+   for the quarter/half/year", and at least 1,500 characters of text).** The audit: Maintenance `release-check` with `ids` =
+   `results_statement` (the stored RESULTS cards whose text is in R2, the last 8 days; changed = would be OTHER), then a blind read of
+   the changed cards; switch on only if no real results card is retyped.
    **TODO 129: fixed on #298** (a later report gives a year's balance sheet only with that year's equity; every case found is before FY23).
 6. Owner questions from docs/handover/2026-10-31.md section 4 (Mistral October spend; NVIDIA nemotron-3.5-parse model id; a results
    filing made twice: table on the repeat card?; Cloudflare Workers Paid renewal before ~21 Nov).

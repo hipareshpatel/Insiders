@@ -56,7 +56,7 @@ from .prompts.engine import PromptEngine
 from .quant import QuantCheck
 from .quant import check as check_quant
 from .rules import RuleBook
-from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_press_release
+from .settings import Settings, card_consolidated_only, card_ebitda_profit_v2, card_fact_sheet, card_footer_plausible, card_ground_all_fields, card_text_support, card_two_parts, card_watch_verdict, card_yoy_restated, d1_plan, memory_call_v2, results_needs_statement, results_press_release
 from .forensics import text_signals
 from .scoring import score as score_card
 from .signals import compute as compute_signals, scale_block, scale_parts
@@ -1180,6 +1180,22 @@ def merged_priority(read: list[str], now: list[str], order: list[str]) -> list[s
     requeue by id meanwhile) first, then those read at the start that still have history left."""
     left = set(order)
     return [s for s in now if s not in set(read)] + [s for s in read if s in left]
+
+
+_RESULTS_FOR = re.compile(r"financial\s+results\s+(?:of\s+the\s+bank\s+|of\s+the\s+company\s+)?for\s+the\s+"
+                          r"(?:quarter|half[\s-]*year|period|nine\s+months|year|financial\s+year)", re.I)
+LACKS_RESULTS_MIN_CHARS = 1500   # a filing with less text than this (a scan OCR did not read) is never retyped
+
+
+def lacks_results(text: str) -> bool:
+    """A filing's text with enough words to judge, and none of what a results filing carries: the statement's heading
+    (`_RESULTS_STATEMENT`), a covering letter submitting the results (`results_cover`), or "financial results for the quarter"
+    (TMB nse-106836238, a note on a ₹304 Cr ECL provision typed RESULTS, took the results path and became a second card)."""
+    t = text or ""
+    if len(t.strip()) < LACKS_RESULTS_MIN_CHARS:
+        return False
+    head = t[:40000]
+    return not (_RESULTS_STATEMENT.search(head) or results_cover(t) or _RESULTS_FOR.search(head))
 
 
 def carries_results(event_type: str, text: str, tagged=None) -> bool:
@@ -3539,6 +3555,11 @@ class Pipeline:
             # CORPORATE_ACTION skipped the quarter's claim and its XBRL and became a second results card (O3, 2026-10-20)
             log.info("%s carries a results statement: %s -> RESULTS before pass 2", filing.news_id, event_type)
             event_type = "RESULTS"
+        elif event_type == "RESULTS" and results_needs_statement() and lacks_results(doc.select_text(10_000_000, [])):
+            # a note about the results is no results filing (RESULTS_NEEDS_STATEMENT, off until measured)
+            log.info("%s is typed RESULTS but carries no results statement; read as OTHER", filing.news_id)
+            filing = filing.model_copy(update={"event_type": "OTHER"})
+            event_type = "OTHER"
         subsidiary = subsidiary_results(filing, text) if event_type == "RESULTS" else None
         if subsidiary:
             # its figures are another company's: no results path (XBRL, table, quarter claim) and none into memory

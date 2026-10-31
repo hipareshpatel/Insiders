@@ -104,6 +104,11 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
         sheets = list(dict.fromkeys(quarters + [f"Q4{fy}" for fy in years if f"Q4{fy}" not in quarters]))
         columns = [("quarters", p) for p in quarters] + [("balance", p) for p in sheets] \
             + [("annual", fy) for fy in years] + [("cash_flow", fy) for fy in years]
+        # a year that does not end in March ("YE:2025-12"), where a report or the year-end quarter's file has its twelve months
+        # (owner, 1 Nov 2026: VBL, ABB, Siemens, CRISIL; measured 92.5% annual / 95.9% cash flow exact, run 41244538582): a March
+        # company's December file has nine months, not twelve, so it gives none
+        year_ends = sorted({f"YE:{e.year}-{e.month:02d}" for e in (quarter_end(p) for p in quarters) if e and e.month != 3})
+        columns += [(t, ye) for ye in year_ends for t in ("annual", "cash_flow")]
         for table, period in columns:
             rows, why = sv._ours(cf, fam, basis, table, period, memo)
             values = {name: row.value for name, row in (rows or {}).items() if row.value is not None}

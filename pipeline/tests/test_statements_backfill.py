@@ -312,3 +312,27 @@ def test_a_year_held_only_as_an_annual_reports_comparative_is_built_with_its_mar
     entries, _ = sb.company_entries(cf, {}, "t")
     got = {(e["table"], e["period"]) for e in entries}
     assert {("annual", "FY25"), ("balance", "Q4FY25"), ("annual", "FY26"), ("balance", "Q4FY26")} <= got
+
+
+def test_a_december_year_is_stored_from_the_files_that_hold_its_twelve_months(monkeypatch):
+    """Owner, 1 Nov 2026: VBL, ABB, Siemens: a "YE:2025-12" year goes in where a report or the Dec-quarter file holds its twelve months."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    row = lambda v: SimpleNamespace(value=v)
+
+    def ours(cf, fam, basis, table, period, memo):
+        if table == "quarters":
+            return {"Sales": row(100.0), "Net Profit": row(10.0)}, ""
+        if period == "YE:2025-12" and table in ("annual", "cash_flow"):
+            return ({"Sales": row(400.0), "Net Profit": row(40.0)} if table == "annual" else {"Net Cash Flow": row(5.0)}), ""
+        return None, ""
+
+    monkeypatch.setattr(sv, "_ours", ours)
+    quarters = ("Q1FY26", "Q2FY26", "Q3FY26", "Q4FY26")
+    cf = SimpleNamespace(results={(p, "CONSOLIDATED"): p for p in quarters}, annual={}, family=lambda b: "corporate")
+    entries, _ = sb.company_entries(cf, {}, "t")
+    got = {(e["table"], e["period"]) for e in entries}
+    assert {("annual", "YE:2025-12"), ("cash_flow", "YE:2025-12")} <= got
+    assert not {p for t, p in got if p.startswith("YE:") and p != "YE:2025-12"}   # Jun / Sep quarters held no twelve months

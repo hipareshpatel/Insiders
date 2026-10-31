@@ -1,7 +1,7 @@
 // The company page's screener-style statements (src/components/company/statements.ts). Run: npm test.
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters, withRestated, statementMetrics } from "../src/components/company/statements.ts";
+import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, statementDate, ttmQuarters, withRestated, statementMetrics } from "../src/components/company/statements.ts";
 
 const m = (metric: string, period: string, value: number) => ({ metric, period, value, unit: "INR_CR", as_of: "2026-10-15", source_news_id: "xbrl:res:1:x" });
 const quarter = (q: string, rev: number, pat: number) => [m("revenue", q, rev), m("pbt", q, pat * 1.3), m("finance_cost", q, 10), m("depreciation", q, 20),
@@ -241,4 +241,15 @@ test("statement figures win for the years they cover; an older year keeps the ol
     { period: "FY25", metric: "revenue", value: 99, unit: "INR_CR", as_of: "", source_news_id: "" }];
   const got = statementMetrics([{ period: "FY25", basis: "CONSOLIDATED", table: "annual", rows: { Sales: 100 } }] as never, "CONSOLIDATED", old as never);
   assert.deepEqual(got.filter((m) => m.metric === "revenue").map((m) => [m.period, m.value]).sort(), [["FY20", 50], ["FY25", 100]]);
+});
+
+test("a year that ends in December is a year column, labelled by its month, and counts in the growth boxes (owner, 1 Nov 2026)", () => {
+  const year = (p: string, rev: number) => [m("revenue", p, rev), m("pat", p, rev / 10), m("pbt", p, rev / 8)];
+  const metrics = [...year("YE:2022-12", 1000), ...year("YE:2023-12", 1100), ...year("YE:2024-12", 1210), ...year("YE:2025-12", 1331)];
+  const t = annualTable(metrics);
+  assert.deepEqual(t.columns, ["YE:2022-12", "YE:2023-12", "YE:2024-12", "YE:2025-12"]);
+  assert.equal(statementDate("YE:2025-12"), "Dec 2025");
+  assert.equal(statementDate("YE:2024-06"), "Jun 2024");
+  const three = growth(metrics, "revenue").find((g) => g.label === "3 years")!;
+  assert.equal(Math.round(three.value! * 10) / 10, 10);   // 1,000 -> 1,331 over three December years
 });

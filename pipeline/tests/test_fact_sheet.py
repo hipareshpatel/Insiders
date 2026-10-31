@@ -198,6 +198,31 @@ def test_the_ab_makes_each_card_twice_writes_nothing_and_leaves_the_switch_as_it
     assert "CARD_FACT_SHEET" not in os.environ
 
 
+def test_the_ab_with_one_named_model_makes_only_the_switch_on_card_and_saves_it(settings, monkeypatch, tmp_path):
+    """FACT_SHEET_AB_ON_ONLY (the model grid, 30 Oct 2026): the first grid run lost every card to a KeyError on the missing
+    switch-off card, so nothing could be scored."""
+    import argparse
+
+    from bse_intel import call_memory, cli
+
+    monkeypatch.setenv("FACT_SHEET_AB_ON_ONLY", "1")
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-on", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    filing = filing.model_copy(update={"xbrl_url": "https://bse.invalid/co.xml", "route": "FAST_TRACK", "event_type": "RESULTS"})
+    text = ("Statement of unaudited consolidated financial results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,091.00. Net profit 1,500.00.")
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    monkeypatch.setattr(call_memory, "find_filing", lambda s, news_id: filing)
+    monkeypatch.setattr(cli, "_pipeline", lambda s, quiet: (setattr(pipeline, "sink", quiet), pipeline)[1])
+    fakes = pipeline.bse
+    monkeypatch.setattr(cli, "_NoExchange", lambda: fakes)
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-on", out=str(tmp_path)), settings, sink) == 0
+    saved = json.loads((tmp_path / "n-on.json").read_text(encoding="utf-8"))
+    assert saved["on_status"] == "ANALYZED" and saved["off"] is None and saved["on"]["card"]
+    assert len(fake.calls) == 1
+
+
 def test_the_ab_sink_reads_our_stored_copies_and_never_downloads_again():
     """Owner rule: never download a file twice. The A/B's read-only sink must still be seen as the platform store, so the
     pipeline reads stored texts (F147) and XBRL files (F191) instead of fetching them from NSE again."""

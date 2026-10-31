@@ -37,9 +37,18 @@ LAYOUT = {sv.CORPORATE: ("Sales", "Operating Profit", "OPM %"),
           # a REIT or InvIT files the corporate lines (reit_results.py); only its kind differs on the page
           "reit": ("Sales", "Operating Profit", "OPM %"),
           "invit": ("Sales", "Operating Profit", "OPM %")}
+# a company on the NBFC template whose NSE industry is known and is not financial services is no lender: its page is the corporate one
+# (measured 31 Oct 2026, live: WESTLIFE restaurants, KIRLOSIND industrial products, HEALTHX healthcare services, RTNINDIA e-retail and
+# IBULLSLTD commercial services file the NBFC template and showed as NBFCs, their EBITDA the financing profit; nbfc_pl also holds Sales / Operating Profit / OPM %)
 PAT_ROWS = (fact_sheet.OWNERS, "Net Profit")   # the profit to shareholders when the file has it, else the net profit
 EXCEPTIONAL_AT = "Exceptional items AT"   # screener_view._exceptional_rows: the exceptional item after its tax (a gain is positive); corporate, bank and NBFC filers
 EXCEPTIONAL = "Exceptional items"
+
+
+def non_lender(industry: str | None) -> bool:
+    """True when the industry is known and is not financial services ("Financial Services > ..." or a bare "Finance"); an unknown one is not."""
+    text = (industry or "").strip().lower()
+    return bool(text) and not text.startswith("financial services") and text != "finance"
 
 
 def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
@@ -114,22 +123,24 @@ def _before_exceptional(now: dict, before: dict, pat_row: str, pat: dict) -> dic
     return line
 
 
-def table_of(dossier: dict, period: str) -> dict | None:
+def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | None:
     """A quarter's table: ``lens`` (the kind: company, bank, nbfc, insurer), period, basis, source filing and one entry per line (revenue, ebitda, pat,
-    ebitda_margin), or None when the statements hold no profit line for it."""
+    ebitda_margin), or None when the statements hold no profit line for it. ``industry`` (NSE's, from the companies table): an NBFC-template
+    filer in a known industry that is not financial services is built with the corporate layout and kind "company"."""
     prior = {"prev_year": prior_year_period(period), "prev_quarter": prior_quarter_period(period)}
     for basis in (CONSOLIDATED, STANDALONE):
         now = _entry(dossier, period, basis)
         if now is None:
             continue
         before = {slot: _entry(dossier, p, basis) for slot, p in prior.items()}
-        revenue_row, ebitda_row, margin_row = LAYOUT[now["family"]]
+        layout = sv.CORPORATE if now["family"] == sv.NBFC and non_lender(industry) else now["family"]
+        revenue_row, ebitda_row, margin_row = LAYOUT[layout]
         # the profit's comparatives are the same row as its value (a total with minority interest is no base for the owners' profit)
         pat_row = next((r for r in PAT_ROWS if (now.get("rows") or {}).get(r) is not None), None)
         pat = _line("pat", pat_row, now, before) if pat_row else None
         if pat is None:
             continue
-        table: dict = {"lens": "company" if now["family"] == sv.CORPORATE else now["family"], "period": period, "basis": basis, "source_news_id": now.get("source_news_id"), "pat": pat}
+        table: dict = {"lens": "company" if layout == sv.CORPORATE else layout, "period": period, "basis": basis, "source_news_id": now.get("source_news_id"), "pat": pat}
         pre = _before_exceptional(now, before, pat_row, pat)
         if pre is not None:
             table["pat_pre"] = pre
@@ -154,14 +165,14 @@ def table_of(dossier: dict, period: str) -> dict | None:
     return None
 
 
-def company_tables(dossier: dict, kept: int = QUARTERS_KEPT) -> dict[str, dict]:
+def company_tables(dossier: dict, kept: int = QUARTERS_KEPT, industry: str | None = None) -> dict[str, dict]:
     """Quarter -> table for one company, from its statements only."""
     periods = sorted({e["period"] for e in dossier.get(statements.KEY, []) or []
                       if isinstance(e, dict) and e.get("table") == "quarters" and str(e.get("period", "")).startswith("Q")},
                      key=lambda p: sv.quarter_index(p) or 0, reverse=True)[:kept]
     out: dict[str, dict] = {}
     for period in periods:
-        table = table_of(dossier, period)
+        table = table_of(dossier, period, industry)
         if table is not None:
             out[period] = table
     return out
@@ -204,9 +215,16 @@ def kpi_row(scrip: str, table: dict, at: str) -> dict:
     return row
 
 
-def company_rows(scrip: str, dossier: dict, at: str) -> list[dict]:
+def company_rows(scrip: str, dossier: dict, at: str, industry: str | None = None) -> list[dict]:
     """The KPI rows of one company, newest quarter first."""
-    return [kpi_row(scrip, table, at) for table in company_tables(dossier).values()]
+    return [kpi_row(scrip, table, at) for table in company_tables(dossier, industry=industry).values()]
+
+
+def industries(sink) -> dict[str, str]:
+    """Scrip -> NSE's industry for every stored company that has one (the companies table, paged: export_companies)."""
+    from .company_master import stored_companies
+
+    return {c["scrip_code"]: c["industry"] for c in stored_companies(sink) if c.get("industry")}
 
 
 def recent_scrips(sink) -> list[str]:
@@ -226,6 +244,7 @@ def write(sink, at: str, scrips: list[str] | None = None) -> int:
     all of them). The rows are saved every ``SAVE_EVERY`` companies, so a run that is stopped keeps what it did (and the page fills as it
     goes). A company whose read fails is logged and keeps its old rows. Returns the number of rows sent."""
     names = sink.list_dossiers() if scrips is None else scrips
+    industry = industries(sink)
     rows: list[dict] = []
     kept: list[dict] = []
     sent = 0
@@ -242,7 +261,7 @@ def write(sink, at: str, scrips: list[str] | None = None) -> int:
 
     for i, scrip in enumerate(names, 1):
         try:
-            found = company_rows(scrip, sink.get_dossier(scrip) or {}, at)
+            found = company_rows(scrip, sink.get_dossier(scrip) or {}, at, industry.get(scrip))
         except Exception as exc:  # noqa: BLE001 - one company's bad file must not stop the rest
             log.warning("results-table: %s not read: %s", scrip, exc)
             continue

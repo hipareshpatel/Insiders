@@ -5,8 +5,8 @@ from bse_intel import results_table as rt
 
 
 class _Sink:
-    def __init__(self, dossiers):
-        self.dossiers, self.sent = dossiers, []
+    def __init__(self, dossiers, industries=None):
+        self.dossiers, self.sent, self.industries = dossiers, [], industries or {}
 
     def list_dossiers(self):
         return sorted(self.dossiers)
@@ -23,6 +23,8 @@ class _Sink:
         return len(rows)
 
     def query(self, name, params):
+        if name == "export_companies":   # the companies table, paged by scrip code (company_master.stored_companies)
+            return [{"scrip_code": k, "industry": v} for k, v in sorted(self.industries.items()) if k > params[0]][:params[1]]
         assert name == "results_cards_recent"   # the query the results catch-up already uses
         return [{"scrip_code": "500001"}, {"scrip_code": "500001"}, {"scrip_code": None}]
 
@@ -322,3 +324,32 @@ def test_the_database_statement_and_migration_hold_the_new_columns(settings):
     got = sink._db.execute("SELECT pat_pre, pat_pre_prev, pat_pre_yoy FROM results_kpi WHERE period='Q2FY27'").fetchone()
     assert tuple(got) == (112.0, 18.24, 514.0)
     assert sink.execute(rt.STATEMENT, rows) == 0   # unchanged: nothing rewritten
+def _holding(period, sales, op, net, margin):
+    return _entry(period, {"Revenue": sales, "Sales": sales, "Financing Profit": sales * 0.1, "Financing Margin %": 10.0, "Operating Profit": op, "OPM %": margin,
+                           "Net Profit": net}, family="nbfc")
+
+
+def _nbfc_template():
+    return {"statements": [_holding("Q2FY27", 700.0, 70.0, 20.0, 10.0), _holding("Q2FY26", 600.0, 48.0, 10.0, 8.0), _holding("Q1FY27", 650.0, 65.0, 15.0, 10.0)]}
+
+
+def test_an_nbfc_template_filer_in_a_non_financial_industry_gets_the_corporate_layout_and_kind_company():
+    for industry in ("Consumer Services > Restaurants", "Capital Goods > Industrial Products", "Services > Commercial Services & Supplies"):
+        row = next(r for r in rt.company_rows("500020", _nbfc_template(), "t", industry) if r["period"] == "Q2FY27")
+        assert row["kind"] == "company" and (row["revenue"], row["revenue_yoy"]) == (700.0, 16.7)
+        assert (row["ebitda"], row["ebitda_prev"], row["ebitda_yoy"], row["opm"], row["opm_yoy_bps"]) == (70.0, 48.0, 45.8, 10.0, 200)   # operating profit, not financing profit
+
+
+def test_real_lenders_and_a_company_with_no_industry_stay_as_they_are():
+    for industry in ("Financial Services > Finance > Non Banking Financial Company (NBFC)", "Financial Services", "Finance", " finance ", None, ""):
+        row = next(r for r in rt.company_rows("500020", _nbfc_template(), "t", industry) if r["period"] == "Q2FY27")
+        assert row["kind"] == "nbfc" and row["ebitda"] == 70.0 and row["ebitda_prev"] == 60.0 and row["opm"] == 10.0   # financing profit and margin, as before
+    assert rt.non_lender("Consumer Services > Restaurants") and not rt.non_lender("Finance") and not rt.non_lender(None)
+
+
+def test_the_run_passes_each_companys_industry_from_the_companies_table():
+    sink = _Sink({"500020": _nbfc_template(), "500021": _nbfc_template(), "500022": _nbfc_template()},
+                 {"500020": "Consumer Services > Restaurants", "500021": "Financial Services > Finance > Housing Finance Company"})
+    rt.write(sink, "t")
+    kinds = {r["scrip_code"]: r["kind"] for r in sink.sent}
+    assert kinds == {"500020": "company", "500021": "nbfc", "500022": "nbfc"}   # 500022 has no industry stored: as today

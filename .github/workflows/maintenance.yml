@@ -36,6 +36,11 @@
 #   memory files (owner, 25 Oct 2026; F158). Run the dry run first and read it.
 #   Kept since 26 Oct 2026 (owner, Option A): a BSE-only company with a stored market cap of 500 Cr or more is never removed
 #   and is listed apart (`--bse-keep-min-mcap`, 0 = off).
+# - bank-pdf-read (TODO 148): banks' annual-report PDFs read for the rows their XBRL lacks (depreciation of a direct cash flow,
+#   CWIP inside FixedAssets): the reports kept in R2 and the BSE ones on the stored Screener page (`days` = the newest N, default
+#   4), each fetched once through the ported BSE adapter and kept; each reading kept at raw/bank-pdf/<scrip>/ at once. `ids` =
+#   companies, `limit` = the N largest by market cap; banks only. `file_cap` caps a test (the first: 100); `dry_run` keeps the
+#   files, not the readings. A refusal stops the run (exit 75). summary.json goes up as the artifact `bank-pdf-read`. Group maint-bse.
 # - bse-verify-kept: one-time, read-only (F160): for each kept BSE-only company, three paced calls a company through the ported BSE adapter
 #   (stock-page header: status; trading panel: market cap; announcements filtered by the scrip, last 90 days); a refusal stops the run and
 #   its body head goes in the file; JSON and CSV up as the artifact `bse-verify-kept`. Its group is the BSE one.
@@ -242,7 +247,7 @@
 #   ids) each made into a card twice by the live code (pipeline.analyze), the switch off and then on, with the free AI providers the card
 #   path uses (two calls a filing, never DeepSeek); the sink is read-only (every D1, R2 and memory write dropped and counted). One
 #   <news_id>.json each (off, on, changed fields, what the table and the text check changed) and summary.json go up as the artifact
-#   `fact-sheet-ab`. Writes nothing live.
+#   `fact-sheet-ab`. Writes nothing live. `sample=lenders` flips CARD_FACT_SHEET_LENDERS instead (banks, NBFCs and insurers; TODO 151).
 # - restated-pdf-trial: read only (F202, TODO 104). restated-pdf --dry-run: the latest six quarters' results PDFs of the companies
 #   in `ids` (or the first `limit` of the universe), text layer only, and every comparative that differs from memory's original
 #   listed with both figures and their sources (artifact `restated-pdf-trial`). Writes nothing; storing waits for its review.
@@ -294,6 +299,7 @@
 #                      requeue-failed, apply-verdicts, release-pruned, export-held, export-critic, restore (puts a backup of
 #                      cards and memory back; it can overlap a memory job, so do not run it beside one)
 #   maint-bse          probe-bse, bse-results-test, bse-verify-kept, text-backfill-bse (reads BSE; writes only text/ objects)
+#                      bank-pdf-read (reads BSE; writes only raw/annual-pdf/ and raw/bank-pdf/ objects)
 #   maint-screener     screener-download, screener-fill (the dry run reads screener.in)
 #   maint-tijori       tijori-download (reads tijorifinance.com; writes only raw/tijori/ objects)
 #   maint-pdf-store    store-kept-pdfs (reads a GitHub artifact; writes only raw/results-pdf/ objects)
@@ -320,7 +326,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, restated-pdf, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, bank-pdf-read, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, restated-pdf, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -360,7 +366,7 @@ on:
         type: boolean
         default: false
       sample:
-        description: pdf-referee only - instead of the open pairs, a random sample of N pairs where memory equals NSE's file (tests the file against its PDF)
+        description: pdf-referee only - instead of the open pairs, a random sample of N pairs where memory equals NSE's file (tests the file against its PDF); fact-sheet-ab - `lenders` flips CARD_FACT_SHEET_LENDERS (the fact sheet kept on) instead of CARD_FACT_SHEET
         type: string
         default: ''
       then:
@@ -429,7 +435,7 @@ concurrency:
     || inputs.command == 'reit-results' && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","results-table","restore"]'), inputs.command) && 'maint-cards'
     || contains(fromJSON('["text-backfill-bse","bse-annual-xbrl","bse-results-xbrl"]'), inputs.command) && format('maint-bse-{0}', inputs.command)
-    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept"]'), inputs.command) && 'maint-bse'
+    || contains(fromJSON('["probe-bse","bse-results-test","bse-verify-kept","bank-pdf-read"]'), inputs.command) && 'maint-bse'
     || contains(fromJSON('["screener-download","screener-schedules","screener-fill"]'), inputs.command) && 'maint-screener'
     || inputs.command == 'tijori-download' && 'maint-tijori'
     || inputs.command == 'store-kept-pdfs' && 'maint-pdf-store'
@@ -629,6 +635,26 @@ jobs:
         with:
           name: bse-results-xbrl
           path: ${{ runner.temp }}/bseresults/
+          if-no-files-found: ignore
+      - name: Banks' annual-report PDFs read for the rows their XBRL lacks (TODO 148)
+        if: inputs.command == 'bank-pdf-read'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          IDS: ${{ inputs.ids }}         # through the environment, never pasted into the script
+          LIMIT: ${{ inputs.limit }}
+          YEARS: ${{ inputs.days != '110' && inputs.days || '4' }}   # `days` reused: the newest N reports a bank (default 4)
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+        run: |
+          code=0
+          mkdir -p "$RUNNER_TEMP/bankpdf"
+          "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel bank-pdf-read ${IDS:+--scrips "$IDS"} ${LIMIT:+--top-mcap "$LIMIT"} --years "${YEARS:-4}" ${DRY_RUN:+--dry-run} --time-budget 17400 --json "$RUNNER_TEMP/bankpdf/summary.json" || code=$?
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'bank-pdf-read'
+        with:
+          name: bank-pdf-read
+          path: ${{ runner.temp }}/bankpdf/
           if-no-files-found: ignore
       - name: Keep annual-report PDFs in R2 (named companies, once)
         if: inputs.command == 'keep-annual-pdfs'
@@ -940,6 +966,7 @@ jobs:
           ONLY_MODEL: ${{ inputs.only_model }}   # a measured test only (TODO 142 step 4): cards written by this one model, switch on only
           ONLY_MODEL_ON_ALL_ROUTES: ${{ inputs.only_model != '' && '1' || '' }}
           FACT_SHEET_AB_ON_ONLY: ${{ inputs.only_model != '' && '1' || '' }}
+          FACT_SHEET_AB_SWITCH: ${{ inputs.command == 'fact-sheet-ab' && inputs.sample == 'lenders' && 'CARD_FACT_SHEET_LENDERS' || '' }}   # TODO 151
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # the keys the card path uses (pipeline.yml)
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}

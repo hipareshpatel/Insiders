@@ -303,3 +303,35 @@ def test_a_card_gets_the_corrected_profit_of_a_quarter_whose_filed_profit_does_n
     pnb = {"statements": [entry("Q2FY27", 560.0, 0.0), entry("Q2FY26", 500.0, 0.0)]}
     pat = fs.fact_sheet(pnb, "Q2FY27")["lines"]["pat"]
     assert (pat["value"], pat["yoy_pct"]) == (560.0, 12.0)
+
+
+def test_the_ab_can_flip_the_lenders_switch_with_the_fact_sheet_kept_on(settings, monkeypatch, tmp_path):
+    """FACT_SHEET_AB_SWITCH=CARD_FACT_SHEET_LENDERS (TODO 151): CARD_FACT_SHEET is held on for both cards (a corporate filer's card
+    therefore has its sheet both times), only the lenders' switch is flipped, and both switches are as they were afterwards."""
+    import argparse
+    import os
+
+    from bse_intel import call_memory, cli
+
+    monkeypatch.delenv("CARD_FACT_SHEET", raising=False)
+    monkeypatch.delenv("CARD_FACT_SHEET_LENDERS", raising=False)
+    monkeypatch.setenv("FACT_SHEET_AB_SWITCH", "CARD_FACT_SHEET_LENDERS")
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-len", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    filing = filing.model_copy(update={"xbrl_url": "https://bse.invalid/co.xml", "route": "FAST_TRACK", "event_type": "RESULTS"})
+    text = ("Statement of unaudited consolidated financial results for the quarter ended 30.09.2026 (Rs. in lakhs). "
+            "Revenue from operations 12,000.00 9,091.00. Net profit 1,500.00.")
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    monkeypatch.setattr(call_memory, "find_filing", lambda s, news_id: filing)
+    monkeypatch.setattr(cli, "_pipeline", lambda s, quiet: (setattr(pipeline, "sink", quiet), pipeline)[1])
+    fakes = pipeline.bse
+    monkeypatch.setattr(cli, "_NoExchange", lambda: fakes)
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-len", out=str(tmp_path)), settings, sink) == 0
+    prompts = [c["messages"][1]["content"] for c in fake.calls]
+    assert len(prompts) == 2 and all("RESULTS FIGURES" in p for p in prompts)      # the fact sheet on for both
+    summary = json.loads((tmp_path / "summary.json").read_text(encoding="utf-8"))
+    assert summary["switch"] == "CARD_FACT_SHEET_LENDERS"
+    assert "CARD_FACT_SHEET" not in os.environ and "CARD_FACT_SHEET_LENDERS" not in os.environ
+    monkeypatch.setenv("FACT_SHEET_AB_SWITCH", "CRITIC")
+    assert cli.cmd_fact_sheet_ab(argparse.Namespace(ids="n-len", out=str(tmp_path)), settings, sink) == 2

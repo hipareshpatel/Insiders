@@ -313,6 +313,13 @@ def card_fact_sheet() -> bool:
     return _switch("CARD_FACT_SHEET")
 
 
+def card_fact_sheet_lenders() -> bool:
+    """CARD_FACT_SHEET_LENDERS (default off; TODO 151, owner 31 Oct 2026 ~13:45 IST): with CARD_FACT_SHEET, banks', NBFCs' and
+    insurers' results cards get the fact sheet too, on their own statement rows (fact_sheet.FAMILY_LINES). Off: only corporate filers'
+    cards, as before. Read at the call."""
+    return _switch("CARD_FACT_SHEET_LENDERS")
+
+
 def results_needs_statement() -> bool:
     """RESULTS_NEEDS_STATEMENT (default off; 31 Oct 2026, TMB nse-106836238): a filing typed RESULTS whose text holds no results
     statement, no covering letter submitting results and no "financial results for the quarter/half/year" is read as OTHER

@@ -1284,7 +1284,15 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
     pipeline = _pipeline(settings, quiet)
     # never a call to NSE or BSE: a filing whose text or file is not stored fails here, it is not downloaded twice (owner rule)
     stub = pipeline.nse = pipeline.bse = _NoExchange()
-    was = os.environ.get("CARD_FACT_SHEET")
+    # FACT_SHEET_AB_SWITCH=CARD_FACT_SHEET_LENDERS (TODO 151): flip the lenders' switch instead, the fact sheet itself kept on
+    switch = os.environ.get("FACT_SHEET_AB_SWITCH") or "CARD_FACT_SHEET"
+    if switch not in ("CARD_FACT_SHEET", "CARD_FACT_SHEET_LENDERS"):
+        print(f"FACT_SHEET_AB_SWITCH {switch!r}: only CARD_FACT_SHEET or CARD_FACT_SHEET_LENDERS")
+        return 2
+    kept = {name: os.environ.get(name) for name in ("CARD_FACT_SHEET", "CARD_FACT_SHEET_LENDERS")}
+    if switch == "CARD_FACT_SHEET_LENDERS":
+        os.environ["CARD_FACT_SHEET"] = "1"
+    was = os.environ.get(switch)
     report: list[dict] = []
     try:
         for news_id in ids:
@@ -1303,7 +1311,7 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
                 made = {}
                 # FACT_SHEET_AB_ON_ONLY=1 (a measured test of one named model, ONLY_MODEL): the switch-on card only, half the AI calls
                 for name, value in (("on", "1"),) if os.environ.get("FACT_SHEET_AB_ON_ONLY") == "1" else (("off", "0"), ("on", "1")):
-                    os.environ["CARD_FACT_SHEET"] = value   # read at the call (settings._switch)
+                    os.environ[switch] = value   # read at the call (settings._switch)
                     with pipeline._lock:   # each card reads memory as stored, never the other run's merge (blind review)
                         pipeline._pending_memory.clear()
                     outcome = pipeline.analyze(filing, bulk=False)   # as the live path reads it
@@ -1324,13 +1332,14 @@ def cmd_fact_sheet_ab(args, settings, sink) -> int:
             report.append(row)
             print(json.dumps({k: row.get(k) for k in ("news_id", "symbol", "off_status", "on_status", "changed_fields", "warning", "error")}, ensure_ascii=False, default=str))
     finally:
-        if was is None:
-            os.environ.pop("CARD_FACT_SHEET", None)
-        else:
-            os.environ["CARD_FACT_SHEET"] = was
+        for name, value in kept.items():
+            if value is None:
+                os.environ.pop(name, None)
+            else:
+                os.environ[name] = value
     done = [r for r in report if "error" not in r]
     summary = {"filings": len(ids), "made": len(done), "failed": len(report) - len(done),
-               "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
+               "switch": switch, "with_fact_sheet": sum(bool(r.get("fact_sheet")) for r in done), "not_like_for_like": sum("warning" in r for r in done),
                "blocked_writes": quiet.blocked, "rows": report}
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1, default=str) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in summary.items() if k != "rows"}, ensure_ascii=False))
@@ -1657,6 +1666,30 @@ def cmd_keep_annual_pdfs(args, settings, sink) -> int:
     if args.json:
         Path(args.json).write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
     return 0
+
+
+def cmd_bank_pdf_read(args, settings, sink) -> int:
+    """TODO 148: banks' annual-report PDFs read for the rows their XBRL lacks (bank_pdf.py): depreciation (a direct cash flow),
+    CWIP and Fixed Assets (CWIP inside the file's FixedAssets). The reports kept in R2 (raw/annual-pdf/<SYMBOL>/) and the BSE ones
+    linked on the stored Screener page (the newest --years), fetched once through the ported BSE adapter as written and kept; each
+    reading kept at raw/bank-pdf/<scrip>/ as it is made, with what the bank's own file says of each figure. Companies that are not
+    banks are skipped. --dry-run keeps the files, not the readings. A refusal stops the run (exit 75); the file cap is a planned
+    stop (0); --time-budget ends it between two reports (exit 124). No AI, no NSE, no memory write: the statements take the
+    readings at their next rebuild."""
+    from . import bank_pdf
+    from .adapters.bse import BSEClient
+
+    companies = _selected_companies(args, sink)
+    if companies is None:
+        return 2
+    out = bank_pdf.run(sink, BSEClient(), companies, years=args.years, time_budget=args.time_budget, dry_run=args.dry_run)
+    print(bank_pdf.render(out))
+    if args.json:
+        Path(args.json).write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if out["blocked"]:
+        logging.getLogger("bse_intel.bank_pdf").error("BSE refused; stopping: %s", out["blocked"])
+        return REFUSED
+    return MORE_LEFT if out["out_of_time"] else 0
 
 
 def cmd_tijori_download(args, settings, sink) -> int:
@@ -2982,6 +3015,15 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--years", type=int, default=1, help="without --year: the newest N reports a company (default 1)")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_keep_annual_pdfs)
+
+    p = sub.add_parser("bank-pdf-read", help="banks' annual-report PDFs read for the rows their XBRL lacks (R2 and BSE, no AI)")
+    p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the universe; banks only are read)")
+    p.add_argument("--top-mcap", type=int, help="only the N largest by market cap (of --scrips, else of the universe)")
+    p.add_argument("--years", type=int, default=4, help="the newest N BSE reports a bank on its Screener page (default 4: FY23 on)")
+    p.add_argument("--time-budget", type=int, help="seconds; exit 124 when it ends with reports left")
+    p.add_argument("--dry-run", action="store_true", help="keep the fetched files, not the readings")
+    p.add_argument("--json", help="write the summary to this file")
+    p.set_defaults(func=cmd_bank_pdf_read)
 
     p = sub.add_parser("tijori-download", help="download every company's financials page from Tijori Finance, raw, into R2 (no AI, no NSE)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

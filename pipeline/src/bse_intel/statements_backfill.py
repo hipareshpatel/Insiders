@@ -25,6 +25,7 @@ import logging
 import re
 
 from .periods import prior_year_period
+from . import bank_pdf
 from . import screener_view as sv
 from . import segments
 from . import xbrl_extras
@@ -400,6 +401,7 @@ def _prepare(sink, scrip: str, at: str, lost: dict | None = None, confirm_for=No
     if read is None or not keys:
         return None
     cf = sv.CompanyFacts(keys, sink.get_object)
+    bank_pdf.attach(cf, sink, scrip)      # a bank's annual-report rows its file lacks (TODO 148); none stored: no change
     merged = json.loads(json.dumps(read))
     entries, left = company_entries(cf, merged, at, confirm_for(scrip) if confirm_for else None)
     segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements

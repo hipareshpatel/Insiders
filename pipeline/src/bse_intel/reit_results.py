@@ -197,9 +197,15 @@ def run(client, sink, at: str, day_from: date | None = None) -> dict:
     companies, kpi, kept = [], [], []
     for symbol, found in parsed.items():
         info = meta[symbol]
-        if not info["scrip"] or not info["isin"]:
-            log.warning("reit-results: %s has no BSE code or ISIN in its file; left out", symbol)
+        if not info["isin"]:
+            log.warning("reit-results: %s has no ISIN in its file; left out", symbol)
             continue
+        if not info["scrip"].strip("0"):
+            # not on BSE: the file says 000000 (measured 31 Oct 2026: six trusts, Nxt-Infra, NDR, Oriental, SEIT, Shrem, TVS), so the key is
+            # the NSE symbol, as for an NSE-only company (nse.py); the rows once saved under the shared 000000 are removed below
+            if info["scrip"]:
+                kept.append({"scrip_code": info["scrip"], "periods": []})
+            info["scrip"] = f"NSE:{symbol}"
         companies.append({"scrip_code": info["scrip"], "symbol": symbol, "company_name": info["name"], "isin": info["isin"],
                           "industry": INDUSTRY.get(symbol), "updated_at": at})
         rows = results_table.company_rows(info["scrip"], {statements.KEY: entries(found, info["family"])}, at)

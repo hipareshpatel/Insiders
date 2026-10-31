@@ -967,6 +967,9 @@ def cmd_restated_pdf(args, settings, sink) -> int:
         symbols = {s: by_scrip[s] for s in wanted if s in by_scrip}
     else:
         symbols = {s: by_scrip[s] for s in sorted(nse_universe.included) if s in by_scrip}
+    if args.top_mcap:    # the N largest by market cap (of the named companies, else of the universe), still taken in scrip order so a resume works
+        picked = _largest_by_mcap(sink, [(s, v) for s, v in symbols.items()], args.top_mcap)
+        symbols = {s: v for s, v in sorted(picked)}
     from . import pdf_referee as pr
     pr.be_gentle()
     resume_key = "restated_pdf:last_done"   # F213: where a run that hit the file cap stopped; the next run goes on from there
@@ -2368,7 +2371,8 @@ def cmd_statements_backfill(args, settings, sink) -> int:
         print(f"rating snapshots in the backups: {sum(len(v) for p in ratings.values() for v in p.values())} in {len(ratings)} companies")
         outcome = sb.run(sink, sorted(ratings), args.apply, args.limit, args.restart, ratings=ratings)
     else:
-        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
+        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named),
+                         replace=getattr(args, "replace", False))
     print(sb.render(outcome))
     if args.json:
         Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -2781,6 +2785,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--restart", action="store_true", help="start again from the first company")
     p.add_argument("--json", help="write the report to this file")
     p.add_argument("--put-back-ratings", action="store_true", help="only the companies whose rating snapshots the empty-snapshot clean-up took out: put them back from the backups")
+    p.add_argument("--replace", action="store_true", help="statements-rebuild: also put back a file-labelled entry the stored facts now build differently (a recipe change), backed up")
     p.set_defaults(func=cmd_statements_backfill)
     p = sub.add_parser("statements-correct", help="the profit-line rules over every stored quarters and annual entry (stock page, cards and Results then read the same numbers): dry run (default) or --apply (backs each changed dossier up first; no NSE, no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
@@ -2836,8 +2841,9 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("restated-pdf", help="keep restated comparatives beside the originals, read from later results PDFs' text layer (no OCR, no AI; F202)")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")
-    p.add_argument("--quarters", type=int, default=6, help="how many of each company's latest quarters to read")
+    p.add_argument("--quarters", type=int, default=4, help="how many of each company's latest quarters to read (4: each file's year-ago and previous-quarter columns cover eight)")
     p.add_argument("--limit", type=int, help="stop after this many companies")
+    p.add_argument("--top-mcap", type=int, help="only the N largest companies by market cap (of --scrips, else of the universe)")
     p.add_argument("--json", help="write the counts and the reasons to this file")
     p.add_argument("--dry-run", action="store_true", help="write nothing; list every restated figure found in --json")
     p.add_argument("--restart", action="store_true", help="ignore where a run that hit the file cap stopped; begin at the first company")

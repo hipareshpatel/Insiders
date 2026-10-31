@@ -37,6 +37,7 @@ log = logging.getLogger(__name__)
 
 LIMIT = 50
 RESUME_KEY = "statements_backfill:done_through"
+REBUILD_RESUME_KEY = "statements_rebuild:done_through"   # statements-rebuild's own (it must not move the fill's)
 RATINGS_RESUME_KEY = "statements_backfill:ratings_done_through"   # the put-back's own (review: it must not move the fill's)
 SLIP_RATIO = 1.5
 _QUARTER = re.compile(r"Q[1-4]FY\d{2}")
@@ -63,8 +64,20 @@ def _memory_profit(dossier: dict, period: str, basis: str) -> float | None:
     return None
 
 
-def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[dict], list[str]]:
-    """The entries the stored facts give for one company, and the ones left out (with why)."""
+def _confirmed(confirm, period: str, basis: str, top: float | None) -> bool:
+    """Screener's stored quarter agrees with the file's Net Profit (within max(1 Cr, 1%), Screener prints whole crore): with memory
+    in doubt, two sources agreeing decide (owner, 31 Oct 2026; memory's AI-read profit was the wrong side for CGPOWER Q2FY26,
+    18.24 against the file's 284.29 and Screener's 284)."""
+    if confirm is None or top is None or not period.startswith("Q"):
+        return False
+    theirs = confirm(period, basis)
+    return theirs is not None and abs(theirs - top) <= max(1.0, abs(top) / 100)
+
+
+def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -> tuple[list[dict], list[str]]:
+    """The entries the stored facts give for one company, and the ones left out (with why). ``confirm(period, basis)``: Screener's
+    stored Net Profit for a quarter, or None; a quarter memory doubts (held as unit-slipped, or 1.5x off memory's profit) goes in
+    when Screener confirms the file's figure."""
     entries, left = [], []
     held = {str(h.get("period")) for h in dossier.get("scale_held", []) if isinstance(h, dict)} \
         | {str(h) for h in dossier.get("scale_held", []) if isinstance(h, str)}
@@ -76,19 +89,22 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str) -> tuple[list[d
         columns = [("quarters", p) for p in quarters] + [("balance", p) for p in quarters if p[:2] in ("Q2", "Q4")] \
             + [("annual", fy) for fy in years] + [("cash_flow", fy) for fy in years]
         for table, period in columns:
-            if period in held or f"Q4{period}" in held:
-                left.append(f"{basis} {table} {period}: unit slip held in memory")
-                continue
             rows, why = sv._ours(cf, fam, basis, table, period, memo)
             values = {name: row.value for name, row in (rows or {}).items() if row.value is not None}
             if not values:
                 continue
             if table in ("quarters", "annual"):
                 values = sv.corrected_pl(values, fam)   # the profit-line rules, as at the live write (screener_view.corrected_pl)
-                top = values.get("Net Profit")
+            quarter = period if table == "quarters" else None
+            top = values.get("Net Profit") if table in ("quarters", "annual") else None
+            sure = _confirmed(confirm, quarter, basis, top) if quarter else False
+            if (period in held or f"Q4{period}" in held) and not sure:
+                left.append(f"{basis} {table} {period}: unit slip held in memory")
+                continue
+            if table in ("quarters", "annual"):
                 mine = _memory_profit(dossier, period, basis)
                 if top and mine and abs(mine) >= 1 and (top > 0) == (mine > 0) \
-                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO):
+                        and not (1 / SLIP_RATIO <= abs(top) / abs(mine) <= SLIP_RATIO) and not sure:
                     left.append(f"{basis} {table} {period}: Net Profit {top:g} against memory's profit {mine:g}")
                     continue
             column = period
@@ -262,20 +278,59 @@ def put_back(dossier: dict, lost: dict[str, list[dict]]) -> int:
     return added
 
 
-def fill(dossier: dict, entries: list[dict]) -> int:
-    """Add the entries memory does not hold yet (in place); the number added."""
-    have = {(e.get("period"), e.get("basis"), e.get("table")) for e in dossier.get(KEY, []) if isinstance(e, dict)}
+def _rebuildable(e: dict) -> bool:
+    """An entry the stored facts rebuild: the file's own, by screener_view's recipes (never a card's or another source's)."""
+    lab = e.get("lab") or {}
+    return lab.get("by") == "file" and lab.get("rules", "screener_view") == "screener_view"
+
+
+def _screener_confirm(sink):
+    """scrip -> confirm(period, basis): Screener's stored quarterly Net Profit (restated_pdf.ScreenerStore over the stored pages),
+    or None for the whole run when the pages or the symbols cannot be read (the old checks then stand alone)."""
+    try:
+        from .company_master import stored_companies
+        from .restated_pdf import ScreenerStore
+        symbols = {c["scrip_code"]: c.get("symbol") for c in stored_companies(sink) if c.get("symbol")}
+        store = ScreenerStore(sink)
+    except Exception as exc:  # noqa: BLE001 - no confirmation is the old behaviour, never a stop
+        log.warning("statements-backfill: Screener pages not read (%s); memory's checks stand alone", exc)
+        return None
+
+    def confirm_for(scrip):
+        symbol = symbols.get(scrip)
+        if not symbol:
+            return None
+        def confirm(period, basis):
+            try:
+                return store.figure(symbol, basis, "pat", period)
+            except Exception:  # noqa: BLE001
+                return None
+        return confirm
+    return confirm_for
+
+
+def fill(dossier: dict, entries: list[dict], replace: bool = False) -> int:
+    """Add the entries memory does not hold yet (in place); the number added. ``replace`` (statements-rebuild): an entry the stored
+    facts rebuild is put back with the current recipes when its rows changed (owner, 31 Oct 2026: a recipe rule is site-wide, so
+    the stored statements the stock page reads are rebuilt from the same files; the backfill alone only added), counted too."""
+    held = [e for e in dossier.get(KEY, []) if isinstance(e, dict)]
+    have = {(e.get("period"), e.get("basis"), e.get("table")): e for e in held}
     new = [e for e in entries if (e["period"], e["basis"], e["table"]) not in have]
-    if new:
-        dossier[KEY] = keep_latest([e for e in dossier.get(KEY, []) if isinstance(e, dict)] + new)
-    return len(new)
+    changed = []
+    if replace:
+        changed = [e for e in entries if (old := have.get((e["period"], e["basis"], e["table"]))) is not None
+                   and _rebuildable(old) and (old.get("rows") or {}) != (e.get("rows") or {})]
+    if new or changed:
+        gone = {(e["period"], e["basis"], e["table"]) for e in changed}
+        dossier[KEY] = keep_latest([e for e in held if (e.get("period"), e.get("basis"), e.get("table")) not in gone] + new + changed)
+    return len(new) + len(changed)
 
 
 WRITE_WORKERS = 8   # companies written at once (each its own dossier and backup objects)
 WORKERS = 24  # companies read at once: each reads its stored facts documents one by one (run 1: 17 min for 50 alone; run 2 at 8: 8.7 min)
 
 
-def _prepare(sink, scrip: str, at: str, lost: dict | None = None):
+def _prepare(sink, scrip: str, at: str, lost: dict | None = None, confirm_for=None):
     """One company read and worked out (no write): (read, merged, entries, left, segment rows added) or None when it has no dossier or facts."""
     read = sink.get_dossier(scrip)
     keys = sink.list_objects(f"{xbrl_facts.PREFIX}{scrip}/")
@@ -283,7 +338,7 @@ def _prepare(sink, scrip: str, at: str, lost: dict | None = None):
         return None
     cf = sv.CompanyFacts(keys, sink.get_object)
     merged = json.loads(json.dumps(read))
-    entries, left = company_entries(cf, merged, at)
+    entries, left = company_entries(cf, merged, at, confirm_for(scrip) if confirm_for else None)
     segments_added = fill_segments(cf, merged, at) + fill_extras(cf, merged, at)   # rows and entries added beyond the statements
     stubs = drop_empty_balance(merged)
     covered, extra = drop_file_covered_balance(merged)
@@ -305,7 +360,7 @@ def _write(sink, backup, scrip: str, read: dict, merged: dict) -> tuple[str, Exc
 
 
 def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restart: bool = False, named: bool = False,
-        workers: int = WORKERS, write_workers: int = WRITE_WORKERS, ratings: dict | None = None) -> dict:
+        workers: int = WORKERS, write_workers: int = WRITE_WORKERS, ratings: dict | None = None, replace: bool = False) -> dict:
     """``ratings`` (lost_ratings): the rating snapshots to put back, company by company. ``named``: the companies were named (--scrips): the resume point is neither read nor moved (blind review). The companies
     are read ``workers`` at a time and written ``write_workers`` at a time (each company's dossier and backup are its own
     objects; the first write goes alone, as it opens the backup folder). Results are taken in scrip order: the first failure
@@ -316,18 +371,20 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
 
     from .backup import RunBackup
 
-    resume = RATINGS_RESUME_KEY if ratings else RESUME_KEY
+    resume = RATINGS_RESUME_KEY if ratings else REBUILD_RESUME_KEY if replace else RESUME_KEY
     after = "" if (restart or not apply or named) else (sink.kv_get(resume) or "")
     todo = [s for s in sorted(scrips) if s > after][:limit]
-    backup = RunBackup(sink, "statements-backfill") if apply else None
-    out = {"apply": apply, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
+    backup = RunBackup(sink, "statements-rebuild" if replace else "statements-backfill") if apply else None
+    out = {"apply": apply, "replace": replace, "limit": limit, "after": after, "companies": len(todo), "written": 0, "entries": 0,
            "no_facts": 0, "segments": 0, "balance_stubs": 0, "balance_covered": 0, "balance_kept_extra": 0, "ratings_put_back": 0, "left_out": [], "by_table": {}, "last": None, "more": len([s for s in scrips if s > after]) > len(todo),
            "backup": None, "error": None}
     at = now_iso()
 
+    confirm_for = _screener_confirm(sink)
+
     def safe(scrip):
         try:
-            return _prepare(sink, scrip, at, ratings), None
+            return _prepare(sink, scrip, at, ratings, confirm_for), None
         except Exception as exc:  # noqa: BLE001 - reported in order below, where it stops the run
             return None, exc
 
@@ -349,11 +406,12 @@ def run(sink, scrips: list[str], apply: bool = False, limit: int = LIMIT, restar
         out["balance_covered"] += covered
         out["balance_kept_extra"] += extra
         out["left_out"] += [f"{scrip} {x}" for x in left]
-        have = {(e.get("period"), e.get("basis"), e.get("table")) for e in merged.get(KEY, []) if isinstance(e, dict)}
+        have = {(e.get("period"), e.get("basis"), e.get("table")): e for e in merged.get(KEY, []) if isinstance(e, dict)}
         for e in entries:
-            if (e["period"], e["basis"], e["table"]) not in have:
+            old = have.get((e["period"], e["basis"], e["table"]))
+            if old is None or (replace and _rebuildable(old) and (old.get("rows") or {}) != (e.get("rows") or {})):
                 out["by_table"][e["table"]] = out["by_table"].get(e["table"], 0) + 1
-        added = fill(merged, entries)
+        added = fill(merged, entries, replace)
         out["segments"] += segments_added
         # written when anything changed, a clean-up with nothing added too (30 Oct 2026: filler-zero ratios dropped by
         # xbrl_extras.remember were never saved, the run writing only where entries were added)

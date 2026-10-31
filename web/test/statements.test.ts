@@ -1,7 +1,7 @@
 // The company page's screener-style statements (src/components/company/statements.ts). Run: npm test.
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters } from "../src/components/company/statements.ts";
+import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters, withRestated } from "../src/components/company/statements.ts";
 
 const m = (metric: string, period: string, value: number) => ({ metric, period, value, unit: "INR_CR", as_of: "2026-10-15", source_news_id: "xbrl:res:1:x" });
 const quarter = (q: string, rev: number, pat: number) => [m("revenue", q, rev), m("pbt", q, pat * 1.3), m("finance_cost", q, 10), m("depreciation", q, 20),
@@ -192,4 +192,17 @@ test("a consolidated company's many standalone-only KPIs do not make its page St
     ...["plant_utilisation", "stores", "solvency_ratio", "roe", "volume"].map((k) => own(k, "STANDALONE"))];
   assert.equal(mainBasis(metrics), "CONSOLIDATED");
   assert.equal(mainBasis([own("revenue", "STANDALONE"), own("pat", "STANDALONE"), own("roe", "CONSOLIDATED")]), "STANDALONE");
+});
+
+test("a quarter a later filing restated shows the restated figure, with the original kept for the marker", () => {
+  const t = { columns: ["Q2FY26", "Q2FY27"], rows: [
+    { label: "Sales", cells: [16241, 18226], strong: true }, { label: "Net Profit", cells: [2700, 2796] }, { label: "Tax %", cells: [25, 25], kind: "pct" as const }] };
+  const fig = (metric: string, original: number, restated: number) => ({ metric, period: "Q2FY26", basis: "CONSOLIDATED", unit: "INR_CR", original, restated, restated_in: "Q2FY27" });
+  const out = withRestated(t, [fig("revenue", 16241, 15919), fig("pat", 2500, 2400)], "CONSOLIDATED");
+  assert.deepEqual(out.rows[0].cells, [15919, 18226]);
+  assert.deepEqual(out.rows[0].restated, [{ original: 16241, restated_in: "Q2FY27" }, null]);
+  assert.deepEqual(out.rows[1].cells, [2700, 2796]);            // the cell is not the original the restatement was made against: left alone
+  assert.equal(out.rows[1].restated, undefined);
+  assert.equal(withRestated(t, [fig("revenue", 16241, 15919)], "STANDALONE"), t);
+  assert.equal(withRestated(t, undefined, "CONSOLIDATED"), t);
 });

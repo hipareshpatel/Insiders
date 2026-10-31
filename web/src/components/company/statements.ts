@@ -9,7 +9,10 @@ import { periodEnd } from "../../lib/periods.ts";
 type Metric = Dossier["financial_metrics"][number];
 type Values = Map<string, Map<string, number>>;   // metric -> period -> value
 export type Cell = number | null;
-export type Row = { label: string; cells: Cell[]; kind?: "pct" | "days" | "ratio" | "per_share"; strong?: boolean };
+export type Restated = { original: number; restated_in: string };
+export type Row = { label: string; cells: Cell[]; kind?: "pct" | "days" | "ratio" | "per_share"; strong?: boolean;
+  /** per cell: the figure was restated by a later filing (the cell shows the restated one; this keeps the original) */
+  restated?: (Restated | null)[] };
 export type Table = { columns: string[]; rows: Row[] };
 
 // owner rule 26 Oct 2026: no EPS on cards or stock pages. Memory keeps every EPS figure; no row, TTM or split adjustment of it here.
@@ -348,6 +351,29 @@ type StatementEntry = NonNullable<Dossier["statements"]>[number];
 
 /** The table screener.in shows, from memory's statements (the exchange's files by screener's rules, statements.py), for one
  *  basis: the latest `most` periods, rows in the order the recipes give them. Empty when memory holds none. */
+type RestatedFigure = NonNullable<Dossier["restated_figures"]>[number];
+const RESTATED_ROWS: Record<string, string> = { Sales: "revenue", Revenue: "revenue", "Net Profit": "pat" };
+
+/** The quarters table shows a quarter's figure as its latest filing restates it (owner, 31 Oct 2026: "as Screener does"). A cell is
+ *  replaced only when it is the original the restatement was made against (within half a crore or 0.05%): the same quantity. The
+ *  original stays in `Row.restated` for the marker and its tooltip. */
+export function withRestated(t: Table, restated: RestatedFigure[] | undefined, basis: string | null): Table {
+  if (!restated?.length || !basis) return t;
+  const rows = t.rows.map((r) => {
+      const metric = RESTATED_ROWS[r.label];
+      if (!metric) return r;
+      const marks: (Restated | null)[] = [];
+      const cells = r.cells.map((c, i) => {
+        const f = restated.find((x) => x.metric === metric && x.period === t.columns[i] && x.basis === basis && x.unit === "INR_CR");
+        if (!f || c == null || Math.abs(c - f.original) > Math.max(0.5, 0.0005 * Math.abs(f.original))) { marks.push(null); return c; }
+        marks.push({ original: c, restated_in: f.restated_in });
+        return f.restated;
+      });
+      return marks.some(Boolean) ? { ...r, cells, restated: marks } : r;
+    });
+  return rows.some((r, i) => r !== t.rows[i]) ? { columns: t.columns, rows } : t;
+}
+
 export function screenerTable(entries: StatementEntry[] | undefined, basis: string | null, table: string, most: number): Table {
   const mine = (entries ?? []).filter((e) => e.table === table && (e.basis ?? null) === basis && e.rows && Object.keys(e.rows).length);
   if (!mine.length) return { columns: [], rows: [] };

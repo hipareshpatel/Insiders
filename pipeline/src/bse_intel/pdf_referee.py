@@ -86,6 +86,8 @@ VERDICTS = ("pdf_matches_ours", "pdf_matches_screener", "pdf_matches_xbrl", "pdf
 EXTRA_VERDICTS = ("pdf_disagree", "pdf_scanned_lead")
 MAX_CANDIDATES = 4          # results PDFs tried for one period
 MAX_PAGES = 12              # candidate table pages read in one PDF
+MAX_SCAN_PAGES = 60         # pages looked at for them (PDF_ROW_FIXES: the first twelve that name a quarter are no longer all)
+_RESULTS_LINE = re.compile(r"revenue\s+from\s+operations|net\s+sales|total\s+income|profit\s+(?:for\s+the|after)\s+(?:period|year|quarter|tax)|interest\s+earned", re.I)
 WINDOW_DAYS = 120           # a period's results are filed within this many days after its end
 MAX_PDF_BYTES = 40_000_000
 HEADER_LOOKBACK = 100
@@ -100,7 +102,12 @@ _LONG_WORD = re.compile(r"[A-Za-z]{8,}")
 _TITLE = re.compile(r"results|statement|financial|profit|particulars", re.I)
 _RESULTS = re.compile(r"financial\s+results?|outcome\s+of\s+(?:the\s+)?board|\bresults?\b", re.I)
 _NOT_RESULTS = re.compile(r"intimation|trading\s+window|earnings?\s+call|conference\s+call|presentation|transcript|investor|"
-                          r"analyst|schedule|press\s+release|clarification|copy\s+of\s+newspaper", re.I)
+                          r"analyst|schedule|press\s+release|clarification|copy\s+of\s+newspaper|"
+                          r"voting|s?crutini[sz]er|postal\s+ballot|change\s+in\s+(?:board|directors?)", re.I)
+# a shareholders' meeting or a postal ballot is never a results filing, whatever its headline says ("voting results", "Srutinizers
+# report"): the restated-pdf trial of 31 Oct 2026 read VEDL's and PERSISTENT's voting-results PDFs and reported "no page names a
+# quarter or year ended" while the real results file was the next candidate
+_NOT_RESULTS_SUBJECT = re.compile(r"shareholders?\s+meeting|postal\s+ballot|general\s+meeting", re.I)
 
 _REVENUE = re.compile(r"(?:revenue|income|sales)\s+from\s+operations|net\s+sales|total\s+interest\s+earned|"
                       r"^\W*(?:\d+\W+)?interest\s+earned", re.I)
@@ -436,6 +443,71 @@ def _revenue_heading_above(lines: list[str], at: int) -> bool:
     return False
 
 
+DERIVED_LABEL = "(sum of its sub-lines)"
+_CELL = re.compile(r"\(?-?[\d,]+(?:\.\d+)?\)?|[-\u2013\u2014]")
+
+
+def _row_cells(line: str) -> tuple[str, list[float], int]:
+    """(label, the trailing cells as numbers (a lone dash is nil, 0), the most decimals one prints) of a table line; the label is
+    what stands before the run of numeric cells."""
+    words = line.split()
+    k = len(words)
+    while k > 0 and _CELL.fullmatch(words[k - 1]):
+        k -= 1
+    cells, decimals = [], 0
+    for w in words[k:]:
+        if _CELL.fullmatch(w) and re.search(r"\d", w):
+            negative = w.startswith("(") or w.startswith("-")
+            digits = re.sub(r"[^\d.]", "", w)
+            decimals = max(decimals, len(digits.partition(".")[2]))
+            cells.append(-float(digits) if negative else float(digits))
+        else:
+            cells.append(0.0)
+    return " ".join(words[:k]), cells, decimals
+
+
+def derive_revenue(lines: list[str]) -> list[str]:
+    """A table that splits "Revenue from operations" into sub-lines and prints no total for it (Hindustan Unilever: sale of
+    products, sale of services, other operating revenue, then other income and total income) gets the total as the sum of the
+    sub-lines, written on the heading line with the label ``DERIVED_LABEL``. Only when every column proves it: the sum plus
+    other income is the printed total income, within the rounding of the figures printed (each cell is rounded half a unit),
+    and all the lines print the same number of cells. A table with a revenue total of its own is left as it is."""
+    out = list(lines)
+    for i, line in enumerate(lines):
+        if not _REVENUE_HEADING.match(line.strip()) or _row_cells(line)[1]:
+            continue
+        parts: list[list[float]] = []
+        other = total = None
+        decimals = 0
+        for j in range(i + 1, min(len(lines), i + 12)):
+            label, cells, dec = _row_cells(lines[j])
+            if not label and not cells:
+                continue
+            if _revenue_rank(label) is not None and cells:         # a total of its own (or a total income): not a split-only table
+                if _TOTAL_INCOME.search(label) and other is not None:
+                    total, decimals = cells, max(decimals, dec)
+                break
+            if re.match(r"\W*(?:\d+\W+)?other\s+income\b", label, re.I) and cells:
+                other, decimals = cells, max(decimals, dec)
+                continue
+            if other is None and len(cells) >= 2 and not _STEP_BREAK.match(label):
+                parts.append(cells)
+                decimals = max(decimals, dec)
+                continue
+            break
+        if not parts or other is None or total is None or not 1 <= len(parts) <= 6:
+            continue
+        n = len(total)
+        if n < 3 or len(other) != n or any(len(c) != n for c in parts):
+            continue
+        sums = [sum(c[k] for c in parts) for k in range(n)]
+        tolerance = (len(parts) + 2) * 0.5 * 10 ** -decimals + 1e-9
+        if any(abs(sums[k] + other[k] - total[k]) > tolerance for k in range(n)) or any(v <= 0 for v in sums[:1]):
+            continue
+        out[i] = f"{line.strip()} {DERIVED_LABEL} " + " ".join(f"{v:,.{decimals}f}" for v in sums)
+    return out
+
+
 def parse_page(text: str, page: int, consolidated_anywhere: bool,
                positions: list[list[tuple]] | None = None, bad_lines: frozenset[int] | set[int] = frozenset()) -> list[Row]:
     """The metric rows (revenue, pat, eps) of one page's text, each with the column proof it has. ``positions`` are the words
@@ -452,6 +524,11 @@ def parse_page(text: str, page: int, consolidated_anywhere: bool,
         offsets.append(pos)
         pos += len(line) + 1
     lines = list(lines)
+    if _row_fixes():
+        derived = derive_revenue(lines)
+        if positions is not None:
+            positions = [[] if derived[k] != lines[k] else w for k, w in enumerate(positions)]
+        lines = derived
     for i in range(len(lines) - 1):      # a label wrapped onto two lines ("Revenue from" / "operations 120.50 ..."): one line
         a, b = lines[i].strip(), lines[i + 1].strip()
         if a and len(a) <= 60 and re.search(r"[A-Za-z]$", a) and not any(f for _, f in numbers_on(a)) \
@@ -558,6 +635,167 @@ BASELINE_SHARE = 0.45        # a figure farther than this share of the distance 
 SYSTEMATIC_SHARE = 0.3       # figures all sitting this far (median) off their labels: the pairing of the page is in doubt
 
 
+_YEAR_ONLY = re.compile(r"20\d\d")
+_MONTH_WORD = re.compile(r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?"
+                         r"|nov(?:ember)?|dec(?:ember)?)\.?", re.I)
+_DAY_WORD = re.compile(r"\d{1,2}(?:st|nd|rd|th)?", re.I)
+
+
+def align_staggered_dates(words: list[tuple]) -> list[tuple]:
+    """Header dates set a line higher or lower than their neighbours' ("September 30, 2025" over "(Restated)" in one column, and
+    "September 30, 2026" on the line of that "(Restated)" in the next: Persistent Systems, 31 Oct 2026) put on one baseline, the
+    highest, so the header is one line with all its dates. A date is a month name, a day and a year on one line (either order).
+    Only when three or more dates sit on two or more baselines within one and a third line heights of each other and no two of
+    them overlap horizontally (stacked rows of one column overlap; staggered columns do not). Anything else is left as it was."""
+    ordered = sorted(range(len(words)), key=lambda i: (round(words[i][1]), words[i][0]))
+    phrases: list[list[int]] = []
+    for pos in range(len(ordered) - 2):
+        a, b, c = (words[ordered[pos + k]] for k in range(3))
+        if not (abs(a[1] - b[1]) < 1.0 and abs(b[1] - c[1]) < 1.0 and a[2] <= b[0] + 1 and b[2] <= c[0] + 1):
+            continue
+        t = [a[4].strip(" ,"), b[4].strip(" ,"), c[4].strip(" ,")]
+        if _YEAR_ONLY.fullmatch(t[2]) and ((_MONTH_WORD.fullmatch(t[0]) and _DAY_WORD.fullmatch(t[1]))
+                                          or (_DAY_WORD.fullmatch(t[0]) and _MONTH_WORD.fullmatch(t[1]))):
+            phrases.append([ordered[pos + k] for k in range(3)])
+    if len(phrases) < 3:
+        return words
+    height = max(max(words[i][3] - words[i][1] for i in ph) for ph in phrases)
+    phrases.sort(key=lambda ph: words[ph[0]][1])
+    clusters: list[list[list[int]]] = []
+    for ph in phrases:                      # phrases on baselines within one and a third line heights of the one before
+        if clusters and words[ph[0]][1] - words[clusters[-1][-1][0]][1] <= 1.34 * height:
+            clusters[-1].append(ph)
+        else:
+            clusters.append([ph])
+    out = list(words)
+    for cluster in clusters:
+        if len(cluster) < 3 or len({round(words[ph[0]][1], 1) for ph in cluster}) < 2:
+            continue
+        spans = sorted((words[ph[0]][0], words[ph[2]][2]) for ph in cluster)
+        if any(b[0] < a[1] for a, b in zip(spans, spans[1:])):
+            continue
+        top = words[cluster[0][0]][1]
+        for ph in cluster:
+            shift = top - words[ph[0]][1]
+            for i in ph:
+                w = words[i]
+                out[i] = (w[0], w[1] + shift, w[2], w[3] + shift, *w[4:])
+    return out
+
+
+def flatten_wrapped_dates(words: list[tuple]) -> list[tuple]:
+    """Header cells whose date wraps ("quarter ended / 30th September" with the year "2026" alone on the line below, in a table
+    whose columns are narrow: Hindustan Unilever's statements, 31 Oct 2026) put into one word per column, the whole cell text
+    ending with its year ("Unaudited results for the quarter ended 30th September 2026"). The cell's words are replaced, so the
+    header line then holds each column's date with its own group words, which the date and group readers already understand.
+
+    Only a row of two or more bare years is touched; a year that follows a month word on its line is part of an ordinary date. A
+    cell is the words above the years' row, in lines no farther apart than one line's height, merged where their horizontal
+    extents meet; it must hold exactly one month word, with a day before it, as its last words. Anything else leaves the page as
+    it was. ``words`` are PyMuPDF's (x0, y0, x1, y1, text, ...)."""
+    bare = []
+    for w in words:
+        if not _YEAR_ONLY.fullmatch(w[4].strip()):
+            continue
+        if any(abs(o[1] - w[1]) < 2 and 0 <= w[0] - o[2] < 8 and _MONTH_WORD.fullmatch(o[4].strip(" ,")) for o in words):
+            continue            # "30 September 2026" on one line: an ordinary date
+        bare.append(w)
+    if len(bare) < 2:
+        return words
+    bare.sort(key=lambda w: (w[1], w[0]))
+    groups: list[list[tuple]] = []
+    for w in bare:
+        if groups and abs(groups[-1][0][1] - w[1]) < 2:
+            groups[-1].append(w)
+        else:
+            groups.append([w])
+    drop: set[int] = set()
+    add: list[tuple] = []
+    for group in groups:
+        if len(group) < 2:
+            continue
+        top, height = group[0][1], max(group[0][3] - group[0][1], 1.0)
+        span = max(group[-1][2] - group[0][0], 1.0)
+        above = sorted((w for w in words if w[3] <= top + 0.5 and w not in group and w[4].strip()), key=lambda w: (-round(w[3]), w[0]))
+        lines: list[list[tuple]] = []
+        for w in above:
+            if lines and abs(lines[-1][0][3] - w[3]) < 1.0:
+                lines[-1].append(w)
+            else:
+                lines.append([w])
+        band, edge = [], top
+        for line in lines:                  # walk up the lines of the header; a bigger gap or a title line wider than a cell ends it
+            if edge - max(w[3] for w in line) > height:
+                break
+            run_start = run_end = None
+            wide = False
+            for w in sorted(line, key=lambda w: w[0]):
+                if run_end is not None and w[0] - run_end <= 4:
+                    run_end = max(run_end, w[2])
+                else:
+                    run_start, run_end = w[0], w[2]
+                wide = wide or run_end - run_start > 0.4 * span
+            if wide:
+                break
+            band += line
+            edge = min(edge, min(w[1] for w in line))
+        cells: list[list] = []               # [x0, x1, words] merged where the extents meet
+        for w in sorted(band, key=lambda w: w[0]):
+            if cells and w[0] <= cells[-1][1] + 2:
+                cells[-1][1] = max(cells[-1][1], w[2])
+                cells[-1][2].append(w)
+            else:
+                cells.append([w[0], w[2], [w]])
+        made, used = [], set()
+        for year in group:
+            centre = (year[0] + year[2]) / 2
+            cell = next((c for c in cells if c[0] - 1 <= centre <= c[1] + 1), None)
+            if cell is None:
+                made = []
+                break
+            members = cell[2]
+            names = [w for w in members if _MONTH_WORD.fullmatch(w[4].strip(" ,"))]
+            if len(names) > 1:        # two columns' headers joined by a shared phrase ("Audited results for the"): split by position
+                mid = lambda w: (w[0] + w[2]) / 2           # noqa: E731
+                mine = min(names, key=lambda n: abs(mid(n) - centre))
+                members = [w for w in members if min(names, key=lambda n: abs(mid(n) - mid(w))) is mine]
+            ordered = sorted(members, key=lambda w: (round(w[1] / max(height * 0.6, 1.0)), w[0]))
+            texts = [w[4].strip() for w in ordered]
+            months = [k for k, t in enumerate(texts) if _MONTH_WORD.fullmatch(t.strip(" ,"))]
+            if len(months) != 1 or months[0] != len(texts) - 1 or months[0] < 1 or not _DAY_WORD.fullmatch(texts[months[0] - 1]):
+                made = []
+                break
+            made.append((year[0], year[1], year[2], year[3], " ".join(texts) + " " + year[4].strip(), 0, 0, 0))
+            used.update(id(w) for w in members)
+        if made:
+            drop.update(used | {id(y) for y in group})
+            add += made
+    return [w for w in words if id(w) not in drop] + add if add else words
+
+
+def _numeric_like(word: str) -> bool:
+    return bool(re.fullmatch(r"\(?-?[\d,]+(?:\.\d+)?\)?|[-\u2013\u2014]", word.strip()))
+
+
+def label_first(row: list[tuple]) -> list[tuple]:
+    """A row whose label stands between its figures (the first columns' figures, the label, the other columns' figures:
+    Hindustan Unilever's layout, where the label column sits in the middle of the page) with the label put first, the figures
+    after it in their left to right order, which is the column order of the header. Needs two or more figures on each side; a
+    label with figures on one side only (every other table) is left as it was."""
+    texts = [w[2] for w in row]
+    lead = 0
+    while lead < len(texts) and _numeric_like(texts[lead]):
+        lead += 1
+    trail = 0
+    while trail < len(texts) - lead and _numeric_like(texts[-1 - trail]):
+        trail += 1
+    middle = row[lead:len(row) - trail]
+    if lead < 2 or trail < 2 or not middle or not any(re.search(r"[A-Za-z]{3}", w[2]) for w in middle) \
+            or any(_numeric_like(w[2]) and re.search(r"\d{2}", w[2]) for w in middle):
+        return row
+    return middle + row[:lead] + row[len(row) - trail:]
+
+
 def coordinate_text(page) -> tuple[str, list[list[tuple]], set[int], bool]:
     """A page's words put into rows by position, not by the order the text layer lists them: a layer that runs column by
     column (all labels, then all figures) or sets a figure a point off its label's baseline.
@@ -571,6 +809,8 @@ def coordinate_text(page) -> tuple[str, list[list[tuple]], set[int], bool]:
     from .ocr import positioned_lines
 
     words = page.get_text("words")
+    if _row_fixes():
+        words = flatten_wrapped_dates(align_staggered_dates(words))
     alpha = [([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], w, 1.0) for x0, y0, x1, y1, w, *_ in words if re.search(r"[A-Za-z]", w)]
     rest = [((x0 + x1) / 2, x0, x1, w, (y0 + y1) / 2) for x0, y0, x1, y1, w, *_ in words
             if not re.search(r"[A-Za-z]", w) and w.strip()]
@@ -594,6 +834,8 @@ def coordinate_text(page) -> tuple[str, list[list[tuple]], set[int], bool]:
     offsets.sort()
     systematic = len(offsets) >= 6 and offsets[len(offsets) // 2] > SYSTEMATIC_SHARE
     rows = [sorted(row) for row in rows]
+    if _row_fixes():
+        rows = [label_first(row) for row in rows]
     return "\n".join(" ".join(w[2] for w in row) for row in rows), rows, bad, systematic
 
 
@@ -619,12 +861,20 @@ def read_document(payload: bytes, ocr: bool = True, max_ocr_pages: int = 6) -> t
         if not doc.page_count:
             return None, "no pages"
         texts: dict[int, str] = {}
+        rowish: set[int] = set()        # pages that name a results line (PDF_ROW_FIXES: these come first, below)
         for i in range(doc.page_count):
             layer = doc.page_text(i, figures=False)
             if re.search(r"months?\s+ended|quarter|year\s+ended", layer, re.I) or doc.is_scanned(i):
                 texts[i] = layer
-            if len(texts) >= MAX_PAGES:
+                if _RESULTS_LINE.search(layer):
+                    rowish.add(i)
+            if len(texts) >= MAX_PAGES and (not _row_fixes() or i >= MAX_SCAN_PAGES):
                 break
+        if _row_fixes() and len(texts) > MAX_PAGES:
+            # an auditor's letter or a long note also names a quarter: the statements of a long filing (Persistent's consolidated page is
+            # the 19th) were crowded out by the first twelve pages that did. Pages with a results line first, then the rest, in page order.
+            keep = sorted(texts, key=lambda i: (i not in rowish, i))[:MAX_PAGES]
+            texts = {i: texts[i] for i in sorted(keep)}
         if not texts:
             return None, "no page names a quarter or year ended"
         consolidated_anywhere = any(_names(t, "consolidated") for t in texts.values())
@@ -805,7 +1055,7 @@ def candidate_filings(filings: list, period: str) -> list:
         if not f.pdf_url:
             continue
         words = f"{f.subject} {f.headline}"
-        if not _RESULTS.search(words) or _NOT_RESULTS.search(f"{f.headline}"):
+        if not _RESULTS.search(words) or _NOT_RESULTS.search(f"{f.headline}") or _NOT_RESULTS_SUBJECT.search(f.subject or ""):
             continue
         out.append(f)
     out.sort(key=lambda f: ("financial result" not in (f.subject or "").lower(),

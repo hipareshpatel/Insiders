@@ -545,7 +545,7 @@ def test_more_statement_lines_count(line):
 
 def test_a_non_results_pdf_listed_as_results_gives_no_rows_and_the_next_pdf_is_read():
     agm, res = "https://nsearchives.nseindia.com/corporate/AGM.pdf", "https://nsearchives.nseindia.com/corporate/RES.pdf"
-    agm_filing = filing(agm, subject="Financial Results", headline="Outcome of AGM and voting results")
+    agm_filing = filing(agm, subject="Financial Results", headline="Outcome of AGM and results notice")
     alone = xk.run(FakeNse([agm_filing], {agm: letter_pdf(*AGM_LINES)}), FakeSink({"1": full_dossier()}), [("1", "X")], limit=1)
     assert len(alone["rows"]) == 8 and not any(r.get("pdf_url") for r in alone["rows"])      # no figure paired with the AGM letter
     assert "not a results statement" in alone["rows"][0]["note"]

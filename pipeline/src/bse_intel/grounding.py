@@ -898,6 +898,7 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
     filing_index, other_index = SourceIndex(filing), SourceIndex(*others)
     well_formed = SourceIndex(_blank_malformed(filing))   # what may support an enlargement
     whole = whole_rupee_crores(filing)
+    whole_formed = whole_rupee_crores(_blank_malformed(filing))   # what may support an enlargement by reading 2
     if not unit and not whole and not any(u != 1 for u in filing_index._by_unit):
         return []
     slips: dict[str, tuple[str, float, int, float, int]] = {}
@@ -925,8 +926,10 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
                 continue
             # 2. a whole-rupee amount, a power of ten off
             tolerance = 0.5 * 10 ** (-decimals) + 1e-9
+            # an enlargement (c above the card's figure) only from a whole-rupee amount with well-formed digit groups (TODO 147)
             fits = sorted({(round(c, _places(c)), _places(c)) for c in whole for k in (-3, -2, -1, 1, 2, 3)
-                           if abs(value - c * 10 ** k) <= max(tolerance, 0.002 * c * 10 ** k)})
+                           if abs(value - c * 10 ** k) <= max(tolerance, 0.002 * c * 10 ** k)
+                           and (c <= value or _near(whole_formed, c, 1e-9))})
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
                 continue

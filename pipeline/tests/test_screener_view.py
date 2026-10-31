@@ -950,3 +950,11 @@ def test_a_negative_bank_exceptional_item_goes_to_expenses_and_pbt_stays_as_file
     rows = values(sv.bank_pl(sv._Reader(facts, end=END, months=12)))
     assert rows["Expenses"] == pytest.approx(25.0) and rows["Other Income"] == pytest.approx(10.0)
     assert rows["Financing Profit"] + rows["Other Income"] - rows["Depreciation"] == pytest.approx(rows["Profit before tax"])
+
+
+def test_a_compared_year_lists_what_each_source_gives_for_the_row():
+    page = sv.parse_page(PAGE.replace('"1,99"', "199"))
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): doc(ANNUAL)})
+    rows = {(r["table"], r["row"], r["period"]): r for r in sv.compare(page, cf, "1", "DEMO")}
+    assert rows[("annual", "Sales", "FY26")]["alts"].startswith("own ")
+    assert "alts" not in rows[("annual", "Sales", "FY24")]          # nothing compared, nothing listed

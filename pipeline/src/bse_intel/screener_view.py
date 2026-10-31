@@ -1214,6 +1214,40 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
     return result
 
 
+def _year_alternatives(cf: "CompanyFacts", fam: str, basis: str, fy: str, memo: dict) -> dict[str, dict[str, float]]:
+    """A year's P&L rows by each source the year could be read from (a measurement aid for which source screener uses; never the
+    stored figure): ``own`` the year's own annual report, ``next`` the next year's (its comparative), ``q4`` the Q4 results file's
+    twelve months, ``sumq`` our four quarters added up. A source that does not hold the year is left out."""
+    k = ("alts", fy)
+    if k in memo:
+        return memo[k]
+    end, out = _fy_end(fy), {}
+    q4 = cf.result(f"Q4{fy}", basis)
+    if end is not None:
+        q4r = _Reader(q4, end=end, months=12) if q4 is not None else None
+        for label, off in (("own", 0), ("next", 1)):
+            key = cf.annual.get((f"FY{_fy_num(fy) + off:02d}", basis))
+            f = cf._load(key) if key else None
+            if f is not None and any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod")):
+                out[label] = {n: r.value for n, r in pl_rows(fam, _Reader(f, end=end, months=12), q4r).items() if r.value is not None}
+        if q4r is not None and any(q4.cr(n, end=end, months=12) is not None
+                                   for n in ("ProfitLossForPeriod", "ProfitLossForThePeriod", "InterestEarned")):
+            out["q4"] = {n: r.value for n, r in pl_rows(fam, q4r).items() if r.value is not None}
+        quarters = []
+        for i in (1, 2, 3, 4):
+            rows, _ = _ours(cf, fam, basis, "quarters", f"Q{i}{fy}", memo)
+            quarters.append(rows)
+        if all(quarters):
+            sums: dict[str, float] = {}
+            for name in quarters[0]:
+                vals = [q[name].value if name in q else None for q in quarters]
+                if name not in PCT_ROWS and all(v is not None for v in vals):
+                    sums[name] = sum(vals)
+            out["sumq"] = sums
+    memo[k] = out
+    return out
+
+
 def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", basis: str | None = None,
             sub_rows: dict | None = None) -> list[dict]:
     """Every (table, row, period) the page shows, with ours and a status: ok, apart, no_facts, no_recipe."""
@@ -1244,6 +1278,9 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                     else:
                         rec.update(ours=round(got.value, 2), diff=round(got.value - theirs, 2),
                                    status="ok" if exact(got.value, theirs, row) else "apart", note=got.note)
+                        if table == "annual" and row not in PCT_ROWS:
+                            alts = _year_alternatives(cf, fam, basis, period, memo)
+                            rec["alts"] = "; ".join(f"{label} {_fmt(v[row])}" for label, v in alts.items() if row in v)
                         reader = memo.get(("reader", (table, period)))
                         if rec["status"] == "apart" and row not in PCT_ROWS and reader is not None:
                             rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
@@ -1403,7 +1440,7 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
 
 
 CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
-              "gap matches", "gap pairs", "expense parts apart", "lines in that part")
+              "gap matches", "gap pairs", "expense parts apart", "lines in that part", "year by source")
 
 
 def to_csv(summary: dict) -> str:
@@ -1413,7 +1450,7 @@ def to_csv(summary: dict) -> str:
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
-                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", "")])
+                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", ""), r.get("alts", "")])
     return buf.getvalue()
 
 

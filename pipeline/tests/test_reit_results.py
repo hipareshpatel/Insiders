@@ -126,6 +126,24 @@ def test_the_file_cap_ends_the_run_early_and_keeps_what_was_read(settings):
     assert sink._db.execute("SELECT count(*) FROM results_kpi").fetchone()[0] == 1
 
 
+def test_a_quarter_with_no_sales_is_left_out_and_its_stored_row_pruned(settings):
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    rows = [row(symbol="BAGMANE", name="Bagmane Prime Office REIT", file="q1.xml", ended="30-Jun-2026", related="First Quarter"),
+            row(symbol="BAGMANE", name="Bagmane Prime Office REIT", file="shell.xml", ended="31-Mar-2026", related="Fourth Quarter",
+                basis="Non-Consolidated", broadcast="20-May-2026 10:00:00")]
+    q1 = dict(start="2026-04-01", end="2026-06-30", symbol="BAGMANE", scrip="544758", isin="INE0QS725011")
+    files = {"q1.xml": xbrl_doc(**q1), "shell.xml": xbrl_doc(**{**q1, "start": "2026-01-01", "end": "2026-03-31"}, basis="Standalone",
+                                                           revenue=0, expenses=400_000, finance=0, depreciation=0, profit=-1_100_000)}
+    sink.execute(rr.results_table.STATEMENT, rr.results_table.company_rows("544758", {rr.statements.KEY: [
+        {"table": "quarters", "period": "Q4FY26", "basis": "STANDALONE", "family": "reit", "lab": {"by": "file"},
+         "rows": {"Net Profit": -0.11, "Sales": 0, "Operating Profit": -0.04}, "source_news_id": None}]}, "t0"))
+    out = rr.run(Client(rows, files), sink, "t")
+    assert (out["no_sales"], out["rows"], out["per_quarter"]) == (1, 1, {"Q1FY27": 1})
+    assert [r[0] for r in sink._db.execute("SELECT period FROM results_kpi WHERE scrip_code = '544758'")] == ["Q1FY27"]
+
+
 def test_an_unreadable_file_is_counted_and_a_trust_without_a_code_is_left_out(settings):
     from bse_intel.sinks.local import LocalSink
 

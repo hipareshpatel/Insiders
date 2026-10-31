@@ -170,7 +170,7 @@ def run(client, sink, at: str, day_from: date | None = None) -> dict:
     into results_kpi. Returns the counts. A file that cannot be read is left out and counted; the cap ends the run early, not as a failure."""
     listed = client.reit_invit_results(day_from)
     chosen = pick(listed)
-    counts = {"listed": len(listed), "files": len(chosen), "stored": 0, "downloaded": 0, "not_xml": 0, "unreadable": 0, "no_quarter": 0}
+    counts = {"listed": len(listed), "files": len(chosen), "stored": 0, "downloaded": 0, "not_xml": 0, "unreadable": 0, "no_quarter": 0, "no_sales": 0}
     parsed: dict[str, list[dict]] = defaultdict(list)
     meta: dict[str, dict] = {}
     capped = False
@@ -185,6 +185,9 @@ def run(client, sink, at: str, day_from: date | None = None) -> dict:
         got = read(data)
         if got is None or not got["period"]:
             counts["no_quarter" if got is None else "unreadable"] += 1
+            continue
+        if got["rows"].get("Sales") == 0:
+            counts["no_sales"] += 1   # a trust's quarter before it held its assets (Bagmane, Mar 2026): no sales, no result to show (owner, 31 Oct 2026)
             continue
         got["stamp"] = stamp(row)
         symbol = row["symbol"]

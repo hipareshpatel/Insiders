@@ -169,6 +169,14 @@ job. Hourly lead check-ins until 22:00 IST.**
 3. Review and run the second session's PRs (TODO 148 bank PDF reader, TODO 151 fact sheet for lenders).
 4. Hubtown nse-106629168: the live card still shows finance cost Q4FY25 0.02 Cr (right: 18.82); requeued 12:52 IST after #294 but
    a 19 May filing waits behind ~1,500 history filings. Re-run that one card by the existing path, never a hand edit.
+   **31 Oct ~18:15 IST:** still the old card. #298's requeue puts Hubtown first in the history queue, but pipeline run
+   41196991535 (17:03-17:43 IST) spent its whole 40-minute budget on the day's results filings (20 deferred) and never reached the
+   history pass. It re-runs on the first run with time left; results season can delay that for days. Varun Beverages nse-106835976
+   is re-made (revenue 6,815.59 Cr).
+   **Fix on #301 (31 Oct ~19:30 IST, shipped as a live wrong card):** `requeue-failed --ids` also names the filings in
+   `requeue:by_id`; each run gives them a slot of at most 3 minutes, 6 filings, right after today's filings
+   (`pipeline._requeued_first`), before the history pass. Hubtown was requeued before this existed: after #301 merges, run
+   `requeue-failed ids=nse-106629168` once more.
 5. TODO 147 leftovers (unit-slip enlargements: SYRMA nse-106836602 cause unproven; reading 2 on malformed digit groups). **31 Oct
    ~16:05 IST (second session):** SYRMA's live card is right (1,989.68, rewritten by the exchange-file card); the cause needs its PDF
    (`SYRMASGS_30102026163122_BMOutcome30102026.pdf`), not downloaded here: the lead checks R2 for a kept copy before any fetch (rule:
@@ -179,7 +187,17 @@ job. Hourly lead check-ins until 22:00 IST.**
    **TMB nse-106836238** (₹304 Cr ECL provision note, typed RESULTS): typed RESULTS by NSE's category or the model, it took the results
    path and found the bank's Q2FY27 file, so a second results card for the quarter. Proposed rule: a RESULTS-typed filing with no
    results statement and no results covering letter in its text (`_RESULTS_STATEMENT`, `results_cover`) is OTHER. It changes cards, so
-   it needs the on/off audit over stored cards and a blind sample first (owner rule); not built.
+   it needs the on/off audit over stored cards and a blind sample first (owner rule). **Built 31 Oct ~18:10 IST behind
+   `RESULTS_NEEDS_STATEMENT` (off; `pipeline.lacks_results`: no statement heading, no results covering letter, no "financial results
+   for the quarter/half/year", and at least 1,500 characters of text).** The audit: Maintenance `release-check` with `ids` =
+   `results_statement` (the stored RESULTS cards whose text is in R2, the last 8 days; changed = would be OTHER), then a blind read of
+   the changed cards; switch on only if no real results card is retyped.
+   **TODO 147 reading 2: fixed on #301** (an enlargement from an amount in whole rupees needs well-formed digit groups, as #297
+   made it for reading 3; a shrink is unchanged).
+   **SHILPAMED (TODO 129's other half): left as a recorded exception.** Consolidated FY23 and FY24 Borrowings are 1.31 Cr above
+   screener's (on ~800 Cr), the CurrentMaturitiesOfLongTermDebt element SCREENER_CMLTD adds (measured +34 / -2 rows when it went on;
+   these are the 2). Its current borrowings' breakdown already holds the current term loans; no file-level signal found that tells
+   this case from L&T's (where the maturities are outside borrowings), so no rule.
    **TODO 129: fixed on #298** (a later report gives a year's balance sheet only with that year's equity; every case found is before FY23).
 6. Owner questions from docs/handover/2026-10-31.md section 4 (Mistral October spend; NVIDIA nemotron-3.5-parse model id; a results
    filing made twice: table on the repeat card?; Cloudflare Workers Paid renewal before ~21 Nov).

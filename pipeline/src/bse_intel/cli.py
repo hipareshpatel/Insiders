@@ -481,6 +481,8 @@ def cmd_requeue_failed(args, settings, sink) -> int:
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
         if scrips:      # their history is read first, so an older requeued filing runs on the next pipeline run
             print("requeue-failed: first in the history queue: " + ", ".join(requeue.prioritise(sink, scrips)[:len(scrips)]))
+            # and the named filings get the run's short slot after today's filings (the history pass may not start)
+            requeue.mark_by_id(sink, ids, scrips)
         return 0
     since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
     print("requeue-failed: no backup taken (no filings named; failed filings have no card to back up)")

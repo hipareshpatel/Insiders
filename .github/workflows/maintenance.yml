@@ -53,7 +53,7 @@
 #   summary.json, lines.json and the blind-sample markdown go up as the artifact `audit-precision`. No writes.
 # - release-check: read-only on/off comparison of the nine card switches that are built but off (CARD_EBITDA_PROFIT_V2,
 #   CARD_SAME_DEFINITION, CARD_CONSOLIDATED_ONLY, CARD_TWO_PARTS, QUOTE_EXACT_NUMBERS, CARD_GROUNDED_FIGURES,
-#   CARD_GUIDANCE_DATED, CARD_ONE_BASIS, MEMORY_YEAR_CHECK; the parts that cannot be replayed offline are listed, not faked; pipeline/scripts/release_check.py,
+#   CARD_GUIDANCE_DATED, CARD_ONE_BASIS, MEMORY_YEAR_CHECK, RESULTS_NEEDS_STATEMENT as check results_statement; the parts that cannot be replayed offline are listed, not faked; pipeline/scripts/release_check.py,
 #   F170) over every stored card, its text in R2 and its company's memory, no AI. Per switch: what changed (cards, lines
 #   added, removed, changed), a plain-text summary and a seeded blind sample of up to 20 changed cards with its key, all up
 #   as the artifact `release-check`. No writes.
@@ -1144,19 +1144,31 @@ jobs:
           REPO: ${{ github.repository }}
           LIMIT: ${{ inputs.limit }}
         run: |
-          # the newest earlier screener-rows artifact of a main run (another run's, not this one's)
-          id=$(gh api "repos/$REPO/actions/artifacts?name=screener-rows&per_page=30" --jq "[.artifacts[] | select(.workflow_run.head_branch == \"main\" and .workflow_run.id != ${{ github.run_id }} and (.expired | not))][0].id")
-          if [ -z "$id" ] || [ "$id" = "null" ]; then echo "no earlier run on main to compare with"; exit 0; fi
+          # the newest earlier full run on main with the same limit (its own artifact, uploaded below; review of #298: a --scrips or
+          # a smaller run is no baseline), never this run's
+          name="screener-rows-full-${LIMIT:-50}"
+          id=$(gh api "repos/$REPO/actions/artifacts?name=$name&per_page=30" --jq "[.artifacts[] | select(.workflow_run.head_branch == \"main\" and .workflow_run.id != ${{ github.run_id }} and (.expired | not))][0].id")
+          if [ -z "$id" ] || [ "$id" = "null" ]; then echo "no earlier $name run on main to compare with"; exit 0; fi
           mkdir -p "$RUNNER_TEMP/prev"
           gh api "repos/$REPO/actions/artifacts/$id/zip" > "$RUNNER_TEMP/prev/a.zip" && (cd "$RUNNER_TEMP/prev" && unzip -o -q a.zip)
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-rows-diff --prev "$RUNNER_TEMP/prev/rows.csv" --curr "$RUNNER_TEMP/screener-rows/rows.csv" --md "$RUNNER_TEMP/screener-rows/against-previous.md" --fail-on-worse || echo "::warning::a row class lost 5 or more exact pairs against the previous run: see against-previous.md"
-          echo "Compared with artifact $id (limit ${LIMIT:-50} this run; the earlier run's limit may differ)" >> "$GITHUB_STEP_SUMMARY"
+          if [ ! -s "$RUNNER_TEMP/prev/rows.csv" ]; then echo "::warning::the earlier run's rows.csv is missing or empty: no comparison"; exit 0; fi
+          code=0
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel screener-rows-diff --prev "$RUNNER_TEMP/prev/rows.csv" --curr "$RUNNER_TEMP/screener-rows/rows.csv" --md "$RUNNER_TEMP/screener-rows/against-previous.md" --fail-on-worse || code=$?
+          if [ "$code" -eq 1 ]; then echo "::warning::a row class lost 5 or more exact pairs against the previous run: see against-previous.md"
+          elif [ "$code" -ne 0 ]; then echo "::warning::the comparison failed (exit $code)"; fi
+          echo "Compared with artifact $id ($name, the previous full run on main)" >> "$GITHUB_STEP_SUMMARY"
           cat "$RUNNER_TEMP/screener-rows/against-previous.md" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always() && inputs.command == 'screener-rows'
         with:
           name: screener-rows
           path: ${{ runner.temp }}/screener-rows/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4   # the baseline of the next full run with the same limit (rows.csv only)
+        if: success() && inputs.command == 'screener-rows' && github.ref == 'refs/heads/main' && !inputs.ids
+        with:
+          name: screener-rows-full-${{ inputs.limit || '50' }}
+          path: ${{ runner.temp }}/screener-rows/rows.csv
           if-no-files-found: ignore
       - name: Cross-check memory against the stored Tijori pages (reads only)
         if: inputs.command == 'tijori-crosscheck'

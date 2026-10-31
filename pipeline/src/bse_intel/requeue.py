@@ -91,6 +91,23 @@ def prioritise(sink, scrips: list[str]) -> list[str]:
     return kept
 
 
+BY_ID_KEY = "requeue:by_id"
+BY_ID_MAX = 50   # the list kept between runs; a run reads at most pipeline.REQUEUED_FIRST_MAX of them
+
+
+def mark_by_id(sink, news_ids: list[str], scrips: list[str]) -> dict:
+    """Name the filings requeued by id, and their companies, for the run's short slot after today's filings
+    (pipeline._requeued_first). In results season today's filings used every run's whole time, so the history pass where a
+    requeue by id waited never started (31 Oct 2026: Hubtown nse-106629168 still wrong six hours after its requeue; run
+    41196991535 deferred 20 of the day's filings). The run drops an id once it is no longer pending."""
+    have = json.loads(sink.kv_get(BY_ID_KEY) or "{}")
+    ids = list(dict.fromkeys([n for n in news_ids if n] + list(have.get("ids", []))))[:BY_ID_MAX]
+    companies = list(dict.fromkeys([s for s in scrips if s] + list(have.get("scrips", []))))[:BY_ID_MAX]
+    kept = {"ids": ids, "scrips": companies}
+    sink.kv_set(BY_ID_KEY, json.dumps(kept), now_iso())
+    return kept
+
+
 def requeue(sink, since: str, max_attempts: int, attempts_left: int | None = None, dry_run: bool = False) -> dict:
     """Set the failed filings since ``since`` PENDING with ``attempts_left`` tries (default all); returns a summary."""
     left = max_attempts if attempts_left is None else max(1, min(attempts_left, max_attempts))

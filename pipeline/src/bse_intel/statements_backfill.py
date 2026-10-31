@@ -68,7 +68,7 @@ def _confirmed(confirm, period: str, basis: str, top: float | None) -> bool:
     """Screener's stored quarter agrees with the file's Net Profit (within max(1 Cr, 1%), Screener prints whole crore): with memory
     in doubt, two sources agreeing decide (owner, 31 Oct 2026; memory's AI-read profit was the wrong side for CGPOWER Q2FY26,
     18.24 against the file's 284.29 and Screener's 284)."""
-    if confirm is None or top is None or not period.startswith("Q"):
+    if confirm is None or top is None or not period.startswith(("Q", "FY")):     # a year too: its annual Net Profit (31 Oct 2026)
         return False
     theirs = confirm(period, basis)
     return theirs is not None and abs(theirs - top) <= max(1.0, abs(top) / 100)
@@ -95,9 +95,9 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
                 continue
             if table in ("quarters", "annual"):
                 values = sv.corrected_pl(values, fam)   # the profit-line rules, as at the live write (screener_view.corrected_pl)
-            quarter = period if table == "quarters" else None
+            checked = period if table in ("quarters", "annual") else None
             top = values.get("Net Profit") if table in ("quarters", "annual") else None
-            sure = _confirmed(confirm, quarter, basis, top) if quarter else False
+            sure = _confirmed(confirm, checked, basis, top) if checked else False
             if (period in held or f"Q4{period}" in held) and not sure:
                 left.append(f"{basis} {table} {period}: unit slip held in memory")
                 continue

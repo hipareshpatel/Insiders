@@ -216,4 +216,4 @@ def test_screener_breaks_the_tie_when_memory_doubts_the_files_profit():
     assert sb._confirmed(lambda p, b: 18.0, "Q2FY26", "CONSOLIDATED", 284.29) is False     # Screener sides with memory: stays out
     assert sb._confirmed(lambda p, b: None, "Q2FY26", "CONSOLIDATED", 284.29) is False     # no page: the old check stands
     assert sb._confirmed(None, "Q2FY26", "CONSOLIDATED", 284.29) is False
-    assert sb._confirmed(lambda p, b: 284.0, "FY26", "CONSOLIDATED", 284.29) is False      # a year: Screener's quarter page has none
+    assert sb._confirmed(lambda p, b: 284.0, "FY26", "CONSOLIDATED", 284.29) is True       # a year: the page's annual Net Profit

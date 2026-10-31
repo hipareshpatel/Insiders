@@ -189,7 +189,7 @@ def test_hdfc_bank_quarter_and_half_year_by_the_bank_recipe():
     assert q["Other Income"].value == pytest.approx(34227.06, abs=0.01)
     assert q["Depreciation"].value is None and q["Expenses"].value is None      # the quarter has no cash flow
     h = sv.bank_pl(sv._Reader(facts, end=date(2026, 9, 30), months=6))
-    assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68, abs=0.02)
+    assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68 + 1975.04, abs=0.02)   # its exceptional loss in Expenses
     assert h["Financing Profit"].value == pytest.approx(h["Revenue"].value - h["Interest"].value - h["Expenses"].value)
     bs = sv.bank_bs(sv._Reader(facts, instant=date(2026, 9, 30)))
     assert {"Equity Capital", "Reserves", "Deposits", "Borrowing", "Other Liabilities", "Total Liabilities", "Total Assets", "Fixed Assets",
@@ -939,3 +939,46 @@ def test_statements_rows_of_writes_the_bank_and_nbfc_balance_sheet_rows_for_the_
         d = dict(trimmed(name).doc, period="Q4FY26", basis="STANDALONE")
         got = {table: rows for table, rows, _ in statements.rows_of(d)}
         assert got["balance"][row].value is not None and got["balance"]["Total Assets"].value
+
+
+def test_a_negative_bank_exceptional_item_goes_to_expenses_and_pbt_stays_as_filed():
+    """SBI FY24: its 7,100.31 Cr pension charge is in screener's Expenses and Financing Profit, both bases (run 41174640014)."""
+    facts = xf.Facts(doc([("InterestEarned", "D2026", 100.0), ("InterestExpended", "D2026", 50.0), ("OperatingExpenses", "D2026", 20.0),
+                          ("AdjustmentsForDepreciationAndAmortisationExpense", "D2026", 2.0), ("OtherIncome", "D2026", 10.0),
+                          ("ExceptionalItems", "D2026", -7.0), ("ProfitLossFromOrdinaryActivitiesBeforeTax", "D2026", 33.0)],
+                         template="BANKING"))
+    rows = values(sv.bank_pl(sv._Reader(facts, end=END, months=12)))
+    assert rows["Expenses"] == pytest.approx(25.0) and rows["Other Income"] == pytest.approx(10.0)
+    assert rows["Financing Profit"] + rows["Other Income"] - rows["Depreciation"] == pytest.approx(rows["Profit before tax"])
+
+
+def test_a_compared_year_lists_what_each_source_gives_for_the_row():
+    page = sv.parse_page(PAGE.replace('"1,99"', "199"))
+    cf = _store({xf.annual_key("1", "FY26", "CONSOLIDATED"): doc(ANNUAL)})
+    rows = {(r["table"], r["row"], r["period"]): r for r in sv.compare(page, cf, "1", "DEMO")}
+    assert rows[("annual", "Sales", "FY26")]["alts"].startswith("own ")
+    assert "alts" not in rows[("annual", "Sales", "FY24")]          # nothing compared, nothing listed
+
+
+def test_a_bank_states_its_stock_options_in_the_balance_sheet_note_and_screener_moves_them_to_reserves_at_march():
+    """HDFC Bank Q4FY24 standalone: "Employees stock options outstanding as at March 31, 2024 were Rs. 2652.72 crore" (screener
+    Reserves 439,486); the segment note's "Capital, ... stock options outstanding and Reserves" total is never read."""
+    note = ("DisclosureOfNotesOnAssetsAndLiabilitiesExplanatoryTextBlock", "I2026",
+            "Employees stock options outstanding as at March 31, 2026 were Rs. 4,545.11 crore and Other liability is Rs 1")
+    segment = ("DisclosureOfNotesOnSegmentsExplanatoryTextBlock", "I2026",
+               "Capital, Employees stock options outstanding and Reserves for quarter ended March 2026 is Rs. 5,62,900.90 crore")
+    base = [("ReservesAndSurplus", "I2026", 50000.0), ("OtherLiabilitiesAndProvisions", "I2026", 20000.0)]
+    march = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment, note], template="BANKING")), instant=END))
+    assert march["Reserves"].value == pytest.approx(54545.11) and march["Other Liabilities"].value == pytest.approx(15454.89)
+    alone = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment], template="BANKING")), instant=END))
+    assert alone["Reserves"].value == pytest.approx(50000.0)
+
+
+def test_a_row_apart_names_the_screener_sub_rows_that_equal_its_gap():
+    head = {"Long term Borrowings": {"Mar 2025": "1,200"}, "Short term Borrowings": {"Mar 2025": "300"},
+            "Lease Liabilities": {"Mar 2025": "45.5"}, "Other Borrowings": {"Mar 2025": "0"}}
+    listed, hit = sv.sub_row_hints(head, "Mar 2025", -45.4)
+    assert "Long term Borrowings 1,200.00" in listed and hit == "Lease Liabilities 45.50"
+    assert sv.sub_row_hints(head, "Mar 2025", 1245.5)[1] == "Long term Borrowings 1,200.00 + Lease Liabilities 45.50"
+    assert sv.sub_row_hints({"Material Cost %": {"Mar 2025": "40%"}}, "Mar 2025", 40.0) == ("", "")
+    assert sv.column_for("balance", "Q4FY25") == "Mar 2025" and sv.column_for("cash_flow", "FY25") == "Mar 2025"

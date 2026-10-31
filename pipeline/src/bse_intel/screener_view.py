@@ -381,6 +381,50 @@ def lines_making(cand: list[tuple[str, float]], gap: float, most: int = 3, limit
     return out
 
 
+SECTION_OF = {"quarters": "quarters", "annual": "profit-loss", "balance": "balance-sheet", "cash_flow": "cash-flow"}
+
+
+def _amount_text(raw) -> float | None:
+    """A sub-row cell in crore ("1,234", "-56.7"); None for a percent cell or anything else."""
+    text = str(raw or "").replace(",", "").strip()
+    if not text or text.endswith("%"):
+        return None
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def sub_row_hints(answer: dict | None, column: str | None, gap: float, limit: int = 3) -> tuple[str, str]:
+    """(screener's sub-rows of the head in that column, compact; the sub-rows, alone or two together, that equal the gap) for a row
+    apart: which part of screener's head we leave out or add (owner, 31 Oct 2026: "screener's stock page has sub rows for most
+    items"). Amount cells only; a percent sub-row (the Expenses heads of a quarter) is left out."""
+    if not answer or not column:
+        return "", ""
+    cells = [(name, v) for name, row in answer.items() if isinstance(row, dict) and (v := _amount_text(row.get(column))) is not None]
+    listed = "; ".join(f"{name} {_fmt(v)}" for name, v in cells[:10])
+    tol = max(ABS_TOL, abs(gap) * 0.005)
+    hits = [f"{name} {_fmt(v)}" for name, v in cells if v and abs(abs(v) - abs(gap)) <= tol]
+    if not hits:
+        for i, (a, va) in enumerate(cells):
+            for b, vb in cells[i + 1:]:
+                if not (va and vb):
+                    continue
+                for sign in (1, -1):
+                    if abs(abs(va + sign * vb) - abs(gap)) <= tol:
+                        hits.append(f"{a} {_fmt(va)} {'+' if sign > 0 else '-'} {b} {_fmt(vb)}")
+                        break
+    return listed, "; ".join(hits[:limit])
+
+
+def column_for(table: str, period: str) -> str | None:
+    """Screener's column heading for a compared period of any table: a balance sheet's Q4FY25 and a cash flow's FY25 are "Mar 2025"."""
+    if table == "balance":
+        m = re.fullmatch(r"Q([1-4])FY(\d\d)", period)
+        return column_of("quarters", period) if m else None
+    return column_of("annual" if table == "cash_flow" else table, period)
+
+
 def part_gaps(r: _Reader, ours_expenses: float, answer: dict, column: str, sales: float, gap: float) -> tuple[str, str]:
     """(which part holds the gap, the lines inside that part that make it) for an Expenses row apart."""
     parts = expense_parts(answer, column, sales, ours_expenses + gap)     # screener's Expenses: ours + its gap
@@ -619,8 +663,13 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     out["Interest"] = Row(expended, ("InterestExpended" if expended is not None else "missing InterestExpended") + src)
     out["Depreciation"] = Row(dep, ("AdjustmentsForDepreciationAndAmortisationExpense (cash flow)" if dep is not None
                                     else "missing AdjustmentsForDepreciationAndAmortisationExpense (no cash flow in this period)") + src)
-    expenses = None if None in (opex, dep) else opex + (prov or 0.0) - dep
-    out["Expenses"] = Row(expenses, ("OperatingExpenses + ProvisionsOtherThanTaxAndContingencies - Depreciation" if expenses is not None
+    # a loss filed as an exceptional item is in screener's Expenses (a gain is in its Other Income, below), so Financing Profit +
+    # Other Income - Depreciation stays the filed PBT (SBI FY24: its 7,100.31 Cr pension charge, Expenses and Financing Profit
+    # apart by exactly that, both bases, screener-rows run 41174640014)
+    loss = -min(exc or 0.0, 0.0)
+    expenses = None if None in (opex, dep) else opex + (prov or 0.0) - dep + loss
+    out["Expenses"] = Row(expenses, ("OperatingExpenses + ProvisionsOtherThanTaxAndContingencies - Depreciation"
+                                     + (" + exceptional loss" if loss else "") if expenses is not None
                                      else "missing OperatingExpenses or Depreciation") + src)
     fp = None if None in (earned, expended, expenses) else earned - expended - expenses
     out["Financing Profit"] = Row(fp, "Revenue - Interest - Expenses" + src)
@@ -903,6 +952,26 @@ def _paid_up(r: _Reader) -> tuple[float | None, str]:
 ESOP_ROW = r"stock option|esop"
 
 
+ESOP_NOTE = re.compile(r"employees?\W+stock\s+options?(?:\s*/\s*units)?\s+outstanding\b[^.]{0,60}?\bRs\.?\s*([\d,]+(?:\.\d+)?)", re.I)
+
+
+def _esop_note(r: _Reader, olp: float | None) -> float:
+    """The stock options outstanding a bank states in its balance-sheet note (crore), 0 when none; never the segment note's
+    "Capital, Employees stock options outstanding and Reserves ... Rs. 501424" (another total), never above the other liabilities."""
+    for name, _ctx, _unit, value, _dec in r.facts.doc.get("facts") or []:
+        if name != "DisclosureOfNotesOnAssetsAndLiabilitiesExplanatoryTextBlock" or not isinstance(value, str):
+            continue
+        m = ESOP_NOTE.search(value)
+        if m:
+            try:
+                v = float(m[1].replace(",", ""))
+            except ValueError:
+                continue
+            if v > 0 and (olp is None or v < olp):
+                return v
+    return 0.0
+
+
 def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
     """A bank's balance sheet (srules2 bs report, 1; 10 of 10 standalone Q4FY26 files: HDFC, SBI, ICICI, Union, Canara, IDFC First,
     Axis, Kotak, BoB, PNB, all within tolerance except the two named residues below).
@@ -921,18 +990,31 @@ def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
         out["Equity Capital"] = Row(paid[0], paid[1] + src)
     else:
         out["Equity Capital"] = Row(cap, ("Capital" if cap is not None else "missing Capital") + src)
-    esop = r.rows(("OtherLiabilitiesAndProvisions",), ESOP_ROW)
-    esop_v = _sum_rows(esop)
+    # screener moves the stock options outstanding and the Capital - paid-up difference into Reserves at March only: at September
+    # both stay in Other Liabilities (Q2FY27: HDFC both bases, Axis, Kotak, ICICI standalone; every row the move mends is a March
+    # one; bank balance-sheet review, 31 Oct 2026)
+    instant = r.at.get("instant")
+    march = instant is not None and instant.month == 3
+    esop = r.rows(("OtherLiabilitiesAndProvisions",), ESOP_ROW) if march else []
+    esop_v, esop_name = _sum_rows(esop), "ESOP row"
+    if march and not esop:
+        # HDFC Bank states it only in its balance-sheet note ("Employees stock options outstanding as at March 31, 2024 were
+        # Rs. 2652.72 crore"): Reserves FY24-FY26 both bases equal screener's with it
+        esop_v = _esop_note(r, olp=r.cr("OtherLiabilitiesAndProvisions"))
+        esop_name = "ESOP (balance-sheet note)"
     shift = (cap - paid[0]) if cap is not None and paid[0] is not None else 0.0
-    res_note = "ReservesAndSurplus" + (f" + Capital - paid-up {_fmt(shift)}" if shift else "") \
-        + (f" + ESOP row {_fmt(esop_v)}" if esop else "")
-    out["Reserves"] = Row(None if rs is None else rs + shift + esop_v, (res_note if rs is not None else "missing ReservesAndSurplus") + src)
+    to_reserves = shift if march else 0.0
+    res_note = "ReservesAndSurplus" + (f" + Capital - paid-up {_fmt(shift)}" if to_reserves else "") \
+        + (f" + {esop_name} {_fmt(esop_v)}" if esop_v else "")
+    out["Reserves"] = Row(None if rs is None else rs + to_reserves + esop_v, (res_note if rs is not None else "missing ReservesAndSurplus") + src)
     for row, name in (("Deposits", "Deposits"), ("Borrowing", "Borrowings")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
     olp = r.cr("OtherLiabilitiesAndProvisions")
-    out["Other Liabilities"] = Row(None if olp is None else olp - esop_v,
-                                   ("OtherLiabilitiesAndProvisions" + (f" - ESOP row {_fmt(esop_v)}" if esop else "")
+    to_other = shift - to_reserves      # a September sheet: the Capital - paid-up difference stays among the other liabilities
+    out["Other Liabilities"] = Row(None if olp is None else olp - esop_v + to_other,
+                                   ("OtherLiabilitiesAndProvisions" + (f" - {esop_name} {_fmt(esop_v)}" if esop_v else "")
+                                    + (f" + Capital - paid-up {_fmt(to_other)}" if to_other else "")
                                     if olp is not None else "missing OtherLiabilitiesAndProvisions") + src)
     tot, tot_name = r.cr("CapitalAndLiabilities"), "CapitalAndLiabilities"
     if tot is None:
@@ -1209,6 +1291,40 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
     return result
 
 
+def _year_alternatives(cf: "CompanyFacts", fam: str, basis: str, fy: str, memo: dict) -> dict[str, dict[str, float]]:
+    """A year's P&L rows by each source the year could be read from (a measurement aid for which source screener uses; never the
+    stored figure): ``own`` the year's own annual report, ``next`` the next year's (its comparative), ``q4`` the Q4 results file's
+    twelve months, ``sumq`` our four quarters added up. A source that does not hold the year is left out."""
+    k = ("alts", fy)
+    if k in memo:
+        return memo[k]
+    end, out = _fy_end(fy), {}
+    q4 = cf.result(f"Q4{fy}", basis)
+    if end is not None:
+        q4r = _Reader(q4, end=end, months=12) if q4 is not None else None
+        for label, off in (("own", 0), ("next", 1)):
+            key = cf.annual.get((f"FY{_fy_num(fy) + off:02d}", basis))
+            f = cf._load(key) if key else None
+            if f is not None and any(f.cr(n, end=end, months=12) is not None for n in ("RevenueFromOperations", "ProfitLossForPeriod")):
+                out[label] = {n: r.value for n, r in pl_rows(fam, _Reader(f, end=end, months=12), q4r).items() if r.value is not None}
+        if q4r is not None and any(q4.cr(n, end=end, months=12) is not None
+                                   for n in ("ProfitLossForPeriod", "ProfitLossForThePeriod", "InterestEarned")):
+            out["q4"] = {n: r.value for n, r in pl_rows(fam, q4r).items() if r.value is not None}
+        quarters = []
+        for i in (1, 2, 3, 4):
+            rows, _ = _ours(cf, fam, basis, "quarters", f"Q{i}{fy}", memo)
+            quarters.append(rows)
+        if all(quarters):
+            sums: dict[str, float] = {}
+            for name in quarters[0]:
+                vals = [q[name].value if name in q else None for q in quarters]
+                if name not in PCT_ROWS and all(v is not None for v in vals):
+                    sums[name] = sum(vals)
+            out["sumq"] = sums
+    memo[k] = out
+    return out
+
+
 def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", basis: str | None = None,
             sub_rows: dict | None = None) -> list[dict]:
     """Every (table, row, period) the page shows, with ours and a status: ok, apart, no_facts, no_recipe."""
@@ -1239,11 +1355,16 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                     else:
                         rec.update(ours=round(got.value, 2), diff=round(got.value - theirs, 2),
                                    status="ok" if exact(got.value, theirs, row) else "apart", note=got.note)
+                        if table == "annual" and row not in PCT_ROWS:
+                            alts = _year_alternatives(cf, fam, basis, period, memo)
+                            rec["alts"] = "; ".join(f"{label} {_fmt(v[row])}" for label, v in alts.items() if row in v)
                         reader = memo.get(("reader", (table, period)))
                         if rec["status"] == "apart" and row not in PCT_ROWS and reader is not None:
                             rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
                             rec["pairs"] = "; ".join(gap_pairs(reader, theirs - got.value))
                             sales = ((page.get("tables") or {}).get(table, {}).get("Sales") or {}).get(period)
+                            head = (sub_rows or {}).get(f"{SECTION_OF[table]}|{row}")
+                            rec["sub rows"], rec["sub match"] = sub_row_hints(head, column_for(table, period), theirs - got.value)
                             answer = (sub_rows or {}).get(("quarters" if table == "quarters" else "profit-loss") + "|Expenses")
                             col = column_of(table, period)
                             if row == "Expenses" and answer and col and sales:
@@ -1398,7 +1519,8 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
 
 
 CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
-              "gap matches", "gap pairs", "expense parts apart", "lines in that part")
+              "gap matches", "gap pairs", "expense parts apart", "lines in that part", "year by source",
+              "screener sub-rows", "sub-rows equal to the gap")
 
 
 def to_csv(summary: dict) -> str:
@@ -1408,7 +1530,8 @@ def to_csv(summary: dict) -> str:
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
-                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", "")])
+                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", ""), r.get("alts", ""),
+                    r.get("sub rows", ""), r.get("sub match", "")])
     return buf.getvalue()
 
 

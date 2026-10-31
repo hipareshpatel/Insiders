@@ -317,6 +317,60 @@ year pattern); EID Parry's standalone FY23 in its FY24 annual report (Sales 440,
 PBT; the dropped fair-value rule). The 96.7 % is flat because the new pairs match at the same rate; the gap to 98 %
 is still the classes in the table above.
 
+## 31 Oct 2026: batches 1-3, the reader fix, the measured ceilings
+
+How the work was run: every rule change is measured with `screener-rows` (top 500) against the run before it, row by row (which
+rows moved from apart to exact and back); a rule that breaks more than it mends is narrowed or dropped, and the batch merges only
+when no row class is worse. Cut-off FY23 (owner: "FY 22 not required"); years before a company's listing are never counted.
+
+**Reading the files (F227, Statement).** NSE's pre-integrated results files (to 2024) tag the quarter, the year to date and the
+balance to `OneD`, `FourD` and `OneI`, and some declare only their segment contexts. The reader dates the undeclared ones from the
+file's own `DateOfEndOfReportingPeriod` and `DateOfStartOfFinancialYear` (`xbrl._undeclared_legacy`). 4,034 stored documents of
+1,856 companies (mostly Q4FY21/Q4FY22, some Q4FY23) had kept 102,696 of 886,258 facts; they are read again from the raw files
+(`xbrl-facts --reread-legacy`). A reader gap like this is found by a fact count that is far below its neighbours' (64 against
+about 250), never by a figure alone.
+
+**Kept (batch 1, run 41171327785):** the associates' share follows the company's own layout on quarters (segment PBT = PBT + share:
+in; = PBT: out; no segment PBT: in, measured 95.0% -> 90.4% when out); fair value on investments out of Expenses in results files
+only; right-of-use rows under the financial assets in Fixed Assets; lease liabilities however spelt.
+**Dropped by measurement (run 41166426469):** fair value on investments in annual reports (Grasim FY23 8,736.95 wrong), exploration
+and biological assets, deferred-tax netting on every basis, the associates' rule on years.
+
+**Batch 2 (#292, run 41174640014).** Bank and NBFC balance sheets get a recipe for every row (3,958 lender rows newly compared,
+82.0% exact). Corporate Investments take a described row naming an investment inside "Others" of another asset line (Wording),
+but never a lease receivable, plan money with an insurer, leave encashment with LIC, application money or shares pending
+allotment, a forward contract or a bank balance: those are Other Assets for screener (43 rows broken before that list, 21 mended).
+
+**Batch 3 (#296, to measure).**
+- Bank stock options outstanding are read from the balance-sheet note when no line carries them (HDFC Bank: "Employees stock options
+  outstanding as at March 31, 2024 were Rs. 2652.72 crore"); never the segment note's total of capital, options and reserves.
+- Screener moves the stock options and the Capital - paid-up difference into a bank's Reserves at March only; at September both
+  stay in Other Liabilities (HDFC both bases, Axis, Kotak, ICICI standalone, Q2FY27). Statement.
+- A bank's exceptional loss in Expenses (SBI FY24 7,100.31, both bases), so Financing Profit + Other Income - Depreciation is the
+  filed PBT, as screener's rows add up. Measured (runs 41182528007 against 41182762968): Expenses 4 mended / 3 broken, Financing
+  Profit 4 / 3, Financing Margin 5 / 4. Kept for the identity; HDFC Bank consolidated FY24-FY26 is a recorded exception (screener
+  leaves its exceptional item out of PBT there, with nothing in the file to tell the case apart).
+- Batch 3 in all (same runs): 37 rows mended, 11 broken (the HDFC exception above, Union Bank Q2FY27 Other Liabilities: screener
+  uses Capital there, an inconsistency); Reserves +13 and Other Liabilities +11 from the stock options.
+- The backfill takes a year memory doubts when screener's annual Net Profit equals the file's (as for quarters).
+
+**Ceilings (measured; nothing in the filing carries the figure).**
+- A bank filing a direct cash flow has no depreciation anywhere in its file (Bank of Maharashtra): Expenses, Financing Profit and
+  Depreciation stay empty. Its annual report has it (a PDF); not used.
+- Bank CWIP sits inside `FixedAssets`; screener shows it apart (172 of 197 bank Fixed Assets gaps equal screener's CWIP within 1.5).
+- ICICI Bank and SBI consolidated March: fixed assets and the minority interest inside reserves come from the annual report
+  (September matches).
+- Union Bank (37,502) and Canara Bank standalone (27,021) FY25: screener moved deposits to borrowings; both the XBRL and the FY25 annual
+  report show the filed split (owner's links, 31 Oct 2026). Assumption, to check with the FY26 report: its restated comparative.
+- Equity Capital: Union Q2FY27 and Punjab & Sind Q4FY25 use Capital where every other bank uses paid-up: screener's inconsistency.
+- Annual profit and loss: where screener's year equals its four quarters we match 86%; where it does not (its regrouped annual
+  figure) 47%. The `year by source` column of `screener-rows` shows which source each year matches.
+
+**Tools for the next gap.** `screener-rows` lists, for every row apart, screener's own sub-rows of that head and the ones equal to
+the gap, and for every year the value of each source (own report, next report, Q4 file, four quarters). The drill-down set keeps
+the newest annual reports of the companies with the most gaps (`keep-annual-pdfs --years 3`). New results go into memory by these
+same rules at filing time (`statements.from_file`), and the stock page, cards and Results page read the stored statements.
+
 ## How a pattern is found
 
 The `screener-rows` report names, for every row apart by 2 Cr or more, the filed facts of that column equal to the gap within

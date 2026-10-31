@@ -121,3 +121,18 @@ def test_judged_date_not_period_end_decides_a_deadline_said_after_its_period():
          "status": "OPEN", "status_history": []}
     got = open_promises({"guidance": [g]})[0]
     assert got["due_date"] == "2026-09-30" and got["overdue_from"] == "2026-11-14"
+
+
+def test_latest_revenue_and_ebitda_come_from_the_statements_when_stored():
+    d = dossier()
+    d["statements"] = [
+        {"period": "Q1FY27", "basis": "STANDALONE", "table": "quarters", "rows": {"Sales": 90.0, "Operating Profit": 9.0}},
+        {"period": "Q4FY26", "basis": "CONSOLIDATED", "table": "quarters", "rows": {"Sales": 100.0, "Operating Profit": 12.0}},
+        {"period": "Q1FY27", "basis": "CONSOLIDATED", "table": "quarters", "rows": {"Sales": 130.0, "Operating Profit": 15.5}},
+    ]
+    summary = summarize(d)["memory_summary_json"]
+    assert summary["revenue"] == {"period": "Q1FY27", "value": 130.0}
+    assert summary["ebitda"] == {"period": "Q1FY27", "value": 15.5}
+    d["statements"] = [{"period": "Q1FY27", "basis": "STANDALONE", "table": "quarters", "rows": {"Revenue": 50.0, "Financing Profit": 20.0}}]
+    summary = summarize(d)["memory_summary_json"]
+    assert summary["revenue"] == {"period": "Q1FY27", "value": 50.0} and summary["ebitda"] == {"period": "Q1FY27", "value": 20.0}

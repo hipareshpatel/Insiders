@@ -1642,7 +1642,7 @@ def cmd_keep_annual_pdfs(args, settings, sink) -> int:
     try:
         client = NseClient()
         client.warm_up()
-        out = ap.run(sink, client, symbols, args.year)
+        out = ap.run(sink, client, symbols, args.year, years=args.years)
     except SourceBlockedError as exc:
         logging.getLogger("bse_intel.annual_pdfs").error("NSE refused; stopping: %s", exc)
         return REFUSED
@@ -1896,6 +1896,14 @@ def cmd_xbrl_facts(args, settings, sink) -> int:
             tmp.write_text(xf.to_json(current), encoding="utf-8")
             os.replace(tmp, summary_path)
 
+    if args.reread_legacy:
+        result = xf.reread_legacy(sink, [scrip for scrip, _ in companies], dry_run=args.dry_run)
+        print(json.dumps({k: v for k, v in result.items() if k != "changed"}))
+        for line in result["changed"]:
+            print("  " + line)
+        if args.json:
+            Path(args.json).write_text(json.dumps(result, indent=1), encoding="utf-8")
+        return 0
     listing = xf.ListingCsv(args.csv) if (args.from_nse and args.csv) else None
     extra = {"from_nse": args.from_nse, "time_budget": args.time_budget, "row_sink": listing, "progress": progress}
     try:
@@ -2952,6 +2960,7 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("keep-annual-pdfs", help="keep named companies' annual-report PDFs in R2, once (NSE, no AI)")
     p.add_argument("--symbols", help="comma-separated NSE symbols")
     p.add_argument("--year", help="the year the report ends, e.g. 2026 for FY26 (default: each company's newest)")
+    p.add_argument("--years", type=int, default=1, help="without --year: the newest N reports a company (default 1)")
     p.add_argument("--json", help="write the summary to this file")
     p.set_defaults(func=cmd_keep_annual_pdfs)
 
@@ -3015,6 +3024,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--annual", action="store_true", help="also keep the facts of the annual-report XBRL (Ind AS only, never BRSR): one NSE list request a company; a file is fetched only with --download")
     p.add_argument("--annual-years", type=int, default=3, help="the latest N years of annual reports a basis (default 3; a file is about 7 MB)")
     p.add_argument("--force", action="store_true", help="read again the files whose facts are stored")
+    p.add_argument("--reread-legacy", action="store_true", help="only read again the stored results documents whose raw file tags figures to an undeclared OneD context (no NSE request; with --dry-run it counts)")
     p.add_argument("--dry-run", action="store_true", help="parse and count, write no facts")
     p.add_argument("--from-nse", action="store_true", help="list each company's results files from NSE's own list (the seed's latest 12 quarters, both bases) and fetch every file not stored; needs --download; writes no memory (one list request a company, not counted toward FILE_CAP; files are)")
     p.add_argument("--shard", help="I/N: only every N-th company from the I-th (N at most 16), e.g. 0/8")

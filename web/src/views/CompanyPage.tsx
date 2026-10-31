@@ -11,6 +11,7 @@ import { PriceChart } from "../components/PriceChart";
 import { formerOwnName, PROVISIONAL_STAGES, resultLines, STAGE_LABEL } from "../components/AnnouncementCard";
 import { parseCard } from "../components/FilingCard";
 import { CardList, RailTime, railDate } from "../components/company/CardList";
+import { dossierMetrics } from "../components/company/statements";
 import { chartTags, dayChange, allZero, inStatementOrder, latestBalance, metricLabel, nextResults, overdue, peTtm, quarterly, quarterLabel, short, statementPlace, unitValue, yearRange } from "../components/company/companyText";
 import { dayMonth, GoodAndBad, StorySoFar, WhatToTrack, type Parsed } from "../components/company/OverviewPanels";
 import { CapitalAndCalibration, parseRoiic } from "../components/company/Execution";
@@ -694,7 +695,7 @@ function KeyFigures({ company, dossier, cards, chart, today }: { company: Compan
   const fundamentals = cards.map(parseCard).find((c) => c?.fundamentals)?.fundamentals ?? {};
   const own = dossier?.ownership?.[dossier.ownership.length - 1];
   const high = cards.filter((c) => c.impact_level === "HIGH").length;
-  const pe = peTtm(dossier?.financial_metrics ?? [], company?.market_cap_cr, today);
+  const pe = peTtm(dossier ? dossierMetrics(dossier) : [], company?.market_cap_cr, today);
   const range = yearRange(chart);
   const px = (v: number) => v.toLocaleString("en-IN", { maximumFractionDigits: v < 100 ? 2 : 0 });
   const items: [string, string, string?][] = [
@@ -746,20 +747,22 @@ function BalanceTiles({ dossier }: { dossier: Dossier }) {
 /** Revenue, profit or margin for the last eight quarters in memory, as bars (the latest in the accent). */
 function QuarterBars({ dossier }: { dossier: Dossier }) {
   const [metric, setMetric] = useState<"revenue" | "pat" | "ebitda_margin">("revenue");
+  // the statements' figures, as the tables above show them (owner, 31 Oct 2026: one source for the whole site)
+  const figures = useMemo(() => dossierMetrics(dossier), [dossier]);
   const series = useMemo(() => {
-    const rows = dossier.financial_metrics.filter((m) => periodKind(m.period) === "Quarter" && (m.metric === metric || (metric === "pat" && m.metric === "pat_owners")));
+    const rows = figures.filter((m) => periodKind(m.period) === "Quarter" && (m.metric === metric || (metric === "pat" && m.metric === "pat_owners")));
     const by = new Map<string, number>();
     for (const m of rows) if (!(metric === "pat" && m.metric === "pat" && by.has(m.period))) by.set(m.period, m.value);
     return [...by.entries()].sort((a, b) => periodEnd(a[0]).localeCompare(periodEnd(b[0]))).slice(-8);
-  }, [dossier.financial_metrics, metric]);
+  }, [figures, metric]);
   const table = useMemo(() => {
-    const rev = quarterly(dossier.financial_metrics, ["revenue"]), pat = quarterly(dossier.financial_metrics, ["pat_owners", "pat"]);
+    const rev = quarterly(figures, ["revenue"]), pat = quarterly(figures, ["pat_owners", "pat"]);
     const last = Math.max(...rev.keys(), ...pat.keys());
     if (!Number.isFinite(last)) return null;
     const qs = [3, 2, 1, 0].map((k) => last - k).filter((q) => rev.has(q) || pat.has(q));
     const yoy = (m: Map<number, number>, q: number) => { const a = m.get(q), b = m.get(q - 4); return a != null && b != null && b > 0 && a >= 0 ? (a / b - 1) * 100 : undefined; };
     return { qs, rows: [["Revenue", rev], ["Profit", pat]] as const, yoy };
-  }, [dossier.financial_metrics]);
+  }, [figures]);
   if (series.length < 2 && metric === "revenue") return null;
   const values = series.map(([, v]) => v);
   const lo = metric === "ebitda_margin" ? Math.min(...values) - 2 : Math.min(0, ...values);
@@ -834,7 +837,7 @@ function SegmentMix({ dossier }: { dossier: Dossier }) {
   // Filings often give nested or alternative cuts (Dairy holds Milk; VAP with and without ghee): they add up past
   // 100% and cannot be drawn as parts of one whole, so each is shown as its own share of revenue.
   // ...and when only amounts are given, cuts that add up past the quarter's revenue overlap in the same way
-  const quarterRevenue = dossier.financial_metrics.find((m) => m.period === latest && m.metric === "revenue")?.value;
+  const quarterRevenue = dossierMetrics(dossier).find((m) => m.period === latest && m.metric === "revenue")?.value;
   if (sum > 105 || (quarterRevenue && total > quarterRevenue * 1.05)) {
     return (
       <Panel title="Business mix" hint={`${latest} · each segment's share of revenue; the cuts overlap`}>

@@ -156,6 +156,18 @@ def _latest(dossier: dict, names: tuple[str, ...]) -> dict | None:
     return {"period": m["period"], "value": m["value"]}
 
 
+def _statement_latest(dossier: dict, names: tuple[str, ...]) -> dict | None:
+    """The latest quarter's screener row from the stored statements (one source for the site, owner 31 Oct 2026), on the main
+    basis: consolidated when present, else standalone. None when there are no statements quarters entries."""
+    rows = [e for e in dossier.get("statements") or [] if e.get("table") == "quarters" and e.get("rows") and due_date(e.get("period"))]
+    for basis in ("CONSOLIDATED", "STANDALONE"):
+        mine = [e for e in rows if e.get("basis") == basis and any(isinstance(e["rows"].get(n), (int, float)) for n in names)]
+        if mine:
+            e = max(mine, key=lambda r: due_date(r["period"]))
+            return {"period": e["period"], "value": next(e["rows"][n] for n in names if isinstance(e["rows"].get(n), (int, float)))}
+    return None
+
+
 def summarize(dossier: dict) -> dict:
     promises = open_promises(dossier)
     found = triggers(dossier)
@@ -166,8 +178,9 @@ def summarize(dossier: dict) -> dict:
         "open_promises": promises,
         "triggers": found,
         "active_capex": active_capex,
-        "revenue": _latest(dossier, ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
-        "ebitda": _latest(dossier, ("ebitda", "operating_profit")),
+        "revenue": _statement_latest(dossier, ("Sales", "Revenue"))
+        or _latest(dossier, ("revenue", "revenue_from_operations", "total_revenue", "net_sales")),
+        "ebitda": _statement_latest(dossier, ("Operating Profit", "Financing Profit")) or _latest(dossier, ("ebitda", "operating_profit")),
         "gross_debt_cr": sheets[-1]["gross_debt_cr"] if sheets else None,
         "calibration": (calibration(dossier) or {}).get("rule"),
         "roiic": roiic(dossier),

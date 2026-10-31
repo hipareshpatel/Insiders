@@ -1,7 +1,7 @@
 // The company page's screener-style statements (src/components/company/statements.ts). Run: npm test.
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters, withRestated } from "../src/components/company/statements.ts";
+import { annualTable, balanceTable, cashFlowTable, formatCell, growth, quarterlyTable, ratioTable, ttmQuarters, withRestated, statementMetrics } from "../src/components/company/statements.ts";
 
 const m = (metric: string, period: string, value: number) => ({ metric, period, value, unit: "INR_CR", as_of: "2026-10-15", source_news_id: "xbrl:res:1:x" });
 const quarter = (q: string, rev: number, pat: number) => [m("revenue", q, rev), m("pbt", q, pat * 1.3), m("finance_cost", q, 10), m("depreciation", q, 20),
@@ -205,4 +205,40 @@ test("a quarter a later filing restated shows the restated figure, with the orig
   assert.equal(out.rows[1].restated, undefined);
   assert.equal(withRestated(t, [fig("revenue", 16241, 15919)], "STANDALONE"), t);
   assert.equal(withRestated(t, undefined, "CONSOLIDATED"), t);
+});
+
+test("the page's figures, growth and ratios read the stored statements; no statements keeps the old metrics", async () => {
+  const { statementMetrics, statementSheets, dossierMetrics } = await import("../src/components/company/statements.ts");
+  const e = (table: string, period: string, rows: Record<string, number>, basis = "CONSOLIDATED") => ({ table, period, basis, rows });
+  const entries = [
+    e("annual", "FY24", { Sales: 100, "Profit before tax": 20, Interest: 5, "Net Profit": 15 }),
+    e("annual", "FY25", { Sales: 150, "Profit before tax": 30, Interest: 5, "Net Profit": 22, "Net Profit (owners)": 20 }),
+    e("quarters", "Q1FY26", { Sales: 40, "Operating Profit": 8, "OPM %": 20, "Net Profit": 5 }),
+    e("balance", "FY24", { "Equity Capital": 10, Reserves: 90, Borrowings: 50, "Total Assets": 200 }),
+    e("balance", "FY25", { "Equity Capital": 10, Reserves: 110, Borrowings: 60, "Total Assets": 260 }),
+    e("quarters", "Q1FY26", { Sales: 1 }, "STANDALONE"),
+  ];
+  const m = statementMetrics(entries, "CONSOLIDATED", []);
+  const at = (metric: string, period: string) => m.find((x) => x.metric === metric && x.period === period)?.value;
+  assert.equal(at("revenue", "Q1FY26"), 40);
+  assert.equal(at("ebitda", "Q1FY26"), 8);
+  assert.equal(at("ebitda_margin", "Q1FY26"), 20);
+  assert.equal(at("pat_owners", "FY25"), 20);
+  assert.equal(growth(m, "revenue").length, 0);   // one year only: no 3 or 5 year rate
+  const ratios = ratioTable(m, statementSheets(entries, "CONSOLIDATED", []));
+  assert.equal(ratios.rows.find((r) => r.label === "Debt to equity")?.cells[1]?.toFixed(2), "0.50");
+  assert.equal(ratios.rows.find((r) => r.label === "ROCE %")?.cells[1]?.toFixed(1), (35 / 180 * 100).toFixed(1));
+  const old = [{ metric: "revenue", period: "Q1FY26", value: 7, unit: "INR_CR", as_of: "", source_news_id: "" }];
+  assert.equal(statementMetrics([], "CONSOLIDATED", old), old);
+  assert.equal(dossierMetrics({ statements: [], financial_metrics: old }), old);
+  // a lender's Revenue is also its interest earned
+  const bank = statementMetrics([e("quarters", "Q1FY26", { Revenue: 900, "Financing Profit": 300 })], "CONSOLIDATED", []);
+  assert.equal(bank.find((x) => x.metric === "interest_earned")?.value, 900);
+});
+
+test("statement figures win for the years they cover; an older year keeps the old figure for the long growth boxes", () => {
+  const old = [{ period: "FY20", metric: "revenue", value: 50, unit: "INR_CR", as_of: "", source_news_id: "" },
+    { period: "FY25", metric: "revenue", value: 99, unit: "INR_CR", as_of: "", source_news_id: "" }];
+  const got = statementMetrics([{ period: "FY25", basis: "CONSOLIDATED", table: "annual", rows: { Sales: 100 } }] as never, "CONSOLIDATED", old as never);
+  assert.deepEqual(got.filter((m) => m.metric === "revenue").map((m) => [m.period, m.value]).sort(), [["FY20", 50], ["FY25", 100]]);
 });

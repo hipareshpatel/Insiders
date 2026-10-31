@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import type { Dossier } from "../../../shared/types";
 import { cn } from "../../lib/cn";
 import {
-  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, screenerTable, statementDate, withRestated, type Table,
+  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, screenerTable, statementDate, statementMetrics, statementSheets, withRestated, type Table,
 } from "./statements";
 import { Panel } from "./Panel";
 
@@ -35,11 +35,13 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   const annual = pick(screenerTable(dossier.statements, stBasis, "annual", 6), () => annualTable(metrics, SCREENER_LINES));
   const balance = pick(screenerTable(dossier.statements, stBasis, "balance", 8), () => balanceTable(sheets, SCREENER_LINES));
   const cash = pick(screenerTable(dossier.statements, stBasis, "cash_flow", 6), () => cashFlowTable(metrics));
-  const ratios = ratioTable(metrics, sheets);
-  const top = bank ? "interest_earned" : "revenue";
+  // growth boxes and ratios read the same statements (owner, 31 Oct 2026: one source for the whole site)
+  const figures = statementMetrics(dossier.statements, stBasis, metrics);
+  const ratios = ratioTable(figures, statementSheets(dossier.statements, stBasis, sheets));
+  const top = isBank(figures) ? "interest_earned" : "revenue";
   const boxes = [
-    { title: bank ? "Compounded revenue growth" : "Compounded sales growth", rows: growth(metrics, top) },
-    { title: "Compounded profit growth", rows: growth(metrics, "pat") },
+    { title: bank ? "Compounded revenue growth" : "Compounded sales growth", rows: growth(figures, top) },
+    { title: "Compounded profit growth", rows: growth(figures, "pat") },
   ].filter((b) => b.rows.length);
   const sub = `${label ? `${label} · ` : ""}₹ Cr · from the NSE filings`;
   const yearEnd = dossier.fy_end_month && dossier.fy_end_month !== 3 ? MONTHS[dossier.fy_end_month - 1] : null;

@@ -45,3 +45,28 @@ def test_the_newest_n_years_are_the_distinct_report_years_newest_first():
     rows = [{"toYr": "2026", "fileName": "a.pdf"}, {"toYr": "2024", "fileName": "c.pdf"}, {"toYr": "2025", "fileName": "b.pdf"},
             {"toYr": "2026", "fileName": "a2.pdf"}, {"toYr": ""}]
     assert ap.newest_years(rows, 3) == ["2026", "2025", "2024"] and ap.newest_years(rows, 1) == ["2026"]
+
+
+def test_the_file_cap_is_a_planned_stop_that_keeps_what_came():
+    from bse_intel.nse import FileCapReached
+    from backup_objects import BackupObjects
+
+    class Reply:
+        def json(self):
+            return {"data": [{"toYr": "2026", "fileName": "https://x/a.pdf"}, {"toYr": "2025", "fileName": "https://x/b.pdf"}]}
+
+    class Client:
+        calls = 0
+
+        def _get(self, url, params):
+            return Reply()
+
+        def fetch(self, url, max_bytes=None):
+            Client.calls += 1
+            if Client.calls > 1:
+                raise FileCapReached("file cap reached (1 of 1 files)")
+            return b"%PDF-1"
+
+    sink = BackupObjects()
+    out = ap.run(sink, Client(), ["ABC"], years=2)
+    assert out["capped"] is True and out["downloaded"] == 1 and ap.key("ABC", "https://x/a.pdf") in sink.objects

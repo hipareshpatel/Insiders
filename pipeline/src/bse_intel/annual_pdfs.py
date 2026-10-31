@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import gzip
 
-from .nse import SITE
+from .nse import SITE, FileCapReached
 
 PREFIX = "raw/annual-pdf/"
 LIST = f"{SITE}/api/annual-reports"
@@ -51,7 +51,7 @@ def newest_years(rows: list[dict], n: int) -> list[str]:
 def run(sink, client, symbols: list[str], to_year: str | None = None, years: int = 1) -> dict:
     """``to_year`` None: each company's newest ``years`` reports (owner, 31 Oct 2026: two or three a company to drill into a gap)."""
     out = {"symbols": len(symbols), "listed": 0, "stored_before": 0, "downloaded": 0, "missing": 0, "not_listed": [], "bytes": 0,
-           "kept": []}
+           "kept": [], "capped": False}
     for symbol in symbols:
         stored = set(sink.list_objects(f"{PREFIX}{symbol.upper()}/"))
         data = client._get(LIST, {"index": "equities", "symbol": symbol.upper()}).json()
@@ -67,7 +67,11 @@ def run(sink, client, symbols: list[str], to_year: str | None = None, years: int
             if key(symbol, url) in stored:
                 out["stored_before"] += 1
                 continue
-            body = client.fetch(url, max_bytes=MAX_BYTES)
+            try:
+                body = client.fetch(url, max_bytes=MAX_BYTES)
+            except FileCapReached:      # a planned stop (file_cap.py): what is kept stays kept, and the summary says so
+                out["capped"] = True
+                return out
             if not body:
                 out["missing"] += 1
                 continue

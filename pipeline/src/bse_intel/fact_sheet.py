@@ -22,7 +22,7 @@ financing profit and its margin, PBT and profit; an insurer: profit only (its st
 whose known industry is not financial services is a company (the corporate rows, as results_table), and one in insurance an insurer.
 Each family has its own words in the text check (a bank's "operating profit" is its pre-provision profit and its "total income" adds
 other income: neither is judged), and its sheet goes only into a card table of its own kind (a bank table's interest earned, NII, PBT
-and profit; an insurer's PBT and profit; an NBFC's company table: revenue, PBT and profit, its EBITDA row left as it is).
+and profit; an insurer's PBT and profit; an NBFC's company table: revenue, PBT and profit, and its financing profit and margin in the EBITDA rows' place, owner 31 Oct 2026).
 Orders of book, guidance, capex and segment figures are not touched: a sentence is judged only when it names one results line and no
 other period, segment or outlook."""
 
@@ -224,7 +224,8 @@ _SLOTS = (("prev_year", "yoy"), ("prev_quarter", "qoq"))
 def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
     """The sheet's figures into a card's results table (``results_snapshot``'s dict, in place), for the lines the table holds: a
     company table's revenue, EBITDA, margin, PAT (PBT where it holds it); a bank table's interest earned, NII, PBT and profit; an
-    insurer's PBT and profit. A row is the sheet's alone: a comparative the sheet lacks is not kept from memory's other sources.
+    insurer's PBT and profit; an NBFC's company table its revenue, PBT and profit, and its financing profit and margin in place of
+    the EBITDA rows (``_nbfc_rows``). A row is the sheet's alone: a comparative the sheet lacks is not kept from memory's other sources.
     Returns what changed, {line, was, now}, for the card's grounding record. A table of another kind than the sheet's family (a
     bank's sheet beside a company table) and a table of another quarter are left as they are."""
     family = sheet.get("family", sv.CORPORATE) if sheet else None
@@ -233,8 +234,10 @@ def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
     notes = []
     for line_key, line in sheet["lines"].items():
         key = TABLE_KEY.get(family, {}).get(line_key, line_key)
-        if key not in results:
+        if key not in results and not (family == sv.NBFC and line_key in ("financing_profit", "financing_margin")):
             continue
+        if key not in results:          # an NBFC's financing rows are new to its company table (_nbfc_rows puts them in its lines)
+            results[key] = {}
         was = results[key]
         row: dict = {"value": line["value"]}
         for slot, tag in _SLOTS:
@@ -246,6 +249,40 @@ def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
         if row != {k: v for k, v in was.items() if k in row or k in ("derived", "held")}:
             notes.append({"line": key, "was": {k: v for k, v in was.items() if isinstance(v, (int, float, str))}, "now": row})
         results[key] = row
+    if family == sv.NBFC:
+        notes += _nbfc_rows(results)
+    return notes
+
+
+# an NBFC's card shows its financing profit and margin where a company shows EBITDA (owner, 31 Oct 2026: "Yes, NBFC cards show
+# financing profit"), as Screener and the Results page do; the EBITDA rows (ours, and a printed one under CARD_EBITDA_PROFIT_V2) go
+_NBFC_SWAP = (("ebitda", "financing_profit", "Financing profit", "cr"), ("ebitda_margin", "financing_margin", "Financing margin", "pct"))
+_EBITDA_KEYS = ("ebitda", "ebitda_margin", "ebitda_filing")
+
+
+def _nbfc_rows(results: dict) -> list[dict]:
+    """An NBFC's company table with the sheet's financing profit and margin in the EBITDA rows' place (in place); nothing when the sheet
+    gave no financing profit (the table stays as it was). Returns what changed, as ``apply_to_results``."""
+    if "financing_profit" not in results:
+        return []
+    notes = [{"line": key, "was": {k: v for k, v in (results.get(key) or {}).items() if isinstance(v, (int, float, str))},
+              "now": "removed: an NBFC shows its financing profit"} for key in _EBITDA_KEYS if key in results]
+    lines = results.get("lines")
+    if isinstance(lines, list):
+        new: list = []
+        for spec in lines:
+            key = spec.get("key") if isinstance(spec, dict) else None
+            swap = next((x for x in _NBFC_SWAP if x[0] == key), None)
+            if swap and swap[1] in results:
+                new.append({"key": swap[1], "label": swap[2], "unit": swap[3]})
+            elif key not in _EBITDA_KEYS:
+                new.append(spec)
+        if not any(isinstance(x, dict) and x.get("key") == "financing_profit" for x in new):
+            at = next((i for i, x in enumerate(new) if isinstance(x, dict) and x.get("key") == "pat"), len(new))
+            new.insert(at, {"key": "financing_profit", "label": "Financing profit", "unit": "cr"})
+        results["lines"] = new
+    for key in _EBITDA_KEYS:
+        results.pop(key, None)
     return notes
 
 

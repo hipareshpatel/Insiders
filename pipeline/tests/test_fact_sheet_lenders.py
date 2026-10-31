@@ -103,11 +103,28 @@ def test_a_sheet_goes_only_into_its_own_kind_of_table():
     assert fs.apply_to_results(company, bank) == [] and company["revenue"] == {"value": 1.0}
     d, period = dossier_of("nse_bajfin_q2fy27_cons.xml", "500034")
     nbfc = fs.fact_sheet(d, period, lenders=True)
-    table = {"lens": "company", "period": "Q2FY27", "revenue": {"value": 1.0}, "ebitda": {"value": 9.0},
-             "ebitda_margin": {"value": 50.0}, "pat": {"value": 2.0}}
-    fs.apply_to_results(table, nbfc)
+    lines = [{"key": "revenue", "label": "Revenue", "unit": "cr"}, {"key": "ebitda", "label": "Operating EBITDA (calculated)", "unit": "cr"},
+             {"key": "ebitda_filing", "label": "EBITDA (Filing)", "unit": "cr"},
+             {"key": "ebitda_margin", "label": "EBITDA margin", "unit": "pct"}, {"key": "pat", "label": "PAT", "unit": "cr"}]
+    table = {"lens": "company", "period": "Q2FY27", "revenue": {"value": 1.0}, "ebitda": {"value": 9.0}, "ebitda_filing": {"value": 8.0},
+             "ebitda_margin": {"value": 50.0}, "pat": {"value": 2.0}, "lines": lines}
+    notes = fs.apply_to_results(table, nbfc)
     assert table["revenue"]["value"] == pytest.approx(24546.37) and table["pat"]["value"] == pytest.approx(6266.2)
-    assert table["ebitda"] == {"value": 9.0} and table["ebitda_margin"] == {"value": 50.0}     # left as it is (owner's call)
+    # owner, 31 Oct 2026: an NBFC card shows its financing profit and margin where a company shows EBITDA
+    assert [x["key"] for x in table["lines"]] == ["revenue", "financing_profit", "financing_margin", "pat"]
+    assert [x["label"] for x in table["lines"]][1:3] == ["Financing profit", "Financing margin"]
+    assert table["financing_profit"]["value"] == pytest.approx(8825.09) and table["financing_margin"]["value"] == pytest.approx(35.95)
+    assert not {"ebitda", "ebitda_margin", "ebitda_filing"} & set(table)
+    assert {n["line"] for n in notes} >= {"ebitda", "ebitda_filing", "ebitda_margin", "financing_profit"}
+    # a table with no lines list (an old card) still gets the rows, and a company sheet never swaps anything
+    bare = {"lens": "company", "period": "Q2FY27", "revenue": {"value": 1.0}, "ebitda": {"value": 9.0}, "pat": {"value": 2.0}}
+    fs.apply_to_results(bare, nbfc)
+    assert "ebitda" not in bare and bare["financing_profit"]["value"] == pytest.approx(8825.09)
+    d2, period2 = dossier_of("nse_bajfin_q2fy27_cons.xml", "500034", industry="Consumer Services > Restaurants")
+    as_company = fs.fact_sheet(d2, period2, lenders=True)
+    kept = {"lens": "company", "period": "Q2FY27", "revenue": {"value": 1.0}, "ebitda": {"value": 9.0}, "pat": {"value": 2.0}}
+    fs.apply_to_results(kept, as_company)
+    assert kept["ebitda"]["value"] == pytest.approx(17426.82) and "financing_profit" not in kept
     d, period = dossier_of("nse_hdfclife_q2fy27_cons.xml", "540777")
     insurer = fs.fact_sheet(d, period, lenders=True)
     table = {"lens": "insurer", "period": "Q2FY27", "gross_premium": {"value": 9000.0}, "pat": {"value": 500.0}}

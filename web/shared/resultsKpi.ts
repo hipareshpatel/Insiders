@@ -2,7 +2,7 @@
  * Worker types here, so the Worker builds its queries from it and `node --test` runs the cases in resultsKpi.test.ts. The rows are
  * `results_kpi` (pipeline results_table.py): one per company and quarter, worked out from the saved statements. Every filter value is a
  * bound parameter; sort and direction come from whitelists; LIKE patterns are escaped. */
-import { INDICES, MOMENTUM_POINTS } from "./resultsTypes.ts";
+import { INDICES, MOMENTUM_POINTS, NM_PCT } from "./resultsTypes.ts";
 import type { KpiQuery, KpiRow, Kind, Momentum, ResultsSort, Turn } from "./resultsTypes.ts";
 
 export type { KpiQuery, KpiResponse, KpiRow } from "./resultsTypes.ts";
@@ -13,10 +13,34 @@ const MAX_OFFSET = 10_000;
 /** The most filtered rows the summary reads (a quarter holds about 2,800 companies, so this is never reached in practice). */
 export const SUMMARY_CAP = 5000;
 
-/** The columns a sort may name; the value is the SQL it orders by (growth sorts on the per cent only, so a named turn across a loss has
- *  none and lands after every row with a %, either direction, as the QoQ sorts already did: measured 31 Oct 2026, the default list
- *  opened with 15 "Loss → profit" rows; the turnaround filter still finds them; momentum is this quarter's growth minus last
- *  quarter's, null when either is missing). */
+/** The columns a sort may name; the value is the SQL it orders by. A growth sort is built by `sortExpr` from its per cent and named turn
+ *  (highest first: the meaningful per cents, then the "NM" ones above +999%, then rows with no figure, a turn across a loss among them;
+ *  lowest first: the falls across a loss, then the per cents, then no figure; measured 31 Oct 2026: the profit-growth list opened with
+ *  8 NM rows and the lowest-first list held the 61 profit-to-loss rows after row 500). Momentum is this quarter's growth minus
+ *  last quarter's, null when either is missing or "NM". */
+/** The points between this quarter's growth and last quarter's, as SQL; null when either is missing or above +999% ("NM": a base effect,
+ *  not a pace; measured 31 Oct 2026: CGPOWER 13% to 2,159% showed "+2,146 pts", EMKAY "+6,553 pts"). */
+export const momentumSql = (col: string) =>
+  `(CASE WHEN k.${col} > ${NM_PCT} OR pk.${col} > ${NM_PCT} THEN NULL ELSE k.${col} - pk.${col} END)`;
+
+/** The growth sorts: per cent column and the column of its named turn (null: the line has none). */
+const GROWTH: Record<string, { pct: string; turn: string | null }> = {
+  revenue_yoy: { pct: "k.revenue_yoy", turn: null }, ebitda_yoy: { pct: "k.ebitda_yoy", turn: "k.ebitda_turn" },
+  pat_yoy: { pct: "k.pat_yoy", turn: "k.pat_turn" }, revenue_qoq: { pct: "k.revenue_qoq", turn: null },
+  ebitda_qoq: { pct: "k.ebitda_qoq", turn: null }, pat_qoq: { pct: "k.pat_qoq", turn: "k.pat_qoq_turn" },
+};
+
+/** What a sort orders by (a NULL goes last, either way). Highest first: NM per cents sit below every meaningful one, in their own order.
+ *  Lowest first: a profit that turned to a loss, then a loss that widened, then the per cents; a loss turned to profit or narrowed has no
+ *  place on a lowest-first list, so it has none. */
+export function sortExpr(sort: KpiSort, dir: "asc" | "desc"): string {
+  const g = GROWTH[sort];
+  if (!g) return KPI_SORTS[sort];
+  if (dir === "desc") return `(CASE WHEN ${g.pct} IS NULL THEN NULL WHEN ${g.pct} > ${NM_PCT} THEN ${g.pct} - 1e12 ELSE ${g.pct} END)`;
+  const falls = g.turn ? `WHEN ${g.turn} = 'PROFIT_TO_LOSS' THEN -2e12 WHEN ${g.turn} = 'LOSS_WIDENED' THEN -1e12 ` : "";
+  return `(CASE ${falls}WHEN ${g.pct} IS NOT NULL THEN ${g.pct} END)`;
+}
+
 export const KPI_SORTS = {
   company: "co.company_name COLLATE NOCASE",
   mcap: "co.market_cap_cr",
@@ -28,9 +52,9 @@ export const KPI_SORTS = {
   ebitda_qoq: "k.ebitda_qoq",
   pat_qoq: "k.pat_qoq",
   opm_qoq_bps: "k.opm_qoq_bps",
-  pat_momentum: "(k.pat_yoy - pk.pat_yoy)",
-  revenue_momentum: "(k.revenue_yoy - pk.revenue_yoy)",
-  ebitda_momentum: "(k.ebitda_yoy - pk.ebitda_yoy)",
+  pat_momentum: momentumSql("pat_yoy"),
+  revenue_momentum: momentumSql("revenue_yoy"),
+  ebitda_momentum: momentumSql("ebitda_yoy"),
   filed: "f.filed_at",
 } as const satisfies Record<ResultsSort, string>;
 export type KpiSort = keyof typeof KPI_SORTS;
@@ -71,9 +95,9 @@ export function quarterDay(period: string | null | undefined): string | null {
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
-/** This quarter's year-on-year growth minus last quarter's, in points; null when either quarter has no per cent. */
+/** This quarter's year-on-year growth minus last quarter's, in points; null when either quarter has no per cent or is "NM" (above +999%). */
 export function momentumPts(yoy: number | null | undefined, prevYoy: number | null | undefined): number | null {
-  return yoy == null || prevYoy == null ? null : round2(yoy - prevYoy);
+  return yoy == null || prevYoy == null || yoy > NM_PCT || prevYoy > NM_PCT ? null : round2(yoy - prevYoy);
 }
 
 /** >= +2 points speeding up, <= -2 slowing, between steady; not comparable when either quarter has no per cent. */
@@ -92,7 +116,7 @@ const num = (v: string | undefined, min: number, max: number): number | null => 
 /** The request's query string as a KpiQuery: anything not on the lists is dropped and numbers are clamped, so nothing it holds reaches
  *  the SQL as written. */
 export function parseKpiQuery(raw: Record<string, string | undefined>): KpiQuery {
-  const sort = (raw.sort ?? "") in KPI_SORTS ? (raw.sort as KpiSort) : "pat_yoy";
+  const sort = (raw.sort ?? "") in KPI_SORTS ? (raw.sort as KpiSort) : "mcap";
   const page = Math.min(Math.max(Number.parseInt(raw.page ?? "", 10) || 1, 1), Math.floor(MAX_OFFSET / PAGE_SIZE) + 1);
   const flag = (v: string | undefined) => v === "1" || v === "true";
   return {
@@ -155,8 +179,8 @@ export function kpiWhere(query: KpiQuery, quarter: string): { from: string; para
   if (query.ebitda_min != null) where.push(`(k.ebitda_yoy >= ${p(query.ebitda_min)} OR k.ebitda_turn = 'LOSS_TO_PROFIT')`);
   if (query.pat_min != null) where.push(`(k.pat_yoy >= ${p(query.pat_min)} OR k.pat_turn = 'LOSS_TO_PROFIT')`);
   if (query.opm_min != null) where.push(`k.opm_yoy_bps >= ${p(query.opm_min)}`);
-  if (query.momentum === "speeding_up") where.push(`round(k.pat_yoy - pk.pat_yoy, 2) >= ${p(MOMENTUM_POINTS)}`);
-  if (query.momentum === "slowing") where.push(`round(k.pat_yoy - pk.pat_yoy, 2) <= ${p(-MOMENTUM_POINTS)}`);
+  if (query.momentum === "speeding_up") where.push(`round(${momentumSql("pat_yoy")}, 2) >= ${p(MOMENTUM_POINTS)}`);
+  if (query.momentum === "slowing") where.push(`round(${momentumSql("pat_yoy")}, 2) <= ${p(-MOMENTUM_POINTS)}`);
   if (query.turnaround) where.push(`k.pat_turn = 'LOSS_TO_PROFIT'`);
   if (query.nfo) where.push(`k.nfo = 1`);
   if (query.spread) where.push(SPREAD_SQL[query.spread]);
@@ -183,13 +207,13 @@ export function companyRows(rows: Omit<DbKpiRow, "prev_revenue_yoy" | "prev_ebit
     const before = by.get(prevPeriod(r.period) ?? "");
     const prev = before?.basis === r.basis ? before : undefined;   // growth on another basis is no pace
     return toKpiRow({ ...r, prev_revenue_yoy: prev?.revenue_yoy ?? null, prev_ebitda_yoy: prev?.ebitda_yoy ?? null,
-      prev_pat_yoy: prev?.pat_yoy ?? null, prev_pat_turn: prev?.pat_turn ?? null }, seriesFor(by, r.period));
+      prev_pat_yoy: prev?.pat_yoy ?? null, prev_pat_turn: prev?.pat_turn ?? null }, seriesFor(by, r.period, r.basis));
   });
 }
 
 /** The page's rows: the chosen sort, a row without the figure last whichever way it runs, the company code to break ties. */
 export function kpiRowsSql(query: KpiQuery, from: string): string {
-  const col = Object.hasOwn(KPI_SORTS, query.sort) ? KPI_SORTS[query.sort as KpiSort] : KPI_SORTS.pat_yoy;   // the whitelist again, in case the query was built by hand
+  const col = sortExpr(Object.hasOwn(KPI_SORTS, query.sort) ? (query.sort as KpiSort) : "mcap", query.dir === "asc" ? "asc" : "desc");   // the whitelist again, in case the query was built by hand
   return `SELECT ${KPI_COLUMNS} ${from} ORDER BY (${col}) IS NULL, ${col} ${query.dir === "asc" ? "ASC" : "DESC"}, k.scrip_code
      LIMIT ${PAGE_SIZE} OFFSET ${(query.page - 1) * PAGE_SIZE}`;
 }
@@ -199,7 +223,7 @@ export const kpiSummaryRowsSql = (from: string) => `SELECT k.scrip_code, k.kind,
   k.pat, k.pat_yoy, k.pat_turn, k.nfo, pk.pat_yoy AS prev_pat_yoy ${from} LIMIT ${SUMMARY_CAP}`;
 
 /** A row's last 8 quarters of profit and revenue growth: its own company's rows, the calendar quarters ending with `period`. */
-export const kpiSeriesSql = `SELECT scrip_code, period, pat_yoy, revenue_yoy FROM results_kpi
+export const kpiSeriesSql = `SELECT scrip_code, period, basis, pat_yoy, revenue_yoy FROM results_kpi
   WHERE scrip_code IN (SELECT value FROM json_each(?1)) AND period IN (SELECT value FROM json_each(?2))`;
 
 export interface DbKpiRow {
@@ -214,12 +238,14 @@ export interface DbKpiRow {
   filed_at: string | null; filing_url: string | null;
 }
 
-/** The series of one company for the quarters ending with `period`, from its rows by period; null where no per cent. */
-export function seriesFor(byPeriod: Map<string, { pat_yoy: number | null; revenue_yoy: number | null }>, period: string) {
+/** The series of one company for the quarters ending with `period`, from its rows by period; null where no per cent or on another basis. */
+export function seriesFor(byPeriod: Map<string, { pat_yoy: number | null; revenue_yoy: number | null; basis?: string }>, period: string, basis?: string) {
   const periods = periodsBack(period);
+  // a quarter on the other basis is no point of this row's trend (the table's momentum needs the same basis too)
+  const at = (q: string) => { const r = byPeriod.get(q); return r && (!basis || !r.basis || r.basis === basis) ? r : undefined; };
   return {
-    series_pat: periods.map((q) => byPeriod.get(q)?.pat_yoy ?? null),
-    series_revenue: periods.map((q) => byPeriod.get(q)?.revenue_yoy ?? null),
+    series_pat: periods.map((q) => at(q)?.pat_yoy ?? null),
+    series_revenue: periods.map((q) => at(q)?.revenue_yoy ?? null),
   };
 }
 

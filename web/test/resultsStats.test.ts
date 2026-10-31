@@ -199,3 +199,24 @@ test("a REIT or an InvIT counts in profit and revenue statistics but is no ordin
   assert.equal(s.nfo, 0);
   assert.deepEqual(["company", "bank", "nbfc", "insurer", "reit", "invit"].map((k) => isFinancial(k as never)), [false, true, true, true, false, false]);
 });
+
+test("group coverage counts every member that reported, whatever the cut (R7)", () => {
+  const companies = [co("1", "I1", null), co("2", "I2", null), co("3", "I3", null), co("4", "I4", null)];
+  const members = ["I1", "I2", "I3", "I4"].map((i) => mem("NIFTY50", i));
+  const rows = [stat("1", NOW), stat("2", NOW), stat("3", NOW, { kind: "bank" }), stat("4", NOW, { kind: "nbfc" })];
+  for (const cut of ["all", "ex_financials", "financials"] as const) {
+    const g = computeGroups({ quarter: NOW, by: "index", cut, rows, companies, members, withinIndex: null, withinMcap: null }).find((x) => x.id === "NIFTY50")!;
+    assert.deepEqual([g.reported, g.of], [4, 4], cut);   // 4 of 4 reported, not 2 of 4 under ex-financials
+  }
+});
+
+test("group momentum and the trend use only quarters on the company's basis this quarter (R8)", () => {
+  const companies = [co("1", "I1", "A > B > C")];
+  const rows = [stat("1", NOW, { basis: "CONSOLIDATED", pat_yoy: 30 }), stat("1", "Q1FY27", { basis: "STANDALONE", pat_yoy: 5 }), stat("1", "Q4FY26", { basis: "CONSOLIDATED", pat_yoy: 8 })];
+  const g = computeGroups({ quarter: NOW, by: "sector", cut: "all", rows, companies, members: [], withinIndex: null, withinMcap: null })[0];
+  assert.equal(g.speeding_up_pct, null);              // last quarter was on another basis: no pace
+  assert.equal(g.trend_pat_median[6], null);          // and no trend point either
+  assert.equal(g.trend_pat_median[5], 8);             // the same basis as this quarter's: kept
+  const same = computeGroups({ quarter: NOW, by: "sector", cut: "all", rows: [stat("1", NOW, { basis: "CONSOLIDATED", pat_yoy: 30 }), stat("1", "Q1FY27", { basis: "CONSOLIDATED", pat_yoy: 5 })], companies, members: [], withinIndex: null, withinMcap: null })[0];
+  assert.equal(same.speeding_up_pct, 100);
+});

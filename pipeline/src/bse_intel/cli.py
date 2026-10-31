@@ -1853,6 +1853,19 @@ def cmd_screener_rows(args, settings, sink) -> int:
     return 0
 
 
+def cmd_screener_rows_diff(args, settings, sink) -> int:
+    """Two screener-rows runs compared (screener_rows_diff.py, TODO 149): the weekly check's report. Reads two local files."""
+    from . import screener_rows_diff as srd
+
+    result = srd.compare(Path(args.prev).read_text(encoding="utf-8"), Path(args.curr).read_text(encoding="utf-8"))
+    report = srd.render(result)
+    if args.md:
+        Path(args.md).write_text(report, encoding="utf-8")
+    else:
+        print(report)
+    return 1 if args.fail_on_worse and srd.worse_classes(result) else 0
+
+
 def cmd_xbrl_facts(args, settings, sink) -> int:
     """Every fact of the results XBRL files already stored in R2 (raw/xbrl/), into raw/xbrl-facts/<scrip>/<period>-<basis>.json.gz
     (xbrl_facts.py; owner, 28 Oct 2026). Reads R2 and memory only: no request to NSE. Lists the filings whose file is not stored
@@ -3015,6 +3028,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--csv", help="write every pair (company, basis, period, table, row, screener, ours, diff, status, recipe note)")
     p.add_argument("--md", help="write the markdown report to this file")
     p.set_defaults(func=cmd_screener_rows)
+    p = sub.add_parser("screener-rows-diff", help="read-only: two screener-rows runs' rows.csv compared row by row (broken and mended pairs by class)")
+    p.add_argument("--prev", required=True, help="the earlier run's rows.csv")
+    p.add_argument("--curr", required=True, help="this run's rows.csv")
+    p.add_argument("--md", help="write the markdown report to this file (else print it)")
+    p.add_argument("--fail-on-worse", action="store_true", help="exit 1 when a class lost 5 or more exact pairs net")
+    p.set_defaults(func=cmd_screener_rows_diff)
 
     p = sub.add_parser("xbrl-facts", help="keep every fact of the stored results XBRL files in R2 (raw/xbrl-facts/); lists the filings whose file is not stored; no NSE request unless --download")
     p.add_argument("--scrips", help="comma-separated company keys or NSE symbols (default: the whole universe)")

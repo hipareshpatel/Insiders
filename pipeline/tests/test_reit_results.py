@@ -144,14 +144,35 @@ def test_a_quarter_with_no_sales_is_left_out_and_its_stored_row_pruned(settings)
     assert [r[0] for r in sink._db.execute("SELECT period FROM results_kpi WHERE scrip_code = '544758'")] == ["Q1FY27"]
 
 
-def test_an_unreadable_file_is_counted_and_a_trust_without_a_code_is_left_out(settings):
+def test_an_unreadable_file_is_counted_and_a_trust_without_an_isin_is_left_out(settings):
     from bse_intel.sinks.local import LocalSink
 
     sink = LocalSink(settings)
-    rows = [row(file="bad.xml"), row(symbol="NOCODE", name="No Code Trust", file="nocode.xml", broadcast="28-Oct-2026 09:00:00")]
-    files = {"bad.xml": b"<html>blocked</html>", "nocode.xml": xbrl_doc(scrip="", symbol="NOCODE", isin="INE000000001")}
+    rows = [row(file="bad.xml"), row(symbol="NOISIN", name="No Isin Trust", file="noisin.xml", broadcast="28-Oct-2026 09:00:00")]
+    files = {"bad.xml": b"<html>blocked</html>", "noisin.xml": xbrl_doc(symbol="NOISIN", isin="")}
     out = rr.run(Client(rows, files), sink, "t")
     assert out["no_quarter"] == 1 and out["trusts"] == 0 and out["rows"] == 0
+
+
+def test_trusts_not_on_bse_are_keyed_by_their_nse_symbol_and_the_shared_000000_rows_go(settings):
+    from bse_intel.sinks.local import LocalSink
+
+    sink = LocalSink(settings)
+    # measured 31 Oct 2026: six trusts not on BSE all say ScripCode 000000; keyed by it, each overwrote the others' quarters
+    sink.execute(rr.results_table.STATEMENT, rr.results_table.company_rows("000000", {rr.statements.KEY: [
+        {"table": "quarters", "period": "Q2FY27", "basis": "CONSOLIDATED", "family": "invit", "lab": {"by": "file"},
+         "rows": {"Net Profit": 1.0, "Sales": 2.0}, "source_news_id": None}]}, "t0"))
+    rows = [row(symbol="TVSINVIT", name="TVS Infrastructure Trust", file="tvs.xml", kind="InvITs"),
+            row(symbol="NDRINVIT", name="NDR InvIT Trust", file="ndr.xml", kind="InvITs"),
+            row(symbol="NOCODE", name="No Code Trust", file="nocode.xml", kind="InvITs")]
+    files = {"tvs.xml": xbrl_doc(scrip="000000", symbol="TVSINVIT", isin="INE1JNC23012", revenue=1_000_000_000),
+             "ndr.xml": xbrl_doc(scrip="000000", symbol="NDRINVIT", isin="INE0Q7Q23015", revenue=3_000_000_000),
+             "nocode.xml": xbrl_doc(scrip="", symbol="NOCODE", isin="INE000000001")}
+    out = rr.run(Client(rows, files), sink, "t")
+    assert (out["trusts"], out["rows"]) == (3, 3)
+    got = dict(sink._db.execute("SELECT scrip_code, revenue FROM results_kpi").fetchall())
+    assert got == {"NSE:TVSINVIT": 100.0, "NSE:NDRINVIT": 300.0, "NSE:NOCODE": 1302.63}   # each trust its own figures; nothing under 000000
+    assert sink._db.execute("SELECT symbol FROM companies WHERE scrip_code = 'NSE:TVSINVIT'").fetchone()[0] == "TVSINVIT"
 
 
 def test_prune_companies_keeps_a_trust_that_is_not_on_nses_equity_list(settings):

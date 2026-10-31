@@ -14,7 +14,7 @@ function row(r: Partial<KpiRow> & Pick<KpiRow, "symbol" | "company_name">): KpiR
     revenue: null, revenue_yoy: null, revenue_qoq: null, revenue_prev_yoy: null, revenue_momentum_pts: null,
     ebitda: null, ebitda_yoy: null, ebitda_qoq: null, ebitda_turn: null, ebitda_prev_yoy: null, ebitda_momentum_pts: null,
     opm: null, opm_yoy_bps: null, opm_qoq_bps: null,
-    pat: null, pat_yoy: null, pat_qoq: null, pat_turn: null, pat_qoq_turn: null, pat_prev_yoy: null, pat_prev_turn: null, pat_momentum_pts: null,
+    pat: null, pat_yoy: null, pat_qoq: null, pat_turn: null, pat_qoq_turn: null, pat_prev_yoy: null, pat_prev_turn: null, pat_momentum_pts: null, pat_pre: null, pat_pre_yoy: null, pat_pre_turn: null,
     momentum: "not_comparable", nfo: false, filed_at: "2026-10-30T15:35:00+05:30", filing_url: `https://nsearchives.nseindia.com/corporate/${r.symbol}_Q2FY27.pdf`,
     series_pat: [null, null, null, null, null, null, null, null], series_revenue: [null, null, null, null, null, null, null, null],
   };

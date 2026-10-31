@@ -181,7 +181,8 @@ def test_the_row_keys_are_the_tables_columns_and_ten_quarters_are_kept(settings)
 
     row = rt.company_rows("500001", _memory(), "t")[0]
     columns = [c[1] for c in LocalSink(settings)._db.execute("PRAGMA table_info(results_kpi)")]
-    assert sorted(row) == sorted(columns) and rt.QUARTERS_KEPT == 10
+    # the profit before exceptional items is in a row only for a quarter that has one (its absence keeps the digest)
+    assert sorted(row) == sorted(set(columns) - {"pat_pre", "pat_pre_prev", "pat_pre_yoy", "pat_pre_turn"}) and rt.QUARTERS_KEPT == 10
     memory = {"statements": [_entry(f"Q{q}FY{y}", _rows(100.0 + y, 20.0, 15.0, 10.0)) for y in range(20, 28) for q in range(1, 5)]}
     assert len(rt.company_rows("500001", memory, "t")) == 10
 
@@ -264,3 +265,60 @@ def test_a_margin_change_is_not_given_when_a_margin_is_past_100_per_cent_or_the_
     # a negative base EBITDA with an in-range margin is no base either
     memory = {"statements": [_entry("Q2FY27", _rows(100.0, 10.0, 12.0, 9.0)), _entry("Q2FY26", _rows(100.0, -5.0, -6.0, -6.0, opm=-5.0))]}
     assert _row(memory)["opm_yoy_bps"] is None
+
+
+# --- the profit before exceptional items (illustrative figures shaped like two live quarters of 31 Oct 2026) ---
+
+def _with_exceptional(period, rows, exc, at, **kw):
+    return _entry(period, {**rows, "Exceptional items": exc, **({} if at is None else {"Exceptional items AT": at})}, **kw)
+
+
+def test_a_big_exceptional_gain_gives_the_profit_before_it_and_its_growth_on_the_same_row_rule():
+    # CGPOWER-like: PAT 412.0 against 18.24 (+2,159%); an exceptional gain of 300 after tax leaves 112.0, and the year-ago quarter had none filed
+    memory = {"statements": [_with_exceptional("Q2FY27", _rows(2900.0, 400.0, 560.0, 412.0, owners=412.0), 400.0, 300.0),
+                             _entry("Q2FY26", _rows(2500.0, 300.0, 24.0, 18.24, owners=18.24))]}
+    row = _row(memory)
+    assert (row["pat"], row["pat_yoy"]) == (412.0, 2158.8)
+    assert (row["pat_pre"], row["pat_pre_prev"], row["pat_pre_yoy"], row["pat_pre_turn"]) == (112.0, 18.24, 514.0, None)
+
+
+def test_the_base_is_the_year_ago_profit_less_its_own_exceptional_item_and_a_turn_across_a_loss_is_named():
+    # ABREL-like: PAT 858.5 on revenue 825.0 (profit above revenue); a 700 gain after tax leaves 158.5; a year ago a 50 loss after tax hid a profit of 20
+    memory = {"statements": [_with_exceptional("Q2FY27", _rows(825.0, 200.0, 900.0, 858.5, owners=858.5), 800.0, 700.0),
+                             _with_exceptional("Q2FY26", _rows(700.0, 150.0, -40.0, -30.0, owners=-30.0), -60.0, -50.0)]}
+    row = _row(memory)
+    assert row["pat_turn"] == "LOSS_TO_PROFIT"
+    assert (row["pat_pre"], row["pat_pre_prev"]) == (158.5, 20.0) and row["pat_pre_yoy"] == 692.5 and row["pat_pre_turn"] is None
+    loss = {"statements": [_with_exceptional("Q2FY27", _rows(825.0, 200.0, 900.0, 858.5, owners=858.5), 800.0, 700.0),
+                           _with_exceptional("Q2FY26", _rows(700.0, 150.0, -40.0, -90.0, owners=-90.0), -60.0, -50.0)]}
+    assert _row(loss)["pat_pre_turn"] == "LOSS_TO_PROFIT" and _row(loss)["pat_pre_yoy"] is None   # -40 a year ago: a turn, not a per cent
+
+
+def test_no_profit_before_exceptional_items_without_a_non_zero_exceptional_item_after_tax():
+    plain = {"statements": [_entry("Q2FY27", _rows(1200.0, 240.0, 200.0, 150.0, owners=148.0)), _entry("Q2FY26", _rows(1000.0, 200.0, 160.0, 120.0, owners=118.4))]}
+    zero = {"statements": [_with_exceptional("Q2FY27", _rows(1200.0, 240.0, 200.0, 150.0, owners=148.0), 0.0, 0.0), plain["statements"][1]]}
+    untaxed = {"statements": [_with_exceptional("Q2FY27", _rows(1200.0, 240.0, 200.0, 150.0, owners=148.0), 40.0, None), plain["statements"][1]]}
+    for memory in (plain, zero, untaxed):
+        row = _row(memory)
+        assert not any(k in ("pat_pre", "pat_pre_prev", "pat_pre_yoy", "pat_pre_turn") for k in row)   # the key is left out, so the row's digest is what it was before the columns
+
+
+def test_a_row_without_one_offs_keeps_its_old_digest_and_a_bank_or_nbfc_gets_the_line_too():
+    base = next(r for r in rt.company_rows("500001", _memory(), "t") if r["period"] == "Q2FY27")
+    assert "pat_pre" not in base
+    bank = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 28.0, "Exceptional items AT": 8.0, "Exceptional items": 10.0}),
+                           _bank("Q2FY26", 80.0, 20.0, **{"Net Profit (owners)": 24.0})]}
+    row = _row(bank)
+    assert (row["pat_pre"], row["pat_pre_prev"], row["pat_pre_yoy"]) == (20.0, 24.0, -16.7)
+
+
+def test_the_database_statement_and_migration_hold_the_new_columns(settings):
+    from bse_intel.sinks.local import LocalSink
+    memory = {"statements": [_with_exceptional("Q2FY27", _rows(2900.0, 400.0, 560.0, 412.0, owners=412.0), 400.0, 300.0),
+                             _entry("Q2FY26", _rows(2500.0, 300.0, 24.0, 18.24, owners=18.24))]}
+    rows = rt.company_rows("500001", memory, "t")
+    sink = LocalSink(settings)
+    sink.execute(rt.STATEMENT, rows)
+    got = sink._db.execute("SELECT pat_pre, pat_pre_prev, pat_pre_yoy FROM results_kpi WHERE period='Q2FY27'").fetchone()
+    assert tuple(got) == (112.0, 18.24, 514.0)
+    assert sink.execute(rt.STATEMENT, rows) == 0   # unchanged: nothing rewritten

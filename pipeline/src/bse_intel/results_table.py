@@ -38,6 +38,8 @@ LAYOUT = {sv.CORPORATE: ("Sales", "Operating Profit", "OPM %"),
           "reit": ("Sales", "Operating Profit", "OPM %"),
           "invit": ("Sales", "Operating Profit", "OPM %")}
 PAT_ROWS = (fact_sheet.OWNERS, "Net Profit")   # the profit to shareholders when the file has it, else the net profit
+EXCEPTIONAL_AT = "Exceptional items AT"   # screener_view._exceptional_rows: the exceptional item after its tax (a gain is positive); corporate, bank and NBFC filers
+EXCEPTIONAL = "Exceptional items"
 
 
 def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
@@ -82,6 +84,36 @@ def _line(key: str, row: str, now: dict, before: dict) -> dict | None:
     return line
 
 
+def _before_exceptional(now: dict, before: dict, pat_row: str, pat: dict) -> dict | None:
+    """The profit before exceptional items: the PAT line's own row less the exceptional item after tax (Ind AS 1 shows it apart; brokers
+    quote adjusted PAT beside the reported), and its change on the same rule as the PAT's. Only when the quarter has a non-zero exceptional
+    item after tax (else it is the PAT). The year-ago base is the same row less that quarter's exceptional item after tax; a quarter
+    that filed no exceptional line at all had none. None when the quarter has no such item or the base cannot be worked out."""
+    rows = now.get("rows") or {}
+    at = rows.get(EXCEPTIONAL_AT)
+    if at is None or round(at, 2) == 0 or rows.get(pat_row) is None:
+        return None
+    line: dict = {"value": round(rows[pat_row] - at, 2)}
+    for slot, tag in (("prev_year", "yoy"), ("prev_quarter", "qoq")):
+        base_rows = (before[slot] or {}).get("rows") or {}
+        if base_rows.get(pat_row) is None:
+            continue
+        base_at = base_rows.get(EXCEPTIONAL_AT)
+        if base_at is None and base_rows.get(EXCEPTIONAL) is not None:
+            continue   # a line was filed but its tax could not be worked out: the base is not known
+        base = round(base_rows[pat_row] - (base_at or 0.0), 2)
+        if slot == "prev_year":
+            line["prev_year"] = base
+        change = fact_sheet._change(line["value"], base, "pat")
+        if base == 0 and line["value"] < 0 and change.get("turn") == "PROFIT_TO_LOSS":
+            change = {"turn": "LOSS_WIDENED"}
+        if "pct" in change:
+            line[f"{tag}_pct"] = change["pct"]
+        elif "turn" in change:
+            line[f"{tag}_turn"] = change["turn"]
+    return line
+
+
 def table_of(dossier: dict, period: str) -> dict | None:
     """A quarter's table: ``lens`` (the kind: company, bank, nbfc, insurer), period, basis, source filing and one entry per line (revenue, ebitda, pat,
     ebitda_margin), or None when the statements hold no profit line for it."""
@@ -98,6 +130,9 @@ def table_of(dossier: dict, period: str) -> dict | None:
         if pat is None:
             continue
         table: dict = {"lens": "company" if now["family"] == sv.CORPORATE else now["family"], "period": period, "basis": basis, "source_news_id": now.get("source_news_id"), "pat": pat}
+        pre = _before_exceptional(now, before, pat_row, pat)
+        if pre is not None:
+            table["pat_pre"] = pre
         for key, row in (("revenue", revenue_row), ("ebitda", ebitda_row)):
             line = _line(key, row, now, before) if row else None
             if line is not None:
@@ -143,6 +178,7 @@ def kpi_row(scrip: str, table: dict, at: str) -> dict:
     """One ``results_kpi`` row from a quarter's table: the figures, their changes, and a digest of them (an unchanged row is not
     rewritten in the database). The keys are the table's column names."""
     revenue, ebitda, pat, opm = table.get("revenue") or {}, table.get("ebitda") or {}, table.get("pat") or {}, table.get("ebitda_margin") or {}
+    pre = table.get("pat_pre") or {}
     kind = table["lens"]
     news_id = table.get("source_news_id")
     row = {"scrip_code": scrip, "period": table["period"], "basis": table["basis"], "kind": kind,
@@ -158,6 +194,11 @@ def kpi_row(scrip: str, table: dict, at: str) -> dict:
     row["nfo"] = int(kind == "company"
                      and ((row["pat_yoy"] or 0) > 0 or row["pat_turn"] == "LOSS_TO_PROFIT")
                      and ((row["ebitda_yoy"] or 0) < 0 or row["ebitda_turn"] in ("PROFIT_TO_LOSS", "LOSS_WIDENED")))
+    # the profit before exceptional items, only where there is one: a row without it keeps the digest it had before the columns existed,
+    # so the rebuild rewrites no row (D1 writes) that has nothing to add
+    if pre:
+        row.update({"pat_pre": pre.get("value"), "pat_pre_prev": pre.get("prev_year"), "pat_pre_yoy": pre.get("yoy_pct"),
+                    "pat_pre_turn": pre.get("yoy_turn")})
     row["digest"] = hashlib.sha1(json.dumps(row, sort_keys=True).encode()).hexdigest()[:16]
     row["updated_at"] = at
     return row

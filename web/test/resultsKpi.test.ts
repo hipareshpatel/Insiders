@@ -111,7 +111,7 @@ test("the sort names a listed column, puts a missing figure last and breaks ties
 
 const db = (over: Partial<DbKpiRow>): DbKpiRow => ({
   scrip_code: "1", period: "Q2FY27", basis: "CONSOLIDATED", kind: "company", revenue: 100, revenue_yoy: 10, revenue_qoq: 1, ebitda: 20, ebitda_yoy: 12,
-  ebitda_qoq: 1, ebitda_turn: null, opm: 20, opm_yoy_bps: 50, opm_qoq_bps: 10, pat: 10, pat_yoy: 25, pat_qoq: 2, pat_turn: null, pat_qoq_turn: null, nfo: 0,
+  ebitda_qoq: 1, ebitda_turn: null, opm: 20, opm_yoy_bps: 50, opm_qoq_bps: 10, pat: 10, pat_yoy: 25, pat_qoq: 2, pat_turn: null, pat_qoq_turn: null, nfo: 0, pat_pre: null, pat_pre_yoy: null, pat_pre_turn: null,
   symbol: "AAA", company_name: "Aaa", industry: null, market_cap_cr: 1000, size_category: "SMALL", prev_revenue_yoy: 8, prev_ebitda_yoy: 9, prev_pat_yoy: 20,
   prev_pat_turn: null, filed_at: null, filing_url: null, ...over,
 });

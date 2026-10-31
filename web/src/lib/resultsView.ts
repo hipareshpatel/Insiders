@@ -2,7 +2,7 @@
  *  sentences, chart geometry, the CSV and the URL's filters. No React here, so `node --test` runs the cases in resultsView.test.ts.
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
-import { num } from "./format.ts";
+import { cr, num } from "./format.ts";
 import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
 import type { GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
@@ -100,6 +100,16 @@ export function growth(value: number | null | undefined, turn?: Turn | null, uni
 export function wasLine(amount: string | null, prevYoy: number | null | undefined, prevTurn?: Turn | null): string {
   const was = prevTurn ? `last qtr ${TURN_TEXT[prevTurn].toLowerCase()}` : prevYoy != null ? `was ${fmtGrowth(prevYoy)}` : "";
   return [amount, was].filter(Boolean).join(" · ");
+}
+
+/** The exceptional item after tax must be at least this share of |PAT| before the page shows the profit without it (a smaller one is noise). */
+export const ONE_OFF_SHARE = 0.1;
+/** "Before one-offs ₹112 Cr · +514.0%": the profit excluding exceptional items, only when the one-off is at least 10% of |PAT| (brokers' adjusted
+ *  PAT beside the reported); null otherwise. `title` is the tooltip's definition. */
+export function oneOff(r: Pick<KpiRow, "pat" | "pat_pre" | "pat_pre_yoy" | "pat_pre_turn">): { text: string; title: string } | null {
+  if (r.pat == null || r.pat_pre == null || Math.abs(r.pat - r.pat_pre) < ONE_OFF_SHARE * Math.abs(r.pat)) return null;
+  const change = r.pat_pre_turn ? TURN_TEXT[r.pat_pre_turn].toLowerCase() : r.pat_pre_yoy != null ? fmtGrowth(r.pat_pre_yoy) : null;
+  return { text: ["Before one-offs " + cr(r.pat_pre), change].filter(Boolean).join(" · "), title: "Profit after tax excluding exceptional items, after their tax" };
 }
 
 // ---------- kinds of company ----------
@@ -473,7 +483,8 @@ const CSV_COLUMNS: [string, (r: KpiRow) => string | number | null | boolean][] =
   ["EBITDA (Rs Cr)", (r) => r.ebitda], ["EBITDA YoY %", (r) => nmCell(r.ebitda_yoy)], ["EBITDA turn", (r) => (r.ebitda_turn ? TURN_TEXT[r.ebitda_turn] : null)],
   ["EBITDA QoQ %", (r) => nmCell(r.ebitda_qoq)], ["EBITDA margin %", (r) => (isNmMargin(r.opm) ? NM : r.opm)], ["Margin change YoY (bp; 100 bp = 1 percentage point)", (r) => r.opm_yoy_bps],
   ["PAT (Rs Cr)", (r) => r.pat], ["PAT YoY %", (r) => nmCell(r.pat_yoy)], ["PAT turn", (r) => (r.pat_turn ? TURN_TEXT[r.pat_turn] : null)],
-  ["PAT QoQ %", (r) => nmCell(r.pat_qoq)], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT growth change vs last quarter (pts)", (r) => r.pat_momentum_pts],
+  ["PAT QoQ %", (r) => nmCell(r.pat_qoq)],
+  ["PAT before exceptional items (Rs Cr)", (r) => r.pat_pre], ["PAT before exceptional items YoY %", (r) => (r.pat_pre_turn ? TURN_TEXT[r.pat_pre_turn] : nmCell(r.pat_pre_yoy))], ["PAT YoY last quarter %", (r) => r.pat_prev_yoy], ["PAT growth change vs last quarter (pts)", (r) => r.pat_momentum_pts],
   ["Momentum", (r) => MOMENTUM_TEXT[r.momentum]], ["Profit up, EBITDA down", (r) => r.nfo], ["Filed", (r) => r.filed_at], ["Filing", (r) => r.filing_url],
 ];
 

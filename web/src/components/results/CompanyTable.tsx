@@ -5,7 +5,7 @@ import type { KpiRow, View } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
 import {
-  blankNote, filedDay, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, type Sort,
+  blankNote, filedDay, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, oneOff as oneOffOf, type Sort,
 } from "../../lib/resultsView";
 import { CompanyCell, Growth, MomentumMark, NfoFlag, Signals, Skeleton } from "./bits";
 import { Dumbbell, Spark } from "./charts";
@@ -90,6 +90,7 @@ function MarginCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
 function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
   const turn = qoq ? r.pat_qoq_turn : r.pat_turn;
   const amount = r.pat == null ? null : `${cr(r.pat)}${turn ? (r.pat >= 0 ? " profit" : " loss") : ""}`;
+  const oneOff = qoq ? null : oneOffOf(r);   // the year-ago comparison only: its growth is a year-on-year one
   return (
     <>
       <span className="whitespace-nowrap">
@@ -97,6 +98,7 @@ function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
         {!qoq && <MomentumMark m={r.momentum} />}
       </span>
       <Sm>{qoq ? amount ?? "—" : wasLine(amount, r.pat_prev_yoy, r.pat_prev_turn)}</Sm>
+      {oneOff && <Sm><span title={oneOff.title}>{oneOff.text}</span></Sm>}
       {r.nfo && <div className="mt-1.5"><NfoFlag /></div>}
     </>
   );

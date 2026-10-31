@@ -205,7 +205,7 @@ def movement_closing(block: list[list[float]]) -> tuple[float, float] | None:
     return fits.pop() if len(fits) == 1 else None
 
 
-def opex_section(gs: list[tuple[str, list[float]]]) -> dict | None:
+def opex_section(gs: list[tuple[str, list[float]]], unit: float = 1e-4) -> dict | None:
     """Schedule 16: (current, previous) of the depreciation lines (added) and of the printed total, and whether the items add up to
     that total in both years."""
     dep, items, total = [0.0, 0.0], [0.0, 0.0], None
@@ -224,7 +224,10 @@ def opex_section(gs: list[tuple[str, list[float]]]) -> dict | None:
             dep, found = [dep[0] + pair[0], dep[1] + pair[1]], True
     if total is None or not found:
         return None
-    adds = [abs(items[i] - total[i]) <= SLACK * 6 for i in (0, 1)]      # a dozen rounded items
+    # a dozen rounded items: 12 printed units in thousands, 6 paise in crore or lakh (12 units of a crore report would be Rs 12 Cr:
+    # the lead's review of #299)
+    slack = SLACK * 6 if unit < 1e-3 else 0.06 / unit
+    adds = [abs(items[i] - total[i]) <= slack for i in (0, 1)]
     return {"depreciation": dep, "total": list(total), "adds_up": adds}
 
 
@@ -325,7 +328,7 @@ found and not read, with the reason (the run's diagnosis of an empty report)."""
                             "header": [x.strip()[:80] for x in header if x.strip()][:12]})
             continue
         gs = groups(body)
-        section = fixed_section(gs) if kind == FIXED else opex_section(gs)
+        section = fixed_section(gs) if kind == FIXED else opex_section(gs, unit)
         if section is None:
             if why is not None:
                 why.append({"page": page, "kind": kind, "reason": "no total or no depreciation line read",

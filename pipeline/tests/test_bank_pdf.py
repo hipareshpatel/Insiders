@@ -396,3 +396,9 @@ def test_empty_reading_is_read_again_once_for_its_diagnosis():
     assert reading["diagnosis"]["pages"] == 1 and reading["figures"] == {} and reading["reader"] == bp.READER
     again = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
     assert again["reports_read"] == 0 or all(r.get("file") != kept for r in again["readings"])
+
+
+def test_items_add_up_slack_follows_the_unit():
+    gs = [("I. Rent", [100.0, 90.0]), ("V. Depreciation on Bank's property", [10.0, 9.0]), ("TOTAL", [115.0, 99.0])]
+    assert bp.opex_section(gs, 1e-4)["adds_up"] == [True, True]       # 5 printed units in thousands: rounding
+    assert bp.opex_section(gs, 1.0)["adds_up"] == [False, True]       # Rs 5 Cr in a crore report: not rounding

@@ -253,7 +253,8 @@ def apply_to_results(results: dict | None, sheet: dict | None) -> list[dict]:
             for suffix in ("pct", "bps", "turn"):
                 if f"{tag}_{suffix}" in line:
                     row[f"{tag}_{suffix}"] = line[f"{tag}_{suffix}"]
-        if row != {k: v for k, v in was.items() if k in row or k in ("derived", "held")}:
+        kept = {k: v for k, v in was.items() if k in row or k in ("derived", "held") or k.startswith(("prev_", "yoy_", "qoq_"))}
+        if row != kept:   # a comparative memory had and the sheet lacks is a change too (it goes; Spandana, A/B of 31 Oct 2026)
             notes.append({"line": key, "was": {k: v for k, v in was.items() if isinstance(v, (int, float, str))}, "now": row})
         results[key] = row
     if family == sv.NBFC and results.get("lens") == "company":
@@ -315,13 +316,30 @@ _OWN_QUARTER = re.compile(r"\bQ[1-4]\s?FY\s?\d{2,4}\b", re.I)
 _CR = re.compile(r"\s*(?:cr\b|crores?\b)", re.I)
 _PCT_UNIT = re.compile(r"\s*(?:%|per ?cent|percent)\s*", re.I)
 _QOQ = re.compile(r"(?:\(?\s*)?(?:q[\s/-]*o[\s/-]*q|quarter[- ]on[- ]quarter|sequential|vs\.? (?:the )?(?:previous|prior))", re.I)
+_COMPARES = re.compile(r"\b(?:from|against|versus|vs\.?|compared|prior|preceding)\b", re.I)
+_YEAR_AGO = re.compile(r"\b(?:year[- ]ago|a year (?:earlier|before)|last year|y[\s/-]*o[\s/-]*y|year[- ]on[- ]year)\b", re.I)
+_QUARTER_AGO = re.compile(r"\b(?:previous quarter|last quarter|sequential\w*|q[\s/-]*o[\s/-]*q|quarter[- ]on[- ]quarter)\b", re.I)
 _CHANGE = re.compile(r"(?:\(?\s*)?(?:y[\s/-]*o[\s/-]*y|q[\s/-]*o[\s/-]*q|year[- ]on[- ]year|quarter[- ]on[- ]quarter|"
                      r"sequential\w*|from a year|vs\.? (?:the )?(?:year|previous|prior))", re.I)
 
 
+# a lender's other lines, none of them on its sheet: a sentence that names one beside a sheet line is not judged, as a figure in it
+# may be that other line's (A/B of 31 Oct 2026: Bandhan's pre-provision profit judged as its NII, ICICI Prudential Life's net premium
+# as its PAT, both right sentences cut)
+_LENDER_OTHER = (r"revenue|sales|turnover|total income|other income|operating profit|pre[- ]provision\w*|ppop|provisions?|"
+                 r"interest (?:earned|expended|expenses?)|total interest income|operating expenses|premiums?|claims?|"
+                 r"assets under management|aum|deposits|advances|loan book|disbursements?|profit before tax|pbt|ebitda|"
+                 r"net interest income|nii|financing profit")
+
+
 def _lines_named(sentence: str, family: str = sv.CORPORATE) -> list[str]:
     words_of = FAMILY_KEYWORDS.get(family, _KEYWORDS)
-    return [k for k, words in words_of.items() if re.search(rf"\b(?:{words})\b", sentence, re.I)]
+    named = [k for k, words in words_of.items() if re.search(rf"\b(?:{words})\b", sentence, re.I)]
+    if family != sv.CORPORATE and len(named) == 1:
+        rest = re.sub(rf"\b(?:{words_of[named[0]]})\b", " ", sentence, flags=re.I)
+        if re.search(rf"\b(?:{_LENDER_OTHER})\b", rest, re.I):
+            return named + ["other"]
+    return named
 
 
 def _near(value: float, decimals: int, target: float | None, scale: float = 1.0) -> bool:
@@ -345,10 +363,14 @@ def disagreements(text: str, sheet: dict) -> list[tuple[str, str]]:
         if len(named) != 1 or named[0] not in sheet["lines"]:
             continue
         line = sheet["lines"][named[0]]
+        # a comparative the sheet lacks may be the amount written (Spandana's year-ago loss, A/B of 31 Oct 2026): amounts not judged
+        lacking = sheet.get("family", sv.CORPORATE) != sv.CORPORATE and (
+            ("prev_year" not in line and _YEAR_AGO.search(sentence)) or ("prev_quarter" not in line and _QUARTER_AGO.search(sentence))
+            or (("prev_year" not in line or "prev_quarter" not in line) and _COMPARES.search(sentence)))
         amounts = [line.get(k) for k in ("value", "prev_year", "prev_quarter", "with_minority")]
         for value, decimals, pos, kind, raw in _tokens(sentence):
             after = sentence[pos + len(raw):pos + len(raw) + 40]
-            if kind not in ("pct", "bps", "pp", "x") and _CR.match(after):
+            if kind not in ("pct", "bps", "pp", "x") and _CR.match(after) and not lacking:
                 if not any(_near(value, decimals, a, max(1.0, abs(a or 0) / 1000)) for a in amounts):
                     found.append((raw, f'{line["label"]} is {_cr(line["value"])} Cr in the exchange file'))
             elif kind == "pct" and (unit := _PCT_UNIT.match(after)) and (_CHANGE.match(after, unit.end()) or _QOQ.match(after, unit.end())):

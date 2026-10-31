@@ -187,3 +187,34 @@ def test_nbfc_sheet_into_a_bank_table_fills_pbt_and_profit_only():
     assert table["interest_earned"] == {"value": 20000.0} and table["nii"] == {"value": 11000.0}
     assert table["pbt"]["value"] == pytest.approx(8537.2) and table["pat"]["value"] == pytest.approx(6266.2)
     assert "financing_profit" not in table and table["lines"] == [{"key": "interest_earned"}, {"key": "nii"}, {"key": "pat"}]
+
+
+def test_a_lender_sentence_naming_another_line_too_is_not_judged():
+    # A/B of 31 Oct 2026: right sentences cut, a figure of a line the sheet lacks judged against the one line it named
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180")
+    bank = fs.fact_sheet(d, period, lenders=True)
+    assert fs.disagreements("Net interest income rose to ₹44,464 Cr and pre-provision operating profit was ₹31,000 Cr.", bank) == []
+    assert fs.disagreements("NII was ₹44,464 Cr; provisions were ₹3,000 Cr.", bank) == []
+    assert fs.disagreements("Net interest income was ₹40,000 Cr.", bank)          # alone, still judged
+    d, period = dossier_of("nse_hdfclife_q2fy27_cons.xml", "540777")
+    life = fs.fact_sheet(d, period, lenders=True)
+    assert fs.disagreements("Revenue was ₹13,803.9 Cr and net profit ₹521.6 Cr.", life) == []
+    assert fs.disagreements("Gross premium of ₹27,115 Cr; PAT ₹521.6 Cr.", life) == []
+    assert fs.disagreements("PAT was ₹600 Cr.", life)
+
+
+def test_a_comparative_the_sheet_lacks_is_not_judged():
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180", year_ago_scale=None)
+    sheet = fs.fact_sheet(d, period, lenders=True)
+    assert "prev_year" not in sheet["lines"]["pat"]
+    assert fs.disagreements("Net profit rose to ₹20,700 Cr from ₹17,000 Cr a year ago.", sheet) == []
+    assert fs.disagreements("Net profit was ₹19,000 Cr.", sheet)                    # no comparison: judged
+
+
+def test_a_dropped_comparative_is_recorded():
+    d, period = dossier_of("nse_hdfcbank_q2fy27_cons.xml", "500180", year_ago_scale=None)
+    sheet = fs.fact_sheet(d, period, lenders=True)
+    pat = sheet["lines"]["pat"]["value"]
+    table = {"lens": "bank", "period": "Q2FY27", "pat": {"value": pat, "prev_year": -100.0, "yoy_turn": "LOSS_TO_PROFIT"}}
+    notes = fs.apply_to_results(table, sheet)
+    assert [n["line"] for n in notes] == ["pat"] and "prev_year" not in table["pat"]

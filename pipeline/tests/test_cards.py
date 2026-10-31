@@ -538,6 +538,33 @@ e. Finance costs  8,483  2,341  1.882  15,066  13.492
 """
 
 
+LCC_MILLION = """--- Page 3
+Statement of unaudited results (₹ in Mn)
+Particulars 30.09.2026 30.06.2026
+Revenue from operations 8,857.3 7,100.2
+Trade receivables 4,558,21 3,900.10
+"""
+BILLION_TABLE = """--- Page 3
+Business update (Rs billion)
+Particulars Q2FY27 Q2FY26
+Net interest income 156.28 140.1
+Profit after tax 40.21 35.0
+"""
+
+
+def test_unit_slips_never_enlarge_on_a_figure_with_malformed_digit_groups():
+    from bse_intel.grounding import unit_slips
+
+    # LCC, 30 Oct 2026: the OCR's "4,558,21" (4,558.21 million) read as 455,821 supported "₹455.82 Cr" -> ₹45,582 Cr
+    assert unit_slips(["Trade receivables of ₹455.82 Cr"], LCC_MILLION) == []
+    # the same row with well-formed digits is no slip either, it is the right reading: 4,558.21 million = ₹455.82 Cr
+    assert unit_slips(["Trade receivables of ₹455.82 Cr"], LCC_MILLION.replace("4,558,21", "4,558.21")) == []
+    # a shrink on a malformed figure is still made: 8,857.3 million carded "₹8,857.3 Cr"
+    assert unit_slips(["Revenue of ₹8,857.3 Cr"], LCC_MILLION) == [("8,857.3", 8857.3, 1, 885.73, 2)]
+    # and a true enlargement on well-formed figures is still made: 156.28 billion carded "₹156.28 Cr" is ₹15,628 Cr
+    assert [(s[0], s[3]) for s in unit_slips(["NII of ₹156.28 Cr"], BILLION_TABLE)] == [("156.28", 15628.0)]
+
+
 def test_unit_slips_never_shrink_a_figure_under_five_lakh():
     from bse_intel.grounding import unit_slips
 

@@ -283,10 +283,10 @@ PAGE = (section("profit-loss", {"Sales&nbsp;+": [900, 50], "Expenses&nbsp;+": [6
         + section("cash-flow", {"Cash from Investing Activity&nbsp;+": [-88, 1]}, ["Mar 2026", "Dec 2024"]))
 
 
-def test_quarters_before_fy26_are_listed_but_never_counted():
-    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90]}, ["Jun 2025", "Mar 2025"]))
+def test_quarters_before_fy25_are_listed_but_never_counted():
+    page = sv.parse_page(section("quarters", {"Sales&nbsp;+": [100, 90]}, ["Jun 2024", "Mar 2024"]))
     rows = {r["period"]: r for r in sv.compare(page, _store({}), "1", "DEMO")}
-    assert rows["Q4FY25"]["status"] == "before_cutoff" and rows["Q1FY26"]["status"] == "no_facts"   # owner: quarters from FY26
+    assert rows["Q4FY24"]["status"] == "before_cutoff" and rows["Q1FY25"]["status"] == "no_facts"   # owner 31 Oct: from FY25
     summary = sv.summarise([{"scrip": "1", "symbol": "DEMO", "rows": list(rows.values()), "skipped": None}], "2026-10-29")
     assert summary["by_status"]["before_cutoff"] == 1 and summary["by_row"]["quarters: Sales"]["exact_share"] is None
 

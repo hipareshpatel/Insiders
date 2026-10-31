@@ -90,6 +90,9 @@ STATUSES = ("ok", "apart", "no_facts", "no_recipe", "before_cutoff", "before_lis
 # older ones carry screener's merger restatements and the older file format; a quarter before it is listed as before_cutoff, never
 # counted in the exact share. Years and balance sheets are compared as before.
 FIRST_QUARTER = "Q1FY26"
+# the quarters measured against screener (owner, 31 Oct 2026 ~21:30 IST: "Yes, measure FY25 quarters"; the cut-off is FY25 onward).
+# FIRST_QUARTER stays the start of the BSE results fetch (bse_results_xbrl): measuring more never downloads more.
+MEASURE_FROM = "Q1FY25"
 LISTING_FROM = "Q1FY24"       # before_listing is decided only from here: the years and quarters screener shows for a recent listing
 # a period screener shows from before the company's first results on any exchange (its prospectus, or the year-ago column of its first
 # results) is before_listing, never counted (owner, 29 Oct 2026: "we don't need it at all"): no facts for it, earlier than the first
@@ -1344,8 +1347,8 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
             for period, theirs in by_period.items():
                 rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": fam, "period": period, "table": table,
                        "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "", "hints": ""}
-                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(FIRST_QUARTER):
-                    rec.update(status="before_cutoff", note=f"before {FIRST_QUARTER}: not compared")
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(MEASURE_FROM):
+                    rec.update(status="before_cutoff", note=f"before {MEASURE_FROM}: not compared")
                     out.append(rec)
                     continue
                 ours_rows, why = _ours(cf, fam, basis, table, period, memo)
@@ -1598,7 +1601,7 @@ def render(summary: dict) -> str:
 
 def compare_stored(page: dict, entries: list[dict], scrip: str = "", symbol: str = "", basis: str | None = None) -> list[dict]:
     """Every (table, row, period) the page shows against the dossier's stored statements entry of that table, basis and period:
-    ok, apart, no_facts (no stored entry) or no_recipe (the entry has no such row); quarters before FIRST_QUARTER are not
+    ok, apart, no_facts (no stored entry) or no_recipe (the entry has no such row); quarters before MEASURE_FROM are not
     compared, as in ``compare``."""
     basis = basis or page.get("basis") or CONSOLIDATED
     stored = {(e.get("table"), e.get("period"), e.get("basis")): e for e in entries or []}
@@ -1610,8 +1613,8 @@ def compare_stored(page: dict, entries: list[dict], scrip: str = "", symbol: str
                 rec = {"company": symbol, "scrip": scrip, "basis": basis, "family": (e or {}).get("family") or "", "period": period,
                        "table": table, "row": row, "screener": theirs, "ours": None, "diff": None, "status": "", "note": "",
                        "hints": ""}
-                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(FIRST_QUARTER):
-                    rec.update(status="before_cutoff", note=f"before {FIRST_QUARTER}: not compared")
+                if table == "quarters" and (quarter_index(period) or 0) < quarter_index(MEASURE_FROM):
+                    rec.update(status="before_cutoff", note=f"before {MEASURE_FROM}: not compared")
                 elif e is None:
                     rec.update(status="no_facts", note="no stored statements entry")
                 elif (e.get("rows") or {}).get(row) is None:

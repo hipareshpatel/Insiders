@@ -4,16 +4,17 @@ import type { Cut, GroupBy, GroupRow } from "../../../shared/resultsTypes";
 import { api } from "../../lib/api";
 import { cn } from "../../lib/cn";
 import { istDate } from "../../lib/format";
-import { fmtPct, groupNoun, groupsBullets, groupsLead, quarterLabel, quarterSeries, sharedScale } from "../../lib/resultsView";
+import { coverageOf, fmtCount, fmtPct, groupNoun, groupsBullets, groupsLead, quarterLabel, quarterSeries, sharedScale } from "../../lib/resultsView";
 import { Button } from "../ui/button";
 import { Growth, Panel, SegControl, Segs, Skeleton } from "./bits";
 import { Spark, SpreadStack } from "./charts";
 
 const BY: { key: GroupBy; label: string }[] = [{ key: "index", label: "Index" }, { key: "sector", label: "Sector" }, { key: "industry", label: "Industry" }];
 const CUTS: { key: Cut; label: string }[] = [{ key: "all", label: "All" }, { key: "ex_financials", label: "Ex-financials" }, { key: "financials", label: "Financials" }];
-const CUT_WORDS: Record<Cut, string> = { all: "all companies", ex_financials: "excluding financials", financials: "financials only" };
+const CUT_WORDS: Record<Cut, string> = { all: "ex-financials only", ex_financials: "ex-financials", financials: "financials only" };
 const patTotal = (r: GroupRow, c: Cut) => (c === "all" ? r.pat_total_all : c === "ex_financials" ? r.pat_total_ex_financials : r.pat_total_financials);
-const revTotal = (r: GroupRow, c: Cut) => (c === "all" ? r.revenue_total_all : c === "ex_financials" ? r.revenue_total_ex_financials : r.revenue_total_financials);
+// no revenue total for "all": a bank's revenue is interest earned, not sales (audit 31 Oct 2026); pick Ex-financials for it
+const revTotal = (r: GroupRow, c: Cut) => (c === "all" ? null : c === "ex_financials" ? r.revenue_total_ex_financials : r.revenue_total_financials);
 const KEY = [["bg-d-neg", "Below 0%"], ["bg-d-1", "0–10%"], ["bg-d-2", "10–20%"], ["bg-d-3", "Above 20%"]];
 
 /** Profit growth by index, sector or industry: a ranked dot plot of the median against the total, what it says, and a table of every
@@ -35,7 +36,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
         <span className="flex items-center gap-2"><span className="text-[14px] text-ink-2">Companies</span>
           <SegControl label="Companies" items={CUTS} value={cut} onChange={(k) => setParams({ cut: k === "all" ? null : k })} itemClass="max-sm:min-h-11" /></span>
         <span className="flex-1" />
-        <span className="text-[13px] text-ink-3">Financials = banks, NBFCs and insurers</span>
+        <span className="text-[13px] text-ink-3">Financials = banks, NBFCs and insurers · PAT = profit after tax</span>
       </div>
 
       {res.isError && !res.data ? (
@@ -65,7 +66,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
             </Panel>
             <Panel title="Median or total?" className="text-[15px] text-ink-2">
               <p><b className="text-ink">Median</b> is the middle value: every company counts the same. <b className="text-ink">Total</b> adds up all their
-                profits: the biggest companies count most. Companies that turned a loss into a profit have no % and sit out of medians; totals include them.</p>
+                profits: the biggest companies count most. Companies that turned a loss into a profit have no % and sit out of medians; totals include them. The same holds for profit that turned into a loss and for a loss that narrowed or widened: the median covers only companies with a % change, while every company is in the counts and totals.</p>
             </Panel>
           </div>
 
@@ -73,6 +74,9 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
             <div>
               <h2 className="text-[20px] font-bold tracking-[-0.01em] text-ink">All {plural}</h2>
               <p className="text-[13.5px] text-ink-2">Growth vs the same quarter a year ago · sorted by median profit growth · click a row to see its companies</p>
+              {by === "index" && (
+                <p className="mt-0.5 text-[13px] text-ink-3">Earlier quarters in the trend use today's index members{res.data.index_tracking_since ? ` (membership has been recorded only since ${istDate(res.data.index_tracking_since)})` : ""}, not the members of that time.</p>
+              )}
             </div>
             <div className="flex flex-wrap gap-3.5 text-[12.5px] text-ink-2" aria-hidden>
               {KEY.map(([c, l]) => <span key={l}><i className={cn("mr-1.5 inline-block h-2.5 w-2.5 rounded-[3px] align-[-1px]", c)} />{l}</span>)}
@@ -80,24 +84,24 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
           </div>
           <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <table className="w-full min-w-[1180px] table-fixed border-collapse text-[14px]">
-              <colgroup>{[14, 7, 8.5, 6.5, 6.5, 7, 7.5, 8, 7.5, 10.5, 11, 6].map((w, i) => <col key={i} style={{ width: `${w}%` }} />)}</colgroup>
+              <colgroup>{[13, 7.5, 8, 6, 6.5, 7, 7, 7.5, 7, 12.5, 11, 7].map((w, i) => <col key={i} style={{ width: `${w}%` }} />)}</colgroup>
               <thead className="text-[13px] font-semibold text-ink-2">
                 <tr>
                   <th colSpan={3} /><th colSpan={3} scope="colgroup" className="pb-0 text-center font-semibold text-ink-2">Profit, total growth</th><th colSpan={6} />
                 </tr>
                 <tr className="[&>th]:border-b [&>th]:border-line [&>th]:px-3 [&>th]:py-2.5 [&>th]:text-right [&>th]:align-bottom [&>th]:font-semibold">
                   <th scope="col" className="!text-left">{by === "index" ? "Index" : by === "sector" ? "Sector" : "Industry"}</th>
-                  <th scope="col">Reported</th>
-                  <th scope="col" aria-sort="descending" className="text-ink"><span className="inline-flex items-center gap-1">Profit median<ArrowDown aria-hidden className="h-3 w-3" /></span></th>
+                  <th scope="col" title="Companies reported, out of the group's members">Reported</th>
+                  <th scope="col" aria-sort="descending" className="whitespace-nowrap text-ink" title="Median of the profit growth of the companies that have a % change"><span className="inline-flex items-center gap-1">Profit median<ArrowDown aria-hidden className="h-3 w-3" /></span></th>
                   {CUTS.map((c) => (
                     <th key={c.key} scope="col" className={cn(c.key === cut && "text-ink shadow-[inset_0_-2px_0_var(--accent)]")}>{c.key === "ex_financials" ? "Ex-fin." : c.key === "all" ? "All" : "Financials"}</th>
                   ))}
-                  <th scope="col">Financials'<span className="block text-[12px] font-normal text-ink-3">share of profit</span></th>
-                  <th scope="col">Revenue total<span className="block text-[12px] font-normal text-ink-3">{CUT_WORDS[cut]}</span></th>
-                  <th scope="col">EBITDA total<span className="block text-[12px] font-normal text-ink-3">ex-financials</span></th>
-                  <th scope="col" className="!text-left">Median trend<span className="block text-[12px] font-normal text-ink-3">8 quarters, one scale</span></th>
-                  <th scope="col">Profit growth spread<span className="block text-[12px] font-normal text-ink-3">% of companies</span></th>
-                  <th scope="col">Speeding<span className="block text-[12px] font-normal text-ink-3">up</span></th>
+                  <th scope="col" className="whitespace-nowrap" title="Financials' share of the group's profit this quarter">Fin. share<span className="block text-[12px] font-normal text-ink-3">of profit</span></th>
+                  <th scope="col" className="whitespace-nowrap" title="Total revenue growth. Not shown for all companies: a bank's revenue is interest earned, not sales. Pick Ex-financials.">Revenue total<span className="block text-[12px] font-normal text-ink-3">{CUT_WORDS[cut]}</span></th>
+                  <th scope="col" className="whitespace-nowrap" title="Total EBITDA growth, leaving out banks, NBFCs and insurers">EBITDA total<span className="block text-[12px] font-normal text-ink-3">ex-fin.</span></th>
+                  <th scope="col" className="!text-left" title="Median profit growth, last 8 quarters, all lines on one scale">Median profit growth<span className="block text-[12px] font-normal text-ink-3">last 8 quarters</span></th>
+                  <th scope="col" className="whitespace-nowrap" title="Profit growth spread, share of companies in each band">Growth spread<span className="block text-[12px] font-normal text-ink-3">% of companies</span></th>
+                  <th scope="col" title="Share of companies whose profit growth is speeding up">Speeding up</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,7 +111,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
                     className="num cursor-pointer hover:[&>td]:bg-[#f7f8fa] focus-visible:[&>td]:bg-accent-soft [&>td]:border-b [&>td]:border-line [&>td]:px-3 [&>td]:py-3 [&>td]:text-right [&>td]:align-middle">
                     <td className="!text-left"><span className="block truncate font-sans text-[14.5px] font-bold text-ink" title={r.id}>{r.label}</span></td>
                     <td>
-                      <div className="whitespace-nowrap text-ink">{r.reported}{r.of != null && <span className="text-ink-3"> / {r.of}</span>}</div>
+                      <div className="whitespace-nowrap text-ink" title={r.of ? coverageOf(r).trim().slice(1, -1) : undefined}>{fmtCount(r.reported)}{r.of != null && <span className="text-ink-3"> / {fmtCount(r.of)}</span>}</div>
                       {r.of ? <span className="ml-auto mt-1.5 block h-[5px] w-14 overflow-hidden rounded-full bg-surface-2"><i className="block h-full bg-ink-3" style={{ width: `${Math.min(100, (r.reported / r.of) * 100)}%` }} /></span> : null}
                     </td>
                     <td><Growth value={r.pat_median} className="text-[15px]" /></td>
@@ -129,7 +133,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
           <div className="mt-[18px] grid gap-x-10 gap-y-2.5 text-[13px] text-ink-3 sm:grid-cols-2">
             {by === "index" ? (
               <p><b className="font-semibold text-ink-2">Index members</b> {res.data.index_tracking_since
-                ? <>are tracked weekly since {istDate(res.data.index_tracking_since)}; quarters before use the list as first read, so a company that left an index earlier may be missing.</>
+                ? <>are tracked weekly since {istDate(res.data.index_tracking_since)}; quarters before use the list as first read, so a company that left an index earlier may be missing. "Best median in 8 quarters" counts only indices with at least 80% of members reported.</>
                 : <>are the list as first read; weekly tracking has not started.</>}</p>
             ) : (
               <p><b className="font-semibold text-ink-2">{by === "sector" ? "Sectors" : "Industries"}</b> are NSE's own classification as stored ({by === "sector" ? "first" : "second"} step of the path); companies with none are left out.</p>

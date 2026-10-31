@@ -41,6 +41,9 @@ def pages(name: str) -> dict:
     ("  88", [88.0]),
     (" -   ", [0.0]),
     ("31393,47,30 29069,87,58", [313934730.0, 290698758.0]),
+    ("1937 ,74 ,81", [19377481.0]),                   # Bank of Maharashtra: a space before each comma (run 41206706133)
+    ("12293 ,75 ,21", [122937521.0]),
+    ("22 ,52 ,43", [225243.0]),
     ("Depreciation on Bank's property", None),
     ("V.", None),
 ])

@@ -32,7 +32,7 @@ from itertools import permutations
 
 from .metrics import CONSOLIDATED, STANDALONE
 
-READER = 4      # 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read; 4: "000's
+READER = 5      # 5: "1937 ,74 ,81" (Bank of Maharashtra); 2: mixed-case and number-only schedule headings; 3: the diagnosis says why a schedule is not read; 4: "000's
 #                 Omitted", "31st-Mar-2024", "31-Mar-25" (31 Oct 2026); an empty reading of an older reader is read again
 PREFIX = "raw/bank-pdf/"        # + <scrip>/<report file name>.json: what ``read`` found in one report (bank-pdf-read)
 TOL = 1.0                       # crore: the file's figure and the report's agree within this (screener_view.ABS_TOL)
@@ -51,6 +51,7 @@ def figures(line: str) -> list[float] | None:
     s = line.strip().strip("`₹").strip()
     if not s:
         return None
+    s = re.sub(r"(?<=\d)\s+,(?=\d)", ",", s)     # "1937 ,74 ,81": Bank of Maharashtra prints a space before each comma
     if _NIL.match(s):
         return [0.0] * max(1, len(re.findall(r"[-–—]+", s))) if re.search(r"[-–—]", s) or s.lower() == "nil" else None
     m = _SPACED.match(s)

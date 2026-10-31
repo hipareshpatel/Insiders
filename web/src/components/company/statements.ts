@@ -395,3 +395,53 @@ export function screenerTable(entries: StatementEntry[] | undefined, basis: stri
 export function statementBases(entries: StatementEntry[] | undefined): string[] {
   return [...new Set((entries ?? []).map((e) => e.basis ?? "").filter(Boolean))];
 }
+
+/** Screener row -> the metric name the page code reads. A lender's "Revenue" is also its interest earned (isBank). */
+const STATEMENT_METRICS: [string, string][] = [["Sales", "revenue"], ["Revenue", "revenue"], ["Expenses", "total_expenses"],
+  ["Operating Profit", "ebitda"], ["Financing Profit", "ebitda"], ["OPM %", "ebitda_margin"], ["Financing Margin %", "ebitda_margin"],
+  ["Other Income", "other_income"], ["Interest", "finance_cost"], ["Depreciation", "depreciation"], ["Profit before tax", "pbt"],
+  ["Net Profit", "pat"], ["Net Profit (owners)", "pat_owners"]];
+
+/** The metrics the stock page's growth boxes, ratios, chart, P/E and story read, taken from memory's statements for one basis
+ *  (owner, 31 Oct 2026: financial statements are one source for the whole site) from the quarters and annual tables. A company with
+ *  none of them on that basis keeps `fallback`, the old metrics, so nothing goes blank. */
+export function statementMetrics(entries: StatementEntry[] | undefined, basis: string | null, fallback: Metric[]): Metric[] {
+  const out: Metric[] = [];
+  for (const e of entries ?? []) {
+    if ((e.basis ?? null) !== basis || (e.table !== "quarters" && e.table !== "annual") || !e.rows) continue;
+    for (const [row, metric] of STATEMENT_METRICS) {
+      const value = e.rows[row];
+      if (typeof value !== "number" || !Number.isFinite(value)) continue;
+      const base = { period: e.period, value, unit: metric === "ebitda_margin" ? "PCT" : "INR_CR", as_of: e.as_of ?? "", source_news_id: e.source_news_id ?? "" };
+      out.push({ ...base, metric });
+      if (row === "Revenue") out.push({ ...base, metric: "interest_earned" });
+    }
+  }
+  return out.some((m) => m.metric === "revenue" || m.metric === "pat") ? out : fallback;
+}
+
+/** `statementMetrics` on the page's main basis: the one memory's metrics carry, else consolidated when its statements have it. */
+export function dossierMetrics(d: Pick<Dossier, "statements" | "financial_metrics">): Metric[] {
+  const bases = statementBases(d.statements);
+  const basis = mainBasis(d.financial_metrics) ?? (bases.includes("CONSOLIDATED") ? "CONSOLIDATED" : bases[0] ?? null);
+  return statementMetrics(d.statements, basis, d.financial_metrics);
+}
+
+/** The balance-sheet inputs of the ratios (equity = Equity Capital + Reserves, debt = Borrowings, total assets), from the "balance"
+ *  statements for one basis, laid over the old snapshot of the same date so the lines statements do not hold (receivables, stock,
+ *  payables) stay. Without a balance entry the old sheets are returned as they are. */
+export function statementSheets(entries: StatementEntry[] | undefined, basis: string | null, sheets: Snapshot[]): Snapshot[] {
+  const old = new Map(balanceSnapshots(sheets).map((s) => [periodEnd(String(s.period)).slice(0, 7), s]));
+  const out = new Map(old);
+  for (const e of entries ?? []) {
+    if (e.table !== "balance" || (e.basis ?? null) !== basis || !e.rows) continue;
+    const key = periodEnd(e.period).slice(0, 7);
+    const r = e.rows, debt = r.Borrowings ?? r.Borrowing;
+    const next: Snapshot = { ...(old.get(key) ?? {}), period: e.period, as_of: e.as_of ?? "", source_news_id: `xbrl:${e.source_news_id ?? ""}` };
+    if (r["Equity Capital"] != null && r.Reserves != null) next.net_worth_cr = r["Equity Capital"] + r.Reserves;
+    if (debt != null) next.gross_debt_cr = debt;
+    if (r["Total Assets"] != null) next.total_assets_cr = r["Total Assets"];
+    out.set(key, next);
+  }
+  return [...out.values()];
+}

@@ -129,4 +129,6 @@ does not store its basis is read on CONSOLIDATED first, then STANDALONE (the rea
 | 41099857249, 41100677046, 41103575628, 41105318205 | facts-dump; screener-rows 500 (branch) x3 | facts-dump found the stray Assets fact (UltraTech FY26 report at 31 Mar 2024); the year-source fix measured 187 fixed / 100 broken, then 187 / 77, then **187 / 0** | Merged with PR #273 |
 | 41100996875 | release-check text_support (branch) | 4,922 items on 3,341 of 9,249 cards would drop (36%) | Stays off; blind sample to judge |
 | 41103785967 | call-memory, 9 decks, prompt v3, Flash-Lite (branch) | 282 points kept; judged blind 27 WRONG (9.6%), v2 27 of 293 | No gain; owner's A/B/D |
-| (31 Oct ~05:05 IST) | xbrl-facts apply from_nse shards 8 file_cap 1000000 (main) | running | Then statements-backfill dry run over every company (the file-covered count, Q1FY24 and the Borrowings fix in one count), then apply in runs of 50 |
+| 41145127712 (31 Oct ~05:05 IST) | xbrl-facts apply from_nse shards 8 file_cap 1000000 (main) | running | Then statements-backfill dry run over every company (the file-covered count, Q1FY24 and the Borrowings fix in one count), then apply in runs of 50 |
+| 41145772223 | xbrl-expiry-check (main, first run) | 47,079 raw files: 45,152 covered, 293 superseded, 220 nothing to keep, 1,414 results with no facts copy (exit 1, as designed) | Run again after 41145127712 |
+| 41145380818 | release-check text_support (branch, with the blind sample's filing texts and memory) | running | Blind-judge the 60 items |

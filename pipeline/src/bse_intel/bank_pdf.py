@@ -412,6 +412,20 @@ def screener_links(html: str) -> list[tuple[str, str]]:
     return sorted(out, key=lambda x: x[0], reverse=True)
 
 
+def links_seen(html: str) -> dict:
+    """What a stored Screener page's annual-reports box holds, for the run's summary when no BSE report is found: whether the box
+    is there, how many links it has, their hosts, and the first link's text (a layout change shows here first)."""
+    start = html.find("annual-reports")
+    if start < 0:
+        return {"box": False}
+    end = html.find('class="documents', start + 20)
+    box = html[start:end if end > 0 else start + 60_000]
+    hrefs = re.findall(r'href="([^"]+)"', box)
+    hosts = sorted({re.sub(r"^https?://([^/]+).*$", r"\1", h) for h in hrefs})
+    first = re.search(r"<a[^>]*>(.{0,120}?)</a>", box, re.S)
+    return {"box": True, "links": len(hrefs), "hosts": hosts[:5], "first": re.sub(r"\s+", " ", first[1]).strip()[:100] if first else None}
+
+
 def checked(cf, figures: dict) -> list[dict]:
     """What the bank's own file says of each reading (``pl_figure``, ``bs_figures`` against the Q4 file's year and March balance):
     one line per (year, basis), for the run's report. Reads stored facts only."""
@@ -458,7 +472,8 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
 
     began = time.monotonic()
     out = {"companies": len(companies), "banks": 0, "not_banks": 0, "reports_read": 0, "downloaded": 0, "missing": 0,
-           "failed": 0, "bytes": 0, "no_text": 0, "capped": False, "blocked": None, "out_of_time": False, "readings": []}
+           "failed": 0, "bytes": 0, "no_text": 0, "capped": False, "blocked": None, "out_of_time": False, "readings": [],
+           "sources": []}
     pages = sc.stored_pages(sink)[0]
     for scrip, symbol in companies:
         if time_budget is not None and time.monotonic() - began > time_budget:
@@ -472,13 +487,18 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
         sym = symbol.upper()
         stored = [k for k in sink.list_objects(f"{annual_pdfs.PREFIX}{sym}/") if k.endswith(".gz")]
         done = set(sink.list_objects(f"{PREFIX}{scrip}/"))
-        wanted = []
-        for basis_key in (pages.get(symbol) or pages.get(sym) or {}).values():
+        wanted, seen = [], {}
+        page_keys = list((pages.get(symbol) or pages.get(sym) or {}).values())
+        for basis_key in page_keys:
             blob = sink.get_object(basis_key)
             if blob:
-                wanted = screener_links(sd.unpack(blob))
+                html = sd.unpack(blob)
+                wanted, seen = screener_links(html), links_seen(html)
                 if wanted:
                     break
+        # where each bank's reports come from (or why none): the first run found no BSE link on any page (31 Oct 2026)
+        out["sources"].append({"symbol": sym, "stored_pdfs": len(stored), "screener_pages": len(page_keys),
+                               "bse_links": len(wanted), "years": sorted({fy for fy, _ in wanted}, reverse=True), **seen})
         newest = sorted({fy for fy, _ in wanted}, reverse=True)[:max(1, years)]
         todo = [(k, None) for k in stored]
         for fy, url in wanted:
@@ -537,6 +557,10 @@ def render(o: dict) -> str:
              f"{o['downloaded']} downloaded ({o['bytes'] / 1e6:.1f} MB), {o['missing']} missing, {o['failed']} failed, "
              f"{o['no_text']} without a text layer" + (", file cap reached" if o["capped"] else "")
              + (", out of time" if o["out_of_time"] else "") + (f", REFUSED: {o['blocked']}" if o["blocked"] else "")]
+    for src in o.get("sources", []):
+        lines.append(f"  {src['symbol']:12s} kept PDFs {src['stored_pdfs']}, Screener pages {src['screener_pages']}, BSE links "
+                     f"{src['bse_links']} {src.get('years') or ''}; box {src.get('box')}, links {src.get('links')}, hosts {src.get('hosts')}, "
+                     f"first {src.get('first')!r}")
     for r in o["readings"]:
         if "error" in r:
             lines.append(f"  {r['symbol']:12s} {r.get('file') or r.get('url')}: {r['error']}")

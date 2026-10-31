@@ -258,6 +258,9 @@ def test_screener_links():
     assert got == [("FY23", "https://www.bseindia.com/xml-data/corpfiling/AttachHis/22d33d1d-af2a-4d2d-98c0-eff16cd73cb5.pdf"),
                    ("FY22", "https://www.bseindia.com/bseplus/AnnualReport/500112/68583500112.pdf")]
     assert bp.screener_links("<html>no box</html>") == []
+    seen = bp.links_seen(PAGE)
+    assert seen["box"] and seen["links"] == 3 and "www.bseindia.com" in seen["hosts"] and seen["first"].startswith("Financial Year 2023")
+    assert bp.links_seen("<html></html>") == {"box": False}
 
 
 def _bank(sink, scrip="500112"):
@@ -272,6 +275,9 @@ def test_run_fetches_keeps_and_reads(monkeypatch):
     client = Client(body=pdf)
     out = bp.run(sink, client, [("500112", "SBIN")], years=1)
     assert out["banks"] == 1 and out["downloaded"] == 1 and out["reports_read"] == 1
+    assert out["sources"] == [{"symbol": "SBIN", "stored_pdfs": 0, "screener_pages": 1, "bse_links": 2, "years": ["FY23", "FY22"],
+                               "box": True, "links": 3, "hosts": ["nsearchives.nseindia.com", "www.bseindia.com"],
+                               "first": out["sources"][0]["first"]}]
     assert client.urls == ["https://www.bseindia.com/xml-data/corpfiling/AttachHis/22d33d1d-af2a-4d2d-98c0-eff16cd73cb5.pdf"]
     kept = "raw/annual-pdf/SBIN/22d33d1d-af2a-4d2d-98c0-eff16cd73cb5.pdf.gz"
     assert gzip.decompress(sink.objects[kept]) == pdf                     # every fetched file kept

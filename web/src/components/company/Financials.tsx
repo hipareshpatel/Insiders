@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import type { Dossier } from "../../../shared/types";
 import { cn } from "../../lib/cn";
 import {
-  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, screenerTable, statementDate, type Table,
+  annualTable, balanceTable, cashFlowTable, formatCell, growth, isBank, mainBasis, quarterlyTable, ratioTable, screenerTable, statementDate, withRestated, type Table,
 } from "./statements";
 import { Panel } from "./Panel";
 
@@ -30,7 +30,8 @@ export function Financials({ dossier }: { dossier: Dossier }) {
   // having financial statements will be saved as per screener"); else the lines worked out from memory's figures, as before
   const stBasis = useAlone ? "STANDALONE" : (main ?? "CONSOLIDATED");
   const pick = (t: Table, fallback: () => Table) => (t.columns.length ? t : fallback());
-  const quarterly = pick(screenerTable(dossier.statements, stBasis, "quarters", 12), () => quarterlyTable(metrics, SCREENER_LINES));
+  const quarterly = pick(withRestated(screenerTable(dossier.statements, stBasis, "quarters", 12), dossier.restated_figures, stBasis),
+    () => quarterlyTable(metrics, SCREENER_LINES));
   const annual = pick(screenerTable(dossier.statements, stBasis, "annual", 6), () => annualTable(metrics, SCREENER_LINES));
   const balance = pick(screenerTable(dossier.statements, stBasis, "balance", 8), () => balanceTable(sheets, SCREENER_LINES));
   const cash = pick(screenerTable(dossier.statements, stBasis, "cash_flow", 6), () => cashFlowTable(metrics));
@@ -62,7 +63,10 @@ export function Financials({ dossier }: { dossier: Dossier }) {
           ))}
         </div>
       )}
-      <Statement title="Quarterly results" t={quarterly} label={statementDate} sub={sub} />
+      <Statement title="Quarterly results" t={quarterly} label={statementDate} sub={sub}
+        footer={quarterly.rows.some((r) => r.restated?.some(Boolean)) && (
+          <p className="mt-3 text-[12px] text-ink-3"><sup>R</sup> Restated: the figure a later results filing gives for that quarter, as Screener shows it. Hover for the figure first filed.</p>
+        )} />
       <Statement title="Profit & loss" t={annual} label={(p) => (p === "TTM" ? "TTM" : statementDate(p))} sub={sub}
         footer={boxes.length > 0 && (
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -102,10 +106,17 @@ function Statement({ title, t, label, footer, empty, sub }: { title: string; t: 
             {t.rows.map((r) => (
               <tr key={r.label} className={cn("border-b border-line last:border-0", r.strong && "bg-surface-2/60")}>
                 <td className={cn("sticky left-0 whitespace-nowrap px-5 py-2 text-left", r.strong ? "bg-surface-2 font-bold text-ink" : "bg-surface text-ink-2")}>{r.label}</td>
-                {r.cells.map((c, i) => (
-                  <td key={i} className={cn("num whitespace-nowrap px-3 py-2 text-right", r.strong ? "font-bold text-ink" : r.kind === "pct" ? "text-ink-3" : "text-ink",
-                    c != null && c < 0 && r.kind !== "pct" && "text-neg")}>{formatCell(c, r.kind)}</td>
-                ))}
+                {r.cells.map((c, i) => {
+                  const was = r.restated?.[i];
+                  return (
+                    <td key={i} title={was ? `Restated in the ${was.restated_in} results. Originally filed: ₹${formatCell(was.original)} Cr` : undefined}
+                      className={cn("num whitespace-nowrap px-3 py-2 text-right", r.strong ? "font-bold text-ink" : r.kind === "pct" ? "text-ink-3" : "text-ink",
+                        c != null && c < 0 && r.kind !== "pct" && "text-neg")}>
+                      {formatCell(c, r.kind)}
+                      {was && <sup className="ml-0.5 text-[9px] font-semibold text-ink-3" aria-label="restated">R</sup>}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

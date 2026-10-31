@@ -246,6 +246,12 @@
 # - restated-pdf-trial: read only (F202, TODO 104). restated-pdf --dry-run: the latest six quarters' results PDFs of the companies
 #   in `ids` (or the first `limit` of the universe), text layer only, and every comparative that differs from memory's original
 #   listed with both figures and their sources (artifact `restated-pdf-trial`). Writes nothing; storing waits for its review.
+# - restated-pdf: F202 / TODO 104, owner 31 Oct 2026 (growth on the year-ago figure as the later filing restates it). The latest 4 quarters'
+#   results PDFs of each company (`ids`, else the `limit` largest by market cap, else the universe), text layer only, no OCR, no AI; the
+#   restated year-ago and previous-quarter figures go into the dossier's `restated_figures` (a restatement beyond 25% only when Screener's
+#   stored page shows the same figure). A dry run unless `apply` (artifact `restated-pdf`: every restated figure with both figures and
+#   their sources, every one rejected with its reason); with `apply` each dossier is backed up first (`restore` undoes it) and saved as it
+#   goes. `file_cap` caps NSE files (the test is 100); a capped run resumes after the last company done (`restart` begins again). Group maint-nse-memory.
 # - memory-gaps-fill-bse: the one-time fill (F201, TODO 100, owner 27 Oct 2026) of the results quarters memory lacks for companies
 #   whose NSE results list is empty (listed on NSE in 2026, earlier quarters on BSE only), from BSE's results XBRL through the seed's
 #   BSE path, for companies at the universe's market-cap floor (500 Cr) or more. NSE's list is read at run time; a figure memory
@@ -314,7 +320,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, restated-pdf, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -330,7 +336,7 @@ on:
         options: [preview, apply, apply-force]
         default: preview
       ids:
-        description: release-check - only these checks (names, comma separated, e.g. text_support; empty = all); screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank, statements-backfill and statements-correct - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial - only these companies
+        description: release-check - only these checks (names, comma separated, e.g. text_support; empty = all); screener-crosscheck, screener-rows and xbrl-facts - only these companies (scrip codes or NSE symbols, comma separated); restore - the cards to put back (news ids, comma separated), or `all` for everything in the backup; requeue-failed - re-run these filings instead; call-memory - the transcripts and decks to read (news ids, comma separated); fact-sheet-ab - the results filings to make twice, switch off and on (news ids, comma separated); xbrl-key - only these companies (scrip codes or NSE symbols, comma separated); pdf-oos - the seed of the company shuffle (a number, default 29; 28 is the seed earlier xbrl-key runs used); store-kept-pdfs - the run id whose artifact holds the kept PDFs; memory-drop-known-wrong - only these listed companies (scrip codes); memory-rerank, statements-backfill and statements-correct - only these companies (scrip codes), statements-backfill `put-back-ratings` the rating snapshots taken out on 30 Oct, from the backups; pdf-referee-ensemble - `tijori` reads the tijori-referee artifact instead of the screener-referee one; `hardset` reads the answer key docs/bench/hardpdf/key.csv and scores every reader against it; pdf-referee - `explained` reads the screener-explain artifact (its unexplained rows); screener-referee - `archive` reads the file names memory holds and the archive host only (no results list); seed-memory - re-read only these companies (scrip codes or NSE symbols); restated-pdf-trial and restated-pdf - only these companies (scrip codes or NSE symbols)
         type: string
         default: ''
       since:
@@ -346,7 +352,7 @@ on:
         type: string
         default: '110'
       limit:
-        description: screener-crosscheck and xbrl-facts - only the N largest companies by market cap (of `ids`, else of the universe); text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); xbrl-key - at most N filings read (empty = all); pdf-oos - filings read and scored (empty = 100); pdf-bench - the first N PDFs of each key (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies; screener-rows - the N largest by market cap (empty = 50)
+        description: screener-crosscheck and xbrl-facts - only the N largest companies by market cap (of `ids`, else of the universe); text-backfill - a trial on the first N cards lacking text; screener-referee and pdf-referee - at most N pairs refereed (empty = all); xbrl-key - at most N filings read (empty = all); pdf-oos - filings read and scored (empty = 100); pdf-bench - the first N PDFs of each key (empty = all); memory-recall-export - filings in the sample (empty = 20); restated-pdf-trial - at most N companies; restated-pdf - the N largest by market cap; screener-rows - the N largest by market cap (empty = 50)
         type: string
         default: ''
       no_ocr:
@@ -362,7 +368,7 @@ on:
         type: string
         default: ''
       apply:
-        description: memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild and statements-correct only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
+        description: memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild, statements-correct and restated-pdf only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
         type: boolean
         default: false
       dry_run:
@@ -418,7 +424,7 @@ concurrency:
   # (reit-results: NSE downloads and a write to companies and results_kpi, so the NSE memory group. No # inside the expression below: GitHub reads it as part of it.)
   # groups by source and by what a job writes: the table in the header comment (a downloading xbrl-facts run is NSE traffic: the NSE memory group)
   group: >-
-    ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","statements-rebuild","statements-correct","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
+    ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","statements-rebuild","statements-correct","restated-pdf","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || inputs.command == 'reit-results' && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","results-table","restore"]'), inputs.command) && 'maint-cards'
@@ -813,6 +819,34 @@ jobs:
         if: always() && inputs.command == 'restated-pdf-trial'
         with:
           name: restated-pdf-trial
+          path: ${{ runner.temp }}/restated/
+          if-no-files-found: ignore
+      - name: Restated comparatives from the PDFs' text layer (a dry run unless apply; F202)
+        if: inputs.command == 'restated-pdf'
+        timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          PLATFORM_TIMEOUT_S: "30"   # F216
+          PLATFORM_ATTEMPTS: "3"
+          APPLY: ${{ inputs.apply }}     # through the environment, never pasted into the script
+          IDS: ${{ inputs.ids }}
+          RESTART: ${{ inputs.restart }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          set -o pipefail
+          code=0
+          mkdir -p "$RUNNER_TEMP/restated"
+          args=(--json "$RUNNER_TEMP/restated/restated-pdf.json")
+          [ "$APPLY" = "true" ] || args+=(--dry-run)
+          [ "$RESTART" = "true" ] && args+=(--restart)
+          if [ -n "$IDS" ]; then args+=(--scrips "$IDS"); fi
+          if [ -n "$LIMIT" ]; then args+=(--top-mcap "$LIMIT"); fi
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel restated-pdf "${args[@]}" | tee "$RUNNER_TEMP/restated/restated-pdf.txt" || code=$?
+          if [ "$code" -eq 124 ]; then exit 0; fi   # companies left: the next run resumes
+          exit "$code"
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.command == 'restated-pdf'
+        with:
+          name: restated-pdf
           path: ${{ runner.temp }}/restated/
           if-no-files-found: ignore
       - name: Memory recall export (reads only)

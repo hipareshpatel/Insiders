@@ -15,7 +15,7 @@ import hashlib
 import json
 import logging
 
-from . import fact_sheet, screener_view as sv, statements
+from . import fact_sheet, restated_pdf, screener_view as sv, statements
 from .metrics import CONSOLIDATED, STANDALONE
 from .periods import prior_quarter_period, prior_year_period
 
@@ -139,6 +139,11 @@ def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | 
         revenue_row, ebitda_row, margin_row = LAYOUT[layout]
         # the profit's comparatives are the same row as its value (a total with minority interest is no base for the owners' profit)
         pat_row = next((r for r in PAT_ROWS if (now.get("rows") or {}).get(r) is not None), None)
+        # the year-ago base as a later filing restates it (owner, 31 Oct 2026: as Screener does), from this quarter's own filing or an
+        # earlier one: the growth is worked against what the company now says the year-ago figure was
+        rebased, _ = restated_pdf.rebase_entry(dossier, before["prev_year"], {revenue_row: "revenue", **({pat_row: "pat"} if pat_row else {})},
+                                               prior["prev_year"], basis, period, positive=False)
+        before = {**before, "prev_year": rebased}
         pat = _line("pat", pat_row, now, before) if pat_row else None
         if pat is None:
             continue

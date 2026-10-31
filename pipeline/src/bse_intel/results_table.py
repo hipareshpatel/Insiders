@@ -63,7 +63,7 @@ def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
                 and e.get("family") in LAYOUT and (e.get("lab") or {}).get("by") == "file"):
-            return _without_pat_slip(_without_filler_owners(e))
+            return _without_pat_slip(_owners_that_add_up(_without_filler_owners(e)))
     return None
 
 
@@ -77,6 +77,19 @@ def _without_filler_owners(e: dict) -> dict:
     if rows.get(fact_sheet.OWNERS) == 0 and rows.get("Net Profit") not in (None, 0):
         return {**e, "rows": {**rows, fact_sheet.OWNERS: rows["Net Profit"]}}
     return e
+
+
+def _owners_that_add_up(e: dict) -> dict:
+    """An owners' profit that does not add up with the minority's share to the whole profit is the whole profit less the minority's (the
+    rule reit_results.read applies, within max(0.01 Cr, 0.5%)). Measured 31 Oct 2026, ATUL Q2FY26 consolidated, NSE's own file
+    INTEGRATED_FILING_INDAS_1551863: ProfitLossForPeriod 182.37, owners 87.95, minority 3.13 (the owners' tag is a slip; Screener 182,
+    Tijori 179.24 = 182.37 - 3.13), so Q2FY27 showed +77.1% where the truth is about -13%. Without a minority row nothing says what the
+    owners' share should be, so the owners' row stays (a filler 0 is handled above, a wrong sign by the slip guard)."""
+    rows = e.get("rows") or {}
+    owners, minority, net = rows.get(fact_sheet.OWNERS), rows.get("Minority share"), rows.get("Net Profit")
+    if owners is None or minority is None or net is None or abs(owners + minority - net) <= max(0.01, abs(net) / 200):
+        return e
+    return {**e, "rows": {**rows, fact_sheet.OWNERS: round(net - minority, 2)}}
 
 
 SLIP_MIN = 5.0   # Cr: a profit this far from PBT - tax, and on the other side of zero, is a slip

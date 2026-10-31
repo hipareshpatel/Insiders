@@ -409,3 +409,18 @@ def test_primesecu_like_nbfc_quarters_find_their_bases_beside_filler_owners_rows
                              _entry("Q3FY26", _rows(30.18, 6.0, 3.0, 2.1, owners=0.0), family="nbfc")]}
     pat = rt.company_tables(memory)["Q4FY26"]["pat"]
     assert (pat["prev_year"], pat["yoy_turn"], pat["prev_quarter"], pat["qoq_turn"]) == (0.8, "PROFIT_TO_LOSS", 2.1, "PROFIT_TO_LOSS")
+
+
+def test_an_owners_profit_that_does_not_add_up_with_the_minoritys_to_the_whole_is_the_whole_less_the_minority():
+    # measured 31 Oct 2026, NSE's ATUL Q2FY26 file: profit 182.37, owners 87.95, minority 3.13 (Tijori 179.24); the page showed +77.1% for Q2FY27
+    def atul(period, net, owners, minority):
+        rows = _rows(1500.0, 300.0, 230.1, net, owners=owners)
+        rows["Minority share"] = minority
+        return _entry(period, rows)
+    memory = {"statements": [atul("Q2FY27", 158.8, 155.67, 3.13), atul("Q2FY26", 182.37, 87.95, 3.13)]}
+    pat = rt.company_tables(memory)["Q2FY27"]["pat"]
+    assert (pat["prev_year"], pat["yoy_pct"]) == (179.24, -13.1)
+    # rows that add up (within 0.5%) are left alone, and with no minority row the owners' row stays
+    assert rt.company_tables({"statements": [atul("Q2FY27", 158.8, 155.67, 3.13), atul("Q2FY26", 100.0, 96.9, 3.1)]})["Q2FY27"]["pat"]["prev_year"] == 96.9
+    bare = {"statements": [_entry("Q2FY27", _rows(1500.0, 300.0, 230.1, 182.37, owners=87.95))]}
+    assert rt.company_tables(bare)["Q2FY27"]["pat"]["value"] == 87.95

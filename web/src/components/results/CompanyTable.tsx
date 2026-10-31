@@ -43,7 +43,7 @@ function Th({ children, hint, title, sortKey, sort, dir, onSort, left, className
 
 /** The quiet second line under a figure. */
 const Sm = ({ children, italic }: { children: ReactNode; italic?: boolean }) => (
-  <div className={cn("num mt-0.5 whitespace-nowrap text-[13px] text-ink-3", italic && "italic")}>{children}</div>
+  <div className={cn("num mt-0.5 text-[13px] text-ink-3", italic && "italic")}>{children}</div>
 );
 const Blank = ({ note }: { note?: string }) => (<><span className="font-medium text-ink-3">—</span>{note && <Sm>{note}</Sm>}</>);
 /** A growth cell with no figure says why (U4, 31 Oct 2026: UDS, DIAMONDYD and JNPR showed "—" in every growth cell with no reason). */
@@ -154,10 +154,10 @@ function QuickActions({ r, onPeek }: { r: KpiRow; onPeek: () => void }) {
 }
 
 /** The table's narrowest width: below it the table scrolls inside its own box, never the page (U1: it overlapped itself at 1024 px). */
-const MIN_WIDTH: Record<View, string> = { yoy: "min-w-[1180px]", momentum: "min-w-[1040px]", qoq: "min-w-[1080px]" };
+const MIN_WIDTH: Record<View, string> = { yoy: "min-w-[1280px]", momentum: "min-w-[1040px]", qoq: "min-w-[1260px]" };
 
 const COLS: Record<View, number[]> = {
-  yoy: [21, 7, 13, 13, 10, 15, 7.5, 7.5, 6],
+  yoy: [18.5, 7, 14.5, 14.5, 9.5, 15.5, 6.5, 8, 6],
   momentum: [21, 20, 13, 12, 13, 12, 9],
   qoq: [23, 7.5, 15, 15, 11, 15, 7.5, 6],
 };
@@ -197,7 +197,7 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
             <Th {...th} sortKey="ebitda_yoy">EBITDA</Th>
             <Th {...th} sortKey="opm_yoy_bps" title="100 bp = 1 percentage point" hint="EBITDA margin">Margin change</Th>
             <Th {...th} sortKey="pat_yoy" title="PAT: profit after tax" hint="⇡ faster / ⇣ slower than last qtr">Profit (PAT)</Th>
-            <Th {...th} hint="8 qtrs, own scale">Profit trend</Th>
+            <Th {...th} title="Profit growth in the last 8 quarters, on its own scale" hint="own scale">Profit trend</Th>
             <Th {...th} sortKey="mcap">Market cap</Th>
             <Th {...th} sortKey="filed" className="pr-3">Filed</Th>
           </tr>

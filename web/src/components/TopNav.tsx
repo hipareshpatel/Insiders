@@ -89,7 +89,7 @@ export function TopNav({ onSearch }: { onSearch: () => void }) {
         <button type="button" onClick={onSearch}
           className="ml-auto hidden h-10 min-w-0 flex-[0_1_340px] items-center gap-2.5 rounded-xl bg-surface-2 px-3.5 text-[13.5px] text-ink-2 hover:text-ink lg:flex">
           <Search className="h-4 w-4 shrink-0" /><span className="truncate">Search company, symbol or event</span>
-          <kbd className="num ml-auto rounded-md border border-line-strong px-1.5 text-[11px] font-semibold">Ctrl K</kbd>
+          <kbd className="num ml-auto whitespace-nowrap rounded-md border border-line-strong px-1.5 text-[11px] font-semibold">Ctrl K</kbd>
         </button>
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
           <button type="button" onClick={onSearch} aria-label="Search" className="grid h-10 w-10 place-items-center rounded-xl bg-surface-2 text-ink-2 lg:hidden">

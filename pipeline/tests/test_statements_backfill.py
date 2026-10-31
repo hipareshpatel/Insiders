@@ -241,3 +241,20 @@ def test_a_quarter_a_hundred_times_off_the_companys_other_quarters_is_left_out_a
                              {"period": "Q1FY27", "basis": "CONSOLIDATED", "table": "quarters", "rows": {"Sales": 9.0}, "lab": {"by": "card"}}]}
     assert sb.fill(stored, entries, replace=True, slipped=sb.slipped_keys(left)) == len(entries) + 1
     assert [(e["period"], e["basis"]) for e in stored["statements"] if e["period"] == "Q1FY27"] == [("Q1FY27", "CONSOLIDATED")]
+
+
+def test_a_seasonal_quarter_as_large_as_a_year_earlier_is_no_unit_slip(monkeypatch):
+    """Dry run 41225623600: Maharashtra Scooters' Jul-Sep quarter (its dividends) is ~40x its other quarters every year."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    figures = {"Q1FY26": (29.27, 35.36), "Q2FY26": (271.02, 267.07), "Q3FY26": (6.44, 4.12), "Q4FY26": (6.03, 4.01),
+               "Q1FY27": (5.41, 3.32), "Q2FY27": (297.36, 293.27)}
+    row = lambda v: SimpleNamespace(value=v)
+    monkeypatch.setattr(sv, "_ours", lambda cf, fam, basis, table, period, memo: (
+        ({"Sales": row(figures[period][0]), "Net Profit": row(figures[period][1])}, "")
+        if table == "quarters" and period in figures else (None, "")))
+    cf = SimpleNamespace(results={(p, "STANDALONE"): f"k{p}" for p in figures}, annual={}, family=lambda b: "corporate")
+    entries, left = sb.company_entries(cf, {}, "t")
+    assert left == [] and {e["period"] for e in entries} >= {"Q2FY26", "Q2FY27"}

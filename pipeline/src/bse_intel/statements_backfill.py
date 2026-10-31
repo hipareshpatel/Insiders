@@ -24,6 +24,7 @@ import json
 import logging
 import re
 
+from .periods import prior_year_period
 from . import screener_view as sv
 from . import segments
 from . import xbrl_extras
@@ -124,7 +125,8 @@ def _off_by_scale(values: dict, period: str, basis: str, cf: sv.CompanyFacts, fa
     """A quarter whose Sales and Net Profit are both UNIT_SLIP times or more off the medians of the company's other quarters of the
     same basis, in the same direction: a file tagged in the wrong unit (audit #303 item D: IMPAL Q1FY27 Sales 2.3429 against
     196.69-230.99 in its other quarters; the live path holds such a file out unless its PDF proves the factor, xbrl.fix_scale, but
-    the backfill from stored facts wrote it). Needs at least three other quarters; a real step (a demerger) moves Sales alone."""
+    the backfill from stored facts wrote it). Needs at least three other quarters and the same quarter a year earlier, both as far off;
+    a real step (a demerger) moves Sales alone, a seasonal quarter matches its year-ago one."""
     sales = values.get("Sales") or values.get("Revenue")
     profit = values.get("Net Profit")
     if not sales or not profit:
@@ -142,8 +144,19 @@ def _off_by_scale(values: dict, period: str, basis: str, cf: sv.CompanyFacts, fa
     if len(others_s) < 3 or len(others_p) < 3:
         return False
     med = lambda xs: sorted(xs)[len(xs) // 2]
-    rs, rp = abs(sales) / med(others_s), abs(profit) / med(others_p)
-    return (rs <= 1 / UNIT_SLIP and rp <= 1 / UNIT_SLIP) or (rs >= UNIT_SLIP and rp >= UNIT_SLIP)
+
+    def off(ref_s: float, ref_p: float) -> bool:
+        rs, rp = abs(sales) / ref_s, abs(profit) / ref_p
+        return (rs <= 1 / UNIT_SLIP and rp <= 1 / UNIT_SLIP) or (rs >= UNIT_SLIP and rp >= UNIT_SLIP)
+
+    if not off(med(others_s), med(others_p)):
+        return False
+    # and as far off the same quarter a year earlier, where held: a seasonal business is not a slip (dry run 41225623600: Maharashtra
+    # Scooters' Jul-Sep dividend quarter is ~40x its others every year; Raymond standalone, a holding company after its demerger)
+    ago, _ = sv._ours(cf, fam, basis, "quarters", prior_year_period(period), memo) if prior_year_period(period) else (None, "")
+    got = {n: r.value for n, r in (ago or {}).items() if r.value is not None}
+    ago_s, ago_p = got.get("Sales") or got.get("Revenue"), got.get("Net Profit")
+    return bool(ago_s and ago_p) and off(abs(ago_s), abs(ago_p))   # no year-ago quarter held: not called a slip
 
 
 def fill_segments(cf: sv.CompanyFacts, dossier: dict, at: str) -> int:

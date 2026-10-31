@@ -184,6 +184,8 @@ job. Hourly lead check-ins until 22:00 IST.**
    for the quarter/half/year", and at least 1,500 characters of text).** The audit: Maintenance `release-check` with `ids` =
    `results_statement` (the stored RESULTS cards whose text is in R2, the last 8 days; changed = would be OTHER), then a blind read of
    the changed cards; switch on only if no real results card is retyped.
+   **TODO 147 reading 2: fixed on #301** (an enlargement from an amount in whole rupees needs well-formed digit groups, as #297
+   made it for reading 3; a shrink is unchanged).
    **TODO 129: fixed on #298** (a later report gives a year's balance sheet only with that year's equity; every case found is before FY23).
 6. Owner questions from docs/handover/2026-10-31.md section 4 (Mistral October spend; NVIDIA nemotron-3.5-parse model id; a results
    filing made twice: table on the repeat card?; Cloudflare Workers Paid renewal before ~21 Nov).

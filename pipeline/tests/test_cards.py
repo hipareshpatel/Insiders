@@ -565,6 +565,16 @@ def test_unit_slips_never_enlarge_on_a_figure_with_malformed_digit_groups():
     assert [(s[0], s[3]) for s in unit_slips(["NII of ₹156.28 Cr"], BILLION_TABLE)] == [("156.28", 15628.0)]
 
 
+def test_unit_slips_never_enlarge_from_a_whole_rupee_amount_with_malformed_digit_groups():
+    from bse_intel.grounding import unit_slips
+
+    # TODO 147, reading 2: a garbled whole-rupee amount ("1,989,68,00,000": groups of 3 then 2) no longer lifts a card figure
+    assert unit_slips(["Revenue of ₹19.90 Cr"], "The revenue for the quarter was Rs 1,989,68,00,000 as reported.") == []
+    # the same amount in the Indian grouping is a real slip and is corrected, as before
+    assert unit_slips(["Revenue of ₹19.90 Cr"], "The revenue for the quarter was Rs 19,89,68,00,000 as reported.") == \
+        [("19.90", 19.9, 2, 1989.68, 2)]
+
+
 def test_unit_slips_never_shrink_a_figure_under_five_lakh():
     from bse_intel.grounding import unit_slips
 

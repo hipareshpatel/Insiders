@@ -2368,7 +2368,8 @@ def cmd_statements_backfill(args, settings, sink) -> int:
         print(f"rating snapshots in the backups: {sum(len(v) for p in ratings.values() for v in p.values())} in {len(ratings)} companies")
         outcome = sb.run(sink, sorted(ratings), args.apply, args.limit, args.restart, ratings=ratings)
     else:
-        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named))
+        outcome = sb.run(sink, named or sink.list_dossiers(), args.apply, args.limit, args.restart, named=bool(named),
+                         replace=getattr(args, "replace", False))
     print(sb.render(outcome))
     if args.json:
         Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
@@ -2781,6 +2782,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--restart", action="store_true", help="start again from the first company")
     p.add_argument("--json", help="write the report to this file")
     p.add_argument("--put-back-ratings", action="store_true", help="only the companies whose rating snapshots the empty-snapshot clean-up took out: put them back from the backups")
+    p.add_argument("--replace", action="store_true", help="statements-rebuild: also put back a file-labelled entry the stored facts now build differently (a recipe change), backed up")
     p.set_defaults(func=cmd_statements_backfill)
     p = sub.add_parser("statements-correct", help="the profit-line rules over every stored quarters and annual entry (stock page, cards and Results then read the same numbers): dry run (default) or --apply (backs each changed dossier up first; no NSE, no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")

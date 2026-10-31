@@ -190,3 +190,21 @@ def test_rating_snapshots_are_not_empty_and_are_put_back_from_the_backups(settin
     assert sink.kv_get(sb.RESUME_KEY) != "522261" and sink.kv_get(sb.RATINGS_RESUME_KEY) == "522261"   # the fill's point unmoved
     labelled = dict(rating, lab={"by": "ai"})
     assert sb.put_back({"balance_sheet": [labelled]}, {"main": [rating]}) == 0
+
+
+def _q(period, rows, by="file", rules="screener_view"):
+    return {"period": period, "basis": "CONSOLIDATED", "table": "quarters", "rows": rows, "lab": {"by": by, "rules": rules}}
+
+
+def test_replace_puts_back_a_file_entry_the_recipes_now_build_differently_and_leaves_the_rest():
+    # owner, 31 Oct 2026: a recipe rule is site-wide, so the stored statements the stock page reads are rebuilt (statements-rebuild)
+    dossier = {"statements": [_q("Q2FY27", {"Operating Profit": 1940.0}), _q("Q1FY27", {"Operating Profit": 3272.0}, by="card"),
+                              _q("Q4FY26", {"Operating Profit": 2640.0})]}
+    fresh = [_q("Q2FY27", {"Operating Profit": 2648.0}), _q("Q1FY27", {"Operating Profit": 2137.0}),
+             _q("Q4FY26", {"Operating Profit": 2640.0}), _q("Q3FY26", {"Operating Profit": 2883.0})]
+    plain = json.loads(json.dumps(dossier))
+    assert sb.fill(plain, fresh) == 1   # without replace: only the missing quarter is added, as before
+    assert {e["period"]: e["rows"]["Operating Profit"] for e in plain["statements"]}["Q2FY27"] == 1940.0
+    assert sb.fill(dossier, fresh, replace=True) == 2   # Q2FY27 replaced, Q3FY26 added
+    got = {e["period"]: (e["rows"]["Operating Profit"], e["lab"]["by"]) for e in dossier["statements"]}
+    assert got == {"Q2FY27": (2648.0, "file"), "Q1FY27": (3272.0, "card"), "Q4FY26": (2640.0, "file"), "Q3FY26": (2883.0, "file")}

@@ -256,6 +256,8 @@
 #   stored in R2 (raw/xbrl-facts/), into dossier['statements']: quarters, years, balance sheets, cash flows, both bases. No NSE
 #   request. A dry run unless `apply`; `file_cap` unused; at most 50 companies a run, resuming (restart starts again); each
 #   dossier backed up first (backup/statements-backfill-<time>/), so `restore` undoes it. Group maint-nse-memory.
+# - statements-rebuild: the same with --replace: a file-labelled entry the stored facts now build differently (a recipe change)
+#   is put back with the current recipes (backup/statements-rebuild-<time>/; `restore` undoes it). Dry run unless apply.
 # - statements-correct: the profit-line rules (screener_view.corrected_pl: owners' profit that does not add up with the minority's
 #   share, the filler 0, a profit on the wrong side of PBT - Tax) over every file-labelled quarters and annual entry already stored in
 #   dossier['statements'], so the stock page reads what the cards and Results read. No NSE request, no AI. A dry run unless `apply`
@@ -312,7 +314,7 @@ on:
       command:
         description: what to run
         type: choice
-        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
+        options: [refresh-card-blocks, refresh-summaries, both, export-held, export-critic, requeue-failed, failed-report, probe-bse, bse-results-test, bse-verify-kept, apply-verdicts, seed-memory, fill-memory, fill-trades, release-pruned, memory-gaps, memory-gaps-fill, memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild, statements-correct, results-table, reit-results, prune-companies, prune-companies-apply, label-memory, label-memory-apply, audit-precision, release-check, screener-fill, screener-fill-apply, screener-download, screener-schedules, bse-annual-xbrl, bse-results-xbrl, keep-annual-pdfs, screener-crosscheck, screener-rows, xbrl-facts, screener-referee, screener-explain, pdf-referee, xbrl-key, pdf-oos, store-kept-pdfs, deck-pdfs, api-reader-hardset, api-reader-oos, pdf-referee-ensemble, tijori-download, tijori-crosscheck, tijori-referee, pdf-referee-tijori, text-backfill, text-backfill-bse, restated-report, restated-pdf-trial, pdf-bench, xbrl-expiry-check, facts-dump, memory-recall-export, nse-selfcheck, prediction-units, nse-speedtest, call-memory, fact-sheet-ab, restore]
         default: both
       backup:
         description: store-kept-pdfs - the artifact name (empty = pdf-oos-pdfs); restore only - the backup's R2 prefix (backup/<job>-<time>/); empty lists the backups. Needs `scrips` or `ids` (the cards' news ids) to name what goes back, or `all` in `ids`
@@ -360,7 +362,7 @@ on:
         type: string
         default: ''
       apply:
-        description: memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill and statements-correct only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
+        description: memory-gaps-fill-bse, memory-drop-known-wrong, memory-rerank, statements-backfill, statements-rebuild and statements-correct only - write (the figures labelled BSE; the listed figures taken out, after a backup); without it a dry run that writes nothing; xbrl-facts - also download the files that are not stored (NSE, the seed's fetch and pace, counts toward file_cap, which is required, the first run is 100)
         type: boolean
         default: false
       dry_run:
@@ -416,7 +418,7 @@ concurrency:
   # (reit-results: NSE downloads and a write to companies and results_kpi, so the NSE memory group. No # inside the expression below: GitHub reads it as part of it.)
   # groups by source and by what a job writes: the table in the header comment (a downloading xbrl-facts run is NSE traffic: the NSE memory group)
   group: >-
-    ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","statements-correct","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
+    ${{ contains(fromJSON('["keep-annual-pdfs","seed-memory","memory-gaps-fill","memory-gaps-fill-bse","memory-drop-known-wrong","memory-rerank","statements-backfill","statements-rebuild","statements-correct","fill-memory","fill-trades","label-memory-apply","screener-fill-apply","prune-companies-apply","text-backfill"]'), inputs.command) && 'maint-nse-memory'
     || (inputs.command == 'xbrl-facts' && (inputs.apply || inputs.annual)) && 'maint-nse-memory'
     || inputs.command == 'reit-results' && 'maint-nse-memory'
     || contains(fromJSON('["refresh-card-blocks","refresh-summaries","both","requeue-failed","apply-verdicts","release-pruned","export-held","export-critic","results-table","restore"]'), inputs.command) && 'maint-cards'
@@ -679,7 +681,7 @@ jobs:
           fi
           "$RUNNER_TEMP/venv/bin/python" -m bse_intel reit-results
       - name: Statements by screener's rules from the stored facts (a dry run unless apply)
-        if: inputs.command == 'statements-backfill'
+        if: inputs.command == 'statements-backfill' || inputs.command == 'statements-rebuild'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
         env:
           PLATFORM_TIMEOUT_S: "30"   # F216
@@ -688,12 +690,14 @@ jobs:
           IDS: ${{ inputs.ids }}
           RESTART: ${{ inputs.restart }}
           LIMIT: ${{ inputs.limit }}
+          COMMAND: ${{ inputs.command }}
         run: |
           set -o pipefail
           code=0
           mkdir -p "$RUNNER_TEMP/stmts"
           args=(--json "$RUNNER_TEMP/stmts/statements-backfill.json")
           [ "$APPLY" = "true" ] && args+=(--apply)
+          [ "$COMMAND" = "statements-rebuild" ] && args+=(--replace)   # a recipe change: file-labelled entries rebuilt from the stored facts
           [ "$RESTART" = "true" ] && args+=(--restart)
           if [ -n "$LIMIT" ]; then args+=(--limit "$LIMIT"); fi
           if [ "$IDS" = "put-back-ratings" ]; then args+=(--put-back-ratings)
@@ -702,7 +706,7 @@ jobs:
           if [ "$code" -eq 124 ]; then exit 0; fi   # companies left: the next run resumes
           exit "$code"
       - uses: actions/upload-artifact@v4
-        if: always() && inputs.command == 'statements-backfill'
+        if: always() && (inputs.command == 'statements-backfill' || inputs.command == 'statements-rebuild')
         with:
           name: statements-backfill
           path: ${{ runner.temp }}/stmts/

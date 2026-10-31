@@ -14,7 +14,7 @@ import { api } from "../lib/api";
 import { cn } from "../lib/cn";
 import { TURN, turnOf } from "../lib/results";
 import {
-  activeChips, csvName, firstDir, VIEW_SORT, viewOf, fmtCount, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
+  activeChips, csvName, firstDir, NBFC_EBITDA_NOTE, VIEW_SORT, viewOf, fmtCount, growthCount, growthOf, indexLabel, newestFiled, quarterLabel, quarterMonths, readQuery, toApiParams,
   toCsv, type Sort, type SpreadKey,
 } from "../lib/resultsView";
 import { useQueryState } from "../lib/url";
@@ -101,6 +101,10 @@ export function ResultsView() {
   return (
     <div className="results-c min-h-full">
       <div className="mx-auto w-full max-w-[1360px] px-4 pb-16 sm:px-10">
+        <a href="#company-list" onClick={(e) => { e.preventDefault(); document.getElementById("company-list")?.focus(); document.getElementById("company-list")?.scrollIntoView(); }}
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2 focus:text-[14px] focus:font-semibold focus:text-ink focus:shadow-[0_0_0_2px_var(--accent)]">
+          Skip to the company list
+        </a>
         <header className="pt-[18px] sm:flex sm:items-end sm:justify-between sm:gap-6 sm:pt-[34px]">
           <div>
             <h1 className="text-[30px] font-bold leading-[1.05] tracking-[-0.025em] text-ink sm:text-[40px]">
@@ -146,7 +150,7 @@ export function ResultsView() {
             <FilterBar query={query} view={view} indices={first?.indices ?? []} setParams={set} onView={onView} />
 
             {/* phone: title, filters, sort, search and the view */}
-            <div className="sticky top-0 z-20 -mx-4 mt-6 bg-surface px-4 pb-2 pt-2.5 sm:hidden">
+            <div className="sticky top-[var(--nav-h,62px)] z-20 -mx-4 mt-6 bg-surface px-4 pb-2 pt-2.5 sm:hidden">
               <div className="flex items-center justify-between gap-2">
                 <h2 className="text-[19px] font-bold text-ink">Companies</h2>
                 <div className="flex gap-2">
@@ -185,7 +189,7 @@ export function ResultsView() {
               {summary ? `${fmtCount(rows.length)} of ${fmtCount(total)} · ${SORT_LABEL[query.sort]}, ${dirWords(query.sort, query.dir)}` : ""}
             </p>
 
-            <div className={cn("transition-opacity", kpi.isPlaceholderData && "opacity-60")} aria-busy={kpi.isFetching}>
+            <div id="company-list" tabIndex={-1} className={cn("scroll-mt-24 outline-none transition-opacity", kpi.isPlaceholderData && "opacity-60")} aria-busy={kpi.isFetching}>
               {!first ? <TableSkeleton /> : rows.length === 0 ? (
                 <div className="rounded-2xl bg-surface-2 px-6 py-14 text-center">
                   <p className="text-[17px] font-semibold text-ink">{filtered ? "No companies match these filters" : `No results saved for ${quarterLabel(quarter)} yet`}</p>
@@ -200,6 +204,10 @@ export function ResultsView() {
                     <CompanyTable rows={rows} view={view} sort={query.sort} dir={query.dir} onSort={onSort} selected={peekKey} onSelect={select} />
                   </div>
                   <div className="sm:hidden"><PhoneList rows={rows} onSelect={select} /></div>
+                  <p className="hidden px-3 pt-2 text-[12.5px] text-ink-3 sm:block">
+                    NM: not meaningful, a change above +999% on a small base (the exact figure is in the row's quick look).
+                    {rows.some((r) => r.kind === "nbfc") && <> * {NBFC_EBITDA_NOTE}</>}
+                  </p>
                   <div className="flex flex-col items-stretch gap-3 py-4 text-[13px] text-ink-3 sm:flex-row sm:items-center sm:justify-between sm:px-3">
                     <span className="hidden sm:inline">
                       Showing {fmtCount(rows.length)} of {fmtCount(total)}
@@ -237,7 +245,8 @@ function QuarterSwitch({ quarters, value, onChange }: { quarters: { period: stri
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const refs = useMemo(() => [box], []);
-  useDismiss(open, () => setOpen(false), refs);
+  const toggle = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), refs, toggle);
   if (!quarters.length) return <span className="inline-block h-[46px] w-[380px] max-w-full rounded-xl bg-surface-2" aria-hidden />;
   const recent = quarters.slice(0, 4), older = quarters.slice(4);
   const olderOn = older.some((q) => q.period === value);
@@ -251,16 +260,16 @@ function QuarterSwitch({ quarters, value, onChange }: { quarters: { period: stri
         </button>
       ))}
       {older.length > 0 && (
-        <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
+        <button ref={toggle} type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
           className={cn("inline-flex min-h-[38px] items-center gap-1 whitespace-nowrap rounded-[9px] px-3 text-[13.5px] font-semibold max-sm:min-h-11 max-sm:flex-1 max-sm:justify-center max-sm:px-2",
             olderOn ? "bg-surface text-ink shadow-[inset_0_0_0_1px_var(--line-strong)]" : "text-ink-2 hover:text-ink")}>
           {olderOn ? value : "Older"}<ChevronDown aria-hidden className="h-3.5 w-3.5" />
         </button>
       )}
       {open && (
-        <div role="menu" className="absolute right-0 top-full z-30 mt-2 max-h-[320px] w-[200px] overflow-y-auto rounded-2xl bg-surface p-2 shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]">
+        <div className="absolute right-0 top-full z-30 mt-2 max-h-[320px] w-[200px] overflow-y-auto rounded-2xl bg-surface p-2 shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]">
           {older.map((q) => (
-            <button key={q.period} type="button" role="menuitemradio" aria-checked={q.period === value} onClick={() => { onChange(q.period); setOpen(false); }}
+            <button key={q.period} type="button" aria-pressed={q.period === value} onClick={() => { onChange(q.period); setOpen(false); }}
               className={cn("flex w-full justify-between rounded-[9px] px-2.5 py-2 text-[13.5px]", q.period === value ? "bg-accent-soft font-semibold text-ink" : "text-ink-2 hover:bg-surface-2")}>
               <span>{q.period}</span><span className="num text-ink-3">{q.n}</span>
             </button>
@@ -276,12 +285,15 @@ function ExportButton({ rows, total, quarter, pages, loadedPages, fetchPage }: {
   rows: KpiRow[]; total: number; quarter: string | null; pages: number; loadedPages: number; fetchPage: (p: number) => Promise<{ rows: KpiRow[] }>;
 }) {
   const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(0);
   const [failed, setFailed] = useState(false);
   const run = async () => {
     setBusy(true); setFailed(false);
     try {
       const all = [...rows];
-      for (let p = loadedPages + 1; p <= Math.min(pages, MAX_EXPORT_PAGES); p++) all.push(...(await fetchPage(p)).rows);
+      const last = Math.min(pages, MAX_EXPORT_PAGES);
+      setDone(Math.min(loadedPages, last));
+      for (let p = loadedPages + 1; p <= last; p++) { all.push(...(await fetchPage(p)).rows); setDone(p); }
       const url = URL.createObjectURL(new Blob([toCsv(all)], { type: "text/csv;charset=utf-8" }));
       const a = Object.assign(document.createElement("a"), { href: url, download: csvName(quarter) });
       document.body.append(a); a.click(); a.remove();
@@ -295,7 +307,7 @@ function ExportButton({ rows, total, quarter, pages, loadedPages, fetchPage }: {
   return (
     <Button onClick={run} disabled={busy || !total} title={`Download the filtered list (all ${total} companies, every column) as a CSV file`}
       className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[13.5px] font-semibold text-ink sm:h-[38px]">
-      <Download aria-hidden className="h-4 w-4" />{busy ? "Preparing…" : failed ? "Export failed · retry" : "Export CSV"}
+      <Download aria-hidden className="h-4 w-4" />{busy ? `Preparing… (${done} of ${Math.min(pages, MAX_EXPORT_PAGES)})` : failed ? "Export failed · retry" : "Export CSV"}
     </Button>
   );
 }
@@ -305,16 +317,17 @@ function PhoneSort({ sort, dir, onSort }: { sort: Sort; dir: "asc" | "desc"; onS
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const refs = useMemo(() => [box], []);
-  useDismiss(open, () => setOpen(false), refs);
+  const toggle = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), refs, toggle);
   return (
     <div ref={box} className="relative">
-      <Button aria-expanded={open} className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[14px] font-semibold" onClick={() => setOpen((o) => !o)}>
+      <Button ref={toggle} aria-expanded={open} className="h-11 rounded-[11px] border-0 bg-surface-2 px-3.5 text-[14px] font-semibold" onClick={() => setOpen((o) => !o)}>
         Sort <ArrowDownUp aria-hidden className="h-4 w-4" />
       </Button>
       {open && (
-        <div role="menu" className="absolute right-0 top-full z-30 mt-2 w-[240px] rounded-2xl bg-surface p-2 shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]">
+        <div className="absolute right-0 top-full z-30 mt-2 w-[240px] rounded-2xl bg-surface p-2 shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]">
           {PHONE_SORTS.map((s) => (
-            <button key={s} type="button" role="menuitemradio" aria-checked={s === sort} onClick={() => { onSort(s); setOpen(false); }}
+            <button key={s} type="button" aria-pressed={s === sort} onClick={() => { onSort(s); setOpen(false); }}
               className={cn("flex min-h-11 w-full items-center justify-between rounded-[9px] px-3 text-left text-[14px]", s === sort ? "bg-accent-soft font-semibold text-ink" : "text-ink-2")}>
               <span className="first-letter:uppercase">{SORT_LABEL[s]}</span>
               {s === sort && <span className="text-[12.5px] text-ink-3">{dir === "desc" ? "highest first" : "lowest first"}</span>}

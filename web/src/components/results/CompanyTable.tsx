@@ -5,7 +5,7 @@ import type { KpiRow, View } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
 import { companyPath, cr } from "../../lib/format";
 import {
-  blankNote, filedDay, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, oneOff as oneOffOf, type Sort,
+  blankNote, filedDay, NBFC_EBITDA_NOTE, fmtGrowth, fmtPct, fmtMargin, fmtPts, lineLabels, NM, MOMENTUM_TEXT, notComparableText, sharedScale, wasLine, oneOff as oneOffOf, type Sort,
 } from "../../lib/resultsView";
 import { CompanyCell, Growth, MomentumMark, NfoFlag, Signals, Skeleton } from "./bits";
 import { Dumbbell, Spark } from "./charts";
@@ -46,6 +46,8 @@ const Sm = ({ children, italic }: { children: ReactNode; italic?: boolean }) => 
   <div className={cn("num mt-0.5 whitespace-nowrap text-[13px] text-ink-3", italic && "italic")}>{children}</div>
 );
 const Blank = ({ note }: { note?: string }) => (<><span className="font-medium text-ink-3">—</span>{note && <Sm>{note}</Sm>}</>);
+/** A growth cell with no figure says why (U4, 31 Oct 2026: UDS, DIAMONDYD and JNPR showed "—" in every growth cell with no reason). */
+const NO_BASE = (qoq?: boolean) => (qoq ? "No prior-quarter figure to compare" : "No year-ago figure to compare");
 
 function RevenueCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
   const label = lineLabels(r.kind).revenue;
@@ -54,6 +56,7 @@ function RevenueCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
     <>
       <Growth value={qoq ? r.revenue_qoq : r.revenue_yoy} className="text-[15px]" />
       <Sm>{qoq ? cr(r.revenue) : wasLine(r.revenue == null ? null : cr(r.revenue), r.revenue_prev_yoy)}</Sm>
+      {(qoq ? r.revenue_qoq : r.revenue_yoy) == null && <Sm italic>{NO_BASE(qoq)}</Sm>}
       {label !== "Revenue" && <Sm italic>{label}</Sm>}
     </>
   );
@@ -66,7 +69,8 @@ function EbitdaCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
     <>
       <Growth value={qoq ? r.ebitda_qoq : r.ebitda_yoy} turn={qoq ? null : r.ebitda_turn} className="text-[15px]" />
       <Sm>{qoq ? cr(r.ebitda) : wasLine(r.ebitda == null ? null : cr(r.ebitda), r.ebitda_prev_yoy)}</Sm>
-      {label !== "EBITDA" && <Sm italic>{label}</Sm>}
+      {(qoq ? r.ebitda_qoq : r.ebitda_yoy) == null && !(qoq ? false : r.ebitda_turn) && <Sm italic>{NO_BASE(qoq)}</Sm>}
+      {label !== "EBITDA" && <Sm italic><span title={r.kind === "nbfc" ? NBFC_EBITDA_NOTE : undefined}>{label}{r.kind === "nbfc" && <sup aria-hidden> *</sup>}</span></Sm>}
     </>
   );
 }
@@ -82,7 +86,7 @@ function MarginCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
       {bps == null && r.opm != null && hadBase
         ? <span className="num whitespace-nowrap text-[15px] font-semibold text-ink-2" title="Not meaningful: a margin outside −100%…+100%, or a loss in the base period">{NM}</span>
         : <Growth value={bps} unit="bp" className="text-[15px]" />}
-      <Sm>{r.kind === "nbfc" ? "financing margin" : "now"} <span title={r.opm != null && Math.abs(r.opm) > 100 ? `Not meaningful: ${r.opm.toFixed(1)}%` : undefined}>{fmtMargin(r.opm)}</span></Sm>
+      <Sm>{r.kind === "nbfc" ? "margin" : "now"} <span title={r.opm != null && Math.abs(r.opm) > 100 ? `Not meaningful: ${r.opm.toFixed(1)}%` : undefined}>{fmtMargin(r.opm)}</span></Sm>
     </>
   );
 }
@@ -98,6 +102,7 @@ function ProfitCell({ r, qoq }: { r: KpiRow; qoq?: boolean }) {
         {!qoq && <MomentumMark m={r.momentum} />}
       </span>
       <Sm>{qoq ? amount ?? "—" : wasLine(amount, r.pat_prev_yoy, r.pat_prev_turn)}</Sm>
+      {(qoq ? r.pat_qoq : r.pat_yoy) == null && !turn && <Sm italic>{NO_BASE(qoq)}</Sm>}
       {oneOff && <Sm><span title={oneOff.title}>{oneOff.text}</span></Sm>}
       {r.nfo && <div className="mt-1.5"><NfoFlag /></div>}
     </>
@@ -148,6 +153,9 @@ function QuickActions({ r, onPeek }: { r: KpiRow; onPeek: () => void }) {
   );
 }
 
+/** The table's narrowest width: below it the table scrolls inside its own box, never the page (U1: it overlapped itself at 1024 px). */
+const MIN_WIDTH: Record<View, string> = { yoy: "min-w-[1180px]", momentum: "min-w-[1040px]", qoq: "min-w-[1080px]" };
+
 const COLS: Record<View, number[]> = {
   yoy: [21, 7, 13, 13, 10, 15, 7.5, 7.5, 6],
   momentum: [21, 20, 13, 12, 13, 12, 9],
@@ -177,7 +185,8 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
     ? sharedScale(rows.map((r) => (r.pat_momentum_pts != null ? [r.pat_yoy, r.pat_prev_yoy] : [])), true) : [0, 1];
 
   return (
-    <table className="w-full table-fixed border-collapse text-[14px]">
+    <div className="overflow-x-auto">
+    <table className={cn("w-full table-fixed border-collapse text-[14px]", MIN_WIDTH[view])}>
       <colgroup>{COLS[view].map((w, i) => <col key={i} style={{ width: `${w}%` }} />)}</colgroup>
       <thead>
         {view === "yoy" ? (
@@ -281,6 +290,7 @@ export function CompanyTable({ rows, view, sort, dir, onSort, selected, onSelect
         })}
       </tbody>
     </table>
+    </div>
   );
 }
 

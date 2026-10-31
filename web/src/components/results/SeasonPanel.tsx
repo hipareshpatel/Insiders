@@ -2,7 +2,7 @@ import { ArrowRight, ChartColumn, ChevronsDown, ChevronsUp, IndianRupee, Minus, 
 import type { ReactNode } from "react";
 import type { GroupRow, KpiSummary } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
-import { fmtCount, fmtPct, medianNote, seasonHeadline, seasonLines, toneOf, type SpreadKey } from "../../lib/resultsView";
+import { fmtCount, fmtPct, medianNote, seasonHeadline, seasonLines, spreadHeading, tilesIntro, toneOf, type SpreadKey } from "../../lib/resultsView";
 import { Panel, Segs, Skeleton } from "./bits";
 import { Histogram } from "./charts";
 
@@ -17,6 +17,7 @@ export function SeasonPanel({ summary, indexRows, filtered, spread, turnaround, 
   const lines = seasonLines(summary, indexRows);
   return (
     <div className="mt-4 flex flex-col gap-3 sm:mt-7 lg:gap-4">
+      <p className="-mb-1 text-[14px] text-ink-2">{tilesIntro(summary)}</p>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
         <Tile icon={<IndianRupee className="h-3.5 w-3.5" />} label="Revenue up" of={summary.revenue_of} up={summary.revenue_up} reported={summary.revenue_n}
           foot={<MedianFoot noun="revenue" value={summary.median_revenue_yoy} />} />
@@ -49,7 +50,7 @@ export function SeasonPanel({ summary, indexRows, filtered, spread, turnaround, 
       <div className="flex flex-col gap-3 lg:grid lg:grid-cols-12 lg:gap-4">
         <Panel className="px-[18px] sm:px-6 lg:col-span-7" title={
           <span className="flex flex-wrap items-baseline justify-between gap-2">
-            <span><abbr title="PAT: profit after tax" className="no-underline">Spread of PAT growth</abbr> <span className="block font-normal text-ink-3 sm:inline"><span className="hidden sm:inline">· </span>{fmtCount(summary.n)} {summary.n === 1 ? "company" : "companies"} · profit this quarter vs a year ago</span></span>
+            <span><abbr title="PAT: profit after tax" className="no-underline">Spread of PAT growth</abbr> <span className="block font-normal text-ink-3 sm:inline"><span className="hidden sm:inline">· </span>{summary.n === 0 ? "no companies" : spreadHeading(summary)} · profit this quarter vs a year ago</span></span>
             <span className="flex gap-3 text-[12px] font-normal text-ink-2">
               <span><i aria-hidden className="mr-1 inline-block h-2 w-2 rounded-[2px] bg-neg align-[1px]" />Fell</span>
               <span><i aria-hidden className="mr-1 inline-block h-2 w-2 rounded-[2px] bg-pos align-[1px]" />Grew</span>
@@ -72,12 +73,11 @@ export function SeasonPanel({ summary, indexRows, filtered, spread, turnaround, 
 
 /** One tile: how many grew out of how many that can be compared with a year ago, a 20-step bar, and what sits under it (the median, or why
  *  there is none). `reported` is every company with the line: when it is more than `of`, the rest have no year-ago quarter. */
-function Tile({ icon, label, title, up, of, reported, note, foot }: {
-  icon: ReactNode; label: string; title?: string; up: number; of: number; reported: number; note?: string; foot: ReactNode;
+function Tile({ icon, label, title, up, of, note, foot }: {
+  icon: ReactNode; label: string; title?: string; up: number; of: number; reported?: number; note?: string; foot: ReactNode;
 }) {
   const pct = of ? Math.round((up / of) * 100) : 0;
   const filled = Math.round(pct / 5);
-  const gap = reported > of;
   return (
     <Panel className="flex flex-col justify-between px-4 py-4 sm:px-5">
       <div>
@@ -92,12 +92,7 @@ function Tile({ icon, label, title, up, of, reported, note, foot }: {
         <div className="mt-3 flex gap-[2px]" role="img" aria-label={`${fmtCount(up)} of ${fmtCount(of)}, ${pct}%`}>
           {Array.from({ length: 20 }, (_, i) => <i key={i} className={cn("h-2 flex-1 rounded-[1px]", i < filled ? "bg-pos" : "bg-line")} />)}
         </div>
-        {(gap || note) && (
-          <p className="mt-2 text-[12px] leading-snug text-ink-3">
-            {gap && <span title="Companies with no quarter a year ago to compare with are left out of the base">{fmtCount(of)} with a year-ago quarter of {fmtCount(reported)} reported. </span>}
-            {note}
-          </p>
-        )}
+        {note && <p className="mt-2 text-[12px] leading-snug text-ink-3">{note}</p>}
       </div>
       <div className="mt-3.5 flex items-center justify-between gap-2 text-[12.5px] text-ink-2">{foot}</div>
     </Panel>

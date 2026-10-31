@@ -84,10 +84,10 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
           </div>
           <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             <table className="w-full min-w-[1180px] table-fixed border-collapse text-[14px]">
-              <colgroup>{[13, 7.5, 8, 6, 6.5, 7, 7, 7.5, 7, 12.5, 11, 7].map((w, i) => <col key={i} style={{ width: `${w}%` }} />)}</colgroup>
+              <colgroup>{[13, 7.5, 8, 6, 6.5, 7, 7, 7.5, 7, 12.5, 11, 7].filter((_, i) => cut !== "all" || i !== 7).map((w, i) => <col key={i} style={{ width: `${w}%` }} />)}</colgroup>
               <thead className="text-[13px] font-semibold text-ink-2">
                 <tr>
-                  <th colSpan={3} /><th colSpan={3} scope="colgroup" className="pb-0 text-center font-semibold text-ink-2">Profit, total growth</th><th colSpan={6} />
+                  <th colSpan={3} /><th colSpan={3} scope="colgroup" className="pb-0 text-center font-semibold text-ink-2">Profit, total growth</th><th colSpan={cut === "all" ? 5 : 6} />
                 </tr>
                 <tr className="[&>th]:border-b [&>th]:border-line [&>th]:px-3 [&>th]:py-2.5 [&>th]:text-right [&>th]:align-bottom [&>th]:font-semibold">
                   <th scope="col" className="!text-left">{by === "index" ? "Index" : by === "sector" ? "Sector" : "Industry"}</th>
@@ -97,7 +97,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
                     <th key={c.key} scope="col" className={cn(c.key === cut && "text-ink shadow-[inset_0_-2px_0_var(--accent)]")}>{c.key === "ex_financials" ? "Ex-fin." : c.key === "all" ? "All" : "Financials"}</th>
                   ))}
                   <th scope="col" className="whitespace-nowrap" title="Financials' share of the group's profit this quarter">Fin. share<span className="block text-[12px] font-normal text-ink-3">of profit</span></th>
-                  <th scope="col" className="whitespace-nowrap" title="Total revenue growth. Not shown for all companies: a bank's revenue is interest earned, not sales. Pick Ex-financials.">Revenue total<span className="block text-[12px] font-normal text-ink-3">{CUT_WORDS[cut]}</span></th>
+                  {cut !== "all" && <th scope="col" className="whitespace-nowrap" title="Total revenue growth">Revenue total<span className="block text-[12px] font-normal text-ink-3">{CUT_WORDS[cut]}</span></th>}
                   <th scope="col" className="whitespace-nowrap" title="Total EBITDA growth, leaving out banks, NBFCs and insurers">EBITDA total<span className="block text-[12px] font-normal text-ink-3">ex-fin.</span></th>
                   <th scope="col" className="!text-left" title="Median profit growth, last 8 quarters, all lines on one scale">Median profit growth<span className="block text-[12px] font-normal text-ink-3">last 8 quarters</span></th>
                   <th scope="col" className="whitespace-nowrap" title="Profit growth spread, share of companies in each band">Growth spread<span className="block text-[12px] font-normal text-ink-3">% of companies</span></th>
@@ -119,7 +119,7 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
                       <td key={c.key} className={c.key === cut ? "font-bold text-ink" : "text-ink-2"}>{fmtPct(patTotal(r, c.key))}</td>
                     ))}
                     <td className="text-ink">{r.financials_share_pct == null ? "—" : `${Math.round(r.financials_share_pct)}%`}</td>
-                    <td className="text-ink">{fmtPct(revTotal(r, cut))}</td>
+                    {cut !== "all" && <td className="text-ink">{fmtPct(revTotal(r, cut))}</td>}
                     <td className="text-ink">{fmtPct(r.ebitda_total_ex_financials)}</td>
                     <td className="!text-left"><Spark vals={r.trend_pat_median} lo={lo} hi={hi} w={104} h={30}
                       title={`${r.label}: ${r.trend_pat_median.map((v, i) => `${labels[i]} ${fmtPct(v)}`).join(", ")}`} /></td>

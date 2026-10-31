@@ -22,7 +22,7 @@ export function FilterSheet({ open, onOpenChange, query, indices, setParams }: {
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       {/* no portal: the sheet stays inside the page, so the page's own colours apply */}
       <Dialog.Overlay className="fixed inset-0 z-40 bg-black/20" />
-      <Dialog.Content aria-describedby={undefined}
+      <Dialog.Content aria-describedby={undefined} aria-label="Filters" onOpenAutoFocus={(e) => { e.preventDefault(); (e.currentTarget as HTMLElement).focus(); }}   // focus the sheet, not "Reset" (a heavy outline on open)
         className="fixed inset-x-0 bottom-0 z-50 max-h-[88vh] overflow-y-auto rounded-t-[22px] bg-surface px-4 pb-4 pt-2.5 shadow-[0_-1px_0_var(--line-strong)] focus:outline-none">
         {open && <SheetBody query={query} indices={indices} onApply={(changes) => { setParams(changes); onOpenChange(false); }} />}
       </Dialog.Content>
@@ -60,7 +60,7 @@ function SheetBody({ query, indices, onApply }: { query: KpiQuery; indices: { id
   const cta = (
     <div className="sticky bottom-0 mt-3 flex gap-2.5 bg-surface pt-3.5">
       <Button variant="primary" className="h-12 flex-1 justify-center rounded-xl text-[15px] font-semibold" onClick={apply}>
-        {n ? `Apply ${n} ${n === 1 ? "filter" : "filters"}` : "Show all"}{count != null ? ` · ${count}` : ""}
+        {count != null ? `Show ${count} ${count === 1 ? "company" : "companies"}` : n ? `Apply ${n} ${n === 1 ? "filter" : "filters"}` : "Show all"}
       </Button>
     </div>
   );

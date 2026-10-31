@@ -4,7 +4,7 @@ import { test } from "node:test";
 import {
   activeChips, arrowOf, barHeight, bestInEight, coverageOf, fmtBp, fmtPct, fmtPts, groupsBullets, groupsLead, growth, growthCount, growthOf, lineLabels,
   medianSlot, momentumOf, niceTicks, notComparableText, paceSentence, quarterLabel, quarterMonths, quarterSeries, readQuery, seasonHeadline,
-  KIND_TAG, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, oneOff, type Seg,
+  KIND_TAG, nmLines, spreadHeading, tilesIntro, blankNote, medianNote, wellCovered, fmtGrowth, fmtMargin, isNmPct, seasonLines, sharedScale, sparkPath, stackWidths, toApiParams, toCsv, wasLine, oneOff, type Seg,
 } from "../src/lib/resultsView.ts";
 import { EMPTY_SUMMARY, groupsResponse, ROWS, SUMMARY } from "./fixtures/resultsFixture.ts";
 
@@ -136,7 +136,7 @@ test("the URL's filters become the API's parameters; anything off the lists is d
     pat_min: 20, opm_min: null, momentum: "speeding_up", turnaround: "1", nfo: null, spread: "above_20", sort: "pat_momentum", dir: "desc", page: 2,
   });
   const bad = readQuery(new URLSearchParams("quarter=2027&index=SENSEX&mcap_min=7&pat_min=15&momentum=up&spread=x&sort=drop table&dir=sideways"));
-  assert.deepEqual([bad.quarter, bad.index, bad.mcap_min, bad.pat_min, bad.momentum, bad.spread, bad.sort, bad.dir], [null, null, null, null, null, null, "pat_yoy", "desc"]);
+  assert.deepEqual([bad.quarter, bad.index, bad.mcap_min, bad.pat_min, bad.momentum, bad.spread, bad.sort, bad.dir], [null, null, null, null, null, null, "mcap", "desc"]);
   assert.equal(readQuery(new URLSearchParams("sort=company")).dir, "asc", "a name sorts A to Z first");
   assert.equal(growthCount(growthOf(q)), 3);
   assert.deepEqual(activeChips(q).map((c) => c.label), ["Nifty 500", "Market cap at least ₹5,000 Cr", "Pharmaceuticals", "Profit growth at least 20%",
@@ -168,17 +168,18 @@ test("every avatar colour keeps its white initials at 4.5:1 or better", async ()
 
 test("each view ranks by its own column until a column is picked", async () => {
   const { VIEW_SORT, SORTS, DEFAULT_SORT } = await import("../src/lib/resultsView.ts");
-  assert.deepEqual(VIEW_SORT, { yoy: "pat_yoy", momentum: "pat_momentum", qoq: "pat_qoq" });
+  assert.deepEqual(VIEW_SORT, { yoy: "mcap", momentum: "pat_momentum", qoq: "pat_qoq" });
   for (const s of Object.values(VIEW_SORT)) assert.ok((SORTS as readonly string[]).includes(s), s);
   assert.equal(VIEW_SORT.yoy, DEFAULT_SORT);
 });
 
 test("a link that names only a view ranks by that view's own column; a picked column wins", () => {
-  assert.equal(readQuery(new URLSearchParams("")).sort, "pat_yoy");
+  assert.equal(readQuery(new URLSearchParams("")).sort, "mcap");   // market cap, largest first (R3c)
+  assert.equal(readQuery(new URLSearchParams("sort=pat_yoy")).sort, "pat_yoy");   // every other sort stays one param away
   assert.equal(readQuery(new URLSearchParams("view=momentum")).sort, "pat_momentum");
   assert.equal(readQuery(new URLSearchParams("view=qoq")).sort, "pat_qoq");
   assert.equal(readQuery(new URLSearchParams("view=qoq&sort=mcap")).sort, "mcap");
-  assert.equal(readQuery(new URLSearchParams("view=nonsense")).sort, "pat_yoy");
+  assert.equal(readQuery(new URLSearchParams("view=nonsense")).sort, "mcap");
 });
 
 test("a trust is tagged REIT or InvIT and shows revenue, EBITDA and margin like a company", () => {
@@ -198,9 +199,12 @@ test("NM: a change above +999% and a margin outside -100..+100% are not meaningf
   assert.deepEqual([g.text, g.title], ["NM", "Not meaningful: +6643.4% (a change above +999%)"]);
   assert.equal(growth(12, null, "bp")!.title, "100 bp = 1 percentage point");
   assert.equal(wasLine("₹10 Cr", 2159), "₹10 Cr · was NM");
+  // the CSV keeps the real numbers and names the NM lines in one column (U3)
   const csv = toCsv([{ ...ROWS[0], pat_yoy: 2159, opm: -628.89 }]).split("\r\n")[1];
-  assert.match(csv, /,NM,/);
-  assert.ok(!csv.includes("2159") && !csv.includes("628.89"));
+  assert.ok(csv.includes(",2159,") && csv.includes("-628.89") && !csv.includes(",NM,"));
+  assert.deepEqual(nmLines({ ...ROWS[0], pat_yoy: 2159, revenue_qoq: 1200, revenue_yoy: 999 }), ["Revenue QoQ", "PAT YoY"]);
+  assert.match(csv, /PAT YoY,/);
+  assert.ok(toCsv([]).includes("Growth NM (over +999%)"));
 });
 
 test("CSV headers say what a column is (U14)", () => {
@@ -220,4 +224,18 @@ test("the profit before one-offs shows only when the exceptional item is at leas
   const csv = toCsv([{ ...ROWS[0], pat_pre: 112, pat_pre_yoy: 514 }]);
   assert.ok(csv.includes("PAT before exceptional items (Rs Cr),PAT before exceptional items YoY %"));
   assert.match(csv.split("\r\n")[1], /,112,514,/);
+});
+
+test("the spread chart's header gives its base, and one sentence above the tiles says who can be compared (R5, U5)", () => {
+  // live Q2FY27: 611 reported, 558 with a year-ago quarter, 515 in the bars, 29 loss to profit, 14 loss narrowed
+  const s = { n: 611, pat_of: 558, spread: { below_0: 138, from_0_to_10: 54, from_10_to_20: 50, above_20: 273, loss_to_profit: 29, loss_narrowed: 14, with_pct: 515 } };
+  assert.equal(spreadHeading(s), "558 with a year-ago quarter: 515 in the bars, 29 loss to profit, 14 loss narrowed");
+  assert.equal(515 + 29 + 14, 558);
+  assert.equal(tilesIntro(s), "611 companies have reported; 558 can be compared with the same quarter last year.");
+  assert.equal(tilesIntro({ n: 1, pat_of: 1 }), "1 company has reported; 1 can be compared with the same quarter last year.");
+});
+
+test("an empty cell says why: insurers show no revenue by design (U4)", () => {
+  assert.equal(blankNote("insurer", "revenue"), "Not shown for insurers");
+  assert.equal(blankNote("bank", "ebitda"), "Not shown for banks");
 });

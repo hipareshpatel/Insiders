@@ -71,7 +71,7 @@ function FilterButton({ label, value, open, onClick, count, controls }: { label:
 function Pop({ id, children, className, label }: { id: string; children: ReactNode; className?: string; label: string }) {
   return (
     <div id={id} role="dialog" aria-label={label}
-      className={cn("absolute top-full z-30 mt-2 rounded-[18px] bg-surface p-[22px] shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]", className)}>
+      className={cn("absolute top-full z-30 mt-2 max-h-[70vh] overflow-y-auto rounded-[18px] bg-surface p-[22px] shadow-[0_0_0_1px_var(--line-strong),0_24px_60px_-24px_rgba(20,30,50,0.25)]", className)}>
       {children}
     </div>
   );

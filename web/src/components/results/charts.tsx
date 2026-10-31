@@ -96,21 +96,25 @@ export function Dumbbell({ was, now, lo, hi, w = 230, h = 28 }: { was: number; n
 }
 
 /** Growth against a year ago over 8 quarters, profit and revenue, with the end values written beside the last points. */
+export const AXIS_CLIP = 200;
+
 export function LineChart({ series, labels, w = 424, h = 230 }: {
   series: { name: string; vals: (number | null)[]; color: string }[]; labels: string[]; w?: number; h?: number;
 }) {
-  const all = series.flatMap((s) => s.vals.filter((v): v is number => v != null));
+  // the axis stops at ±200% so one huge quarter does not flatten the others; a point beyond it sits on the edge as a triangle, its real figure in the tip
+  const clip = (v: number) => Math.max(-AXIS_CLIP, Math.min(AXIS_CLIP, v));
+  const all = series.flatMap((s) => s.vals.filter((v): v is number => v != null)).map(clip);
   if (!all.length) return <p className="py-8 text-center text-[13px] text-ink-3">No per cent growth in these quarters (a loss in the year-ago quarter).</p>;
   let lo = Math.min(0, ...all), hi = Math.max(0, ...all);
   const pad = (hi - lo || 10) * 0.12;
   if (lo < 0) lo -= pad;
   hi += pad;
-  const L = 48, R = 112, T = 12, B = 26, n = Math.max(1, labels.length - 1);
+  const L = 58, R = 112, T = 12, B = 26, n = Math.max(1, labels.length - 1);
   const xs = (i: number) => L + (i * (w - L - R)) / n;
   const ys = (v: number) => T + ((hi - v) / (hi - lo)) * (h - T - B);
   const ticks = niceTicks(lo, hi, 4);
   const ends = series.map((s) => ({ s, v: s.vals[s.vals.length - 1] })).filter((e): e is { s: typeof e.s; v: number } => e.v != null)
-    .map((e) => ({ y: ys(e.v), text: fmtPct(e.v), name: e.s.name.toLowerCase() })).sort((a, b) => a.y - b.y);
+    .map((e) => ({ y: ys(clip(e.v)), text: fmtPct(e.v), name: e.s.name.toLowerCase() })).sort((a, b) => a.y - b.y);
   for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 18) ends[i].y = ends[i - 1].y + 18;
   return (
     <svg viewBox={`0 0 ${w} ${h}`} width="100%" role="img" aria-label={`Growth against a year ago, ${labels[0]} to ${labels[labels.length - 1]}`}>
@@ -124,15 +128,20 @@ export function LineChart({ series, labels, w = 424, h = 230 }: {
         <text key={q + i} x={xs(i)} y={h - 6} textAnchor="middle" fontSize={11} fill="var(--ink-3)">{q}</text>
       ))}
       {series.map((s) => {
-        const { d } = sparkPathOn(s.vals, xs, ys);
+        const { d } = sparkPathOn(s.vals.map((v) => (v == null ? null : clip(v))), xs, ys);
         return (
           <g key={s.name}>
             <path d={d} fill="none" stroke={s.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
-            {s.vals.map((v, i) => v != null && (
+            {s.vals.map((v, i) => v != null && (Math.abs(v) > AXIS_CLIP ? (
+              <path key={i} d={`M${xs(i) - 5} ${ys(clip(v)) + (v > 0 ? 4 : -4)} L${xs(i) + 5} ${ys(clip(v)) + (v > 0 ? 4 : -4)} L${xs(i)} ${ys(clip(v)) + (v > 0 ? -5 : 5)} Z`}
+                transform={v < 0 ? `rotate(180 ${xs(i)} ${ys(clip(v))})` : undefined} fill={s.color} stroke="var(--surface)" strokeWidth={1.5}>
+                <title>{`${s.name}, ${labels[i]}: ${fmtPct(v)} (beyond the chart's ±${AXIS_CLIP}%)`}</title>
+              </path>
+            ) : (
               <circle key={i} cx={xs(i)} cy={ys(v)} r={i === s.vals.length - 1 ? 4 : 2.5} fill={s.color} stroke="var(--surface)" strokeWidth={1.5}>
                 <title>{`${s.name}, ${labels[i]}: ${fmtPct(v)}`}</title>
               </circle>
-            ))}
+            )))}
           </g>
         );
       })}

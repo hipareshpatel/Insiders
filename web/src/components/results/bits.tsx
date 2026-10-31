@@ -26,7 +26,7 @@ export function Growth({ value, turn, unit = "%", className, arrowClass }: {
   const g = growth(value, turn, unit);
   if (!g) return <span className="font-medium text-ink-3">—</span>;
   return (
-    <span className={cn("num whitespace-nowrap font-semibold", TONE_TEXT[g.tone], className)}>
+    <span title={g.title} className={cn("num whitespace-nowrap font-semibold", TONE_TEXT[g.tone], className)}>
       {g.arrow && <span aria-hidden className={cn("relative -top-[0.12em] mr-1 text-[0.62em]", arrowClass)}>{g.arrow}</span>}
       {g.text}
     </span>
@@ -78,7 +78,7 @@ export function Signals({ row, qoq = false }: { row: KpiRow; qoq?: boolean }) {
     <span className="inline-flex gap-1">
       {marks.map((m, i) => (
         <span key={i} title={m.tip} role="img" aria-label={m.tip}
-          className={cn("grid h-[22px] w-[22px] place-items-center rounded-[7px] text-[10px] font-bold",
+          className={cn("grid h-[22px] w-[22px] place-items-center rounded-[7px] text-[11px] font-bold",
             m.tone === "up" ? "bg-pos-soft text-pos" : m.tone === "down" ? "bg-neg-soft text-neg" : "text-ink-3 ring-1 ring-inset ring-line-strong")}>
           {m.tone === "up" ? "▲" : m.tone === "down" ? "▼" : "–"}
         </span>

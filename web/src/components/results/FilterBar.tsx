@@ -48,7 +48,7 @@ export function SearchBox({ q, setParams, className }: { q: string; setParams: S
       <Search aria-hidden className="h-4 w-4 shrink-0" />
       <input ref={ref} value={text} onChange={(e) => setText(e.target.value)} placeholder="Search company or symbol" aria-label="Search company or symbol"
         onKeyDown={(e) => { if (e.key === "Escape") { setText(""); e.currentTarget.blur(); } }}
-        className="h-full min-w-0 flex-1 bg-transparent text-[14px] text-ink placeholder:text-ink-3 focus:outline-none" />
+        className="h-full min-w-0 flex-1 bg-transparent text-[14px] text-ink placeholder:text-ink-3 focus:outline-none focus-visible:!outline-none" />
       {text ? (
         <button type="button" aria-label="Clear search" onClick={() => setText("")} className="grid h-6 w-6 place-items-center rounded-md hover:bg-line"><X className="h-3.5 w-3.5" /></button>
       ) : <kbd aria-hidden className="rounded border border-line-strong px-1.5 text-[11px] font-semibold text-ink-3">/</kbd>}

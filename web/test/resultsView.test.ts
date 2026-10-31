@@ -95,7 +95,7 @@ test("groups in words", () => {
   assert.equal(text(groupsLead(idx, "index")), "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%.");
   assert.equal(groupsBullets(idx, "index")[0],
     "Banks and other financials hold the Nifty 50 back: they make 38% of its profit and grew +8.4% in total, the rest +9.9%.");
-  assert.equal(groupsBullets(idx, "index")[2], "In every index, total profit grew faster than total revenue.");
+  assert.equal(groupsBullets(idx, "index")[2], "In every index, total profit grew faster than total revenue (companies other than financials).");
   assert.match(text(groupsLead([], "sector")), /No sector/);
 });
 

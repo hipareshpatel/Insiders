@@ -285,3 +285,30 @@ def test_a_december_year_company_gets_its_year_and_its_december_balance_sheet(mo
     got = {(e["table"], e["period"]) for e in entries}
     assert {("balance", "Q1FY25"), ("balance", "Q3FY25"), ("annual", "FY25"), ("cash_flow", "FY25")} <= got
     assert ("annual", "FY26") not in got and ("balance", "Q2FY25") not in got   # FY26 unfinished; no sheet in that file
+
+
+def test_a_year_held_only_as_an_annual_reports_comparative_is_built_with_its_march_sheet(monkeypatch):
+    """Every-company check after the 1 Nov 2026 rebuild: Meesho, Anthem and others had FY25 only as the FY26 report's comparative."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    row = lambda v: SimpleNamespace(value=v)
+    built = []
+
+    def ours(cf, fam, basis, table, period, memo):
+        built.append((table, period))
+        if table == "quarters" and period in ("Q1FY26", "Q2FY26", "Q3FY26", "Q4FY26"):
+            return {"Sales": row(100.0), "Net Profit": row(10.0)}, ""
+        if table == "annual" and period in ("FY25", "FY26"):
+            return {"Sales": row(400.0), "Net Profit": row(40.0)}, ""
+        if table == "balance" and period in ("Q4FY25", "Q4FY26"):
+            return {"Total Assets": row(500.0)}, ""
+        return None, ""
+
+    monkeypatch.setattr(sv, "_ours", ours)
+    cf = SimpleNamespace(results={(p, "CONSOLIDATED"): p for p in ("Q1FY26", "Q2FY26", "Q3FY26", "Q4FY26")},
+                         annual={("FY26", "CONSOLIDATED"): "ar26"}, family=lambda b: "corporate")
+    entries, _ = sb.company_entries(cf, {}, "t")
+    got = {(e["table"], e["period"]) for e in entries}
+    assert {("annual", "FY25"), ("balance", "Q4FY25"), ("annual", "FY26"), ("balance", "Q4FY26")} <= got

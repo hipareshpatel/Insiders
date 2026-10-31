@@ -95,9 +95,14 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
         # Hexaware, ZF Steering among them, as only Q4 years and Q2/Q4 balance sheets were built). A quarter with no balance sheet in
         # its file gives none (_ours returns nothing), so a March-year company is unchanged.
         newest = quarters[-1] if quarters else ""
-        years = sorted({p[2:] for p in quarters if p[2:] != newest[2:] or newest.startswith("Q4")}
-                       | {fy for fy, b in cf.annual if b == basis})
-        columns = [("quarters", p) for p in quarters] + [("balance", p) for p in quarters] \
+        # and the year before each annual report (its comparative column): a company listed recently, or one with no Q4 file for a
+        # year, has that year only there (every-company check after the 1 Nov rebuild: Meesho, Anthem, Adani Enterprises standalone,
+        # TMCV, NMDC, UPL FY25 annual and March balance sheets, which the recipes read from the FY26 report)
+        reports = {fy for fy, b in cf.annual if b == basis}
+        prior = {f"FY{sv._fy_num(fy) - 1:02d}" for fy in reports if sv._fy_num(fy) > 0}
+        years = sorted({p[2:] for p in quarters if p[2:] != newest[2:] or newest.startswith("Q4")} | reports | prior)
+        sheets = list(dict.fromkeys(quarters + [f"Q4{fy}" for fy in years if f"Q4{fy}" not in quarters]))
+        columns = [("quarters", p) for p in quarters] + [("balance", p) for p in sheets] \
             + [("annual", fy) for fy in years] + [("cash_flow", fy) for fy in years]
         for table, period in columns:
             rows, why = sv._ours(cf, fam, basis, table, period, memo)

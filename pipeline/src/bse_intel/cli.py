@@ -469,15 +469,18 @@ def cmd_requeue_failed(args, settings, sink) -> int:
         from . import prune
 
         ids = prune.release(sink, dry_run=True)["rerun_ids"] + [i.strip() for i in (args.ids or "").split(",") if i.strip()]
-        if not args.dry_run and not _snapshot_requeue(sink, ids):
+        if not args.dry_run and _snapshot_requeue(sink, ids) is None:
             return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
         return 0
     if args.ids:
         ids = [i.strip() for i in args.ids.replace("\n", ",").split(",")]
-        if not args.dry_run and not _snapshot_requeue(sink, ids):
+        scrips = [] if args.dry_run else _snapshot_requeue(sink, ids)
+        if scrips is None:
             return 1
         print(json.dumps(requeue.requeue_ids(sink, ids, settings.max_attempts, args.dry_run), ensure_ascii=False))
+        if scrips:      # their history is read first, so an older requeued filing runs on the next pipeline run
+            print("requeue-failed: first in the history queue: " + ", ".join(requeue.prioritise(sink, scrips)[:len(scrips)]))
         return 0
     since = args.since or (today_ist() - timedelta(days=args.days)).isoformat()
     print("requeue-failed: no backup taken (no filings named; failed filings have no card to back up)")
@@ -485,10 +488,10 @@ def cmd_requeue_failed(args, settings, sink) -> int:
     return 0
 
 
-def _snapshot_requeue(sink, ids: list[str]) -> bool:
+def _snapshot_requeue(sink, ids: list[str]) -> list[str] | None:
     """Before named filings are set pending (the live run re-reads them later and rewrites their cards and their companies'
     memory): save the named filings' cards and those companies' dossiers (backup.start_scope). False when a copy did not read
-    back: nothing is requeued. The backup has no after-state (the live run rewrites the filings later, and what it or anything
+    back: nothing is requeued (None); else the companies of the named filings. The backup has no after-state (the live run rewrites the filings later, and what it or anything
     else writes meanwhile cannot be told from the job's), so it restores only with ``--force``, the dry run listing every
     difference. Finding the cards of named filings reads every stored card once (export_cards, about 80 pages): acceptable for
     a named re-run, and the reason a re-run by date takes no backup."""
@@ -499,14 +502,14 @@ def _snapshot_requeue(sink, ids: list[str]) -> bool:
         backup = start_scope(sink, "requeue", news_ids=ids)
     except BackupError as exc:
         print(f"requeue-failed: the backup did not read back, nothing requeued: {exc}")
-        return False
+        return None
     summary = backup.summary()
     print("requeue-failed: " + (f"backup of {summary['cards']} stored cards and {summary['dossiers']} dossiers before the re-run: "
                                 f"{summary['prefix']} (no after-state: restore it only with --force; the dry run lists every difference, "
                                 "later live writes included)" if summary else "no backup taken (none of the filings has a stored card)"))
     if backup.missing_ids and summary:
         print(f"requeue-failed: no stored card, not in the backup: {len(backup.missing_ids)} filings")
-    return True
+    return list(getattr(backup, "scrips", []))
 
 
 def cmd_failed_report(args, settings, sink) -> int:

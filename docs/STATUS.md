@@ -173,6 +173,10 @@ job. Hourly lead check-ins until 22:00 IST.**
    41196991535 (17:03-17:43 IST) spent its whole 40-minute budget on the day's results filings (20 deferred) and never reached the
    history pass. It re-runs on the first run with time left; results season can delay that for days. Varun Beverages nse-106835976
    is re-made (revenue 6,815.59 Cr).
+   **Fix on #301 (31 Oct ~19:30 IST, shipped as a live wrong card):** `requeue-failed --ids` also names the filings in
+   `requeue:by_id`; each run gives them a slot of at most 3 minutes, 6 filings, right after today's filings
+   (`pipeline._requeued_first`), before the history pass. Hubtown was requeued before this existed: after #301 merges, run
+   `requeue-failed ids=nse-106629168` once more.
 5. TODO 147 leftovers (unit-slip enlargements: SYRMA nse-106836602 cause unproven; reading 2 on malformed digit groups). **31 Oct
    ~16:05 IST (second session):** SYRMA's live card is right (1,989.68, rewritten by the exchange-file card); the cause needs its PDF
    (`SYRMASGS_30102026163122_BMOutcome30102026.pdf`), not downloaded here: the lead checks R2 for a kept copy before any fetch (rule:

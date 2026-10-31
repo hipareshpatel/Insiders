@@ -2,6 +2,7 @@
  *  sentences, chart geometry, the CSV and the URL's filters. No React here, so `node --test` runs the cases in resultsView.test.ts.
  *  The design is docs/design/results-kpi.md (Direction C, white theme). */
 
+import { num } from "./format.ts";
 import { INDICES, MARKET_CAP_STEPS, MOMENTUM_POINTS, RESULTS_SORTS } from "../../shared/resultsTypes.ts";
 import type { GroupBy, GroupRow, KpiQuery, KpiRow, KpiSummary, Kind, Momentum, ResultsSort, Turn, View } from "../../shared/resultsTypes.ts";
 
@@ -92,7 +93,7 @@ export function growth(value: number | null | undefined, turn?: Turn | null, uni
   if (value == null) return null;
   if (unit === "%" && isNmPct(value)) return { text: NM, tone: "up", arrow: "▲", title: `Not meaningful: ${fmtPct(value)} (a change above +${NM_PCT}%)` };
   if (unit === "bp") return { text: fmtBp(value), tone: toneOf(value), arrow: arrowOf(value), title: "100 bp = 1 percentage point" };
-  return { text: unit === "bp" ? fmtBp(value) : fmtPct(value), tone: toneOf(value), arrow: arrowOf(value) };
+  return { text: fmtPct(value), tone: toneOf(value), arrow: arrowOf(value) };
 }
 
 /** The quiet second line of a growth cell: the amount this quarter and last quarter's growth ("₹2,900 Cr · was +17.1%"). */
@@ -161,8 +162,8 @@ export function notComparableText(row: Pick<KpiRow, "pat_turn" | "pat_prev_turn"
 /** A run of text; `b` bold, `up`/`down` coloured (with a sign in the text, so never colour alone). */
 export type Seg = { t: string; b?: boolean; tone?: Tone };
 
-/** A count in Indian grouping ("1,27,000"). */
-export const fmtCount = (n: number) => n.toLocaleString("en-IN");
+/** A count in Indian grouping ("1,27,000"): the page's one helper (lib/format.ts). */
+export const fmtCount = (n: number) => num(n);
 
 /** What the median of profit growth covers (rule: the median keeps companies with a per cent change; the rest are in the counts). */
 export function medianNote(s: Pick<KpiSummary, "median_pat_n" | "pat_turn_n">): string {

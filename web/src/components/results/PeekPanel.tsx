@@ -24,7 +24,7 @@ function Tile({ label, value, turn, amount, title }: { label: string; value: num
   return (
     <div className="min-w-0 rounded-xl bg-surface-2 px-3 py-2.5 sm:px-3.5">
       <div className="text-[13px] text-ink-2" title={title}>{label}</div>
-      <div className="mt-0.5 text-[18px] font-bold leading-tight tracking-[-0.01em] sm:text-[20px]"><Growth value={value} turn={turn} className="whitespace-normal break-words" /></div>
+      <div className="mt-0.5 text-[18px] font-bold leading-tight tracking-[-0.01em] sm:text-[20px]"><Growth value={value} turn={turn} className={turn ? "whitespace-normal" : undefined} /></div>
       <div className="num mt-0.5 text-[13px] text-ink-3">{cr(amount)}</div>
     </div>
   );

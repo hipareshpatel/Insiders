@@ -105,7 +105,7 @@ export function LineChart({ series, labels, w = 424, h = 230 }: {
   const pad = (hi - lo || 10) * 0.12;
   if (lo < 0) lo -= pad;
   hi += pad;
-  const L = 36, R = 118, T = 12, B = 26, n = Math.max(1, labels.length - 1);
+  const L = 48, R = 112, T = 12, B = 26, n = Math.max(1, labels.length - 1);
   const xs = (i: number) => L + (i * (w - L - R)) / n;
   const ys = (v: number) => T + ((hi - v) / (hi - lo)) * (h - T - B);
   const ticks = niceTicks(lo, hi, 4);

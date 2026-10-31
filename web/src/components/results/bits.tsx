@@ -27,7 +27,7 @@ export function Growth({ value, turn, unit = "%", className, arrowClass }: {
   if (!g) return <span className="font-medium text-ink-3">—</span>;
   return (
     <span title={g.title} className={cn("num whitespace-nowrap font-semibold", TONE_TEXT[g.tone], className)}>
-      {g.arrow && <span aria-hidden className={cn("relative -top-[0.12em] mr-1 text-[0.62em]", arrowClass)}>{g.arrow}</span>}
+      {g.arrow && <span aria-hidden className={cn("relative -top-[0.12em] mr-1 text-[11px]", arrowClass)}>{g.arrow}</span>}
       {g.text}
     </span>
   );

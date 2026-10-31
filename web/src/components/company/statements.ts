@@ -150,6 +150,10 @@ function table(columns: string[], perColumn: Record<string, Cell>[], bank: boole
   return { columns, rows: rows.filter((r) => r.label !== "Profit to shareholders" || r.cells.some((c, i) => c != null && pat?.cells[i] != null && Math.abs(c - pat.cells[i]!) > 0.5)) };
 }
 
+/** A year column: an April-March year ("FY26") or one ending in another month ("YE:2025-12", owner 1 Nov 2026). */
+const YEAR = /^(FY\d{2}|YE:\d{4}-\d{2})$/;
+/** The calendar year a year column ends in. */
+const yearOf = (p: string) => Number(periodEnd(p).slice(0, 4));
 const byEnd = (a: string, b: string) => periodEnd(a).localeCompare(periodEnd(b));
 const periodsOf = (metrics: Metric[], test: RegExp) => [...new Set(metrics.map((m) => m.period).filter((p) => test.test(p)))].sort(byEnd);
 
@@ -170,7 +174,7 @@ export function ttmQuarters(metrics: Metric[]): string[] | null {
   const quarters = periodsOf(metrics, /^Q[1-4]FY\d{2}$/);
   const last4 = quarters.slice(-4);
   if (last4.length < 4) return null;
-  const years = periodsOf(metrics, /^FY\d{2}$/);
+  const years = periodsOf(metrics, YEAR);
   if (years.length && periodEnd(years[years.length - 1]) >= periodEnd(last4[3])) return null;   // the year is the TTM
   // consecutive: each quarter ends three months after the one before
   const months = last4.map((q) => { const [y, m] = periodEnd(q).split("-").map(Number); return y * 12 + m; });
@@ -180,7 +184,7 @@ export function ttmQuarters(metrics: Metric[]): string[] | null {
 /** Profit and loss by year, the latest six, with a TTM column (owner: "year and TTM in year"). */
 export function annualTable(metrics: Metric[], screener = false): Table {
   const bank = isBank(metrics), v = collect(metrics);
-  const years = periodsOf(metrics, /^FY\d{2}$/).slice(-YEARS);
+  const years = periodsOf(metrics, YEAR).slice(-YEARS);
   const ttm = ttmQuarters(metrics);
   const useScreener = screener && screenerReady(v, years, bank);
   const cols = years.map((y) => lines(v, y, bank, useScreener));
@@ -262,7 +266,7 @@ export function balanceTable(sheets: Snapshot[], screener = false): Table {
 export function cashFlowTable(metrics: Metric[]): Table {
   const v = collect(metrics);
   const has = (p: string) => get(v, "operating_cash_flow", p) != null;
-  const years = periodsOf(metrics, /^FY\d{2}$/).filter(has).slice(-YEARS);
+  const years = periodsOf(metrics, YEAR).filter(has).slice(-YEARS);
   const halves = periodsOf(metrics, /^H1FY\d{2}$/).filter(has);
   const half = halves[halves.length - 1];
   const cols = [...years, ...(half && (!years.length || periodEnd(half) > periodEnd(years[years.length - 1])) ? [half] : [])];
@@ -282,10 +286,10 @@ export function cashFlowTable(metrics: Metric[]): Table {
 /** Ratios by year, from the year's figures and its March balance sheet. */
 export function ratioTable(metrics: Metric[], sheets: Snapshot[]): Table {
   const v = collect(metrics);
-  const years = periodsOf(metrics, /^FY\d{2}$/).slice(-YEARS);
+  const years = periodsOf(metrics, YEAR).slice(-YEARS);
   const march = new Map(balanceSnapshots(sheets).map((s) => [periodEnd(String(s.period)).slice(0, 7), s]));
   const sheet = (y: string) => march.get(periodEnd(y).slice(0, 7));
-  const prior = (y: string) => march.get(`${Number(periodEnd(y).slice(0, 4)) - 1}-03`);
+  const prior = (y: string) => march.get(`${yearOf(y) - 1}-${periodEnd(y).slice(5, 7)}`);   // the same month a year before
   const days = (k: string) => years.map((y) => { const s = sheet(y), rev = get(v, "revenue", y); return s && rev ? (num(s, k) ?? NaN) / rev * 365 : null; })
     .map((x) => (x == null || Number.isNaN(x) ? null : x));
   const roe = years.map((y) => {
@@ -314,10 +318,10 @@ export function ratioTable(metrics: Metric[], sheets: Snapshot[]): Table {
 /** Compounded growth of a line over the last N years (screener's boxes), and TTM against the four quarters before. */
 export function growth(metrics: Metric[], metric: string): { label: string; value: Cell }[] {
   const v = collect(metrics);
-  const years = periodsOf(metrics, /^FY\d{2}$/);
+  const years = periodsOf(metrics, YEAR);
   const last = years[years.length - 1];
   // by fiscal year, not by position: with FY24 missing, "3 years" from FY26 is still FY23 (deep audit F-04)
-  const fy = (p: string) => 2000 + Number(p.slice(2));
+  const fy = yearOf;
   const cagr = (n: number) => {
     if (!last) return null;
     const from = years.find((y) => fy(y) === fy(last) - n);

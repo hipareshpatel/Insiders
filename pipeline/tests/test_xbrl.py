@@ -654,6 +654,9 @@ def test_consolidated_bank_file_zero_ratios_are_fillers_not_values():
     # a net NPA of nil beside real ratios is a value
     assert _bank_ratios(_bank_file({"Q": ("0.0069", "0", "0.021")})) == {
         ("gnpa_pct", "Q2FY27"): 0.69, ("nnpa_pct", "Q2FY27"): 0.0, ("roa_pct", "Q2FY27"): 2.1}
+    # BANKBARODA Q2FY27 consolidated (31 Oct 2026): gross and net NPA 0 beside a real RoA, "net NPA 0.00%, gross 0.00%" in a live
+    # headline; a gross NPA of 0 is a filler and takes the net with it, the RoA stays
+    assert _bank_ratios(_bank_file({"Q": ("0", "0", "0.0119")})) == {("roa_pct", "Q2FY27"): 1.19}
 
 
 def test_roa_put_on_a_yearly_basis_only_when_the_file_is_not():

@@ -192,7 +192,9 @@ def test_hdfc_bank_quarter_and_half_year_by_the_bank_recipe():
     assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68, abs=0.02)
     assert h["Financing Profit"].value == pytest.approx(h["Revenue"].value - h["Interest"].value - h["Expenses"].value)
     bs = sv.bank_bs(sv._Reader(facts, instant=date(2026, 9, 30)))
-    assert set(bs) == {"Equity Capital", "Deposits", "Borrowing"} and bs["Borrowing"].value == pytest.approx(594143.54, abs=0.01)
+    assert {"Equity Capital", "Reserves", "Deposits", "Borrowing", "Other Liabilities", "Total Liabilities", "Total Assets", "Fixed Assets",
+            "Investments", "Other Assets"} <= set(bs) and "CWIP" not in bs
+    assert bs["Borrowing"].value == pytest.approx(594143.54, abs=0.01)
 
 
 def test_a_positive_bank_exceptional_item_goes_to_other_income_and_pbt_stays_as_filed():
@@ -836,3 +838,104 @@ def test_a_minority_share_as_large_as_the_whole_profit_is_the_slip_and_the_owner
     # BANCOINDIA Q1FY26: owners 164.06 against total 115.0 and minority 5.48 -> 109.52 (Screener 110): the rule still corrects
     banco = {"Net Profit": 115.0, "Net Profit (owners)": 164.06, "Minority share": 5.48}
     assert sv.corrected_pl(banco, sv.CORPORATE)["Net Profit (owners)"] == 109.52
+
+
+def trimmed(name):
+    """A results file's balance-sheet facts, trimmed from the real NSE Q4FY26 file (srules2 bs report)."""
+    return xf.Facts(json.loads((FIXTURES / f"screener_bs_{name}_q4fy26.json").read_text()))
+
+
+MARCH26 = date(2026, 3, 31)
+
+
+def test_bank_balance_sheet_icici_paid_up_capital_and_the_capital_premium_move_into_reserves():
+    f = trimmed("icici")
+    assert sv.family(f.doc["template"]) == sv.BANK
+    bs = sv.bank_bs(sv._Reader(f, instant=MARCH26))
+    # Capital 4,114.30 is paid-up plus premium; screener: 1,432.23 and 335,939
+    assert bs["Equity Capital"].value == pytest.approx(1432.23, abs=0.01)
+    assert bs["Reserves"].value == pytest.approx(335939.19, abs=0.01)
+    assert bs["Reserves"].value + bs["Equity Capital"].value == pytest.approx(f.cr("Capital", instant=MARCH26) + f.cr("ReservesAndSurplus", instant=MARCH26))
+    assert bs["Total Liabilities"].value == bs["Total Assets"].value == pytest.approx(f.cr("CapitalAndLiabilities", instant=MARCH26))
+    assert bs["Other Assets"].value == pytest.approx(bs["Total Assets"].value - bs["Fixed Assets"].value - bs["Investments"].value)
+    assert "CWIP" not in bs        # none filed: not made up
+
+
+def test_bank_balance_sheet_idfc_first_and_kotak_stock_options_row():
+    idfc = sv.bank_bs(sv._Reader(trimmed("idfcfirst"), instant=MARCH26))
+    assert idfc["Equity Capital"].value == pytest.approx(8601.70, abs=0.01) and idfc["Reserves"].value == pytest.approx(38750.14, abs=0.01)
+    f = trimmed("kotak")
+    kotak = sv.bank_bs(sv._Reader(f, instant=MARCH26))
+    # the employee stock options outstanding row (113.12) leaves Other Liabilities for Reserves
+    assert kotak["Reserves"].value == pytest.approx(f.cr("ReservesAndSurplus", instant=MARCH26) + 113.12, abs=0.01)
+    assert kotak["Other Liabilities"].value == pytest.approx(f.cr("OtherLiabilitiesAndProvisions", instant=MARCH26) - 113.12, abs=0.01)
+    assert kotak["Equity Capital"].value == pytest.approx(994.65, abs=0.01)
+
+
+def test_bank_balance_sheet_without_the_paid_up_fact_reads_capital():
+    f = xf.Facts(doc([("Capital", "I2026", 100.0), ("ReservesAndSurplus", "I2026", 900.0), ("OtherLiabilitiesAndProvisions", "I2026", 50.0),
+                      ("CapitalAndLiabilities", "I2026", 2000.0), ("FixedAssets", "I2026", 20.0), ("Investments", "I2026", 500.0),
+                      ("CapitalWorkInProgress", "I2026", 5.0), ("Deposits", "I2026", 900.0), ("Borrowings", "I2026", 50.0)], template="BANKING"))
+    bs = sv.bank_bs(sv._Reader(f, instant=END))
+    assert bs["Equity Capital"].value == 100.0 and bs["Reserves"].value == 900.0 and bs["CWIP"].value == 5.0
+    assert bs["Other Assets"].value == pytest.approx(2000 - 20 - 5 - 500)
+    assert sv.bs_rows(sv.BANK, sv._Reader(f, instant=END)).keys() == bs.keys()
+
+
+def test_nbfc_balance_sheet_bajaj_finance_closes_every_row_of_the_recipe():
+    f = trimmed("bajfin")
+    assert sv.family(f.doc["template"]) == sv.NBFC
+    bs = sv.nbfc_bs(sv._Reader(f, instant=MARCH26))
+    assert bs["Borrowing"].value == pytest.approx(435112.49, abs=0.01)      # screener 435,112
+    assert "Borrowings" not in bs
+    assert bs["Total Assets"].value == bs["Total Liabilities"].value
+    assert bs["Other Liabilities"].value == pytest.approx(bs["Total Liabilities"].value - bs["Equity Capital"].value - bs["Reserves"].value
+                                                          - bs["Borrowing"].value)
+    assert bs["Other Assets"].value == pytest.approx(bs["Total Assets"].value - bs["Fixed Assets"].value - bs["CWIP"].value
+                                                     - bs["Investments"].value)
+
+
+def test_nbfc_balance_sheet_total_nets_the_deferred_tax_and_chola_keeps_the_rule():
+    f = trimmed("chola")
+    bs = sv.nbfc_bs(sv._Reader(f, instant=MARCH26))
+    sub = f.cr("SubordinatedLiabilities", instant=MARCH26)
+    assert sub == pytest.approx(1030.27, abs=0.01)
+    # screener's Chola figure is without the subordinated liabilities (211,070): the recipe is the one for the other six, and says so
+    assert bs["Borrowing"].value - 211070 == pytest.approx(sub, abs=1.0)
+    assert "SubordinatedLiabilities" in bs["Borrowing"].note
+    dta, dtl = f.cr("DeferredTaxAssetsNet", instant=MARCH26), f.cr("DeferredTaxLiabilitiesNet", instant=MARCH26)
+    off = min(dta, dtl) if dta is not None and dtl is not None else 0.0
+    assert bs["Total Assets"].value == pytest.approx(f.cr("Assets", instant=MARCH26) - off)
+
+
+def test_corporate_investment_rows_inside_other_assets_go_to_investments():
+    for name, base_inv, rows in (("gail", None, 9360.17), ("fincables", None, 262.76 + 719.55), ("kims", None, 87.5)):
+        f = trimmed(name)
+        r = sv._Reader(f, instant=MARCH26)
+        bs = sv.corporate_bs(r, "", False, name == "fincables")
+        elements = sum(f.cr(n, instant=MARCH26) or 0 for n in ("NoncurrentInvestments", "CurrentInvestments", "InvestmentsAccountedForUsingEquityMethod"))
+        assert bs["Investments"].value == pytest.approx(elements + rows, abs=0.01), name
+        assert "rows" in bs["Investments"].note
+        # out of Other Assets: the total is unchanged
+        assert bs["Other Assets"].value == pytest.approx(bs["Total Assets"].value - bs["Fixed Assets"].value - bs["CWIP"].value
+                                                         - bs["Investments"].value)
+
+
+def test_an_investment_property_loan_or_unrelated_row_is_not_an_investment():
+    extra = [("DescriptionOfOtherNoncurrentFinancialAssets", "D2026_M5", "Investment property"),
+             ("OtherNoncurrentFinancialAssets", "I2026_M5", 11.0),
+             ("DescriptionOfOtherNoncurrentFinancialAssets", "D2026_M6", "Loans and advances"),
+             ("OtherNoncurrentFinancialAssets", "I2026_M6", 13.0),
+             ("DescriptionOfOtherCurrentFinancialAssets", "D2026_M8", "Other investments"),
+             ("OtherCurrentFinancialAssets", "I2026_M8", 17.0)]
+    bs = sv.corporate_bs(sv._Reader(annual_facts(extra), instant=END), "")
+    assert bs["Investments"].value == pytest.approx(60 + 40 + 25 + 17)
+
+
+def test_statements_rows_of_writes_the_bank_and_nbfc_balance_sheet_rows_for_the_stock_page():
+    from bse_intel import statements
+
+    for name, row in (("icici", "Reserves"), ("bajfin", "Borrowing")):
+        d = dict(trimmed(name).doc, period="Q4FY26", basis="STANDALONE")
+        got = {table: rows for table, rows, _ in statements.rows_of(d)}
+        assert got["balance"][row].value is not None and got["balance"]["Total Assets"].value

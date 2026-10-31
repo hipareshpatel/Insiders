@@ -56,7 +56,9 @@ ProfitLossFromOrdinaryActivitiesBeforeTax - a negative ExceptionalItems (HDFC FY
 ProfitLossAfterTaxesMinorityInterestAndShareOfProfitLossOfAssociates (a standalone file: ProfitLossForThePeriod). Balance sheet: Equity
 Capital = Capital, Deposits = Deposits, Borrowing = Borrowings (screener 2025: deposits a line apart; the Excel Data Sheet still adds
 them); the rest has no recipe yet (Reserves: ReservesAndSurplus is 4,545 Cr under the Excel's for HDFC Bank FY26, 18,768 over for
-SBI). Measured on the FY26 Q4 files against the Excel: HDFC Bank and SBI profit and loss (8 rows) and cash flow (4) all exact. NBFC and insurers: what maps cleanly (below); every other row is ``no_recipe``.
+SBI). Measured on the FY26 Q4 files against the Excel: HDFC Bank and SBI profit and loss (8 rows) and cash flow (4) all exact. NBFC: ``nbfc_bs`` (Borrowing = debt securities + borrowings + deposits + subordinated + lease rows, Fixed Assets, CWIP, Investments, Total net of
+deferred tax, the remainders). Insurers: what maps cleanly (below); every other row is ``no_recipe``. Corporate Investments also take a
+described row naming an investment inside the "Others" of another asset line (GAIL, Finolex Cables, KIMS).
 
 Not implemented on purpose: the L&T segment element InterestExpenseReportableSegment (Wipro FY26 files it equal to its FinanceCosts,
 1,457.7 Cr: adding it would count Wipro's interest twice); PDF-only lines (Reliance's sales tax, L&T's bank charges); director
@@ -768,6 +770,28 @@ def pl_rows(fam: str, r: _Reader, fallback: _Reader | None = None, source: str =
 
 # --- balance sheet ------------------------------------------------------------------------------------------------
 
+# a described row naming an investment inside the "Others" of another asset line is screener's Investments (srules2 bs report, 4: GAIL
+# cons FY26 "Other Investments" 9,360.17; Finolex Cables FY26 262.76 + 719.55; KIMS FY26 87.5; all 3 files that carry one close, 0 broken).
+# Not a lease receivable ("net investment in (sub)lease": Infosys, Tata Technologies, Nykaa, Welspun, Black Box), plan money with
+# an insurer (Nestle's "Investment in Insurance plan", Eternal's gratuity plan, GRSE's leave encashment with LIC), application
+# money or shares pending allotment (Ashok Leyland, ZF, GAIL FY23), a forward contract (Zydus) or a bank balance (Molbio):
+# screener keeps those in Other Assets (screener-rows run 41173800391: 43 rows broken, 21 mended before this list)
+INVESTMENT_PARENTS = ("OtherNoncurrentFinancialAssets", "OtherNoncurrentFinancialAssetsOthers", "OtherNoncurrentAssets",
+                      "OtherNoncurrentAssetsOthers", "OtherCurrentFinancialAssets", "OtherCurrentFinancialAssetsOthers")
+INVESTMENT_ROW = (r"^(?!.*(investment\s+propert|loans?\b|advances?\b|receivable|accrued|interest|income|dividend|deposit|"
+                  r"right.of.use|lease|insurance|gratuity|\blic\b|encashment|pending\s+allotment|application\s+money|forward|bank\s+balance))"
+                  r".*\binvest")
+
+
+def _investment_rows(r: _Reader) -> list[tuple[str, str, float]]:
+    out, seen = [], set()
+    for x in r.rows(INVESTMENT_PARENTS, INVESTMENT_ROW):     # a parent and its "Others" member can carry the same line
+        if (x[1], round(x[2], 2)) not in seen:
+            seen.add((x[1], round(x[2], 2)))
+            out.append(x)
+    return out
+
+
 def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:
     """``half_year``: a September balance sheet, read from its results file, where screener puts intangibles under development in
     Fixed Assets (HCL Tech, UltraTech, JSW Steel, Hindustan Zinc, Adani Green Q2FY27: the CWIP and Fixed Assets gaps both =
@@ -841,6 +865,10 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
                       (" + ".join(cwip_names) or ("neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0" if has_sheet
                                                   else "no balance sheet in the file")) + src)
     inv, inv_names = total("NoncurrentInvestments", "CurrentInvestments", "InvestmentsAccountedForUsingEquityMethod")
+    inv_rows = _investment_rows(r)
+    if inv_rows:    # an investment the filer keeps inside "Others" of another asset line: Investments for screener, out of Other Assets
+        inv += _sum_rows(inv_rows)
+        inv_names = inv_names + ["rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in inv_rows)]
     out["Investments"] = Row(inv if inv_names or has_sheet else None,
                              (" + ".join(inv_names) or ("no investments element: 0" if has_sheet else "no balance sheet in the file")) + src)
     assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
@@ -859,23 +887,128 @@ def corporate_bs(r: _Reader, source: str = "", half_year: bool = False, standalo
     return out
 
 
+def _paid_up(r: _Reader) -> tuple[float | None, str]:
+    """The paid-up equity capital: the 12-month duration fact PaidUpValueOfEquityShareCapital ending on the balance-sheet date (a
+    half-year file: its own 6- or 3-month one; the value is a stock, the same in each)."""
+    inst = r.at.get("instant")
+    if inst is None:
+        return None, ""
+    for months in (12, 6, 9, 3):
+        v = r.facts.cr("PaidUpValueOfEquityShareCapital", end=inst, months=months)
+        if v is not None:
+            return v, f"PaidUpValueOfEquityShareCapital ({months} months)"
+    return None, ""
+
+
+ESOP_ROW = r"stock option|esop"
+
+
 def bank_bs(r: _Reader, source: str = "") -> dict[str, Row]:
+    """A bank's balance sheet (srules2 bs report, 1; 10 of 10 standalone Q4FY26 files: HDFC, SBI, ICICI, Union, Canara, IDFC First,
+    Axis, Kotak, BoB, PNB, all within tolerance except the two named residues below).
+
+    Equity Capital = the paid-up capital (ICICI files Capital 4,114.30 = screener's Reserves-side double, screener 1,432.23), else Capital;
+    Reserves = ReservesAndSurplus + Capital - paid-up, plus the employee stock options outstanding row of the other liabilities (Kotak
+    113.12), which leaves Other Liabilities; Other Liabilities = OtherLiabilitiesAndProvisions less that row; Total = CapitalAndLiabilities;
+    Fixed Assets = FixedAssets; CWIP only where the file carries CapitalWorkInProgress (a bank's file has none: screener's CWIP, SBI 627,
+    Union 62, IDFC 113, Axis 260, is not in it, so the row is not made up and Other Assets still takes it); Investments = Investments;
+    Other Assets = Total - Fixed Assets - CWIP - Investments (advances, cash and balances with RBI all sit there).
+    Not closed: HDFC Reserves +4,546 and Axis +1,342, each opposite in Other Liabilities (no element or row of that size in the file)."""
     src = f" [{source}]" if source else ""
-    out = {}
-    # Reserves: no recipe yet (ReservesAndSurplus is 4,545 Cr under screener's Excel for HDFC Bank FY26, 18,768 over for SBI)
-    for row, name in (("Equity Capital", "Capital"), ("Deposits", "Deposits"), ("Borrowing", "Borrowings")):
+    out: dict[str, Row] = {}
+    cap, rs, paid = r.cr("Capital"), r.cr("ReservesAndSurplus"), _paid_up(r)
+    if paid[0] is not None:
+        out["Equity Capital"] = Row(paid[0], paid[1] + src)
+    else:
+        out["Equity Capital"] = Row(cap, ("Capital" if cap is not None else "missing Capital") + src)
+    esop = r.rows(("OtherLiabilitiesAndProvisions",), ESOP_ROW)
+    esop_v = _sum_rows(esop)
+    shift = (cap - paid[0]) if cap is not None and paid[0] is not None else 0.0
+    res_note = "ReservesAndSurplus" + (f" + Capital - paid-up {_fmt(shift)}" if shift else "") \
+        + (f" + ESOP row {_fmt(esop_v)}" if esop else "")
+    out["Reserves"] = Row(None if rs is None else rs + shift + esop_v, (res_note if rs is not None else "missing ReservesAndSurplus") + src)
+    for row, name in (("Deposits", "Deposits"), ("Borrowing", "Borrowings")):
         v = r.cr(name)
         out[row] = Row(v, (name if v is not None else "missing " + name) + src)
+    olp = r.cr("OtherLiabilitiesAndProvisions")
+    out["Other Liabilities"] = Row(None if olp is None else olp - esop_v,
+                                   ("OtherLiabilitiesAndProvisions" + (f" - ESOP row {_fmt(esop_v)}" if esop else "")
+                                    if olp is not None else "missing OtherLiabilitiesAndProvisions") + src)
+    tot, tot_name = r.cr("CapitalAndLiabilities"), "CapitalAndLiabilities"
+    if tot is None:
+        tot, tot_name = r.cr("Assets"), "Assets"
+    out["Total Liabilities"] = Row(tot, (tot_name if tot is not None else "missing CapitalAndLiabilities") + src)
+    out["Total Assets"] = Row(tot, out["Total Liabilities"].note)
+    fa, inv, cwip = r.cr("FixedAssets"), r.cr("Investments"), r.cr("CapitalWorkInProgress")
+    out["Fixed Assets"] = Row(fa, ("FixedAssets" if fa is not None else "missing FixedAssets") + src)
+    if cwip is not None:
+        out["CWIP"] = Row(cwip, "CapitalWorkInProgress" + src)
+    out["Investments"] = Row(inv, ("Investments" if inv is not None else "missing Investments") + src)
+    out["Other Assets"] = Row(None if None in (tot, fa, inv) else tot - fa - (cwip or 0.0) - inv,
+                              "Total - Fixed Assets - CWIP - Investments" + src)
     return out
 
 
 def nbfc_bs(r: _Reader, source: str = "") -> dict[str, Row]:
+    """An NBFC's balance sheet, screener's rows "Borrowing" etc. (srules2 bs report, 2; 7 consolidated Q4FY26 files: Bajaj Finance,
+    Shriram, Muthoot, Chola, LTF, REC, PFC). Borrowing = DebtSecurities + Borrowings + Deposits + SubordinatedLiabilities + the lease
+    liability rows of the other financial liabilities (closed 6 of 7 with the subordinated; Chola's figure is without its 1,030.27: a
+    broken case kept as the rule holds for the other six; REC is 558.8 under, the pair with its Reserves); Fixed Assets = PPE + Goodwill +
+    OtherIntangibleAssets + InvestmentProperty + right-of-use (element, else the row); CWIP = CapitalWorkInProgress +
+    IntangibleAssetsUnderDevelopment; Investments = Investments; Equity Capital = EquityShareCapital; Reserves = OtherEquity; Total = Assets
+    - min(DeferredTaxAssetsNet, DeferredTaxLiabilitiesNet) (Muthoot 33.48); Other Liabilities (the minority interest inside) and Other
+    Assets the remainders."""
     src = f" [{source}]" if source else ""
-    out = {}
-    for row, name in (("Equity Capital", "EquityShareCapital"), ("Reserves", "OtherEquity")):
-        v = r.cr(name)
-        out[row] = Row(v, (name if v is not None else "missing " + name) + src)
+    out: dict[str, Row] = {}
+
+    def total(*names: str) -> tuple[float, list[str]]:
+        found = [(n, v) for n, v in ((n, r.cr(n)) for n in names) if v is not None]
+        return sum(v for _, v in found), [n for n, _ in found]
+
+    cap, res = r.cr("EquityShareCapital"), r.cr("OtherEquity")
+    out["Equity Capital"] = Row(cap, ("EquityShareCapital" if cap is not None else "missing EquityShareCapital") + src)
+    out["Reserves"] = Row(res, ("OtherEquity" if res is not None else "missing OtherEquity") + src)
+    has_sheet = r.cr("Assets") is not None
+    debt, debt_names = total("DebtSecurities", "Borrowings", "Deposits", "SubordinatedLiabilities")
+    lease_rows = r.rows(NBFC_LIABILITY_PARENTS, LEASE_ROW)
+    b = debt + _sum_rows(lease_rows)
+    b_note = " + ".join(debt_names + (["lease rows " + "; ".join(f"{t[:50]} {_fmt(v)}" for _, t, v in lease_rows)] if lease_rows else []))
+    out["Borrowing"] = Row(b if debt_names or lease_rows or has_sheet else None,
+                           (b_note or ("no borrowing line: 0" if has_sheet else "no balance sheet in the file")) + src)
+    fixed, fixed_names = total("PropertyPlantAndEquipment", "Goodwill", "OtherIntangibleAssets", "InvestmentProperty")
+    rou = r.cr("RightOfUseAssets")
+    rou_note = "RightOfUseAssets" if rou is not None else ""
+    if rou is None:
+        rou_rows = r.rows(NBFC_ASSET_PARENTS, r"right.of.use")
+        rou = _sum_rows(rou_rows) if rou_rows else None
+        rou_note = ("right-of-use row " + _fmt(rou)) if rou_rows else ""
+    fa = fixed + (rou or 0.0)
+    out["Fixed Assets"] = Row(fa if fixed_names or rou else None,
+                              (" + ".join(fixed_names + ([rou_note] if rou_note else [])) or "missing PropertyPlantAndEquipment") + src)
+    cwip, cwip_names = total("CapitalWorkInProgress", "IntangibleAssetsUnderDevelopment")
+    out["CWIP"] = Row(cwip if cwip_names or has_sheet else None,
+                      (" + ".join(cwip_names) or ("neither CapitalWorkInProgress nor IntangibleAssetsUnderDevelopment: 0" if has_sheet
+                                                  else "no balance sheet in the file")) + src)
+    inv = r.cr("Investments")
+    out["Investments"] = Row(inv if inv is not None or has_sheet else None,
+                             ("Investments" if inv is not None else ("no Investments element: 0" if has_sheet else "no balance sheet in the file")) + src)
+    assets, dta, dtl = r.cr("Assets"), r.cr("DeferredTaxAssetsNet"), r.cr("DeferredTaxLiabilitiesNet")
+    offset = min(dta, dtl) if dta is not None and dtl is not None else 0.0
+    tot = None if assets is None else assets - offset
+    tot_note = ("Assets" + (f" - min(DTA, DTL) {_fmt(offset)}" if offset else "") if assets is not None else "missing Assets") + src
+    out["Total Liabilities"] = Row(tot, tot_note)
+    out["Total Assets"] = Row(tot, tot_note)
+    bv = out["Borrowing"].value
+    out["Other Liabilities"] = Row(None if None in (tot, cap, res, bv) else tot - cap - res - bv,
+                                   "Total - Equity Capital - Reserves - Borrowing" + src)
+    out["Other Assets"] = Row(None if None in (tot, out["Fixed Assets"].value, out["CWIP"].value, out["Investments"].value)
+                              else tot - fa - cwip - (inv or 0.0), "Total - Fixed Assets - CWIP - Investments" + src)
     return out
+
+
+NBFC_LIABILITY_PARENTS = ("OtherFinancialLiabilities", "OtherFinancialLiabilitiesOthers", "OtherNoncurrentFinancialLiabilities",
+                          "OtherCurrentFinancialLiabilities")
+NBFC_ASSET_PARENTS = ("OtherNonFinancialAssets", "OtherNonFinancialAssetsOthers", "OtherFinancialAssets", "OtherFinancialAssetsOthers")
 
 
 def bs_rows(fam: str, r: _Reader, source: str = "", half_year: bool = False, standalone: bool = False) -> dict[str, Row]:

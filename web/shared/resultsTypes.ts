@@ -104,6 +104,8 @@ export interface KpiSummary {
   spread: { below_0: number; from_0_to_10: number; from_10_to_20: number; above_20: number; loss_to_profit: number; loss_narrowed: number; with_pct: number };
   momentum: { speeding_up: number; slowing: number; steady: number; not_comparable: number };
   nfo: number;                                  // companies flagged "profit not from operations"
+  /** medians over the same companies (ordinary ones with a per cent for revenue, EBITDA and profit), for any sentence that compares them */
+  like_for_like: { n: number; revenue: number | null; ebitda: number | null; pat: number | null } | null;
 }
 
 export interface KpiProgress {

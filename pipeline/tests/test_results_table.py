@@ -446,3 +446,14 @@ def test_the_whole_profit_sits_beside_the_owners_profit_only_when_they_differ():
     assert (row["pat_total"], row["pat_total_prev"], row["pat_total_yoy"], row["pat_total_turn"]) == (30.0, 20.0, 50.0, None)
     same = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 30.0}), _bank("Q2FY26", 80.0, 20.0, **{"Net Profit (owners)": 20.0})]}
     assert "pat_total" not in _row(same)            # no minority share: the PAT is already the whole profit (the digest is kept)
+
+
+def test_a_year_ago_quarter_with_no_owners_line_and_no_minority_share_is_the_owners_base():
+    """Audit #303 item B: SPANDANA Q2FY27 owners 18.24, year ago only Net Profit -249.16 with no minority: loss to profit, not blank."""
+    memory = {"statements": [_nbfc("Q2FY27", 500.0, 300.0, 18.24, 60.0), _nbfc("Q2FY26", 400.0, 200.0, -249.16, 50.0)]}
+    memory["statements"][0]["rows"]["Net Profit (owners)"] = 18.24
+    row = _row(memory)
+    assert (row["pat"], row["pat_prev"], row["pat_turn"]) == (18.24, -249.16, "LOSS_TO_PROFIT")
+    with_minority = {"statements": [_bank("Q2FY27", 100.0, 30.0, **{"Net Profit (owners)": 28.0}),
+                                    _bank("Q2FY26", 80.0, 20.0, **{"Minority share": 2.0})]}
+    assert _row(with_minority)["pat_prev"] is None   # a total with a minority share is no base for the owners' profit

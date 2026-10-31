@@ -231,11 +231,13 @@ export function seasonHeadline(s: KpiSummary, filtered = false): Seg[] {
 export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[][] {
   if (s.n === 0) return [];
   const lines: Seg[][] = [];
-  const { median_revenue_yoy: rev, median_ebitda_yoy: ebitda, median_pat_yoy: pat } = s;
-  if (rev != null && pat != null) {
+  // the comparison is made over the same companies only (#303 item A): the tile medians are over three different sets
+  const same = s.like_for_like;
+  if (same && same.revenue != null && same.pat != null) {
+    const { revenue: rev, ebitda, pat } = same;
     const lead = pat > rev ? "Profit grew faster than sales" : pat < rev ? "Sales grew faster than profit" : "Profit grew as fast as sales";
-    lines.push([{ t: `${lead}: median revenue growth ` }, { t: fmtPct(rev), b: true },
-      ...(ebitda != null ? [{ t: ", EBITDA " }, { t: fmtPct(ebitda), b: true }] : []), { t: "." }]);
+    lines.push([{ t: `${lead} for the ${fmtCount(same.n)} companies with all three figures: median revenue growth ` }, { t: fmtPct(rev), b: true },
+      ...(ebitda != null ? [{ t: ", EBITDA " }, { t: fmtPct(ebitda), b: true }] : []), { t: ", profit " }, { t: fmtPct(pat), b: true }, { t: "." }]);
   }
   const m = s.momentum;
   if (m.speeding_up + m.slowing > 0) {

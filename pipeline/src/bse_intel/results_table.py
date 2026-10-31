@@ -45,6 +45,11 @@ EXCEPTIONAL_AT = "Exceptional items AT"   # screener_view._exceptional_rows: the
 EXCEPTIONAL = "Exceptional items"
 
 
+def insurer_industry(industry: str | None) -> bool:
+    """True when NSE's industry is an insurance one ("Financial Services > Insurance > Life Insurance")."""
+    return "insurance" in (industry or "").lower()
+
+
 def non_lender(industry: str | None) -> bool:
     """True when the industry is known and is not financial services ("Financial Services > ..." or a bare "Finance"); an unknown one is not."""
     text = (industry or "").strip().lower()
@@ -58,18 +63,54 @@ def _entry(dossier: dict, period: str | None, basis: str) -> dict | None:
     for e in dossier.get(statements.KEY, []) or []:
         if (isinstance(e, dict) and e.get("table") == "quarters" and e.get("period") == period and e.get("basis") == basis
                 and e.get("family") in LAYOUT and (e.get("lab") or {}).get("by") == "file"):
-            return _without_filler_owners(e)
+            return _without_pat_slip(_without_filler_owners(e))
     return None
 
 
 def _without_filler_owners(e: dict) -> dict:
-    """The entry without an owners' profit of exactly 0 beside a net profit that is not: a filler (measured 31 Oct 2026, the live
-    table: 204 quarters at 0, e.g. PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; the NBFC template is read without the
-    corporate guard of screener_view); a listed parent's shareholders never own none of a profit. The net profit is then the line."""
+    """The entry with an owners' profit of exactly 0 beside a net profit that is not replaced by that net profit: a filler (measured
+    31 Oct 2026, the live table: 204 quarters at 0, e.g. PNB Housing Q2FY27, CreditAccess, Kaynes Q2FY26, Goldiam; the NBFC template is
+    read without the corporate guard of screener_view); a listed parent's shareholders never own none of a profit. The owners' row is
+    kept, at the net profit, so a quarter whose owners' row is real still finds its year-ago base on the same row (Kaynes Q1FY27 PAT 56.43
+    against Q1FY26 74.61 had no YoY when the filler row was dropped)."""
     rows = e.get("rows") or {}
     if rows.get(fact_sheet.OWNERS) == 0 and rows.get("Net Profit") not in (None, 0):
-        return {**e, "rows": {k: v for k, v in rows.items() if k != fact_sheet.OWNERS}}
+        return {**e, "rows": {**rows, fact_sheet.OWNERS: rows["Net Profit"]}}
     return e
+
+
+SLIP_MIN = 5.0   # Cr: a profit this far from PBT - tax, and on the other side of zero, is a slip
+SLIP_SHARE = 0.5
+
+
+def _without_pat_slip(e: dict) -> dict:
+    """A corporate quarter whose profit line is on the other side of zero from Profit before tax - Tax, and further from it than
+    max(5 Cr, half of it), has PBT - Tax as its profit (measured 31 Oct 2026, live: APARINDS Q1FY27 PAT -138.56 beside EBITDA 757.57 and
+    revenue 6,591; four other sites show 467.45). The corporate PBT already holds the associates' share, the regulatory deferral
+    movement and the discontinued operations after tax (screener_view), and Tax is the continuing tax, so PBT - Tax is the whole profit;
+    the owners' profit is that less the minority's share (without a minority row it is guarded only when it equals the whole). A genuine
+    loss (same side of zero) stays. Other families are not guarded: their PBT is not built the same way."""
+    rows = e.get("rows") or {}
+    pbt, tax = rows.get("Profit before tax"), rows.get("Tax")
+    if e.get("family") != sv.CORPORATE or pbt is None or tax is None:
+        return e
+    whole = round(pbt - tax, 2)
+    fixed = dict(rows)
+    net = rows.get("Net Profit")
+    for row, expected in (("Net Profit", whole), (fact_sheet.OWNERS, None)):
+        value = rows.get(row)
+        if value is None:
+            continue
+        if expected is None:
+            minority = rows.get("Minority share")
+            if minority is None:
+                minority = 0.0 if value == net else None
+            if minority is None:
+                continue
+            expected = round(whole - minority, 2)
+        if value * expected < 0 and abs(value - expected) > max(SLIP_MIN, SLIP_SHARE * abs(expected)):
+            fixed[row] = expected
+    return e if fixed == rows else {**e, "rows": fixed}
 
 
 def _line(key: str, row: str, now: dict, before: dict) -> dict | None:
@@ -133,7 +174,11 @@ def table_of(dossier: dict, period: str, industry: str | None = None) -> dict | 
         if now is None:
             continue
         before = {slot: _entry(dossier, p, basis) for slot, p in prior.items()}
-        layout = sv.CORPORATE if now["family"] == sv.NBFC and non_lender(industry) else now["family"]
+        layout = now["family"]
+        if layout == sv.NBFC:
+            # an insurer on the NBFC template has no financing profit (measured 31 Oct 2026, live: MFSL, "Financial Services > Insurance >
+            # Life Insurance", showed "financing profit" and kind nbfc; 7 such rows): the insurer's page, profit only
+            layout = sv.CORPORATE if non_lender(industry) else sv.INSURER if insurer_industry(industry) else layout
         revenue_row, ebitda_row, margin_row = LAYOUT[layout]
         # the profit's comparatives are the same row as its value (a total with minority interest is no base for the owners' profit)
         pat_row = next((r for r in PAT_ROWS if (now.get("rows") or {}).get(r) is not None), None)

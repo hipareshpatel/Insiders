@@ -169,6 +169,10 @@ job. Hourly lead check-ins until 22:00 IST.**
 3. Review and run the second session's PRs (TODO 148 bank PDF reader, TODO 151 fact sheet for lenders).
 4. Hubtown nse-106629168: the live card still shows finance cost Q4FY25 0.02 Cr (right: 18.82); requeued 12:52 IST after #294 but
    a 19 May filing waits behind ~1,500 history filings. Re-run that one card by the existing path, never a hand edit.
+   **31 Oct ~18:15 IST:** still the old card. #298's requeue puts Hubtown first in the history queue, but pipeline run
+   41196991535 (17:03-17:43 IST) spent its whole 40-minute budget on the day's results filings (20 deferred) and never reached the
+   history pass. It re-runs on the first run with time left; results season can delay that for days. Varun Beverages nse-106835976
+   is re-made (revenue 6,815.59 Cr).
 5. TODO 147 leftovers (unit-slip enlargements: SYRMA nse-106836602 cause unproven; reading 2 on malformed digit groups). **31 Oct
    ~16:05 IST (second session):** SYRMA's live card is right (1,989.68, rewritten by the exchange-file card); the cause needs its PDF
    (`SYRMASGS_30102026163122_BMOutcome30102026.pdf`), not downloaded here: the lead checks R2 for a kept copy before any fetch (rule:

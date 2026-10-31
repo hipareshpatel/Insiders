@@ -526,6 +526,27 @@ def test_unit_slips_need_a_declared_unit_and_a_single_fit():
     assert unit_slips(["Revenue about ₹955 Cr"], LAKH_STATEMENT) == []
 
 
+# Hubtown's Q4FY26 consolidated statement (nse-106629168, live 30 Oct 2026): the OCR read the lakh "1,882" as "1.882", so the
+# card's right "₹18.82 Cr" fitted no figure at the lakh unit and reading 3 "corrected" it to 1.882 lakh = ₹0.02 Cr.
+HUBTOWN_LAKH = """--- Page 26
+Statement of Audited Consolidated Financial Results for the Quarter and Year ended March 31, 2026
+(₹ in Lakhs, except per share data)
+Particulars  31.03.2026  31.12.2025  31.03.2025  31.03.2026  31.03.2025
+a. Revenue from Operations  16,000  8,759  9,675  64.351  40.847
+d. Employee benefits expense  1,252  1.118  689  3,984  2.573
+e. Finance costs  8,483  2,341  1.882  15,066  13.492
+"""
+
+
+def test_unit_slips_never_make_a_correction_two_places_cannot_write():
+    from bse_intel.grounding import unit_slips
+
+    card = ["Finance costs rose to ₹84.83 Cr from ₹18.82 Cr (Q4FY25)."]
+    assert unit_slips(card, HUBTOWN_LAKH) == []   # 18.82 -> 1.882 lakh = ₹0.01882 Cr, never "₹0.02 Cr"
+    # a slip that two places write exactly is still corrected: 8,483 lakh carded as ₹8,483 Cr is ₹84.83 Cr
+    assert unit_slips(["Finance costs of ₹8,483 Cr"], HUBTOWN_LAKH) == [("8,483", 8483.0, 0, 84.83, 2)]
+
+
 # Tinna Rubber's Q2FY27 statement (held-card audit, 22 Oct 2026): the lakh header garbled by OCR ("fRl. in lakh"), one
 # note declared in million on another page; EBITDA 3,018.12 lakh is ₹30.18 Cr, carded right and "corrected" to ₹301.8 Cr
 # HDFC AMC's deck: the quarterly table is "(₹ mm)", Revenue from Operations 10,260 (₹1,026 Cr); the QAAUM slide is in

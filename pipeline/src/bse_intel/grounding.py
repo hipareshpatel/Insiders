@@ -923,6 +923,10 @@ def unit_slips(texts: list[str], filing: str, *others: str) -> list[tuple[str, f
             for k in (-4, -3, -2, -1, 1, 2, 3, 4):
                 right = value * 10 ** k
                 right_decimals = max(0, decimals - k)
+                if right_decimals > 2 and abs(round(right, 2) - right) > 0.005 * right:
+                    # a correction two places cannot write is no correction: Hubtown's right ₹18.82 Cr fitted the OCR's
+                    # "1.882" lakh (its 1,882 with the comma read as a point) and went live as ₹0.02 Cr (30 Oct 2026)
+                    continue
                 if filing_index.stated_crore(right, right_decimals, (unit,)):
                     fits.append((round(right, min(right_decimals, 2)), min(right_decimals, 2)))
             if len(fits) == 1:

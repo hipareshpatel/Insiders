@@ -17,6 +17,7 @@ from bse_intel import bank_pdf as bp
 from bse_intel import screener_view as sv
 from bse_intel import xbrl_facts as xf
 from bse_intel.metrics import CONSOLIDATED, STANDALONE
+from bse_intel.nse import FileCapReached
 
 FIX = Path(__file__).parent / "fixtures" / "bank_pdf"
 CR = 10_000_000
@@ -333,3 +334,29 @@ def test_merge_prefers_the_years_own_report():
     got = bp.merge([own, older])
     assert got[("FY22", STANDALONE)]["depreciation"] == 3.0 and got[("FY23", STANDALONE)]["depreciation"] == 1.0
     assert bp.merge([older, own])[("FY22", STANDALONE)]["depreciation"] == 3.0
+
+
+def test_diagnosis_of_an_empty_report():
+    # a scanned report has no text; another layout shows its headings (bank-pdf-read run 41197917866: 50 of 100 empty)
+    blank = bp.diagnose(["", " ", "x" * 10])
+    assert blank["pages_with_text"] == 0 and blank["schedule_headings"] == 0
+    laid = bp.diagnose(["word " * 60 + "\nSchedule 16: Operating Expenses (Rs in lakh)\nDepreciation 12.5", "word " * 60])
+    assert laid["pages_with_text"] == 2 and laid["schedule_headings"] == 1 and laid["opex_pages"] == [1]
+    assert laid["first_headings"][0][0] == 1
+
+
+def test_empty_reading_is_read_again_once_for_its_diagnosis():
+    import pymupdf
+    sink = Sink()
+    _bank(sink)
+    doc = pymupdf.open()
+    doc.new_page().insert_text((72, 72), "Annual report: nothing in the schedule format")
+    blank_pdf = doc.tobytes()
+    kept = "raw/annual-pdf/SBIN/blank.pdf.gz"
+    sink.put_object(kept, gzip.compress(blank_pdf))
+    sink.put_object(bp.key("500112", kept), json.dumps({"figures": {}}).encode())       # an earlier run's empty reading
+    out = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
+    reading = json.loads(sink.objects[bp.key("500112", kept)])
+    assert reading["diagnosis"]["pages"] == 1 and reading["figures"] == {}
+    again = bp.run(sink, Client(error=FileCapReached("no fetch")), [("500112", "SBIN")], years=0)
+    assert again["reports_read"] == 0 or all(r.get("file") != kept for r in again["readings"])

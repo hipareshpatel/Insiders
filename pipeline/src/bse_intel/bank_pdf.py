@@ -304,9 +304,33 @@ in the report (1 = the first page; default their order here), so trimmed pages k
 
 def read(payload: bytes) -> dict:
     """``read_pages`` over a PDF's text layer (no OCR: a scanned report gives nothing)."""
+    return read_with_diagnosis(payload)[0]
+
+
+_SCHEDULE_WORD = re.compile(r"schedule\s*[-–]?\s*\d{1,2}", re.I)
+
+
+def diagnose(pages: list[str]) -> dict:
+    """Why a report gave no figures, from its own text (bank-pdf-read run 41197917866: 50 of 100 reports gave none, among them all
+    four of Bank of Maharashtra's): how many pages carry text, the schedule headings seen (page and line), and the pages naming
+    operating expenses or fixed assets. A scanned report shows no text; a report laid out another way shows its headings."""
+    with_text = [i for i, t in enumerate(pages, 1) if len(t.strip()) > 200]
+    headings = [(i, line.strip()[:90]) for i, t in enumerate(pages, 1) for line in t.splitlines()
+                if _SCHEDULE_WORD.search(line) and len(line.strip()) < 120]
+    opex = [i for i, t in enumerate(pages, 1) if re.search(r"operating\s+expenses", t, re.I)]
+    fixed = [i for i, t in enumerate(pages, 1) if re.search(r"fixed\s+assets", t, re.I)]
+    return {"pages": len(pages), "pages_with_text": len(with_text), "chars": sum(len(t) for t in pages),
+            "schedule_headings": len(headings), "first_headings": headings[:12], "opex_pages": opex[:10],
+            "fixed_pages": fixed[:10]}
+
+
+def read_with_diagnosis(payload: bytes) -> tuple[dict, dict | None]:
+    """(figures, diagnosis): the diagnosis only when the report gave no figures."""
     import pymupdf
     with pymupdf.open(stream=payload, filetype="pdf") as doc:
-        return read_pages([page.get_text() for page in doc])
+        pages = [page.get_text() for page in doc]
+    figures = read_pages(pages)
+    return figures, (None if figures else diagnose(pages))
 
 
 # --- what a bank's own figures accept --------------------------------------------------------------------------------
@@ -511,7 +535,14 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
                 todo.append((k, url))
         for k, url in todo:
             if key(scrip, k) in done:
-                continue
+                # a reading with no figures and no diagnosis is read again (from R2, nothing fetched) for its diagnosis
+                prior = sink.get_object(key(scrip, k))
+                try:
+                    prior = json.loads(prior) if prior else {}
+                except ValueError:
+                    prior = {}
+                if prior.get("figures") or prior.get("diagnosis"):
+                    continue
             if url is None:
                 body = sink.get_object(k)
                 body = gzip.decompress(body) if body else None
@@ -540,7 +571,7 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
             if not body:
                 continue
             try:
-                figures = read(body)
+                figures, diagnosis = read_with_diagnosis(body)
             except Exception as exc:  # noqa: BLE001 - a damaged PDF is no reading; the run goes on
                 out["failed"] += 1
                 out["readings"].append({"symbol": sym, "file": k, "error": f"{type(exc).__name__}: {exc}"[:200]})
@@ -550,9 +581,12 @@ def run(sink, client, companies: list[tuple[str, str]], years: int = 4, time_bud
                 out["no_text"] += 1
             fys = sorted({fy for by in figures.values() for fy in by}, reverse=True)
             report = {"scrip": scrip, "symbol": sym, "file": k, "url": url, "years": fys[:2], "figures": figures, "read_at": now_iso()}
+            if diagnosis is not None:
+                report["diagnosis"] = diagnosis
             if not dry_run:
                 sink.put_object(key(scrip, k), json.dumps(report, ensure_ascii=False).encode(), content_type="application/json")
-            out["readings"].append({"symbol": sym, "file": k, "years": fys[:2], "checks": checked(cf, figures)})
+            out["readings"].append({"symbol": sym, "file": k, "years": fys[:2], "checks": checked(cf, figures),
+                                    **({"diagnosis": diagnosis} if diagnosis is not None else {})})
     return out
 
 

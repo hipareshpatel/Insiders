@@ -116,7 +116,8 @@ ASSET_PARENTS = ("OtherNoncurrentAssetsOthers", "OtherNoncurrentAssets", "OtherN
 # exploration and evaluation assets and biological assets (other than bearer plants, which are PPE) are Fixed Assets for screener: Coal
 # India cons Q4FY23 -4,924.4 = 4,924.9, Oil India FY25/FY26 -2,482.7 / -3,894.6, Atul, Godrej Industries (10 company-periods; srules/bscf
 # report rule 2)
-FIXED_ASSET_EXTRAS = ("AssetsArisingFromExplorationForAndEvaluationOfMineralResources", "BiologicalAssetsOtherThanBearerPlants")
+FIXED_ASSET_EXTRAS: tuple[str, ...] = ()   # exploration and biological assets: +7 / -29 rows when added (run 41166426469), so Screener does not
+# add them as a rule; the names: AssetsArisingFromExplorationForAndEvaluationOfMineralResources, BiologicalAssetsOtherThanBearerPlants
 LEASE_ELEMENTS = ("LeaseLiabilitiesNoncurrent", "LeaseLiabilitiesCurrent", "NoncurrentLeaseLiabilities", "CurrentLeaseLiabilities")
 # a line of the other current financial liabilities, tagged by its own element: in screener's Borrowings in 58 rows of 23
 # companies (the 500 largest, run 40759776253: the gap = the element, screener above ours, every one an annual report)
@@ -146,10 +147,11 @@ SEGMENT_PBT = "SegmentProfitBeforeTax"
 # 31 Oct 2026 (run 41164053629): a share added to PBT is right for 195 company-bases (870 PBT quarters), wrong for 28 (+27 mixed), so the
 # default stays "include" until the owner's on/off measurement
 ASSOCIATES_DEFAULT_INCLUDE = True
+ASSOCIATES_RULE_ON_YEARS = False   # the presentation rule on a year's P&L (off: measured worse there)
 # a standalone sheet nets min(DTA, DTL) from the total like a consolidated one when both are filed (not a half-year column). Infosys
 # standalone FY25: Assets 124,936 - min(497, 1,062) = 124,439 = screener; consolidated netted 754 ok / 64 apart, standalone filers matched
 # both ways (1,371 without, 30 with), so the switch is measured on/off (srules/bscf report rule 7)
-B4_NET_ANY_BASIS = True
+B4_NET_ANY_BASIS = False   # measured 31 Oct 2026 (screener-rows run 41166426469): +50 / -78 rows on; standalone filers net both ways
 EXPENSE_ROW_PARENTS = ("OtherExpenses",)
 # a row of other financial liabilities that is bank debt by its own words: Titan standalone "Secured and Unsecured Payable to Banks"
 # 7,043 Cr FY25 and 14,314 Cr FY26 = screener's Borrowings less ours, exactly (its gold on loan; measured 28 Oct 2026)
@@ -478,6 +480,8 @@ def _share_in_pbt(r: _Reader, filed_pbt: float | None, share: float | None) -> t
     figure (absent, a filler 0, or neither): ASSOCIATES_DEFAULT_INCLUDE. Measured 31 Oct 2026 on 9 of 13 consolidated Q1/Q2FY27 files."""
     if not share:
         return True, ""
+    if r.at.get("months") != 3 and not ASSOCIATES_RULE_ON_YEARS:   # a year: included as before (on years the rule moved 13 rows
+        return True, ""                                                # right and 38 wrong, run 41166426469)
     seg = r.cr(SEGMENT_PBT)
     if seg and filed_pbt is not None:
         if abs(seg - filed_pbt) <= ABS_TOL:
@@ -503,7 +507,9 @@ def corporate_pl(r: _Reader, fallback: _Reader | None = None, source: str = "") 
     # related to subsidiaries, associates and joint ventures" 410.2 Cr = the 410.47 Cr Expenses gap (run 40726456306)
     inv_rows = r.rows(EXPENSE_ROW_PARENTS, INVESTMENT_LOSS)
     # and a fair value (gain)/loss on investments, signed as filed (TMCV Q2FY27 708 Cr), once when a row matches both patterns
-    inv_rows += [x for x in r.rows(EXPENSE_ROW_PARENTS, FAIR_VALUE_INVESTMENT) if x not in inv_rows]
+    if r.at.get("months") == 3:   # a results file's quarter only: in the annual reports the rule moved 0 rows right and 31 wrong (Grasim FY23
+        # 8,736.95, Zydus, Lloyds Metals, OFSS; run 41166426469); proven on TMCV's quarters
+        inv_rows += [x for x in r.rows(EXPENSE_ROW_PARENTS, FAIR_VALUE_INVESTMENT) if x not in inv_rows]
     inv_loss = _sum_rows(inv_rows) if inv_rows else 0.0
     loss += inv_loss
     # bank charges are a finance cost for screener: HAL, IndiGo and IOC, every year FY24-FY26 and both bases, the yearly

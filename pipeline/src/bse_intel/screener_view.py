@@ -619,8 +619,13 @@ def bank_pl(r: _Reader, source: str = "") -> dict[str, Row]:
     out["Interest"] = Row(expended, ("InterestExpended" if expended is not None else "missing InterestExpended") + src)
     out["Depreciation"] = Row(dep, ("AdjustmentsForDepreciationAndAmortisationExpense (cash flow)" if dep is not None
                                     else "missing AdjustmentsForDepreciationAndAmortisationExpense (no cash flow in this period)") + src)
-    expenses = None if None in (opex, dep) else opex + (prov or 0.0) - dep
-    out["Expenses"] = Row(expenses, ("OperatingExpenses + ProvisionsOtherThanTaxAndContingencies - Depreciation" if expenses is not None
+    # a loss filed as an exceptional item is in screener's Expenses (a gain is in its Other Income, below), so Financing Profit +
+    # Other Income - Depreciation stays the filed PBT (SBI FY24: its 7,100.31 Cr pension charge, Expenses and Financing Profit
+    # apart by exactly that, both bases, screener-rows run 41174640014)
+    loss = -min(exc or 0.0, 0.0)
+    expenses = None if None in (opex, dep) else opex + (prov or 0.0) - dep + loss
+    out["Expenses"] = Row(expenses, ("OperatingExpenses + ProvisionsOtherThanTaxAndContingencies - Depreciation"
+                                     + (" + exceptional loss" if loss else "") if expenses is not None
                                      else "missing OperatingExpenses or Depreciation") + src)
     fp = None if None in (earned, expended, expenses) else earned - expended - expenses
     out["Financing Profit"] = Row(fp, "Revenue - Interest - Expenses" + src)

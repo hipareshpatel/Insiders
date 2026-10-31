@@ -189,7 +189,7 @@ def test_hdfc_bank_quarter_and_half_year_by_the_bank_recipe():
     assert q["Other Income"].value == pytest.approx(34227.06, abs=0.01)
     assert q["Depreciation"].value is None and q["Expenses"].value is None      # the quarter has no cash flow
     h = sv.bank_pl(sv._Reader(facts, end=date(2026, 9, 30), months=6))
-    assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68, abs=0.02)
+    assert h["Expenses"].value == pytest.approx(100308.45 + 8011.84 - 2218.68 + 1975.04, abs=0.02)   # its exceptional loss in Expenses
     assert h["Financing Profit"].value == pytest.approx(h["Revenue"].value - h["Interest"].value - h["Expenses"].value)
     bs = sv.bank_bs(sv._Reader(facts, instant=date(2026, 9, 30)))
     assert {"Equity Capital", "Reserves", "Deposits", "Borrowing", "Other Liabilities", "Total Liabilities", "Total Assets", "Fixed Assets",
@@ -939,3 +939,14 @@ def test_statements_rows_of_writes_the_bank_and_nbfc_balance_sheet_rows_for_the_
         d = dict(trimmed(name).doc, period="Q4FY26", basis="STANDALONE")
         got = {table: rows for table, rows, _ in statements.rows_of(d)}
         assert got["balance"][row].value is not None and got["balance"]["Total Assets"].value
+
+
+def test_a_negative_bank_exceptional_item_goes_to_expenses_and_pbt_stays_as_filed():
+    """SBI FY24: its 7,100.31 Cr pension charge is in screener's Expenses and Financing Profit, both bases (run 41174640014)."""
+    facts = xf.Facts(doc([("InterestEarned", "D2026", 100.0), ("InterestExpended", "D2026", 50.0), ("OperatingExpenses", "D2026", 20.0),
+                          ("AdjustmentsForDepreciationAndAmortisationExpense", "D2026", 2.0), ("OtherIncome", "D2026", 10.0),
+                          ("ExceptionalItems", "D2026", -7.0), ("ProfitLossFromOrdinaryActivitiesBeforeTax", "D2026", 33.0)],
+                         template="BANKING"))
+    rows = values(sv.bank_pl(sv._Reader(facts, end=END, months=12)))
+    assert rows["Expenses"] == pytest.approx(25.0) and rows["Other Income"] == pytest.approx(10.0)
+    assert rows["Financing Profit"] + rows["Other Income"] - rows["Depreciation"] == pytest.approx(rows["Profit before tax"])

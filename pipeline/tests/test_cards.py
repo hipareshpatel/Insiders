@@ -538,13 +538,16 @@ e. Finance costs  8,483  2,341  1.882  15,066  13.492
 """
 
 
-def test_unit_slips_never_make_a_correction_two_places_cannot_write():
+def test_unit_slips_never_shrink_a_figure_under_five_lakh():
     from bse_intel.grounding import unit_slips
 
     card = ["Finance costs rose to ₹84.83 Cr from ₹18.82 Cr (Q4FY25)."]
     assert unit_slips(card, HUBTOWN_LAKH) == []   # 18.82 -> 1.882 lakh = ₹0.01882 Cr, never "₹0.02 Cr"
-    # a slip that two places write exactly is still corrected: 8,483 lakh carded as ₹8,483 Cr is ₹84.83 Cr
+    # real slips are still corrected: 8,483 lakh carded as ₹8,483 Cr is ₹84.83 Cr
     assert unit_slips(["Finance costs of ₹8,483 Cr"], HUBTOWN_LAKH) == [("8,483", 8483.0, 0, 84.83, 2)]
+    # and a small one is written with the places it needs: 45.67 lakh carded as ₹4,567 Cr is ₹0.457 Cr
+    small = HUBTOWN_LAKH.replace("1,252  1.118", "45.67  1.118")
+    assert unit_slips(["Employee costs of ₹4,567 Cr"], small) == [("4,567", 4567.0, 0, 0.457, 3)]
 
 
 # Tinna Rubber's Q2FY27 statement (held-card audit, 22 Oct 2026): the lakh header garbled by OCR ("fRl. in lakh"), one

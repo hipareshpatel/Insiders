@@ -417,7 +417,10 @@ export function statementMetrics(entries: StatementEntry[] | undefined, basis: s
       if (row === "Revenue") out.push({ ...base, metric: "interest_earned" });
     }
   }
-  return out.some((m) => m.metric === "revenue" || m.metric === "pat") ? out : fallback;
+  if (!out.some((m) => m.metric === "revenue" || m.metric === "pat")) return fallback;
+  // statements start at FY23: an older period keeps the old figure, so a 5- or 10-year growth box still has its base year
+  const have = new Set(out.map((m) => `${m.metric}|${m.period}`));
+  return [...out, ...fallback.filter((m) => !have.has(`${m.metric}|${m.period}`))];
 }
 
 /** `statementMetrics` on the page's main basis: the one memory's metrics carry, else consolidated when its statements have it. */

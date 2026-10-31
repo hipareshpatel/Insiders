@@ -166,8 +166,31 @@ class ScreenerStore:
             self._quarters[(symbol, basis)] = quarters
         return self._quarters[(symbol, basis)]
 
+    def years(self, symbol: str, basis: str) -> dict:
+        """The page's annual Net Profit by year ({"FY25": {"pat": ...}}), from screener_view's reading of the whole page."""
+        k = ("years", symbol, basis)
+        if k not in self._quarters:
+            from . import screener_crosscheck as sc
+            from . import screener_download as sd
+            from . import screener_view as sv
+            if self._keys is None:
+                self._keys = sc.stored_pages(self.sink)[0]
+            years: dict = {}
+            key = (self._keys.get(symbol) or {}).get(basis)
+            try:
+                blob = self.sink.get_object(key) if key else None
+                page = sv.parse_page(sd.unpack(blob)) if blob else None
+            except Exception:   # noqa: BLE001 - a damaged page is no confirmation
+                page = None
+            if page and page.get("basis") == basis:
+                for fy, v in ((page.get("tables") or {}).get("annual", {}).get("Net Profit") or {}).items():
+                    years[fy] = {"pat": v}
+            self._quarters[k] = years
+        return self._quarters[k]
+
     def figure(self, symbol: str, basis: str, metric: str, period: str) -> float | None:
-        value = (self.quarters(symbol, basis).get(period) or {}).get(metric)
+        table = self.years(symbol, basis) if period.startswith("FY") else self.quarters(symbol, basis)
+        value = (table.get(period) or {}).get(metric)
         return float(value) if isinstance(value, (int, float)) else None
 
 

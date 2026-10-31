@@ -184,3 +184,19 @@ def test_the_screener_store_reads_the_stored_page_on_the_basis(monkeypatch):
     assert store.figure("VEDL", "CONSOLIDATED", "revenue", "Q2FY26") == 16736.0
     assert store.figure("VEDL", "CONSOLIDATED", "revenue", "Q1FY26") is None
     assert store.figure("OTHER", "CONSOLIDATED", "revenue", "Q2FY26") is None
+
+
+def test_the_screener_store_reads_a_years_net_profit_from_the_annual_section(monkeypatch):
+    from bse_intel import screener_download as sd
+    from bse_intel import screener_view as sv
+
+    class FakeSink:
+        def list_objects(self, prefix):
+            return ["raw/screener/2026-10-28/ABC_c.html.gz"]
+
+        def get_object(self, key):
+            return sd.pack("<html>c</html>")
+
+    monkeypatch.setattr(sv, "parse_page", lambda body: {"basis": "CONSOLIDATED", "tables": {"annual": {"Net Profit": {"FY25": 541.0}}}})
+    store = rp.ScreenerStore(FakeSink())
+    assert store.figure("ABC", "CONSOLIDATED", "pat", "FY25") == 541.0 and store.figure("ABC", "CONSOLIDATED", "pat", "FY24") is None

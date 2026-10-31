@@ -408,4 +408,4 @@ def test_primesecu_like_nbfc_quarters_find_their_bases_beside_filler_owners_rows
                              _entry("Q4FY25", _rows(12.33, 2.0, 1.0, 0.8, owners=0.0), family="nbfc"),
                              _entry("Q3FY26", _rows(30.18, 6.0, 3.0, 2.1, owners=0.0), family="nbfc")]}
     pat = rt.company_tables(memory)["Q4FY26"]["pat"]
-    assert (pat["prev_year"], pat["yoy_turn"], pat["prev_quarter"] if "prev_quarter" in pat else None, pat["qoq_turn"]) == (0.8, "PROFIT_TO_LOSS", None, "PROFIT_TO_LOSS")
+    assert (pat["prev_year"], pat["yoy_turn"], pat["prev_quarter"], pat["qoq_turn"]) == (0.8, "PROFIT_TO_LOSS", 2.1, "PROFIT_TO_LOSS")

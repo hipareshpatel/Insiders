@@ -381,6 +381,50 @@ def lines_making(cand: list[tuple[str, float]], gap: float, most: int = 3, limit
     return out
 
 
+SECTION_OF = {"quarters": "quarters", "annual": "profit-loss", "balance": "balance-sheet", "cash_flow": "cash-flow"}
+
+
+def _amount_text(raw) -> float | None:
+    """A sub-row cell in crore ("1,234", "-56.7"); None for a percent cell or anything else."""
+    text = str(raw or "").replace(",", "").strip()
+    if not text or text.endswith("%"):
+        return None
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def sub_row_hints(answer: dict | None, column: str | None, gap: float, limit: int = 3) -> tuple[str, str]:
+    """(screener's sub-rows of the head in that column, compact; the sub-rows, alone or two together, that equal the gap) for a row
+    apart: which part of screener's head we leave out or add (owner, 31 Oct 2026: "screener's stock page has sub rows for most
+    items"). Amount cells only; a percent sub-row (the Expenses heads of a quarter) is left out."""
+    if not answer or not column:
+        return "", ""
+    cells = [(name, v) for name, row in answer.items() if isinstance(row, dict) and (v := _amount_text(row.get(column))) is not None]
+    listed = "; ".join(f"{name} {_fmt(v)}" for name, v in cells[:10])
+    tol = max(ABS_TOL, abs(gap) * 0.005)
+    hits = [f"{name} {_fmt(v)}" for name, v in cells if v and abs(abs(v) - abs(gap)) <= tol]
+    if not hits:
+        for i, (a, va) in enumerate(cells):
+            for b, vb in cells[i + 1:]:
+                if not (va and vb):
+                    continue
+                for sign in (1, -1):
+                    if abs(abs(va + sign * vb) - abs(gap)) <= tol:
+                        hits.append(f"{a} {_fmt(va)} {'+' if sign > 0 else '-'} {b} {_fmt(vb)}")
+                        break
+    return listed, "; ".join(hits[:limit])
+
+
+def column_for(table: str, period: str) -> str | None:
+    """Screener's column heading for a compared period of any table: a balance sheet's Q4FY25 and a cash flow's FY25 are "Mar 2025"."""
+    if table == "balance":
+        m = re.fullmatch(r"Q([1-4])FY(\d\d)", period)
+        return column_of("quarters", period) if m else None
+    return column_of("annual" if table == "cash_flow" else table, period)
+
+
 def part_gaps(r: _Reader, ours_expenses: float, answer: dict, column: str, sales: float, gap: float) -> tuple[str, str]:
     """(which part holds the gap, the lines inside that part that make it) for an Expenses row apart."""
     parts = expense_parts(answer, column, sales, ours_expenses + gap)     # screener's Expenses: ours + its gap
@@ -1319,6 +1363,8 @@ def compare(page: dict, cf: CompanyFacts, scrip: str = "", symbol: str = "", bas
                             rec["hints"] = "; ".join(gap_hints(reader, theirs - got.value))
                             rec["pairs"] = "; ".join(gap_pairs(reader, theirs - got.value))
                             sales = ((page.get("tables") or {}).get(table, {}).get("Sales") or {}).get(period)
+                            head = (sub_rows or {}).get(f"{SECTION_OF[table]}|{row}")
+                            rec["sub rows"], rec["sub match"] = sub_row_hints(head, column_for(table, period), theirs - got.value)
                             answer = (sub_rows or {}).get(("quarters" if table == "quarters" else "profit-loss") + "|Expenses")
                             col = column_of(table, period)
                             if row == "Expenses" and answer and col and sales:
@@ -1473,7 +1519,8 @@ def summarise(results: list[dict], pages_day: str | None = None) -> dict:
 
 
 CSV_HEADER = ("company", "sector", "industry", "basis", "period", "table", "row", "screener", "ours", "diff", "status", "recipe note",
-              "gap matches", "gap pairs", "expense parts apart", "lines in that part", "year by source")
+              "gap matches", "gap pairs", "expense parts apart", "lines in that part", "year by source",
+              "screener sub-rows", "sub-rows equal to the gap")
 
 
 def to_csv(summary: dict) -> str:
@@ -1483,7 +1530,8 @@ def to_csv(summary: dict) -> str:
     for r in summary["rows"]:
         w.writerow([r["company"], r.get("sector", "unknown"), r.get("industry", ""), r["basis"], r["period"], r["table"], r["row"], r["screener"],
                     "" if r["ours"] is None else r["ours"], "" if r["diff"] is None else r["diff"], r["status"], r["note"],
-                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", ""), r.get("alts", "")])
+                    r.get("hints", ""), r.get("pairs", ""), r.get("parts", ""), r.get("part lines", ""), r.get("alts", ""),
+                    r.get("sub rows", ""), r.get("sub match", "")])
     return buf.getvalue()
 
 

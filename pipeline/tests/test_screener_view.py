@@ -972,3 +972,13 @@ def test_a_bank_states_its_stock_options_in_the_balance_sheet_note_and_screener_
     assert march["Reserves"].value == pytest.approx(54545.11) and march["Other Liabilities"].value == pytest.approx(15454.89)
     alone = sv.bank_bs(sv._Reader(xf.Facts(doc(base + [segment], template="BANKING")), instant=END))
     assert alone["Reserves"].value == pytest.approx(50000.0)
+
+
+def test_a_row_apart_names_the_screener_sub_rows_that_equal_its_gap():
+    head = {"Long term Borrowings": {"Mar 2025": "1,200"}, "Short term Borrowings": {"Mar 2025": "300"},
+            "Lease Liabilities": {"Mar 2025": "45.5"}, "Other Borrowings": {"Mar 2025": "0"}}
+    listed, hit = sv.sub_row_hints(head, "Mar 2025", -45.4)
+    assert "Long term Borrowings 1,200.00" in listed and hit == "Lease Liabilities 45.50"
+    assert sv.sub_row_hints(head, "Mar 2025", 1245.5)[1] == "Long term Borrowings 1,200.00 + Lease Liabilities 45.50"
+    assert sv.sub_row_hints({"Material Cost %": {"Mar 2025": "40%"}}, "Mar 2025", 40.0) == ("", "")
+    assert sv.column_for("balance", "Q4FY25") == "Mar 2025" and sv.column_for("cash_flow", "FY25") == "Mar 2025"

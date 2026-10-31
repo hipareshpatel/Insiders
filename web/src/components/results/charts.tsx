@@ -1,4 +1,4 @@
-import type { GroupRow, KpiSummary } from "../../../shared/resultsTypes";
+import type { KpiSummary } from "../../../shared/resultsTypes";
 import { cn } from "../../lib/cn";
 import {
   barHeight, fmtPct, medianSlot, niceTicks, scaleX, sparkPath, spreadBins, stackWidths, type SpreadKey,
@@ -153,53 +153,6 @@ function sparkPathOn(vals: (number | null)[], xs: (i: number) => number, ys: (v:
     on = true;
   });
   return { d: d.trim() };
-}
-
-/** Groups ranked by the middle company's profit growth: the median (filled) and the total (hollow) joined by a line. */
-export function RankedDots({ rows, total, onPick, w = 720 }: {
-  rows: GroupRow[]; total: (r: GroupRow) => number | null; onPick?: (r: GroupRow) => void; w?: number;
-}) {
-  const vals = rows.flatMap((r) => [r.pat_median, total(r)]).filter((v): v is number => v != null);
-  if (!vals.length) return <p className="py-10 text-center text-[13px] text-ink-3">No group has a per cent change yet.</p>;
-  const ticks = niceTicks(Math.min(...vals) - 2, Math.max(...vals) + 2, 8);
-  const lo = ticks[0], hi = ticks[ticks.length - 1];
-  const lab = 190, R = 72, rh = 38, top = 30, h = top + rows.length * rh + 6;
-  const x = (v: number) => scaleX(v, lo, hi, lab, w - R);
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} width="100%" role="img" aria-label="Profit growth by group: median and total">
-      {ticks.map((t) => (
-        <g key={t}>
-          <line x1={x(t)} x2={x(t)} y1={top - 6} y2={h - 6} stroke={t === 0 ? "var(--line-strong)" : "var(--line)"} />
-          <text x={x(t)} y={top - 12} textAnchor="middle" fontSize={11} fill="var(--ink-3)">{`${t}%`}</text>
-        </g>
-      ))}
-      {rows.map((r, i) => {
-        const y = top + i * rh + rh / 2, mv = r.pat_median, tv = total(r);
-        const name = r.label.length > 24 ? `${r.label.slice(0, 23)}…` : r.label;
-        const mRight = mv != null && tv != null ? mv >= tv : true;
-        return (
-          <g key={r.id} className={onPick ? "cursor-pointer" : undefined} onClick={onPick ? () => onPick(r) : undefined}>
-            <title>{`${r.label}: median ${fmtPct(mv)}, total ${fmtPct(tv)}`}</title>
-            <rect x={0} y={y - rh / 2} width={w} height={rh} fill="transparent" />
-            <text x={0} y={y + 5} fontSize={14} fontWeight={i === 0 ? 700 : 500} fill="var(--ink)">{name}</text>
-            {mv != null && tv != null && <line x1={x(Math.min(mv, tv))} x2={x(Math.max(mv, tv))} y1={y} y2={y} stroke="var(--ink-3)" strokeWidth={2} />}
-            {tv != null && (
-              <>
-                <circle cx={x(tv)} cy={y} r={5} fill="var(--surface)" stroke="var(--ink-2)" strokeWidth={1.8} />
-                <text x={x(tv) + (mRight ? -11 : 11)} y={y + 4.5} textAnchor={mRight ? "end" : "start"} fontSize={12.5} fill="var(--ink-2)">{fmtPct(tv)}</text>
-              </>
-            )}
-            {mv != null && (
-              <>
-                <circle cx={x(mv)} cy={y} r={6} fill="var(--accent)" stroke="var(--surface)" strokeWidth={2} />
-                <text x={x(mv) + (mRight ? 12 : -12)} y={y + 4.5} textAnchor={mRight ? "start" : "end"} fontSize={13} fontWeight={700} fill="var(--ink)">{fmtPct(mv)}</text>
-              </>
-            )}
-          </g>
-        );
-      })}
-    </svg>
-  );
 }
 
 const STACK = ["bg-d-neg text-white", "bg-d-1 text-[#0b1a12]", "bg-d-2 text-white", "bg-d-3 text-white"];

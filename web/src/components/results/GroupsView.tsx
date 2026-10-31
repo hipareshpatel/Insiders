@@ -7,7 +7,7 @@ import { istDate } from "../../lib/format";
 import { fmtPct, groupNoun, groupsBullets, groupsLead, quarterLabel, quarterSeries, sharedScale } from "../../lib/resultsView";
 import { Button } from "../ui/button";
 import { Growth, Panel, SegControl, Segs, Skeleton } from "./bits";
-import { RankedDots, Spark, SpreadStack } from "./charts";
+import { Spark, SpreadStack } from "./charts";
 
 const BY: { key: GroupBy; label: string }[] = [{ key: "index", label: "Index" }, { key: "sector", label: "Sector" }, { key: "industry", label: "Industry" }];
 const CUTS: { key: Cut; label: string }[] = [{ key: "all", label: "All" }, { key: "ex_financials", label: "Ex-financials" }, { key: "financials", label: "Financials" }];
@@ -46,9 +46,8 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
         </div>
       ) : !res.data ? (
         <div className="mt-7 grid gap-4 lg:grid-cols-[7fr_5fr]" aria-busy="true">
-          <Panel><Skeleton className="h-3 w-56" /><Skeleton className="mt-6 h-[320px]" /></Panel>
-          <div className="flex flex-col gap-4"><Panel><Skeleton className="h-3 w-24" /><Skeleton className="mt-4 h-20" /><Skeleton className="mt-4 h-16" /></Panel>
-            <Panel><Skeleton className="h-24" /></Panel></div>
+          <Panel><Skeleton className="h-3 w-24" /><Skeleton className="mt-4 h-20" /><Skeleton className="mt-4 h-16" /></Panel>
+          <Panel><Skeleton className="h-24" /></Panel>
         </div>
       ) : rows.length === 0 ? (
         <div className="mt-7 rounded-2xl bg-surface-2 px-6 py-14 text-center">
@@ -57,26 +56,17 @@ export function GroupsView({ quarter, by, cut, setParams, onPick }: {
         </div>
       ) : (
         <>
+          {/* owner, 31 Oct 2026: the ranked-dots chart is gone (the table below holds the same median and total; on a phone one outlying
+              group squashed the scale and long names ran into the numbers) */}
           <div className="mt-7 grid gap-4 lg:grid-cols-[7fr_5fr]">
-            <Panel title={<>Profit growth by {groupNoun(by)}, {q} <span className="font-normal text-ink-2">· ranked by median profit growth{cut !== "all" ? `, ${CUT_WORDS[cut]}` : ""}</span>
-              <span className="mt-2 flex flex-wrap gap-3.5 text-[12.5px] font-normal text-ink-2">
-                <span><i aria-hidden className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full bg-accent align-[-1px]" />Median</span>
-                <span><i aria-hidden className="mr-1.5 inline-block h-2.5 w-2.5 rounded-full align-[-1px] ring-[1.8px] ring-inset ring-ink-2" />Total (all profits added up)</span>
-              </span></>}>
-              <div className={cn(rows.length > 14 && "max-h-[620px] overflow-y-auto")}>
-                <RankedDots rows={rows} total={(r) => patTotal(r, cut)} onPick={(r) => onPick(r, by)} />
-              </div>
+            <Panel title="What it says">
+              <p className="text-[19px] font-semibold leading-[1.32] tracking-[-0.01em] text-ink sm:text-[21px]"><Segs segs={groupsLead(rows, by)} /></p>
+              <ul className="mt-3.5 grid gap-2 text-[14px] text-ink-2">{groupsBullets(rows, by).map((t) => <li key={t}>· {t}</li>)}</ul>
             </Panel>
-            <div className="flex flex-col gap-4">
-              <Panel title="What it says">
-                <p className="text-[19px] font-semibold leading-[1.32] tracking-[-0.01em] text-ink sm:text-[21px]"><Segs segs={groupsLead(rows, by)} /></p>
-                <ul className="mt-3.5 grid gap-2 text-[14px] text-ink-2">{groupsBullets(rows, by).map((t) => <li key={t}>· {t}</li>)}</ul>
-              </Panel>
-              <Panel title="Median or total?" className="text-[15px] text-ink-2">
-                <p><b className="text-ink">Median</b> is the middle value: every company counts the same. <b className="text-ink">Total</b> adds up all their
-                  profits: the biggest companies count most. Companies that turned a loss into a profit have no % and sit out of medians; totals include them.</p>
-              </Panel>
-            </div>
+            <Panel title="Median or total?" className="text-[15px] text-ink-2">
+              <p><b className="text-ink">Median</b> is the middle value: every company counts the same. <b className="text-ink">Total</b> adds up all their
+                profits: the biggest companies count most. Companies that turned a loss into a profit have no % and sit out of medians; totals include them.</p>
+            </Panel>
           </div>
 
           <div className="mb-2 mt-[34px] flex flex-wrap items-end justify-between gap-3">

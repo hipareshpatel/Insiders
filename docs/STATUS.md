@@ -4,7 +4,7 @@ Read this first. It replaces the "pending", "status" and "next" parts of `PLAN.m
 and `docs/audit/actions-pending.md`. Those files stay as history; do not work from their lists. Keep this page current:
 when something changes, change it here, in plain English, with the date and time in IST.
 
-Last updated: 29 Oct 2026, 18:37 IST.
+Last updated: 31 Oct 2026, 06:25 IST (handover at the top of section 3).
 
 ## 0. How the lead session works (owner, 27 Oct 2026, ~22:15 IST)
 
@@ -91,6 +91,60 @@ in older files are history.
 Not met. The rate has stayed between 15% and 23% for a week while about 120 fixes shipped (F104-F222).
 
 ## 3. Open work, in order
+
+**Handover, 31 Oct 2026 ~06:25 IST: the Results page and REITs session (branch `ccr-69266234-c8jxew`).** In plain words, for the next
+session. Read this block, then the table below.
+
+*Merged and live (30-31 Oct).*
+- **#272** the Results page as a KPI report (took over #268, whose branch was left with a half-built page; #268 and the older #223 are
+  closed). One row per company and quarter in D1 `results_kpi`, from each company's saved statements only (no card). Review fixes in
+  it: stale quarters removed (`results_kpi_prune`), profit pace only on the same basis, a zero base going to a loss reads as "loss
+  widened", avatar colours at 4.5:1, `resultsView.test.ts` added to `npm test` (CI had never run it; four of its tests were wrong).
+- **#274** `results-table` saves every 100 companies (a stopped run keeps its work); each view ranks by its own column; market words
+  ("median", "Profit up, EBITDA down"); the Nifty 500 box says how many members are not covered. **#275** a link naming only a view
+  (`?view=momentum`) ranks by that view's column (measured live 31 Oct: the three views lead with different companies).
+- **#276** REIT plan and findings (item 12). **#279** REITs and InvITs, step 1 (`reit_results.py`, Maintenance `reit-results`, kinds
+  `reit` and `invit`, trusts kept by `prune-companies`). **#280** hotfix: #279 put a `#` comment inside the folded `group: >-`
+  concurrency expression of `maintenance.yml`, and GitHub refused every Maintenance dispatch until it was merged (about 5 minutes,
+  31 Oct ~06:00 IST). The automatic pipeline (`pipeline.yml`) was not affected.
+
+*First full build of `results_kpi` (30 Oct, ~23:22 IST, Maintenance `results-table`).* Companies a quarter: Q2FY27 572 (season under
+way), Q1FY27 1,820, Q4FY26 1,756, Q3FY26 1,744, Q2FY26 1,701, Q1FY26 1,683, Q4FY25 1,462, Q3FY25 1,469, Q2FY25 1,439, Q1FY25 1,404,
+Q4FY24 929; older quarters a handful (a company keeps its newest ten). Index refresh (Sync indices) the same night: Nifty 500 247 of
+497 reported for Q2FY27 then. A late filer appears within one or two pipeline runs once its exchange XBRL file is read (the results
+step refreshes companies with a results card in the last 10 days).
+
+*REIT 100-file test, read 31 Oct ~06:30 IST* (Maintenance `reit-results`, `file_cap` 100, run 41150836776, 06:10-06:20 IST): NSE listed
+193 filings, 185 after revisions; 100 downloaded and kept (`raw/reit-xbrl/`), the cap reached as planned, none unreadable; all 27 trusts
+in `companies`; 54 quarter rows (Q1FY27 26, Q2FY27 5, Q4FY26 23). The Nifty 500 box reads 260 of 500 members (no "not covered" note).
+Against Screener: Embassy Sep 2026 1,302.6 / 980 / 831 and Jun 2026 1,240.8 / 959 / 195 (Screener 1,303 / 980 / 831 and 1,241 / 959 /
+195): equal. Brookfield Jun 2026 sales 973.8 (Screener 974), operating profit 713.6 (Screener 701, not explained yet: our expenses are
+total expenses less finance cost and depreciation), profit 179.8 to unitholders against Screener's 221.3 total (41.5 minority interest:
+the page's rule is the owners' share, as for companies). Bagmane Jun 2026 437.0 / 364.2 / 57.9 (Screener 437 / 364 / 59, total 58.5).
+Bagmane's newest file (broadcast 22 Oct) is its June quarter, filed late; NSE's list calls it period 31-Mar-2027. No growth figures yet:
+the year-ago files are among the 85 not downloaded. Four more files were fetched once by hand (Brookfield, Bagmane) to check the above.
+Next: the full run (`file_cap` 100 more is enough: 85 left), then the year-ago check; the list reaches back to Sep 2025 only by default
+(Q1FY27 has no year-ago file without a `from_date`); a daily refresh step; trusts' market cap; the R2 lifecycle for `raw/reit-xbrl/`;
+step 2 (NDCF, distribution per unit, NAV per unit).
+
+*Open PR.* **#281** (not merged, waits for the owner's OK): the top of the Companies tab as the owner's Design E (revenue / EBITDA /
+PAT up and loss-to-profit tiles with medians, progress ring with the next meeting, "What this list says" kept, spread of PAT growth,
+"Is profit growth speeding up?"), and the By group ranked-dots chart removed (one outlying group squashed it on a phone).
+
+*Waiting for the owner.* (1) Merge #281. (2) A minimum group size, proposed 5 companies reported, before a group is ranked or named
+"leads the season" (live, 31 Oct: Diversified +480% and Telecom Equipment +1,746% led their tabs on one or two companies). (3) The REIT
+full run (the 100-file test is read, above).
+
+*Learned the hard way.*
+- No `#` inside a folded `${{ }}` expression in a workflow: YAML loads it and CI passes, GitHub refuses the dispatch.
+- NSE answers an unknown `index=` name with `{"data":[],"msg":"no data found"}`, the same as a real empty answer: test a made-up name as
+  a control before calling a source empty. The REIT/InvIT call is `index=reitsinvits`, found in NSE's own `corporate-filings.js`.
+- NSE's REIT list puts the year end in `periodEnded` on some new files (Embassy and IRB InvIT, Sep 2026 quarter: 31-Mar-2027); the quarter
+  comes from the XBRL's own three-month context.
+- Screener links a REIT's quarter to BSE's PDF; NSE has the XBRL, with the same Ind AS tags as a company plus the trust's own.
+- `vite preview` keeps the file list it started with: restart it after a rebuild, or the page is blank (the scripts answer as HTML).
+- `actions_list` on `maintenance.yml` returns very large JSON (commit messages): read only id, status and conclusion with `jq`.
+
 
 **Results page as a KPI report from the saved statements, 30 Oct 2026 ~22:00 IST (owner: "only the saved statements, no card"; "consolidated over standalone"; "no company repeated"; "growth filters and sorting, redesign the entire page as a KPI report").** Built: `results_table.py` (`results-table`) turns each company's `statements` (the company page's Results tab source) into one row per company and quarter in the D1 table `results_kpi` (revenue, EBITDA, PAT, margin and their changes); the Worker's `/api/results-kpi` filters and sorts them in the database; the page shows one row per company for a quarter with a summary strip. Each pipeline run refreshes the live window's companies; the first full build is Maintenance > results-table (`--all`), run after the deploy has applied migration 0015. Also built (PR #268, owner 30 Oct 2026 "update it every Sunday"): `sync-indices` (workflow `sync-indices.yml`, Sundays 09:00 IST) keeps NSE's broad index members in `index_members`; the page's index filter, sector and industry filters and the by-group medians wait on the owner's approval of the design. Not yet measured: how many companies each quarter has (read the first full build). Banks and insurers have no row. The page no longer reads a card.
 

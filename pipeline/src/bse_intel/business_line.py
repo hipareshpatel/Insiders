@@ -56,9 +56,10 @@ def operating(metric: str | None) -> bool:
     return bool(metric) and _norm(metric) not in STATEMENT_FIGURES
 
 
-def known_lines(dossier: dict | None) -> list[str]:
+def known_lines(dossier: dict | None, segments: bool = True) -> list[str]:
     """The names memory knows for this company: lines already stored on figures first, then its segments and the
-    subsidiaries, JVs and brands its identity names. In order, without repeats."""
+    subsidiaries, JVs and brands its identity names. In order, without repeats. ``segments`` False leaves the segment names out:
+    a segment can be the whole business ("Cement" for a cement company), so code never reads a line from it (review of #324)."""
     from .dossier import _bare_name
 
     d = dossier or {}
@@ -66,7 +67,8 @@ def known_lines(dossier: dict | None) -> list[str]:
     for e in d.get("financial_metrics", []):
         if isinstance(e, dict):
             names += [e.get("line"), *[s.get("line") for s in e.get("sources", []) if isinstance(s, dict)]]
-    names += [e.get("segment") for e in d.get("segment_mix", []) if isinstance(e, dict)]
+    if segments:
+        names += [e.get("segment") for e in d.get("segment_mix", []) if isinstance(e, dict)]
     names += [_bare_name(e.get("name") or "") for e in (d.get("identity") or {}).get("entities", []) if isinstance(e, dict)]
     seen, out = set(), []
     for name in names:
@@ -86,7 +88,7 @@ def detect(text: str | None, dossier: dict | None) -> str | None:
     """The one known line the text names, else None (nothing named, or two lines named: then the figures decide for themselves)."""
     if not text:
         return None
-    found = [n for n in known_lines(dossier) if _mentions(text, n)]
+    found = [n for n in known_lines(dossier, segments=False) if _mentions(text, n)]
     # one name inside another ("Royal Enfield" and "Royal Enfield Motorcycles"): the longest is the line
     found = [n for n in found if not any(n != m and _key(n) in _key(m) for m in found)]
     return found[0] if len(found) == 1 else None
@@ -105,8 +107,8 @@ def canonical(line: str | None, dossier: dict | None) -> str | None:
 
 def assign(metrics: list, filing, dossier: dict | None) -> int:
     """Set ``line`` on the operating figures of this filing's answer (FinancialMetric objects, in place); returns how many
-    carry one. Code first: the headline or subject naming exactly one known line sets it, whatever the model said. Else the
-    model's own line, in memory's spelling. A figure the exchange file built, or a statement line, never takes one."""
+    carry one. The model's own line first, in memory's spelling; else the headline or subject naming exactly one known line
+    (a subsidiary, JV or a line already stored, never a segment name: review of #324). A figure the exchange file built, or a statement line, never takes one."""
     if not enabled():
         return 0
     named = detect(f"{getattr(filing, 'headline', '')} {getattr(filing, 'subject', '')}", dossier)
@@ -115,7 +117,7 @@ def assign(metrics: list, filing, dossier: dict | None) -> int:
         if getattr(m, "by", None) in ("file", "calc") or not operating(m.metric):
             m.line = None
             continue
-        m.line = named or canonical(getattr(m, "line", None), dossier)
+        m.line = canonical(getattr(m, "line", None), dossier) or named
         n += bool(m.line)
     return n
 
@@ -137,7 +139,8 @@ def view(dossier: dict | None, line: str | None) -> dict | None:
     if not any(isinstance(e, dict) and e.get("line") for e in dossier.get("financial_metrics", [])):
         return dossier
     return {**dossier, "financial_metrics": [e for e in dossier.get("financial_metrics", [])
-                                             if not isinstance(e, dict) or e.get("line") == line]}
+                                             if not isinstance(e, dict) or not operating(e.get("metric"))
+                                             or e.get("line") == line]}   # statement rows are the whole company's: always kept
 
 
 def split_entry(entry: dict, lines: dict[str, str | None], multi: bool = False) -> list[dict]:

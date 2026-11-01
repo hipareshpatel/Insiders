@@ -208,3 +208,22 @@ def test_switch_off_the_prompt_and_view_are_unchanged(monkeypatch):
     monkeypatch.setenv("METRIC_BUSINESS_LINE", "1")
     system_on, _ = engine.pass2(flt, "MONTHLY_BUSINESS_UPDATE", None, None, "text")
     assert system_on == system_off + "\n\n" + engine._business_line and 'set "line"' in system_on
+
+
+def test_a_line_view_keeps_the_whole_company_statement_rows(monkeypatch):
+    """Review of #324: a reader of one line's series must still see revenue and profit (statement rows carry no line)."""
+    monkeypatch.setenv("METRIC_BUSINESS_LINE", "1")
+    from bse_intel import business_line
+    d = {"financial_metrics": [{"metric": "revenue", "period": "Q2FY27", "value": 5000.0},
+                               {"metric": "volumes", "period": "OCT-2026", "value": 10861.0, "line": "VECV"},
+                               {"metric": "volumes", "period": "OCT-2026", "value": 101000.0, "line": "Royal Enfield"}]}
+    got = business_line.view(d, "VECV")["financial_metrics"]
+    assert {(e["metric"], e.get("line")) for e in got} == {("revenue", None), ("volumes", "VECV")}
+
+
+def test_a_segment_name_is_never_read_as_a_line_from_the_headline(monkeypatch):
+    """Review of #324: "Cement" for a cement company is its whole business, not a line."""
+    monkeypatch.setenv("METRIC_BUSINESS_LINE", "1")
+    from bse_intel import business_line
+    d = {"segment_mix": [{"segment": "Cement", "period": "Q2FY27"}], "financial_metrics": []}
+    assert business_line.detect("Acme: cement production and sales volumes for October", d) is None

@@ -802,6 +802,9 @@ def vision_confirm(points: list[CallPoint], render, ask, max_calls: int = VISION
                 verdict[id(p)] = (True, "")
             else:
                 verdict[id(p)] = (False, "the slide does not show this figure for this label and period")
+    answered = sum(1 for keep, why in verdict.values() if keep or why.startswith("the slide does not"))
+    if verdict and not answered:   # a provider outage drops every assembled point: say so (review of #324)
+        log.warning("call memory vision check: no answer for any of %d assembled points (%d calls); all dropped", len(verdict), calls)
     kept: list[CallPoint] = []
     dropped: list[dict] = []
     for p in points:

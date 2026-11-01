@@ -1060,3 +1060,34 @@ def test_an_owners_tag_holding_the_comprehensive_income_is_the_whole_profit():
     honest = base + [("ProfitOrLossAttributableToOwnersOfParent", "Q2026", 1600.0)]
     got = values(sv.nbfc_pl(sv._Reader(xf.Facts(doc(honest, kind="results", template="NBFC")), end=END, months=3)))
     assert got["Net Profit (owners)"] == 1600.0
+
+
+def test_a_december_year_end_balance_sheet_comes_from_its_annual_report():
+    """SCHAEFFLER Q3FY24 / Q3FY25 (screener-rows run 41324707501): the year-end sheet was read from the results file, whose other
+    financial liabilities carry no lease rows, so Borrowings were 0 against screener's 51 and 56 (its leases). The annual report
+    holding 31 Dec now gives it; with no report the results file stays the source, as before."""
+    def dec(facts, kind, year=2024):
+        d = doc(facts, kind=kind, template="INDAS" if kind == "results" else "MCA-INDAS", year=2025)
+        d["contexts"][f"IY{year}"] = {"i": f"{year}-12-31"}
+        d["facts"] = [[el, f"IY{year}" if ctx == "IY" else ctx, *rest] for el, ctx, *rest in d["facts"]]
+        return d
+
+    sheet = [("Assets", "IY", 5000.0), ("EquityShareCapital", "IY", 31.26), ("OtherEquity", "IY", 3500.0),
+             ("EquityAndLiabilities", "IY", 5000.0)]
+    report = dec(sheet + [("LeaseLiabilitiesNoncurrent", "IY", 51.53)], "annual")
+    results_file = dec(sheet, "results")
+    end = date(2024, 12, 31)
+    with_report = _store({xf.annual_key("1", "FY25-12", "CONSOLIDATED"): report, xf.key("1", "Q3FY25", "CONSOLIDATED"): results_file})
+    assert with_report.year_end_sheet(end, "CONSOLIDATED", sv.CORPORATE)[1] == "annual report FY25-12"
+    rows, _ = sv._ours(with_report, sv.CORPORATE, "CONSOLIDATED", "balance", "Q3FY25", {})
+    assert rows["Borrowings"].value == pytest.approx(51.53)
+    # no report: the results file, exactly as before
+    alone = _store({xf.key("1", "Q3FY25", "CONSOLIDATED"): results_file})
+    assert alone.year_end_sheet(end, "CONSOLIDATED", sv.CORPORATE) == (None, "")
+    before, _ = sv._ours(alone, sv.CORPORATE, "CONSOLIDATED", "balance", "Q3FY25", {})
+    assert not before["Borrowings"].value
+    # a March quarter end, a lender, and a report without the year's equity at that date are no source
+    assert with_report.year_end_sheet(date(2025, 3, 31), "CONSOLIDATED", sv.CORPORATE) == (None, "")
+    assert with_report.year_end_sheet(end, "CONSOLIDATED", sv.BANK) == (None, "")
+    stray = _store({xf.annual_key("1", "FY25-12", "CONSOLIDATED"): dec([("Assets", "IY", 5000.0)], "annual")})
+    assert stray.year_end_sheet(end, "CONSOLIDATED", sv.CORPORATE) == (None, "")

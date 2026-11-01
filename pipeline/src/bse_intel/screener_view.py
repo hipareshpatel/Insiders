@@ -1294,6 +1294,30 @@ class CompanyFacts:
                     return f, f"results file {p}"
         return None, ""
 
+    def year_end_sheet(self, end: date | None, basis: str, fam: str) -> tuple[xbrl_facts.Facts | None, str]:
+        """(facts, label) of the balance sheet at a year end that is not March, from the annual report that holds it (the year's
+        own or the next one's comparative, the nearest first), with the year's equity in it so a stray note fact is no sheet; else
+        (None, ""). A December company's year-end sheet is its Q3 one, which was read from the results file alone, whose
+        other financial liabilities carry no lease rows: SCHAEFFLER Q3FY24 and Q3FY25 Borrowings 0 against screener's 51 and 56
+        (leases), Other Liabilities above by the same (screener-rows run 41324707501, 1 Nov 2026). A March quarter end, a lender
+        and a company with no report holding that date are unchanged."""
+        if end is None or end.month == 3 or fam != CORPORATE:
+            return None, ""
+        target = end.year % 100 + (end.month > 3)   # the label number of the year closing at ``end`` (Dec 2024 -> 25)
+
+        def label_num(afy: str) -> int:
+            m = re.fullmatch(r"FY(\d{2})(?:-\d{2})?", afy)
+            return int(m[1]) if m else -1
+
+        reports = sorted(((afy, key) for (afy, b), key in self.annual.items() if b == basis and label_num(afy) >= target),
+                         key=lambda r: label_num(r[0]) - target)
+        for afy, key in reports:
+            f = self._load(key)
+            if f is not None and f.cr("Assets", instant=end) is not None and \
+                    (f.cr("EquityShareCapital", instant=end) is not None or f.cr("Equity", instant=end) is not None):
+                return f, self._scale_label(key, f"annual report {afy}")
+        return None, ""
+
     def result(self, period: str, basis: str) -> xbrl_facts.Facts | None:
         return self._load(self.results.get((period, basis)))
 
@@ -1438,7 +1462,9 @@ def _ours(cf: CompanyFacts, fam: str, basis: str, table: str, period: str, memo:
         if period.startswith("Q4"):
             f, label, _ = cf.year(period[2:], basis, fam, instant=True)
         else:
-            f, label = cf.result(period, basis), f"results file {period}"
+            f, label = cf.year_end_sheet(end, basis, fam)
+            if f is None:
+                f, label = cf.result(period, basis), f"results file {period}"
         reader = _Reader(f, instant=end) if f is not None and end else None
         pdf = cf.bank_pdf.get((period[2:], basis)) if period.startswith("Q4") else None
         sheet = bs_rows(fam, reader, label, half_year=not period.startswith("Q4"), standalone=basis == STANDALONE, pdf=pdf) \

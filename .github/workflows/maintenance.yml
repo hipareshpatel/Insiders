@@ -616,13 +616,15 @@ jobs:
       - name: Annual-report XBRL from BSE (the years NSE does not list)
         if: inputs.command == 'bse-annual-xbrl'
         timeout-minutes: 305   # F216: a step that overruns ends here, so the upload step below still runs
+        env:
+          IDS: ${{ inputs.ids }}       # only these companies (scrip codes or NSE symbols); through the environment, never pasted
         run: |
           # every file kept raw in R2 and its facts saved; a stored year is not asked again; file_cap caps a test (the first is 100)
           set -o pipefail
           code=0
           mkdir -p "$RUNNER_TEMP/bseannual"
           "$RUNNER_TEMP/venv/bin/pip" install -q "requests>=2.31"   # the ported adapter uses requests, as bse-results-test
-          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel bse-annual-xbrl --time-budget 17400 ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }} --json "$RUNNER_TEMP/bseannual/bse-annual-xbrl.json" | tee "$RUNNER_TEMP/bseannual/bse-annual-xbrl.txt" || code=$?
+          timeout 300m "$RUNNER_TEMP/venv/bin/python" -m bse_intel bse-annual-xbrl ${IDS:+--scrips "$IDS"} --time-budget 17400 ${{ inputs.limit && format('--limit {0}', inputs.limit) || '' }} --json "$RUNNER_TEMP/bseannual/bse-annual-xbrl.json" | tee "$RUNNER_TEMP/bseannual/bse-annual-xbrl.txt" || code=$?
           if [ "$code" -eq 124 ]; then echo "::warning::the file cap or the time budget ended the run with companies left: run the same command again to resume"; exit 0; fi
           exit "$code"
       - uses: actions/upload-artifact@v4

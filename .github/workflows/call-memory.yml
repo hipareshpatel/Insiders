@@ -6,6 +6,8 @@
 #
 # AI keys: GEMINI_API_KEY_3 (a Gemini project for call memory only: providers.gemini_3, only_routes) and NVIDIA's free key as
 # a spare on the call_memory route. Never GEMINI_API_KEY / GEMINI_API_KEY_2 (the cards' keys) and never DEEPSEEK_API_KEY.
+# `--backlog` (input, default 6): with the queue empty, each run first queues that many old calls and decks (newest first) that
+# memory has not read, so the free quota drains the ~1,790 filed before the queue existed; 0 turns it off.
 # Exit 124 (filings left when the time budget ended) is not a failure: the next run carries on.
 name: Call memory
 
@@ -18,6 +20,9 @@ on:
       limit:
         description: at most this many filings (0 = all)
         default: "0"
+      backlog:
+        description: with the queue empty, queue this many old calls and decks first (0 = off)
+        default: "6"
   schedule:
     - cron: "11,41 * * * *"   # every 30 minutes
 
@@ -67,8 +72,9 @@ jobs:
         env:
           BUDGET: ${{ inputs.time_budget || '1500' }}
           LIMIT: ${{ inputs.limit || '0' }}
+          BACKLOG: ${{ inputs.backlog || '6' }}
         run: |
           code=0
-          "$RUNNER_TEMP/venv/bin/python" -m bse_intel call-memory --pending --apply --time-budget "$BUDGET" --limit "$LIMIT" --out "$RUNNER_TEMP/callmem" || code=$?
+          "$RUNNER_TEMP/venv/bin/python" -m bse_intel call-memory --pending --apply --time-budget "$BUDGET" --limit "$LIMIT" --backlog "$BACKLOG" --out "$RUNNER_TEMP/callmem" || code=$?
           if [ "$code" = 124 ]; then echo "filings left in the queue; the next run carries on"; exit 0; fi
           exit "$code"

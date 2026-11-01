@@ -1259,3 +1259,59 @@ def test_vision_without_an_image_or_over_the_call_cap_drops():
     assert [p.topic for p in kept] == ["roe"] and "not rendered" in dropped[0]["detail"]
     kept, dropped = cm.vision_confirm(_slide_points(), lambda page: b"png", lambda png, q: "1: YES", max_calls=0)
     assert [p.topic for p in kept] == ["roe"] and "no vision call left" in dropped[0]["detail"]
+
+
+class BacklogSink(KvSink):
+    """KvSink with stored cards (export_cards, oldest first, keyset paged) and a dossier a company."""
+
+    def __init__(self, cards, dossiers=None):
+        super().__init__()
+        self.cards, self.dossiers, self.pages = cards, dossiers or {}, 0
+
+    def query(self, name, params):
+        assert name == "export_cards"
+        self.pages += 1
+        rows = sorted(self.cards, key=lambda r: (r["filed_at"], r["news_id"]))
+        return [r for r in rows if (r["filed_at"], r["news_id"]) > (params[0], params[1])][:params[2]]
+
+    def get_dossier(self, scrip):
+        return self.dossiers.get(scrip)
+
+
+def _card(news_id, month, scrip="123", event="CONCALL_PRESENTATION", held=0):
+    return {"news_id": news_id, "scrip_code": scrip, "filed_at": f"2026-0{month}-10T19:00:00+05:30", "event_category": event, "held": held}
+
+
+def test_backlog_queues_newest_first_skipping_read_queued_and_other_events():
+    cards = [_card("old", 1), _card("mid", 2), _card("new", 3), _card("read", 4), _card("results", 5, event="RESULTS"),
+             _card("queued", 6, scrip="456"), _card("held", 7, held=1)]
+    sink = BacklogSink(cards, {"123": {"call_memory": [{"news_id": "read"}]}})
+    call_queue.enqueue(sink, "queued", "456", "x")
+    for item in call_queue.pending(sink):   # settled: the queue is empty but the id is still known
+        call_queue.settle(sink, item, "done")
+    assert call_queue.pending(sink) == []
+    assert call_queue.enqueue_backlog(sink, 2) == ["new", "mid"]
+    assert [i["news_id"] for i in call_queue.pending(sink)] == ["new", "mid"]
+    assert call_queue.pending(sink)[0]["filed_at"] == "2026-03-10T19:00:00+05:30" and call_queue.pending(sink)[0]["scrip"] == "123"
+
+
+def test_backlog_adds_nothing_with_items_queued_or_a_limit_of_zero():
+    sink = BacklogSink([_card("a", 1), _card("b", 2)])
+    assert call_queue.enqueue_backlog(sink, 0) == [] and sink.kv == {} and sink.pages == 0
+    call_queue.enqueue(sink, "live", "123", "x")
+    assert call_queue.enqueue_backlog(sink, 5) == [] and [i["news_id"] for i in call_queue.pending(sink)] == ["live"]
+
+
+def test_the_pending_command_queues_the_backlog_before_reading(monkeypatch, settings, tmp_path):
+    monkeypatch.setenv("MEMORY_CALL_V2", "1")
+    sink = BacklogSink([_card("a", 1), _card("b", 2), _card("c", 3)])
+    monkeypatch.setattr(cli, "_pipeline", lambda s, k: None)
+    monkeypatch.setattr(cli, "_read_call_document", lambda *a, **k: (_ for _ in ()).throw(cli.PermanentSkip("test")))
+    monkeypatch.setattr("bse_intel.call_memory.paid_providers", lambda s: [])
+    monkeypatch.setattr("bse_intel.call_memory.pace_gap_s", lambda s: 0)
+    monkeypatch.setattr("bse_intel.memory_recall_export.read_text_from", lambda s: None)
+    assert cli.cmd_call_memory(_pending_args(tmp_path, backlog=0), settings, sink) == 0
+    assert sink.kv == {}   # off: nothing queued, nothing read
+    assert cli.cmd_call_memory(_pending_args(tmp_path, backlog=2), settings, sink) == 0
+    assert call_queue.pending(sink) == []   # c and b were queued, read (given up by the stub) and settled
+    assert call_queue.enqueue_backlog(sink, 2) == ["a"]   # the next run takes the next one

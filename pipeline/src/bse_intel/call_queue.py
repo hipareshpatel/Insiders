@@ -118,3 +118,45 @@ def settle(sink, item: dict, state: str, reason: str | None = None, count: bool 
     sink.kv_set(key, json.dumps(states, ensure_ascii=False), _stamp())
     item["attempts"] = attempts
     return state
+
+
+def known_ids(sink, days: int = QUEUE_DAYS) -> set[str]:
+    """Every news_id in a queue key of the last `days` days, read or not (the states only settle entries of the queue)."""
+    out: set[str] = set()
+    for offset in range(days):
+        out.update(_load(sink, f"callmem:q:{_day(offset)}"))
+    return out
+
+
+def enqueue_backlog(sink, limit: int) -> list[str]:
+    """Old transcripts and decks filed before the queue existed, a few at a time (`call-memory --pending --backlog N`): only when
+    the queue is empty (so no entry ages past QUEUE_DAYS unread), newest filed first, at most `limit`. Candidates are the stored
+    published CONCALL_PRESENTATION cards (the rule memory_recall_export.candidates and the pipeline's queue step use), minus any
+    news_id already in the company's dossier `call_memory` and any in a queue key of the last QUEUE_DAYS days. Returns the ids."""
+    from .memory_recall_export import EVENT, PAGE
+
+    if limit <= 0 or pending(sink):
+        return []
+    rows, after = [], ["", ""]
+    while True:   # export_cards only pages oldest first: every card is paged once, kept as a few bytes, newest first after
+        page = sink.query("export_cards", [after[0], after[1], PAGE])
+        if not page:
+            break
+        after = [page[-1]["filed_at"], page[-1]["news_id"]]
+        rows += [(r["filed_at"], r["news_id"], r["scrip_code"]) for r in page if r.get("event_category") == EVENT and not r.get("held")]
+        if len(page) < PAGE:
+            break
+    rows.sort(reverse=True)
+    queued, dossiers, picked = known_ids(sink), {}, []
+    for filed_at, news_id, scrip in rows:
+        if len(picked) >= limit:
+            break
+        if news_id in queued:
+            continue
+        if scrip not in dossiers:
+            dossiers[scrip] = {e.get("news_id") for e in ((sink.get_dossier(scrip) or {}).get("call_memory") or [])}
+        if news_id in dossiers[scrip]:
+            continue
+        enqueue(sink, news_id, scrip, filed_at)
+        picked.append(news_id)
+    return picked

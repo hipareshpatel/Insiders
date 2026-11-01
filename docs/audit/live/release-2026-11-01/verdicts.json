@@ -1,0 +1,532 @@
+{
+ "deck_period": {
+  "c01": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_5949f32c: 'not due' false, filing reports Q2FY27 (reason wrong; no run-rate figure printed so not-judged itself is fine)",
+    "w_c36e1258: 'not due' false; filing prints consolidated EBITDA margin 31.2% for Q2FY27 vs target 37%+ = missed"
+   ],
+   "wrong_y": [
+    "w_c36e1258: 'prints no figure' false; p.6 consolidated EBITDA % Q2FY27 = 31.2% (missed)"
+   ],
+   "note": "HALS run-rate: no figure printed, Y right. EBITDA margin: both wrong."
+  },
+  "c02": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "g_13d536ac: 'not due' false; filing says USD 926.74 million FCNR(B) raised in the quarter (target 400m met)"
+   ],
+   "wrong_y": [
+    "g_13d536ac: 'prints no figure' false; same 926.74m figure in Q&A"
+   ],
+   "note": "both miss a met target"
+  },
+  "c03": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "w_2344d77c: 'not due' false; Q2 landed fuel cost INR 2.09/kcal vs target <=1.95 = missed"
+   ],
+   "wrong_y": [
+    "w_2344d77c: 'prints no figure' false; same 2.09 figure"
+   ],
+   "note": "UAE concern line identical and right (mgmt declined to give UAE split)"
+  },
+  "c04": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "w_8266431b: 'prints no figure' false; wholesale 93,000 units in Q2 vs >83,000 = met"
+   ],
+   "wrong_y": [
+    "w_8266431b: 'not due' false; Q2FY27 call, same 93,000 figure"
+   ],
+   "note": "both miss a met target"
+  },
+  "c05": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "w_fd952c33: 'prints no figure' false; QAAUM 13,140 bn vs 11,995 bn = ~10% YoY (<11% target, missed)"
+   ],
+   "wrong_y": [
+    "w_fd952c33: 'not due' false; Q2FY27 call, figure printed"
+   ],
+   "note": "concern-met line identical"
+  },
+  "c06": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_84480650: 'not due' false; consolidated Q2FY27 EBITDA margin 18.2% (p.8) vs >17.96% = met, X right"
+   ],
+   "note": ""
+  },
+  "c07": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_51343734: 'not due' false; consolidated Q2FY27 EBITDA margin 15.27% vs >19% = missed, X right"
+   ],
+   "note": ""
+  },
+  "c08": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_d74051a8: reason 'not due' false (filing reports Q2FY27 order book Rs 7,880 Mn), but target has no number so not-judged itself fine"
+   ],
+   "wrong_y": [],
+   "note": "Y's reason ('not a plain figure') is the accurate one"
+  },
+  "c09": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "g_ba383219: 'not due' false; filing is the Q2FY27 call, LOI for 18,685 BSNL sites reported"
+   ],
+   "note": "X states the true count vs the 26,000 target and withholds a verdict"
+  },
+  "c10": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "g_7a8c74a8 and g_a0b9ad65: 'not due' false; target was due Q1FY27 and the AGM transcript says merger became effective July 1, 2026 (one day after Q1 end)"
+   ],
+   "wrong_y": [
+    "g_7a8c74a8 and g_a0b9ad65: 'prints no figure' false; filing states effective date July 1, 2026"
+   ],
+   "note": "both fail to report completion"
+  },
+  "c11": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_f21f3948: 'not due' false; Q2FY27 disbursements INR 2,375 Cr vs 3,000 Cr = missed, X right"
+   ],
+   "note": ""
+  },
+  "c12": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_e360e0fd: 'not due' false; Q2FY27 operating margin 36 bps vs corridor 33-35 (p.1)"
+   ],
+   "note": "X right on figure; 'missed' is literal (above, not within, corridor)"
+  },
+  "c13": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_b6a90841: 'missed' misleading; 7.9% is ABOVE the 7.0-7.5% range, i.e. beat, not a miss"
+   ],
+   "note": "filing 7.9% Q2FY27 EBITDA margin"
+  },
+  "c14": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_9b0c90b0: reason 'not due' false (Q2FY27 call); target has no number so not-judged fine"
+   ],
+   "wrong_y": [],
+   "note": "CSR concern line (shared): management gave reason but no CSR figure, 'met' is generous; same in both"
+  },
+  "c15": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_fac13dc9: 'not due' false; equity MF mix 47.4% in Q2FY27 vs >46.5% = met, X right"
+   ],
+   "note": ""
+  },
+  "c16": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_d4620192: 'not due' false; Q2FY27 gross margin 29% vs 32-34% = missed"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c17": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "g_648343dd: 'prints no figure' false; Q2 IT services revenue $2.61bn, flat seq CC, inside -1.5% to +0.5% = delivered"
+   ],
+   "note": "all other lines identical"
+  },
+  "c18": {
+   "verdict": "X BETTER",
+   "wrong_x": [
+    "w_a86b3126: filing does print 99acres Q2FY27 operating loss <Rs 2 cr (so a figure exists), 'not a plain figure' debatable"
+   ],
+   "wrong_y": [
+    "w_a86b3126: 'not due' false"
+   ],
+   "note": "X's reason less wrong; neither gives the loss <2 cr (near but not at breakeven)"
+  },
+  "c19": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_0126a476: 'not due' false (Q2FY27 call); target has no number"
+   ],
+   "note": ""
+  },
+  "c20": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "w_482c34e0: 'prints no figure' false, export 15% of H1 revenue vs 16%+ (missed)",
+    "w_e1fbe09d: 'prints no figure' false, Q2 EBITDA margin 20.5% (H1 21.3%) vs 21.9%+ (missed)"
+   ],
+   "wrong_y": [
+    "w_482c34e0: 'not due' false",
+    "w_e1fbe09d: 'not due' false"
+   ],
+   "note": ""
+  }
+ },
+ "guided_not_actual": {
+  "c01": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line (doubling in 4-5 yrs from ~Rs 650 cr FY27 annualised run-rate) is true (Q&A) and the headline/takeaway still rest on it. Dropping lost a true fact."
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line true: pre-sales 576 cr, 832 cr incl post-merger, collections 781 cr."
+  },
+  "c03": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line mostly true (debt ~850+ cr, ~300 cr from capacity expansion); 'consolidated' not stated. Lost a true fact."
+  },
+  "c04": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line true (debt-free, net cash ~136 cr, FY27 capex ~130 cr); 'funds without borrowing' is inference."
+  },
+  "c05": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line: capex 170-180 cr and Haridwar capacity starting Q4 are in filing; '12.8-13.5% of net worth' is not in filing (unverifiable)."
+  },
+  "c06": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line true (2024-27 >500 cr, 2027-30 ~1,000 cr on p.4); FY26 revenue 384.83 cr is not in the filing."
+  },
+  "c07": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line: 40% interest-bearing mobilisation advance (down from 58%) and ~200 cr capex are in call; 'net cash Rs 304 cr' is not in the filing (unverifiable)."
+  },
+  "c08": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT why_it_matters: Get-A-Way FY25 turnover 18.08 cr / 0.4% of TTM revenue: not in this filing (one-page Reg 30 letter, no turnover)"
+   ],
+   "wrong_y": [],
+   "note": "Filing is a one-page letter; also in BOTH: Rs 9 cr outlay, Oct 31 clarification, Get-A-Way name are not in the filing text (memory-derived). Dropped line removes an unsupported claim."
+  },
+  "c09": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line figures right (net debt 7,908 vs 6,414 Mar-26, p.32); 'within Rs 10,000 cr cap' not in filing."
+  },
+  "c10": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line true: first machine Sept, second Dec; FY27 20-25 cr, FY28 100-120 cr at 15-16% EBITDA."
+  },
+  "c11": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line true: Bluetile+BestPlay first two months revenue 329 cr, EBITDA 64 cr."
+  },
+  "c12": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT why_it_matters: Alco '...fell 23.5% YoY' false; Alco segment revenue 23,058 lakh vs 16,239 lakh Q3FY25 = +42% YoY (QoQ +20.8% and the 230.58/190.88 figures are right)"
+   ],
+   "note": "BOTH: headline/takeaway/fact 'revenue fell 23.5% to 265.82 cr from 347.52 cr' is not in the filing; consolidated revenue 26,582 lakh vs 18,035 lakh = +47% YoY. Y adds a second wrong line."
+  },
+  "c13": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line true (order book 5,812 Mn, 73% private/27% govt)."
+  },
+  "c14": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line true (adj EBITDA +54.5% to 43.9 cr, margin 21.5%)."
+  },
+  "c15": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only: order 24.91 cr incl tax true; FY26 revenue 4,277 cr not in filing."
+  },
+  "c16": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Dropped line true (FY26 consolidated revenue 20,823 cr, PAT 724 cr)."
+  },
+  "c17": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line true (FY27 capex 300-350 cr, 137 cr ex-IPP, 75 cr subs for BESS/electrolysers)."
+  },
+  "c18": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Both Y-only lines true (Alcon signalling 120-130 cr, ~20% vs 13-14%; capex 70-75 cr a year incl 55-60 cr HAM)."
+  },
+  "c19": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y-only line true (600 cr EBITDA ~all to operating cash, no depreciation/finance cost, tax shield up to 700 cr)."
+  },
+  "c20": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Both Y-only lines true (142 cr deferral = 45+84+12.6 contracted, carried to Q1/Q2 FY27; 273 cr Q4 revenue so >half)."
+  }
+ },
+ "figure_matches_file": {
+  "c01": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TABLE stored 78.52 vs filed 'Reported EBITDA 75.09': mismatch shown; stored 78.52 is Normalized EBITDA"
+   ],
+   "note": "X cites the label that matches stored; headline reported EBITDA is 75.09"
+  },
+  "c02": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "TABLE EBITDA 679: that is the H1 FY26 (prior-year) column; H1 FY27 EBITDA is 971 (adj 997); Q2FY27 adj 543"
+   ],
+   "wrong_y": [],
+   "note": "X confirms a wrong-period stored figure; Y's 543 is the current-quarter adjusted EBITDA and exposes the mismatch"
+  },
+  "c03": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TABLE stored 220 vs Q4 105: only a mismatch if card is the quarter"
+   ],
+   "note": "220 is FY26 EBITDA (FY25 328); Q4FY26 is 105. X right if year figure; Y right if the card is quarterly. Low confidence."
+  }
+ },
+ "deck_period_unreplayable": {
+  "u01": {
+   "lines": [
+    {
+     "line": "w_85e8872d",
+     "judgement": "RIGHT",
+     "why": "FY25 income from ops 40,986 Mn (+6.3%), Q4 12,158 vs 11,637 = +4.5%"
+    }
+   ]
+  },
+  "u02": {
+   "lines": [
+    {
+     "line": "g_869e7c44",
+     "judgement": "RIGHT",
+     "why": "FY25 PAT INR 872.3 mn = 87.23 cr, inside 87-90 cr"
+    },
+    {
+     "line": "w_3a807c0b",
+     "judgement": "WRONG",
+     "why": "figures true (international 62%, North America 38-40%) but they are shares, not growth; filing gives no international growth rate, 'met' unsupported"
+    }
+   ]
+  },
+  "u03": {
+   "lines": [
+    {
+     "line": "g_39544d52",
+     "judgement": "RIGHT",
+     "why": "Adj EBITDA margin 26.3% Q2, 25.2% H1 (Q1 24.0%); H1 only, FY27 not complete"
+    }
+   ]
+  },
+  "u04": {
+   "lines": [
+    {
+     "line": "g_ccef2920",
+     "judgement": "WRONG",
+     "why": "filing (4 Jun 2026 call) gives no Suyog FY26 revenue/PAT; breach from silence unsupported, should be not judged"
+    }
+   ]
+  },
+  "u05": {
+   "lines": [
+    {
+     "line": "w_ae8b1f6f",
+     "judgement": "RIGHT",
+     "why": "Board recommended Rs 2.15/share (21.5% of face value); no approval yet"
+    }
+   ]
+  },
+  "u06": {
+   "lines": [
+    {
+     "line": "g_c8e861c4",
+     "judgement": "RIGHT",
+     "why": "EBIT margin 16.3% Q2FY27, mid-16% aspiration reached ahead of time"
+    }
+   ]
+  },
+  "u07": {
+   "lines": [
+    {
+     "line": "g_2d148653",
+     "judgement": "WRONG",
+     "why": "filing prints no farmer additions; procurement 1.73 MLPD (+7%) is a different metric; status should be undetermined"
+    }
+   ]
+  },
+  "u08": {
+   "lines": [
+    {
+     "line": "w_84e5f10d",
+     "judgement": "WRONG",
+     "why": "filing is a cover letter with an audio link only; no 80% AI figure or any result"
+    }
+   ]
+  },
+  "u09": {
+   "lines": [
+    {
+     "line": "w_4e856d5c",
+     "judgement": "WRONG",
+     "why": "self-contradictory: NNPA 4.2% Mar-26 vs FY26 guidance NNPA <3% (missed), no '<=4.21' target in filing"
+    }
+   ]
+  },
+  "u10": {
+   "lines": [
+    {
+     "line": "g_648343dd",
+     "judgement": "RIGHT",
+     "why": "Q2 IT services $2.61bn, flat sequentially CC, inside -1.5% to +0.5%"
+    }
+   ]
+  },
+  "u11": {
+   "lines": [
+    {
+     "line": "g_51a29b8c",
+     "judgement": "RIGHT",
+     "why": "NIM 3.81% Q2FY26, up 27 bps from 3.54%, inside 3.5-4%"
+    }
+   ]
+  },
+  "u12": {
+   "lines": [
+    {
+     "line": "g_9b4e3b9d",
+     "judgement": "WRONG",
+     "why": "target due Q1FY27 is past; filing (Oct 2026) says only trial production at 500 MW plant began, commercial in 1-1.5 months = missed/late, not 'not due'"
+    }
+   ]
+  },
+  "u13": {
+   "lines": [
+    {
+     "line": "g_f14bb261",
+     "judgement": "WRONG",
+     "why": "filing is the 25 May 2026 call restating the 40-45k Q1 order outlook; no result, so not delivered"
+    }
+   ]
+  },
+  "u14": {
+   "lines": [
+    {
+     "line": "w_e862f5a0",
+     "judgement": "WRONG",
+     "why": "51 MWp not in filing; 1.4 GW commissioned in FY26 shown; verdict 'missed' contradicts its own text"
+    }
+   ]
+  },
+  "u15": {
+   "lines": [
+    {
+     "line": "w_cd122d4e",
+     "judgement": "RIGHT",
+     "why": "Top-3 share 59.9% vs 66.2%; figures right; 'missed' verdict not checkable (no target shown, share improved)"
+    }
+   ]
+  },
+  "u16": {
+   "lines": [
+    {
+     "line": "g_01d418f1",
+     "judgement": "RIGHT",
+     "why": "H1FY27 deal wins TCV $285M, +15.0% YoY"
+    }
+   ]
+  },
+  "u17": {
+   "lines": [
+    {
+     "line": "g_f206101e",
+     "judgement": "RIGHT",
+     "why": "GNPA 1.33% vs 1.50% guidance"
+    },
+    {
+     "line": "g_04e3985c",
+     "judgement": "RIGHT",
+     "why": "NNPA 0.30% vs ~0.40%"
+    },
+    {
+     "line": "w_52868646",
+     "judgement": "WRONG",
+     "why": "GNPA 1.33% beats FY27 guidance of 1.50%: should be met, not missed"
+    }
+   ]
+  },
+  "u18": {
+   "lines": [
+    {
+     "line": "w_0ade2064",
+     "judgement": "RIGHT",
+     "why": "PCR 38.4% to 35.5% (opening remarks say 35.4%), gold loans in Stage III"
+    }
+   ]
+  },
+  "u19": {
+   "lines": [
+    {
+     "line": "w_43cba428",
+     "judgement": "RIGHT",
+     "why": "Trade receivables 48.2 vs 34.3 cr"
+    }
+   ]
+  },
+  "u20": {
+   "lines": [
+    {
+     "line": "w_b3937afd",
+     "judgement": "RIGHT",
+     "why": "GNPA 1.49% FY26 (from 1.82%); 'missed' not checkable, no target in filing"
+    }
+   ]
+  }
+ }
+}

@@ -167,10 +167,18 @@ def _bound(target: str):
     return (v, None, strict, False, cur, unit) if up else (None, v, False, strict, cur, unit)
 
 
-def numeric_contradiction(target: str | None, evidence: str | None) -> str | None:
+_LOWER_BETTER = re.compile(r"\b(?:cost|costs|expense|expenses|npa|gnpa|nnpa|slippages?|debt|leverage|attrition|opex|losses|"
+                           r"deficit|churn|(?:debtor|receivable|inventory|working[- ]capital|cash[- ]conversion)\s+days)\b", re.I)
+_SAVING = re.compile(r"\bsavings?\b", re.I)   # "cost savings of 100-120 Cr": more is better ("reduce debt to 0.5-0.6x" is not)
+_CORRIDOR = re.compile(r"\b(?:within|corridor|band|between)\b", re.I)
+
+
+def numeric_contradiction(target: str | None, evidence: str | None, topic: str | None = None) -> str | None:
     """A sentence naming the contradiction when the one figure in ``evidence`` that is in the target's unit lies outside the
     target's range or on the wrong side of its bound ("36 bps" against "33-35 bps"); else None. Figures equal to a bound are the
-    target quoted back and skipped; two different candidate figures give None (not certain)."""
+    target quoted back and skipped; two different candidate figures give None (not certain). Beyond a two-sided range on its
+    good side is no miss (blind sample 1 Nov 2026, SKYGOLD: a 7.9% EBITDA margin against 7.0-7.5%): above it, or below it for a
+    lower-is-better ``topic`` (costs, NPAs, debt), unless the topic or target asks to stay within a corridor (HDFCAMC)."""
     if _NEGATIVE.search(str(target or "")) or _NEGATIVE.search(str(evidence or "")):
         return None   # a sign the figure reader drops ("-5%" read as 5) could flip a right verdict (review)
     b = _bound(str(target or ""))
@@ -186,6 +194,11 @@ def numeric_contradiction(target: str | None, evidence: str | None) -> str | Non
         return None
     v = got.pop()
     ok = (lo is None or (v > lo if slo else v >= lo)) and (hi is None or (v < hi if shi else v <= hi))
+    if not ok and lo is not None and hi is not None and not _CORRIDOR.search(f"{topic or ''} {target or ''}"):
+        words = f"{topic or ''} {target or ''}"
+        lower_better = bool(_LOWER_BETTER.search(words)) and not _SAVING.search(words)
+        if (v < lo) if lower_better else (v > hi):
+            return None   # beat the range: the model's verdict stands
     return None if ok else f"the filing's figure {v:g} is outside the target ({target})"
 
 

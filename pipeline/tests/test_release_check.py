@@ -90,7 +90,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
                           "adjusted_profit", "words_match_figures",
-                          "filer_checks"}
+                          "filer_checks", "event_repeat"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -179,3 +179,16 @@ def test_filer_checks_reads_the_cards_own_file_off_and_on(monkeypatch):
     assert "TABLE revenue Q4FY26 CONSOLIDATED: 593.12" in note["off_lines"]
     assert "TABLE revenue Q4FY26 CONSOLIDATED: 593.12" not in note["on_lines"] and rc.changed_by_diff(note["diff"])
     assert os.environ.get("XBRL_FILER_CHECKS") != "1"   # restored after
+
+
+def test_event_repeat_check_holds_a_second_card_on_one_order():
+    """CARD_EVENT_REPEAT (S2): ARIS's press release of the ₹250 Cr Transcon order already filed as an intimation."""
+    rc = _script()
+    row = {"news_id": "nse-106830842", "symbol": "ARIS", "scrip_code": "544419", "pdf_url": "u",
+           "company_name": "Arisinfra Solutions Limited", "filed_at": "2026-10-27T18:45:34+05:30"}
+    card = {"event_type": "ORDER_WIN", "headline": "Arisinfra subsidiary wins ₹250 Cr DaaS mandate for Transcon Ramdev Plaza"}
+    memory = {"timeline": [{"event_type": "ORDER_WIN", "date": "2026-10-27T18:40:37+05:30", "news_id": "nse-106830824",
+                            "summary": "Arisinfra's subsidiary secured a ₹250 Cr DaaS service order from Transcon Iconica."}]}
+    note = rc.check_event_repeat(card, row, memory)
+    assert rc.changed_by_diff(note["diff"]) and any(line.startswith("HELD: repeat of nse-106830824") for line in note["on_lines"])
+    assert not rc.changed_by_diff(rc.check_event_repeat(card, row, {"timeline": []})["diff"])

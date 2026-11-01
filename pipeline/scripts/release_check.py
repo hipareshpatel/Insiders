@@ -78,6 +78,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
   words_match_figures CARD_WORDS_MATCH_FIGURES (1 Nov 2026, blind audit "arithmetic in words"): `words_figures.apply_card_json`
                      on a copy of each stored results card with a table, memory for the previous quarter's YoY; the words it
                      softens and the list items it drops. Complete.
+  event_repeat       CARD_EVENT_REPEAT (S2, 1 Nov 2026): each ORDER_WIN or M_AND_A card against its company's memory timeline
+                     (`event_repeats.match`); the cards it would hold as a repeat of an earlier entry, that entry named.
   filer_checks       XBRL_FILER_CHECKS (S3, TODO 111, F219): each results card's own exchange file (R2, 180 days) read twice by
                      `xbrl.parse`, off and on; the figures it changes or holds. Read only; over stored memory's source files.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
@@ -136,7 +138,8 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
-                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS")
+                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS",
+                "CARD_EVENT_REPEAT")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -147,7 +150,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
-          ("filer_checks", "XBRL_FILER_CHECKS"))
+          ("filer_checks", "XBRL_FILER_CHECKS"), ("event_repeat", "CARD_EVENT_REPEAT"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -328,6 +331,20 @@ def check_filer_checks(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
         off = filer_lines(xbrl.parse(xbrl.as_utf8(xbrl_bytes)))
     with switches_on("XBRL_FILER_CHECKS"):
         on = filer_lines(xbrl.parse(xbrl.as_utf8(xbrl_bytes)))
+    return _record(row, card, off, on)
+
+
+def check_event_repeat(card: dict, row: dict, dossier: dict | None) -> dict:
+    """event_repeat: an ORDER_WIN or M_AND_A card against the company's memory timeline (`event_repeats.match`, S2): the
+    card held as a repeat of the earlier entry named, with CARD_EVENT_REPEAT on."""
+    from bse_intel import event_repeats
+
+    off = [f"TYPE: {card.get('event_type')}", f"HEADLINE {card.get('headline') or ''}"]
+    with switches_on("CARD_EVENT_REPEAT"):
+        found = event_repeats.match(card.get("event_type"), row.get("filed_at") or card.get("filed_at"),
+                                    f"{card.get('headline') or ''} {card.get('timeline_entry') or ''}", row.get("company_name"),
+                                    (dossier or {}).get("timeline"), row.get("news_id"))
+    on = off + ([f"HELD: repeat of {found[0]}: {found[1]}"] if found else [])
     return _record(row, card, off, on)
 
 
@@ -1131,6 +1148,13 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                             seen[name] += 1
                             keep(name, check_unit_slip_guard(card, body, row))
                             row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "event_repeat":
+                    if card.get("event_type") not in ("ORDER_WIN", "M_AND_A"):
+                        skipped[name]["not an order or deal card"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_event_repeat(card, row, memory() or None))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "filer_checks":
                     url = (card.get("xbrl") or {}).get("url")
                     if not results:

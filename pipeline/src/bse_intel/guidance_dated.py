@@ -169,7 +169,7 @@ def _bound(target: str):
 
 _LOWER_BETTER = re.compile(r"\b(?:cost|costs|expense|expenses|npa|gnpa|nnpa|slippages?|debt|leverage|attrition|opex|losses|"
                            r"deficit|churn|(?:debtor|receivable|inventory|working[- ]capital|cash[- ]conversion)\s+days)\b", re.I)
-_SAVING = re.compile(r"\b(?:savings?|reduction|reduce[sd]?|cut)\b", re.I)   # "cost savings of 100-120 Cr": more is better
+_SAVING = re.compile(r"\bsavings?\b", re.I)   # "cost savings of 100-120 Cr": more is better ("reduce debt to 0.5-0.6x" is not)
 _CORRIDOR = re.compile(r"\b(?:within|corridor|band|between)\b", re.I)
 
 

@@ -276,5 +276,7 @@ def test_beating_a_two_sided_range_on_its_good_side_is_no_miss():
                                  "Operating margin as bps of AUM within the stated corridor") is not None   # HDFCAMC
     assert numeric_contradiction("₹100-120 Cr", "cost savings of ₹135 Cr", "Cost savings programme") is None   # more is better
     assert numeric_contradiction("₹100-120 Cr", "cost savings of ₹80 Cr", "Cost savings programme") is not None
+    assert numeric_contradiction("0.5-0.6x", "net debt/EBITDA 0.9x", "Reduce net debt") is not None   # review: reduce is lower-better
+    assert numeric_contradiction("0.5-0.6x", "net debt/EBITDA 0.3x", "Reduce net debt") is None
     assert numeric_contradiction("60-65", "order book of 90 days", "Order book days") is None   # not a working-capital day count
     assert numeric_contradiction("7.0-7.5%", "margin 7.9%") is None and numeric_contradiction("between 7-8%", "margin 9%") is not None

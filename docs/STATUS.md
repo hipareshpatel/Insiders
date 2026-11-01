@@ -105,10 +105,10 @@ Every list was swept: this section 3 (the lead's list and the 31 Oct table below
 | 2 | `CARD_TEXT_SUPPORT` (off) | cards | grade the release-check `text_support` blind sample (run 41261609960), switch on only if true items survive |
 | 3 | Headline tag "(company-reported; results table ...)" against a table of the other basis; some headlines wrong at source (CDSL, BLIL "standalone revenue") | cards | tag by the headline's own basis word, or fix the headline at source |
 | 4 | `RESULTS_PRESS_RELEASE` (off, #269) | cards | on/off on live results filings, then switch |
-| 5 | `UNIT_SLIP_XBRL_GUARD` (off, #313) | data | release-check `unit_slip_guard`, blind sample, switch on |
+| 5 | `UNIT_SLIP_XBRL_GUARD` (#313) | data | **on, 1 Nov ~11:10 IST**: release-check 41263548723 over 9,884 cards: 70 with a unit correction, 3 with their file, 0 would change (each a real slip); nothing for a blind sample to judge |
 | 6 | `D20_DROPPED_FILE_PERIOD` (off, #314; TMB root cause) | data | count stored RESULTS cards it would hold, blind read, switch on; `RESULTS_NEEDS_STATEMENT` stays off (superseded by this) |
 | 7 | `ANNUAL_SCALE_FIX` (TDPOWERSYS, MSPL annual reports 1e5 small) | data | read the branch dry run, merge off, then on/off audit and apply |
-| 8 | Screener gap: annual P&L ~90%, balance 92%, cash flow 94%, quarters 96% (FY25 on) | data | annual-report notes (Screener's regrouping of Expenses / Other Income); measure after each rebuild |
+| 8 | Screener gap (FY25 on, 1 Nov run 41269771761): exact / close (within 0.5%): quarters 95.7 / 96.4%, annual 90.3 / 92.8%, balance 92.2 / 93.8%, cash flow 94.1 / 94.5%; site = recipes (0 pairs differ, ~60 lacking) | data | **tried and dropped 1 Nov**: annual P&L from the Q4 file (branch run 41274289728: mended 594, broke 3,322; annual 90.3 -> 85.8%). Next candidates, each measured on every company before merge: finance-arm interest in Interest (Grasim, L&T), Sales incl. other operating revenue (Godrej Ind, Coal India); exceptional items need note text |
 | 9 | Bank PDF reader full run (TODO 148 follow-up): City Union, Bank of Maharashtra FY23-25, UCO 0.0 depreciation | data | full `bank-pdf-read`, then rebuild |
 | 10 | Memory gaps: 47 companies without stored facts; raw XBRL files with no facts copy (10 are Q2FY27: is the live path storing raw without facts?) | data | root-cause the live path; `xbrl-facts` on the 47 |
 | 11 | Restated year-ago figures from the PDF (`restated-pdf`): trial 40431994775 stored nothing (reader slips) | data | fix the reader slips, re-run the trial, then top 500 |

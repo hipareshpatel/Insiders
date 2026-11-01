@@ -168,6 +168,8 @@ export interface GroupRow {
   id: string;                                   // index id, or the classification path of the group
   label: string;
   reported: number;                             // companies of the group with a row this quarter; for an index every member that reported, whatever the cut (so "of" is the same base)
+  /** companies of the group in the chosen cut with a row this quarter (for an index, `reported` counts every member whatever the cut) */
+  in_cut?: number;
   of: number | null;                            // the group's size (an index's members matched to companies; null for a sector or industry)
   pat_median: number | null;                    // in the chosen cut
   /** total profit growth: every company's profit this quarter added up against the same total a year ago, losses included */

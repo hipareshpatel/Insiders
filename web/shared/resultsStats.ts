@@ -207,7 +207,7 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
     const known = rows.map((r) => momentumClass(momentumPts(r.pat_yoy, (sameBasis(prevByScrip.get(r.scrip_code) ?? r) ? prevByScrip.get(r.scrip_code)?.pat_yoy : null)))).filter((m: Momentum) => m !== "not_comparable");
     const totalPat = patSum(all.filter((r) => r.pat != null));
     out.push({
-      id, label: label(id), reported: of != null ? all.length : rows.length, of,
+      id, label: label(id), reported: of != null ? all.length : rows.length, in_cut: rows.length, of,
       pat_median: median(rows.map((r) => pct(r.pat_yoy, r.pat_turn)).filter((v): v is number => v != null)),
       pat_total_all: totalGrowth(pairs(all, "pat")), pat_total_ex_financials: totalGrowth(pairs(ord, "pat")), pat_total_financials: totalGrowth(pairs(fin, "pat")),
       financials_share_pct: totalPat > 0 ? (patSum(fin) / totalPat) * 100 : null,
@@ -221,6 +221,6 @@ export function computeGroups(input: GroupsInput): GroupRow[] {
   }
   // a group with fewer than GROUP_RANK_MIN companies reported is listed after the ranked ones (owner, 1 Nov 2026: Telecom Equipment
   // +1,746% topped its tab on two companies); the page's lead line uses the same minimum (MIN_GROUP_SIZE in resultsView.ts)
-  const unranked = (r: GroupRow) => (r.pat_median == null ? 2 : r.reported < GROUP_RANK_MIN ? 1 : 0);
+  const unranked = (r: GroupRow) => (r.pat_median == null ? 2 : (r.in_cut ?? r.reported) < GROUP_RANK_MIN ? 1 : 0);
   return out.sort((a, b) => unranked(a) - unranked(b) || (b.pat_median ?? 0) - (a.pat_median ?? 0) || a.label.localeCompare(b.label));
 }

@@ -138,7 +138,7 @@ Every list was swept: this section 3 (the lead's list and the 31 Oct table below
 | S5 | TODO 121 PDF shadow check (#237): every scheduled run skipped, repository variable PDF_SHADOW not "on" | owner | set it on, or drop it after the reader's FAIL (row 15) |
 | S6 | `fill-trades` remainder: 656 insider-trade filings unread; deals history 27 Apr - 21 Aug only (OPS 23 Oct) | data | one `fill-trades` run when the memory chain is idle |
 | S7 | TODO 123 reader cleanup (`drop_twin_rows`, `tail_label` still in pdf_numbers_first.py) | reader | low while the reader set fails |
-| S8 | TODO 126: 21 finance companies with empty BSE files | owner | Yes / No / Later never answered |
+| S8 | TODO 126: 21 finance companies with empty BSE files | closed | **owner, 1 Nov ~13:25 IST: "if it's for FY 25, leave it"**: not on NSE, mostly older quarters; reopen only for a quarter after FY25 |
 | S9 | TODO 113 and TODO 47 (owner Yes, conditional: after the 95% gate) | label | "Yes, waiting for its trigger" |
 
 Doc notes: `MEMORY_CALL_V2 = true` only queues and gates the call-memory job; the v2 prompt is not live (TODO 101). "Unclear" also holds XBRL_FILER_CHECKS, CARD_EPS_WHOLE and PDF_SHADOW. Owner "Later": TODO 36, 39, 40 as well.

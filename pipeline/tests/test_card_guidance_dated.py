@@ -119,7 +119,7 @@ def test_union_bank_gets_dated_said_on_lines_instead_with_the_switch_on(monkeypa
     before, after, out = _union()
     found = signals._promises(before, after, out, _filing(UNION, "2026-10-19T12:25:56+05:30"))
     assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] * 2
-    assert "not a plain figure" in found[0].text
+    assert "prints no figure for the target's metric" in found[0].text   # the target has a number: not "not a plain figure"
     assert "FCNR mobilisation" in found[1].text and "prints no figure for the target's metric" in found[1].text
     assert not any(s.severity == "WARNING" for s in found)
 
@@ -195,3 +195,63 @@ def test_a_non_deck_filing_without_the_figure_still_settles_nothing(monkeypatch)
     before, after, out, deck = _krn_deck(monkeypatch)
     found = signals._promises(before, after, out, deck.model_copy(update={"event_type": "GOVERNANCE"}))
     assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] and "not due for the period" in found[0].text
+
+
+# ---- 1 Nov 2026 blind grade of release_check deck_period
+def _deck_watch(monkeypatch, target, text, status, evidence):
+    monkeypatch.setenv("CARD_GUIDANCE_DATED", "1")
+    monkeypatch.setenv("DECK_DISCUSSED_PERIOD", "1")
+    watch = {"id": "w_1", "kind": "KPI", "text": text, "check_in": "Q2FY27 results", "target": target,
+             "check_by": "2026-09-30", "created_on": "2026-07-17T10:00:00+05:30", "status": "OPEN", "status_history": []}
+    before = {"watchlist": [watch]}
+    after = {**before, "financial_metrics": [_metric("ebitda_margin", "Q2FY27", 20.0, "nse-1"), _metric("revenue", "Q2FY27", 100, "nse-1")]}
+    deck = _filing("nse-2", "2026-10-30T13:31:07+05:30").model_copy(update={"event_type": "CONCALL_PRESENTATION"})
+    return signals._promises(before, after, _out(watches=[("w_1", status, evidence)]), deck)
+
+
+def test_hdfcamc_36_bps_against_33_35_is_missed_not_met(monkeypatch):
+    found = _deck_watch(monkeypatch, "33-35 bps", "Operating margin as bps of AUM within the stated corridor", "MET",
+                        "Operating margin as bps of AUM reported at 36 bps for Q2FY27.")
+    assert _kinds(found) == [("WATCH_RESOLVED", "WARNING")]
+    assert found[0].text.startswith("KPI check missed") and "36" in found[0].text
+
+
+def test_a_figure_inside_the_range_or_the_bound_keeps_met(monkeypatch):
+    found = _deck_watch(monkeypatch, "33-35 bps", "Operating margin corridor", "MET", "Operating margin reported at 34 bps for Q2FY27.")
+    assert found[0].text.startswith("KPI check met")
+    found = _deck_watch(monkeypatch, "above 37%", "Consolidated EBITDA margin", "MET", "Consolidated EBITDA margin was 38.2% in Q2FY27, above the 37% target.")
+    assert found[0].text.startswith("KPI check met")
+    found = _deck_watch(monkeypatch, "above 37%", "Consolidated EBITDA margin", "MET", "Consolidated EBITDA margin was 35.0% in Q2FY27.")
+    assert found[0].text.startswith("KPI check missed")
+
+
+def test_the_range_check_is_only_on_the_deck_path(monkeypatch):
+    monkeypatch.setenv("CARD_GUIDANCE_DATED", "1")
+    watch = {"id": "w_1", "kind": "KPI", "text": "Operating margin", "check_in": "Q2FY27 results", "target": "33-35 bps",
+             "check_by": "2026-09-30", "created_on": "2026-07-17T10:00:00+05:30", "status": "OPEN", "status_history": []}
+    after = {"watchlist": [watch], "financial_metrics": [_metric("ebitda_margin", "Q2FY27", 20.0, NEWS)]}
+    found = signals._promises({"watchlist": [watch]}, after, _out(watches=[("w_1", "MET", "Operating margin reported at 36 bps for Q2FY27.")]), _filing())
+    assert found[0].text.startswith("KPI check met")
+
+
+def test_numeric_target_reason_text(monkeypatch):
+    for target in ("at or below ₹1.95", "target above 83,000 units", "16% or above", "above 11% YoY"):
+        found = _deck_watch(monkeypatch, target, "Some metric", "MET", "Some metric was 5 in Q2FY27.")
+        assert "prints no figure for the target's metric" in found[0].text, target
+        assert "not a plain figure" not in found[0].text
+    found = _deck_watch(monkeypatch, "breakeven or positive", "99acres operating PBT", "MET", "99acres operating PBT was positive in Q2FY27.")
+    assert "the target is not a plain figure" in found[0].text
+
+
+def test_tejas_a_smaller_loi_count_is_not_delivery(monkeypatch):
+    monkeypatch.setenv("CARD_GUIDANCE_DATED", "1")
+    monkeypatch.setenv("DECK_DISCUSSED_PERIOD", "1")
+    g = _g("g_1", "BSNL 4G expansion order for additional 26,000 sites expected to be awarded", "order",
+           "award of 26,000-site add-on order", "Q2FY27", "2026-09-30", "2026-08-03T10:00:00+05:30")
+    after = {"guidance": [g], "financial_metrics": [_metric("order", "Q2FY27", 100, "nse-1"), _metric("revenue", "Q2FY27", 100, "nse-1")]}
+    deck = _filing("nse-2", "2026-10-30T13:31:07+05:30").model_copy(update={"event_type": "CONCALL_PRESENTATION"})
+    out = _out(promises=[("g_1", "DELIVERED", "Received LOI and began initial shipments for 18,685 BSNL 4G RAN add-on sites.")])
+    found = signals._promises({"guidance": [g]}, after, out, deck)
+    assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] and "smaller count" in found[0].text
+    out = _out(promises=[("g_1", "DELIVERED", "Received a 26,000 site order.")])
+    assert _kinds(signals._promises({"guidance": [g]}, after, out, deck)) == [("PROMISE_DELIVERED", "POSITIVE")]

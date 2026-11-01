@@ -764,7 +764,7 @@ def _results(facts, contexts, units, text_facts, tags: dict[str, str] | None = N
     continuing_before_share(values)
     owners_share(values, minority)
     eps_fillers(values)
-    eps_signs(values, tagged_minority, filer_checks)
+    eps_signs(values, tagged_minority, filer_checks, minority)
     # the two EPS variants go to memory only (F188), beside the owners' share: no table, prompt or card reads them
     for key in [k for k in values if k[0] in EPS_METRICS[1:]]:
         minority[key] = values.pop(key)
@@ -834,13 +834,14 @@ def _lender_revenue(values: dict, check: bool) -> int:
     income while "other income" is 0 or absent and "other revenue from operations" is above 0: the NBFC template's
     RevenueFromOperations then holds the other income as well, and the file cannot settle it. Aptus Finance, Q4FY26 and
     Q3FY26: 593.12 = Income, OtherIncome 0, OtherRevenueFromOperations 18.78 (the PDF's other income); the PDF's revenue
-    from operations is 574.34 (TODO 111, 27 Oct 2026). Returns how many periods lost their revenue."""
+    from operations is 574.34 (TODO 111, 27 Oct 2026). The other revenue must be at least 1% of revenue: LTF Q2FY27's 0.07 Cr
+    beside 5,484.23 cannot be a missing other income (facts-dump run 41323023287). Returns how many periods lost their revenue."""
     held = 0
     for key in [k for k in values if k[0] == _OTHER_REVENUE]:
         other = values.pop(key)
         label = key[1]
         revenue, income = values.get(("revenue", label)), values.get(("total_income", label))
-        if (check and other > 0 and revenue and income is not None and abs(revenue - income) <= 0.01
+        if (check and revenue and other >= 0.01 * abs(revenue) and other > 0 and income is not None and abs(revenue - income) <= 0.01
                 and not values.get(("other_income", label))):
             del values[("revenue", label)]
             held += 1
@@ -1014,7 +1015,21 @@ def _eps_profit(values: dict, metric: str, label: str) -> float | None:
         # only the continuing profit: the whole one may be a gain from the business sold while continuing operations lost
         # (review: a continuing EPS of -3.0 beside a whole profit of +200 was turned into +3.0); none, no sign or filler rule
         return values.get(("pat_continuing", label))
+    if metric == "eps" and _continuing_eps(values, label):
+        return values.get(("pat_continuing", label))
     return values.get(("pat_owners", label)) or values.get(("pat", label))
+
+
+def _continuing_eps(values: dict, label: str) -> bool:
+    """XBRL_FILER_CHECKS: the period's `eps` is the continuing-operations EPS (the tag kept first) and the period has a real
+    discontinued figure, so the EPS is on the continuing profit, not the whole one. TMPV FY26: EPS -4.43 (continuing) beside a
+    profit of 82,645 Cr that holds the demerger's 84,022 Cr; CAMLINFINE FY26 -1.59 beside 23.54 with 55.07 discontinued (facts-dump
+    run 41323023287). Off, or with no discontinued figure, the test stays as it was."""
+    if not xbrl_filer_checks():
+        return False
+    eps, continuing, total = (values.get((m, label)) for m in ("eps", "eps_continuing", "eps_total"))
+    return (eps is not None and continuing is not None and eps == continuing and (total is None or total != continuing)
+            and bool(values.get(("pat_discontinued", label))) and values.get(("pat_continuing", label)) is not None)
 
 
 def eps_fillers(values: dict) -> int:
@@ -1054,19 +1069,25 @@ def _year_disagrees(values: dict, label: str) -> bool:
     return abs(sum(quarters) - year) > max(1.0, 0.02 * abs(year))
 
 
-def _profit_corroborated(values: dict, label: str) -> bool:
+def _profit_corroborated(values: dict, label: str, kept: dict | None = None) -> bool:
     """True when something in the file backs a period's whole profit: its four quarters add up to the year (the check ran
-    and agreed), or the owners' and minority profit add up to it."""
+    and agreed), or the owners' and minority profit add up to it. The minority is read from ``kept`` too: `owners_share` has
+    moved a minority that adds up out of `values` by then (TMPV FY26 82,390 + 255 = 82,645; CAMLINFINE FY26 27.63 - 4.08 =
+    23.54), so without it this never held."""
     whole = values.get(("pat", label))
     if whole is None:
         return False
     if label.startswith("FY") and all(values.get(("pat", f"Q{n}{label}")) is not None for n in (1, 2, 3, 4)):
         return not _year_disagrees(values, label)
-    owners, minority = values.get(("pat_owners", label)), values.get(("pat_minority", label))
+    owners = values.get(("pat_owners", label))
+    minority = values.get(("pat_minority", label))
+    if minority is None and kept:
+        minority = kept.get(("pat_minority", label))
     return bool(owners and minority and abs(owners + minority - whole) <= max(0.5, 0.01 * abs(whole)))
 
 
-def eps_signs(values: dict, minority_labels: frozenset | set = frozenset(), filer_checks: bool = False) -> int:
+def eps_signs(values: dict, minority_labels: frozenset | set = frozenset(), filer_checks: bool = False,
+              kept: dict | None = None) -> int:
     """Give a period's EPS its profit's sign where the file's own figures show the EPS was filed unsigned, in place
     ({(metric, period): value}). Returns how many figures it changed or left out. Never invents a sign:
 
@@ -1111,7 +1132,7 @@ def eps_signs(values: dict, minority_labels: frozenset | set = frozenset(), file
             values.pop((metric, label))   # nothing proves it: the EPS goes, the profit (shown on cards) stays
         elif 0.4 <= mine / refs[len(refs) // 2] <= 2.5:   # the median of the other periods' share counts
             values[(metric, label)] = -value
-        elif filer_checks and not _profit_corroborated(values, label):
+        elif filer_checks and not _profit_corroborated(values, label, kept):
             for name in ("pat", "pat_continuing"):
                 values.pop((name, label), None)   # the EPS is the one the file's other periods support
         else:

@@ -92,3 +92,8 @@ CALL_MEMORY_VISION_CHECK = true  # call_memory.vision_confirm: a deck point asse
 # discontinued (COALINDIA 534.33 Cr, GAIL 271.68, AMBUJACEM, JSWCEMENT, IEX ...), and 78 of the 92 PDFs never mention a discontinued
 # operation; real ones (JUBLFOOD, TITAGARH, SIEMENS, UNITDSPR) keep the file's own figure. Residual: ABREL Q4FY26 (no figure in memory).
 DISCONTINUED_NEEDS_FIGURE = true # one_basis.discontinued_part: the label needs the period's own discontinued figure
+# Turned on 1 Nov 2026 ~19:00 IST (lead; owner: "fix at root cause, must be applicable to other companies also"): memory-split-lines
+# dry run over 1,902 companies (run 41304735037) splits only Eicher (505200) APR/MAY volumes into VECV 7,318 / 7,978 and Royal
+# Enfield 1,13,164 / 1,03,231; applied (run 41308954089: APR, MAY and OCT split, backup memory-split-lines-20261101T125828Z);
+# lines are learned only from repeated reporting (2+ filings of a metric).
+METRIC_BUSINESS_LINE = true      # dossier.merge keys operating figures by business line; readers take the filing's own line

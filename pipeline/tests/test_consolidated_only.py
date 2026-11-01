@@ -101,7 +101,8 @@ def test_the_table_header_names_basis_and_period_only_with_the_switch():
     assert _result().table(explicit_basis=True).splitlines()[1:] == _result().table().splitlines()[1:]
 
 
-def test_the_pass2_prompt_is_byte_identical_off_and_says_consolidated_only_on(settings):
+def test_the_pass2_prompt_is_byte_identical_off_and_says_consolidated_only_on(settings, monkeypatch):
+    monkeypatch.setenv("METRIC_BUSINESS_LINE", "0")   # its rule follows this one when live; this test pins this rule alone
     from bse_intel.prompts.engine import PromptEngine
 
     f = Filing(news_id="c1", scrip_code="999001", company_name="Demo Ltd", headline="Results",

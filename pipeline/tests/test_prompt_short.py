@@ -16,7 +16,8 @@ def _filing():
 
 
 def _shape(system: str) -> dict:
-    return json.loads(system[system.rindex("exactly this shape:") + len("exactly this shape:"):])
+    tail = system[system.rindex("exactly this shape:") + len("exactly this shape:"):].lstrip()
+    return json.JSONDecoder().raw_decode(tail)[0]   # a switched-on rule may follow the shape (METRIC_BUSINESS_LINE)
 
 
 def test_each_kind_of_filing_gets_only_its_fields_and_their_rules(settings):

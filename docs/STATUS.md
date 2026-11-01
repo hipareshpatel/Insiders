@@ -127,6 +127,22 @@ Every list was swept: this section 3 (the lead's list and the 31 Oct table below
 **Owner, 1 Nov ~10:00 IST:** nemotron-3.5-parse model id: not needed now (dropped); #281 Design E: already merged 31 Oct 07:15 IST (live); minimum group size **5** agreed, built (`MIN_GROUP_SIZE`, web `resultsView.ts`: a group with fewer than 5 companies reported is never ranked or named as leading). `ANNUAL_SCALE_FIX` on (measured: only TDPOWERSYS/MSPL's 9 left-out years return).
 **Owner decisions / account actions:** results filing made twice: table on the repeat card?; daily card-audit routine on or by hand; B3 held-card display; B5 bhavcopy prices; G9 rate-limit rule; whether the 5% bar fits long cards; "Later" items (TODO 37/38/41/46/47/58/59/83/101/113).
 
+**Second sweep, 1 Nov ~13:20 IST** (owner: "don't forget anything pending from day 1"; independent pass, evidence in each line; these sat in no row above):
+
+| # | Item | Lane | Next step |
+|---|---|---|---|
+| S1 | Arithmetic in words ("accelerated... outperforming", "far outpaced"; HANDOVER class 7): no check exists outside CARD_TEXT_SUPPORT (off) | cards | a small comparative-word check, on/off over stored cards |
+| S2 | Same event, different documents (results + deck + release; buyback + letter of offer): duplicates.py matches identical bodies only, D20 covers RESULTS only | cards | read-only count of stored non-results repeats, then the event-level rule with its on/off |
+| S3 | `XBRL_FILER_CHECKS` (TODO 111, F219; built, off; owner "after BSE", BSE done) | data | on/off over stored memory, then owner's call |
+| S4 | TODO 128 steps 2-3 (the "may be" memory link behind a mover) | cards | blocked on call memory (row 16) |
+| S5 | TODO 121 PDF shadow check (#237): every scheduled run skipped, repository variable PDF_SHADOW not "on" | owner | set it on, or drop it after the reader's FAIL (row 15) |
+| S6 | `fill-trades` remainder: 656 insider-trade filings unread; deals history 27 Apr - 21 Aug only (OPS 23 Oct) | data | one `fill-trades` run when the memory chain is idle |
+| S7 | TODO 123 reader cleanup (`drop_twin_rows`, `tail_label` still in pdf_numbers_first.py) | reader | low while the reader set fails |
+| S8 | TODO 126: 21 finance companies with empty BSE files | owner | Yes / No / Later never answered |
+| S9 | TODO 113 and TODO 47 (owner Yes, conditional: after the 95% gate) | label | "Yes, waiting for its trigger" |
+
+Doc notes: `MEMORY_CALL_V2 = true` only queues and gates the call-memory job; the v2 prompt is not live (TODO 101). "Unclear" also holds XBRL_FILER_CHECKS, CARD_EPS_WHOLE and PDF_SHADOW. Owner "Later": TODO 36, 39, 40 as well.
+
 **Cleared in the sweep (evidence):** TODO 1/2/6 (on main), 7/9 (no gap / nothing needed), 18-20/25/26 (F132-F136 built), 45 prune-companies (2,496 removed 26 Oct; 3b's "dry run never run" was stale), 129 Borrowings (#270/#273/#298; SHILPAMED recorded exception), 140/141, 147 unit slips (#294-#301), 148 bank reader (#299), 149 weekly Screener check (screener-weekly.yml, #298), 150 (#298), 151 lender fact sheet (#300, on in #304); Hubtown nse-106629168 and BANKBARODA cards right; Varun Beverages no mapping fault; card switches 3b.1 listed as "waiting" are ON in switches.toml since 27/30 Oct (CARD_EBITDA_PROFIT_V2, CARD_TWO_PARTS, CARD_CONSOLIDATED_ONLY, CARD_RESULTS_ONE_LINE, CARD_WATCH_VERDICT, CARD_FOOTER_PLAUSIBLE, EPS_SHARE_COUNT_CHECK, CARD_GUIDANCE_DATED, CARD_ONE_BASIS, CARD_GROUNDED_FIGURES, QUOTE_EXACT_NUMBERS, CARD_SAME_DEFINITION; the 1 Nov audit is their post-switch measure); VITE_SCREENER_LINES and BSE_FILL_PRE_NSE default on; REIT full run done (41153853516). **Superseded:** TODO 3/10/13/16 (by MEMORY_FILE_ONLY and CARD_FACT_SHEET, both on), 103/100/108 (BSE_FILL_PRE_NSE), 114/116 (weekly check), RESULTS_NEEDS_STATEMENT (by D20_DROPPED_FILE_PERIOD); laptop-era TASKS/PLAN/HANDOVER lists. **Not needed:** G8, TODO 29/42/54 (owner No), 146 (Later), 8 (Later), 17 (measured). **Unclear (to decide):** MEMORY_YEAR_CHECK, LINE_MAP, MEMORY_SCREENER, MEMORY_STANDALONE_ONLY, MEMORY_RESTATED (built, off, no on/drop decision found); TODO 62/66/75/81/94/96b (Tijori follow-ups: did tijori-referee run?); docs/audit/actions-pending.md's 21-23 Oct requeues (live cards not re-checked).
 
 

@@ -236,6 +236,8 @@ def test_balance_sheet_items_never_carry_a_line():
     for m in ("net_worth", "inventories", "trade_receivables", "net_debt_cr", "cash_and_equivalents", "capex"):
         assert not business_line.operating(m), m
     assert business_line.operating("volumes") and business_line.operating("store_count")
+    for m in ("debtor_days", "asset_turnover", "cash_conversion", "assets_under_management", "inventory_days"):
+        assert business_line.operating(m), m
 
 
 def test_a_card_whose_headline_names_no_line_is_read_from_its_takeaway(monkeypatch):

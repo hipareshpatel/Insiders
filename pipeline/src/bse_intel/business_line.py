@@ -51,8 +51,11 @@ def clean(line: str | None) -> str | None:
 
 # balance-sheet and capital items are the whole company's, never one line's (memory-split-lines dry run 1 Nov 2026: Eternal's
 # FY26 net worth, inventories and trade receivables would have been tagged "District" from the filing's headline)
-_BALANCE = re.compile(r"net_?worth|inventor|receivable|payable|borrowing|debt|cash|asset|liabilit|equity|reserve|investment|"
-                      r"capex|cwip|book_value|working_capital|share_capital|provision", re.I)
+_BALANCE = re.compile(r"^(?:net_?worth|inventor(?:y|ies)|trade_(?:receivables|payables)|receivables|payables|borrowings|"
+                      r"(?:total|net|gross)_debt(?:_cr)?|debt|cash(?:_and_(?:cash_)?equivalents|_balance)?(?:_cr)?|total_(?:assets|liabilities)|"
+                      r"fixed_assets|net_block|goodwill|intangibles?|capex|cwip|book_value(?:_per_share)?|working_capital|share_capital|"
+                      r"equity|reserves|investments|loans_and_advances|deposits|provisions)$", re.I)   # whole names, not parts: debtor_days,
+# asset_turnover, cash_conversion, assets_under_management stay operating (review of 018517a2)
 
 
 def operating(metric: str | None) -> bool:
@@ -60,7 +63,7 @@ def operating(metric: str | None) -> bool:
     no balance-sheet or capital item."""
     from .dossier import STATEMENT_FIGURES, _norm
 
-    return bool(metric) and _norm(metric) not in STATEMENT_FIGURES and not _BALANCE.search(str(metric))
+    return bool(metric) and _norm(metric) not in STATEMENT_FIGURES and not _BALANCE.match(str(metric))
 
 
 def known_lines(dossier: dict | None, segments: bool = True) -> list[str]:

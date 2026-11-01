@@ -12,6 +12,7 @@ text); every other point is kept untouched, as in production. Bar: WRONG kept / 
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import sys
 from pathlib import Path
@@ -26,6 +27,30 @@ from bse_intel.models import CallPoint  # noqa: E402
 from bse_intel.settings import get_settings  # noqa: E402
 
 
+def _fetch_missing(news_ids: list[str], pdfs: Path) -> list[str]:
+    """Each judged deck missing from ``pdfs`` fetched from its filing: the card's pdf_url from the site's public card page, the file
+    from NSE's archive with the project's own client (nse.NseClient.fetch). Returns the ones still missing."""
+    import httpx
+    from bse_intel.nse import NseClient
+
+    site = os.environ.get("SITE_URL", "https://insiders.reply-bd3.workers.dev")
+    client, left = NseClient(), []
+    pdfs.mkdir(parents=True, exist_ok=True)
+    for news_id in news_ids:
+        try:
+            card = httpx.get(f"{site}/api/cards/{news_id}", timeout=30, headers={"User-Agent": "Mozilla/5.0"}).json()
+            url = (card.get("card") or card).get("pdf_url")
+            data = client.fetch(url) if url else None
+        except Exception as exc:   # noqa: BLE001 - a deck we cannot get stays missing and is reported
+            print(f"{news_id}: not fetched ({type(exc).__name__})", file=sys.stderr)
+            data = None
+        if data:
+            (pdfs / f"{news_id}.pdf").write_bytes(data)
+        else:
+            left.append(news_id)
+    return left
+
+
 def main() -> int:
     root = Path(__file__).resolve().parents[2]
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -34,6 +59,8 @@ def main() -> int:
     ap.add_argument("--out")
     ap.add_argument("--dpi", type=int, default=110)
     ap.add_argument("--max-calls", type=int, default=call_memory.VISION_MAX_CALLS)
+    ap.add_argument("--fetch-missing", action="store_true",
+                    help="download a judged deck not in --pdf-dir from its filing (pdf_url from the site's card page; NSE's archive)")
     args = ap.parse_args()
     judged, pdfs = Path(args.judged), Path(args.pdf_dir)
     verdicts = {v["id"]: v["verdict"] for v in json.loads((judged / "verdicts.json").read_text(encoding="utf-8"))}
@@ -44,6 +71,8 @@ def main() -> int:
             stored[raw["id"]] = CallPoint.model_validate(raw)
     news_ids = sorted({r["news_id"] for r in rows})
     missing = [n for n in news_ids if not (pdfs / f"{n}.pdf").exists()]
+    if missing and args.fetch_missing:
+        missing = _fetch_missing(missing, pdfs)
     if missing:
         print(f"missing PDFs in {pdfs}: {', '.join(missing)}\n(dispatch the maintenance job that kept `deck-pdfs`, run 41069401462, "
               "and download that artifact here)", file=sys.stderr)

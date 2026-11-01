@@ -2691,7 +2691,7 @@ jobs:
           ls "$RUNNER_TEMP/decks" | wc -l
           ARGS=()
           if [ -n "$MAX_CALLS" ]; then ARGS+=(--max-calls "$MAX_CALLS"); fi
-          "$RUNNER_TEMP/venv/bin/python" scripts/bench_call_vision.py --pdf-dir "$RUNNER_TEMP/decks" --out "$RUNNER_TEMP/vbench/report.json" "${ARGS[@]}" | tee "$RUNNER_TEMP/vbench/summary.txt"
+          "$RUNNER_TEMP/venv/bin/python" scripts/bench_call_vision.py --pdf-dir "$RUNNER_TEMP/decks" --fetch-missing --out "$RUNNER_TEMP/vbench/report.json" "${ARGS[@]}" | tee "$RUNNER_TEMP/vbench/summary.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

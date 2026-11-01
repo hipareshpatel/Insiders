@@ -338,6 +338,39 @@ def test_a_december_year_is_stored_from_the_files_that_hold_its_twelve_months(mo
     assert not {p for t, p in got if p.startswith("YE:") and p != "YE:2025-12"}   # Jun / Sep quarters held no twelve months
 
 
+def test_a_december_year_before_the_stored_quarters_comes_from_the_annual_reports(monkeypatch):
+    """Every-company check 1 Nov 2026 (run 41254893012): ELANTAS has quarters from Q1FY26 only, so only YE:2025-12 was built, while
+    its reports hold 2023 and 2024 (screener 680 and 749). A March company asks for no earlier December year."""
+    from types import SimpleNamespace
+
+    from bse_intel import screener_view as sv
+
+    row = lambda v: SimpleNamespace(value=v)
+    years = ("YE:2023-12", "YE:2024-12", "YE:2025-12")
+    asked = []
+
+    def ours(cf, fam, basis, table, period, memo):
+        asked.append(period)
+        if table == "quarters":
+            return {"Sales": row(100.0), "Net Profit": row(10.0)}, ""
+        if period in years and table in ("annual", "cash_flow") and cf.december:
+            return ({"Sales": row(400.0), "Net Profit": row(40.0)} if table == "annual" else {"Net Cash Flow": row(5.0)}), ""
+        return None, ""
+
+    monkeypatch.setattr(sv, "_ours", ours)
+    quarters = ("Q1FY26", "Q2FY26", "Q3FY26", "Q4FY26", "Q1FY27")
+    for december in (True, False):
+        asked.clear()
+        cf = SimpleNamespace(results={(p, "STANDALONE"): p for p in quarters}, december=december,
+                             annual={("FY25", "STANDALONE"): "ar25", ("FY26", "STANDALONE"): "ar26"}, family=lambda b: "corporate")
+        entries, _ = sb.company_entries(cf, {}, "t")
+        got = {(e["table"], e["period"]) for e in entries if e["period"].startswith("YE:")}
+        if december:
+            assert got == {(t, y) for t in ("annual", "cash_flow") for y in years}
+        else:
+            assert not got and "YE:2023-12" not in asked
+
+
 def test_a_re_read_results_file_keeps_the_rebuilds_sheet_and_years():
     """1 Nov 2026: the live run re-read RITES's and VINATIORGA's May results files and put the results file's FY26 cash flow and
     March sheet over the rebuild's, which reads the annual report first (RITES cash from operations 165.97 over 327.48, screener 327).

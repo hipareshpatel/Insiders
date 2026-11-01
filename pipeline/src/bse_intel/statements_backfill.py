@@ -108,7 +108,8 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
         # (owner, 1 Nov 2026: VBL, ABB, Siemens, CRISIL; measured 92.5% annual / 95.9% cash flow exact, run 41244538582): a March
         # company's December file has nine months, not twelve, so it gives none
         year_ends = sorted({f"YE:{e.year}-{e.month:02d}" for e in (quarter_end(p) for p in quarters) if e and e.month != 3})
-        columns += [(t, ye) for ye in year_ends for t in ("annual", "cash_flow")]
+        columns += [(t, ye) for ye in _earlier_year_ends(year_ends, reports, cf, fam, basis, memo) + year_ends
+                    for t in ("annual", "cash_flow")]
         for table, period in columns:
             rows, why = sv._ours(cf, fam, basis, table, period, memo)
             values = {name: row.value for name, row in (rows or {}).items() if row.value is not None}
@@ -137,6 +138,19 @@ def company_entries(cf: sv.CompanyFacts, dossier: dict, at: str, confirm=None) -
                             "lab": {"by": "file", "doc": "results", "basis": basis, "at": at, "rules": "screener_view",
                                     "from": "stored facts"}})
     return entries, left
+
+
+def _earlier_year_ends(year_ends: list[str], reports: set[str], cf: sv.CompanyFacts, fam: str, basis: str, memo: dict) -> list[str]:
+    """The non-March years before the stored quarters, back to the oldest annual report's comparative: ELANTAS (December) has
+    quarters from Q1FY26 only, so its quarters gave YE:2025-12 alone, while its reports hold 2023 and 2024 (screener 680 and 749,
+    every-company check run 41254893012; KENNAMET June and FOSECOIND likewise). Only for a month that already gives a twelve-month
+    year, so a March company, whose December quarter is nine months, asks nothing more."""
+    months = sorted({ye[-2:] for ye in year_ends if (sv._ours(cf, fam, basis, "annual", ye, memo)[0] or {})})
+    nums = [sv._fy_num(fy) for fy in reports if sv._fy_num(fy) > 0]
+    if not months or not nums:
+        return []
+    first, last = 2000 + min(nums) - 2, min(int(ye[3:7]) for ye in year_ends)
+    return [f"YE:{y}-{m}" for y in range(first, last) for m in months if f"YE:{y}-{m}" not in year_ends]
 
 
 def _off_by_scale(values: dict, period: str, basis: str, cf: sv.CompanyFacts, fam: str, memo: dict) -> bool:

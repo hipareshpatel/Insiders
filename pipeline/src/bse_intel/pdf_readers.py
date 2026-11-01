@@ -1224,7 +1224,7 @@ _NUMERICISH = re.compile(r"[\d.,()\-\s]")
 
 class MistralOcrReader(Reader):
     """Mistral's Document OCR API (``POST /v1/ocr``, model ``MISTRAL_OCR_MODEL``, default ``mistral-ocr-latest``), bench only (lead,
-    30 Oct 2026): never in a live path. The statement pages go in one call a PDF as a base64 data URL; tables come back as HTML
+    30 Oct 2026): never in a live path. The statement pages go as a base64 data URL, one page a request by default; tables come back as HTML
     (``table_format``) in the page's ``tables`` or inline in its markdown. ``MISTRAL_OCR_PAGE_CAP`` (default 300) pages a process,
     then no answer: at up to $10 per 1,000 pages that stays inside the lead's $3. ``MISTRAL_OCR_RAW_DIR`` keeps each answer."""
     name, family = "mistral", "mistral"
@@ -1236,29 +1236,50 @@ class MistralOcrReader(Reader):
     def available(self) -> bool:
         return bool(os.environ.get("MISTRAL_API_KEY")) and super().available()
 
-    def extract(self, sub_pdf):
-        import base64
-        import hashlib
+    last_call = 0.0         # time.monotonic() of the last request, for MISTRAL_OCR_SPACING_S
 
-        import httpx
+    def extract(self, sub_pdf):
+        """One request a page by default (``MISTRAL_OCR_PER_PAGE``, default on; off sends the PDF in one request), spaced
+        ``MISTRAL_OCR_SPACING_S`` (default 3 s) apart: the Free plan allows OCR (owner, 1 Nov 2026) and every request of runs
+        41072420377, 41076952339 and 41267832784 got 429 "Rate limit exceeded" (code 1300), so it is a real rate limit."""
         with _pymupdf().open(stream=sub_pdf, filetype="pdf") as doc:
             count = doc.page_count
+        if os.environ.get("MISTRAL_OCR_PER_PAGE", "1") == "0" or count <= 1:
+            return self._ocr(sub_pdf, count)
+        out = []
+        for page in range(1, count + 1):
+            out.extend((page, grid) for _, grid in self._ocr(subset_pdf(sub_pdf, [page]), 1))
+        return out
+
+    def _ocr(self, pdf: bytes, count: int):
+        import base64
+        import hashlib
+        import time
+
+        import httpx
         cap = int(os.environ.get("MISTRAL_OCR_PAGE_CAP", "300"))
         if MistralOcrReader.pages_used + count > cap:
             raise RuntimeError(f"page cap {cap} reached ({MistralOcrReader.pages_used} used)")
         body = {"model": os.environ.get("MISTRAL_OCR_MODEL", "mistral-ocr-latest"), "table_format": "html", "include_blocks": True,
-                "document": {"type": "document_url",
-                             "document_url": "data:application/pdf;base64," + base64.b64encode(sub_pdf).decode()}}
-        import time
+                "document": {"type": "document_url", "document_url": "data:application/pdf;base64," + base64.b64encode(pdf).decode()}}
+        spacing = float(os.environ.get("MISTRAL_OCR_SPACING_S", "3"))
         t0 = time.perf_counter()
-        for wait in (2, 5, 10, None):   # a 429 (probe run 41072420377: "Rate limit exceeded", code 1300) waits and tries again
+        for wait in (5, 20, 60, None):   # a 429 waits (its Retry-After when it gives one) and tries again
+            gap = spacing - (time.monotonic() - MistralOcrReader.last_call)
+            if gap > 0:
+                time.sleep(gap)
+            MistralOcrReader.last_call = time.monotonic()
             reply = httpx.post("https://api.mistral.ai/v1/ocr", json=body, timeout=180,
                                headers={"Authorization": f"Bearer {os.environ['MISTRAL_API_KEY'].strip()}"})
             if reply.status_code != 429 or wait is None:
                 break
+            try:
+                wait = min(120.0, float(reply.headers.get("retry-after") or wait))
+            except ValueError:
+                pass
             time.sleep(wait)
         raw_dir = os.environ.get("MISTRAL_OCR_RAW_DIR")
-        if reply.status_code >= 400:     # the Free plan may refuse OCR (mistral-large-2512 answers 403 on our key): say why
+        if reply.status_code >= 400:
             _keep_refusal(raw_dir, reply)
             raise RuntimeError(f"mistral ocr HTTP {reply.status_code}: {reply.text[:200]}")
         answer = reply.json()
@@ -1266,7 +1287,7 @@ class MistralOcrReader(Reader):
         MistralOcrReader.pages_used += int((answer.get("usage_info") or {}).get("pages_processed") or count)
         if raw_dir:
             os.makedirs(raw_dir, exist_ok=True)
-            with open(os.path.join(raw_dir, hashlib.sha256(sub_pdf).hexdigest()[:16] + ".json"), "w", encoding="utf-8") as fh:
+            with open(os.path.join(raw_dir, hashlib.sha256(pdf).hexdigest()[:16] + ".json"), "w", encoding="utf-8") as fh:
                 json.dump(answer, fh)
         return mistral_grids(answer)
 
@@ -1359,7 +1380,8 @@ def _keep_refusal(raw_dir: str | None, reply) -> None:
     os.makedirs(raw_dir, exist_ok=True)
     n = len([f for f in os.listdir(raw_dir) if f.startswith("refused-")])
     with open(os.path.join(raw_dir, f"refused-{n}.json"), "w", encoding="utf-8") as fh:
-        json.dump({"status": reply.status_code, "body": reply.text[:2000]}, fh)
+        limits = {k: v for k, v in reply.headers.items() if "ratelimit" in k.lower() or k.lower() == "retry-after"}
+        json.dump({"status": reply.status_code, "body": reply.text[:2000], "headers": limits}, fh)
 
 
 def nemotron_grids(answer: dict) -> list[list[list[str]]]:

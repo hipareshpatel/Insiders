@@ -47,6 +47,8 @@ def test_not_available_without_a_key(monkeypatch):
 @respx.mock
 def test_extract_posts_the_pdf_counts_pages_and_keeps_the_answer(monkeypatch, tmp_path):
     monkeypatch.setenv("MISTRAL_API_KEY", " k ")
+    monkeypatch.setenv("MISTRAL_OCR_PER_PAGE", "0")
+    monkeypatch.setenv("MISTRAL_OCR_SPACING_S", "0")
     monkeypatch.setenv("MISTRAL_OCR_RAW_DIR", str(tmp_path))
     monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
     route = respx.post("https://api.mistral.ai/v1/ocr").mock(return_value=httpx.Response(200, json=ANSWER))
@@ -62,6 +64,7 @@ def test_extract_posts_the_pdf_counts_pages_and_keeps_the_answer(monkeypatch, tm
 @respx.mock
 def test_page_cap_stops_before_the_call(monkeypatch):
     monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setenv("MISTRAL_OCR_PER_PAGE", "0")
     monkeypatch.setenv("MISTRAL_OCR_PAGE_CAP", "3")
     monkeypatch.setattr(MistralOcrReader, "pages_used", 2)
     route = respx.post("https://api.mistral.ai/v1/ocr").mock(return_value=httpx.Response(200, json=ANSWER))
@@ -137,7 +140,7 @@ def test_a_refusal_is_kept_with_its_status_and_body(monkeypatch, tmp_path):
         NemotronParse35Reader().extract(_pdf(1))
     assert json.loads(route.calls[0].request.content)["model"] == "nvidia/nemotron-3.5-parse"
     kept = json.loads((tmp_path / "refused-0.json").read_text())
-    assert kept == {"status": 404, "body": '{"detail":"Function not found"}'}
+    assert kept == {"status": 404, "body": '{"detail":"Function not found"}', "headers": {}}
 
 
 @respx.mock
@@ -197,10 +200,28 @@ def test_nemotron2_names_its_tool_and_v1_does_not(monkeypatch):
 def test_mistral_retries_a_429(monkeypatch):
     monkeypatch.setenv("MISTRAL_API_KEY", "k")
     monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
-    monkeypatch.setattr("time.sleep", lambda s: None)
+    slept = []
+    monkeypatch.setattr("time.sleep", slept.append)
     route = respx.post("https://api.mistral.ai/v1/ocr").mock(
-        side_effect=[httpx.Response(429, text="Rate limit exceeded"), httpx.Response(200, json=ANSWER)])
-    assert len(MistralOcrReader().extract(_pdf(2))) == 2 and route.call_count == 2
+        side_effect=[httpx.Response(429, text="Rate limit exceeded", headers={"retry-after": "7"}), httpx.Response(200, json=ANSWER)])
+    assert len(MistralOcrReader().extract(_pdf(1))) == 2 and route.call_count == 2
+    assert 7.0 in slept                                                    # its Retry-After, not the default wait
+
+
+@respx.mock
+def test_mistral_sends_one_page_a_request_spaced_out(monkeypatch, tmp_path):
+    monkeypatch.setenv("MISTRAL_API_KEY", "k")
+    monkeypatch.setenv("MISTRAL_OCR_RAW_DIR", str(tmp_path))
+    monkeypatch.setattr(MistralOcrReader, "pages_used", 0)
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    one = {"pages": [ANSWER["pages"][0]], "usage_info": {"pages_processed": 1}}
+    route = respx.post("https://api.mistral.ai/v1/ocr").mock(
+        side_effect=[httpx.Response(200, json=one), httpx.Response(429, text="x", headers={"x-ratelimit-remaining-req-minute": "0"})] + [httpx.Response(429, text="x")] * 3)
+    with pytest.raises(RuntimeError, match="HTTP 429"):
+        MistralOcrReader().extract(_pdf(2))
+    assert route.call_count == 5 and MistralOcrReader.pages_used == 1        # page 1 read alone; page 2 refused after 3 waits
+    kept = json.loads((tmp_path / "refused-0.json").read_text())
+    assert kept["status"] == 429 and "headers" in kept
 
 
 def test_garbled_figure_spares_dates_and_sees_through_marks():

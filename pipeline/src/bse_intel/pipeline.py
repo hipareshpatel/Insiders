@@ -75,7 +75,7 @@ from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
-from . import event_repeats, footer_plausible, one_basis, results_one_line, words_figures
+from . import comparative_memory, event_repeats, footer_plausible, one_basis, results_one_line, words_figures
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -3974,13 +3974,25 @@ class Pipeline:
         # a card whose figures are its own XBRL file's, every amount grounded: the garbled text layer cannot have
         # given it a wrong figure (held-card audit, 22 Oct 2026: 15 such holds, all false)
         checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
+        # a checks.held reason only publishes the card as unverified; these take it out of the feed (held), its facts kept
+        hide: list[str] = []
         if other_issuer:
-            checks.held.append(f"The results in this filing are {other_issuer}'s, not {filing.company_name}'s own (CARD_OTHER_ISSUER)")
+            hide.append(f"The results in this filing are {other_issuer}'s, not {filing.company_name}'s own (CARD_OTHER_ISSUER)")
+        if out.card is not None and not tagged and (out.event_type or event_type) == "RESULTS":
+            # a PDF-read results card whose earlier quarters contradict memory read its columns out of order (MASKINVEST)
+            wrong = comparative_memory.contradictions(
+                [out.card.headline or "", out.card.takeaway or "", out.timeline_entry or ""]
+                + [f.text for f in out.card.what_happened] + [f"{k.label} {k.value} {k.change or ''}" for k in out.card.key_numbers],
+                dossier)
+            if wrong:
+                hide.append("Earlier quarters contradict memory, columns read out of order: " + "; ".join(wrong[:3])
+                            + " (CARD_COMPARATIVE_MATCHES_MEMORY)")
         if out.card is not None and (repeat := event_repeats.match(
                 out.event_type or event_type, filing.filed_at, f"{out.card.headline or ''} {out.timeline_entry or ''}",
                 filing.company_name, dossier.get("timeline"), filing.news_id)):
             # the same order or deal from a second document (S2): this card's facts stay stored, the first card is the event's
-            checks.held.append(f"Repeat of {repeat[0]}: {repeat[1]} (CARD_EVENT_REPEAT)")
+            hide.append(f"Repeat of {repeat[0]}: {repeat[1]} (CARD_EVENT_REPEAT)")
+        checks.held += hide
         unchecked: list[str] = []
         if checks.only_quotes:
             # the points whose quote does not carry them leave the face, behind a tap; the card is published, not held
@@ -4180,6 +4192,7 @@ class Pipeline:
             # every line sorted into part 1 or part 2 by code, after every edit above (indexes point at the final lists)
             card_json["parts"] = two_parts.split_card(card_json, text, blocks, two_hidden.get(id(out)))
         held = (review or {}).get("status") == "UNRESOLVED" and not checks.only_style
+        held = held or bool(hide)   # another company's results, a repeat, columns out of order: out of the feed (switches above)
         # A held card is one for review whatever made it so: a card held only for an unfound amount had
         # needs_review = 0, so it escaped the review count and the scoring veto (76 of 118 held cards in the
         # smoke-test funnel, 2026-10-18).

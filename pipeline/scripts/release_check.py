@@ -80,6 +80,8 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      softens and the list items it drops. Complete.
   event_repeat       CARD_EVENT_REPEAT (S2, 1 Nov 2026): each ORDER_WIN or M_AND_A card against its company's memory timeline
                      (`event_repeats.match`); the cards it would hold as a repeat of an earlier entry, that entry named.
+  comparative_memory CARD_COMPARATIVE_MATCHES_MEMORY (1 Nov 2026, MASKINVEST nse-106838206): each PDF-read results card whose figure
+                     for a named earlier quarter contradicts memory's; held with the switch on (columns read out of order).
   unit_fix_scale     UNIT_FIX_SCALE_GUARD (1 Nov 2026, CDSL nse-106838164): each unit correction a stored card records that the
                      guard would refuse (the figure as written at the company's own scale in memory, the correction not).
   press_release_fold RESULTS_PRESS_RELEASE (TODO 135): each stored results card a fold would take (its headline or file name names a
@@ -146,7 +148,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
                 "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS",
                 "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE",
-                "UNIT_FIX_SCALE_GUARD")
+                "UNIT_FIX_SCALE_GUARD", "CARD_COMPARATIVE_MATCHES_MEMORY")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -158,7 +160,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
           ("filer_checks", "XBRL_FILER_CHECKS"), ("event_repeat", "CARD_EVENT_REPEAT"),
-          ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"))
+          ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"),
+          ("comparative_memory", "CARD_COMPARATIVE_MATCHES_MEMORY"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -384,6 +387,20 @@ def fold_pairs(results_cards: list[dict], candidates: list[dict]) -> list[dict]:
         if earlier:
             pairs.append({**c, "into": earlier[0]["news_id"], "into_headline": earlier[0]["headline"]})
     return pairs
+
+
+def check_comparative_memory(card: dict, row: dict, dossier: dict | None) -> dict:
+    """comparative_memory: a PDF-read results card (no exchange file) whose figures for a named earlier quarter contradict
+    memory's (comparative_memory.contradictions, MASKINVEST nse-106838206): held with CARD_COMPARATIVE_MATCHES_MEMORY on."""
+    from bse_intel import comparative_memory
+
+    texts = ([card.get("headline") or "", card.get("takeaway") or "", card.get("timeline_entry") or ""]
+             + [(i.get("text") if isinstance(i, dict) else i) or "" for i in card.get("what_happened") or []]
+             + [f"{k.get('label')} {k.get('value')} {k.get('change') or ''}" for k in card.get("key_numbers") or [] if isinstance(k, dict)])
+    with switches_on("CARD_COMPARATIVE_MATCHES_MEMORY"):
+        wrong = comparative_memory.contradictions(texts, dossier)
+    off = [f"HEADLINE {card.get('headline') or ''}"]
+    return _record(row, card, off, off + [f"HELD: {w}" for w in wrong])
 
 
 def check_unit_fix_scale(card: dict, row: dict, dossier: dict | None) -> dict:
@@ -1211,6 +1228,13 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_event_repeat(card, row, memory() or None))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "comparative_memory":
+                    if not results or (card.get("xbrl") or {}).get("url"):
+                        skipped[name]["not a PDF-read results card"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_comparative_memory(card, row, memory() or None))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "unit_fix_scale":
                     if not (card.get("grounding") or {}).get("unit_fixes"):

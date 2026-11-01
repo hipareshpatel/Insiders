@@ -336,6 +336,15 @@ def unit_slip_xbrl_guard() -> bool:
     return _switch("UNIT_SLIP_XBRL_GUARD")
 
 
+def discontinued_needs_figure() -> bool:
+    """DISCONTINUED_NEEDS_FIGURE (default off; blind audit of 1 Nov 2026): a card says "includes ₹X Cr from discontinued operations"
+    only when the period has a discontinued-operations figure of its own (ProfitLossFromDiscontinuedOperationsAfterTax, a line every
+    SEBI results statement prints). Total profit less "continuing" profit is otherwise the associates' share (the taxonomy's
+    continuing profit is before it) or a scheme's restatement: GABRIEL 48.3 Cr, SARDAEN's Q1FY27 15.32 Cr and Q2FY26 12.53 Cr,
+    POLICYBZR, all called discontinued. It changes card text: on after release_check discontinued_figure. Read at the call."""
+    return _switch("DISCONTINUED_NEEDS_FIGURE")
+
+
 def annual_scale_fix() -> bool:
     """ANNUAL_SCALE_FIX (default off; 1 Nov 2026: TD Power and MSP Steel's annual reports state lakh with no scale, every money fact
     1e5 small, so the statements rebuild left their annual years out): an annual report whose year's Sales AND Net Profit are both

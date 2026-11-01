@@ -22,7 +22,7 @@ import re
 
 from .grounding import _tokens
 from .periods import prior_quarter_period, prior_year_period
-from .settings import card_one_basis
+from .settings import card_one_basis, discontinued_needs_figure
 
 _TOLERANCE = 0.02   # as metrics._DISCONTINUED_TOLERANCE: the share of the profit a discontinued part must exceed
 _MIN_CR = 1.0
@@ -56,6 +56,13 @@ def discontinued_part(found: dict[tuple[str, str], float], period: str | None) -
     if not period:
         return None
     total, continuing = found.get(("pat", period)), found.get(("pat_continuing", period))
+    if discontinued_needs_figure():
+        # the period's own discontinued figure, never the gap: the taxonomy's continuing profit is before the associates' share,
+        # so the gap is that share where no operation was discontinued (GABRIEL, SARDAEN, POLICYBZR; audit of 1 Nov 2026)
+        part = found.get(("pat_discontinued", period))
+        if total is None or part is None or abs(part) <= max(_MIN_CR, _TOLERANCE * abs(total)):
+            return None
+        return part
     if total is None or continuing is None or abs(total - continuing) <= max(_MIN_CR, _TOLERANCE * abs(total)):
         return None
     return total - continuing
@@ -88,8 +95,10 @@ def _profit_labels(period: str, found: dict[tuple[str, str], float]):
             what = (f"{base_period} includes {_cr(base_part)} from discontinued operations" if base_part is not None
                     else f"{period} includes {_cr(own)} from discontinued operations")
             notes[round((now - base) / abs(base) * 100, 1)] = what
+    continuing = found.get(("pat", period), 0.0) - own if own is not None and discontinued_needs_figure() \
+        else found.get(("pat_continuing", period), 0.0)
     own_note = (f"includes {_cr(own)} from discontinued operations; continuing operations "
-                f"{_cr(found.get(('pat_continuing', period), 0.0))}" if own is not None else None)
+                f"{_cr(continuing)}" if own is not None else None)
     return amounts, notes, own_note
 
 

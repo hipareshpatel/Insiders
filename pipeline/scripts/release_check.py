@@ -108,6 +108,7 @@ import audit_card_v2 as v2  # noqa: E402
 import audit_precision as prec  # noqa: E402
 import audit_two_parts as two  # noqa: E402
 from bse_intel import card_support, event_xbrl, gate, one_basis, signals, xbrl_facts, xbrl_store  # noqa: E402
+from bse_intel.periods import prior_quarter_period, prior_year_period  # noqa: E402
 from bse_intel import pipeline as P  # noqa: E402
 from bse_intel.dossier import dossier_as_of, latest_fundamentals, results_snapshot, view_as_of, with_year_hold  # noqa: E402
 from bse_intel.extract import Document  # noqa: E402
@@ -127,7 +128,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("year_check", "MEMORY_YEAR_CHECK"), ("footer_plausible", "CARD_FOOTER_PLAUSIBLE"),
           ("eps_follows_profit", "CARD_EPS_FOLLOWS_PROFIT"), ("eps_whole", "CARD_EPS_WHOLE"),
           ("text_support", "CARD_TEXT_SUPPORT"), ("results_statement", "RESULTS_NEEDS_STATEMENT"),
-          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"))
+          ("unit_slip_guard", "UNIT_SLIP_XBRL_GUARD"), ("discontinued_figure", "DISCONTINUED_NEEDS_FIGURE"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -573,6 +574,31 @@ def check_one_basis(card: dict, dossier: dict | None, row: dict, period: str | N
     return rec
 
 
+def check_discontinued_figure(card: dict, dossier: dict | None, row: dict, period: str | None) -> dict:
+    """discontinued_figure: the "includes X from discontinued operations" part of the card's period and its two bases, by the gap
+    (off) and by the period's own discontinued figure (on), over memory's rows and the file read back from memory. A card whose
+    stored text names discontinued operations and whose part goes away under the switch is a label the switch removes."""
+    dossier = dossier or {}
+    current = dossier_as_of(dossier, row["filed_at"]) if dossier else {}
+    history = (current or {}).get("financial_metrics") or []
+    tagged = tagged_from_memory(dossier, period, card.get("basis")) if dossier and period else None
+    found = one_basis.values(history, tagged)
+    periods = [p for p in (period, prior_quarter_period(period) if period else None, prior_year_period(period) if period else None) if p]
+
+    def parts() -> list[str]:
+        return [f"{p}: {one_basis.discontinued_part(found, p)}" for p in periods]
+
+    off = parts()
+    with switches_on("DISCONTINUED_NEEDS_FIGURE"):
+        on = parts()
+    words = json.dumps({k: card.get(k) for k in ("headline", "what_happened", "key_numbers", "why_it_matters", "timeline_entry")},
+                       ensure_ascii=False, default=str)
+    rec = _record(row, card, off, on, extra=[])
+    rec["info"] = {"text_names_discontinued": "discontinued operation" in words}
+    rec["unreplayable"] = []
+    return rec
+
+
 def _kpi_specs(card: dict) -> list[dict]:
     """The footer specs a stored card shows: its results table's kpi rows and its fundamentals strip's labels."""
     specs = [footer_spec(x) for x in (card.get("results") or {}).get("lines") or [] if str(x.get("key") or "").startswith("kpi:")]
@@ -986,6 +1012,9 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                             seen[name] += 1
                             keep(name, check_unit_slip_guard(card, body, row))
                             row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "discontinued_figure":
+                    seen[name] += 1
+                    keep(name, check_discontinued_figure(card, memory() or None, row, period if results else None))
                 elif name == "one_basis":
                     seen[name] += 1
                     keep(name, check_one_basis(card, memory() or None, row, period if results else None))

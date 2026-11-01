@@ -72,6 +72,30 @@ def _same_period(due: str | None, due_iso: str | None, period: str) -> bool:
     return end is not None and end == due_date(period) and bool(re.fullmatch(r"Q[1-4]FY\d{2}", period))
 
 
+def _not_this_period(due: str | None, due_iso: str | None, own: dict[str, set[str]]) -> str | None:
+    """CARD_VERDICT_NEEDS_FIGURE: the honest reason when the target's period is not this filing's but has already ended
+    (SHAKTIPUMP, blind audit 1 Nov 2026: a module plant due Q1FY27 was "not due" on the Q2FY27 call); None otherwise."""
+    from .settings import card_verdict_needs_figure
+
+    if not card_verdict_needs_figure() or not own:
+        return None
+    ends = {p: due_date(p) for p in own}
+    latest = max((p for p in ends if ends[p]), key=lambda p: ends[p], default=None)
+    label = canonical_period(due or "")
+    end = due_date(label) if _PERIOD.fullmatch(label) else None
+    if end is None and due_iso:
+        try:
+            end = date.fromisoformat(due_iso[:10])
+        except ValueError:
+            end = None
+    if latest is None or end is None:
+        return None
+    shown = due or due_iso
+    if end < ends[latest]:
+        return f"it was due {shown}, which has passed; this filing reports {latest} and does not settle it"
+    return None   # the same end (FY26 on a Q4FY26 filing) keeps the old wording (lead's review of #342)
+
+
 def why_no_verdict(g: dict, metrics: list[dict], news_id: str, discussed: str | None = None) -> str | None:
     """None when memory target ``g`` may be judged by filing ``news_id``; else why not, in plain words."""
     if not g.get("due_date"):
@@ -81,7 +105,7 @@ def why_no_verdict(g: dict, metrics: list[dict], news_id: str, discussed: str | 
     own = _own_periods(metrics, news_id, discussed)
     periods = [p for p in own if _same_period(g.get("due"), g.get("due_date"), p)]
     if not periods:
-        return "the target is not due for the period this filing reports"
+        return _not_this_period(g.get("due"), g.get("due_date"), own) or "the target is not due for the period this filing reports"
     if not any(_name(g.get("metric")) and _name(g.get("metric")) in own[p] for p in periods):
         return "this filing prints no figure for the target's metric"
     return None
@@ -97,7 +121,7 @@ def why_no_watch_verdict(w: dict, metrics: list[dict], news_id: str, discussed: 
         return "the check has no date, or one before it was set"
     own = _own_periods(metrics, news_id, discussed)
     if canonical_period(w.get("check_in") or "") not in own:
-        return "the check is not due for the period this filing reports"
+        return _not_this_period(w.get("check_in"), w.get("check_by"), own) or "the check is not due for the period this filing reports"
     target = str(w.get("target") or "")
     if not discussed and not _KPI_TARGET.fullmatch(target):
         return "the target is not a plain figure"   # as before; the honest reason below rides DECK_DISCUSSED_PERIOD (review)

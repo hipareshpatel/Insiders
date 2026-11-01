@@ -335,6 +335,7 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
         if not g:
             continue
         when = g.get("given_on", "")[:10]
+        decided = False   # code, not the model, settled the verdict
         if dated and update.status in ("DELIVERED", "DELAYED", "MISSED"):
             why = why_no_verdict(g, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:
@@ -349,10 +350,19 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             wrong = numeric_contradiction(g.get("target"), update.evidence, g.get("statement"))
             if wrong:
                 update = update.model_copy(update={"status": "MISSED", "evidence": f"{update.evidence or ''} (code check: {wrong})".strip()})
+                decided = True
         if card_watch_verdict() and update.status in ("DELIVERED", "DELAYED", "MISSED"):   # F205: two periods of one metric
             from .watch_code import relative_guidance_verdict
             if relative_guidance_verdict(g, after.get("financial_metrics", [])) == "MET":
                 update = update.model_copy(update={"status": "DELIVERED"})
+                decided = True
+        if not decided and update.status in ("DELIVERED", "MISSED"):   # CARD_VERDICT_NEEDS_FIGURE (off: judge_item gives None)
+            from .verdict_figure import judge_item
+            unjudged = judge_item(update.status, g, update.evidence)
+            if unjudged:
+                from .guidance_dated import said_on as _said_on
+                out.append(Signal("WATCH_RESOLVED", "INFO", _said_on(g, unjudged), g["id"]))
+                continue
         if update.status == "DELIVERED":
             out.append(Signal("PROMISE_DELIVERED", "POSITIVE",
                               f"\"{g['statement']}\" (guided {when}). {update.evidence}".strip(), g["id"]))
@@ -387,6 +397,13 @@ def _promises(before: dict | None, after: dict, output: Pass2Output, filing: Fil
             why = why_no_watch_verdict(w, after.get("financial_metrics", []), filing.news_id, discussed)
             if why:
                 out.append(Signal("WATCH_RESOLVED", "INFO", said_on(w, why), w["id"]))
+                continue
+        if w["kind"] == "KPI" and status in ("MET", "MISSED") and code not in ("MET", "MISSED") and "(code check:" not in (update.evidence or ""):
+            from .verdict_figure import judge_item   # CARD_VERDICT_NEEDS_FIGURE (off: judge_item gives None)
+            unjudged = judge_item(status, w, update.evidence)
+            if unjudged:
+                from .guidance_dated import said_on as _said_on
+                out.append(Signal("WATCH_RESOLVED", "INFO", _said_on(w, unjudged), w["id"]))
                 continue
         severity = {"MET": "POSITIVE", "MISSED": "WARNING"}.get(status, "INFO")
         label = {"KPI": "KPI check", "APPROVAL": "Approval", "CONCERN": "Concern"}.get(w["kind"], "Watch item")

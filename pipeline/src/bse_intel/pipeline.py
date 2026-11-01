@@ -4222,7 +4222,7 @@ class Pipeline:
         if one_line_notes := results_one_line.apply_card_json(card_json):
             card_json.setdefault("grounding", {})["one_line"] = one_line_notes
         # a profit figure that is not the table's reported profit is labelled with it (CARD_ADJUSTED_PROFIT_LABEL; off: nothing)
-        if profit_notes := results_one_line.profit_label_card_json(card_json):
+        if profit_notes := results_one_line.profit_label_card_json(card_json, current):
             card_json.setdefault("grounding", {})["profit_label"] = profit_notes
         # a comparison word its own figures contradict is dropped or softened (CARD_WORDS_MATCH_FIGURES; off: nothing)
         if words_notes := words_figures.apply_card_json(card_json, current):

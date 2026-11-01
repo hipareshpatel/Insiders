@@ -118,7 +118,7 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
     if card_adjusted_profit_label() and new.get("results"):
         # a profit figure that is not the table's reported profit is labelled, as at card time (off: nothing)
         new = {**new, "key_numbers": [dict(k) for k in new.get("key_numbers") or []]}
-        if notes := results_one_line.profit_label_card_json(new):
+        if notes := results_one_line.profit_label_card_json(new, dossier):
             new["grounding"] = {**(new.get("grounding") or {}), "profit_label": notes}
     if card_words_match_figures() and new.get("results"):
         # a comparison word its own figures contradict is dropped or softened, as at card time (off: nothing)

@@ -152,3 +152,51 @@ def test_any_of_total_owners_or_continuing_profit_is_not_other(monkeypatch):
         card["headline"] = "Mahindra Q2FY27 net profit ₹%s Cr" % value[1:-3]
         card["key_numbers"] = [{"label": "Net profit", "value": value}]
         assert R.profit_label_card_json(card) == [], value
+
+
+# --- release-check triage of run 41318733817 (1 Nov 2026): 285 cards, most of them code against code -----------------------------
+
+def _card(period, table_pat, key_label, key_value, key_quote, takeaway="Strong quarter."):
+    return {"headline": f"Acme {period} results", "takeaway": takeaway,
+            "key_numbers": [{"label": key_label, "value": key_value, "change": None, "quote": key_quote}],
+            "results": {"period": period, "pat": {"value": table_pat}, "lines": [{"key": "pat", "label": "PAT"}]}}
+
+
+def test_tatacomm_a_key_number_code_wrote_is_not_labelled(monkeypatch):
+    # TATACOMM Q4FY26: the key "Net profit ₹259.27 Cr" is results_card's (quote: the table line), the table's PAT row 263.24
+    card = _card("Q4FY26", 263.24, "Net profit", "₹259.27 Cr", "- pat Q4FY26: 259.27 Cr, YoY -40.2%")
+    for switch in ("0", "1"):
+        monkeypatch.setenv("CARD_ADJUSTED_PROFIT_LABEL", switch)
+        c = copy.deepcopy(card)
+        assert R.profit_label_card_json(c) == [] and c["key_numbers"][0]["label"] == "Net profit"
+
+
+def test_swsolar_the_takeaway_code_wrote_is_not_labelled(monkeypatch):
+    on(monkeypatch)
+    text = ("Q4FY26 net profit of ₹141.59 Cr against net profit of ₹55.01 Cr a year earlier; the largest move was other income of "
+            "₹52.93 Cr against ₹12.1 Cr a year earlier.")
+    card = _card("Q4FY26", 134.57, "EBITDA", "₹300 Cr", "x", takeaway=text)
+    assert R.profit_label_card_json(card) == [] and card["takeaway"] == text
+    figures = _card("Q4FY26", 134.57, "EBITDA", "₹300 Cr", "x", takeaway="Q4FY26: revenue ₹1,200 Cr, net profit ₹141.59 Cr.")
+    assert R.profit_label_card_json(figures) == []
+
+
+def test_kanorichem_a_key_naming_its_basis_is_left_alone(monkeypatch):
+    on(monkeypatch)
+    card = _card("Q4FY25", 30.06, "Standalone PAT", "-₹37.98 Cr", "Standalone loss of Rs 37.98 crore")
+    assert R.profit_label_card_json(card) == [] and card["key_numbers"][0]["label"] == "Standalone PAT"
+
+
+def test_emudhra_a_year_figure_on_a_q4_card_is_named_with_its_year(monkeypatch):
+    on(monkeypatch)
+    memory = {"financial_metrics": [{"metric": "pat", "period": "FY25", "value": 87.23}, {"metric": "pat", "period": "Q4FY25", "value": 23.89}]}
+    card = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
+    notes = R.profit_label_card_json(card, memory)
+    assert card["key_numbers"][0]["label"] == "PAT (FY25)" and "memory's FY25 profit" in notes[0]
+    # no memory year that matches: labelled company-reported as before (an adjusted figure, TI)
+    other = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
+    R.profit_label_card_json(other, {"financial_metrics": [{"metric": "pat", "period": "FY25", "value": 99.0}]})
+    assert other["key_numbers"][0]["label"].startswith("PAT (company-reported")
+    monkeypatch.setenv("CARD_ADJUSTED_PROFIT_LABEL", "0")
+    off = _card("Q4FY25", 23.89, "PAT", "₹87.23 Cr", "Profit after tax of Rs 87.23 crore")
+    assert R.profit_label_card_json(off, memory) == [] and off["key_numbers"][0]["label"] == "PAT"

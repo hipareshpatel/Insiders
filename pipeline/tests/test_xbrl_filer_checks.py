@@ -112,7 +112,9 @@ def _aptus(monkeypatch, on, other_income=0, other_ops=187_800_000):   # 18.78 Cr
     return (body + "</xbrli:xbrl>").encode()
 
 
-def test_a_lenders_revenue_equal_to_its_income_is_held_when_other_revenue_exists(monkeypatch):
+def test_a_lenders_revenue_equal_to_its_income_is_never_held(monkeypatch):
+    """Blind review of release check 41324276371: the Aptus hold removed true revenue on 6 cards (MASTERTR, ARMANFIN, JSWHL,
+    BAJAJFINSV, HDBFS, c03), each the filing's printed revenue from operations with other income nil. Removed: kept both ways."""
     def figures(raw):
         r = xbrl.parse(raw)
         return {m.metric for m in r.metrics}
@@ -120,14 +122,10 @@ def test_a_lenders_revenue_equal_to_its_income_is_held_when_other_revenue_exists
     raw = _aptus(monkeypatch, True)
     monkeypatch.setattr(xbrl, "LENDER_TEMPLATES", ("INDAS",))   # the fixture has no SEBI namespace: read it as a lender's
     monkeypatch.setattr(xbrl, "taxonomy", lambda data: "INDAS")
-    _on(monkeypatch, False)
-    assert "revenue" in figures(raw)
-    _on(monkeypatch)
-    assert "revenue" not in figures(raw) and "total_income" in figures(raw)
-    assert not any(m.startswith("_") for m in figures(raw))
-    # other income present, or no other revenue from operations: the revenue stays
-    assert "revenue" in figures(_aptus(monkeypatch, True, other_income=18_780_000))
-    assert "revenue" in figures(_aptus(monkeypatch, True, other_ops=0))
+    for on in (False, True):
+        _on(monkeypatch, on)
+        assert "revenue" in figures(raw) and "total_income" in figures(raw)
+        assert not any(m.startswith("_") for m in figures(raw))
 
 
 def test_a_commercial_company_keeps_its_revenue_with_the_switch_on(monkeypatch):
@@ -206,8 +204,6 @@ def test_a_lender_whose_revenue_is_its_income_with_no_other_income_keeps_it(monk
     assert "revenue" in got and "total_income" in got
     assert xbrl._lender_revenue({("revenue", "Q"): 5.0, ("total_income", "Q"): 5.0, ("other_income", "Q"): 0,
                                  (xbrl._OTHER_REVENUE, "Q"): 0}, True) == 0
-    # Aptus stays held: other revenue from operations above 0 beside revenue = income
-    assert "revenue" not in {m.metric for m in xbrl.parse(_aptus(monkeypatch, True)).metrics}
 
 
 def _disc_file(rows) -> bytes:
@@ -259,10 +255,42 @@ def test_continuing_eps_only_with_a_discontinued_figure(monkeypatch):
     assert xbrl._eps_profit({**base, ("pat_discontinued", "Y"): 84022.0}, "eps", "Y") == 82390.0
 
 
-def test_lender_other_revenue_under_one_percent_holds_nothing():
-    # LTF Q2FY27: other revenue 0.07 Cr beside revenue = income 5,484.23, other income 0: kept
-    ltf = {("revenue", "Q"): 5484.23, ("total_income", "Q"): 5484.23, ("other_income", "Q"): 0.0, (xbrl._OTHER_REVENUE, "Q"): 0.07}
-    assert xbrl._lender_revenue(ltf, True) == 0 and ("revenue", "Q") in ltf
-    # HDBFS Q2FY27: 345.38 beside 5,005.32 (6.9%), the Aptus shape: still held, for the PDF to settle
-    hdb = {("revenue", "Q"): 5005.32, ("total_income", "Q"): 5005.32, ("other_income", "Q"): 0.0, (xbrl._OTHER_REVENUE, "Q"): 345.38}
-    assert xbrl._lender_revenue(hdb, True) == 1 and ("revenue", "Q") not in hdb
+def test_lender_revenue_is_kept_whatever_its_other_revenue():
+    # LTF Q2FY27 (0.07 Cr other revenue) and HDBFS Q2FY27 (345.38 beside 5,005.32, the Aptus shape the review found true)
+    for other in (0.07, 345.38):
+        values = {("revenue", "Q"): 5005.32, ("total_income", "Q"): 5005.32, ("other_income", "Q"): 0.0, (xbrl._OTHER_REVENUE, "Q"): other}
+        assert xbrl._lender_revenue(values, True) == 0 and values[("revenue", "Q")] == 5005.32
+        assert (xbrl._OTHER_REVENUE, "Q") not in values
+
+
+def test_tmpv_keeps_the_total_eps_not_the_continuing_one(monkeypatch):
+    """Blind review of 41324276371, TMPV c15: FY26's continuing-only EPS -4.43 stayed on the card; the total EPS is -0.61."""
+    raw = _disc_file(TMPV)
+    _on(monkeypatch)
+    # the total EPS replaces the continuing one; against the positive owners' profit its sign is unproven, so eps_signs leaves
+    # it out (less, never a guess; no card shows EPS): -4.43 is gone from the card's figures, memory keeps the continuing variant
+    assert ("eps", "FY26") not in _figures(raw)
+    assert xbrl.total_tags({("eps", "Y"): -4.43, ("eps_continuing", "Y"): -4.43, ("eps_total", "Y"): -0.61,
+                            ("pat_discontinued", "Y"): 84022.0}) == 1
+    extra = {(m.metric, m.period): m.value for m in xbrl.parse(raw).memory_extra}
+    assert extra[("eps_continuing", "FY26")] == -4.43
+    assert _figures(raw).get(("eps", "Q4FY26")) == 15.71   # no discontinued figure in the quarter: as filed
+    _on(monkeypatch, False)
+    assert ("eps", "FY26") not in _figures(raw)            # off: the sign check leaves -4.43 out against the positive profit, as before
+
+
+def test_aurum_owners_equal_to_the_continuing_profit_are_left_out(monkeypatch):
+    """AURUM c12: owners -10.45 is the continuing profit; the whole profit is +1.90 with the discontinued figure."""
+    _on(monkeypatch)
+    aurum = {("pat", "Q"): 1.90, ("pat_continuing", "Q"): -10.45, ("pat_discontinued", "Q"): 12.35, ("pat_owners", "Q"): -10.45}
+    values = dict(aurum)
+    assert xbrl.total_tags(values) == 1 and ("pat_owners", "Q") not in values and values[("pat", "Q")] == 1.90
+    # an owners' figure that is the whole profit stays; so does one in a period with no discontinued figure
+    right = {**aurum, ("pat_owners", "Q"): 1.90}
+    assert xbrl.total_tags(right) == 0 and right[("pat_owners", "Q")] == 1.90
+    none = {**aurum, ("pat_discontinued", "Q"): 0.0}
+    assert xbrl.total_tags(none) == 0 and ("pat_owners", "Q") in none
+    # owners that add up with a real minority to the whole profit stay
+    ok = {("pat", "Q"): 100.0, ("pat_continuing", "Q"): 90.0, ("pat_discontinued", "Q"): 10.0, ("pat_owners", "Q"): 90.0,
+          ("pat_minority", "Q"): 10.0}
+    assert xbrl.total_tags(ok) == 0

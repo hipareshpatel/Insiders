@@ -1079,7 +1079,9 @@ def candidate_filings(filings: list, period: str) -> list:
         if not f.pdf_url:
             continue
         words = f"{f.subject} {f.headline}"
-        if not _RESULTS.search(words) or _NOT_RESULTS.search(f"{f.headline}") or _NOT_RESULTS_SUBJECT.search(f.subject or ""):
+        # the subject too (dry run 41356601414: RELIANCE's "Press Release", "Dividend" and "Updates" files took candidate slots)
+        if not _RESULTS.search(words) or _NOT_RESULTS.search(f"{f.headline}") or _NOT_RESULTS.search(f.subject or "") \
+                or _NOT_RESULTS_SUBJECT.search(f.subject or ""):
             continue
         out.append(f)
     out.sort(key=lambda f: ("financial result" not in (f.subject or "").lower(),

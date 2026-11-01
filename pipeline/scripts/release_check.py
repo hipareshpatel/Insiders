@@ -337,7 +337,7 @@ def check_words_figures(card: dict, row: dict, dossier: dict | None) -> dict:
     return _record(row, card, lines(card), lines(on_card))
 
 
-def check_year_ago_label(card: dict, row: dict) -> dict:
+def check_year_ago_label(card: dict, row: dict, dossier: dict | None = None) -> dict:
     """year_ago_label: `year_ago_label.apply_card_json` on a copy of a stored card with CARD_YEAR_AGO_LABEL off and on; the
     headline, takeaway, timeline entry, list items and key numbers whose year-ago label it puts right."""
     from bse_intel import year_ago_label
@@ -350,7 +350,7 @@ def check_year_ago_label(card: dict, row: dict) -> dict:
 
     on_card = copy.deepcopy(card)
     with switches_on("CARD_YEAR_AGO_LABEL"):
-        year_ago_label.apply_card_json(on_card)
+        year_ago_label.apply_card_json(on_card, dossier)
     return _record(row, card, lines(card), lines(on_card))
 
 
@@ -1351,7 +1351,7 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "year_ago_label":
                     seen[name] += 1
-                    keep(name, check_year_ago_label(card, row))
+                    keep(name, check_year_ago_label(card, row, memory() or None))
                     row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "ratio_columns":
                     seen[name] += 1

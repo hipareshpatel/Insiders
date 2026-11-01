@@ -128,7 +128,7 @@ def refresh(card: dict, dossier: dict, filing: Filing, company: dict | None, foo
     if card_year_ago_label():
         # a year-ago label one year too old is put right, as at card time (off: nothing)
         new = copy.deepcopy(new)
-        if notes := year_ago_label.apply_card_json(new):
+        if notes := year_ago_label.apply_card_json(new, dossier):
             new["grounding"] = {**(new.get("grounding") or {}), "year_ago_label": notes}
     if card_ratio_columns():
         # a ratio comparison read from a shifted column is corrected or dropped, as at card time (off: nothing)

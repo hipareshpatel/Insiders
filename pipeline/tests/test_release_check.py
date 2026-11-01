@@ -167,7 +167,7 @@ def test_year_ago_label_check_puts_a_label_two_years_back_right():
     row = {"news_id": "nse-106837190", "symbol": "HEGAM", "scrip_code": "1", "pdf_url": "u"}
     card = {"event_type": "RESULTS", "headline": "HEG Limited Q2FY27 revenue at ₹740.40 Cr", "takeaway": "",
             "what_happened": [{"text": "Revenue reached **₹740.40 Cr**, compared to **₹696.85 Cr** in Q2FY25."}]}
-    note = rc.check_year_ago_label(card, row)
+    note = rc.check_year_ago_label(card, row, {"financial_metrics": [{"metric": "revenue", "period": "Q2FY26", "value": 696.85}]})
     assert rc.changed_by_diff(note["diff"]) and any("in Q2FY26." in line for line in note["on_lines"])
     assert "Q2FY25" in card["what_happened"][0]["text"]   # the stored card is not changed
 

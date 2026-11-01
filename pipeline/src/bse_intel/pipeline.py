@@ -4241,7 +4241,7 @@ class Pipeline:
         if words_notes := words_figures.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["words_figures"] = words_notes
         # a year-ago label one year too old is put right (CARD_YEAR_AGO_LABEL; off: nothing)
-        if year_notes := year_ago_label.apply_card_json(card_json):
+        if year_notes := year_ago_label.apply_card_json(card_json, current):
             card_json.setdefault("grounding", {})["year_ago_label"] = year_notes
         # a ratio comparison read from a shifted column is corrected or dropped (CARD_RATIO_COLUMNS; off: nothing)
         if ratio_notes := ratio_columns.apply_card_json(card_json, current):

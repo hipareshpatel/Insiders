@@ -958,7 +958,11 @@ def unit_slips(texts: list[str], filing: str, *others: str, xbrl_crore=(), trace
             if len(fits) == 1:
                 slips[raw] = (raw, value, decimals, *fits[0])
                 if trace is not None:
-                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": _window(filing, fits[0][0] * 1e7)})
+                    # the source is the whole-rupee amount itself (unrounded), else the card's figure at the power it was read
+                    exact = [c for c in whole if round(c, _places(c)) == fits[0][0]]
+                    found = next((w for w in (_window(filing, c * 1e7) for c in exact) if w), "") \
+                        or next((w for k in (-3, -2, -1, 1, 2, 3) if (w := _window(filing, value * 10 ** (7 - k)))), "")
+                    trace.append({"raw": raw, "corrected": fits[0][0], "reading": 2, "source": found})
                 continue
             if not unit or value < 10:
                 continue   # a small bare figure is ambiguous against a table's unit

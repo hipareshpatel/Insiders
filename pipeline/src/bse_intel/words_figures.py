@@ -70,9 +70,14 @@ def _metric_before(text: str, at: int) -> str | None:
 
 
 def _other_period_named(sentence: str, period: str | None) -> bool:
-    """The sentence names a period other than the table's (FY, 9M, H1, a year, another quarter): not judged against its row."""
-    own = (_periods(period or "") or [None])[0]
-    return any(_differs_from(p, own) for p in _periods(sentence))
+    """The sentence names a period other than the table's quarter and its comparison quarters (FY, 9M, H1, a year, another
+    quarter): not judged against its row. "Revenue doubled YoY to ₹200 Cr in Q2FY27 from ₹100 Cr in Q2FY26" names the year-ago
+    quarter, which is the table's own comparison, so it is judged (lead's review of #337)."""
+    allowed = [p for q in (period, prior_year_period(period or ""), prior_quarter_period(period or "")) if q
+               for p in _periods(q)[:1]]
+    if not allowed:
+        allowed = [None]
+    return any(all(_differs_from(p, a) for a in allowed) for p in _periods(sentence))
 
 
 _COLUMNS = re.compile(r"\b(?P<yoy>YoY|year[- ]on[- ]year|year[- ]ago)\b|\b(?P<qoq>QoQ|sequential(?:ly)?|quarter[- ]on[- ]quarter)\b", re.I)
@@ -84,7 +89,7 @@ def _row(results: dict, key: str) -> dict | None:
 
 
 def _multiple_wrong(word: str, sentence: str, at: int, row: dict) -> bool:
-    w = word.lower()
+    w = " ".join(word.lower().split())
     loose = w.startswith(("nearly", "almost"))   # "nearly doubled" is true a little under +100%
     floor = (150.0 if loose else 190.0) if "tripl" in w else (75.0 if loose else 90.0)
     want = (lambda c: c <= -45.0) if w.startswith("halv") else (lambda c: c >= floor)
@@ -166,7 +171,7 @@ def _judge(text: str, results: dict, found: dict[tuple[str, str], float]) -> lis
 
 
 def _soften(text: str, word: str) -> str | None:
-    soft = _SOFT.get(word.lower())
+    soft = _SOFT.get(" ".join(word.lower().split()))   # "nearly  doubled" across two spaces or a line break
     if soft is None:
         return None
     return re.sub(rf"\b{re.escape(word)}\b", lambda m: soft.capitalize() if m.group(0)[0].isupper() else soft, text, count=1)

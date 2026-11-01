@@ -147,3 +147,25 @@ def test_a_modifier_is_softened_with_its_word(monkeypatch):
     assert card["headline"] == "PAT rose to ₹50 Cr"
     card, _ = _judged(monkeypatch, "Revenue more than doubled to ₹50 Cr", yoy_pct=40.0)
     assert card["headline"] == "Revenue rose to ₹50 Cr"
+
+
+def test_a_sentence_naming_the_quarter_and_its_comparison_is_judged(monkeypatch):
+    """Lead's review of #337: the commonest card sentence names both quarters and must still be judged."""
+    on(monkeypatch)
+    card = {"headline": "", "takeaway": "", "basis": "CONSOLIDATED",
+            "what_happened": [{"text": "Revenue doubled YoY to ₹200 Cr in Q2FY27 from ₹100 Cr in Q2FY26."}],
+            "results": {"period": "Q2FY27", "revenue": {"value": 200.0, "yoy_pct": 20.0, "qoq_pct": 5.0}}}
+    notes = W.apply_card_json(card, None)
+    assert len(notes) == 1 and card["what_happened"][0]["text"].startswith("Revenue rose YoY")
+    card["what_happened"] = [{"text": "Revenue doubled YoY to ₹200 Cr in Q2FY27 from ₹100 Cr in Q1FY27."}]
+    assert len(W.apply_card_json(card, None)) == 1          # the previous quarter is a comparison too
+    card["what_happened"] = [{"text": "FY26 revenue doubled to ₹800 Cr."}]
+    assert W.apply_card_json(card, None) == []              # a year is still another period
+
+
+def test_a_phrase_across_two_spaces_is_softened(monkeypatch):
+    on(monkeypatch)
+    card = {"headline": "PAT nearly  doubled to ₹50 Cr", "takeaway": "",
+            "results": {"period": "Q2FY27", "pat": {"value": 50.0, "yoy_pct": 40.0}}}
+    W.apply_card_json(card, None)
+    assert card["headline"] == "PAT rose to ₹50 Cr"

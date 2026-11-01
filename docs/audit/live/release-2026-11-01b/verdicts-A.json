@@ -1,0 +1,309 @@
+{
+ "adjusted_profit": {
+  "c01": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "KEY Net profit label 'reported PAT' = owners' share, but filing PAT (profit after tax) is the larger total (PAT 1,363.92; 1,322.85 is owners)"
+   ],
+   "note": ""
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "KEY Net profit label 'reported PAT' = owners' share, but filing PAT (profit after tax) is the larger total (PAT 83.82; 74.24 is owners)"
+   ],
+   "note": ""
+  },
+  "c03": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TAKEAWAY + KEY Net profit label (PAT 16,097 mn = 1,609.7; 1,585.6 is owners)"
+   ],
+   "note": ""
+  },
+  "c04": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "KEY EBITDA label results table 56.95 (not in filing)",
+    "KEY PAT label reported PAT 32.52 (not in filing; filing says FY26 PAT 91.8)"
+   ],
+   "wrong_y": [
+    "KEY EBITDA label 56.95 (not in filing)"
+   ],
+   "note": ""
+  },
+  "c05": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "TAKEAWAY + KEY Net profit label reported PAT 139.43 (filing net profit after tax 123.68; 139.43 is owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c06": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "HEADLINE label results table 516.24 on net profit (516.24 is Q2 revenue)",
+    "KEY Net profit + Net profit to shareholders labels PAT 57.48 (Q2 figure on H1 line)",
+    "KEY Revenue/EBITDA labels Q2 vs H1"
+   ],
+   "wrong_y": [
+    "HEADLINE label 516.24 on net profit (is Q2 revenue)",
+    "KEY Revenue/EBITDA labels Q2 vs H1"
+   ],
+   "note": ""
+  },
+  "c07": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "TAKEAWAY + KEY Net profit label reported PAT 529.3 (filing PAT 5,513 mn=551.3; 529.3 owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c08": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "KEY Net profit label 'reported PAT' = owners' share, but filing PAT (profit after tax) is the larger total (PAT 1,009.2 mn=100.92; 95.58 owners)"
+   ],
+   "note": ""
+  },
+  "c09": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "HEADLINE + KEY Net profit label reported PAT 15.74 (not in filing; filing says net profit 20 Cr)",
+    "KEY EBITDA label 24.45 (not in filing)"
+   ],
+   "wrong_y": [
+    "KEY EBITDA label 24.45 (not in filing)"
+   ],
+   "note": ""
+  },
+  "c10": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "KEY Net profit to shareholders 49.05 not in filing, unflagged (filing PAT 72)",
+    "KEY EPS 3.47 not in filing"
+   ],
+   "wrong_y": [
+    "KEY Net profit to shareholders 49.05 not in filing (but flagged with PAT 72.1)",
+    "KEY EPS 3.47 not in filing"
+   ],
+   "note": ""
+  },
+  "c11": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "TAKEAWAY + KEY Net profit label reported PAT 1,061.1 (PAT 1,126.26; 1,061.10 owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c12": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "TAKEAWAY + KEY Net profit label reported PAT 32.31 (PAT 30.22; 32.31 owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c13": {
+   "verdict": "X BETTER",
+   "wrong_x": [
+    "KEY Revenue label 380.6 (Q4 figure vs FY) / EBITDA label 33.86 (not in filing)"
+   ],
+   "wrong_y": [
+    "KEY PAT label reported PAT 20.61 (not in filing; Q4 PAT 21.4, FY 57.1)",
+    "KEY Revenue/EBITDA labels same as X"
+   ],
+   "note": ""
+  },
+  "c14": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TAKEAWAY + KEY Net profit label reported PAT 48.43 (PAT 46.15; 48.43 owners)"
+   ],
+   "note": ""
+  },
+  "c15": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "TAKEAWAY + KEY Net profit label reported PAT 90.82 (PAT 94.45; 90.82 owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c16": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "KEY Net profit to shareholders label reported PAT 334 (consolidated profit 649.8, owners 479.7; 334 not on this basis)"
+   ],
+   "note": "both: revenue label 841.7 is standalone"
+  },
+  "c17": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "KEY Net profit + to shareholders labels PAT 26.26 (Q2 figure on H1 line)",
+    "KEY Revenue/EBITDA labels Q2 vs H1"
+   ],
+   "wrong_y": [
+    "KEY Revenue/EBITDA labels Q2 vs H1"
+   ],
+   "note": ""
+  },
+  "c18": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "KEY Net profit label reported PAT 22.98 (PAT 25.11; 22.98 owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c19": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "HEADLINE/TAKEAWAY/KEY label reported PAT 747 on shareholders' 673: mislabel, 673 is correct owners share"
+   ],
+   "wrong_y": [],
+   "note": "filing OCR'd text layer ok after refetch"
+  },
+  "c20": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "KEY Net profit label reported PAT 10,819.65 (PAT 13,677.87; 10,819.65 owners)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  }
+ },
+ "words_match_figures": {
+  "c01": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "identical facts; X takeaway 'more than doubled' true (127%)"
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "X keeps a true why line (15.9% domestic, 1.1x, Cardiac 18.7%, Anti-diabetes 15.8%) that Y dropped; both carry duplicate EBITDA 1,171.25/27.0% vs 1,175/27.1%"
+  },
+  "c03": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "why_it_matters: 'PAT +247% far outpaced PBT +249%' is self-contradictory (PAT grew less than PBT)"
+   ],
+   "wrong_y": [],
+   "note": "Y dropped a wrong line, no true fact lost"
+  }
+ },
+ "other_issuer": {
+  "c01": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TYPE OTHER / HELD: filing is SML ISUZU (scrip 505192, same company, renamed SML Mahindra); hold hides a true card"
+   ],
+   "note": ""
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TYPE OTHER / HELD: 'Transrnission' is a text typo of the same company; hold hides a true card"
+   ],
+   "note": ""
+  },
+  "c03": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "TYPE OTHER / HELD: filing says ICICI Life Insurance Limited (formerly ICICI Prudential Life); same company; hold hides a true card"
+   ],
+   "note": ""
+  }
+ },
+ "ratio_columns": {
+  "c01": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y dropped a true line (consolidated EBITDA margin 11.08% vs 10.76%)"
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "notable_changes 23.6% (Q2FY26): filing Q2FY26 12.5%; 23.6% is Q1FY27"
+   ],
+   "note": "X also keeps a true margin line"
+  },
+  "c03": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "notable_changes 16.6% (Q2FY26): filing Q2FY26 12.8%; 16.6% is Q1FY27"
+   ],
+   "note": ""
+  },
+  "c04": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "notable_changes 24.2% (Q2FY26): filing Q2FY26 18.2%, 24.2% is Q1FY27",
+    "why_it_matters 'down 10.6% QoQ' (both): revenue rose 12.6% QoQ"
+   ],
+   "wrong_y": [
+    "why_it_matters 'down 10.6% QoQ' wrong (rose 12.6%)"
+   ],
+   "note": "Y adds a true margin line"
+  },
+  "c05": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "notable_changes 14% (Q4FY25): filing Q4FY25 12.2%, 14.0% is Q3FY26"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c06": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "notable_changes 2.14% (Q4FY25): filing 30.76%; 2.14% is the change"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c07": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "notable_changes 16.66% (Q4FY25): filing 19.56%; 16.66% is Q3FY26"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c08": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "why_it_matters 35.5% 'higher than 35.3% in Q1FY27... margin expansion': filing Q1FY27 36.4% (margin fell QoQ)",
+    "notable_changes 35.3% (Q1FY27) wrong"
+   ],
+   "wrong_y": [],
+   "note": "both: Total income \u20b9112 Cr vs filing \u20b9114.9 Cr (1,149 Mn); 'sector average' unsupported"
+  },
+  "c09": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "notable_changes 76% (Q1FY27): filing Q1FY27 50.3%"
+   ],
+   "wrong_y": [],
+   "note": "Y adds true EBITDA margin line"
+  }
+ }
+}

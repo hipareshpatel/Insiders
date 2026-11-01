@@ -101,3 +101,7 @@ METRIC_BUSINESS_LINE = true      # dossier.merge keys operating figures by busin
 # 20 judged from the filings by an independent reviewer: ON better 13, OFF better 1 (SKYGOLD: a margin above its 7.0-7.5% range
 # called missed; fixed in the same change: beating a two-sided range on its good side is no miss), same 6; WRONG lines 10 ON vs 21 OFF.
 DECK_DISCUSSED_PERIOD = true     # a deck that prints the target's figure for the due period is judged on it, with code checks of numeric verdicts
+# Turned on 1 Nov 2026 ~23:50 IST (lead): release check 41318733817 over 10,428 stored cards, 31 ORDER_WIN / M_AND_A cards held as
+# repeats; blind sample of 20 judged from the filings by an independent reviewer: ON better 18, same 1 (Ceigall: project value vs
+# annual charge, borderline), unreadable 1, news lost 0 (docs/audit/live/release-2026-11-01b/).
+CARD_EVENT_REPEAT = true         # a second order or deal card on the same amount and counterparty is held as a repeat, its facts kept

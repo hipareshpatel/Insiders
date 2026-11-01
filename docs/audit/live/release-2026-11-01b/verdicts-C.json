@@ -1,0 +1,443 @@
+{
+ "unit_fix_scale": {
+  "c01": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 104 Cr kept: filing says Rs.103.57 million = 10.36 Cr"
+   ],
+   "note": ""
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 278 Cr kept: filing chart is Rs million, 278 mn = 27.8 Cr"
+   ],
+   "note": ""
+  },
+  "c03": {
+   "verdict": "UNREADABLE",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "pdf is images, no text layer"
+  },
+  "c04": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "272 Cr -> 2.72",
+    "179 Cr -> 1.79",
+    "101 Cr -> 1.01",
+    "163 Cr -> 1.63 (filing: all amounts in crore)"
+   ],
+   "note": ""
+  },
+  "c05": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 1,933 Cr kept: filing INR 193,31,19,436.71 = 193.31 Cr"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c06": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 199.78 Cr kept: filing 1,99,782 Mn = 19,978 Cr"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c07": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 66.60 Cr -> 0.07 Cr: filing 6,660 lakh = 66.6 Cr"
+   ],
+   "note": ""
+  },
+  "c08": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 90.66 Cr -> 0.091 Cr: filing Rs 9,066 lakhs = 90.66 Cr"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c09": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "299 Cr kept"
+   ],
+   "wrong_y": [
+    "299 -> 2.99 Cr"
+   ],
+   "note": "neither 299 Cr nor 2.99 Cr found in 337-page annual report (nearest 2,992.77 lakh = 29.93 Cr); unverifiable, both likely wrong"
+  },
+  "c10": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 13.07 Cr kept: filing Rs 13.07 million = 1.31 Cr"
+   ],
+   "note": ""
+  },
+  "c11": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 1,528.7 Cr kept: filing INR lakhs, 15,287 lakh = 152.87 Cr"
+   ],
+   "wrong_y": [],
+   "note": "1,077->10.77 right in both (1,077 lakh)"
+  },
+  "c12": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 2,921.78 Cr -> 2.92 Cr: filing Rs lakhs 2,92,178 = 2,921.78 Cr"
+   ],
+   "note": ""
+  },
+  "c13": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 190.10 Cr -> 19,010 Cr: filing 19,009.56 lakh = 190.10 Cr"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c14": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 1,322.46 Cr kept: filing Rs 132,246 Mn = 13,224.6 Cr"
+   ],
+   "note": ""
+  },
+  "c15": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 2,334 Cr kept: filing in millions, 2,333.51 mn = 233.4 Cr"
+   ],
+   "wrong_y": [],
+   "note": "9,471->947.1 right in both"
+  },
+  "c16": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "62.11 Cr -> 6,211 Cr (filing 621.13 mn = 62.11 Cr)",
+    "748.01 Cr -> 74,801 Cr (filing 7,480.10 mn = 748.01 Cr)"
+   ],
+   "wrong_y": [],
+   "note": "82.3->823 same both, 823 not found"
+  },
+  "c17": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "UNIT FIX 2,042.05 Cr kept: filing Rs Mn 204,205 = 20,420.5 Cr"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c18": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 1,026 Cr -> 1,026,000 Cr: filing Rs mm revenue 10,260 = 1,026 Cr"
+   ],
+   "note": "9,691->969,100 right in both (Rs 9,691 bn)"
+  },
+  "c19": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "UNIT FIX 33.1 Cr -> 3.31 Cr: filing PAT Rs 331 Mn = 33.1 Cr"
+   ],
+   "note": ""
+  }
+ },
+ "comparative_memory": {
+  "c01": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: card Q3FY25 92.23 / Q3FY24 55.79 are a segment (922.34 mn); consolidated Q3FY25 is 1,388.50 mn = 138.85 Cr"
+  },
+  "c02": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 49.86 Cr (4,986 lakh) is the quarter ended Sep-25 (Q2FY26) mislabeled Q2FY25"
+  },
+  "c03": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 461.32 is the 30 Sep 2025 quarter (Q2FY26) mislabeled Q2FY25"
+  },
+  "c04": {
+   "verdict": "UNREADABLE",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "results table is image only"
+  },
+  "c05": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 97.66 is the APAG gain on loss of control; Q2FY26 profit is 9,181 lakh = 91.81 Cr"
+  },
+  "c06": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 154 Cr is pre-sales; filing total income 145 Cr"
+  },
+  "c07": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 84.88 Cr = India segment (848.84 mn); consolidated Q4FY25 1,468.77 mn = 146.88 Cr"
+  },
+  "c08": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: Q2FY26 consolidated PAT 1,199 mn = 119.9 Cr; 0.3 not in filing"
+  },
+  "c09": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 40,135.8 is the previous-year same quarter (Q2FY26), labelled Q2FY25"
+  },
+  "c10": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 1,708 is CDMO segment; revenue 2,752"
+  },
+  "c11": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 139.36/81.04 are segment figures; revenue 655.16/527.69"
+  },
+  "c12": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: card 40.6 = PBT+depn (28.53+12.07) excluding finance cost; EBITDA 44.8"
+  },
+  "c13": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold wrong: card 147.4 equals the filing's Standalone Adjusted EBITDA 147.4; memory 125.74 is a different basis (arguable)"
+  },
+  "c14": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 1.31 unsupported; consolidated Q1FY26 revenue 16,395.62 lakh = 163.96 Cr (standalone 29.77 Cr)"
+  },
+  "c15": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 69.2/89.4 are category revenues; total revenue ~158.6 Cr"
+  },
+  "c16": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold wrong: card 1,274.46 matches filing standalone 12,744.66 lakh; memory 1,240.62 is consolidated"
+  },
+  "c17": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 54.37 is pre-tax loss; PAT Q4FY25 is (58.16)"
+  },
+  "c18": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold wrong: card 881.52 is the filing's standalone PAT; memory 910.73 is consolidated"
+  },
+  "c19": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold wrong: card EBITDA 19.2 and 5.6 match the filing exactly"
+  },
+  "c20": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "hold right: 89 Cr is export formulations; revenue 585 Cr"
+  }
+ },
+ "year_ago_label": {
+  "c01": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT net profit '-28.2% YoY compared to 45.94 Cr in Q2FY25': column is 30 Sep 2025 = Q2FY26"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c02": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT why_it_matters 'from 566.56 lakh (FY26) to 400.62 lakh (FY26)': filing FY25 = 566.56"
+   ],
+   "note": ""
+  },
+  "c03": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT revenue 'compared to 151.44 Cr in Q1FY25': filing column June 30 2025 = Q1FY26"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c04": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT revenue 'vs 696.85 in Q2FY25'",
+    "FACT PBT 'from 151.23 in Q2FY25': year-ago is 30-09-2025 = Q2FY26"
+   ],
+   "note": ""
+  },
+  "c05": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT PAT 'from 5,404.12 in H1 FY25'",
+    "FACT underwriting loss 'against 1,021.98 in H1 FY25': filing half year ended 30.09.2025 = H1 FY26"
+   ],
+   "note": ""
+  },
+  "c06": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT revenue 'Q2FY26-26': not a real period; company style is Q2 FY25-26"
+   ],
+   "wrong_y": [],
+   "note": "Y's Q2FY25-26 is the filing's year-ago style"
+  },
+  "c07": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT PAT 'up from 251 Cr in Q2 FY25': 251 is Q2 FY26 in the filing chart"
+   ],
+   "note": ""
+  },
+  "c08": {
+   "verdict": "UNREADABLE",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "image-only pdf, margins not readable"
+  },
+  "c09": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT revenue 'in Q2 FY25'",
+    "FACT PAT 'in Q2 FY25': filing compares with Q2 FY2025-26"
+   ],
+   "note": ""
+  },
+  "c10": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT 'FY27 revenue': FY27 not complete in a May 2026 filing; last year is FY26"
+   ],
+   "note": "1,422 Cr not stated in the filing either way"
+  },
+  "c11": {
+   "verdict": "UNREADABLE",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "results are images, no text"
+  },
+  "c12": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT PAT 'in Q2FY25': year-ago column is 30-Sep-25 (2,117.29 mn)"
+   ],
+   "note": ""
+  },
+  "c13": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "KEY 'vs 2.6x FY25': filing says FY24 2.6x (FY25 2.4x)"
+   ],
+   "note": ""
+  },
+  "c14": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT net sales 'Q2 FY26-26': not a real period; filing says previous year same period FY2025-26"
+   ],
+   "note": ""
+  },
+  "c15": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT net profit 'H1FY25': filing H1 FY26 column 2,303 lakh"
+   ],
+   "note": ""
+  },
+  "c16": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT balance sheet 'at Q4FY24': comparative column is 31 March 2025"
+   ],
+   "wrong_y": [],
+   "note": "both: '25 Cr' borrowings comparative not in filing (Mar-25 borrowings nil)"
+  },
+  "c17": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT PAT 'Q4 FY25-25': not a real period"
+   ],
+   "wrong_y": [],
+   "note": "figures not verifiable (images); label only"
+  },
+  "c18": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "FACT balance sheet 'at Q4FY24': comparative column is 31 March 2025"
+   ],
+   "note": "both: 0.31 Cr trade receivable comparative not in filing (Mar-25 nil)"
+  },
+  "c19": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT revenue 'H1 FY26-26': not a real period; filing says FY2025-26"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c20": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "FACT 'up from 12% in FY26': filing says up from 12% in FY25"
+   ],
+   "wrong_y": [],
+   "note": ""
+  }
+ }
+}

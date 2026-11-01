@@ -93,9 +93,7 @@ def _not_this_period(due: str | None, due_iso: str | None, own: dict[str, set[st
     shown = due or due_iso
     if end < ends[latest]:
         return f"it was due {shown}, which has passed; this filing reports {latest} and does not settle it"
-    if end == ends[latest]:
-        return f"the target is for {shown}; this filing reports {latest}, not that period"
-    return None
+    return None   # the same end (FY26 on a Q4FY26 filing) keeps the old wording (lead's review of #342)
 
 
 def why_no_verdict(g: dict, metrics: list[dict], news_id: str, discussed: str | None = None) -> str | None:

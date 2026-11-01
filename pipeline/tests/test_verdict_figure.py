@@ -136,10 +136,19 @@ def test_shaktipump_a_past_target_is_not_called_not_due(monkeypatch):
     assert why_no_verdict(SHAKTI, METRICS, NEWS) == "it was due Q1FY27, which has passed; this filing reports Q2FY27 and does not settle it"
 
 
-def test_a_year_target_on_its_last_quarter_names_both(monkeypatch):
+def test_a_year_target_on_its_last_quarter_keeps_the_old_wording(monkeypatch):
     _on(monkeypatch, True)
     eiel = {**SHAKTI, "due": "FY26", "due_date": "2026-03-31"}
     q4 = [{**METRICS[0], "period": "Q4FY26"}]
-    assert why_no_verdict(eiel, q4, NEWS) == "the target is for FY26; this filing reports Q4FY26, not that period"
+    assert why_no_verdict(eiel, q4, NEWS) == "the target is not due for the period this filing reports"
     later = {**SHAKTI, "due": "Q3FY27", "due_date": "2026-12-31"}
     assert why_no_verdict(later, METRICS, NEWS) == "the target is not due for the period this filing reports"
+
+
+@pytest.mark.parametrize("evidence", ["Revenue growth strong at 18 per cent.", "Revenue growth strong at 18 pct.",
+                                      "Revenue growth strong at 18 percent."])
+def test_per_cent_and_pct_are_percent(monkeypatch, evidence):
+    _on(monkeypatch, True)
+    assert why_unjudged("MET", "15%", evidence, "Revenue growth") is None
+    assert why_unjudged("MET", "15 per cent", evidence, "Revenue growth") is None
+    assert why_unjudged("MET", "15 pct", "Revenue grew 18%.", "Revenue growth") is None

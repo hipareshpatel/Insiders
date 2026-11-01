@@ -37,6 +37,11 @@ _SAYS_MISSED = re.compile(r"\b(?:missed|misses|short\s+of|fell\s+short|behind)\s
                           r"(?:target|guidance|range|goal)\b", re.I)
 
 
+def _pct(text: str) -> str:
+    """"18 per cent" and "18 pct" as "18%" (lead's review of #342), here and not in guidance_dated._FIG, which a live check reads."""
+    return re.sub(r"(\d)\s*(?:per\s*cent|percent|pct)\b", r"\1%", text, flags=re.I)
+
+
 def _noun(word: str) -> str:
     return word.lower().rstrip("s") or word.lower()
 
@@ -88,7 +93,7 @@ def why_unjudged(status: str, target: str | None, evidence: str | None, topic: s
     no figure (an event: the rule does not apply), or when the switch is off."""
     if not card_verdict_needs_figure() or status not in GOOD + BAD:
         return None
-    target, evidence, topic = str(target or ""), str(evidence or ""), str(topic or "")
+    target, evidence, topic = _pct(str(target or "")), _pct(str(evidence or "")), str(topic or "")
     units = _units(target)
     if not units:
         return None

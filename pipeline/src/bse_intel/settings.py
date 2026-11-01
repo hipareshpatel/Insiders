@@ -331,6 +331,14 @@ def card_words_match_figures() -> bool:
     return _switch("CARD_WORDS_MATCH_FIGURES")
 
 
+def card_event_repeat() -> bool:
+    """CARD_EVENT_REPEAT (default off; STATUS S2, 1 Nov 2026: 47 repeat pairs in 30 days): an ORDER_WIN or M_AND_A card that
+    repeats a memory timeline entry of the same company (same kind, up to 3 days earlier, the same crore amount and a shared
+    name; event_repeats.match) is held with the earlier one named; its facts stay on the stored card. On only after the on/off
+    check over stored cards (release_check.py event_repeat) and a blind sample. Read at the call."""
+    return _switch("CARD_EVENT_REPEAT")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

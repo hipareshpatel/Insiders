@@ -75,7 +75,7 @@ from . import xbrl_facts, xbrl_store
 from . import statements
 from . import directions
 from . import results_card
-from . import footer_plausible, one_basis, results_one_line, words_figures
+from . import event_repeats, footer_plausible, one_basis, results_one_line, words_figures
 from . import event_xbrl
 from . import computed
 from . import facts as code_facts
@@ -3947,6 +3947,11 @@ class Pipeline:
         checks.held += self._held_reasons(filing, text, xbrl_backed=bool(tagged) and not checks.amounts_ungrounded)
         if other_issuer:
             checks.held.append(f"The results in this filing are {other_issuer}'s, not {filing.company_name}'s own (CARD_OTHER_ISSUER)")
+        if out.card is not None and (repeat := event_repeats.match(
+                out.event_type or event_type, filing.filed_at, f"{out.card.headline or ''} {out.timeline_entry or ''}",
+                filing.company_name, dossier.get("timeline"), filing.news_id)):
+            # the same order or deal from a second document (S2): this card's facts stay stored, the first card is the event's
+            checks.held.append(f"Repeat of {repeat[0]}: {repeat[1]} (CARD_EVENT_REPEAT)")
         unchecked: list[str] = []
         if checks.only_quotes:
             # the points whose quote does not carry them leave the face, behind a tap; the card is published, not held

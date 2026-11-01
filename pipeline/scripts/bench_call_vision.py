@@ -56,6 +56,13 @@ def main() -> int:
     tally = {"assembled": 0, "WRONG_kept": 0, "WRONG_dropped": 0, "RIGHT_kept": 0, "RIGHT_dropped": 0,
              "contiguous_WRONG": 0, "contiguous_RIGHT": 0}
     detail = []
+    calls = [0]
+
+    def ask(png: bytes, question: str):   # counts the requests actually made
+        calls[0] += 1
+        return gateway.ask_image(png, question)
+
+    no_answer = 0
     for news_id in news_ids:
         doc = pymupdf.open(pdfs / f"{news_id}.pdf")
         points = [stored[r["id"]] for r in rows if r["news_id"] == news_id and r["id"] in stored]
@@ -63,9 +70,10 @@ def main() -> int:
         def render(page: int, doc=doc) -> bytes | None:
             return doc[page - 1].get_pixmap(dpi=args.dpi).tobytes("png") if 1 <= page <= doc.page_count else None
 
-        kept, dropped = call_memory.vision_confirm(points, render, gateway.ask_image, args.max_calls)
+        kept, dropped = call_memory.vision_confirm(points, render, ask, args.max_calls)
         kept_ids = {p.id for p in kept}
         why = {d["point"]["id"]: d["detail"] for d in dropped}
+        no_answer += sum(1 for d in dropped if not d["detail"].startswith("the slide does not"))
         for p in points:
             verdict = verdicts.get(p.id, "?")
             if verdict not in ("RIGHT", "WRONG"):
@@ -83,11 +91,15 @@ def main() -> int:
     right = tally["RIGHT_kept"] + tally["contiguous_RIGHT"]
     total_right = right + tally["RIGHT_dropped"]
     kept_all = wrong + right
+    kept_assembled = tally["WRONG_kept"] + tally["RIGHT_kept"]
     print(json.dumps(tally))
+    print(f"assembled points {tally['assembled']}: kept {kept_assembled}, dropped {tally['assembled'] - kept_assembled} "
+          f"({no_answer} of the dropped had no answer / no image / no call left); vision calls {calls[0]}; "
+          f"WRONG kept {tally['WRONG_kept']}, RIGHT dropped {tally['RIGHT_dropped']}")
     print(f"WRONG kept {wrong} of {kept_all} kept = {wrong / max(kept_all, 1):.1%} (bar 2%); "
           f"RIGHT dropped {tally['RIGHT_dropped']} of {total_right} = {tally['RIGHT_dropped'] / max(total_right, 1):.1%}")
     if args.out:
-        Path(args.out).write_text(json.dumps({"tally": tally, "errors": detail}, indent=1, ensure_ascii=False), encoding="utf-8")
+        Path(args.out).write_text(json.dumps({"tally": tally, "calls": calls[0], "no_answer": no_answer, "errors": detail}, indent=1, ensure_ascii=False), encoding="utf-8")
     return 0
 
 

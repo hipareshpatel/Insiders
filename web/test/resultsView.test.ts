@@ -98,6 +98,11 @@ test("groups in words", () => {
     "Banks and other financials hold the Nifty 50 back: they make 38% of its profit and grew +8.4% in total, the rest +9.9%.");
   assert.equal(groupsBullets(idx, "index")[2], "In every index, total profit grew faster than total revenue (companies other than financials).");
   assert.match(text(groupsLead([], "sector")), /No sector/);
+  // a group with fewer than 5 companies reported is never ranked or named as leading (owner, 1 Nov 2026: Telecom Equipment
+  // +1,746% led its tab on two companies)
+  const tiny = { ...mid, id: "TELECOM_EQ", label: "Telecom Equipment", reported: 2, of: null, pat_median: 1746 };
+  assert.equal(text(groupsLead([tiny, ...idx], "index")), "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%.");
+  assert.equal(text(groupsLead([tiny], "industry")), "No industry has 5 companies reported yet, so none is ranked.");
 });
 
 test("the spread chart: bar heights, the middle company's place, band widths", () => {

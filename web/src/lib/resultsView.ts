@@ -244,7 +244,7 @@ export function seasonLines(s: KpiSummary, indexRows?: GroupRow[] | null): Seg[]
     lines.push([{ t: String(m.speeding_up), b: true }, { t: " are speeding up, growing profit faster than last quarter; " },
       { t: String(m.slowing), b: true }, { t: " are slowing." }]);
   }
-  const ranked = (indexRows ?? []).filter((r) => r.pat_median != null).sort((a, b) => b.pat_median! - a.pat_median!);
+  const ranked = (indexRows ?? []).filter(rankable).sort((a, b) => b.pat_median! - a.pat_median!);
   if (ranked.length >= 2) {
     const top = ranked[0];
     const other = top.id === "NIFTY50" ? ranked[1] : ranked.find((r) => r.id === "NIFTY50") ?? ranked[ranked.length - 1];
@@ -378,10 +378,19 @@ export function stackWidths(pct: [number, number, number, number]): [number, num
 const GROUP_NOUN: Record<GroupBy, [string, string]> = { index: ["index", "indices"], sector: ["sector", "sectors"], industry: ["industry", "industries"] };
 export const groupNoun = (by: GroupBy, plural = false) => GROUP_NOUN[by][plural ? 1 : 0];
 
+/** A group is ranked, or named as leading, only with this many companies reported (owner, 1 Nov 2026: on 31 Oct Diversified
+ * +480% and Telecom Equipment +1,746% led their tabs on one or two companies). */
+export const MIN_GROUP_SIZE = 5;
+const rankable = (r: GroupRow) => r.pat_median != null && r.reported >= MIN_GROUP_SIZE;
+
 /** "Nifty Midcap 150 leads the season: its median profit growth is +19.4%, the Nifty 50's +12.1%." */
 export function groupsLead(rows: GroupRow[], by: GroupBy): Seg[] {
-  const ranked = rows.filter((r) => r.pat_median != null).sort((a, b) => b.pat_median! - a.pat_median!);
-  if (!ranked.length) return [{ t: `No ${groupNoun(by)} has a median yet: no company with a per cent change.` }];
+  const ranked = rows.filter(rankable).sort((a, b) => b.pat_median! - a.pat_median!);
+  if (!ranked.length) {
+    return [{ t: rows.some((r) => r.pat_median != null)
+      ? `No ${groupNoun(by)} has ${MIN_GROUP_SIZE} companies reported yet, so none is ranked.`
+      : `No ${groupNoun(by)} has a median yet: no company with a per cent change.` }];
+  }
   const top = ranked[0];
   const out: Seg[] = [{ t: `${top.label} leads the season: its median profit growth is ` }, { t: fmtPct(top.pat_median), tone: toneOf(top.pat_median) }];
   const ref = by === "index" ? ranked.find((r) => r.id === "NIFTY50" && r !== top) : undefined;

@@ -105,3 +105,7 @@ DECK_DISCUSSED_PERIOD = true     # a deck that prints the target's figure for th
 # repeats; blind sample of 20 judged from the filings by an independent reviewer: ON better 18, same 1 (Ceigall: project value vs
 # annual charge, borderline), unreadable 1, news lost 0 (docs/audit/live/release-2026-11-01b/).
 CARD_EVENT_REPEAT = true         # a second order or deal card on the same amount and counterparty is held as a repeat, its facts kept
+# Turned on 2 Nov 2026 ~01:20 IST (lead): release check 41324276371 over 10,584 cards, 25 changed; blind sample of 20 by an independent
+# reviewer: ON better 4, OFF better 1 (AWL: a growth target met in absolute revenue figures), same 14, unreadable 1; WRONG lines 0 ON vs
+# 4 OFF; of 7 verdicts turned to "not judged", 5 were wrong or unsupported, 1 right (docs/audit/live/release-2026-11-01c/).
+CARD_VERDICT_NEEDS_FIGURE = true # a model's guidance/watch verdict with no figure in the target's unit is "not judged"

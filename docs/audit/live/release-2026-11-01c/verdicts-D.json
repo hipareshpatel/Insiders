@@ -1,0 +1,321 @@
+{
+ "filer_checks": {
+  "c01": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "pat_owners FY26 1300.4",
+    "pat_owners Q4 159.6"
+   ],
+   "wrong_y": [],
+   "note": "X pat_owners are total comprehensive income (13,004 / 1,596 mn); profit is 13,208 / 2,002 mn"
+  },
+  "c02": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "revenue FY26 2245.48",
+    "revenue Q4 593.12"
+   ],
+   "wrong_y": [],
+   "note": "X revenue is Total Income; revenue from operations 2192.24 / 574.34"
+  },
+  "c03": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y drops true Q4 revenue 27.38 (2,738.16 lakh = revenue from ops). Shared: pbt 75.21/9.75 is before associates/exceptional (PBT 76.16), minor"
+  },
+  "c04": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "eps FY26 -1.59 (continuing only; total 1.46)"
+   ],
+   "wrong_y": [
+    "eps Q4 0.35 (continuing only; total 4.59)"
+   ],
+   "note": "one continuing-ops EPS in each"
+  },
+  "c05": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat_owners Q2FY27 26.0 (is total OCI; owners' profit 112)"
+   ],
+   "note": ""
+  },
+  "c06": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat_owners Q4 29.13 (is TCI; owners' profit 36.09)"
+   ],
+   "note": ""
+  },
+  "c07": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat_owners Q2FY27 68.92 (is TCI; owners' profit 71.47)"
+   ],
+   "note": "shared wrong: pat_owners H1 146.68 is TCI (147.61 right)"
+  },
+  "c08": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y drops true revenue 179.45 / 33.14 (total revenue from operations, other income nil)"
+  },
+  "c09": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat FY26 -338.07 (continuing-ops loss only; net -114.82)",
+    "pat Q4 -110.31 (continuing only; net +5.39)"
+   ],
+   "note": "X pat_owners -103.22 / 10.84 right. Shared: pat_discontinued 0.0 wrong"
+  },
+  "c10": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y drops true Q4 revenue 175.58 (total revenue from operations)"
+  },
+  "c11": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat_owners FY26 -2808 (is TCI; owners' loss -4154)"
+   ],
+   "note": ""
+  },
+  "c12": {
+   "verdict": "SAME",
+   "wrong_x": [
+    "pat_owners FY26 -10.45 (continuing-ops owners only; total +1.90)"
+   ],
+   "wrong_y": [
+    "pat_continuing FY26 -7.75 (filing -11.63)"
+   ],
+   "note": "Y keeps true pat 0.71 (filing 0.72); X lacks it. Shared wrong: pat_continuing Q4 5.24 (3.40), pbt, eps continuing only"
+  },
+  "c13": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "pat_owners Q4 23.09 (is TCI; profit 32.41, no NCI)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c14": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "pat_owners FY26 33.04",
+    "pat_owners Q4 26.41"
+   ],
+   "wrong_y": [],
+   "note": "both are total OCI; owners' profit 403.13 / 171.77. Shared: pbt is before JV share (488.23/205.77)"
+  },
+  "c15": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "eps FY26 -4.43 (continuing only; total -0.61)"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c16": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Y drops true revenue 575.85 / 180.61"
+  },
+  "c17": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "X lacks true revenue Q1FY27 42036.9 (total revenue from operations 42,036.90)"
+  },
+  "c18": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat_owners FY26 877.0",
+    "pat_owners Q4 257.09"
+   ],
+   "note": "both are total comprehensive income; profit 1243.10 / 299.46"
+  },
+  "c19": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "pat_owners FY26 11.08 (is OCI to owners; owners' profit 56.03)"
+   ],
+   "note": ""
+  },
+  "c20": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "X lacks true standalone revenue H1 9943.18 / Q2 5005.32"
+  }
+ },
+ "verdict_figure": {
+  "c01": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c02": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c03": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_cdffa7e6 missed: oncology revenue not disclosed; only total revenue +52%"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c04": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c05": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c06": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c07": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c08": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_d56a0b89 missed: filing states no credit cost"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c09": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c10": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c11": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c12": {
+   "verdict": "Y BETTER",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "Food&FMCG revenue Q2 2216.21 vs 1681.11 = +31.8%, above 18-20%; met is true"
+  },
+  "c13": {
+   "verdict": "Y BETTER",
+   "wrong_x": [
+    "w_df1f3e34 met: filing gives no credit cost in bps"
+   ],
+   "wrong_y": [],
+   "note": ""
+  },
+  "c14": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c15": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c16": {
+   "verdict": "UNREADABLE",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "PDF truncated at 2654208 bytes on 3 fetches"
+  },
+  "c17": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c18": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  },
+  "c19": {
+   "verdict": "X BETTER",
+   "wrong_x": [],
+   "wrong_y": [
+    "w_581e3112 missed: receivables 4,922.74 mn = 492.27 Cr < 496.34 Cr target"
+   ],
+   "note": ""
+  },
+  "c20": {
+   "verdict": "SAME",
+   "wrong_x": [],
+   "wrong_y": [],
+   "note": "wording-only difference (not-due vs has-passed); verdict identical"
+  }
+ },
+ "verdict_figure_turned": {
+  "t01": {
+   "original": "UNSUPPORTED",
+   "why": "filing has provisions 86.77 Cr (+36% QoQ) but no credit cost in bps; 'missed' not stated"
+  },
+  "t02": {
+   "original": "UNSUPPORTED",
+   "why": "no credit cost figure in bps in the filing; 'low credit cost' is an analyst remark"
+  },
+  "t03": {
+   "original": "UNREADABLE",
+   "why": "PDF truncated on 3 fetches (card's own figures would make missed wrong)"
+  },
+  "t04": {
+   "original": "UNSUPPORTED",
+   "why": "filing has quick commerce segment results 488 on revenue 19,152 mn (about 2.5%), no EBIT margin stated; 'positive results' does not show target met"
+  },
+  "t05": {
+   "original": "UNSUPPORTED",
+   "why": "oncology revenue not disclosed; total revenue +52% only"
+  },
+  "t06": {
+   "original": "RIGHT",
+   "why": "Food & FMCG segment revenue Q2 2216.21 vs 1681.11 = +31.8% YoY, meets 18-20% target"
+  },
+  "t07": {
+   "original": "WRONG",
+   "why": "trade receivables 492.27 Cr is below 496.34 Cr target, so missed is false"
+  }
+ }
+}

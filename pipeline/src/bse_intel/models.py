@@ -714,6 +714,9 @@ class FinancialMetric(_Lenient):
     unit: str = "INR_CR"
     yoy_pct: Num = None
     qoq_pct: Num = None
+    # METRIC_BUSINESS_LINE: the business line, subsidiary or JV this operating figure is about ("Royal Enfield", "VECV"); None
+    # is the whole company. Read only with the switch on (dossier.merge), so a model that sends it with the switch off changes nothing.
+    line: OptStr = None
     # Where the figure came from (memory label, docs/design/memory-labels.md): "file" (the filing's own XBRL file),
     # "calc" (worked out by our code from other figures, `derived_from` names them). Left None for a figure a model
     # read from the PDF ("ai"). Set by code only, never stored in the model's raw answer.

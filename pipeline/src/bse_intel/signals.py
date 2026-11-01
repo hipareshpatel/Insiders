@@ -27,7 +27,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date, timedelta
 
-from . import eps_adjust
+from . import business_line, eps_adjust
 from .dossier import approval_granted, watch_verdict, deal_state, is_recap, reported_by, same_deal
 from .models import Filing, Pass2Output
 from .periods import due_date, prior_year_period, results_due
@@ -65,6 +65,9 @@ def compute(before: dict | None, after: dict, output: Pass2Output, filing: Filin
     used only for recent filings."""
     company = priced_for(company, filing)
     from .dossier import with_year_hold
+    if business_line.enabled():   # METRIC_BUSINESS_LINE: the series of the filing's own line, never another line's
+        line = business_line.of_filing(after, filing.news_id)
+        before, after = business_line.view(before, line), business_line.view(after, line)
     before, after = with_year_hold(before), with_year_hold(after)   # MEMORY_YEAR_CHECK (item 76, F181): a held year figure triggers no signal, no verdict
     signals: list[Signal] = []
     signals += _promises(before, after, output, filing)
@@ -209,6 +212,12 @@ def _same_series(entry: dict, main: dict) -> dict | None:
     return {**entry, "value": c["value"], "yoy_pct": c.get("yoy_pct")}
 
 
+def _same_line(entry: dict, other: dict) -> bool:
+    """METRIC_BUSINESS_LINE: a figure belongs to another's series only when both are of the same business line (a row with no line
+    is the whole company). Off, every row of the metric is one series, as before."""
+    return not business_line.enabled() or entry.get("line") == other.get("line")
+
+
 def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
     """The card's monthly strip: the main volume metric this filing reported, over the last months
     memory holds (as of the filing), each with its YoY change."""
@@ -218,7 +227,7 @@ def volume_strip(after: dict, news_id: str, months: int = 6) -> dict | None:
     if not own:
         return None
     main = next((m for m in own if m["metric"] in VOLUME_METRICS), own[0])
-    rows = sorted((e for e in after.get("financial_metrics", []) if e["metric"] == main["metric"]
+    rows = sorted((e for e in after.get("financial_metrics", []) if e["metric"] == main["metric"] and _same_line(e, main)
                    and period_kind(e["period"]) == "M" and due_date(e["period"]) and e.get("value") is not None),
                   key=lambda e: due_date(e["period"]))
     end = due_date(main["period"])
@@ -242,7 +251,8 @@ def _volumes(after: dict, filing: Filing) -> list[Signal]:
         return []
     out = []
     m = own[0]
-    series = {e["period"]: e["value"] for e in after.get("financial_metrics", []) if e["metric"] == m["metric"] and period_kind(e["period"]) == "M"}
+    series = {e["period"]: e["value"] for e in after.get("financial_metrics", [])
+              if e["metric"] == m["metric"] and _same_line(e, m) and period_kind(e["period"]) == "M"}
     def month(label: str, back: int) -> str | None:
         end = due_date(label)
         if not end:

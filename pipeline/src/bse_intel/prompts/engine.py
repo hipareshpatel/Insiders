@@ -10,7 +10,7 @@ from string import Template
 from ..grounding import UNIT_NAMES, declared_unit, explicit_units
 from ..models import EVENT_TYPES, Filing, event_definitions
 from ..card_support import strict_prompt
-from ..settings import Settings, card_text_support
+from ..settings import Settings, card_text_support, metric_business_line
 
 PASS2_SCHEMA = {
     "is_material": True,
@@ -271,6 +271,7 @@ class PromptEngine:
         self._pass2_short = Template((prompts / "pass2_short.md").read_text())
         self._pass2_user = Template((prompts / "pass2_user.md").read_text())
         self._consolidated_only = (prompts / "consolidated_only.md").read_text().strip()
+        self._business_line = (prompts / "business_line.md").read_text().strip()
         self._memory = Template((prompts / "memory.md").read_text())
         # CALL_MEMORY_PROMPT=v2 or v3: a measured test of a held prompt (owner, 30 Oct 2026; v3 = v2 with the chart rule,
         # TODO 144, 31 Oct); scheduled runs never set it
@@ -479,6 +480,8 @@ class PromptEngine:
             system = strict_prompt(system, short)
         if consolidated_only:   # CARD_CONSOLIDATED_ONLY (F154); off, the prompt is byte for byte as before
             system += "\n\n" + self._consolidated_only
+        if metric_business_line():   # METRIC_BUSINESS_LINE; off, the prompt is byte for byte as before
+            system += "\n\n" + self._business_line
         shown = _examples_text(examples or {})
         if shown:
             user = shown + "\n\n" + user

@@ -2490,6 +2490,24 @@ def cmd_statements_correct(args, settings, sink) -> int:
     return 124 if outcome["more"] and args.apply else 0
 
 
+def cmd_memory_split_lines(args, settings, sink) -> int:
+    """Split operating figures that two business lines reported under one key (memory_split_lines.py, METRIC_BUSINESS_LINE): a
+    dry run by default, --apply backs each dossier up (backup.RunBackup) first. No AI, no exchange."""
+    from . import memory_split_lines
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()] or sink.list_dossiers()
+    outcome = memory_split_lines.run(sink, scrips, args.apply)
+    print(memory_split_lines.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:
+        print(f"memory-split-lines: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-split-lines-<time>/, then writes)")
+    return 0
+
+
 def cmd_memory_rerank(args, settings, sink) -> int:
     """Put right the stored figures the TODO 118 B ranking changes (memory_rerank.py): a dry run by default, --apply backs
     each dossier up (backup.RunBackup) and writes at most --limit figures. No AI, no exchange."""
@@ -2883,6 +2901,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the report to this file")
     p.add_argument("--csv", help="write the changes (scrip, period, basis, table, row, old, new) to this file")
     p.set_defaults(func=cmd_statements_correct)
+    p = sub.add_parser("memory-split-lines", help="split operating figures two business lines reported under one key (EICHERMOT's Royal Enfield and VECV volumes): dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_split_lines)
     p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")

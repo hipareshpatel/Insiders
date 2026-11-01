@@ -405,6 +405,20 @@ def memory_file_only() -> bool:
     return _switch("MEMORY_FILE_ONLY")
 
 
+def metric_business_line() -> bool:
+    """METRIC_BUSINESS_LINE (off; owner, 1 Nov 2026: "fix at root cause, must be applicable to other companies also"): an operating
+    figure (monthly volumes, sector KPIs; never a statement line, dossier.STATEMENT_FIGURES) carries the business line, subsidiary
+    or JV it is about (``FinancialMetric.line``, "Royal Enfield", "VECV"), and memory keys it by (metric, period, line), so two
+    lines that report the same metric in the same month never overwrite each other. EICHERMOT files two monthly updates on the
+    1st, Royal Enfield (~100,000 units) and VECV (~10,000): memory held RE's April and May under "volumes" with VECV's only in
+    sources, and the VECV card for October showed RE's months as its history. Readers (the monthly strip, the footer KPIs, the
+    memory the model is given, the volume signals) take the series of the filing's own line; a row with no line is the whole
+    company. On: the model is asked to name the line (config/prompts/business_line.md) and code derives it from the filing's
+    headline first (business_line.py). Read at the call.
+    """
+    return _switch("METRIC_BUSINESS_LINE")
+
+
 def card_footer_plausible() -> bool:
     """CARD_FOOTER_PLAUSIBLE (on in config/switches.toml; F182, TODO 77): a footer KPI that cannot be right is not shown, and the card stores
     why (`grounding.footer_hidden`, listed on the owner's Issues page): one more than 3x the highest of the company's own

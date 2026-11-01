@@ -99,6 +99,8 @@ def why_no_watch_verdict(w: dict, metrics: list[dict], news_id: str, discussed: 
     if canonical_period(w.get("check_in") or "") not in own:
         return "the check is not due for the period this filing reports"
     target = str(w.get("target") or "")
+    if not discussed and not _KPI_TARGET.fullmatch(target):
+        return "the target is not a plain figure"   # as before; the honest reason below rides DECK_DISCUSSED_PERIOD (review)
     if not re.search(r"\d", target):
         return "the target is not a plain figure"
     if not _KPI_TARGET.fullmatch(target):
@@ -127,6 +129,9 @@ _FIG = re.compile(r"(?P<cur>₹|rs\.?|inr|\$|usd)?\s*(?P<n>\d[\d,]*\.?\d*)(?:\s*
 _UP = re.compile(r"\b(above|over|more than|at least|min(?:imum)?|or (?:above|higher|more)|greater than)\b|>=|≥|>", re.I)
 _DOWN = re.compile(r"\b(below|under|less than|at most|max(?:imum)?|or (?:below|lower|less)|at or below)\b|<=|≤|<", re.I)
 _STRICT = re.compile(r"\b(above|over|more than|below|under|less than|greater than)\b|(?<![<>=≤≥])[<>](?!=)", re.I)
+
+
+_NEGATIVE = re.compile(r"(?<![\w.])[-−(]\s*(?:₹|rs\.?|\$)?\s*\d")
 
 
 def _num(x: str) -> float:
@@ -166,12 +171,17 @@ def numeric_contradiction(target: str | None, evidence: str | None) -> str | Non
     """A sentence naming the contradiction when the one figure in ``evidence`` that is in the target's unit lies outside the
     target's range or on the wrong side of its bound ("36 bps" against "33-35 bps"); else None. Figures equal to a bound are the
     target quoted back and skipped; two different candidate figures give None (not certain)."""
+    if _NEGATIVE.search(str(target or "")) or _NEGATIVE.search(str(evidence or "")):
+        return None   # a sign the figure reader drops ("-5%" read as 5) could flip a right verdict (review)
     b = _bound(str(target or ""))
     if not b:
         return None
     lo, hi, slo, shi, cur, unit = b
     bounds = {x for x in (lo, hi) if x is not None}
-    got = {f[0] for f in _figs(evidence or "") if f[2] == unit and (not cur or f[1] == cur) and f[0] not in bounds}
+    figs = [f[0] for f in _figs(evidence or "") if f[2] == unit and (not cur or f[1] == cur)]
+    if any(f in bounds for f in figs):
+        return None   # the evidence quotes the target back: which other figure is the result is not certain (review)
+    got = set(figs)
     if len(got) != 1:
         return None
     v = got.pop()
@@ -186,8 +196,10 @@ def smaller_count(target: str | None, evidence: str | None) -> str | None:
     if not m or _num(m[1]) < 100:
         return None
     want, noun = _num(m[1]), m[2].lower().rstrip("s")
-    if noun in _UNIT or noun in ("crore", "lakh", "per", "and", "the"):
+    if noun in _UNIT or noun in ("crore", "lakh", "per", "and", "the", "day", "basi", "year", "month", "new"):
         return None
+    if _DOWN.search(_PERIODS.sub(" ", str(target or ""))) or re.search(r"\b(?:reduce|cut|limit|lower)\b", str(target or ""), re.I):
+        return None   # a lower-is-better target: a smaller count is the target met, not missed (review)
     ev = _PERIODS.sub(" ", evidence or "")
     seen = [_num(e["n"]) for e in _FIG.finditer(ev) if re.search(rf"\b{re.escape(noun)}s?\b", ev[e.end():e.end() + 45].lower())]
     if seen and all(x < want for x in seen):

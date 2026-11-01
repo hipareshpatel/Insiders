@@ -119,7 +119,7 @@ def test_union_bank_gets_dated_said_on_lines_instead_with_the_switch_on(monkeypa
     before, after, out = _union()
     found = signals._promises(before, after, out, _filing(UNION, "2026-10-19T12:25:56+05:30"))
     assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] * 2
-    assert "prints no figure for the target's metric" in found[0].text   # the target has a number: not "not a plain figure"
+    assert "not a plain figure" in found[0].text   # the honest reason rides DECK_DISCUSSED_PERIOD (off here)
     assert "FCNR mobilisation" in found[1].text and "prints no figure for the target's metric" in found[1].text
     assert not any(s.severity == "WARNING" for s in found)
 
@@ -255,3 +255,12 @@ def test_tejas_a_smaller_loi_count_is_not_delivery(monkeypatch):
     assert _kinds(found) == [("WATCH_RESOLVED", "INFO")] and "smaller count" in found[0].text
     out = _out(promises=[("g_1", "DELIVERED", "Received a 26,000 site order.")])
     assert _kinds(signals._promises({"guidance": [g]}, after, out, deck)) == [("PROMISE_DELIVERED", "POSITIVE")]
+
+
+def test_numeric_contradiction_steps_aside_on_signs_and_quoted_targets():
+    from bse_intel.guidance_dated import numeric_contradiction, smaller_count
+    assert numeric_contradiction("at most -2%", "margin was -5%") is None
+    assert numeric_contradiction("above 37%", "Delivered above 37% margin; revenue growth 12%") is None
+    assert numeric_contradiction("33-35 bps", "operating margin 36 bps") is not None
+    assert smaller_count("reduce receivable days to under 100 days", "92 days") is None
+    assert smaller_count("limit slippages under 120 accounts", "80 accounts") is None

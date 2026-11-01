@@ -106,12 +106,13 @@ def triggers(dossier: dict) -> list[dict]:
             found.append({"kind": "CAPEX_COMMISSIONED", "date": _day(delivered[-1]["as_of"]),
                           "text": f"Delivered: {g['statement'][:100]}"})
 
-    months: dict[str, list[dict]] = {}
+    months: dict[tuple, list[dict]] = {}
     for m in dossier.get("financial_metrics", []):
         if period_kind(m["period"]) == "M" and m.get("yoy_pct") is not None \
                 and any(m["metric"].startswith(v) for v in VOLUME_METRICS):
-            months.setdefault(m["metric"], []).append(m)
-    for metric, rows in months.items():
+            # one series per business line (METRIC_BUSINESS_LINE): two lines in one month are never one streak (review of #324)
+            months.setdefault((m["metric"], m.get("line")), []).append(m)
+    for (metric, _line), rows in months.items():
         rows = sorted(rows, key=lambda r: due_date(r["period"]) or due_date("JAN-2000"))
         streak = 0
         for r in rows:

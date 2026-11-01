@@ -448,6 +448,15 @@ class AIGateway:
         ]}]
         return self._run(route, messages, None, image_tokens=1500).value
 
+    def ask_image(self, png: bytes, question: str, route: str = "vision") -> str:
+        """One question about one image, answered in text (call memory's slide check, CALL_MEMORY_VISION_CHECK)."""
+        b64 = base64.b64encode(png).decode()
+        messages = [{"role": "user", "content": [
+            {"type": "text", "text": question},
+            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64}"}},
+        ]}]
+        return self._run(route, messages, None, image_tokens=1500).value
+
     def usage_rows(self, day: str, updated_at: str) -> list[dict]:
         rows = []
         for key, usage in self.usage.items():

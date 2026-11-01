@@ -35,6 +35,7 @@ from threading import Lock
 
 from .ai.gateway import CEILING, TRANSIENT, AIGateway, AllProvidersFailed
 from .bse import AttachmentError, AttachmentTooLarge, BseClient, SourceBlockedError, XbrlLink
+from . import business_line
 from . import duplicates
 from . import requeue
 from .dossier import (add_timeline_entry, dossier_as_of, forget_filing, keep_concurrent_writes, latest_fundamentals, memory_ids, merge,
@@ -3764,8 +3765,11 @@ class Pipeline:
                 canonical_period(m.period) for m in (tagged.metrics if tagged else []) if m.period}
         # CARD_CONSOLIDATED_ONLY (F154): a consolidated filer's card is stated on the consolidated basis alone
         consolidated_only = bool(card_consolidated_only() and event_type == "RESULTS" and tagged and tagged.basis == "CONSOLIDATED")
-        full_view = view_as_of(dossier, filing.filed_at)
-        view = view_as_of(dossier, filing.filed_at, printed=printed, filing_text=text, consolidated_only=consolidated_only)
+        # METRIC_BUSINESS_LINE: the memory the model is given holds the filing's own line's operating figures (the headline names it)
+        line_now = business_line.detect(f"{filing.headline} {filing.subject}", dossier) if business_line.enabled() else None
+        full_view = view_as_of(dossier, filing.filed_at, line=line_now)
+        view = view_as_of(dossier, filing.filed_at, printed=printed, filing_text=text, consolidated_only=consolidated_only,
+                          line=line_now)
         sector_module = self.prompts.sector_for(industry)
         sector = sector_module.name
         peers = self._peers(sector, event_type, filing)
@@ -4003,6 +4007,8 @@ class Pipeline:
         if tagged:
             _apply_xbrl(out, tagged, filing.news_id)
             _apply_xbrl(remembered, tagged, filing.news_id)
+        # METRIC_BUSINESS_LINE: each operating figure names the business line it is about (code from the headline, else the model's)
+        business_line.assign(remembered.dossier_delta.financial_metrics, filing, dossier)
         score, checked, ungrounded, quant, claims = checks.score, checks.checked, checks.ungrounded, checks.quant, checks.claims
 
         merged = merge(dossier, remembered, filing, card.impact_level, now,
@@ -4289,6 +4295,7 @@ class Pipeline:
         remembered, _ = trust.for_memory(out, filed_text, company, dossier)
         if tagged:
             _apply_xbrl(remembered, tagged, filing.news_id)
+        business_line.assign(remembered.dossier_delta.financial_metrics, filing, dossier)   # METRIC_BUSINESS_LINE
         merged = merge(dossier, remembered, filing, None, now,
                        fy_end_month=getattr(tagged, "fy_end_month", None) if tagged else None)
         if standalone_file is not None and standalone_file.kind == "RESULTS":

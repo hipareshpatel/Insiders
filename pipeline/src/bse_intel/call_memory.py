@@ -733,6 +733,89 @@ def check_points(points: list[CallPoint], text: str, blocks: str = "", pages: li
     return merged, dropped
 
 
+# ---------------------------------------------------------------- slide vision check
+VISION_MAX_CALLS = 8   # vision requests a document may spend (one a slide with assembled points); the free routes allow 20-60 a minute
+
+
+def _vision_question(batch: list[tuple[int, CallPoint]]) -> str:
+    lines = []
+    for n, p in batch:
+        label = (p.metric or p.topic or "").replace("_", " ")
+        figure = f"{p.value:g}" if p.value is not None else "?"
+        if p.value_high is not None:
+            figure += f" to {p.value_high:g}"
+        line = f'{n}. {figure} {p.unit or ""} for "{label}"'.replace("  ", " ")
+        line += (f" for {p.period}" if p.period else "") + f' (slide words: "{(p.quote or "")[:160]}")'
+        lines.append(line)
+    return ("Look at this presentation slide. For each numbered claim, answer YES only if the slide shows that exact figure "
+            "tied to that label (and the period or segment, if named), and not the figure of another bar, year, segment or "
+            "label. Answer NO if it is another one's figure or you cannot see it. Reply with one line a claim, exactly "
+            "'<number>: YES' or '<number>: NO', and nothing else.\n" + "\n".join(lines))
+
+
+def _vision_answers(reply: str | None, count: int) -> dict[int, bool]:
+    out: dict[int, bool] = {}
+    for m in re.finditer(r"(?m)^\W*(\d+)\s*[:.)-]\s*\**\s*(YES|NO)\b", reply or "", re.I):
+        n = int(m[1])
+        if 1 <= n <= count and n not in out:
+            out[n] = m[2].upper() == "YES"
+    return out
+
+
+def vision_confirm(points: list[CallPoint], render, ask, max_calls: int = VISION_MAX_CALLS) -> tuple[list[CallPoint], list[dict]]:
+    """CALL_MEMORY_VISION_CHECK (owner decision "option B", 1 Nov 2026): the assembled slide points (quote_assembled: its words
+    are not one run of the slide text) are put to a vision model, one request a slide with all that slide's points. `render(page)`
+    gives the slide's PNG bytes (None: cannot), `ask(png, question)` the model's text (raises or None: no answer). A point is
+    kept only on a YES; a NO, an unreadable or missing answer, no image or no call left (`max_calls`) drops it with the reason
+    "vision". A point whose quote is a contiguous run of the text is never sent. Returns (kept, dropped)."""
+    by_page: dict[int, list[CallPoint]] = {}
+    for p in points:
+        if p.quote_assembled and p.page is not None:
+            by_page.setdefault(p.page, []).append(p)
+    verdict: dict[int, tuple[bool, str]] = {}   # id(point) -> (keep, why)
+    calls = 0
+    for page in sorted(by_page):
+        group = by_page[page]
+        if calls >= max_calls:
+            verdict |= {id(p): (False, "no vision call left for this document") for p in group}
+            continue
+        png, why = None, "slide not rendered"
+        try:
+            png = render(page)
+        except Exception as exc:   # one bad page leaves the rest
+            why = f"slide not rendered ({type(exc).__name__})"
+        if not png:
+            verdict |= {id(p): (False, why) for p in group}
+            continue
+        calls += 1
+        batch = list(enumerate(group, 1))
+        reply, why = None, "no answer"
+        try:
+            reply = ask(png, _vision_question(batch))
+        except Exception as exc:
+            why = f"no answer ({type(exc).__name__})"
+        answers = _vision_answers(reply, len(group))
+        for n, p in batch:
+            if n not in answers:
+                verdict[id(p)] = (False, why if not reply else "no readable answer")
+            elif answers[n]:
+                verdict[id(p)] = (True, "")
+            else:
+                verdict[id(p)] = (False, "the slide does not show this figure for this label and period")
+    answered = sum(1 for keep, why in verdict.values() if keep or why.startswith("the slide does not"))
+    if verdict and not answered:   # a provider outage drops every assembled point: say so (review of #324)
+        log.warning("call memory vision check: no answer for any of %d assembled points (%d calls); all dropped", len(verdict), calls)
+    kept: list[CallPoint] = []
+    dropped: list[dict] = []
+    for p in points:
+        keep, why = verdict.get(id(p), (True, ""))
+        if keep:
+            kept.append(p)
+        else:
+            dropped.append({"reason": "vision", "detail": why, "point": p.model_dump(exclude_none=True)})
+    return kept, dropped
+
+
 # ---------------------------------------------------------------- memory
 def _entry(p: CallPoint, news_id: str, date: str, quarter: str | None, at: str) -> dict:
     lab = label("ai", "call", at, ok=True)

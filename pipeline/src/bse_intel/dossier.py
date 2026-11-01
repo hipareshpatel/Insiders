@@ -25,8 +25,8 @@ from typing import Any
 
 from .scoring import calibration
 from .settings import (card_results_one_line, card_ebitda_profit_v2, card_eps_whole, card_footer_plausible, card_grounded_figures, card_guidance_dated, card_same_definition, card_watch_verdict, eps_base_check, memory_call_v2, memory_file_only,
-                       memory_restated, memory_screener, memory_year_check)
-from . import footer_plausible, known_wrong
+                       memory_restated, memory_screener, memory_year_check, metric_business_line)
+from . import business_line, footer_plausible, known_wrong
 from .models import _PER_OTHER, Filing, Pass2Output
 from .periods import canonical_period, due_date, quarter_index, results_due
 from .timeutil import now_iso
@@ -482,6 +482,7 @@ def _sources(entry: dict | None) -> list[dict]:
         **({"basis": entry["basis"]} if entry.get("basis") else {}),
         **({"lab": entry["lab"]} if entry.get("lab") else {}),
         **({"restated_from": entry["restated_from"]} if entry.get("restated_from") else {}),
+        **({"line": entry["line"]} if entry.get("line") else {}),   # METRIC_BUSINESS_LINE
     }]
 
 
@@ -598,6 +599,8 @@ def _metric_entry(metric: str, period: str, sources: list[dict]) -> dict:
     entry = {"metric": metric, "period": period, "value": last["value"], "unit": last.get("unit") or "INR_CR",
              "yoy_pct": last.get("yoy_pct"), "qoq_pct": last.get("qoq_pct"), "as_of": sources[0]["as_of"],
              "source_news_id": sources[0]["news_id"]}
+    if last.get("line"):   # METRIC_BUSINESS_LINE: the business line this figure is about (None: the whole company)
+        entry["line"] = last["line"]
     if len(sources) == 1 and sources[0].get("basis"):
         entry["basis"] = sources[0]["basis"]
     if len(sources) == 1 and sources[0].get("lab"):
@@ -706,11 +709,11 @@ def reported_by(entry: dict, news_id: str) -> bool:
 
 
 def _cap_metrics(entries: list[dict]) -> list[dict]:
-    groups: dict[tuple[str, str], list[dict]] = {}
+    groups: dict[tuple, list[dict]] = {}
     for e in entries:
-        groups.setdefault((e["metric"], period_kind(e["period"])), []).append(e)
+        groups.setdefault((e["metric"], period_kind(e["period"]), e.get("line")), []).append(e)
     kept = []
-    for (_, kind), items in groups.items():
+    for (_, kind, _line), items in groups.items():
         items.sort(key=lambda e: (str(due_date(e["period"]) or ""), e["period"]))
         kept += items[-KEEP_PERIODS[kind]:]
     return sorted(kept, key=lambda e: e["as_of"])
@@ -727,7 +730,7 @@ MEMORY_ONLY_METRICS = frozenset({"pat_minority", "eps_total", "eps_continuing"})
 _EXTRAS_KEYS = ("audit", "cash_flow_detail", "related_parties", "fin_ratios", "oci", "discontinued", "segment_balance", "dividends",
                 "kmp_pay", "contingent_liabilities")      # = xbrl_extras.KEYS (a test holds them equal)
 _KEYED_LISTS = {
-    "financial_metrics": lambda e: (e.get("metric"), e.get("period")),
+    "financial_metrics": lambda e: (e.get("metric"), e.get("period"), e.get("line")),
     "ownership": lambda e: e.get("period"),
     "timeline": lambda e: e.get("id") or (e.get("news_id"), e.get("date"), e.get("summary")),
     "statements": lambda e: (e.get("period"), e.get("basis"), e.get("table")),   # statements.py: one entry a period, basis, table
@@ -1153,7 +1156,9 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         d["business_summary"] = {"text": delta.business_summary.strip(), "as_of": as_of, "source_news_id": news_id,
                                  "lab": text_lab()}
 
-    metrics = {(m["metric"], m["period"]): m for m in d.get("financial_metrics", [])}
+    # METRIC_BUSINESS_LINE: a figure of a business line has its own key (metric, period, line); the whole company's is (metric, period)
+    metrics = {(m["metric"], m["period"]) + ((m["line"],) if m.get("line") else ()): m for m in d.get("financial_metrics", [])}
+    by_line = metric_business_line()
     basis = basis or (output.card.basis if output.card is not None else None)
     if own_period is None:
         # the file's own quarter is the latest quarter its machine-tagged figures name; the earlier ones are its comparative
@@ -1168,6 +1173,8 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
         if m.value is None:
             continue
         key = (_norm(m.metric), _period(m.period))
+        line = business_line.clean(getattr(m, "line", None)) if by_line and business_line.operating(key[0]) else None
+        lkey = key + (line,) if line else key
         if not march_year(d) and not _CALENDAR_QUARTER.fullmatch(key[1]):
             continue   # a half year or year of a company whose year does not end in March: wrongly named here
         wrong = known_wrong.listed(filing.scrip_code or d.get("scrip_code"), key[0], key[1], m.value,
@@ -1191,7 +1198,7 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                      key[0], key[1], m.value, news_id)
             continue
         if memory_call_v2() and doc in ("call", "slides") and not (getattr(m, "by", None) in ("file", "calc")) \
-                and (held := file_figure_apart(metrics.get(key), m.value)) is not None:
+                and (held := file_figure_apart(metrics.get(lkey), m.value)) is not None:
             # a call's or deck's own measure under the statutory name (F180): Sobha's "operational cash flow" +755 Cr beside
             # the file's -342.12 Cr for H1FY27, Vishal Mega Mart's operating EBITDA margin 7.7% beside the file's 12.12%. The
             # call reading keeps it as a kpi point with its own definition (call_memory.py)
@@ -1219,10 +1226,11 @@ def merge(dossier: dict, output: Pass2Output, filing: Filing, impact_level: str 
                     basis=(getattr(m, "file_basis", None) if m_by in ("file", "calc") else None) or basis, unit=m.unit, ok=True,
                     src=getattr(m, "derived_from", None) if m_by == "calc" else None)
         source = {"news_id": news_id, "as_of": as_of, "value": m.value, "unit": m.unit,
-                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {}), "lab": lab}
+                  "yoy_pct": m.yoy_pct, "qoq_pct": m.qoq_pct, **({"basis": basis} if basis else {}), "lab": lab,
+                  **({"line": line} if line else {})}
         if m_by in ("file", "calc") and results_source and is_comparative(key[1], own_period):
             source["restated_from"] = own_period   # F167: a comparative column of this filing, for its own earlier period
-        metrics[key] = _metric_entry(*key, [s for s in _sources(metrics.get(key)) if s["news_id"] != news_id] + [source])
+        metrics[lkey] = _metric_entry(*key, [s for s in _sources(metrics.get(lkey)) if s["news_id"] != news_id] + [source])
     for entry in metrics.values():
         # stored before models.FinancialMetric checked it: Ambuja's EBITDA per tonne kept as ₹931 INR_PER_SHARE (item 84)
         for row in [entry, *entry.get("sources", [])]:
@@ -1677,7 +1685,7 @@ def _eps_on_one_basis(dossier: dict, entries: list[dict], known: list[dict]) -> 
 
 
 def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, printed: set[str] | None = None,
-               filing_text: str | None = None, consolidated_only: bool = False) -> dict | None:
+               filing_text: str | None = None, consolidated_only: bool = False, line: str | None = None) -> dict | None:
     """Compact memory for the prompt, containing only facts known before ``cutoff``.
 
     Each figure carries its basis (once for a metric whose figures share one, else on its line) and, when a later
@@ -1686,11 +1694,13 @@ def view_as_of(dossier: dict | None, cutoff: str, budget_chars: int = 9000, prin
     With ``printed`` (the periods this filing prints, ``periods.printed_periods``) memory's figures for those periods
     are withheld and a note says so: the filing's own column wins, restated or not (Kanoria, Star Health, Man
     Industries). With ``filing_text``, deals and timeline items that are probably this same event are marked
-    (``mark_same_event``). Without either it is the view code reads memory's figures from (results_card)."""
+    (``mark_same_event``). Without either it is the view code reads memory's figures from (results_card). With
+    METRIC_BUSINESS_LINE, ``line`` is the business line the filing is about (business_line.detect; None: the whole company) and
+    only that line's operating figures are shown."""
 
     if not dossier:
         return None
-    dossier = with_screener(dossier)
+    dossier = business_line.view(with_screener(dossier), line)
     before = lambda e, field="as_of": e.get(field, "") < cutoff  # noqa: E731
 
     as_known = []
@@ -2357,6 +2367,7 @@ def results_snapshot(dossier: dict, news_id: str, footer: tuple[dict, ...] | lis
     from .periods import prior_quarter_period, prior_year_period
 
     dossier = with_year_hold(with_screener(dossier))   # MEMORY_YEAR_CHECK: held figures are not in the table, its bases or a derived quarter
+    dossier = business_line.view(dossier, business_line.of_filing(dossier, news_id))   # METRIC_BUSINESS_LINE: footer KPIs of the filing's own line
     mine = [m for m in dossier.get("financial_metrics", []) if reported_by(m, news_id)]
     quarters = [m["period"] for m in mine if m["period"].startswith("Q") and due_date(m["period"])]
     if not quarters:

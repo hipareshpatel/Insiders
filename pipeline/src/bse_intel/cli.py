@@ -1028,6 +1028,7 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     that can never be read (not in the ledger, an invitation) raises PermanentSkip; any other error is transient. No stored text
     is transient: the pipeline writes the text after it queues the filing, and the write is best effort."""
     from . import call_memory, memory_recall_export as mre
+    from .settings import call_memory_vision_check
     from .dossier import keep_concurrent_writes
     from .extract import Document
 
@@ -1050,6 +1051,9 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
     started = time.monotonic()
     reply = call_memory.read(pipeline.gateway, pipeline.prompts, filing, kind, industry, text, blocks, prior, paid, gap_s, retry_until)
     kept, dropped = call_memory.check_points(reply.points, text, blocks, scope=f"{filing.scrip_code}:{news_id}")
+    if kept and any(p.quote_assembled for p in kept) and call_memory_vision_check():
+        kept, vision_dropped = call_memory.vision_confirm(kept, *_slide_vision(pipeline, filing))
+        dropped = dropped + vision_dropped
     row |= {"symbol": filing.symbol, "company": filing.company_name, "filed_at": filing.filed_at, "kind": kind,
             "model": reply.served_by, "chars": len(text), "prompt_chars": reply.prompt_chars, "pages": doc.page_count,
             "seconds": round(time.monotonic() - started, 1), "asked": len(reply.points), "kept": len(kept),
@@ -1071,6 +1075,30 @@ def _read_call_document(pipeline, sink, news_id: str, apply: bool, out_dir: Path
             {**row, "points_kept": [p.model_dump(exclude_none=True) for p in kept], "points_dropped": dropped},
             ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     return row
+
+
+def _slide_vision(pipeline, filing):
+    """(render, ask) for call_memory.vision_confirm: the filing's PDF fetched once on the first slide asked for, a page drawn
+    at 110 dpi, the question put to the free `vision` route (providers.toml). Without the route or the PDF nothing is answered."""
+    cache: dict = {}
+
+    def render(page: int) -> bytes | None:
+        import fitz
+
+        if "doc" not in cache:
+            raw = pipeline._attachment(filing.pdf_url, 60 * 1024 * 1024) if filing.pdf_url else None
+            cache["doc"] = fitz.open(stream=raw, filetype="pdf") if raw else None
+        doc = cache["doc"]
+        if doc is None or not 1 <= page <= doc.page_count:
+            return None
+        return doc[page - 1].get_pixmap(dpi=110).tobytes("png")
+
+    def ask(png: bytes, question: str) -> str | None:
+        if not pipeline.gateway.has_route("vision"):
+            return None
+        return pipeline.gateway.ask_image(png, question)
+
+    return render, ask
 
 
 def _call_memory_pending(args, settings, sink) -> int:
@@ -2462,6 +2490,24 @@ def cmd_statements_correct(args, settings, sink) -> int:
     return 124 if outcome["more"] and args.apply else 0
 
 
+def cmd_memory_split_lines(args, settings, sink) -> int:
+    """Split operating figures that two business lines reported under one key (memory_split_lines.py, METRIC_BUSINESS_LINE): a
+    dry run by default, --apply backs each dossier up (backup.RunBackup) first. No AI, no exchange."""
+    from . import memory_split_lines
+
+    scrips = [s.strip() for s in (args.scrips or "").split(",") if s.strip()] or sink.list_dossiers()
+    outcome = memory_split_lines.run(sink, scrips, args.apply)
+    print(memory_split_lines.render(outcome))
+    if args.json:
+        Path(args.json).write_text(json.dumps(outcome, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    if outcome["error"]:
+        print(f"memory-split-lines: stopped, exit 1: {outcome['error']}", file=sys.stderr)
+        return 1
+    if not args.apply:
+        print("dry run: nothing changed (--apply backs each dossier up to backup/memory-split-lines-<time>/, then writes)")
+    return 0
+
+
 def cmd_memory_rerank(args, settings, sink) -> int:
     """Put right the stored figures the TODO 118 B ranking changes (memory_rerank.py): a dry run by default, --apply backs
     each dossier up (backup.RunBackup) and writes at most --limit figures. No AI, no exchange."""
@@ -2855,6 +2901,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--json", help="write the report to this file")
     p.add_argument("--csv", help="write the changes (scrip, period, basis, table, row, old, new) to this file")
     p.set_defaults(func=cmd_statements_correct)
+    p = sub.add_parser("memory-split-lines", help="split operating figures two business lines reported under one key (EICHERMOT's Royal Enfield and VECV volumes): dry run (default) or --apply (backs each dossier up first; no AI)")
+    p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
+    p.add_argument("--apply", action="store_true", help="write; without it nothing changes")
+    p.add_argument("--json", help="write the report to this file")
+    p.set_defaults(func=cmd_memory_split_lines)
     p = sub.add_parser("memory-rerank", help="re-rank stored figures under TODO 118 B (the exchange file above a model's reading): dry run (default) or --apply (backs each dossier up first; no AI)")
     p.add_argument("--scrips", help="only these companies (scrip codes, comma separated); default every stored dossier")
     p.add_argument("--apply", action="store_true", help="write; without it nothing changes")

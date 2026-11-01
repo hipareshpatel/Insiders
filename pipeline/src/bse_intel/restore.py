@@ -82,7 +82,7 @@ def _ident(entry):
     if not isinstance(entry, dict):
         return None
     if "metric" in entry and "period" in entry:
-        return ("metric", str(entry["metric"]), str(entry["period"]), str(entry.get("basis")))
+        return ("metric", str(entry["metric"]), str(entry["period"]), str(entry.get("basis"))) + ((str(entry["line"]),) if entry.get("line") else ())   # METRIC_BUSINESS_LINE: a line is a figure of its own
     for names in (("id",), ("news_id", "date", "summary"), ("news_id", "date", "text"), ("period",), ("news_id",), ("as_of",)):
         if all(entry.get(n) is not None for n in names):
             return (*names, *(json.dumps(entry[n], sort_keys=True) for n in names))

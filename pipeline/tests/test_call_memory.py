@@ -1201,3 +1201,61 @@ def test_speaker_check_keeps_when_turns_cannot_be_told_apart():
     no_intro = KEI_CALL.replace("We have the next question from the line of Kevin Shah from Aditya Birla Capital.", "Please go ahead.")
     assert cm._speaker_issue(point, no_intro) is None   # nobody introduced as an analyst
     assert cm._speaker_issue(_call_point(quote="a quote that is nowhere in the call"), KEI_CALL) is None
+
+
+# ---------------------------------------------------------------- slide vision check (owner "option B", 1 Nov 2026)
+_SLIDE = "--- Page 1 of 1 ---\n39.7%            27.7%\nROCE in H1FY27        ROE in H1FY27\nROE in H1FY27 was 27.7% on the slide.\n"
+
+
+def _slide_points():
+    roce = _point(type="kpi", statement="ROCE 39.7% in H1FY27", metric="roce", topic="roce", value=39.7, unit="PERCENT",
+                  period="H1FY27", section="SLIDE", page=1, quote="39.7% ROCE in H1FY27")
+    roe = _point(type="kpi", statement="ROE 27.7% in H1FY27", metric="roe", topic="roe", value=27.7, unit="PERCENT",
+                 period="H1FY27", section="SLIDE", page=1, quote="ROE in H1FY27 was 27.7% on the slide.")
+    kept, _ = cm.check_points([roce, roe], _SLIDE)
+    assert {p.topic: p.quote_assembled for p in kept} == {"roce": True, "roe": False}
+    return kept
+
+
+def test_the_vision_check_switch_is_off_by_default(monkeypatch):
+    from bse_intel import settings
+    monkeypatch.delenv("CALL_MEMORY_VISION_CHECK", raising=False)
+    assert settings.call_memory_vision_check() is False
+    monkeypatch.setenv("CALL_MEMORY_VISION_CHECK", "1")
+    assert settings.call_memory_vision_check() is True
+
+
+def test_vision_confirms_an_assembled_point_and_never_sends_a_contiguous_one():
+    asked = []
+
+    def ask(png, question):
+        asked.append(question)
+        return "1: YES"
+
+    kept, dropped = cm.vision_confirm(_slide_points(), lambda page: b"png", ask)
+    assert {p.topic for p in kept} == {"roce", "roe"} and dropped == []
+    assert len(asked) == 1 and "ROCE" in asked[0] and "27.7" not in asked[0]   # one call, the contiguous point not in it
+
+
+def test_vision_denial_drops_the_assembled_point_with_its_reason():
+    kept, dropped = cm.vision_confirm(_slide_points(), lambda page: b"png", lambda png, q: "1: NO")
+    assert [p.topic for p in kept] == ["roe"]
+    assert [d["reason"] for d in dropped] == ["vision"] and "does not show" in dropped[0]["detail"]
+
+
+@pytest.mark.parametrize("reply", [None, "I cannot tell", RuntimeError("down")])
+def test_vision_no_answer_drops_the_assembled_point(reply):
+    def ask(png, q):
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
+
+    kept, dropped = cm.vision_confirm(_slide_points(), lambda page: b"png", ask)
+    assert [p.topic for p in kept] == ["roe"] and dropped[0]["reason"] == "vision"
+
+
+def test_vision_without_an_image_or_over_the_call_cap_drops():
+    kept, dropped = cm.vision_confirm(_slide_points(), lambda page: None, lambda png, q: "1: YES")
+    assert [p.topic for p in kept] == ["roe"] and "not rendered" in dropped[0]["detail"]
+    kept, dropped = cm.vision_confirm(_slide_points(), lambda page: b"png", lambda png, q: "1: YES", max_calls=0)
+    assert [p.topic for p in kept] == ["roe"] and "no vision call left" in dropped[0]["detail"]

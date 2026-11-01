@@ -24,6 +24,7 @@ from __future__ import annotations
 import re
 from datetime import date, timedelta
 
+from . import business_line
 from .periods import due_date, prior_quarter_period, prior_year_period
 
 ALIASES = {
@@ -233,7 +234,8 @@ def festive_signals(after: dict, news_id: str) -> list[dict]:
         if m["metric"] not in FESTIVE_METRICS or not reported_by(m, news_id) or not m["period"].startswith("NOV-"):
             continue
         year = int(m["period"][4:])
-        series = {e["period"]: e["value"] for e in after.get("financial_metrics", []) if e["metric"] == m["metric"]}
+        series = {e["period"]: e["value"] for e in after.get("financial_metrics", [])
+                  if e["metric"] == m["metric"] and (not business_line.enabled() or e.get("line") == m.get("line"))}
         now = [series.get(f"OCT-{year}"), series.get(f"NOV-{year}")]
         last = [series.get(f"OCT-{year - 1}"), series.get(f"NOV-{year - 1}")]
         if all(v is not None for v in now + last) and sum(last):

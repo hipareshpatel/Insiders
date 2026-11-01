@@ -236,6 +236,16 @@ def call_memory_geometry() -> bool:
     return _switch("CALL_MEMORY_GEOMETRY")
 
 
+def call_memory_vision_check() -> bool:
+    """CALL_MEMORY_VISION_CHECK (default off; TODO 101/144, owner decision "option B", 1 Nov 2026): a deck point whose quote is
+    assembled from words across a slide (CallPoint.quote_assembled) is kept only when a vision model, shown the slide as an
+    image, says it shows the point's figure for its label and period (call_memory.vision_confirm). Measured 31 Oct 2026: the v2
+    prompt keeps deck points with 9.2% WRONG (27 of 293) against the owner's 2% bar, and all 27 WRONG points had an assembled
+    quote (40% of the RIGHT ones too, so dropping every assembled point costs too much). On no, or no answer, the point is
+    dropped with the reason "vision". Free vision route only. Read at the call."""
+    return _switch("CALL_MEMORY_VISION_CHECK")
+
+
 def card_ground_all_fields() -> bool:
     """CARD_GROUND_ALL_FIELDS (on in config/switches.toml; TODO 105, F204): the figures in the timeline entry, the core catalyst and the
     track-next lists (milestones, pending approvals, catalysts, risks, KPI targets) go through the same grounding as the
@@ -401,6 +411,20 @@ def memory_file_only() -> bool:
     data"): a statement line (dossier.STATEMENT_FIGURES) enters memory only from the exchange's own file; a model's reading of
     a PDF, deck or call is kept on its card and never becomes the company's figure. Read at the call."""
     return _switch("MEMORY_FILE_ONLY")
+
+
+def metric_business_line() -> bool:
+    """METRIC_BUSINESS_LINE (off; owner, 1 Nov 2026: "fix at root cause, must be applicable to other companies also"): an operating
+    figure (monthly volumes, sector KPIs; never a statement line, dossier.STATEMENT_FIGURES) carries the business line, subsidiary
+    or JV it is about (``FinancialMetric.line``, "Royal Enfield", "VECV"), and memory keys it by (metric, period, line), so two
+    lines that report the same metric in the same month never overwrite each other. EICHERMOT files two monthly updates on the
+    1st, Royal Enfield (~100,000 units) and VECV (~10,000): memory held RE's April and May under "volumes" with VECV's only in
+    sources, and the VECV card for October showed RE's months as its history. Readers (the monthly strip, the footer KPIs, the
+    memory the model is given, the volume signals) take the series of the filing's own line; a row with no line is the whole
+    company. On: the model is asked to name the line (config/prompts/business_line.md) and code derives it from the filing's
+    headline first (business_line.py). Read at the call.
+    """
+    return _switch("METRIC_BUSINESS_LINE")
 
 
 def card_footer_plausible() -> bool:

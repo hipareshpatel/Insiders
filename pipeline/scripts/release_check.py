@@ -80,6 +80,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      softens and the list items it drops. Complete.
   filer_checks       XBRL_FILER_CHECKS (S3, TODO 111, F219): each results card's own exchange file (R2, 180 days) read twice by
                      `xbrl.parse`, off and on; the figures it changes or holds. Read only; over stored memory's source files.
+  figure_matches_file CARD_FIGURE_MATCHES_FILE (1 Nov 2026 (b), AJANTPHARM nse-106836128): `printed_figures.printed_ebitda` on each
+                     stored results card's text with the card's file EBITDA, off and on; the company's EBITDA the table shows
+                     (a deck row whose first figure is the base of its own printed change is no longer taken). Complete.
   unit_slip_guard    UNIT_SLIP_XBRL_GUARD (1 Nov 2026): a stored card keeps only its corrected text, but its record names each unit
                      correction (`grounding.unit_fixes`, {as written: corrected}) and its exchange file (`xbrl.url`). The file's
                      bytes come from R2 (`xbrl_store.get`, kept 180 days; --platform only), every money fact is read in crore
@@ -136,7 +139,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_FOOTER_PLAUSIBLE", "CARD_EPS_FOLLOWS_PROFIT", "CARD_EPS_WHOLE", "CARD_TEXT_SUPPORT",
                 "RESULTS_NEEDS_STATEMENT", "UNIT_SLIP_XBRL_GUARD", "DECK_DISCUSSED_PERIOD", "DISCONTINUED_NEEDS_FIGURE",
                 "CARD_OTHER_ISSUER", "CARD_ADJUSTED_PROFIT_LABEL",
-                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS")
+                "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -147,7 +150,7 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("deck_period", "DECK_DISCUSSED_PERIOD"), ("other_issuer", "CARD_OTHER_ISSUER"),
           ("adjusted_profit", "CARD_ADJUSTED_PROFIT_LABEL"),
           ("words_match_figures", "CARD_WORDS_MATCH_FIGURES"),
-          ("filer_checks", "XBRL_FILER_CHECKS"))
+          ("filer_checks", "XBRL_FILER_CHECKS"), ("figure_matches_file", "CARD_FIGURE_MATCHES_FILE"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -329,6 +332,30 @@ def check_filer_checks(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
     with switches_on("XBRL_FILER_CHECKS"):
         on = filer_lines(xbrl.parse(xbrl.as_utf8(xbrl_bytes)))
     return _record(row, card, off, on)
+
+
+def check_figure_matches_file(card: dict, row: dict, text: str) -> dict:
+    """figure_matches_file: `printed_figures.printed_ebitda` over the stored filing text with CARD_FIGURE_MATCHES_FILE off and on, the
+    card's own EBITDA from the exchange file (the results block's `ebitda`) and basis; the company's EBITDA the table would show.
+    A deck row whose first figure is the base of its own printed change (AJANTPHARM nse-106836128: 679 is H1FY26) is not taken."""
+    from bse_intel import printed_figures
+
+    results = card.get("results") or {}
+    ours = (results.get("ebitda") or {}).get("value")
+    basis = card.get("basis") or (card.get("xbrl") or {}).get("basis")
+
+    def line() -> list[str]:
+        got = printed_figures.printed_ebitda(text, results.get("period"), ours, basis)
+        shown = f"{got.name} {got.value_cr} (quote: {got.quote})" if got else "(none shown)"
+        return [f"TABLE EBITDA (Filing): {shown}", f"TABLE stored: {(results.get('ebitda_filing') or {}).get('value')}"]
+
+    with switches_on():
+        off = line()
+    with switches_on("CARD_FIGURE_MATCHES_FILE"):
+        on = line()
+    rec = _record(row, card, off, on)
+    rec["info"], rec["unreplayable"] = {}, []
+    return rec
 
 
 def check_unit_slip_guard(card: dict, xbrl_bytes: bytes, row: dict) -> dict:
@@ -1116,6 +1143,15 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     else:
                         seen[name] += 1
                         keep(name, check_words_figures(card, row, memory() or None))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "figure_matches_file":
+                    if not results or not isinstance(card.get("results"), dict) or not (card["results"].get("ebitda") or {}).get("value"):
+                        skipped[name]["not a results card with an EBITDA row"] += 1
+                    elif text is None:
+                        skipped[name]["no text"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_figure_matches_file(card, row, text))
                         row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "unit_slip_guard":
                     url = (card.get("xbrl") or {}).get("url")

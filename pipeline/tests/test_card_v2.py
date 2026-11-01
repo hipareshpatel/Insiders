@@ -262,3 +262,31 @@ def test_the_key_number_guard_keeps_the_headlined_profit_under_the_companys_own_
     P.xbrl_key_numbers(out, tagged, (RELEASE,))
     assert {k.label: k.value for k in out.card.key_numbers}["PAT"] == "₹48.43 Cr"
     assert next(k for k in out.card.key_numbers if k.label == "EBITDA (Filing)").value == "₹286.61 Cr"   # not ours
+
+
+# --- CARD_FIGURE_MATCHES_FILE (blind audit 1 Nov 2026 (b), AJANTPHARM nse-106836128) ------------------------------------
+
+AJANTA_DECK = ("Consolidated financials, Rs. crore\n"
+               "EBITDA 679 26% 971 28% 43%\n"
+               "Adjusted EBITDA (excluding forex loss) at Rs. 543 cr in Q2FY27.\n")
+
+
+def test_a_deck_row_whose_first_figure_is_the_base_of_its_own_change_is_not_the_quarter(monkeypatch):
+    monkeypatch.delenv("CARD_FIGURE_MATCHES_FILE", raising=False)
+    off = printed_figures.printed_ebitda(AJANTA_DECK, "Q2FY27", ours=547.56)
+    assert off.value_cr == 679.0   # the wrong column, as it was
+    monkeypatch.setenv("CARD_FIGURE_MATCHES_FILE", "1")
+    on = printed_figures.printed_ebitda(AJANTA_DECK, "Q2FY27", ours=547.56)
+    assert on.value_cr == 543.0
+    # a row that starts with the quarter and prints its own change from the year-ago is kept
+    assert printed_figures.printed_ebitda("Rs. crore\nEBITDA 164.5 139.4 18%\n", "Q2FY27", ours=164.0).value_cr == 164.5
+    # no other figure: nothing is shown rather than the earlier period's
+    assert printed_figures.printed_ebitda("Rs. crore\nEBITDA 679 26% 971 28% 43%\n", "Q2FY27", ours=547.56) is None
+
+
+def test_the_figure_the_exchange_file_gives_comes_before_a_farther_one(monkeypatch):
+    text = "Rs. crore\nEBITDA 700 650\nAdjusted EBITDA of Rs. 545 cr, up from Rs. 400 cr\n"
+    monkeypatch.delenv("CARD_FIGURE_MATCHES_FILE", raising=False)
+    assert printed_figures.printed_ebitda(text, "Q2FY27", ours=547.56).value_cr == 700.0
+    monkeypatch.setenv("CARD_FIGURE_MATCHES_FILE", "1")
+    assert printed_figures.printed_ebitda(text, "Q2FY27", ours=547.56).value_cr == 545.0

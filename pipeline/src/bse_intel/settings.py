@@ -371,6 +371,17 @@ def unit_slip_xbrl_guard() -> bool:
     return _switch("UNIT_SLIP_XBRL_GUARD")
 
 
+def card_figure_matches_file() -> bool:
+    """CARD_FIGURE_MATCHES_FILE (default off; blind audit of 1 Nov 2026 (b), AJANTPHARM nse-106836128): the company's own EBITDA the
+    results table shows ("EBITDA (Filing)", printed_figures.printed_ebitda) is read from the deck's row only when the row's
+    first figure is the quarter. A row that prints its own change from the first figure to a later one ("EBITDA 679 26% 971 28% 43%":
+    971 / 679 = +43%) has the first figure as the BASE, an earlier period (679 was H1FY26; Q2FY27 is 543, the file's 547.56
+    before other income): that figure is not taken, and among the figures left the one within 3% of the exchange file's EBITDA
+    comes first (XBRL is never overruled by the PDF, owner 1 Nov 2026). It shows fewer printed figures, so a check accepts more
+    only through the next candidate: on after release_check figure_matches_file. Read at the call."""
+    return _switch("CARD_FIGURE_MATCHES_FILE")
+
+
 def discontinued_needs_figure() -> bool:
     """DISCONTINUED_NEEDS_FIGURE (default off; blind audit of 1 Nov 2026): a card says "includes ₹X Cr from discontinued operations"
     only when the period has a discontinued-operations figure of its own (ProfitLossFromDiscontinuedOperationsAfterTax, a line every

@@ -1032,3 +1032,18 @@ def test_a_december_year_comes_from_its_annual_report_else_its_december_quarter_
     cf = _store({xf.key("1", "Q3FY26", "CONSOLIDATED"): q})
     assert cf.year_end("YE:2025-12", "CONSOLIDATED")[1] == "results file Q3FY26"
     assert cf.year_end("YE:2024-12", "CONSOLIDATED") == (None, "")
+
+
+def test_an_owners_tag_holding_the_comprehensive_income_is_the_whole_profit():
+    """CHOLAFIN Q2FY27 consolidated (NBFC file of 28 Oct 2026): owners 1,763.61 = ComprehensiveIncomeForThePeriod, ProfitLossForPeriod
+    1,630.34, minority 0.0; the Results page showed the owners' profit above the total."""
+    base = [("RevenueFromOperations", "Q2026", 9394.51), ("FinanceCosts", "Q2026", 4334.43), ("ProfitBeforeTax", "Q2026", 2187.05),
+            ("TaxExpense", "Q2026", 558.04), ("ProfitLossForPeriod", "Q2026", 1630.34),
+            ("ProfitOrLossAttributableToNonControllingInterests", "Q2026", 0.0), ("ComprehensiveIncomeForThePeriod", "Q2026", 1763.61)]
+    tagged = base + [("ProfitOrLossAttributableToOwnersOfParent", "Q2026", 1763.61)]
+    got = values(sv.nbfc_pl(sv._Reader(xf.Facts(doc(tagged, kind="results", template="NBFC")), end=END, months=3)))
+    assert got["Net Profit (owners)"] == got["Net Profit"] == 1630.34
+    # an owners' share below the whole profit that is not the comprehensive income stays as filed
+    honest = base + [("ProfitOrLossAttributableToOwnersOfParent", "Q2026", 1600.0)]
+    got = values(sv.nbfc_pl(sv._Reader(xf.Facts(doc(honest, kind="results", template="NBFC")), end=END, months=3)))
+    assert got["Net Profit (owners)"] == 1600.0

@@ -157,3 +157,32 @@ def test_scale_slip_leaves_rates_other_units_and_ordinary_moves_alone():
     assert fp.scale_slip(a, {"value": 30.0, "unit": "MT", "period": "Q1FY27"}) is None
     assert fp.scale_slip(a, {"value": 100.0, "unit": "KT", "period": "Q1FY27"}) is None
     assert fp.scale_slip({"value": 2.0, "unit": "PCT"}, {"value": 20.0, "unit": "PCT"}) is None
+
+
+ORDER_BOOK = {"metric": "order_book", "label": "Order book", "format": "cr", "aliases": ["order_book_cr", "orderbook"]}
+
+
+def _m(metric, period, value, as_of, unit="INR_CR"):
+    return {"metric": metric, "period": period, "value": value, "unit": unit, "as_of": as_of}
+
+
+def test_a_period_not_yet_ended_is_not_the_latest_figure():
+    # audit of 1 Nov 2026: BEL's "order book FY27 1,251 Cr" was one May order, filed in April; FY26's 73,882 is the book
+    d = {"financial_metrics": [_m("order_book", "FY27", 1251.0, "2026-04-22T15:49:28+05:30"),
+                               _m("order_book", "FY26", 73882.0, "2026-05-19T15:23:04+05:30")]}
+    assert latest_fundamentals(d, [ORDER_BOOK])["kpis"][0] == {"label": "Order book", "format": "cr", "period": "FY26", "value": 73882.0}
+    # SWARAJ: a balance sheet projected for Mar-2027 is not the latest one
+    d = {"balance_sheet": [{"period": "FY26", "net_worth_cr": 340.12, "gross_debt_cr": 326.72, "as_of": "2026-05-20"},
+                           {"period": "MAR-2027", "net_worth_cr": 337.74, "gross_debt_cr": 185.78, "as_of": "2026-05-21"}]}
+    out = latest_fundamentals(d)
+    assert out["debt"]["value"] == 326.72 and out["net_worth"]["value"] == 340.12
+
+
+def test_an_order_book_takes_the_newest_date_whatever_its_label():
+    # GVT&D: "Q4FY26 8,610" beside "JUN-2026 20,900" (and FY26 21,460); a stock is as at a date
+    d = {"financial_metrics": [_m("order_book", "Q4FY26", 8610.0, "2026-05-18T20:20:49+05:30"),
+                               _m("order_book", "FY26", 21460.0, "2026-05-18T20:20:49+05:30"),
+                               _m("order_book", "JUN-2026", 20900.0, "2026-08-14T16:04:04+05:30"),
+                               _m("revenue", "Q2FY27", 2026.98, "2026-10-30T17:06:35+05:30")]}
+    kpi = latest_fundamentals(d, [ORDER_BOOK])["kpis"][0]
+    assert kpi["period"] == "JUN-2026" and kpi["value"] == 20900.0

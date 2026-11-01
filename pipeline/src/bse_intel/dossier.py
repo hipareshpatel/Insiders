@@ -1946,14 +1946,24 @@ def deal_state(deal: dict, cutoff: str) -> dict | None:
             "progress": next((h["progress"] for h in reversed(history) if h.get("progress")), None)}
 
 
+_STOCK_KPIS = ("order_book",)
+
+
 def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = ()) -> dict:
     """Latest revenue (quarter preferred), debt and net worth, and the sector's footer KPIs
     (GNPA for a bank, EBITDA/t for cement, ARPU for telecom...), for the card's financial footer."""
     out: dict = {}
     metrics = (with_year_hold(with_screener(dossier)) or {}).get("financial_metrics", [])   # MEMORY_YEAR_CHECK: a held year is not 'latest'
+    # a period that ends after the newest thing memory knows is a plan or a target, not a figure (audit of 1 Nov 2026: BEL's
+    # "order book FY27 1,251 Cr" was one May order; SWARAJ's debt and net worth "Mar-2027" its projection after the expansion)
+    known = max((str(x.get("as_of") or "")[:10] for x in (*metrics, *dossier.get("balance_sheet", [])) if x.get("as_of")), default="")
+
+    def ended(period) -> bool:
+        end = due_date(period)
+        return bool(end) and (not known or str(end) <= known)
 
     def latest(names: tuple[str, ...], prefer_quarter: bool = False):
-        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])]
+        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and ended(m["period"])]
         if prefer_quarter and any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
         return max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
@@ -1966,7 +1976,7 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
                               ("net_worth", ("net_worth", "total_equity"), "net_worth_cr")):
         # the latest period's balance sheet, not the latest filed: a later filing restating FY25 hid Kellton's FY26
         # (live review 2, 2026-10-20)
-        snap = max((b for b in balance if b.get(field) is not None),
+        snap = max((b for b in balance if b.get(field) is not None and (not b.get("period") or ended(b.get("period")) or not due_date(b.get("period")))),
                    key=lambda b: (str(due_date(b.get("period")) or ""), b.get("as_of") or ""), default=None)
         metric = latest(names)
         snap_end, metric_end = (str(due_date(x.get("period")) or "") if x else "" for x in (snap, metric))
@@ -1980,9 +1990,11 @@ def latest_fundamentals(dossier: dict, footer: tuple[dict, ...] | list[dict] = (
     for spec in footer:
         fmt = spec.get("format", "num")
         names = (spec["metric"], *spec.get("aliases", ()))
-        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and due_date(m["period"])
+        rows = [m for m in metrics if m["metric"] in names and m.get("value") is not None and ended(m["period"])
                 and _unit_fits(fmt, m)]
-        if any(m["period"].startswith("Q") for m in rows):
+        # a stock (an order book) is as at a date, whatever the label: the newest date wins ("JUN-2026" 20,900 over "Q4FY26";
+        # GVT&D, audit of 1 Nov 2026); a flow keeps quarters over years
+        if spec["metric"] not in _STOCK_KPIS and any(m["period"].startswith("Q") for m in rows):
             rows = [m for m in rows if m["period"].startswith("Q")]
         metric = max(rows, key=lambda m: (due_date(m["period"]), m.get("as_of") or ""), default=None)
         if metric and card_footer_plausible() and (why := footer_plausible.hide_reason(metrics, names, metric, fmt, dossier.get("industry"))):

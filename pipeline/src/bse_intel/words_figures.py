@@ -10,9 +10,9 @@ Three checks, each acting only when the card's own figures contradict the word (
    quarter's YoY worked out from memory (the previous quarter and the quarter a year before it).
 3. **outpaced / outperformed / outgrew**, between two percentages of one sentence: the first must be above the second.
 
-A contradicted item of a list (what happened, why it matters, notable changes) is dropped; in the headline or takeaway the word
-is softened ("doubled" -> "rose", "halved" -> "fell", "accelerated" -> "rose", "slowed" -> "fell") or, for an outpacing,
-left and noted. Every change is returned as a note."""
+A contradicted word is softened ("doubled" -> "rose", "halved" -> "fell", "accelerated" -> "rose", "slowed" -> "fell"), in a
+list item (what happened, why it matters, notable changes) as in the headline or takeaway; an outpacing has no softer word, so
+its list item is dropped and a headline or takeaway one is noted. Memory is read on the card's own basis only. Every change is returned as a note."""
 
 from __future__ import annotations
 
@@ -79,13 +79,35 @@ def _pace_wrong(word: str, row: dict, previous: float | None) -> bool:
     return yoy <= previous if word.lower().startswith("accelerat") else yoy >= previous
 
 
+def _bound_to_growth(sentence: str, m: re.Match) -> bool:
+    """The pace word is about growth: "growth slowed", "growth of revenue accelerated to", "slowing growth", within a few words
+    (lead's review of #326: "revenue grew 12% despite slowing demand" is about demand, not revenue's growth)."""
+    before, after = sentence[:m.start()], sentence[m.end():]
+    return bool(re.search(r"\bgrowth\b(?:\s+\S+){0,3}\s*$", before, re.I) or re.match(r"\s+(?:\S+\s+){0,1}growth\b", after, re.I))
+
+
+_FALL = re.compile(r"\b(?:fell|fall(?:s|ing)?|declin\w*|drop\w*|down|lower|contract\w*|shr[ai]nk\w*|slump\w*)\b[^%]{0,15}$", re.I)
+_FALL_AFTER = re.compile(r"\s*(?:decline|drop|fall|lower|contraction)\b", re.I)
+
+
 def _outpace_wrong(sentence: str, at: int) -> bool:
-    pcts = [(pos, value) for value, _d, pos, kind, _r in _tokens(sentence) if kind == "pct"]
-    before = [v for pos, v in pcts if pos < at]
-    after = [v for pos, v in pcts if pos > at]
+    """The first growth figure is not above the second. The tokens carry no sign, so a fall on either side ("fell 5%,
+    outperforming the industry's 10% decline") is not judged (lead's review of #326)."""
+    pcts = [(pos, value, raw) for value, _d, pos, kind, raw in _tokens(sentence) if kind == "pct"]
+    before = [(pos, v, raw) for pos, v, raw in pcts if pos < at]
+    after = [(pos, v, raw) for pos, v, raw in pcts if pos > at]
     if not before or not after:
         return False
-    return before[-1] <= after[0]
+
+    def falls(pos: int, raw: str) -> bool:
+        near = sentence[max(0, pos - 25):pos]
+        rest = sentence[pos:pos + 25].split("%", 1)[-1]
+        return raw.startswith("-") or bool(_FALL.search(near)) or bool(_FALL_AFTER.match(rest))
+
+    (p1, v1, r1), (p2, v2, r2) = before[-1], after[0]
+    if falls(p1, r1) or falls(p2, r2):
+        return False
+    return v1 <= v2
 
 
 def _judge(text: str, results: dict, found: dict[tuple[str, str], float]) -> list[tuple[str, str]]:
@@ -100,7 +122,7 @@ def _judge(text: str, results: dict, found: dict[tuple[str, str], float]) -> lis
         for m in _PACE.finditer(sentence):
             key = _metric_before(sentence, m.start())
             row = _row(results, key) if key else None
-            if row and re.search(r"growth|grow|rise|increase|expan", sentence[:m.start()], re.I):
+            if row and _bound_to_growth(sentence, m):
                 previous = _previous_yoy(found, key, results.get("period"))
                 if _pace_wrong(m.group(1), row, previous):
                     wrong.append((m.group(1), f"{key} YoY {row.get('yoy_pct')}% against the previous quarter's {previous:.1f}%"))
@@ -122,8 +144,14 @@ def apply_card_json(card_json: dict, dossier: dict | None = None) -> list[str]:
     results = card_json.get("results")
     if not card_words_match_figures() or not isinstance(results, dict):
         return []
+    from .dossier import _entry_basis
+
+    # memory on the card's own basis only; a card with no basis takes nothing from memory, so its pace words are not judged
+    # (lead's review of #326: a standalone previous quarter judged a consolidated card's "accelerated")
+    basis = card_json.get("basis") or results.get("basis")
     found = {(m["metric"], m["period"]): m["value"] for m in (dossier or {}).get("financial_metrics") or []
-             if isinstance(m, dict) and m.get("period") and isinstance(m.get("value"), (int, float))}
+             if basis and isinstance(m, dict) and m.get("period") and isinstance(m.get("value"), (int, float))
+             and _entry_basis(m) == basis}
     for key in ("revenue", "ebitda", "pat", "pbt"):   # the table's own figures over memory's
         row = results.get(key)
         if isinstance(row, dict):
@@ -150,7 +178,15 @@ def apply_card_json(card_json: dict, dossier: dict | None = None) -> list[str]:
         for item in items:
             text = item.get("text") if isinstance(item, dict) else item if isinstance(item, str) else None
             wrong = _judge(text, results, found) if isinstance(text, str) else []
-            if wrong:
+            softer = text
+            for word, why in wrong:
+                softer = _soften(softer, word) if softer is not None else None
+                if softer is None:
+                    break
+            if wrong and softer is not None:   # the item keeps its other facts with the word softened (lead's review of #326)
+                notes.append(f"{name}: '{wrong[0][0]}' softened in '{text[:80]}', the figures do not show it ({wrong[0][1]})")
+                item = {**item, "text": softer} if isinstance(item, dict) else softer
+            elif wrong:
                 notes.append(f"{name}: dropped '{text[:80]}', '{wrong[0][0]}' is not what the figures show ({wrong[0][1]})")
                 continue
             kept.append(item)

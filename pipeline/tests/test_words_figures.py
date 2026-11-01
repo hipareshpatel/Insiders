@@ -11,14 +11,15 @@ CARD = {
     "what_happened": [{"text": "**Revenue** rose 12% YoY to ₹1,120 Cr."},
                       {"text": "Revenue growth of 12% far outpaced the industry's 18%."},
                       {"text": "EBITDA doubled YoY to ₹200 Cr."}],
+    "basis": "CONSOLIDATED",
     "results": {"period": "Q2FY27",
                 "revenue": {"value": 1120.0, "prev_quarter": 1100.0, "yoy_pct": 12.0, "qoq_pct": 1.8},
                 "ebitda": {"value": 200.0, "yoy_pct": 105.0, "qoq_pct": 10.0},
                 "pat": {"value": 50.0, "yoy_pct": 40.0, "qoq_pct": 5.0}},
 }
 # memory: Q1FY27 revenue 1,100 against Q1FY26 900 = +22.2% YoY, so +12% this quarter is a slowdown
-MEMORY = {"financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1100.0},
-                                {"metric": "revenue", "period": "Q1FY26", "value": 900.0}]}
+MEMORY = {"financial_metrics": [{"metric": "revenue", "period": "Q1FY27", "value": 1100.0, "basis": "CONSOLIDATED"},
+                                {"metric": "revenue", "period": "Q1FY26", "value": 900.0, "basis": "CONSOLIDATED"}]}
 
 
 def on(monkeypatch):
@@ -65,3 +66,44 @@ def test_off_by_default(monkeypatch):
     monkeypatch.setenv("BSE_INTEL_SWITCHES", "/no/such/file.toml")
     card = copy.deepcopy(CARD)
     assert W.apply_card_json(card, MEMORY) == [] and card == CARD
+
+
+def test_list_items_keep_their_facts_with_the_word_softened(monkeypatch):
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["what_happened"].append({"text": "PAT doubled to ₹50 Cr on lower costs."})
+    W.apply_card_json(card, MEMORY)
+    assert {"text": "PAT rose to ₹50 Cr on lower costs."} in card["what_happened"]
+
+
+def test_memory_on_the_other_basis_is_not_read(monkeypatch):
+    """Lead's review of #326: a standalone previous quarter must not judge a consolidated card's pace."""
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["what_happened"], card["takeaway"] = [], ""
+    card["headline"] = "Acme Q2FY27 revenue growth accelerated to 12%"
+    standalone = {"financial_metrics": [dict(m, basis="STANDALONE") for m in MEMORY["financial_metrics"]]}
+    assert W.apply_card_json(card, standalone) == []
+    assert W.apply_card_json(dict(copy.deepcopy(card), basis=None), MEMORY) == []   # no basis: memory is not read
+
+
+def test_a_fall_on_either_side_of_an_outpacing_is_not_judged(monkeypatch):
+    """Lead's review of #326: the figures carry no sign."""
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["headline"], card["takeaway"] = "", ""
+    card["what_happened"] = [{"text": "Volumes fell 5%, outperforming the industry's 10% decline."},
+                             {"text": "Volumes fell 5%, outperforming the industry, down 10%."}]
+    assert W.apply_card_json(card, MEMORY) == []
+
+
+def test_a_pace_word_about_something_else_is_not_judged(monkeypatch):
+    """Lead's review of #326: "slowing demand" is not revenue's growth slowing."""
+    on(monkeypatch)
+    card = copy.deepcopy(CARD)
+    card["headline"], card["takeaway"] = "", ""
+    card["results"]["revenue"]["yoy_pct"] = 30.0   # above last quarter's +22.2%: a bound "slowed" would be contradicted
+    card["what_happened"] = [{"text": "Revenue grew 30% YoY despite slowing demand in exports."}]
+    assert W.apply_card_json(card, MEMORY) == []
+    card["what_happened"] = [{"text": "Revenue growth slowed to 30% YoY."}]
+    assert len(W.apply_card_json(card, MEMORY)) == 1

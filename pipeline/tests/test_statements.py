@@ -122,6 +122,24 @@ def test_the_live_path_keeps_the_rows_and_the_facts(settings):
     assert sink.get_object(xbrl_facts.key(filing.scrip_code, "Q2FY27", "CONSOLIDATED")), "the file's facts are kept"
 
 
+def test_a_results_file_the_card_sets_aside_still_keeps_its_facts(settings):
+    """1 Nov 2026: a file whose figures are not in the PDF text is set aside by the card, and its facts copy was never written (1,414
+    raw files with no facts copy, 10 of them Q2FY27); the copy is now kept when the file is downloaded."""
+    now = now_ist() - timedelta(minutes=30)
+    filing = _filing("n-aside", "Unaudited Financial Results for the quarter ended September 30, 2026", now, "Result")
+    text = "An ECL note for the quarter ended 30.09.2026 with no statement in it. Provision 77.00."
+    day = now.date()
+    pipeline, sink, fake = build(settings, [filing], {filing.pdf_url: _pdf(text), "https://bse.invalid/co.xml": results_xml()},
+                                 {"nvidia/nemotron-3.5-super-vl:free": [json.dumps(PASS2)]})
+    pipeline.bse.archive = {"999001": [XbrlLink("Q2FY27", "CONSOLIDATED", "https://bse.invalid/co.xml", f"{day}T18:05:00")]}
+    pipeline.run("live", time_budget_s=60)
+    assert sink.get_object(xbrl_facts.key(filing.scrip_code, "Q2FY27", "CONSOLIDATED")), "the set-aside file's facts are kept"
+
+
+def test_keep_never_raises_and_skips_a_file_with_no_results():
+    assert xbrl_facts.keep(None, b"not xml", "x", "u") is False
+
+
 def test_a_concurrent_writer_s_statements_are_kept_and_the_newest_periods_win():
     from bse_intel.dossier import keep_concurrent_writes
 

@@ -389,6 +389,23 @@ def load_annual(sink, scrip: str, fy: str, basis: str | None) -> Facts | None:
         return None
 
 
+def keep(sink, data: bytes, scrip: str, url: str) -> bool:
+    """The facts copy of a results file kept the moment the file is downloaded, beside its raw copy (xbrl_store.put). Until 1 Nov
+    2026 the copy was written only at the memory write (statements.from_file), so a file the card set aside (its figures not in the
+    PDF text, a unit slip held, a D20 duplicate) kept its raw copy and no facts (expiry check run 41145772223: 1,414 raw results
+    files with no facts copy, 10 of them Q2FY27), and the stored-facts rebuild, which applies its own guards, never saw it. Best
+    effort: False when the file holds no results or the write fails; never raises."""
+    try:
+        doc = parse_facts(data, scrip, url)
+        if doc is None:
+            return False
+        save(sink, scrip, doc["period"], doc.get("basis"), doc)
+        return True
+    except Exception as exc:  # noqa: BLE001 - the raw copy is kept either way; xbrl-facts can fill the copy later
+        log.warning("xbrl facts of %s not kept: %s", url, exc)
+        return False
+
+
 def save(sink, scrip: str, period: str, basis: str | None, doc: dict) -> int:
     """Keep one document; the stored (gzipped) size in bytes."""
     body = dumps(doc)

@@ -338,6 +338,21 @@ def _which(filing) -> str:
     return f"{str(getattr(filing, 'filed_at', '') or '')[:10]} \"{str(getattr(filing, 'subject', '') or getattr(filing, 'headline', '') or '')[:60]}\""
 
 
+def _sample(src, url: str) -> str:
+    """For a file that gave no dated column or no results row: its page count, the page read, whether that page has a text layer,
+    and the lines above its first results row, where the period header should be (lead, 2 Nov 2026: the header text tells (a) a
+    header the reader cannot date from (b) an image-only page). Empty when the source keeps no sample."""
+    got = (getattr(src, "samples", None) or {}).get(url) or {}
+    if not got:
+        return ""
+    parts = [f"{got['pages']} pages"] if got.get("pages") else []
+    if got.get("page"):
+        parts.append(f"p{got['page']} {'text layer' if got.get('text_layer') else 'no text layer (image)'}")
+    if got.get("header"):
+        parts.append(f'above the first row: "{got["header"]}"')
+    return "; " + ", ".join(parts) if parts else ""
+
+
 def read_company(src, symbol: str, dossier: dict, quarters: int = 6, rejected: list | None = None,
                  screener: ScreenerStore | None = None) -> tuple[list[dict], list[tuple], list[str]]:
     """Read the results PDFs of a company's latest ``quarters`` quarters in memory and return (restated records, unchanged
@@ -358,13 +373,13 @@ def read_company(src, symbol: str, dossier: dict, quarters: int = 6, rejected: l
         for f in listed[:pr.MAX_CANDIDATES]:
             rows, why = src.rows(f.pdf_url)
             if not rows:         # a file with no results row (a notice, an auditor's letter) is not the results: try the next
-                misses.append(f"{why or 'no results row found'} [{_which(f)}]")
+                misses.append(f"{why or 'no results row found'} [{_which(f)}{_sample(src, f.pdf_url)}]")
                 continue
             if not any(r.columns and pr.target_column(period) in r.columns for r in rows):
                 # the next quarter's results are in the window too; the file and the columns it proves say which it was
                 seen = sorted({f"{kind} {end.isoformat()}" for r in rows if r.columns for kind, end in r.columns})
                 misses.append(f"no proven column for {period} (the file is another quarter's) [{_which(f)}; columns: "
-                              f"{', '.join(seen[:6]) or 'none proven'}]")
+                              f"{', '.join(seen[:6]) or 'none proven'}{_sample(src, f.pdf_url) if not seen else ''}]")
                 continue
             theirs = (lambda metric, p, _b=basis: screener.figure(symbol, _b, metric, p)) if screener is not None else None
             mine = find(dossier, rows, period, basis, f.news_id, f.pdf_url, rejected, theirs)

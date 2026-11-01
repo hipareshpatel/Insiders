@@ -58,6 +58,8 @@ def differs(original: float, printed: float, slack: float = 0.5) -> bool:
 
 
 BAND = 0.25     # F212: a restatement moves a figure by this share of the original at most (see TRACKER F212)
+NOISE = 0.0005  # a move under 0.05% of the original is rounding between two filings, no restatement (ONGC Q1FY26 163,108.12 printed
+                # 163,106.33, -0.001%: dry run 41356601414)
 
 
 def _digits(value: float) -> int:
@@ -269,6 +271,8 @@ def find(dossier: dict, rows: list, period: str, basis: str, filing_id: str = ""
         original = original_of(entries.get((c["metric"], c["period"])), basis)
         if original is None or not differs(original[0], c["value"], DERIVED_SLACK if c.get("derived") else 0.5):
             continue
+        if abs(c["value"] - original[0]) < NOISE * abs(original[0]):
+            continue   # under the noise floor: no restatement
         why = c.get("joined") or plausible(original[0], c["value"])
         theirs = screener(c["metric"], c["period"]) if screener is not None and (why.startswith("moves more than") or c.get("dotted")) else None
         confirmed = screener_matches(c["value"], theirs)

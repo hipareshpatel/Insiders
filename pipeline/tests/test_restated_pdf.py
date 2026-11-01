@@ -382,3 +382,20 @@ def test_a_reason_carries_the_files_sample():
     # a source without samples (the tests' and older callers'): the reason as before
     _, _, reasons = rp.read_company(_Src(rows()), "X", dossier(), quarters=1)
     assert reasons == []
+
+
+def test_a_move_under_the_noise_floor_is_no_restatement():
+    """Dry run 41356601414: ONGC's Q1FY26 revenue 163,108.12 printed as 163,106.33 (-0.001%) is rounding between filings."""
+    d = dossier()
+    d["financial_metrics"][0]["value"] = 629.81                               # the printed 629.79 is 0.003% off
+    d["financial_metrics"][0]["sources"][0]["value"] = 629.81
+    assert rp.find(d, rows(), "Q4FY24", "CONSOLIDATED", "nse-77", "u") == []
+    # a real move stays (the fixture's 647.68 against 629.79, -2.8%)
+    assert [r["restated"] for r in rp.find(dossier(), rows(), "Q4FY24", "CONSOLIDATED", "nse-77", "u")] == [629.79]
+
+
+def test_a_press_release_subject_is_no_candidate():
+    """Dry run 41356601414: RELIANCE's "Press Release" files took the candidate slots of its results."""
+    release = filing(url="https://x/PR.pdf", subject="Press Release", headline="Financial results for the quarter")
+    results = filing(url="https://x/RES.pdf")
+    assert pr.candidate_filings([release, results], "Q2FY27") == [results]

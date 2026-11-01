@@ -323,6 +323,14 @@ def card_adjusted_profit_label() -> bool:
     return _switch("CARD_ADJUSTED_PROFIT_LABEL")
 
 
+def card_words_match_figures() -> bool:
+    """CARD_WORDS_MATCH_FIGURES (default off; 1 Nov 2026, blind audit "arithmetic in words"): a card's comparison words
+    (doubled, halved, accelerated, slowed, outpaced) are checked against its own results table and memory
+    (words_figures.apply_card_json); a contradicted list item is dropped, a headline or takeaway word softened. On only after
+    the on/off check over stored cards (release_check.py words_match_figures) and a blind sample. Read at the call."""
+    return _switch("CARD_WORDS_MATCH_FIGURES")
+
+
 def card_consolidated_only() -> bool:
     """CARD_CONSOLIDATED_ONLY (default off; TODO 44, F154; owner, 25 Oct 2026: consolidated first, standalone kept from the
     AI): the figure blocks the model sees name their basis and carry no standalone figures for a consolidated filer, the

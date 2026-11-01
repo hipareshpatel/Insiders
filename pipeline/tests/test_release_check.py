@@ -89,7 +89,7 @@ def test_the_run_over_files_writes_a_report_a_sample_and_a_key_per_switch(tmp_pa
     assert set(total) == {"ebitda_v2", "same_definition", "consolidated_only", "two_parts", "quote_exact",
                           "grounded_figures", "guidance_dated", "one_basis", "year_check", "footer_plausible", "eps_follows_profit", "eps_whole", "text_support",
                           "results_statement", "unit_slip_guard", "discontinued_figure", "deck_period", "other_issuer",
-                          "adjusted_profit"}
+                          "adjusted_profit", "words_match_figures"}
     assert total["ebitda_v2"]["cards_checked"] == 1 and total["ebitda_v2"]["cards_changed"] == 1   # EBITDA (Filing) row added
     assert total["ebitda_v2"]["printed_ebitda_found"] == 1
     assert total["two_parts"]["cards_checked"] == 1 and total["two_parts"]["part2_lines_hidden"] == 1
@@ -144,3 +144,14 @@ def test_adjusted_profit_check_labels_a_profit_that_is_not_the_tables():
     assert card["key_numbers"][0]["label"] == "PAT"   # the stored card is not changed
     same = dict(card, headline="Tilaknagar Q2FY27 PAT ₹22.27 Cr", key_numbers=[{"label": "PAT", "value": "₹22.27 Cr"}])
     assert not rc.changed_by_diff(rc.check_adjusted_profit(same, row)["diff"])
+
+
+def test_words_figures_check_softens_a_word_the_figures_contradict():
+    """CARD_WORDS_MATCH_FIGURES: "PAT doubled" beside a table showing +40% YoY and +5% QoQ."""
+    rc = _script()
+    row = {"news_id": "nse-1", "symbol": "ACME", "scrip_code": "1", "pdf_url": "u"}
+    card = {"event_type": "RESULTS", "headline": "Acme Q2FY27 PAT doubled to ₹50 Cr", "takeaway": "",
+            "results": {"period": "Q2FY27", "pat": {"value": 50.0, "yoy_pct": 40.0, "qoq_pct": 5.0}}}
+    note = rc.check_words_figures(card, row, None)
+    assert rc.changed_by_diff(note["diff"]) and "HEADLINE Acme Q2FY27 PAT rose to ₹50 Cr" in note["on_lines"]
+    assert card["headline"] == "Acme Q2FY27 PAT doubled to ₹50 Cr"

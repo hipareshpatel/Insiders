@@ -350,6 +350,14 @@ def card_words_match_figures() -> bool:
     return _switch("CARD_WORDS_MATCH_FIGURES")
 
 
+def card_results_face_rebuild() -> bool:
+    """CARD_RESULTS_FACE_REBUILD (default off; STATUS 17c, 1 Nov 2026): a stored results card made before CARD_EBITDA_PROFIT_V2 (two
+    profit key lines, or filed before 30 Oct 2026 ~00:40 IST) gets the headline, key numbers and takeaway today's code writes, from
+    memory's file figures (results_face.apply_card_json, in card_refresh). Only what code wrote is replaced. On only after the
+    on/off check over stored cards (release_check.py results_face) and a blind sample. Read at the call."""
+    return _switch("CARD_RESULTS_FACE_REBUILD")
+
+
 def card_year_ago_label() -> bool:
     """CARD_YEAR_AGO_LABEL (default off; 1 Nov 2026, blind audit, GICRE nse-106837460 and HEGAM nse-106837190): a year-ago label in a
     card's words that names two years before the card's period, in a comparison ("from ₹5,404 Cr in H1 FY25" on an H1FY27 card),

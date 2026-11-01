@@ -85,6 +85,9 @@ Three more checks (F171-F173), each replayed only as far as the stored card, its
                      stored card; every ratio comparison drawn from a shifted column that it drops or corrects.
   year_ago_label     CARD_YEAR_AGO_LABEL (1 Nov 2026, GICRE nse-106837460, HEGAM nse-106837190): `year_ago_label.apply_card_json` on a copy of
                      each stored card, off and on; the year-ago labels two years back it puts right, in a comparison only. Complete.
+  results_face       CARD_RESULTS_FACE_REBUILD (STATUS 17c, 1 Nov 2026): `results_face.apply_card_json` on a copy of each stored
+                     results card made before CARD_EBITDA_PROFIT_V2 (two profit key lines, or filed before 30 Oct ~00:40 IST); its
+                     headline, takeaway and key numbers before and after the rebuild from memory's file figures (one profit line).
   event_repeat       CARD_EVENT_REPEAT (S2, 1 Nov 2026): each ORDER_WIN or M_AND_A card against its company's memory timeline
                      (`event_repeats.match`); the cards it would hold as a repeat of an earlier entry, that entry named.
   comparative_memory CARD_COMPARATIVE_MATCHES_MEMORY (1 Nov 2026, MASKINVEST nse-106838206): each PDF-read results card whose figure
@@ -159,7 +162,7 @@ ALL_SWITCHES = ("CARD_EBITDA_PROFIT_V2", "CARD_TWO_PARTS", "CARD_CONSOLIDATED_ON
                 "CARD_WORDS_MATCH_FIGURES", "XBRL_FILER_CHECKS", "CARD_FIGURE_MATCHES_FILE", "CARD_GUIDED_NOT_ACTUAL",
                 "CARD_EVENT_REPEAT", "RESULTS_PRESS_RELEASE",
                 "UNIT_FIX_SCALE_GUARD", "CARD_COMPARATIVE_MATCHES_MEMORY", "CARD_YEAR_AGO_LABEL",
-                "CARD_RATIO_COLUMNS", "CARD_VERDICT_NEEDS_FIGURE")
+                "CARD_RATIO_COLUMNS", "CARD_VERDICT_NEEDS_FIGURE", "CARD_RESULTS_FACE_REBUILD")
 CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME_DEFINITION"),
           ("consolidated_only", "CARD_CONSOLIDATED_ONLY"), ("two_parts", "CARD_TWO_PARTS"), ("quote_exact", "QUOTE_EXACT_NUMBERS"),
           ("grounded_figures", "CARD_GROUNDED_FIGURES"), ("guidance_dated", "CARD_GUIDANCE_DATED"), ("one_basis", "CARD_ONE_BASIS"),
@@ -174,7 +177,8 @@ CHECKS = (("ebitda_v2", "CARD_EBITDA_PROFIT_V2"), ("same_definition", "CARD_SAME
           ("guided_not_actual", "CARD_GUIDED_NOT_ACTUAL"), ("event_repeat", "CARD_EVENT_REPEAT"),
           ("press_release_fold", "RESULTS_PRESS_RELEASE"), ("unit_fix_scale", "UNIT_FIX_SCALE_GUARD"),
           ("comparative_memory", "CARD_COMPARATIVE_MATCHES_MEMORY"), ("year_ago_label", "CARD_YEAR_AGO_LABEL"),
-          ("ratio_columns", "CARD_RATIO_COLUMNS"), ("verdict_figure", "CARD_VERDICT_NEEDS_FIGURE"))
+          ("ratio_columns", "CARD_RATIO_COLUMNS"), ("verdict_figure", "CARD_VERDICT_NEEDS_FIGURE"),
+          ("results_face", "CARD_RESULTS_FACE_REBUILD"))
 TEXT_SUPPORT_SAMPLE = 60
 
 
@@ -334,6 +338,22 @@ def check_words_figures(card: dict, row: dict, dossier: dict | None) -> dict:
     on_card = copy.deepcopy(card)
     with switches_on("CARD_WORDS_MATCH_FIGURES"):
         words_figures.apply_card_json(on_card, dossier)
+    return _record(row, card, lines(card), lines(on_card))
+
+
+def check_results_face(card: dict, row: dict, dossier: dict | None = None, text: str | None = None) -> dict:
+    """results_face: `results_face.apply_card_json` on a copy of a stored results card with CARD_RESULTS_FACE_REBUILD off and on;
+    its headline, takeaway and key numbers before and after."""
+    from bse_intel import results_face
+
+    def lines(c: dict) -> list[str]:
+        return [f"HEADLINE {c.get('headline') or ''}", f"TAKEAWAY {c.get('takeaway') or ''}"] + \
+            [f"KEY {k.get('label')}: {k.get('value')}" + (f" ({k.get('change')})" if k.get("change") else "")
+             for k in c.get("key_numbers") or [] if isinstance(k, dict)]
+
+    on_card = copy.deepcopy(card)
+    with switches_on("CARD_RESULTS_FACE_REBUILD"):
+        results_face.apply_card_json(on_card, dossier, row.get("filed_at"), row.get("company_name") or row.get("symbol"), text or "")
     return _record(row, card, lines(card), lines(on_card))
 
 
@@ -1353,6 +1373,13 @@ def run(source, wanted: tuple[str, ...], out: pathlib.Path | None = None, deadli
                     seen[name] += 1
                     keep(name, check_year_ago_label(card, row, memory() or None))
                     row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
+                elif name == "results_face":
+                    if not results or not isinstance(card.get("results"), dict):
+                        skipped[name]["not a results card with a table"] += 1
+                    else:
+                        seen[name] += 1
+                        keep(name, check_results_face(card, row, memory() or None, text))
+                        row_index[row["news_id"]] = {"headline": row.get("headline"), "pdf_url": row.get("pdf_url")}
                 elif name == "ratio_columns":
                     seen[name] += 1
                     keep(name, check_ratio_columns(card, row, memory() or None))
